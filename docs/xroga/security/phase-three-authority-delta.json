@@ -45,15 +45,15 @@
     },
     {
       "previousCallerId": "b6708d08741254f6da06",
-      "currentCallerId": "0f9bdee0b411ef2f246d"
+      "currentCallerId": "a992f061331cff4e8d50"
     },
     {
       "previousCallerId": "85d5a147aa59e4f62e68",
-      "currentCallerId": "adbc1ef16d0ec277edb7"
+      "currentCallerId": "7ddf1ddcae5c5661a52a"
     },
     {
       "previousCallerId": "bbf934631616a292169c",
-      "currentCallerId": "c2ce222ac0cc6f913871"
+      "currentCallerId": "b01c22a391468e45cbe8"
     },
     {
       "previousCallerId": "840920438b3c862c0e91",
@@ -1186,5 +1186,6 @@
   "completion": "ACTUAL_DISPOSABLE_AND_SOURCE_BOUND_REGRESSION_PENDING",
   "productionEffects": false,
   "currentPositionContinuation": "docs/xroga/evidence/command-010/GITHUB-ACTOR-SEMANTIC-POSITIONS-20261028.json",
-  "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
+  "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json",
+  "nativeCheckoutPositionContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json"
 }

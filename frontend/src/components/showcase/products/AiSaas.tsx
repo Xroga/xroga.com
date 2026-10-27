@@ -28,6 +28,12 @@ const PROMPTS = [
 function id() { return Math.random().toString(36).slice(2, 10); }
 function clock() { return new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date()); }
 
+async function boundedResponseText(response:Response,maximumBytes:number):Promise<string>{
+  const reader=response.body?.getReader(),decoder=new TextDecoder();let bytes=0,text='';
+  try{if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.byteLength;if(bytes>maximumBytes)throw new Error('Aura response exceeded the safe size limit.');text+=decoder.decode(next.value,{stream:true});}return text+decoder.decode();}
+  finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+}
+
 export function AiSaas() {
   const [theme, setTheme] = useState<Theme>('dark');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -54,8 +60,8 @@ export function AiSaas() {
   const messageCount = conversations.reduce((sum, chat) => sum + chat.messages.length, 0);
 
   useEffect(() => {
-    fetch('/api/showcase/aura/health', { cache: 'no-store' })
-      .then((response) => response.json())
+    fetch('/api/showcase/aura/health', { cache: 'no-store',redirect:'error',mode:'same-origin',credentials:'same-origin',signal:AbortSignal.timeout(5000) })
+      .then(async(response) => {if(!response.ok)throw new Error('Aura is unavailable.');const data=JSON.parse(await boundedResponseText(response,4096));if(typeof data?.configured!=='boolean')throw new Error('Invalid availability receipt.');return data;})
       .then((data: { configured?: boolean }) => setConfigured(Boolean(data.configured)))
       .catch(() => setConfigured(false));
     return () => controllerRef.current?.abort();
@@ -98,24 +104,30 @@ export function AiSaas() {
     controllerRef.current = controller;
 
     try {
+      const body=JSON.stringify({messages:history.slice(-24).map(message=>({...message,content:message.content.slice(0,8000)})),model,persona,temperature,maxTokens});
+      if(new TextEncoder().encode(body).byteLength>210000)throw new Error('This conversation is too large to send. Start a new conversation.');
       const response = await fetch('/api/showcase/aura/chat', {
         method: 'POST',
+        redirect:'error',mode:'same-origin',credentials:'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, model, persona, temperature, maxTokens }),
-        signal: controller.signal,
+        body,
+        signal: AbortSignal.any([controller.signal,AbortSignal.timeout(60000)]),
       });
       if (!response.ok || !response.body) {
-        const payload = await response.json().catch(() => ({})) as { error?: string };
-        throw new Error(payload.error || 'Aura could not complete that request.');
+        const payload = await boundedResponseText(response,4096).then(text=>JSON.parse(text)).catch(() => ({})) as { error?: unknown };
+        throw new Error(typeof payload?.error==='string'?payload.error:'Aura could not complete that request.');
       }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
       let full = '';
+      let bytes=0;
+      try{
       while (true) {
         const { value: chunk, done } = await reader.read();
         if (done) break;
+        bytes+=chunk.byteLength;if(bytes>1048576)throw new Error('Aura response exceeded the safe size limit.');
         buffer += decoder.decode(chunk, { stream: true });
         const events = buffer.split('\n\n');
         buffer = events.pop() ?? '';
@@ -127,7 +139,7 @@ export function AiSaas() {
             try {
               const data = JSON.parse(raw) as { choices?: Array<{ delta?: { content?: string } }> };
               const delta = data.choices?.[0]?.delta?.content ?? '';
-              if (!delta) continue;
+              if (typeof delta!=='string'||!delta) continue;
               full += delta;
               updateConversation(chatId, (chat) => ({
                 ...chat,
@@ -137,6 +149,7 @@ export function AiSaas() {
           }
         }
       }
+      }finally{await reader.cancel().catch(()=>undefined);reader.releaseLock();}
       if (!full) throw new Error('Aura returned an empty response. Please try again.');
     } catch (reason) {
       if (!(reason instanceof DOMException && reason.name === 'AbortError')) {

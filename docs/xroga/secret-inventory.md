@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `d156218d5f2b10ff76a0ac93a98620c1f9c18ac1`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `a0ff83a32c23b04afbfb9847db93b56256afcbb9`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -176,6 +176,7 @@ Values are forbidden. Source SHA: `d156218d5f2b10ff76a0ac93a98620c1f9c18ac1`. Na
 | SUPABASE_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-parallel-ai, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-localhost, endpoint-public-example-invalid, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-open-bigmodel-cn, endpoint-public-example-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
+| SystemRoot | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TERM | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TMPDIR | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TZ | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -184,6 +185,7 @@ Values are forbidden. Source SHA: `d156218d5f2b10ff76a0ac93a98620c1f9c18ac1`. Na
 | UNIVERSAL_AGENT_PERCENTAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | UPSTASH_REDIS_REST_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | UPSTASH_VECTOR_REST_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| USERPROFILE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | USER_SECRETS_ENCRYPTION_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | credential-store, endpoint-127-0-0-1 |
 | VERCEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-vercel-com, endpoint-github-com |
 | VERCEL_CLIENT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
@@ -216,6 +218,7 @@ Values are forbidden. Source SHA: `d156218d5f2b10ff76a0ac93a98620c1f9c18ac1`. Na
 | XROGA_BROWSER_PLANNER_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_WORKER_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_CIRCUIT_FAILURE_THRESHOLD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_CLEANUP_JOB_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_CREDENTIAL_KMS_PROVIDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | credential-store |
 | XROGA_DEPLOYMENT_ENVIRONMENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_DEV_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -287,6 +290,7 @@ Values are forbidden. Source SHA: `d156218d5f2b10ff76a0ac93a98620c1f9c18ac1`. Na
 | XROGA_SANDBOX_FLY_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-api-machines-dev |
 | XROGA_SANDBOX_FLY_REGION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-api-machines-dev |
 | XROGA_SANDBOX_FLY_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution, endpoint-127-0-0-1, endpoint-api-machines-dev, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
+| XROGA_SANDBOX_LIVE_TEST_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution |
 | XROGA_SANDBOX_WORKER_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
 | XROGA_SANDBOX_WORKER_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-execution |
 | XROGA_SANDBOX_WORKER_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |

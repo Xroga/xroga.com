@@ -484,7 +484,7 @@ function canonicalize(
   return legacyOrder(valid);
 }
 
-function actionPlanDigest(
+export function actionPlanDigest(
   input: Omit<
     BusinessActionPlan,
     'planDigest'
@@ -1442,6 +1442,13 @@ export async function executePreparedBusinessAction(
   }
 
   input = { userId: input.userId, authorization: { ...input.authorization }, plan: snapshotBusinessActionPlan(input.plan), authorityPermit: input.authorityPermit };
+  if(input.plan.toolkit==='xroga-native-billing'){
+    // Native billing uses the same durable confirmation and original permit.
+    // Never route its prepared payload through third-party tool discovery.
+    const {BillingService}=await import('../BillingService.js');
+    const result=await BillingService.createCheckout(input.userId,{plan:input.plan,authorityPermit:input.authorityPermit});
+    return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
   if (input.authorityPermit) {
     const admitted = businessActionAuthorityScope(input.plan);
     assertAuthorityPermit(input.authorityPermit, { userId: input.userId, provider: admitted.provider,

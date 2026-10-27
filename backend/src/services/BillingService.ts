@@ -15,6 +15,13 @@ import {
   getProviderEntitlementStatus,
 } from '../ai/providerBudget.js';
 import {readWhopCheckoutOwner,whopCheckoutOwnerFromResponse} from './whopCheckoutOwnership.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
+import {authorityContextForPermit,consumeAuthorityPermit,AuthorityError} from '../security/authority/enforce.js';
+import type {AuthorityPermit} from '../security/authority/types.js';
+import {actionPlanDigest,businessActionAuthorityScope,snapshotBusinessActionPlan,type BusinessActionPlan} from './integrations/businessAction.js';
+import {enforceEgress,EgressDenied} from '../security/egress/egressPolicy.js';
+import {persistSecurityDecision} from '../security/egress/securityDecision.js';
+import {isDeepStrictEqual} from 'node:util';
 
 
 export const WHOP_API_VERSION_DATE =
@@ -966,9 +973,30 @@ export class BillingService {
   }
 
 
+  /** A checkout link does not charge a card. Its exact external configuration
+   * still needs the canonical one-time approval, independent of payment on Whop.
+   */
+  static async prepareCheckoutPlan(context:TenantContext):Promise<BusinessActionPlan>{
+    const actor=requireTenantContext(context),config=requiredConfig();
+    await this.verifyConfiguredPlan(true);
+    const issuedAt=new Date().toISOString(),nonce=randomUUID();
+    const unsigned:Omit<BusinessActionPlan,'planDigest'>={version:'1.0',sessionId:`trs_native_checkout_${nonce}`,
+      useCase:'Open Xroga Pro checkout',toolkit:'xroga-native-billing',toolSlug:'XROGA_CREATE_CHECKOUT',
+      arguments:{destination:`${WHOP_API_BASE}/checkout_configurations`,custodyEpoch:crypto.createHash('sha256').update(config.apiKey).digest('hex'),body:{
+        account_id:config.accountId,plan_id:config.planId,mode:'payment',redirect_url:config.redirectUrl,
+        metadata:{xroga_user_id:actor.userId,plan_tier:EXPECTED_TIER,source:EXPECTED_SOURCE,xroga_checkout_id:nonce}}},
+      risk:'write',requiresConfirmation:true,forceConfirmation:true,
+      summary:'Create a Whop checkout link for Xroga Pro, $25 USD every 30 days. Payment requires a separate confirmation on Whop.',
+      requiredScopes:['xroga:checkout'],authority:{version:'1',userId:actor.userId,tenantId:actor.tenantId,
+        connectedAccountId:config.accountId,actionClass:'PURCHASE_OR_SPEND',projectId:null,runId:null,issuedAt,
+        expiresAt:new Date(Date.parse(issuedAt)+15*60_000).toISOString(),nonce,maxSpendMicroUsd:'25000000',currency:'USD'}};
+    return {...unsigned,planDigest:actionPlanDigest(unsigned)};
+  }
+
   static async createCheckout(
     userId:
       string,
+    admission?:{plan:BusinessActionPlan;authorityPermit?:AuthorityPermit},
   ): Promise<{
     purchaseUrl:
       string;
@@ -977,6 +1005,11 @@ export class BillingService {
       string | null;
   }> {
 
+    if(!admission)throw new AuthorityError('AUTHORITY_REQUIRED');
+    const plan=snapshotBusinessActionPlan(admission.plan),scope=businessActionAuthorityScope(plan);
+    const binding={userId,provider:scope.provider,connectedAccountId:scope.connectedAccountId,
+      operation:scope.operation,targetDigest:scope.targetDigest,planDigest:scope.planDigest};
+    const context=authorityContextForPermit(admission.authorityPermit,binding);requireResourceOwner(context,userId);
     const {
       apiKey,
       accountId,
@@ -986,8 +1019,19 @@ export class BillingService {
       requiredConfig();
 
 
-    await this
-      .verifyConfiguredPlan();
+    const expectedBody={account_id:accountId,plan_id:planId,mode:'payment',redirect_url:redirectUrl,
+      metadata:{xroga_user_id:userId,plan_tier:EXPECTED_TIER,source:EXPECTED_SOURCE,xroga_checkout_id:scope.nonce}};
+    const destination=`${WHOP_API_BASE}/checkout_configurations`;
+    if(plan.toolkit!=='xroga-native-billing'||plan.toolSlug!=='XROGA_CREATE_CHECKOUT'
+      ||plan.sessionId!==`trs_native_checkout_${scope.nonce}`||plan.useCase!=='Open Xroga Pro checkout'
+      ||plan.risk!=='write'||!plan.requiresConfirmation||plan.forceConfirmation!==true||scope.actionClass!=='PURCHASE_OR_SPEND'
+      ||scope.maxSpendMicroUsd!=='25000000'||scope.currency!=='USD'||!/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(scope.nonce)
+      ||scope.connectedAccountId!==accountId||scope.projectId!==null||scope.runId!==null
+      ||Date.parse(scope.expiresAt)-Date.parse(scope.issuedAt)>15*60_000
+      ||plan.summary!=='Create a Whop checkout link for Xroga Pro, $25 USD every 30 days. Payment requires a separate confirmation on Whop.'
+      ||!isDeepStrictEqual(plan.requiredScopes,['xroga:checkout'])
+      ||!isDeepStrictEqual(plan.arguments,{destination,custodyEpoch:crypto.createHash('sha256').update(apiKey).digest('hex'),body:expectedBody}))throw new AuthorityError('AUTHORITY_SCOPE_MISMATCH');
+    await this.verifyConfiguredPlan(true);
 
 
     const body = {
@@ -1014,9 +1058,16 @@ export class BillingService {
           EXPECTED_SOURCE,
 
         xroga_checkout_id:
-          randomUUID(),
+          scope.nonce,
       },
     };
+
+    await enforceEgress({context,actionClass:'PURCHASE_OR_SPEND',binding,authorityPermit:admission.authorityPermit,
+      destination,recipient:accountId,purpose:'confirmed_xroga_checkout_configuration',
+      payload:{sessionId:plan.sessionId,useCase:plan.useCase,toolSlug:plan.toolSlug,arguments:plan.arguments},
+      declaredClass:'USER_PRIVATE',toolTrust:'SERVER_REGISTERED'},receipt=>persistSecurityDecision(context,receipt));
+    await consumeAuthorityPermit(admission.authorityPermit,binding);
+    if(!isDeepStrictEqual(requiredConfig(),{apiKey,accountId,planId,redirectUrl}))throw new AuthorityError('AUTHORITY_SCOPE_MISMATCH');
 
 
     let response:
@@ -1028,6 +1079,7 @@ export class BillingService {
         await fetch(
           `${WHOP_API_BASE}/checkout_configurations`,
           {
+            redirect:'manual',
             method:
               'POST',
 
@@ -1036,9 +1088,7 @@ export class BillingService {
                 apiKey,
                 {
                   'Idempotency-Key':
-                    checkoutIdempotencyKey(
-                      userId,
-                    ),
+                    `xroga-checkout-${userId}-${scope.nonce}`,
                 },
               ),
 
@@ -1062,9 +1112,14 @@ export class BillingService {
     }
 
 
-    if (
-      !response.ok
-    ) {
+    if(response.redirected||response.status>=300&&response.status<400){
+      await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');
+    }
+    if(response.status===401||response.status===403){
+      await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('AUTHORITY_CREDENTIAL_REJECTED');
+    }
+    if (!response.ok) {
+      await response.body?.cancel().catch(()=>undefined);
       console.error(
         JSON.stringify({
           level:
@@ -1088,11 +1143,13 @@ export class BillingService {
     }
 
 
-   const payload =
-  (await response.json()) as Record<
-    string,
-    unknown
-  >;
+    const chunks:Uint8Array[]=[];let size=0;const reader=response.body?.getReader();
+    try{if(reader)for(;;){const next=await reader.read();if(next.done)break;size+=next.value.byteLength;
+      if(size>65_536)throw new BillingServiceError('provider_unavailable','Whop checkout receipt was too large',502);chunks.push(next.value);}}
+    finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    let payload:Record<string,unknown>;
+    try{const value:unknown=JSON.parse(Buffer.concat(chunks).toString('utf8'));if(!value||typeof value!=='object'||Array.isArray(value))throw new Error();payload=value as Record<string,unknown>;}
+    catch{throw new BillingServiceError('provider_unavailable','Whop checkout receipt was invalid',502);}
 
 
     if (
@@ -1120,7 +1177,7 @@ export class BillingService {
 
     const checkoutId=pickString(payload,'id');
     try{
-      const scope={checkoutId,accountId,planId};
+      const scope={checkoutId,accountId,planId,expectedCheckoutNonce:body.metadata.xroga_checkout_id};
       const owner=payload.metadata===undefined||payload.metadata===null
         ?await readWhopCheckoutOwner({...scope,apiKey,apiVersion:WHOP_API_VERSION_DATE})
         :whopCheckoutOwnerFromResponse(payload,scope);

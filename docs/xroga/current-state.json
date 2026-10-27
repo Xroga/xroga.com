@@ -6252,7 +6252,7 @@
         "backend/src/ai/tenantModelDispatch.ts:16",
         "backend/src/operations/benchmarkAdapter.ts:36",
         "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
-        "backend/src/routes/billing.ts:5",
+        "backend/src/routes/billing.ts:7",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:29",
         "backend/src/security/budgetOwner.local.integration.ts:7",
@@ -6641,6 +6641,7 @@
         "backend/src/lib/resilience/retry.test.ts:3",
         "backend/src/routes/guestChat.ts:17",
         "backend/src/routes/phase1.ts:1",
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts:6",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:7",
         "backend/src/services/integrations/businessAction.ts:19",
         "backend/src/services/integrations/businessRead.ts:10",
@@ -6678,6 +6679,7 @@
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/lib/resilience/retry.test.ts",
         "backend/src/security/platformHealth.local.integration.ts",
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
         "backend/src/services/integrations/businessAccounting.failure.test.ts",
         "backend/src/services/integrations/composioClient.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts"
@@ -16216,6 +16218,7 @@
         "backend/src/middleware/auth.tenantContext.remote.test.ts",
         "backend/src/middleware/auth.tenantContext.test.ts",
         "backend/src/routes/admin.test.ts",
+        "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/github.settings.test.ts",
         "backend/src/routes/phase1.quota.test.ts",
@@ -16227,6 +16230,7 @@
         "backend/src/routes/projects.fileAuthority.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
+        "backend/src/routes/supabaseOrganizations.security.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/accountRoutes.test.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
@@ -18942,33 +18946,43 @@
       "id": "surface:80c40ab27adc086d734b",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/billing.ts",
-      "sha256": "4f0563b04b327b8a354f90758e698c3ad0f2686da61daa9e585c1e0b3292f719",
+      "sha256": "981e939ad5cb97856cea7ab62b2f400ab06dc355373221b6f65b5ab1e328f87d",
       "symbols": [
         "checkoutSchema",
+        "confirmation",
+        "context",
         "createCheckout",
         "err",
+        "error",
         "manageSubscription",
         "pacingSchema",
         "parsed",
+        "plan",
         "result",
-        "router"
+        "router",
+        "status"
       ],
       "imports": [
         "../ai/providerBudget.js",
         "../middleware/auth.js",
+        "../security/tenantContext.js",
         "../services/BillingService.js",
+        "../services/integrations/businessActionConfirmations.js",
         "express",
         "zod"
       ],
       "runtimeImports": [
         "backend/src/ai/providerBudget.ts",
-        "backend/src/services/BillingService.ts"
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:28"
+        "backend/src/index.ts:28",
+        "backend/src/routes/billingCheckout.security.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18980,13 +18994,19 @@
         "backend/src/routes/billing.ts#AuthRequest"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/routes/billing.ts#confirmBusinessAction",
+        "backend/src/routes/billing.ts#confirmation",
+        "backend/src/routes/billing.ts#createBusinessActionConfirmation"
+      ],
       "costBoundary": [
         "backend/src/routes/billing.ts#BillingService",
         "backend/src/routes/billing.ts#BillingServiceError"
       ],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/routes/billingCheckout.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -21293,21 +21313,25 @@
       "id": "surface:02d224e67cfed441bb6e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "031fb52e095ac060d1637487e7370f50fa268ac7b6b0728602d158717d931293",
+      "sha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675",
       "symbols": [
+        "abort",
         "accessToken",
         "autoSelected",
         "built",
+        "chunks",
         "context",
         "createRes",
         "created",
-        "data",
+        "current",
         "dbPass",
         "envSync",
         "err",
         "failed",
         "i",
+        "item",
         "keys",
+        "lifetime",
         "maybeSyncVaultToVercel",
         "p",
         "parsed",
@@ -21316,6 +21340,7 @@
         "provision",
         "r",
         "raw",
+        "reader",
         "redirectUri",
         "ref",
         "requested",
@@ -21323,9 +21348,12 @@
         "router",
         "schema",
         "schemaMiss",
+        "selected",
+        "size",
         "slug",
         "stateInfo",
         "status",
+        "value",
         "vaultProviders",
         "writeAdmissions"
       ],
@@ -21333,6 +21361,7 @@
         "../middleware/auth.js",
         "../security/tenantContext.js",
         "../services/integrations/githubDeploy.js",
+        "../services/integrations/oauthPkceStore.js",
         "../services/integrations/supabaseAuth.js",
         "../services/integrations/supabaseProvision.js",
         "../services/integrations/userProviderKeys.js",
@@ -21344,6 +21373,7 @@
       "runtimeImports": [
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/oauthPkceStore.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/supabaseProvision.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
@@ -21355,7 +21385,8 @@
       "callers": [
         "backend/src/index.ts:25",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:6",
-        "backend/src/routes/supabaseOAuth.disconnect.test.ts:5"
+        "backend/src/routes/supabaseOAuth.disconnect.test.ts:5",
+        "backend/src/routes/supabaseOrganizations.security.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21384,7 +21415,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
-        "backend/src/routes/supabaseOAuth.disconnect.test.ts"
+        "backend/src/routes/supabaseOAuth.disconnect.test.ts",
+        "backend/src/routes/supabaseOrganizations.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -22183,7 +22215,7 @@
       "callers": [
         "backend/src/sandbox/flyMachineSandbox.test.ts:42",
         "backend/src/sandbox/registryNetwork.test.ts:5",
-        "backend/src/sandbox/sandboxProviders.ts:25",
+        "backend/src/sandbox/sandboxProviders.ts:27",
         "backend/src/synthesis/projectRuntime/flyProvider.ts:14"
       ],
       "reachable": true,
@@ -22580,7 +22612,7 @@
       ],
       "callers": [
         "backend/src/sandbox/google/googleSandbox.test.ts:3",
-        "backend/src/sandbox/sandboxProviders.ts:26",
+        "backend/src/sandbox/sandboxProviders.ts:28",
         "backend/src/sandbox/sandboxRuntime.ts:34"
       ],
       "reachable": true,
@@ -22655,7 +22687,7 @@
       "callers": [
         "backend/src/sandbox/registryNetwork.test.ts:4",
         "backend/src/sandbox/remoteSandbox.test.ts:14",
-        "backend/src/sandbox/sandboxProviders.ts:24",
+        "backend/src/sandbox/sandboxProviders.ts:26",
         "backend/src/sandbox/sandboxRuntime.ts:47"
       ],
       "reachable": true,
@@ -22709,7 +22741,7 @@
         "backend/src/sandbox/remoteSandbox.test.ts:27",
         "backend/src/sandbox/sandboxEnvironment.test.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:4",
-        "backend/src/sandbox/sandboxProviders.ts:23",
+        "backend/src/sandbox/sandboxProviders.ts:25",
         "backend/src/synthesis/browserVerificationAdapter.ts:34",
         "backend/src/synthesis/productionAdapters.ts:28",
         "backend/src/synthesis/projectRuntime/googleProvider.ts:4",
@@ -22742,36 +22774,56 @@
       "id": "surface:8dc40f55e5fa8f92691b",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/sandboxProviders.ts",
-      "sha256": "248e7e65e0c6122171a33976b5d6d355d4937d0882064cf616eca33690b07b8a",
+      "sha256": "797303c61e499a8b5f7aa63b778f32b4b6a8ea2adbb99eaac6dd59bb431e4008",
       "symbols": [
         "ContainerSandboxRuntime",
         "MAX_CAPTURE_BYTES",
         "ProviderProbe",
         "args",
+        "attempt",
         "availability",
         "buildContainerArgs",
         "canRun",
         "candidate",
         "candidates",
+        "capture",
         "child",
+        "cleanup",
+        "cleanupJob",
         "configureFlyMachineSandboxProvider",
         "configureRemoteSandboxProvider",
+        "containerControl",
+        "containerId",
+        "created",
         "defaultProviders",
+        "denied",
         "disabled",
+        "dockerControlEnvironment",
         "done",
+        "environment",
         "error",
+        "finish",
         "fly",
         "image",
         "killedForLimit",
+        "limited",
         "listSandboxProviders",
+        "managedJob",
+        "name",
         "network",
+        "next",
+        "nonce",
         "ok",
+        "onAbort",
         "probes",
         "providers",
         "registerFallbackSandboxProvider",
         "registerSandboxProvider",
         "registry",
+        "remaining",
         "remote",
+        "result",
+        "room",
         "runIsolated",
         "selectSandboxProvider",
         "setSandboxProvidersForTesting",
@@ -22779,17 +22831,21 @@
         "started",
         "stderr",
         "stdout",
+        "stop",
+        "stopping",
         "timedOut",
         "timer"
       ],
       "imports": [
+        "../security/egress/dataClassification.js",
         "../synthesis/projectRuntime/googleFactory.js",
         "./flyMachineSandbox.js",
         "./google/googleSandbox.js",
         "./remoteSandbox.js",
         "./sandboxEnvironment.js",
         "./sandboxTypes.js",
-        "child_process"
+        "child_process",
+        "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/sandbox/flyMachineSandbox.ts",
@@ -22797,6 +22853,7 @@
         "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
         "backend/src/sandbox/sandboxTypes.ts",
+        "backend/src/security/egress/dataClassification.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
@@ -22804,7 +22861,9 @@
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:31",
+        "backend/src/sandbox/containerCancellation.local.integration.ts:6",
         "backend/src/sandbox/containerDispatchAdmission.security.test.ts:3",
+        "backend/src/sandbox/containerLifecycle.security.test.ts:6",
         "backend/src/sandbox/flyMachineSandbox.test.ts:50",
         "backend/src/sandbox/googleSelection.test.ts:3",
         "backend/src/sandbox/registryNetwork.test.ts:3",
@@ -22820,7 +22879,8 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "child_process"
+        "child_process",
+        "node:crypto"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -22829,7 +22889,9 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/p0Regressions.test.ts",
+        "backend/src/sandbox/containerCancellation.local.integration.ts",
         "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+        "backend/src/sandbox/containerLifecycle.security.test.ts",
         "backend/src/sandbox/flyMachineSandbox.test.ts",
         "backend/src/sandbox/googleSelection.test.ts",
         "backend/src/sandbox/registryNetwork.test.ts",
@@ -22953,7 +23015,9 @@
         "backend/src/ai/p0Regressions.test.ts:33",
         "backend/src/ai/softwareAgent/sandboxAdmission.test.ts:7",
         "backend/src/ai/softwareAgent/xrogaTools.ts:4",
+        "backend/src/sandbox/containerCancellation.local.integration.ts:7",
         "backend/src/sandbox/containerDispatchAdmission.security.test.ts:4",
+        "backend/src/sandbox/containerLifecycle.security.test.ts:7",
         "backend/src/sandbox/flyMachineSandbox.test.ts:56",
         "backend/src/sandbox/flyMachineSandbox.ts:88",
         "backend/src/sandbox/google/executionBinding.test.ts:9",
@@ -22966,7 +23030,7 @@
         "backend/src/sandbox/remoteSandbox.ts:32",
         "backend/src/sandbox/sandboxIsolation.test.ts:10",
         "backend/src/sandbox/sandboxProviders.test.ts:25",
-        "backend/src/sandbox/sandboxProviders.ts:28",
+        "backend/src/sandbox/sandboxProviders.ts:30",
         "backend/src/sandbox/sandboxRuntime.ts:18",
         "backend/src/synthesis/browserVerificationAdapter.ts:35",
         "backend/src/synthesis/projectRuntime/flyProvider.ts:9",
@@ -22988,7 +23052,9 @@
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts",
         "backend/src/ai/p0Regressions.test.ts",
         "backend/src/ai/softwareAgent/sandboxAdmission.test.ts",
+        "backend/src/sandbox/containerCancellation.local.integration.ts",
         "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+        "backend/src/sandbox/containerLifecycle.security.test.ts",
         "backend/src/sandbox/flyMachineSandbox.test.ts",
         "backend/src/sandbox/google/executionBinding.test.ts",
         "backend/src/sandbox/google/googleSandbox.test.ts",
@@ -23239,6 +23305,7 @@
         "backend/src/security/egress/egress.integration.test.ts:7",
         "backend/src/security/egress/egressPolicy.ts:4",
         "backend/src/security/egress/fileEgress.test.ts:5",
+        "backend/src/services/fixtures/checkoutApproval.ts:5",
         "backend/src/services/integrations/businessAction.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:5",
         "backend/src/services/integrations/composioClient.ts:5",
@@ -23332,6 +23399,8 @@
         "backend/src/security/egress/egressPolicy.ts:2",
         "backend/src/security/egress/fileEgress.test.ts:6",
         "backend/src/security/egress/fileEgress.ts:5",
+        "backend/src/services/BillingService.ts:19",
+        "backend/src/services/fixtures/checkoutApproval.ts:4",
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6",
@@ -23616,6 +23685,7 @@
         "backend/src/ai/openaiCompat.ts:13",
         "backend/src/ai/parallelDispatch.ts:9",
         "backend/src/lib/publishingProviderRequest.ts:3",
+        "backend/src/sandbox/sandboxProviders.ts:24",
         "backend/src/security/egress/egressPolicy.ts:7",
         "backend/src/security/egress/fileEgress.ts:7",
         "backend/src/security/egress/heldCredentialFloor.test.ts:3",
@@ -23701,6 +23771,7 @@
         "backend/src/security/egress/egress.integration.test.ts:9",
         "backend/src/security/egress/fileEgress.ts:6",
         "backend/src/security/egress/securityDecision.ts:5",
+        "backend/src/services/BillingService.ts:22",
         "backend/src/services/integrations/composioClient.ts:10",
         "backend/tests/securityReceipt.local.integration.ts:10"
       ],
@@ -23829,6 +23900,7 @@
       "callers": [
         "backend/src/ai/parallelDispatch.ts:7",
         "backend/src/security/egress/egress.integration.test.ts:10",
+        "backend/src/services/BillingService.ts:23",
         "backend/src/services/integrations/composioClient.ts:11",
         "backend/tests/securityReceipt.local.integration.ts:11"
       ],
@@ -24413,6 +24485,8 @@
         "backend/src/middleware/auth.tenantContext.test.ts:9",
         "backend/src/middleware/auth.ts:4",
         "backend/src/routes/admin.test.ts:5",
+        "backend/src/routes/billing.ts:5",
+        "backend/src/routes/billingCheckout.security.test.ts:3",
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/browserRuns.ts:17",
         "backend/src/routes/drive.test.ts:2",
@@ -24436,6 +24510,7 @@
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:8",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts:7",
         "backend/src/routes/supabaseOAuth.ts:10",
+        "backend/src/routes/supabaseOrganizations.security.test.ts:8",
         "backend/src/routes/swarm.ts:4",
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
@@ -24477,8 +24552,11 @@
         "backend/src/security/usageAccounting.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:7",
         "backend/src/services/BillingService.budget.test.ts:5",
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts:4",
+        "backend/src/services/BillingService.ts:18",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
+        "backend/src/services/fixtures/checkoutApproval.ts:3",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:9",
         "backend/src/services/integrations/businessAction.ts:20",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:5",
@@ -24597,6 +24675,7 @@
         "backend/src/middleware/auth.tenantContext.remote.test.ts",
         "backend/src/middleware/auth.tenantContext.test.ts",
         "backend/src/routes/admin.test.ts",
+        "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/drive.test.ts",
         "backend/src/routes/github.oauth.test.ts",
@@ -24608,6 +24687,7 @@
         "backend/src/routes/projects.fileAuthority.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
+        "backend/src/routes/supabaseOrganizations.security.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/routes/vercelTransport.security.test.ts",
         "backend/src/security/authority/enforce.test.ts",
@@ -24640,6 +24720,7 @@
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/services/BillingService.budget.test.ts",
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
         "backend/src/services/integrations/businessAccounting.failure.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
@@ -24797,7 +24878,7 @@
       "id": "surface:9b0c1b5d45c8637e2209",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/BillingService.ts",
-      "sha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281",
+      "sha256": "96aa6a02668b9d2a568bf7863c3546edbdc7a26d9bf98d2ff9c8a54202108fe3",
       "symbols": [
         "APPROVED_ACCOUNT_ID",
         "APPROVED_PLAN_ID",
@@ -24814,11 +24895,13 @@
         "WhopWebhookEvent",
         "account",
         "accountId",
+        "actor",
         "actual",
         "api",
         "apiKey",
         "assertWhopPlanContract",
         "assertWhopPlanTerms",
+        "binding",
         "body",
         "bytes",
         "candidates",
@@ -24829,17 +24912,22 @@
         "checkoutOwner",
         "chunks",
         "companyId",
+        "config",
+        "context",
         "data",
         "date",
         "db",
+        "destination",
         "encoded",
         "endsAt",
         "existing",
         "expected",
+        "expectedBody",
         "fiveMinuteWindow",
         "historical",
         "inserted",
         "isPaid",
+        "issuedAt",
         "key",
         "knownOwner",
         "manageUrl",
@@ -24850,6 +24938,7 @@
         "mismatch",
         "nestedRecord",
         "next",
+        "nonce",
         "owner",
         "ownerId",
         "parseDate",
@@ -24872,10 +24961,12 @@
         "row",
         "safeWhopUrl",
         "scope",
+        "size",
         "startsAt",
         "supported",
         "timestampSeconds",
         "type",
+        "unsigned",
         "updated",
         "url",
         "userId",
@@ -24891,13 +24982,25 @@
         "../ai/providerBudget.js",
         "../config/plans.js",
         "../config/supabase.js",
+        "../security/authority/enforce.js",
+        "../security/authority/types.js",
+        "../security/egress/egressPolicy.js",
+        "../security/egress/securityDecision.js",
+        "../security/tenantContext.js",
+        "./integrations/businessAction.js",
         "./whopCheckoutOwnership.js",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "runtimeImports": [
         "backend/src/ai/providerBudget.ts",
         "backend/src/config/plans.ts",
         "backend/src/config/supabase.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/whopCheckoutOwnership.ts"
       ],
       "entryPoints": [
@@ -24909,10 +25012,13 @@
         "backend/src/routes/billingWebhook.ts:3",
         "backend/src/security/tenantIsolation.local.integration.ts:55",
         "backend/src/services/BillingService.budget.test.ts:3",
-        "backend/src/services/BillingService.checkoutOwnership.test.ts:3",
-        "backend/src/services/BillingService.planTransport.security.test.ts:5",
-        "backend/src/services/BillingService.test.ts:4",
-        "backend/src/services/billingBudget.local.integration.ts:5"
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts:3",
+        "backend/src/services/BillingService.checkoutOwnership.test.ts:4",
+        "backend/src/services/BillingService.planTransport.security.test.ts:6",
+        "backend/src/services/BillingService.test.ts:5",
+        "backend/src/services/billingBudget.local.integration.ts:5",
+        "backend/src/services/fixtures/checkoutApproval.ts:2",
+        "backend/src/services/integrations/businessAction.ts:1448"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -24923,15 +25029,24 @@
       "externalProviderDependencies": [
         "declared-host:api.whop.com",
         "declared-host:xroga.com",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/services/BillingService.ts#AuthorityError",
+        "backend/src/services/BillingService.ts#AuthorityPermit",
+        "backend/src/services/BillingService.ts#authorityContextForPermit",
+        "backend/src/services/BillingService.ts#businessActionAuthorityScope",
+        "backend/src/services/BillingService.ts#consumeAuthorityPermit"
+      ],
       "tenantBoundary": [
-        "backend/src/services/BillingService.ts:1158 (user_id)",
-        "backend/src/services/BillingService.ts:1226 (user_id)",
-        "backend/src/services/BillingService.ts:2048 (user_id)"
+        "backend/src/services/BillingService.ts:1215 (user_id)",
+        "backend/src/services/BillingService.ts:1283 (user_id)",
+        "backend/src/services/BillingService.ts:2105 (user_id)"
       ],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/BillingService.ts#actionPlanDigest"
+      ],
       "costBoundary": [
         "backend/src/services/BillingService.ts#BillingService",
         "backend/src/services/BillingService.ts#BillingServiceError",
@@ -24948,6 +25063,7 @@
         "backend/src/routes/billingWebhook.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.budget.test.ts",
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
         "backend/src/services/BillingService.checkoutOwnership.test.ts",
         "backend/src/services/BillingService.planTransport.security.test.ts",
         "backend/src/services/BillingService.test.ts",
@@ -25032,10 +25148,82 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:0054f4712c2c44a29076",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/services/fixtures/checkoutApproval.ts",
+      "sha256": "3775326388a815bf862deae27d20154f0e17b6f07e71dc79e36f58f8b631d95b",
+      "symbols": [
+        "body",
+        "claim",
+        "context",
+        "executeCheckoutWithFixtureClaim",
+        "oldKey",
+        "oldUrl",
+        "origin",
+        "original",
+        "plan",
+        "scope",
+        "url"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/tenantContext.js",
+        "../BillingService.js",
+        "../integrations/businessAction.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/BillingService.ts",
+        "backend/src/services/integrations/businessAction.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts:7",
+        "backend/src/services/BillingService.checkoutOwnership.test.ts:1",
+        "backend/src/services/BillingService.planTransport.security.test.ts:1",
+        "backend/src/services/BillingService.test.ts:1"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1",
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/services/fixtures/checkoutApproval.ts#businessActionAuthorityScope",
+        "backend/src/services/fixtures/checkoutApproval.ts#executeAuthorizedAction"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/fixtures/checkoutApproval.ts#executeAuthorizedAction",
+        "backend/src/services/fixtures/checkoutApproval.ts#preparedActionDigest"
+      ],
+      "costBoundary": [
+        "backend/src/services/fixtures/checkoutApproval.ts#BillingService"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
+        "backend/src/services/BillingService.checkoutOwnership.test.ts",
+        "backend/src/services/BillingService.planTransport.security.test.ts",
+        "backend/src/services/BillingService.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "43de9010090f94d15bde89ca6d4a4e0fd9ab61b5337ad1f4ecc50c42fca4fac2",
+      "sha256": "a6cdfb923889f78b91fb80c9400351ab6c4c2dcfb9d3fc2b2475041831c00240",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -25097,6 +25285,7 @@
         "raw",
         "requiresBusinessActionConfirmation",
         "requiresConfirmation",
+        "result",
         "resultDigest",
         "risk",
         "routes",
@@ -25137,6 +25326,7 @@
         "../../security/authority/risk.js",
         "../../security/authority/types.js",
         "../../security/tenantContext.js",
+        "../BillingService.js",
         "./composioClient.js",
         "./composioSkillGuidance.js",
         "./pluginPermissionPolicy.js",
@@ -25152,6 +25342,7 @@
         "backend/src/security/authority/enforce.ts",
         "backend/src/security/authority/risk.ts",
         "backend/src/security/tenantContext.ts",
+        "backend/src/services/BillingService.ts",
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts"
@@ -25161,10 +25352,14 @@
       ],
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
+        "backend/src/routes/billingCheckout.security.test.ts:5",
         "backend/src/routes/phase1.ts:67",
         "backend/src/security/authority/digest.test.ts:5",
         "backend/src/security/businessAuthority.local.integration.ts:9",
         "backend/src/security/confirmationMetadata.local.integration.ts:7",
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts:5",
+        "backend/src/services/BillingService.ts:21",
+        "backend/src/services/fixtures/checkoutApproval.ts:6",
         "backend/src/services/integrations/businessAction.digest.test.ts:4",
         "backend/src/services/integrations/businessActionConfirmations.ts:16",
         "backend/src/services/integrations/businessActionRisk.test.ts:3",
@@ -25208,9 +25403,11 @@
       ],
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/security/authority/digest.test.ts",
         "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
+        "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts",
         "backend/src/services/integrations/businessActionRisk.test.ts",
         "backend/src/services/integrations/businessModelEgress.test.ts"
@@ -25226,7 +25423,7 @@
       "id": "surface:0315124fb31feefa3fcb",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
       "symbols": [
         "CONFIRMATION_TTL_MS",
         "ConfirmationRow",
@@ -25288,6 +25485,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/routes/billing.ts:6",
+        "backend/src/routes/billingCheckout.security.test.ts:4",
         "backend/src/routes/phase1.ts:94",
         "backend/src/security/businessAuthority.local.integration.ts:8",
         "backend/src/security/confirmationMetadata.local.integration.ts:6",
@@ -25312,7 +25511,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:279 (user_id)",
         "backend/src/services/integrations/businessActionConfirmations.ts:439 (user_id)",
         "backend/src/services/integrations/businessActionConfirmations.ts:520 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:626 (user_id)"
+        "backend/src/services/integrations/businessActionConfirmations.ts:627 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessActionConfirmations.ts#CONFIRMATION_TTL_MS",
@@ -25337,6 +25536,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts#verifyPlanDigest"
       ],
       "testCoverage": [
+        "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts",
@@ -26414,6 +26614,7 @@
         "backend/src/ai/repoSummarize.security.test.ts:7",
         "backend/src/ai/tenantModelDispatch.test.ts:5",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:9",
+        "backend/src/routes/supabaseOrganizations.security.test.ts:9",
         "backend/src/security/githubConsumer.local.integration.ts:11",
         "backend/src/security/oauthSession.local.integration.ts:5",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:7",
@@ -26449,6 +26650,7 @@
         "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
+        "backend/src/routes/supabaseOrganizations.security.test.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
@@ -27961,6 +28163,7 @@
       ],
       "callers": [
         "backend/src/routes/github.ts:8",
+        "backend/src/routes/supabaseOAuth.ts:40",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:44",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
@@ -31183,7 +31386,7 @@
       "id": "surface:c7ad32e7d2ffe4d4c19a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/whopCheckoutOwnership.ts",
-      "sha256": "599c4816881fba840f10cdce5a299cf62d5f495f9ea7ad75bfd67f7a22d60372",
+      "sha256": "d62a773f55b916320a9fc376d0c3057d0772a88bc27cf41d30ee0b67773f2b97",
       "symbols": [
         "CheckoutOwner",
         "CheckoutScope",
@@ -37348,7 +37551,7 @@
         "backend/src/ai/compileValidate.ts:24",
         "backend/src/middleware/runtimePreviewGateway.ts:31",
         "backend/src/sandbox/google/googleSandbox.ts:3",
-        "backend/src/sandbox/sandboxProviders.ts:27",
+        "backend/src/sandbox/sandboxProviders.ts:29",
         "backend/src/sandbox/sandboxRuntime.ts:32",
         "backend/src/synthesis/livePreview/coordinator.ts:6",
         "backend/src/synthesis/productionAdapters.ts:24",
@@ -50768,24 +50971,29 @@
       "id": "surface:51e5f5dacad38b4851db",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/billing/CheckoutButton.tsx",
-      "sha256": "f42cda82acb2808737eb646f9bef97cc16d8e99131adba2085b0d94c37ce26b3",
+      "sha256": "96dfb30b212d6e9652415a629140dd3a617a99aa5bae060f0275dba4056cbeb2",
       "symbols": [
         "CheckoutButton",
         "CheckoutButtonProps",
         "err",
+        "error",
+        "finishCheckout",
         "handleCheckout",
         "message",
-        "result"
+        "result",
+        "selected"
       ],
       "imports": [
         "@/components/ui/Uiverse",
         "@/lib/api",
+        "@/lib/checkoutAdmission",
         "react",
         "react-hot-toast"
       ],
       "runtimeImports": [
         "frontend/src/components/ui/Uiverse.tsx",
-        "frontend/src/lib/api.ts"
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/checkoutAdmission.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/billing/page.tsx",
@@ -50807,7 +51015,9 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/billing/CheckoutButton.tsx#requireCheckoutConfirmation"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
@@ -74239,7 +74449,7 @@
       "id": "surface:bfd736180ae2910964f4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "sha256": "1f4e74e8ddea3a361d386e540a87a90c51d635416a91ddfe569d077a428c9d30",
+      "sha256": "392250f343b2ecf065b87470eda60831a1fddb2532f2b60b0a004412eddc8a39",
       "symbols": [
         "AiSaas",
         "CSS",
@@ -74253,7 +74463,10 @@
         "Theme",
         "active",
         "assistantId",
+        "body",
+        "boundedResponseText",
         "buffer",
+        "bytes",
         "chat",
         "chatId",
         "clock",
@@ -74273,6 +74486,7 @@
         "messageCount",
         "modelInfo",
         "newChat",
+        "next",
         "node",
         "payload",
         "raw",
@@ -74282,6 +74496,7 @@
         "response",
         "scrollRef",
         "sendMessage",
+        "text",
         "updateConversation",
         "user"
       ],
@@ -83566,7 +83781,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d",
+      "sha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -84832,6 +85047,50 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0cf803336fb7a66e9f04",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/checkoutAdmission.ts",
+      "sha256": "318559fb218c890e6baf2bf3204947b34934b564747b440b2349ddc52b3f9659",
+      "symbols": [
+        "CheckoutConfirmation",
+        "requireCheckoutConfirmation",
+        "requireCheckoutDestination",
+        "url"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/billing/page.tsx",
+        "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
+        "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/pricing/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/billing/CheckoutButton.tsx:7",
+        "frontend/src/lib/checkoutAdmission.test.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/checkoutAdmission.ts#CheckoutConfirmation",
+        "frontend/src/lib/checkoutAdmission.ts#requireCheckoutConfirmation"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/checkoutAdmission.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -105571,9 +105830,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:29555a8dc6f68a92e98f",
+      "id": "registration:40dda5436b4c89a24562",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 20,
+      "line": 22,
       "receiver": "router",
       "method": "get",
       "path": "/plans",
@@ -105583,9 +105842,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b846df5cab1408ebc6be",
+      "id": "registration:c6354cc8bbcb18d3fffb",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 24,
+      "line": 26,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -105595,9 +105854,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d5356d8d0a1cbf1de34c",
+      "id": "registration:ccfc04c4a85d07897e6e",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 32,
+      "line": 34,
       "receiver": "router",
       "method": "get",
       "path": "/entitlement",
@@ -105607,9 +105866,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:acdf24631295a01e4307",
+      "id": "registration:f7afe3cb049f872a4ae4",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 40,
+      "line": 42,
       "receiver": "router",
       "method": "post",
       "path": "/promotion/activate",
@@ -105619,9 +105878,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3d5347f7eb926e97a072",
+      "id": "registration:93acd343d1edb838293b",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 44,
+      "line": 46,
       "receiver": "router",
       "method": "post",
       "path": "/pacing",
@@ -105631,9 +105890,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d168ce6cced573f8be7e",
+      "id": "registration:db1527a39f8ae9da759a",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 80,
+      "line": 84,
       "receiver": "router",
       "method": "post",
       "path": "/checkout",
@@ -105645,9 +105904,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b317f23e5f172a0a01f2",
+      "id": "registration:37538ddb394ce61c4a97",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 81,
+      "line": 85,
       "receiver": "router",
       "method": "post",
       "path": "/create-checkout",
@@ -105659,9 +105918,21 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a313f96239ccaf322838",
+      "id": "registration:c8ed48e0c70b8476837a",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 95,
+      "line": 87,
+      "receiver": "router",
+      "method": "post",
+      "path": "/checkout/:id/confirm",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:564bfcedbbfb95118143",
+      "sourcePath": "backend/src/routes/billing.ts",
+      "line": 112,
       "receiver": "router",
       "method": "post",
       "path": "/manage",
@@ -105673,9 +105944,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:29a4982f5ad8f4ccf64a",
+      "id": "registration:c8176d4915b8fa4dfa78",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 96,
+      "line": 113,
       "receiver": "router",
       "method": "post",
       "path": "/portal",
@@ -108102,9 +108373,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:543481c7bf9e2c45c30a",
+      "id": "registration:a80ded8fe694ea9d5b5d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 62,
+      "line": 63,
       "receiver": "router",
       "method": "get",
       "path": "/oauth",
@@ -108114,9 +108385,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c6763b8852334e594537",
+      "id": "registration:bacbf935e6a201400b26",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 84,
+      "line": 85,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -108126,9 +108397,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a3ff91d4a90a12c9bc01",
+      "id": "registration:2320c8945f975f57b6a7",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 122,
+      "line": 123,
       "receiver": "router",
       "method": "post",
       "path": "/connect",
@@ -108138,9 +108409,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:748d92b711f440fc8b46",
+      "id": "registration:d3f4912061020df507ec",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 237,
+      "line": 238,
       "receiver": "router",
       "method": "get",
       "path": "/projects",
@@ -108150,9 +108421,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e13fd77d88252fa18340",
+      "id": "registration:f6aaba2398153bb6da66",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 254,
+      "line": 255,
       "receiver": "router",
       "method": "post",
       "path": "/select-project",
@@ -108162,9 +108433,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e32546fd2098e90f6f0a",
+      "id": "registration:6efdd519f7b5322a7034",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 305,
+      "line": 306,
       "receiver": "router",
       "method": "post",
       "path": "/create-project",
@@ -108174,9 +108445,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ece0250260fea2a2c177",
+      "id": "registration:69a6016ab2263de4985f",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 403,
+      "line": 404,
       "receiver": "router",
       "method": "get",
       "path": "/organizations",
@@ -108186,9 +108457,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:08caa654e2560de784ba",
+      "id": "registration:0072afd4718238af5259",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 423,
+      "line": 448,
       "receiver": "router",
       "method": "delete",
       "path": "/disconnect",
@@ -111966,10 +112237,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:073ee0759ec278cde0f4",
-      "registrationId": "registration:543481c7bf9e2c45c30a",
+      "id": "route:e74f03836a2821f6a9d1",
+      "registrationId": "registration:a80ded8fe694ea9d5b5d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 62,
+      "line": 63,
       "method": "GET",
       "path": "/api/supabase/oauth",
       "mountChain": [
@@ -111984,10 +112255,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0d5044855f46e7e1b134",
-      "registrationId": "registration:c6763b8852334e594537",
+      "id": "route:4024e3ff883566e0277f",
+      "registrationId": "registration:bacbf935e6a201400b26",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 84,
+      "line": 85,
       "method": "GET",
       "path": "/api/supabase/status",
       "mountChain": [
@@ -112002,10 +112273,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8ca36565c99656128b12",
-      "registrationId": "registration:a3ff91d4a90a12c9bc01",
+      "id": "route:a86612ceae718420b15e",
+      "registrationId": "registration:2320c8945f975f57b6a7",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 122,
+      "line": 123,
       "method": "POST",
       "path": "/api/supabase/connect",
       "mountChain": [
@@ -112020,10 +112291,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9c106d9b8a435a394e28",
-      "registrationId": "registration:748d92b711f440fc8b46",
+      "id": "route:c0f6323cfc596cd13a9c",
+      "registrationId": "registration:d3f4912061020df507ec",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 237,
+      "line": 238,
       "method": "GET",
       "path": "/api/supabase/projects",
       "mountChain": [
@@ -112038,10 +112309,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:93b5e559115ab5ffb652",
-      "registrationId": "registration:e13fd77d88252fa18340",
+      "id": "route:84141440ec00acb106f0",
+      "registrationId": "registration:f6aaba2398153bb6da66",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 254,
+      "line": 255,
       "method": "POST",
       "path": "/api/supabase/select-project",
       "mountChain": [
@@ -112056,10 +112327,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:eaf6c8562a48c56fdf9e",
-      "registrationId": "registration:e32546fd2098e90f6f0a",
+      "id": "route:7e1ea3f83cf90f164108",
+      "registrationId": "registration:6efdd519f7b5322a7034",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 305,
+      "line": 306,
       "method": "POST",
       "path": "/api/supabase/create-project",
       "mountChain": [
@@ -112074,10 +112345,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:eeb010609a742ba45f29",
-      "registrationId": "registration:ece0250260fea2a2c177",
+      "id": "route:b808b668331f3d563af9",
+      "registrationId": "registration:69a6016ab2263de4985f",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 403,
+      "line": 404,
       "method": "GET",
       "path": "/api/supabase/organizations",
       "mountChain": [
@@ -112092,10 +112363,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:106717f8675794b1b988",
-      "registrationId": "registration:08caa654e2560de784ba",
+      "id": "route:e4afe8ecaff5cd61099f",
+      "registrationId": "registration:0072afd4718238af5259",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 423,
+      "line": 448,
       "method": "DELETE",
       "path": "/api/supabase/disconnect",
       "mountChain": [
@@ -112448,10 +112719,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8ea3289b676b0f410795",
-      "registrationId": "registration:29555a8dc6f68a92e98f",
+      "id": "route:136b6889e5288d16c242",
+      "registrationId": "registration:40dda5436b4c89a24562",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 20,
+      "line": 22,
       "method": "GET",
       "path": "/api/billing/plans",
       "mountChain": [
@@ -112465,10 +112736,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:611ffda9f25d07120345",
-      "registrationId": "registration:b846df5cab1408ebc6be",
+      "id": "route:da26c748f58e30e1ad22",
+      "registrationId": "registration:c6354cc8bbcb18d3fffb",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 24,
+      "line": 26,
       "method": "GET",
       "path": "/api/billing/status",
       "mountChain": [
@@ -112482,10 +112753,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:108eaa78005e8ded78aa",
-      "registrationId": "registration:d5356d8d0a1cbf1de34c",
+      "id": "route:a8f16b4ce94a13816494",
+      "registrationId": "registration:ccfc04c4a85d07897e6e",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 32,
+      "line": 34,
       "method": "GET",
       "path": "/api/billing/entitlement",
       "mountChain": [
@@ -112499,10 +112770,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f2d309490695ceda61c3",
-      "registrationId": "registration:acdf24631295a01e4307",
+      "id": "route:1ef6ef9229bfa019d72e",
+      "registrationId": "registration:f7afe3cb049f872a4ae4",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 40,
+      "line": 42,
       "method": "POST",
       "path": "/api/billing/promotion/activate",
       "mountChain": [
@@ -112516,10 +112787,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4d8628264c45029d280d",
-      "registrationId": "registration:3d5347f7eb926e97a072",
+      "id": "route:6b491955f62755b9ab99",
+      "registrationId": "registration:93acd343d1edb838293b",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 44,
+      "line": 46,
       "method": "POST",
       "path": "/api/billing/pacing",
       "mountChain": [
@@ -112533,10 +112804,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f5de88901cbd291622c5",
-      "registrationId": "registration:d168ce6cced573f8be7e",
+      "id": "route:8a68903e0516a8213465",
+      "registrationId": "registration:db1527a39f8ae9da759a",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 80,
+      "line": 84,
       "method": "POST",
       "path": "/api/billing/checkout",
       "mountChain": [
@@ -112550,10 +112821,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e2acd253ed8f1ed79ea9",
-      "registrationId": "registration:b317f23e5f172a0a01f2",
+      "id": "route:698864b17906f5fe526e",
+      "registrationId": "registration:37538ddb394ce61c4a97",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 81,
+      "line": 85,
       "method": "POST",
       "path": "/api/billing/create-checkout",
       "mountChain": [
@@ -112567,10 +112838,27 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c9a1c84a3efafdc7f432",
-      "registrationId": "registration:a313f96239ccaf322838",
+      "id": "route:67791babcc929f16b039",
+      "registrationId": "registration:c8ed48e0c70b8476837a",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 95,
+      "line": 87,
+      "method": "POST",
+      "path": "/api/billing/checkout/:id/confirm",
+      "mountChain": [
+        "backend/src/index.ts:266"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:ff7eb69a94710ca45ee5",
+      "registrationId": "registration:564bfcedbbfb95118143",
+      "sourcePath": "backend/src/routes/billing.ts",
+      "line": 112,
       "method": "POST",
       "path": "/api/billing/manage",
       "mountChain": [
@@ -112584,10 +112872,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:fee661c769a96deedaf9",
-      "registrationId": "registration:29a4982f5ad8f4ccf64a",
+      "id": "route:a44030414e3ef597c31a",
+      "registrationId": "registration:c8176d4915b8fa4dfa78",
       "sourcePath": "backend/src/routes/billing.ts",
-      "line": 96,
+      "line": 113,
       "method": "POST",
       "path": "/api/billing/portal",
       "mountChain": [
@@ -116617,9 +116905,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:866833235b7358094a45",
+      "id": "finding:78180c647d11b9ee9f96",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 212,
+      "line": 225,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -116627,9 +116915,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5db6458e264b9796f70a",
+      "id": "finding:f779848513826c764460",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 250,
+      "line": 263,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118454,10 +118742,17 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:a101699194d9ba86aa1e",
+      "id": "frontend-call:4458180c27ef73299d25",
       "sourcePath": "frontend/src/components/billing/CheckoutButton.tsx",
-      "line": 26,
+      "line": 28,
       "callee": "api.billing.createCheckout",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:ec8dea590134f3a18305",
+      "sourcePath": "frontend/src/components/billing/CheckoutButton.tsx",
+      "line": 45,
+      "callee": "api.billing.confirmCheckout",
       "reachable": true
     },
     {
@@ -119917,37 +120212,37 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:102dcb4b0204d9e1a3d6",
+      "id": "frontend-call:4c185fa93b7fa2762f71",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 57,
+      "line": 63,
       "callee": "fetch().then().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:eca3406715fa21656902",
+      "id": "frontend-call:e11aaddf46668c0b4c03",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 57,
+      "line": 63,
       "callee": "fetch().then().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:66eef04a342fcac6f152",
+      "id": "frontend-call:b3f0c588db6e3d0388be",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 57,
+      "line": 63,
       "callee": "fetch().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:d1b75d2a2497ace9b8e9",
+      "id": "frontend-call:0bca22bf3cf103f1cf84",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 57,
+      "line": 63,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:6d005fcfe16021ca0b8f",
+      "id": "frontend-call:d40dbbfebece4219b910",
       "sourcePath": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 101,
+      "line": 109,
       "callee": "fetch",
       "reachable": true
     },
@@ -120657,6 +120952,13 @@
       "line": 1666,
       "callee": "fetchApiResponse",
       "reachable": true
+    },
+    {
+      "id": "frontend-call:927b059bf4591a4de935",
+      "sourcePath": "frontend/src/lib/auraFirstParty.security.test.ts",
+      "line": 17,
+      "callee": "fetch",
+      "reachable": false
     },
     {
       "id": "frontend-call:7c6d8cf46133dccac488",
@@ -122770,6 +123072,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:ac9260aca8e52d28f1df",
+      "sourcePath": "backend/src/routes/billingCheckout.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:282ee7d2da39584e2d7c",
       "sourcePath": "backend/src/routes/billingWebhook.test.ts",
       "declaredTests": 1,
@@ -122952,6 +123261,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:72e57629b784381a526f",
+      "sourcePath": "backend/src/routes/supabaseOrganizations.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e0898697da18ecb2acca",
       "sourcePath": "backend/src/routes/swarm.notificationAuthority.test.ts",
       "declaredTests": 2,
@@ -123029,9 +123345,23 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:89b3e407b1c7466de455",
+      "sourcePath": "backend/src/sandbox/containerCancellation.local.integration.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:ee81b257aba25a7f39ff",
       "sourcePath": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9328d36a84c2ac65dd4d",
+      "sourcePath": "backend/src/sandbox/containerLifecycle.security.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -123711,6 +124041,13 @@
       "id": "test-suite:333201dafadfdbf495e7",
       "sourcePath": "backend/src/services/BillingService.budget.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:27a9ecff06e16b2566a1",
+      "sourcePath": "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -124424,7 +124761,7 @@
     {
       "id": "test-suite:808205228f691cbf2c7c",
       "sourcePath": "backend/src/services/whopCheckoutOwnership.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -125757,6 +126094,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:859e642ce66c79977c7f",
+      "sourcePath": "frontend/src/lib/auraFirstParty.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:ecad1d13bb43af223f67",
       "sourcePath": "frontend/src/lib/authFlowTiming.test.ts",
       "declaredTests": 8,
@@ -125802,6 +126146,13 @@
       "id": "test-suite:321c8abe1d5f2ad9cb18",
       "sourcePath": "frontend/src/lib/chatTurnRail.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8f320a687a5ffa4b445b",
+      "sourcePath": "frontend/src/lib/checkoutAdmission.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

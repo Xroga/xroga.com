@@ -227,7 +227,7 @@
       "enclosing": "fulfillPayment",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "dfe3f40f75bc61dc5266",
+      "currentCallerId": "0aea67fa3389bf24ff93",
       "reason": "The prior profile-read factory and fulfillment factory now share one client after durable authority is required. Both original obligations remain represented, without security certification from consolidation."
     },
     {
@@ -237,7 +237,7 @@
       "enclosing": "fulfillPayment",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "dfe3f40f75bc61dc5266",
+      "currentCallerId": "0aea67fa3389bf24ff93",
       "reason": "The existing fulfillment RPC uses the same client as owner readback and profile validation. The historical transaction factory obligation is retained at that shared factory."
     },
     {
@@ -247,7 +247,7 @@
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
-      "currentCallerId": "47490554a63116ae204d",
+      "currentCallerId": "439fccf866dedefa7f2b",
       "reason": "This remains the initial exact provider-membership lookup, now projecting and preserving the stored checkout parent and rejecting malformed identity receipts."
     },
     {
@@ -257,7 +257,7 @@
       "enclosing": "syncMembership",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "7488715f1171dede4f7e",
+      "currentCallerId": "48550b393b6dfc1fa8f0",
       "reason": "This is the original membership ownership lookup factory, not the later insert/update client. Explicit source-bound mapping preserves that distinction after method edits."
     },
     {
@@ -267,7 +267,7 @@
       "enclosing": "syncMembership",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "7962d478dcc2f8bf0e4e",
+      "currentCallerId": "dfe8cf00d3d6957a9d69",
       "reason": "This remains the post-admission insert/update client. First-owner checkout evidence is required before either write, and its historical obligation is not removed."
     },
     {
@@ -277,7 +277,7 @@
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
-      "currentCallerId": "faa3dacc7aacebf8aa27",
+      "currentCallerId": "f5d3eb081953407d31a7",
       "reason": "This remains insert-ignore on the canonical provider membership identity. The existing first-winner race obligation survives, with new readback admission before the write."
     },
     {
@@ -287,7 +287,7 @@
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
-      "currentCallerId": "c4bf0d005c2d16bbf122",
+      "currentCallerId": "803b86f865c8ed7ab2ca",
       "reason": "This remains the owner-and-provider-ID fenced update and exact persistence receipt, distinct from both lookup and insert-ignore operations."
     },
     {
@@ -2049,7 +2049,7 @@
     },
     {
       "packetId": "B1-P2-a582cdd6898c81f0",
-      "sourceSha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281",
+      "sourceSha256": "96aa6a02668b9d2a568bf7863c3546edbdc7a26d9bf98d2ff9c8a54202108fe3",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_FIRST_OWNER_BINDING_GAP_FIXED_VERIFIED_AT_7BE44030",
       "actualVerification": {
@@ -2067,12 +2067,12 @@
       "callerExtensions": [
         {
           "baselineCallerId": "e7b9dbdcf629027dc864",
-          "currentCallerId": "4a8d0b5bcd7d8c80f473",
+          "currentCallerId": "6cc61f5a54876d646f16",
           "reason": "New payment-receipt lookup reuses the original fulfillment authority obligation to retain canonical owner provenance before profile access and replay."
         },
         {
           "baselineCallerId": "e7b9dbdcf629027dc864",
-          "currentCallerId": "9bab30418efe8bae3267",
+          "currentCallerId": "89734970287eb563062e",
           "reason": "New exact membership lookup reuses the original fulfillment authority obligation for legacy renewal owner and checkout-parent validation. This is not an additional packet or certification."
         }
       ],
@@ -2125,7 +2125,9 @@
         "priorSourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
         "proof": "docs/xroga/evidence/command-010/PLAN-READ-TRANSPORT-20261028.json",
         "scope": "FIXED_PLAN_TRANSPORT_ONLY_EXISTING_PERSISTENCE_EXPRESSIONS_UNCHANGED_NO_NEW_PHASE2_CERTIFICATION"
-      }
+      },
+      "nativeCheckoutPriorSourceSha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281",
+      "nativeCheckoutPositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json"
     },
     {
       "packetId": "B1-P2-235593db1d7f94e0",
@@ -2701,7 +2703,7 @@
     },
     {
       "packetId": "B1-P2-84b9011a0d2b4754",
-      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+      "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
       "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2743,7 +2745,9 @@
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
       },
-      "integrationReview20261025": "Reconciled main519045 and accepted9fb. Confirmation persistence functions are byte-identical and remain owner-bound with exact one-use CAS. Main workflow callers pass issued actor context. Safe display adds redacted operation arguments only. Prior execution receipts retain original source identities. Final integrated authenticated proof required, no candidate or acceptance promotion."
+      "integrationReview20261025": "Reconciled main519045 and accepted9fb. Confirmation persistence functions are byte-identical and remain owner-bound with exact one-use CAS. Main workflow callers pass issued actor context. Safe display adds redacted operation arguments only. Prior execution receipts retain original source identities. Final integrated authenticated proof required, no candidate or acceptance promotion.",
+      "nativeCheckoutPriorSourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
+      "nativeCheckoutPositionProof": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json"
     },
     {
       "packetId": "B1-P2-079a87ae5cea7b51",
@@ -3431,5 +3435,6 @@
   },
   "phase3RetiredCallerRemappings": [],
   "currentPositionContinuation": "docs/xroga/evidence/command-010/GITHUB-ACTOR-SEMANTIC-POSITIONS-20261028.json",
-  "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
+  "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json",
+  "nativeCheckoutPositionContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json"
 }

@@ -37,6 +37,7 @@ import {
   resolveVercelProjectForEnvSync,
 } from '../services/integrations/vercelAuth.js';
 import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js';
+import {loadProviderToken} from '../services/integrations/oauthPkceStore.js';
 
 const router = Router();
 
@@ -401,22 +402,46 @@ router.post('/create-project', async (req: AuthRequest, res) => {
 });
 
 router.get('/organizations', async (req: AuthRequest, res) => {
+  const lifetime=new AbortController();
+  const abort=()=>lifetime.abort();
+  req.once('aborted',abort);res.once('close',abort);
   try {
-    const accessToken = await getSupabaseOAuthAccessToken(req.userId!);
+    const context=requireTenantContext(req.tenantContext);
+    requireResourceOwner(context,req.userId);
+    lifetime.signal.throwIfAborted();
+    const accessToken = await getSupabaseOAuthAccessToken(context.userId);
     if (!accessToken) {
       res.status(403).json({ error: 'Authorize Supabase first', organizations: [] });
       return;
     }
+    const current=async()=>{
+      lifetime.signal.throwIfAborted();requireResourceOwner(context,req.userId);
+      const value=await loadProviderToken(context.userId,'supabase_oauth',{authoritativeOnly:true});
+      if(!value||value.access_token!==accessToken||typeof value.credential_revision!=='string'||!value.credential_revision)throw new Error('Supabase connection changed.');
+      lifetime.signal.throwIfAborted();
+      return JSON.stringify([value.credential_revision,value.metadata,value.refresh_token]);
+    };
+    const selected=await current();
     const r = await fetch('https://api.supabase.com/v1/organizations', {
+      method:'GET',redirect:'manual',
+      signal:AbortSignal.any([lifetime.signal,AbortSignal.timeout(15_000)]),
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const data = (await r.json().catch(() => [])) as Array<{ id: string; name: string; slug?: string }>;
-    if (!r.ok) {
-      throw new Error((data as unknown as { message?: string }).message || 'Failed to list orgs');
+    if(r.redirected||!r.ok){await r.body?.cancel().catch(()=>undefined);throw new Error('Supabase organization read denied.');}
+    const reader=r.body?.getReader(),chunks:Uint8Array[]=[];let size=0;
+    try{
+      if(reader)for(;;){const item=await reader.read();if(item.done)break;size+=item.value.byteLength;if(size>65_536)throw new Error('Supabase organization receipt exceeds safe limit.');chunks.push(item.value);}
+    }finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    const parsed=z.array(z.object({id:z.string().min(1).max(128),name:z.string().max(256),slug:z.string().max(128).optional()})).max(1000).safeParse(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+    if(!parsed.success||await current()!==selected)throw new Error('Supabase organization receipt or connection changed.');
+    lifetime.signal.throwIfAborted();
+    res.json({ organizations: parsed.data });
+  } catch {
+    if(!res.destroyed&&!res.headersSent){
+      res.status(400).json({ error: 'Supabase organizations are unavailable. Check your connection and retry.', organizations: [] });
     }
-    res.json({ organizations: Array.isArray(data) ? data : [] });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message, organizations: [] });
+  } finally {
+    lifetime.abort();req.off('aborted',abort);res.off('close',abort);
   }
 });
 

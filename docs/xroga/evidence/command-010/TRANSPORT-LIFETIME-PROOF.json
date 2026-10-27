@@ -120,10 +120,10 @@
     }
   ],
   "counts": {
-    "total": 135,
-    "reviewed": 115,
-    "pending": 20,
-    "unresolvedHighRiskReviewCandidates": 12
+    "total": 136,
+    "reviewed": 121,
+    "pending": 15,
+    "unresolvedHighRiskReviewCandidates": 8
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -412,11 +412,13 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "43de9010090f94d15bde89ca6d4a4e0fd9ab61b5337ad1f4ecc50c42fca4fac2",
+      "sha256": "a6cdfb923889f78b91fb80c9400351ab6c4c2dcfb9d3fc2b2475041831c00240",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
-      }
+      },
+      "nativeCheckoutPriorSha256": "43de9010090f94d15bde89ca6d4a4e0fd9ab61b5337ad1f4ecc50c42fca4fac2",
+      "nativeCheckoutContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",

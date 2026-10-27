@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: real cached-image container stops after sandbox cancellation and leaves no owned resource
+not ok 1 - real cached-image container stops after sandbox cancellation and leaves no owned resource
+  ---
+  duration_ms: 4366.8455
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\sandbox\\containerCancellation.local.integration.ts:1:634'
+  failureType: 'testCodeFailure'
+  error: |-
+    Cancellation must terminate the daemon container, not only the Docker CLI
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\sandbox\containerCancellation.local.integration.ts:25:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# {"image":"sha256:63538dfe497cc29dfafdda25ada09b46db68a3f4cc205abf1f5d6bf0913f3384","ownedContainer":"2e02252a01fdc27eb8d57366fbef3ab8ed05241d78866d18c325c7786d63a88e","runningAfterCancellation":true,"outcome":"returned","modelRequests":0,"network":"none"}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5084.5104

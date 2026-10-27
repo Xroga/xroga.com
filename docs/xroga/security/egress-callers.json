@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "faeb713d388628cb761c1c71d0b3d4b01bd3226d86d24a4fd0aabc3cc4c687e6",
+  "sourceTreeDigest": "f0ae0300d6ae1b5a0404abcfcbdc4fd506113c57464f78280576f8ff1da773f2",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -1809,7 +1809,7 @@
     {
       "id": "807c2948cdfa16e19b84",
       "file": "backend/src/routes/supabaseOAuth.ts",
-      "line": 330,
+      "line": 331,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
@@ -1825,18 +1825,29 @@
     {
       "id": "96fbfea42a399a233486",
       "file": "backend/src/routes/supabaseOAuth.ts",
-      "line": 410,
+      "line": 425,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "b776c8084f9ca044d9150a7ddd4fb45896ba33a385e24c1612a9ab38d1610c4f",
+      "callSha256": "7f108f6d651966ee8abf288336bb1df93ea2c6816a08806155667c76608f8b8c",
       "destination": "https://api.supabase.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_OFFICIAL_ISSUER_OWNER_ORGANIZATIONS_READ_ONLY",
+      "tenantAuthority": "ORIGINAL_ISSUED_OWNER_AND_CANONICAL_TOKEN_REVISION_BEFORE_AND_AFTER_BOUNDED_READ",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/SUPABASE-ORGANIZATION-READ-BOUNDARY-20261028.json",
+          "marker": "96fbfea42a399a233486",
+          "sha256": "eeea14a115418fd75240581f27b273f2021340112a4da4db4714f192d7bbc8a7"
+        },
+        {
+          "path": "backend/src/routes/supabaseOrganizations.security.test.ts",
+          "marker": "organization listing requires original owner",
+          "sha256": "353a3573fd510fca9c39e143122defbfd3011435df2ea3c8f1dc458179ceb957"
+        }
+      ]
     },
     {
       "id": "fcbe4c75dea0e59bcb3a",
@@ -1894,45 +1905,83 @@
     {
       "id": "f0eab43244d6d3c88de8",
       "file": "backend/src/sandbox/sandboxProviders.ts",
-      "line": 118,
+      "line": 140,
       "entryPoint": "canRun",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
-      "callSha256": "8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
+      "callSha256": "de564e641e3309305bca6125ae8e66ff6aed21b519976780134adeea28735105",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "FIXED_LOCAL_CONTAINER_CLI_VERSION_HEALTH_PROBE_ONLY_NOT_SANDBOX_EXECUTION_OR_NETWORK_CERTIFICATION",
-      "tenantAuthority": "ONLY_CONTAINER_RUNTIME_PROBE_CALLS_FIXED_VERSION_ARGUMENT_WITH_SCRUBBED_ENVIRONMENT_NO_TENANT_PAYLOAD_OR_CREDENTIALS",
+      "trust": "BOUNDED_TRUSTED_OPERATOR_LOCAL_PROCESS_ONLY_PRODUCTION_DENIED",
+      "tenantAuthority": "NO_AUTHORIZATION_FALLBACK_CANONICAL_GOOGLE_BINDING_UNCHANGED_EXACT_OWNED_CID_LIFECYCLE",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "disposition": "VERIFIED_GUARD",
       "evidence": [
         {
-          "path": "backend/src/sandbox/sandboxProbeBoundary.test.ts",
-          "marker": "actual sandbox probe child receives only fixed version argument and a scrubbed environment",
-          "sha256": "0facd9f9ac6c0ebb27b0b2d5f42368f16b38606235f5a886762049712c1f6a73"
+          "path": "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
+          "marker": "f0eab43244d6d3c88de8",
+          "sha256": "cc29a5b81c4e6107a808d99773fd61a51cfcb64c86a7f2db3cd5e07744fd86ed"
         },
         {
-          "path": "docs/xroga/evidence/command-010/GOOGLE-FIXED-PROBE-EQUIVALENCE.json",
-          "marker": "UNCHANGED_FIXED_LOCAL_VERSION_PROBE_ONLY",
-          "sha256": "a268cb1f2c51cca22a4c56f129ec50f12a134d4ff313ad66682fedc57126515d"
+          "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+          "marker": "the local container adapter cannot replace production Google execution",
+          "sha256": "a0cdf6d808483fff5c64bfc3690bf9e3cd5eb8336d9d6d9acc3d9b971e1cb7a7"
+        }
+      ]
+    },
+    {
+      "id": "5e931ac391ece81659aa",
+      "file": "backend/src/sandbox/sandboxProviders.ts",
+      "line": 241,
+      "entryPoint": "containerControl",
+      "transport": "subprocess-or-dynamic-execution",
+      "callee": "spawn",
+      "callSha256": "0dcb12e38d5a1794c6ba9359fc5252a83ff22f842bb06ddff9e427e80c667442",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "BOUNDED_TRUSTED_OPERATOR_LOCAL_PROCESS_ONLY_PRODUCTION_DENIED",
+      "tenantAuthority": "NO_AUTHORIZATION_FALLBACK_CANONICAL_GOOGLE_BINDING_UNCHANGED_EXACT_OWNED_CID_LIFECYCLE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
+          "marker": "5e931ac391ece81659aa",
+          "sha256": "cc29a5b81c4e6107a808d99773fd61a51cfcb64c86a7f2db3cd5e07744fd86ed"
+        },
+        {
+          "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+          "marker": "the local container adapter cannot replace production Google execution",
+          "sha256": "a0cdf6d808483fff5c64bfc3690bf9e3cd5eb8336d9d6d9acc3d9b971e1cb7a7"
         }
       ]
     },
     {
       "id": "151aa103d929fb10c020",
       "file": "backend/src/sandbox/sandboxProviders.ts",
-      "line": 210,
+      "line": 282,
       "entryPoint": "runIsolated",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
-      "callSha256": "d62b42241f2e6c210f1f9e86890eae8fab2695e43b62416d02817f72aac80d74",
+      "callSha256": "5442edb387ddb815fb52cb566880885170270cce15b390f6819fc7fedc42943d",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "BOUNDED_TRUSTED_OPERATOR_LOCAL_PROCESS_ONLY_PRODUCTION_DENIED",
+      "tenantAuthority": "NO_AUTHORIZATION_FALLBACK_CANONICAL_GOOGLE_BINDING_UNCHANGED_EXACT_OWNED_CID_LIFECYCLE",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
+          "marker": "151aa103d929fb10c020",
+          "sha256": "cc29a5b81c4e6107a808d99773fd61a51cfcb64c86a7f2db3cd5e07744fd86ed"
+        },
+        {
+          "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+          "marker": "the local container adapter cannot replace production Google execution",
+          "sha256": "a0cdf6d808483fff5c64bfc3690bf9e3cd5eb8336d9d6d9acc3d9b971e1cb7a7"
+        }
+      ]
     },
     {
       "id": "e166bef56274bbddc0ad",
@@ -2050,7 +2099,7 @@
     {
       "id": "a7a8d74128349a90e3e8",
       "file": "backend/src/services/BillingService.ts",
-      "line": 881,
+      "line": 888,
       "entryPoint": "verifyConfiguredPlan",
       "transport": "fetch",
       "callee": "fetch",
@@ -2070,25 +2119,41 @@
         {
           "path": "backend/src/services/BillingService.planTransport.security.test.ts",
           "marker": "fixed plan read refuses actual redirect",
-          "sha256": "321f9511e97b2de142344915df7b815e31ae8fb0be84bc1c18a24def27fc04b7"
+          "sha256": "cd7f7836d47a0312c6d98ee37c8e79d69226bcda80305d7707ed1654162333df"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
+          "marker": "fcad57247cfb79779f95",
+          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
         }
       ]
     },
     {
       "id": "fcad57247cfb79779f95",
       "file": "backend/src/services/BillingService.ts",
-      "line": 1028,
+      "line": 1079,
       "entryPoint": "createCheckout",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "1c776ec82958ff5970dcf36e63054e4db779fd38c93e6b2071c6084a18cf6502",
+      "callSha256": "91c3d4d2d494b7e67688d1d78d3fa89a4e4cd6d1ade5273c8ec8e3fb4e110637",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "EXACT_SERVER_PREPARED_PLATFORM_CHECKOUT_FIXED_ISSUER_NO_AUTOMATIC_PAYMENT",
+      "tenantAuthority": "ORIGINAL_PERMIT_CONTEXT_EXACT_OWNER_TARGET_TERMS_CURRENT_CUSTODY_EPOCH_AND_DURABLE_ONE_TIME_APPROVAL_EGRESS_BEFORE_POST",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
+          "marker": "fcad57247cfb79779f95",
+          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+        },
+        {
+          "path": "backend/src/routes/billingCheckout.security.test.ts",
+          "marker": "real checkout route uses canonical owner claim",
+          "sha256": "ac4d78352d3ea9352a8b1265aebc79d9cb32bdc3631a84c272e8c0df09f43c8d"
+        }
+      ]
     },
     {
       "id": "7b6e1f490ce974fc3971",
@@ -2140,7 +2205,7 @@
         {
           "path": "docs/xroga/evidence/command-010/GITHUB-SOURCE-ACTOR-BOUNDARY-20261028.json",
           "marker": "07a46a7b451eaf4dc307",
-          "sha256": "34307c85da353b0a4793058f5cbe90acdad91bab36db1b4b869c999bc2aed81a"
+          "sha256": "a221e2ac5f3b0970d0efe8e84ab1ae72d382205c39fec9a0f01b9c7c9e84b004"
         },
         {
           "path": "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
@@ -2483,7 +2548,7 @@
     {
       "id": "9982cf8a2b469fc90070",
       "file": "backend/src/services/whopCheckoutOwnership.ts",
-      "line": 29,
+      "line": 30,
       "entryPoint": "readWhopCheckoutOwner",
       "transport": "fetch",
       "callee": "fetch",
@@ -2504,6 +2569,11 @@
           "path": "backend/src/services/whopCheckoutTransport.security.test.ts",
           "marker": "Whop ownership lookup refuses real redirects without a second request",
           "sha256": "2f83ba1d772ae5a5e689f07d23f80acd4f6152cd4db0f0a05df3590c5171da69"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
+          "marker": "fcad57247cfb79779f95",
+          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
         }
       ]
     },
@@ -3709,34 +3779,56 @@
     {
       "id": "fe9ce5d32d8c52cdd3c3",
       "file": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 57,
+      "line": 63,
       "entryPoint": "AiSaas",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "a0598bc8fba374cbd77c552fd6634ebbe34ddf60bee1326f3cbb3edc9db363f6",
+      "callSha256": "375e51592abe471268493d5603b614d3ba9496ca27334282cad799caad5a998f",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "LITERAL_SAME_ORIGIN_FIRST_PARTY_INGRESS_NO_REDIRECT_NO_PROVIDER_AUTHORITY",
+      "tenantAuthority": "EPHEMERAL_MANUAL_COMPONENT_INPUT_ONLY_NO_ACCOUNT_FILE_OR_CREDENTIAL_ACCESS_SERVER805931ff0dc022677403_UNPROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json",
+          "marker": "fe9ce5d32d8c52cdd3c3",
+          "sha256": "d94131ee907cc7b01b944337f1e2b18e4d36fe11f34fd52bc021f67d634d1060"
+        },
+        {
+          "path": "frontend/src/lib/auraFirstParty.security.test.ts",
+          "marker": "chat redirect never forwards the private manual conversation",
+          "sha256": "7dcd81bd3e2e57eaadcb59f7163dd9b9e0545a3df8a10a7960fa6aaa1ef16d95"
+        }
+      ]
     },
     {
       "id": "52851686fc818e0e4c5f",
       "file": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "line": 101,
+      "line": 109,
       "entryPoint": "sendMessage",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "2025dd1c16212a5bcb58f4bf500abb9dca4a6f508de5508788bf58e8e3e06371",
+      "callSha256": "b0b75fd6a0866cb181c0369f58da453bbc3c8d733ce577e59c4a27cb935bd590",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "LITERAL_SAME_ORIGIN_FIRST_PARTY_INGRESS_NO_REDIRECT_NO_PROVIDER_AUTHORITY",
+      "tenantAuthority": "EPHEMERAL_MANUAL_COMPONENT_INPUT_ONLY_NO_ACCOUNT_FILE_OR_CREDENTIAL_ACCESS_SERVER805931ff0dc022677403_UNPROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json",
+          "marker": "52851686fc818e0e4c5f",
+          "sha256": "d94131ee907cc7b01b944337f1e2b18e4d36fe11f34fd52bc021f67d634d1060"
+        },
+        {
+          "path": "frontend/src/lib/auraFirstParty.security.test.ts",
+          "marker": "chat redirect never forwards the private manual conversation",
+          "sha256": "7dcd81bd3e2e57eaadcb59f7163dd9b9e0545a3df8a10a7960fa6aaa1ef16d95"
+        }
+      ]
     },
     {
       "id": "d836bcd400bd13ddac6c",
@@ -3799,6 +3891,11 @@
           "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
           "marker": "c09bb8607fa4d00f23b7",
           "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
+          "marker": "fcad57247cfb79779f95",
+          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
         }
       ]
     },
@@ -4149,6 +4246,7 @@
       "callerIds": [
         "b7515cbdbc7be27b60a8",
         "f0eab43244d6d3c88de8",
+        "5e931ac391ece81659aa",
         "151aa103d929fb10c020",
         "c332b8bc426cca8b9d28",
         "909db275f450794ebea4",
@@ -4192,9 +4290,9 @@
     }
   ],
   "counts": {
-    "total": 135,
-    "reviewed": 115,
-    "pending": 20,
-    "unresolvedHighRiskBypasses": 12
+    "total": 136,
+    "reviewed": 121,
+    "pending": 15,
+    "unresolvedHighRiskBypasses": 8
   }
 }

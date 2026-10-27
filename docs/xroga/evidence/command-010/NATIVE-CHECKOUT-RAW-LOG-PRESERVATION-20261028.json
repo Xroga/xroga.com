@@ -1,0 +1,11 @@
+{
+  "scope": "LOSSLESS_RAW_LOG_ARCHIVES_WHITESPACE_ONLY_DISPLAY",
+  "files": [
+    {
+      "display": "docs/xroga/evidence/command-010/native-checkout-rawIdRed-20261028.log",
+      "originalGzip": "docs/xroga/evidence/command-010/native-checkout-rawIdRed-20261028.log.original.gz",
+      "originalSha256": "548c0020674b11c9cdea3dd9009dde254ee945215ad1b7dc4750dd267b2dc8f1",
+      "displaySha256": "bd727f8cc92948c9763e6874af2e9c9ebb3523466e46f1176241ffa8c6c92632"
+    }
+  ]
+}

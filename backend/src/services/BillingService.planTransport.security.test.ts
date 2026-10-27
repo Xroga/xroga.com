@@ -1,3 +1,4 @@
+import {executeCheckoutWithFixtureClaim} from './fixtures/checkoutApproval.js';
 import assert from 'node:assert/strict';
 import test,{type TestContext} from 'node:test';
 import {createServer} from 'node:http';
@@ -25,7 +26,7 @@ test('fixed plan read refuses actual redirect and never forwards its issuer cred
 test('plan denial prevents checkout dispatch and failure does not poison later authorized read',async t=>{
  configured(t);let requests=0;
  t.mock.method(globalThis,'fetch',async(_url:Parameters<typeof fetch>[0],init?:RequestInit)=>{requests++;assert.equal(init?.method??'GET','GET');return new Response('denied',{status:403});});
- await assert.rejects(BillingService.createCheckout('11111111-1111-4111-8111-111111111111'),{code:'provider_unavailable'});assert.equal(requests,1);
+ await assert.rejects(executeCheckoutWithFixtureClaim('11111111-1111-4111-8111-111111111111'),{code:'provider_unavailable'});assert.equal(requests,1);
  t.mock.method(globalThis,'fetch',async()=>Response.json(plan));await BillingService.verifyConfiguredPlan(true);
 });
 test('bounded approved plan read preserves exact contract rejection and cache',async t=>{

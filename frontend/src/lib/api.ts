@@ -4751,12 +4751,7 @@ concurrency:
           'spark',
       ) =>
         apiFetch<{
-          purchaseUrl:
-            string;
-
-          checkoutConfigurationId:
-            string |
-            null;
+          confirmation:{id:string;summary:string;toolkit:string;toolSlug?:string;expiresAt:string};
         }>(
           '/api/billing/checkout',
 
@@ -4770,6 +4765,8 @@ concurrency:
               }),
           },
         ),
+
+    confirmCheckout:(id:string)=>apiFetch<{purchaseUrl:string;checkoutConfigurationId:string|null}>(`/api/billing/checkout/${encodeURIComponent(id)}/confirm`,{method:'POST'}),
 
     portal:
       () =>

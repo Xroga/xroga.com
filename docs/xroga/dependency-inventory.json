@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d156218d5f2b10ff76a0ac93a98620c1f9c18ac1",
+  "source_sha": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -379,6 +379,7 @@
         "XROGA_SANDBOX_FLY_IMAGE",
         "XROGA_SANDBOX_FLY_REGION",
         "XROGA_SANDBOX_FLY_TOKEN",
+        "XROGA_SANDBOX_LIVE_TEST_API_KEY",
         "XROGA_SANDBOX_WORKER_NAME",
         "XROGA_SANDBOX_WORKER_TOKEN",
         "XROGA_SANDBOX_WORKER_URL"
@@ -669,6 +670,7 @@
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
         "backend/src/services/billingRoutes.local.integration.ts",
+        "backend/src/services/fixtures/checkoutApproval.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -829,6 +831,7 @@
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
         "backend/src/services/billingRoutes.local.integration.ts",
+        "backend/src/services/fixtures/checkoutApproval.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -7501,6 +7504,8 @@
         "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/sandbox/containerCancellation.local.integration.ts",
+        "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
@@ -7613,6 +7618,7 @@
         "STORAGE_TEST_DATABASE_URL",
         "STORAGE_WRITE_MODE",
         "STRIPE_SECRET_KEY",
+        "SystemRoot",
         "TERM",
         "TMPDIR",
         "TZ",
@@ -7621,6 +7627,7 @@
         "UNIVERSAL_AGENT_PERCENTAGE",
         "UPSTASH_REDIS_REST_URL",
         "UPSTASH_VECTOR_REST_URL",
+        "USERPROFILE",
         "VERCEL_TOKEN",
         "XROGA_ALLOWED_MODELS",
         "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
@@ -7631,6 +7638,7 @@
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
+        "XROGA_CLEANUP_JOB_ID",
         "XROGA_DEV_CREDENTIAL_KEK",
         "XROGA_DISABLED_PROVIDERS",
         "XROGA_DRIVE_PRESIGN_SIGN_LENGTH",
@@ -7698,6 +7706,8 @@
         "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/sandbox/containerCancellation.local.integration.ts",
+        "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
@@ -10438,7 +10448,9 @@
         "backend/src/routes/github.ts",
         "backend/src/routes/guestChat.ts",
         "backend/src/runtime/startupPolicy.ts",
+        "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
+        "backend/src/services/fixtures/checkoutApproval.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
@@ -11532,6 +11544,7 @@
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts",
+        "backend/src/services/fixtures/checkoutApproval.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/storage/migration/cliContext.ts",
         "backend/src/synthesis/livePreview/signing.ts",
@@ -11662,6 +11675,7 @@
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
         "backend/src/services/billingRoutes.local.integration.ts",
+        "backend/src/services/fixtures/checkoutApproval.ts",
         "backend/src/storage/migration/cliContext.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
@@ -11695,6 +11709,25 @@
         "endpoint-whop-com",
         "endpoint-xroga-api-fly-dev",
         "endpoint-xrogaaicom-vercel-app"
+      ]
+    },
+    {
+      "name": "SystemRoot",
+      "consuming_sources": [
+        "backend/src/sandbox/sandboxProviders.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -11844,6 +11877,25 @@
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
         "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "USERPROFILE",
+      "consuming_sources": [
+        "backend/src/sandbox/sandboxProviders.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -12699,6 +12751,26 @@
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/lib/resilience/circuitBreaker.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_CLEANUP_JOB_ID",
+      "consuming_sources": [
+        "backend/src/sandbox/containerCancellation.local.integration.ts",
+        "backend/src/sandbox/sandboxProviders.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -14130,6 +14202,25 @@
         "endpoint-api-whop-com",
         "endpoint-example-invalid",
         "endpoint-public-example-invalid"
+      ]
+    },
+    {
+      "name": "XROGA_SANDBOX_LIVE_TEST_API_KEY",
+      "consuming_sources": [
+        "backend/src/sandbox/containerCancellation.local.integration.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "RESOLVED_ENV_INDEX"
+      ],
+      "dependency_ids": [
+        "google-execution"
       ]
     },
     {
@@ -15739,7 +15830,7 @@
     },
     {
       "path": "backend/src/routes/billing.ts",
-      "sha256": "4f0563b04b327b8a354f90758e698c3ad0f2686da61daa9e585c1e0b3292f719"
+      "sha256": "981e939ad5cb97856cea7ab62b2f400ab06dc355373221b6f65b5ab1e328f87d"
     },
     {
       "path": "backend/src/routes/billingWebhook.ts",
@@ -15871,7 +15962,7 @@
     },
     {
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "031fb52e095ac060d1637487e7370f50fa268ac7b6b0728602d158717d931293"
+      "sha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675"
     },
     {
       "path": "backend/src/routes/swarm.ts",
@@ -15922,6 +16013,10 @@
       "sha256": "e3c6d7ad91ccde602cd040a33c689bdab4dfd7c6d852a4a664ae87306710c6ac"
     },
     {
+      "path": "backend/src/sandbox/containerCancellation.local.integration.ts",
+      "sha256": "a51ff2700018ebe1c8de13c8d6d94edb855183a77d5acaa16ea4f0e8f59bd41d"
+    },
+    {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
       "sha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e"
     },
@@ -15951,7 +16046,7 @@
     },
     {
       "path": "backend/src/sandbox/sandboxProviders.ts",
-      "sha256": "248e7e65e0c6122171a33976b5d6d355d4937d0882064cf616eca33690b07b8a"
+      "sha256": "797303c61e499a8b5f7aa63b778f32b4b6a8ea2adbb99eaac6dd59bb431e4008"
     },
     {
       "path": "backend/src/sandbox/sandboxRuntime.ts",
@@ -16275,7 +16370,7 @@
     },
     {
       "path": "backend/src/services/BillingService.ts",
-      "sha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281"
+      "sha256": "96aa6a02668b9d2a568bf7863c3546edbdc7a26d9bf98d2ff9c8a54202108fe3"
     },
     {
       "path": "backend/src/services/billingBudget.local.integration.ts",
@@ -16294,12 +16389,16 @@
       "sha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852"
     },
     {
+      "path": "backend/src/services/fixtures/checkoutApproval.ts",
+      "sha256": "3775326388a815bf862deae27d20154f0e17b6f07e71dc79e36f58f8b631d95b"
+    },
+    {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "43de9010090f94d15bde89ca6d4a4e0fd9ab61b5337ad1f4ecc50c42fca4fac2"
+      "sha256": "a6cdfb923889f78b91fb80c9400351ab6c4c2dcfb9d3fc2b2475041831c00240"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73"
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
@@ -16579,7 +16678,7 @@
     },
     {
       "path": "backend/src/services/whopCheckoutOwnership.ts",
-      "sha256": "599c4816881fba840f10cdce5a299cf62d5f495f9ea7ad75bfd67f7a22d60372"
+      "sha256": "d62a773f55b916320a9fc376d0c3057d0772a88bc27cf41d30ee0b67773f2b97"
     },
     {
       "path": "backend/src/storage/artifactSink.ts",
@@ -17887,7 +17986,7 @@
     },
     {
       "path": "frontend/src/components/billing/CheckoutButton.tsx",
-      "sha256": "f42cda82acb2808737eb646f9bef97cc16d8e99131adba2085b0d94c37ce26b3"
+      "sha256": "96dfb30b212d6e9652415a629140dd3a617a99aa5bae060f0275dba4056cbeb2"
     },
     {
       "path": "frontend/src/components/billing/OutOfActionsModal.tsx",
@@ -19467,7 +19566,7 @@
     },
     {
       "path": "frontend/src/components/showcase/products/AiSaas.tsx",
-      "sha256": "1f4e74e8ddea3a361d386e540a87a90c51d635416a91ddfe569d077a428c9d30"
+      "sha256": "392250f343b2ecf065b87470eda60831a1fddb2532f2b60b0a004412eddc8a39"
     },
     {
       "path": "frontend/src/components/showcase/products/BookingPlatform.tsx",
@@ -20051,7 +20150,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d"
+      "sha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -20132,6 +20231,10 @@
     {
       "path": "frontend/src/lib/chatSuggestions.ts",
       "sha256": "2a37f6f0eee00d60712a48eee4b6bd3a4f702c74f972ba1a56efdbd8a9b29e2e"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.ts",
+      "sha256": "318559fb218c890e6baf2bf3204947b34934b564747b440b2349ddc52b3f9659"
     },
     {
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
@@ -22695,14 +22798,14 @@
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 330,
+      "line": 331,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 410,
+      "line": 425,
       "credentialsInUrl": false
     },
     {
@@ -23556,14 +23659,14 @@
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/services/BillingService.ts",
-      "line": 28,
+      "line": 35,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/BillingService.ts",
-      "line": 43,
+      "line": 50,
       "credentialsInUrl": false
     },
     {
@@ -23641,6 +23744,13 @@
       "protocol": "https:",
       "path": "backend/src/services/billingRoutes.local.integration.ts",
       "line": 40,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/fixtures/checkoutApproval.ts",
+      "line": 16,
       "credentialsInUrl": false
     },
     {
@@ -24221,7 +24331,7 @@
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/services/whopCheckoutOwnership.ts",
-      "line": 29,
+      "line": 30,
       "credentialsInUrl": false
     },
     {
