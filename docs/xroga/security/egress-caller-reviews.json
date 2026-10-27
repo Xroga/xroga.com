@@ -1301,6 +1301,406 @@
           "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
         }
       ]
+    },
+    {
+      "id": "ff5705ad221b1e6169e6",
+      "callSha256": "8efc214866b00779d8cc79b61f77de470ad33d7e20bf58ba5e1a6eb857df88db",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "ff5705ad221b1e6169e6",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "0ea8c09563919a601d87",
+      "callSha256": "665f971ff4a7886a8681aab543f73342cf5bb0a4e0baa06f51e0cbf282b1c04b",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "0ea8c09563919a601d87",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "929b90c450fdeb68c7a3",
+      "callSha256": "78e2d081d7f9bd41025d08b2244d7756e6af9d28997dd37c5d4c835cd90e64ad",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "929b90c450fdeb68c7a3",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "18bc491b9155e5452bf0",
+      "callSha256": "f69d5b3a51b4db40d42603e1a5aed296596458fcaeeda1a0a0d239f2b3790c03",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "18bc491b9155e5452bf0",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "6782e9bfadcd4eef2da6",
+      "callSha256": "01cfce66fae4942a1f7ac7749adbccfcf2f51cce6fd5717f4ea7ca1a6734a7b2",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "6782e9bfadcd4eef2da6",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "e0735a9a514b6ba7bf73",
+      "callSha256": "e0ea13c8852c7a0ae3385958e540da2dccd39b8986671bc4a2dce2ed8cd4fbb7",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "e0735a9a514b6ba7bf73",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "8dd51a5fe4aed1ff5859",
+      "callSha256": "c4f2d7fdf6aede04ee777ccc09c5af5c4e783b2c5b00f7b03aa4acaf26a92ca1",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "8dd51a5fe4aed1ff5859",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "1112c9944c5f1a0fed49",
+      "callSha256": "484d41716046a01c377b5c67cb3fce409b312cff2dd412c6f76384aa44aa14b9",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "1112c9944c5f1a0fed49",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "f752a96c35c5aeb68b7f",
+      "callSha256": "dc3285bf3fa403cef7270041d8fadd4a8a49b07457c7c835de0c2225d93264e9",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "f752a96c35c5aeb68b7f",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "9ef7eeca256fed04e9cb",
+      "callSha256": "85b01ec82b2475a98bd148c7426e3bb72b20aaa39f5ab4ab680a5898395c1979",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "9ef7eeca256fed04e9cb",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "f19d5282590fa6928ae9",
+      "callSha256": "c669e70b933c3ed412a069e12598122e37aa2614b9de2594651bb8c9d2101ca7",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "f19d5282590fa6928ae9",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "63b7f73d6ad5e5d67ab1",
+      "callSha256": "d6f4125847ad40747e2d5ee920a8627a1042924c7f6a9bdc8193c33e94538295",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_R2_STORAGE_SDK_ONLY_NOT_ARBITRARY_URL_OR_EXTERNAL_UPLOAD_APPROVAL",
+      "tenantAuthority": "SDK_IS_NOT_AN_IDENTITY_OR_AUTHORITY_ISSUER_API_STORAGE_USES_ORIGINAL_CONTEXT_AND_OWNED_METADATA_CURRENT_PROJECT_AND_CAPABILITY_CHECKS_OPERATOR_MIGRATION_FIXTURE_AND_EXTERNAL_EXPORT_CALLERS_REMAIN_INDEPENDENT_OBLIGATIONS",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+          "marker": "63b7f73d6ad5e5d67ab1",
+          "sha256": "5c031c8f020e8f1cd4baf0808d4dc85314bd4d97b2e0501933ef0b531c28ade2"
+        },
+        {
+          "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+          "marker": "every private R2 operation rejects a bucket outside its configured capability",
+          "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+        },
+        {
+          "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+          "marker": "private R2 factories are canonical storage",
+          "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+        },
+        {
+          "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+          "marker": "multipart completion cannot dispatch after ownership is revoked",
+          "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+        }
+      ]
+    },
+    {
+      "id": "f0b2c5745ae0de95cf2c",
+      "callSha256": "a2bef4b8f104c6f8be2b4bd4c406422ab8029b6ebe04539fe201bd2ca83b1c24",
+      "sourceFileSha256": "41febffb1ac3fa86601857282e085217db7dcaf7d5b1490482db1b49a21742a5",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_CURRENT_PRODUCTION_OR_OPERATOR_IMPORTER_NOT_A_FUTURE_PROCESS_EXECUTION_APPROVAL",
+      "tenantAuthority": "INACTIVE_HELPERS_ISSUE_NO_RUNTIME_AUTHORITY_KNOWN_GRAPH_AND_EXACT_UNCHANGED_SOURCE_ONLY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/UNUSED-PROCESS-TREE-TRACE.json",
+          "marker": "f0b2c5745ae0de95cf2c",
+          "sha256": "fbac1b84cbbc7e6cd5a1ada347de7a186e8667d56b66c92abb332c41c122c135"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProcessTree.test.ts",
+          "marker": "legacy processTree helpers have no current production runtime or operator importer",
+          "sha256": "fdf4c7a2e294a4283d92f84c475aa9cab6fa1c8dc475a3f788be3670cf83ecd2"
+        }
+      ]
+    },
+    {
+      "id": "89220f199b9f996c1aa6",
+      "callSha256": "6a288b83b0d5871d589855937891750663a4b0e774c34a114c9b0fad4aaaf3be",
+      "sourceFileSha256": "41febffb1ac3fa86601857282e085217db7dcaf7d5b1490482db1b49a21742a5",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_CURRENT_PRODUCTION_OR_OPERATOR_IMPORTER_NOT_A_FUTURE_PROCESS_EXECUTION_APPROVAL",
+      "tenantAuthority": "INACTIVE_HELPERS_ISSUE_NO_RUNTIME_AUTHORITY_KNOWN_GRAPH_AND_EXACT_UNCHANGED_SOURCE_ONLY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/UNUSED-PROCESS-TREE-TRACE.json",
+          "marker": "89220f199b9f996c1aa6",
+          "sha256": "fbac1b84cbbc7e6cd5a1ada347de7a186e8667d56b66c92abb332c41c122c135"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProcessTree.test.ts",
+          "marker": "legacy processTree helpers have no current production runtime or operator importer",
+          "sha256": "fdf4c7a2e294a4283d92f84c475aa9cab6fa1c8dc475a3f788be3670cf83ecd2"
+        }
+      ]
     }
   ]
 }

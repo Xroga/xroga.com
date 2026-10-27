@@ -484,12 +484,13 @@
     "checkpoint": "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json",
     "counts": {
       "total": 162,
-      "reviewed": 50,
-      "pending": 112,
-      "unresolvedHighRiskBypasses": 66
+      "reviewed": 64,
+      "pending": 98,
+      "unresolvedHighRiskBypasses": 52
     },
     "formalCriteriaVerified": 0,
     "historicalLocalCriterionStates": "UNCHANGED_LOCAL_EVIDENCE_NOT_CURRENT_FINAL_SOURCE_ACCEPTANCE",
-    "release": "BLOCKED_CALLER_COVERAGE_AND_FINAL_SOURCE_GATES"
+    "release": "BLOCKED_CALLER_COVERAGE_AND_FINAL_SOURCE_GATES",
+    "latestCheckpoint": "docs/xroga/evidence/command-010/storage-20261027/checkpoint.json"
   }
 }

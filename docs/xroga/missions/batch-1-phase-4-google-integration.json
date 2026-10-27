@@ -84,12 +84,14 @@
     "backend/src/security/egress/fileEgress.ts",
     "backend/src/security/egress/heldCredentialFloor.test.ts",
     "backend/src/security/egress/internalDependency.test.ts",
+    "backend/src/security/egress/privateR2DependencyReachability.test.ts",
     "backend/src/security/egress/publicPost.test.ts",
     "backend/src/security/egress/securityDecision.ts",
     "backend/src/security/egress/toolTrust.ts",
     "backend/src/security/egress/types.ts",
     "backend/src/security/egress/unreachableBrowserAdapters.test.ts",
     "backend/src/security/egress/untrustedInput.ts",
+    "backend/src/security/egress/unusedProcessTree.test.ts",
     "backend/src/security/egress/unusedProviderAdapters.test.ts",
     "backend/src/security/egress/urlPolicy.ts",
     "backend/src/security/frontendScope.local.integration.ts",
@@ -115,6 +117,10 @@
     "backend/src/services/integrations/userProviderKeys.ts",
     "backend/src/services/storage/privateFileDelivery.revocation.test.ts",
     "backend/src/services/storage/privateFileDelivery.ts",
+    "backend/src/storage/r2BucketBoundary.security.test.ts",
+    "backend/src/storage/r2ObjectStore.test.ts",
+    "backend/src/storage/r2ObjectStore.ts",
+    "backend/src/storage/storageCapabilityRevocation.security.test.ts",
     "backend/src/storage/storageService.test.ts",
     "backend/src/storage/storageService.ts",
     "backend/src/synthesis/coherentImplementation.test.ts",
@@ -301,10 +307,10 @@
   "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "112remaining caller traces including66high-risk candidates, not all are demonstrated vulnerabilities",
+    "98remaining source traces including52high-risk candidates, not all are demonstrated vulnerabilities",
     "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
     "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
-    "Private storage, publishing, uploads and all shared reachable callers still need individual verification",
+    "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
     "Final exact-source disposable/Auth and complete integration CI, original strict acceptance and controlled release remain pending"
   ],
   "placeholderClaimsRemaining": [
@@ -318,14 +324,16 @@
     "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
     "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json",
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
-    "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json"
+    "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/storage-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Original strict caller audit incomplete:112pending and66high-risk candidates",
+      "Original strict caller audit incomplete:98pending and52high-risk candidates",
       "All12original criteria and exact-final-source authenticated/disposable/CI acceptance are not yet verified"
     ],
     "authenticatedE2e": "BLOCKED",
