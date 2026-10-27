@@ -75,3 +75,17 @@ No `gcloud` and no image-build or registry credentials; the Google console and S
 | Cloud Tasks / Scheduler | NOT provisioned | not yet verified or created |
 | Batch 3 (#865) | frozen, untouched | |
 | Additional cloud spend this session | $0 recorded | Cloud Shell opened/closed (no charge observed), AR remote repo (storage only), R2 bucket (free tier) |
+
+### 6.1 Migration prerequisites (read-only checks, 2026-10-27)
+
+| Check | Result |
+|---|---|
+| Production project `xroga-ai` (`nzenxdfumxrnsmybazmo`, ap-northeast-1) | ACTIVE_HEALTHY, serving; Postgres 17 |
+| Pre-migration snapshot | 87 MB; 119 public tables; `profiles` 74 rows; `project_files` 0 rows; no `storage_*`, `builder_*`, `browser_runs` or `worker_task_leases` table exists, so the seven migrations cannot collide or overwrite data |
+| Restorable basis | existing restore-tested recovery point `gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/` (see `docs/operations/google-production-migration.md`); take a fresh schema dump immediately before each stage |
+| Rehearsal target | isolated staging project `xroga-p3-staging-20261024` (`dqxnatoessviphudbhei`, us-east-1, ACTIVE_HEALTHY, 118 public tables, has `project_files`, none of the new tables). Rehearse all seven there first |
+| SHA-256 prefixes of the seven files | `983d9bed` storage_drive_foundation, `a01c475d` worker_task_leases, `83d515f3` browser_runs_durable, `ba2ac026` builder_projects, `1c65e217` builder_phase2, `1a94e53c` builder_phase3, `78f22f98` builder_preview_readiness. Apply only text that matches these |
+| Order and validation | `20261022000000` then `20261024000000` then `20261026100000` then `20261026000100` then `20261026010000` then `20261026020000` then `20261026030000`; after each: table present, RLS forced, no `anon`/`authenticated` write grants, `list_migrations` shows it once; stop on first failure and run the matching `.down.sql` |
+| Ledger quirk | production's migration ledger mixes legacy names and versions; applying through the connector would record a new version row, so use the reviewed operator path or reconcile the ledger deliberately |
+| Cloud Tasks | one queue exists, `xroga-canonical-production` (us-east4, push), for the canonical job; no Browser Worker queue yet. Scheduler not checked |
+| Supabase plan quota | project is serving requests; the "grace period over" banner applies to the organization's Free-plan quota and is not currently blocking requests; no upgrade is authorized or needed for these migrations |
