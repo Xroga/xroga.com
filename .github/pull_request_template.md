@@ -12,6 +12,7 @@ Describe the scoped implementation and what was intentionally left unchanged.
 - [ ] Relevant full test/build checks passed
 - [ ] Security and privacy boundaries were reviewed
 - [ ] No secrets, private repositories, customer data or generated artifacts were committed
+- [ ] Temporary resources cleaned on success/failure, required evidence retained, before/after disk measurements recorded for storage-heavy work
 
 ## External effects
 

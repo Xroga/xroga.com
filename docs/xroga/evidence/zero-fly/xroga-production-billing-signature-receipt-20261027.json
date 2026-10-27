@@ -1,0 +1,8 @@
+{
+  "atUtc": "2026-10-27T08:41:05.051143+00:00",
+  "scope": "EXISTING_SIGNING_KEY_AND_GOOGLE_ROUTE",
+  "customerPaymentEvent": false,
+  "databaseMutationExpected": false,
+  "status": "PASS_SIGNATURE_ACCEPTED_MALFORMED_BODY_DENIED_BEFORE_DATABASE",
+  "httpStatus": 400
+}

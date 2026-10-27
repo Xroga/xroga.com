@@ -7,7 +7,17 @@
     "every CLI command performs a real dry-run and supports JSON and verbose output",
     "actual repository snapshot reuses Command 1, keeps missing data explicit, and produces two valid FIX briefs",
     "validated demand evidence flows into the matching content brief without duplicates",
-    "a missing compiler reports tscRan=false, not a type-check failure"
+    "a missing compiler reports tscRan=false, not a type-check failure",
+    "GitHub routes persist and consume owner-bound state, reject replay and refuse late callback saves",
+    "Supabase callback cannot resurrect derived keys after disconnect during project discovery",
+    "GitHub authority outages and durable revocation prevent stale mirror resurrection",
+    "OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch",
+    "CWS carries the consumed epoch through encrypted BYOK admission and denies lost epochs before or after exchange",
+    "Supabase refresh captures revision before exchange and absent authority cannot revive a mirror",
+    "one-use OAuth admission fails closed on unavailable or malformed receipts and never uses Storage",
+    "shared OAuth requires authority, persists revocation and rejects path traversal before I/O",
+    "bundle reads preserve consistent legacy JWTs and deny opaque, mixed and changed associations",
+    "manual Supabase connection binds all writes before yielding and reports only verified provisioning"
   ],
   "groups": [
     {
@@ -21,6 +31,10 @@
     {
       "file": "backend/src/ai/compileCommand.test.ts",
       "cause": "POSIX-only test; fails on pristine main in Linux when npm puts node_modules/.bin (a tsc) on PATH, skipped on Windows (1 test)"
+    },
+    {
+      "file": "backend/src/services/integrations (credential vault OAuth tests)",
+      "cause": "fail on pristine main bc669f8a in the storage-phase1 workflow (run 40373053674, dispatched on main, 2026-10-26): they need credential-vault configuration the disposable runner does not have (10 tests). Listed from that run's log; a complete run may reveal more of the same family."
     }
   ]
 }

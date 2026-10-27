@@ -30,9 +30,9 @@
  */
 
 import type { ProjectFile } from '../ai/patches.js';
-import { executeSandboxed, probeSandbox } from '../sandbox/sandboxRuntime.js';
+import { executeCanonicalSandboxed, probeSandbox } from '../sandbox/sandboxRuntime.js';
 import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
-import type { SandboxNetworkPolicy } from '../sandbox/sandboxTypes.js';
+import {SandboxAdmissionError,type SandboxNetworkPolicy} from '../sandbox/sandboxTypes.js';
 import type { ViewportEvidence } from './browserVerification.js';
 import {
   DEFAULT_PORT,
@@ -67,6 +67,7 @@ const SERVER_TIMEOUT_MS = 120_000;
 
 /** The one call into the sandbox, as a seam so the logic is testable without a real runtime. */
 export type SandboxExecutor = (request: {
+  sourceFiles?:readonly ProjectFile[];
   files: readonly ProjectFile[];
   command: string;
   args: readonly string[];
@@ -97,8 +98,10 @@ export function sandboxImageSupportsBrowser(env: NodeJS.ProcessEnv = process.env
 
 /** The real executor: straight through the existing Command 1 boundary, widening nothing. */
 const executeSandboxDefault: SandboxExecutor = async (request) => {
-  const result = await executeSandboxed({
+  const result = await executeCanonicalSandboxed('browser-verification',{
     files: [...request.files],
+    sourceFiles:request.sourceFiles,
+    signal:request.signal,
     command: request.command,
     args: [...request.args],
     timeoutMs: request.timeoutMs,
@@ -286,6 +289,7 @@ async function runInSandbox(input: {
   try {
     const { command, args } = buildSandboxCommand(request);
     result = await input.execute({
+      sourceFiles:input.files,
       // The collector travels with the project through the existing `files` mechanism. No new
       // transport into the sandbox is introduced.
       files: [
@@ -317,6 +321,7 @@ async function runInSandbox(input: {
       signal: input.signal,
     });
   } catch (error) {
+    if(error instanceof SandboxAdmissionError)throw error;
     // `SandboxUnavailableError` and anything else the runtime throws. A sandbox that refused is
     // a gap in evidence, never a pass.
     return notChecked(

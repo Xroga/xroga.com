@@ -1,0 +1,35 @@
+{
+  "scope": "EXISTING_HOSTED_SYNTHETIC_STAGING_SCHEMA_NOT_LIVE_GOOGLE_OR_PRODUCTION_ACCEPTANCE",
+  "project": "dqxnatoessviphudbhei",
+  "newProjectCreated": false,
+  "productionChanged": false,
+  "migrationLfSha256": "8038463a25c4f3bde741fc768ddd781595685267e582af915a5edef4b1070d9b",
+  "checks": [
+    {
+      "evidence": {
+        "status": "PASS_HOSTED_SYNTHETIC_ROLLBACK_SCHEMA_PROOF",
+        "ownerEnqueue": true,
+        "claimOwnerBound": true,
+        "rollbackRequired": true,
+        "productionChanged": false,
+        "browserTableDenied": true,
+        "foreignOwnerDenied": true,
+        "anonymousClaimDenied": true,
+        "duplicateClaimDenied": true,
+        "originalCancellationDeniedRedispatch": true
+      }
+    }
+  ],
+  "postRollbackCounts": [
+    {
+      "auth_users": 0,
+      "profiles": 0,
+      "deliveries": 0,
+      "runs": 0,
+      "integrations": 0,
+      "storage_objects": 0
+    }
+  ],
+  "fixtureCorrection": "The first transaction was rejected by the existing profile username uniqueness trigger because two synthetic UUIDs shared its first twelve characters. Transaction rolled back. Distinct synthetic prefixes passed. No product constraint was changed.",
+  "query": "BEGIN;\nINSERT INTO auth.users(id,email) VALUES\n('dc262626-0001-4000-8000-000000000001','xroga-migration-owner@invalid.example'),\n('dc272727-0002-4000-8000-000000000002','xroga-migration-foreign@invalid.example');\nSET LOCAL ROLE service_role;\nDO $proof$\nDECLARE\n o uuid := 'dc262626-0001-4000-8000-000000000001';\n f uuid := 'dc272727-0002-4000-8000-000000000002';\n d uuid := 'dc262626-0010-4000-8000-000000000010';\n r uuid := 'dc262626-0020-4000-8000-000000000020';\n t uuid := 'dc262626-0030-4000-8000-000000000030';\n w uuid := 'dc262626-0040-4000-8000-000000000040';\n g uuid := 'dc262626-0050-4000-8000-000000000050';\n s text := repeat('b',40); result jsonb; rejected boolean := false;\nBEGIN\n result := public.enqueue_google_canonical_run(d,r,o,NULL,'{\"prompt\":\"synthetic hosted migration proof\"}',s);\n ASSERT result->>'deliveryId'=d::text,'Hosted enqueue failed';\n BEGIN\n  PERFORM public.enqueue_google_canonical_run(d,r,f,NULL,'{\"prompt\":\"synthetic hosted migration proof\"}',s);\n EXCEPTION WHEN OTHERS THEN\n  IF SQLERRM='DELIVERY_NOT_FOUND' THEN rejected:=true; ELSE RAISE; END IF;\n END;\n ASSERT rejected,'Foreign owner was not denied';\n result := public.reserve_google_canonical_launch(d,s,t);\n ASSERT result->>'state'='reserved','Hosted launch reservation failed';\n result := public.claim_google_canonical_run(d,s,w::text,g);\n ASSERT result->>'userId'=o::text,'Hosted worker claim owner mismatch';\n ASSERT public.claim_google_canonical_run(d,s,'dc262626-0041-4000-8000-000000000041',g) IS NULL,'Duplicate worker was admitted';\n PERFORM public.cancel_swarm_run_owned(r,o);\n ASSERT (public.reserve_google_canonical_launch(d,s,t)->>'state')='acknowledged','Cancelled run dispatch reopened';\n ASSERT public.claim_google_canonical_run(d,s,w::text,g) IS NULL,'Cancelled run issued a claim';\nEND\n$proof$;\nRESET ROLE;\nSELECT jsonb_build_object('status','PASS_HOSTED_SYNTHETIC_ROLLBACK_SCHEMA_PROOF',\n 'ownerEnqueue',true,'foreignOwnerDenied',true,'claimOwnerBound',true,\n 'duplicateClaimDenied',true,'originalCancellationDeniedRedispatch',true,\n 'browserTableDenied',NOT has_table_privilege('authenticated','public.google_canonical_deliveries','SELECT'),\n 'anonymousClaimDenied',NOT has_function_privilege('anon','public.claim_google_canonical_run(uuid,text,text,uuid)','EXECUTE'),\n 'productionChanged',false,'rollbackRequired',true) as evidence;\nROLLBACK;"
+}

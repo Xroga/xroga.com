@@ -1,0 +1,20 @@
+{
+  "observedAtUtc": "2026-10-27T08:36:00Z",
+  "source": "Authenticated Whop Xroga Developer dashboard",
+  "activeEndpoints": [
+    {
+      "url": "https://api.xroga.com/api/billing/webhook/whop",
+      "eventCount": 9,
+      "signingSecretChanged": false,
+      "status": "Active"
+    }
+  ],
+  "disabledEndpoints": [
+    {
+      "host": "xroga-api-422lt7eujq-uk.a.run.app",
+      "path": "/api/billing/webhook/whop"
+    }
+  ],
+  "flyEndpointsObserved": 0,
+  "providerApiInventory": "Existing API key lacks webhook-list permission, authenticated UI inventory supersedes that read limitation."
+}

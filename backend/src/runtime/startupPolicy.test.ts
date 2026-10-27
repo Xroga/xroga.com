@@ -67,3 +67,21 @@ describe('boot duties', () => {
     assert.ok(d.notes.some((n) => /not recognised/.test(n)));
   });
 });
+
+describe('Cloud Run is explicit, never inferred', () => {
+  it('a Cloud Run service with no declared environment is unclassified and says what to set', () => {
+    const r = resolveDeploymentEnvironment({ K_SERVICE: 'xroga-api' } as NodeJS.ProcessEnv);
+    assert.equal(r.environment, 'unclassified');
+    assert.match(r.problem ?? '', /Cloud Run/);
+    assert.equal(decideStartup({ K_SERVICE: 'xroga-api' } as NodeJS.ProcessEnv).duties.reconcileOrphanedRuns, false);
+  });
+
+  it('an explicit production declaration on a Cloud Run service is honoured, unless its own name says it is not production', () => {
+    assert.equal(resolveDeploymentEnvironment({ K_SERVICE: 'xroga-api', XROGA_DEPLOYMENT_ENVIRONMENT: 'production' } as NodeJS.ProcessEnv).environment, 'production');
+    assert.equal(decideStartup({ K_SERVICE: 'xroga-api', XROGA_DEPLOYMENT_ENVIRONMENT: 'production' } as NodeJS.ProcessEnv).duties.reconcileOrphanedRuns, true);
+    for (const name of ['xroga-api-staging', 'xroga-preview-pr12', 'xroga-dev']) {
+      assert.equal(resolveDeploymentEnvironment({ K_SERVICE: name, XROGA_DEPLOYMENT_ENVIRONMENT: 'production' } as NodeJS.ProcessEnv).environment, 'unclassified', name);
+    }
+    assert.equal(resolveDeploymentEnvironment({ K_SERVICE: 'xroga-api-staging', XROGA_DEPLOYMENT_ENVIRONMENT: 'staging' } as NodeJS.ProcessEnv).environment, 'staging');
+  });
+});

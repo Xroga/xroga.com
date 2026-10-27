@@ -1,0 +1,58 @@
+{
+  "atUtc": "2026-10-27T08:23:57.098279+00:00",
+  "queue": {
+    "name": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/queues/xroga-canonical-production",
+    "state": "RUNNING"
+  },
+  "execution": {
+    "name": "xroga-canonical-production-l7cqt",
+    "conditions": [
+      {
+        "lastTransitionTime": "2026-10-27T08:18:55.582500Z",
+        "message": "Execution completed successfully in 26.47s.",
+        "status": "True",
+        "type": "Completed"
+      },
+      {
+        "lastTransitionTime": "2026-10-27T08:18:26.749303Z",
+        "message": "Provisioned imported containers.",
+        "status": "True",
+        "type": "ResourcesAvailable"
+      },
+      {
+        "lastTransitionTime": "2026-10-27T08:18:42.794327Z",
+        "message": "Started deployed execution in 16.04s.",
+        "status": "True",
+        "type": "Started"
+      },
+      {
+        "lastTransitionTime": "2026-10-27T08:18:26.451091Z",
+        "message": "Imported container image.",
+        "status": "True",
+        "type": "ContainerReady"
+      }
+    ],
+    "succeededCount": 1,
+    "completionTime": "2026-10-27T08:18:55.582500Z",
+    "meaning": "Real production native startup and absent-claim denial, no model request and no fabricated actor"
+  },
+  "scheduler": {
+    "name": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/jobs/xroga-business-automation-tick",
+    "lastAttemptTime": "2026-10-27T08:20:04.826249Z",
+    "status": {}
+  },
+  "requests": [
+    {
+      "atUtc": "2026-10-27T08:20:04.843050Z",
+      "status": 204,
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/business-automations/tick",
+      "revision": "xroga-api-google-faf56ff8-r2"
+    },
+    {
+      "atUtc": "2026-10-27T08:19:59.098035Z",
+      "status": 204,
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/canonical-dispatch",
+      "revision": "xroga-api-google-faf56ff8-r2"
+    }
+  ]
+}

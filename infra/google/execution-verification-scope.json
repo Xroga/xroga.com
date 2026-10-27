@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "purpose": "One synthetic native Google identity to private GCE execution verification",
+  "project": "project-c40d4821-e647-4fa2-92d",
+  "projectNumber": "574998934848",
+  "principal": "serviceAccount:xroga-api-runtime@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+  "bindingDurationSeconds": 7200,
+  "provisionerRole": {
+    "id": "xrogaExecutionProvisioner",
+    "permissions": ["compute.instances.create", "compute.disks.create", "compute.instances.list", "compute.zoneOperations.get"]
+  },
+  "operatorRole": {
+    "id": "xrogaExecutionOperator",
+    "permissions": ["compute.instances.get", "compute.instances.delete", "compute.instances.getGuestAttributes", "compute.instances.setMetadata", "compute.instances.setTags", "compute.instances.setLabels", "compute.instances.setScheduling", "compute.instances.setServiceAccount", "compute.instances.osLogin", "compute.instances.osAdminLogin", "compute.disks.get", "compute.disks.delete"],
+    "resourcePrefixes": [
+      "projects/project-c40d4821-e647-4fa2-92d/zones/us-central1-a/instances/xroga-exec-",
+      "projects/574998934848/zones/us-central1-a/instances/xroga-exec-",
+      "projects/project-c40d4821-e647-4fa2-92d/zones/us-central1-a/disks/xroga-exec-",
+      "projects/574998934848/zones/us-central1-a/disks/xroga-exec-"
+    ]
+  },
+  "resourceBindings": [
+    {"resource": "projects/project-c40d4821-e647-4fa2-92d/global/images/xroga-exec-base-20261025", "role": "roles/compute.imageUser", "requiredImageId": "8312988193178802095"},
+    {"resource": "projects/project-c40d4821-e647-4fa2-92d/regions/us-central1/subnetworks/xroga-verify-subnet", "role": "roles/compute.networkUser"}
+  ],
+  "network": {
+    "existingVpc": "xroga-verify-net",
+    "existingExecutionSubnet": "xroga-verify-subnet",
+    "newControlSubnet": "xroga-api-private",
+    "region": "us-central1",
+    "cidr": "10.91.0.0/26",
+    "privateGoogleAccess": true,
+    "firewall": {"name": "xroga-exec-from-api-ssh", "direction": "INGRESS", "sourceRanges": ["10.91.0.0/26"], "targetTags": ["xroga-exec"], "allowed": ["tcp:22"]}
+  },
+  "verification": {
+    "job": "xroga-gce-transport-verify-20261025",
+    "region": "us-central1",
+    "entrypoint": ["node", "dist/scripts/verifyGceExecution.js"],
+    "cpu": 1,
+    "memoryMiB": 512,
+    "tasks": 1,
+    "maxRetries": 0,
+    "timeoutSeconds": 600,
+    "maxConcurrentInstances": 1,
+    "instancePrefix": "xroga-exec-",
+    "zone": "us-central1-a",
+    "machineType": "e2-medium",
+    "diskGiB": 20,
+    "workspaceMiB": 128,
+    "instanceHardLifetimeSeconds": 600,
+    "instanceTerminationAction": "DELETE",
+    "instanceServiceAccounts": [],
+    "secretBindings": [],
+    "publicInvoker": false,
+    "expectedCreditCostUsdUpperEstimate": 0.25,
+    "newResourceBillingCommitment": false
+  },
+  "excluded": ["iam.serviceAccounts.actAs", "iam.serviceAccountKeys.create", "roles/editor", "roles/owner", "roles/iam.serviceAccountTokenCreator", "production database access", "new KMS access", "secret payload transfer", "public ingress", "production traffic changes", "Fly resource deletion"]
+}

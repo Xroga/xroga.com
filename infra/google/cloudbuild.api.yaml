@@ -1,0 +1,19 @@
+# Manual, build-only pipeline. No service mutation, traffic change, SQL or IAM.
+# Submit a git archive of the exact reviewed _SOURCE_SHA. Retain the archive hash
+# and Cloud Build provenance. A label alone never proves source equivalence.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --file=Dockerfile.api
+      - --build-arg=XROGA_RELEASE_SHA=${_SOURCE_SHA}
+      - --tag=${_IMAGE}:${_SOURCE_SHA}
+      - .
+images:
+  - ${_IMAGE}:${_SOURCE_SHA}
+substitutions:
+  _SOURCE_SHA: ''
+  _IMAGE: us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-migration
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: 1200s

@@ -21,8 +21,8 @@ const connectSources = (authBuildConfiguration.projectRef==='self-hosted-staging
   authBuildConfiguration.url.replace(/^https:/,'wss:'),
 ] : [
   "'self'",
-  'https://xroga-api.fly.dev',
-  'wss://xroga-api.fly.dev',
+  'https://api.xroga.com',
+  'wss://api.xroga.com',
   'https://*.supabase.co',
   'wss://*.supabase.co',
   'https://api.github.com',

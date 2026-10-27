@@ -1,0 +1,31 @@
+{
+  "scope": "ISOLATED_POSTGRES_TRANSPORT_SCHEMA_NOT_FULL_SUPABASE_UPGRADE_OR_LIVE_CALLER",
+  "task": "16126971-acb8-4529-b28c-f65811e6b2d0",
+  "productionChanged": false,
+  "cloudResourcesCreated": false,
+  "checks": [
+    "explicit resume supersedes the old queued delivery without replaying its input",
+    "fresh start is permitted only before any worker was admitted, later retries require canonical recovery",
+    "anon/authenticated table and claim execution denied",
+    "migration reapplication preserves queued input, owner, generation and result rows",
+    "owner-bound enqueue, idempotency and foreign owner denial",
+    "two real psql processes yield exactly one canonical worker claim",
+    "original terminal writer clears worker, preserves generation, and fences result false/contradiction/stale writes",
+    "original cancellation RPC denies queued dispatch and worker claim",
+    "three real dispatcher processes reserve only two launch slots",
+    "expired or unreserved launch cannot issue a worker"
+  ],
+  "freeBeforeBytes": 4243034112,
+  "imageDigests": [
+    "postgres@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3"
+  ],
+  "sourceLfSha256": {
+    "delivery.sql": "8038463a25c4f3bde741fc768ddd781595685267e582af915a5edef4b1070d9b",
+    "attempt.sql": "1dc3e170a9f437fd8066ebf08c4f7a055fa0555d258c0f346bba461f9167e98d",
+    "cancel.sql": "46bcdee21a1fc1a4fe2052779dcf19ae691a8da95caf3181dd092cb19433169f"
+  },
+  "status": "PASS_SYNTHETIC_TRANSPORT_SQL",
+  "containerRemoved": true,
+  "newTaskImageRemoved": true,
+  "freeAfterBytes": 4243034112
+}

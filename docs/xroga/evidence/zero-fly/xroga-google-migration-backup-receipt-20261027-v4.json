@@ -1,0 +1,98 @@
+{
+  "startedAt": "2026-10-27T07:31:06.992006+00:00",
+  "project": "nzenxdfumxrnsmybazmo",
+  "prefix": "gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/",
+  "workDir": "/home/mabdullah_built/xroga-google-migration-recovery/backup/20261027T073106Z",
+  "stages": [
+    "ACTUAL_BACKUP_KEY_WRAP_UNWRAP_PRIVATE_UPLOAD_RETRIEVAL_HASH_DECRYPT_PASS",
+    "PRIVATE_CREDENTIAL_OBJECTS_ENCRYPTED_STABLE_METADATA",
+    "ENCRYPTED_PRODUCTION_DATABASE_AUTHENTICATED_AND_PG_RESTORE_LIST_PASS",
+    "DURABLE_ENCRYPTED_SET_AND_INDEPENDENT_RETRIEVED_DATABASE_VERIFIED"
+  ],
+  "productionSqlApplied": false,
+  "customerProviderDispatch": false,
+  "dumpDataFormat": "INSERT",
+  "metadata": {
+    "version_num": "170006",
+    "transaction_read_only": "on",
+    "database_bytes": 90737811,
+    "vault_rows": 0,
+    "extensions": [
+      {
+        "name": "plpgsql",
+        "version": "1.0"
+      },
+      {
+        "name": "pg_stat_statements",
+        "version": "1.11"
+      },
+      {
+        "name": "uuid-ossp",
+        "version": "1.1"
+      },
+      {
+        "name": "pgcrypto",
+        "version": "1.3"
+      },
+      {
+        "name": "supabase_vault",
+        "version": "0.3.1"
+      }
+    ]
+  },
+  "dumpVerification": {
+    "customDumpBytes": 12575408,
+    "tocSha256": "97deef7c173b0fd71dee5bc3506257486b8968c806863b6885424ce5fa427864",
+    "tocEntries": 2003
+  },
+  "privateObjectCount": 40,
+  "encryptedFiles": [
+    {
+      "name": "credential-objects.tar.gpg",
+      "bytes": 112755,
+      "sha256": "e46c3a1322b588f3c9bcddca847c4e54419ae41bb24a31404b5a9732b768de04"
+    },
+    {
+      "name": "database.dump.gpg",
+      "bytes": 12581025,
+      "sha256": "2858d4a552410a93993660e5444ee25d2c3cf97ce2a6c0214d4170eb730250ac"
+    },
+    {
+      "name": "legacy-key-escrow.gpg",
+      "bytes": 294,
+      "sha256": "4ff7b39ec2be32355bc7495b5460556d75ef5961ba39e0f61e2c592b1cbcb16f"
+    },
+    {
+      "name": "private-object-manifest.json.gpg",
+      "bytes": 24091,
+      "sha256": "67e4a146447ce9a4442eade8103ef06afe6280e9a1564a841f612fdfd158b88c"
+    },
+    {
+      "name": "roles.sql.gpg",
+      "bytes": 5500,
+      "sha256": "2aa4c55b789400b9d9fc7625521011b645c84b42f7ce5e0dc1f45f11f0988ffc"
+    },
+    {
+      "name": "synthetic-retrieved.gpg",
+      "bytes": 113,
+      "sha256": "34c7f2ba54e109cf4f3e2fa3470e7f790b005be5f217722ec36eb1c89260a8ee"
+    },
+    {
+      "name": "synthetic-transport.gpg",
+      "bytes": 113,
+      "sha256": "34c7f2ba54e109cf4f3e2fa3470e7f790b005be5f217722ec36eb1c89260a8ee"
+    },
+    {
+      "name": "backup-secret.kms",
+      "bytes": 145,
+      "sha256": "41e105347a6080d6b8d930718a0ae2d92a9adf898005b7e85c20341d0692d612"
+    }
+  ],
+  "retrievedDumpVerification": {
+    "customDumpBytes": 12575408,
+    "tocSha256": "97deef7c173b0fd71dee5bc3506257486b8968c806863b6885424ce5fa427864",
+    "tocEntries": 2003
+  },
+  "status": "PASS_ENCRYPTED_PRODUCTION_BACKUP_NOT_YET_RESTORED",
+  "completedAt": "2026-10-27T07:39:56.675441+00:00"
+}

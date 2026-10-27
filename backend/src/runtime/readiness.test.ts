@@ -75,6 +75,25 @@ describe('API readiness', () => {
       assert.equal(reasonOf(r, 'storage'), 'storage_config_invalid');
     });
 
+    it('quota and housekeeping are reported, never blocking: unset quota and an unscheduled reconcile are visible, configured ones are clean', async () => {
+      const bare = await verdict(drive, { ...okDb, databaseUrls: dbUrls, databaseTls: async () => ({ ok: true, stage: 'tls' }) });
+      assert.equal(bare.ready, true, 'unlimited storage is a decision, not an outage');
+      assert.equal(reasonOf(bare, 'storage_quota'), 'storage_quota_not_enforced');
+      assert.equal(reasonOf(bare, 'storage_housekeeping'), 'storage_reconcile_not_scheduled');
+      const set = await verdict({ ...drive, STORAGE_QUOTA_BYTES: '5368709120', XROGA_STORAGE_RECONCILE_MODE: 'cloud' }, { ...okDb, databaseUrls: dbUrls, databaseTls: async () => ({ ok: true, stage: 'tls' }) });
+      assert.equal(reasonOf(set, 'storage_quota'), undefined);
+      assert.equal(reasonOf(set, 'storage_housekeeping'), undefined);
+      assert.equal((await verdict(prod)).checks.find((c) => c.name === 'storage_quota')?.status, 'ok', 'nothing to report while Drive is off');
+    });
+
+    it('a quota that is set but not a whole number of bytes is not ready: it must never read as "no limit"', async () => {
+      for (const bad of ['10GB', '-1', '1e9', '5.5', 'unlimited']) {
+        const r = await verdict({ ...drive, STORAGE_QUOTA_BYTES: bad }, { ...okDb, databaseUrls: dbUrls, databaseTls: async () => ({ ok: true, stage: 'tls' }) });
+        assert.equal(r.ready, false, bad);
+        assert.equal(reasonOf(r, 'storage'), 'storage_config_invalid', bad);
+      }
+    });
+
     it('a database URL that asks to skip verification is refused by the same planner the pool uses', async () => {
       const r = await verdict(drive, { ...okDb, databaseUrls: () => [`${drive.DATABASE_URL}?sslmode=no-verify`] });
       assert.equal(r.ready, false);

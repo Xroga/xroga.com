@@ -1,0 +1,59 @@
+diff --git a/backend/src/index.ts b/backend/src/index.ts
+index 9b34f55d..8cf8f61a 100644
+--- a/backend/src/index.ts
++++ b/backend/src/index.ts
+@@ -61,6 +61,9 @@ import { publicHealthPayload } from './lib/safeHealth.js';
+ import operationsRouter from './routes/operations.js';
+ import growthRouter from './routes/growth.js';
+ import { probeDatabaseReadiness } from './security/serviceRoleGuard.js';
++import { probeDatabaseTls } from './storage/databaseTls.js';
++import { decideStartup } from './runtime/startupPolicy.js';
++import { apiProbes, runReadiness } from './runtime/readiness.js';
+ import {
+   configureRemoteSandboxProvider,
+   configureFlyMachineSandboxProvider,
+@@ -177,17 +180,16 @@ app.get('/health', (_req, res) => {
+ });
+ 
+ app.get('/ready', credentialVaultReadinessMiddleware(credentialVaultReadiness), async (_req, res) => {
+-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+-    res.status(503).json({ status: 'not_ready', reason: 'database_not_configured' });
+-    return;
+-  }
+-  try {
+-    await probeDatabaseReadiness();
++  // Fixed reason codes only (runtime/readiness.ts): this endpoint is reachable without authentication. Beyond the database it now
++  // also requires a recognised deployment environment and, when Drive is enabled, a configured storage database that passes TLS.
++  const result = await runReadiness(apiProbes(process.env, { database: probeDatabaseReadiness, databaseTls: probeDatabaseTls }));
++  if (result.ready) {
+     const health = publicHealthPayload();
+     res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
+-  } catch {
+-    res.status(503).json({ status: 'not_ready', reason: 'database_unavailable' });
++    return;
+   }
++  const failing = result.checks.find((check) => check.status === 'fail');
++  res.status(503).json({ status: 'not_ready', reason: failing?.reason ?? 'not_ready', checks: result.checks });
+ });
+ 
+ app.get('/api/health', (_req, res) => {
+@@ -318,9 +320,16 @@ server.listen(port, '0.0.0.0', () => {
+     });
+   // Reconcile only stale durable worker leases. During a rolling deploy the outgoing
+   // API may still own a long build, so a row being old and `running` is not enough.
+-  void reconcileOrphanedRuns().catch((err) => {
+-    console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
+-  });
++  // And only in a process positively identified as production (or local development): a staging, preview or unclassified service
++  // that holds a live service-role key must not rewrite production run state just by starting (runtime/startupPolicy.ts).
++  const startup = decideStartup();
++  for (const note of startup.notes) console.warn(`[startup] ${note}`);
++  console.log(`[startup] environment=${startup.environment} (${startup.source}) orphanReconcile=${startup.duties.reconcileOrphanedRuns}`);
++  if (startup.duties.reconcileOrphanedRuns) {
++    void reconcileOrphanedRuns().catch((err) => {
++      console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
++    });
++  }
+   // Registers a hosted isolation worker only if an operator configured one. With no
+   // XROGA_SANDBOX_WORKER_URL this does nothing and costs nothing: the container
+   // providers are tried and, failing those, executable validation refuses rather than

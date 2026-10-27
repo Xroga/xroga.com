@@ -1,4 +1,4 @@
-import { GoogleAuth } from 'google-auth-library';
+import { Compute, GoogleAuth } from 'google-auth-library';
 import {createFlyGoogleAuth, flyGoogleWorkloadConfiguration, type FlyGoogleWorkloadConfiguration} from './flyGoogleWorkloadIdentity.js';
 import type { CryptoProvider, WrappedDataKey } from './cryptoProvider.js';
 
@@ -19,8 +19,26 @@ export interface GoogleCloudKmsTransport {
 
 export class ApplicationDefaultGoogleKmsTransport implements GoogleCloudKmsTransport {
   readonly #auth;
-  constructor(configuration?: FlyGoogleWorkloadConfiguration) {
-    this.#auth = configuration ? createFlyGoogleAuth(configuration) : new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform'] });
+  constructor(configuration?: FlyGoogleWorkloadConfiguration, env: Readonly<NodeJS.ProcessEnv> = process.env) {
+    const native = Boolean(env.K_SERVICE || env.K_REVISION || env.XROGA_GOOGLE_CLOUD_AUTH_MODE === 'metadata_adc'
+      || (env.NODE_ENV === 'production' && !env.FLY_APP_NAME));
+    if (native) {
+      // A production Google runtime uses its attached identity only. GoogleAuth's
+      // default discovery can prefer a mounted key or an operator's local ADC file.
+      // Compute goes directly to the metadata credential provider instead.
+      const forbidden = ['GOOGLE_APPLICATION_CREDENTIALS', 'GOOGLE_CREDENTIALS',
+        'CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE', 'GCE_METADATA_HOST', 'GCE_METADATA_IP',
+        'FLY_APP_NAME', 'FLY_MACHINE_ID', 'XROGA_GOOGLE_WIF_AUDIENCE',
+        'XROGA_GOOGLE_WIF_SERVICE_ACCOUNT', 'XROGA_FLY_OIDC_ISSUER',
+        'XROGA_FLY_OIDC_ORGANIZATION_ID', 'XROGA_FLY_OIDC_IMAGE_DIGESTS'];
+      if (configuration || forbidden.some(name => Boolean(env[name]))
+        || (env.XROGA_GOOGLE_CLOUD_AUTH_MODE && env.XROGA_GOOGLE_CLOUD_AUTH_MODE !== 'metadata_adc')) {
+        throw new Error('Invalid native Google credential identity configuration.');
+      }
+    }
+    this.#auth = configuration ? createFlyGoogleAuth(configuration)
+      : native ? new Compute({ scopes: ['https://www.googleapis.com/auth/cloud-platform'] })
+      : new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform'] });
   }
   async client() {return this.#auth instanceof GoogleAuth ? this.#auth.getClient() : this.#auth;}
   async encrypt(keyName: string, plaintext: string, additionalAuthenticatedData: string): Promise<{ ciphertext?: unknown }> {
