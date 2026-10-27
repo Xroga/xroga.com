@@ -1577,6 +1577,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-f519b543a5fcfaf9",
+      "filename": "CODEX-HANDOFF-2026-10-27.md",
+      "path_or_url": "docs/infra/CODEX-HANDOFF-2026-10-27.md",
+      "sha256": "0e1d39d8626dc2cfe2dd0c0b3939f6901a528df147e0804b097d7ff6807705e3",
+      "byte_size": 13670,
+      "modified_timestamp": "2026-10-27T12:14:22.149Z",
+      "parse_status": "TEXT_READ",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-43b2a84b82f708dd",
       "filename": "COMBINED-ACTIVATION-RUNBOOK.md",
       "path_or_url": "docs/infra/COMBINED-ACTIVATION-RUNBOOK.md",
