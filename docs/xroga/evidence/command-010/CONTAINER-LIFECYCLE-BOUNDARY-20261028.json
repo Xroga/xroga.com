@@ -156,7 +156,7 @@
     },
     {
       "path": "backend/src/sandbox/containerLifecycle.security.test.ts",
-      "sha256": "f4ee49a87259cfae4497f848436a9702140214b0ae879c826d429400f9cd4d08"
+      "sha256": "8aa93e70a9763c361bc38c857da92bcca7c5435c2ae63cc4206e568d7aa8ebb9"
     },
     {
       "path": "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -306,5 +306,22 @@
     ],
     "finalResources": "Both synthetic runs verify exact own container removal. Cached protected image retained. No task image, network or volume created or deleted.",
     "fixedEnvironmentContinuation": "The same two host-only Windows context fields are now read literally instead of a two-name loop. No key set, child-container environment, command, credential or production behavior changed. Runtime dynamic-key auditor remains unchanged."
+  },
+  "ciPortabilityContinuation": {
+    "scope": "TEST_PORTABILITY_AND_EXISTING_LINT_ONLY",
+    "verification": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/verification.json",
+    "job": "61de11b2-18f8-405c-8008-01056ee7dea6",
+    "status": "passed",
+    "exitCode": 0,
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "log": "docs/xroga/evidence/command-010/ci-portability-focused-20261028.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 582216
+    },
+    "productionChanged": false,
+    "strictCountsChanged": false
   }
 }

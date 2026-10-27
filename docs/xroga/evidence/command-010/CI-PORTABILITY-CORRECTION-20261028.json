@@ -1,0 +1,54 @@
+{
+  "scope": "TEST_ONLY_CI_CORRECTIONS",
+  "sourceParent": "9db3921f93c1c384f853847148f6ec65ccca19bc",
+  "checks": [
+    {
+      "name": "focusedTests",
+      "job": "61de11b2-18f8-405c-8008-01056ee7dea6",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 582216
+      }
+    },
+    {
+      "name": "frontendLint",
+      "job": "872f0858-fdfb-4105-9855-80fabc2a30db",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "frontendTypes",
+      "job": "d316c824-36de-461f-8163-4af14944937f",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322108
+      }
+    },
+    {
+      "name": "stableLocalGates",
+      "job": "e7e4be62-4e09-44d5-8010-2e86e86a1902",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "failedFirstFrontendTypes": {
+    "job": "280e6bad-62eb-4073-ae82-1942cd26c784",
+    "cause": "90 second time limit, no compiler diagnostics",
+    "resolution": "One bounded240second recheck passed in119seconds"
+  },
+  "ci": "NEW_SOURCE_CI_REQUIRED",
+  "strictAudit": "UNCHANGED_15_PENDING_8_HIGH_RISK",
+  "productionChanged": false
+}

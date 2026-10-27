@@ -84,10 +84,27 @@
     },
     {
       "path": "frontend/src/lib/auraFirstParty.security.test.ts",
-      "sha256": "7dcd81bd3e2e57eaadcb59f7163dd9b9e0545a3df8a10a7960fa6aaa1ef16d95"
+      "sha256": "2bd3f103c7c5f6e3ebcf2651ce2870dfcabecbc955ac08c0e40f10d25a87136a"
     }
   ],
   "productionChanged": false,
   "modelRequests": 0,
-  "spending": 0
+  "spending": 0,
+  "ciPortabilityContinuation": {
+    "scope": "TEST_PORTABILITY_AND_EXISTING_LINT_ONLY",
+    "verification": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/verification.json",
+    "job": "61de11b2-18f8-405c-8008-01056ee7dea6",
+    "status": "passed",
+    "exitCode": 0,
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "log": "docs/xroga/evidence/command-010/ci-portability-focused-20261028.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 582216
+    },
+    "productionChanged": false,
+    "strictCountsChanged": false
+  }
 }

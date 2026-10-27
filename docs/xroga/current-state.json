@@ -120954,9 +120954,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:927b059bf4591a4de935",
+      "id": "frontend-call:37f077f2123a5aa9f692",
       "sourcePath": "frontend/src/lib/auraFirstParty.security.test.ts",
-      "line": 17,
+      "line": 19,
       "callee": "fetch",
       "reachable": false
     },

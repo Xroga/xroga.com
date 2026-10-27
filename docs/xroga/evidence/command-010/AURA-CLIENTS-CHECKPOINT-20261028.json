@@ -135,10 +135,54 @@
     "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json"
   ],
   "lastExactSourceCI": {
-    "source": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
-    "workflows": 7,
-    "conclusion": "PASS",
-    "laterSourceNotCovered": true
+    "source": "9db3921f93c1c384f853847148f6ec65ccca19bc",
+    "testedMerge": "69547cddb78a38f804a73595bac25f883a075336",
+    "sameTree": "dbc16f81e14fe843ba47e35700b4916306db3f29",
+    "conclusion": "FAIL",
+    "workflows": {
+      "pass": [
+        40596467535,
+        40596467590,
+        40596467385,
+        40596467142
+      ],
+      "fail": [
+        40596467420,
+        40596467351,
+        40596467449
+      ]
+    },
+    "causes": [
+      "One cleanup-label unit assertion assumed the managed Windows job variable exists on Linux. Runtime correctly uses its own nonce when absent.",
+      "Nine explicit-any annotations in the new Aura test violated existing frontend lint. No lint rule changed."
+    ],
+    "correction": "Test-only changes. Explicitly exercise valid, absent and invalid managed owner IDs. Replace any with narrow view interfaces and unknown at VM boundaries. Production implementations unchanged.",
+    "logs": [
+      {
+        "id": "122513526802",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513526802.log.original.gz",
+        "originalBytes": 128470,
+        "originalSha256": "cb877d231f215e9f1aa9148a6279bdf6aebcde774ba3c4ef15633f611965cf7a"
+      },
+      {
+        "id": "122513527225",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513527225.log.original.gz",
+        "originalBytes": 125526,
+        "originalSha256": "2c9d5009706d521fe2164ec8c8a22ef23715eadb0f56d06ce513cab20bb73a68"
+      },
+      {
+        "id": "122513526779",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513526779.log.original.gz",
+        "originalBytes": 58111,
+        "originalSha256": "86a6b654d226f13099b1fffae8419e4081f6411141dfad19b0e7352833e5d3f2"
+      },
+      {
+        "id": "122513527292",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513527292.log.original.gz",
+        "originalBytes": 453281,
+        "originalSha256": "086f940106f1844fbe0146681dca7603f295d625bdeb9f71eb17430e7ef7cdc5"
+      }
+    ]
   },
   "productionChanged": false,
   "spending": 0,
@@ -220,5 +264,22 @@
     "job": "5054c030-0621-4353-89c5-0548fca6cebf",
     "status": "passed",
     "scope": "Runtime config, source inventories, original73packet/371record continuity, mission policy and10focused register checks. Not phase acceptance."
+  },
+  "ciPortabilityContinuation": {
+    "scope": "TEST_PORTABILITY_AND_EXISTING_LINT_ONLY",
+    "verification": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/verification.json",
+    "job": "61de11b2-18f8-405c-8008-01056ee7dea6",
+    "status": "passed",
+    "exitCode": 0,
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "log": "docs/xroga/evidence/command-010/ci-portability-focused-20261028.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 582216
+    },
+    "productionChanged": false,
+    "strictCountsChanged": false
   }
 }

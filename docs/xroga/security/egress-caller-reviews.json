@@ -53,7 +53,7 @@
         {
           "path": "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
           "marker": "f0eab43244d6d3c88de8",
-          "sha256": "cc29a5b81c4e6107a808d99773fd61a51cfcb64c86a7f2db3cd5e07744fd86ed"
+          "sha256": "d666ab2de12f4691587238e6eaf6e8dbf00b3bd0f461ce06184a21d583115be7"
         },
         {
           "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
@@ -3297,7 +3297,7 @@
         {
           "path": "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
           "marker": "5e931ac391ece81659aa",
-          "sha256": "cc29a5b81c4e6107a808d99773fd61a51cfcb64c86a7f2db3cd5e07744fd86ed"
+          "sha256": "d666ab2de12f4691587238e6eaf6e8dbf00b3bd0f461ce06184a21d583115be7"
         },
         {
           "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
@@ -3337,7 +3337,7 @@
         {
           "path": "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
           "marker": "151aa103d929fb10c020",
-          "sha256": "cc29a5b81c4e6107a808d99773fd61a51cfcb64c86a7f2db3cd5e07744fd86ed"
+          "sha256": "d666ab2de12f4691587238e6eaf6e8dbf00b3bd0f461ce06184a21d583115be7"
         },
         {
           "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
@@ -3417,12 +3417,12 @@
         {
           "path": "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json",
           "marker": "fe9ce5d32d8c52cdd3c3",
-          "sha256": "d94131ee907cc7b01b944337f1e2b18e4d36fe11f34fd52bc021f67d634d1060"
+          "sha256": "ffaa944545e5e72ba45d9e4bd7ea629a15c96bc2a1113786e8e5e578a4a3d3a7"
         },
         {
           "path": "frontend/src/lib/auraFirstParty.security.test.ts",
           "marker": "chat redirect never forwards the private manual conversation",
-          "sha256": "7dcd81bd3e2e57eaadcb59f7163dd9b9e0545a3df8a10a7960fa6aaa1ef16d95"
+          "sha256": "2bd3f103c7c5f6e3ebcf2651ce2870dfcabecbc955ac08c0e40f10d25a87136a"
         }
       ]
     },
@@ -3437,12 +3437,12 @@
         {
           "path": "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json",
           "marker": "52851686fc818e0e4c5f",
-          "sha256": "d94131ee907cc7b01b944337f1e2b18e4d36fe11f34fd52bc021f67d634d1060"
+          "sha256": "ffaa944545e5e72ba45d9e4bd7ea629a15c96bc2a1113786e8e5e578a4a3d3a7"
         },
         {
           "path": "frontend/src/lib/auraFirstParty.security.test.ts",
           "marker": "chat redirect never forwards the private manual conversation",
-          "sha256": "7dcd81bd3e2e57eaadcb59f7163dd9b9e0545a3df8a10a7960fa6aaa1ef16d95"
+          "sha256": "2bd3f103c7c5f6e3ebcf2651ce2870dfcabecbc955ac08c0e40f10d25a87136a"
         }
       ]
     }

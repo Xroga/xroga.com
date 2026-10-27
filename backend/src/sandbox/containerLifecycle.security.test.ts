@@ -32,9 +32,15 @@ test('authorized ordinary program failure preserves its exit status and exact cl
 });
 
 test('managed task containers carry the exact local cleanup ownership labels',async t=>{
- const f=fixture(t,'success');await f.runtime.execute(request());const create=f.commands.find(args=>args[0]==='create')!;
- const labels=create.flatMap((value,index)=>value==='--label'?[create[index+1]]:[]);
- assert.ok(labels.includes('io.xroga.cleanup.owner=XROGA_LOCAL_DISPOSABLE_JOB_V1'));
- assert.ok(labels.includes('io.xroga.cleanup.disposable=true'));
- assert.ok(labels.includes('io.xroga.cleanup.job='+process.env.XROGA_CLEANUP_JOB_ID));
+ const previous=process.env.XROGA_CLEANUP_JOB_ID,f=fixture(t,'success');
+ t.after(()=>{if(previous===undefined)delete process.env.XROGA_CLEANUP_JOB_ID;else process.env.XROGA_CLEANUP_JOB_ID=previous;});
+ for(const managedJob of ['11111111-1111-4111-8111-111111111111',undefined,'../invalid-owner']){
+  if(managedJob===undefined)delete process.env.XROGA_CLEANUP_JOB_ID;else process.env.XROGA_CLEANUP_JOB_ID=managedJob;
+  await f.runtime.execute(request());const create=f.commands.filter(args=>args[0]==='create').at(-1)!;
+  const labels=create.flatMap((value,index)=>value==='--label'?[create[index+1]]:[]);
+  assert.ok(labels.includes('io.xroga.cleanup.owner=XROGA_LOCAL_DISPOSABLE_JOB_V1'));
+  assert.ok(labels.includes('io.xroga.cleanup.disposable=true'));
+  const taskNonce=labels.find(value=>value.startsWith('xroga.sandbox-task='))!.split('=')[1];
+  assert.ok(labels.includes('io.xroga.cleanup.job='+(managedJob?.startsWith('11111111-')?managedJob:taskNonce)));
+ }
 });
