@@ -140,6 +140,7 @@ describe('Golden H: the customer owns the hosting', () => {
   it('keeps production blocked while Vercel protection answers instead of the app, and publishes only on a typed confirmation', async () => {
     const f = world();
     const p = await project(f, SAAS, 'golden-h-0002');
+    await bindAndMigrate(f, p.id); // production needs the app's database schema applied first (see the audit test for the refusal)
     f.remote.result = { status: 'blocked_by_protection', executedChecks: 0, failedChecks: 0, reason: 'Vercel Authentication answered instead of the app.' };
     const blocked = await preview(f, p.id, 'golden-prev-0002', 'golden-h2');
     await assert.rejects(f.services.hosting.preparePromotion(ALICE, p.id, { operationKey: 'golden-prod-0001', previewOperationId: blocked.prepared.operation.id }), /Production is blocked/);

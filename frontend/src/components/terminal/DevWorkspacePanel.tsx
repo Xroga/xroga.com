@@ -40,7 +40,7 @@ import {
   ProjectDeliveryPanel,
 } from './ProjectDeliveryPanel';
 import { BuilderProjectPanel } from './BuilderProjectPanel';
-import { BUILDER_ENABLED } from '@/lib/builderApi';
+import { BUILDER_ENABLED, builderApi } from '@/lib/builderApi';
 import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
@@ -262,6 +262,16 @@ export function DevWorkspacePanel({
   const activeTab = useProjectWorkspaceStore((s) => s.activeTab);
   const setActiveTab = useProjectWorkspaceStore((s) => s.setActiveTab);
   const builderProjectId = useBuilderProjectStore((s) => s.projectId);
+  const setBuilderProjectId = useBuilderProjectStore((s) => s.setProjectId);
+  const boundConversation = useBuilderProjectStore((s) => s.conversationId);
+  // With no chat bound yet (another device, cleared storage, another tab) the most recent project is restored from the server.
+  // Once a chat is bound, its project is the one the chat is building: a new chat has none, and must not inherit another chat's.
+  useEffect(() => {
+    if (!BUILDER_ENABLED || builderProjectId || boundConversation) return;
+    let live = true;
+    builderApi.list().then(({ projects }) => { if (live && projects.length > 0) setBuilderProjectId(projects[0].id); }).catch(() => undefined);
+    return () => { live = false; };
+  }, [builderProjectId, boundConversation, setBuilderProjectId]);
   const tabs = BUILDER_ENABLED && builderProjectId ? [PROJECT_TAB, ...TABS] : TABS;
   const projectFiles = useProjectWorkspaceStore((s) => s.projectFiles);
   const openFilePath = useProjectWorkspaceStore((s) => s.openFilePath);

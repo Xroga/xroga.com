@@ -1,6 +1,8 @@
 'use client';
 
-import { BUILDER_ENABLED, builderApi } from '@/lib/builderApi';
+import toast from 'react-hot-toast';
+
+import { BUILDER_ENABLED, BuilderApiError, builderApi } from '@/lib/builderApi';
 import { builderPhase2Api } from '@/lib/builderApiPhase2';
 import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
 
@@ -15,6 +17,21 @@ import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
  * - Any failure (not signed in, unsupported product, builder not enabled) falls back safely;
  *   nothing is claimed that did not happen.
  */
+export async function syncBuilderConversation(conversationId: string): Promise<void> {
+  if (!BUILDER_ENABLED) return;
+  const store = useBuilderProjectStore.getState();
+  if (store.conversationId === conversationId) return;
+  // Unbind first so the previous chat's project is never shown, or built into, while the lookup is in flight.
+  store.bindConversation(conversationId, null);
+  try {
+    const { project } = await builderApi.forConversation(conversationId);
+    // Ignore a late answer for a chat the user has already left.
+    if (useBuilderProjectStore.getState().conversationId === conversationId) useBuilderProjectStore.getState().bindConversation(conversationId, project?.id ?? null);
+  } catch {
+    // Not found or offline: the chat simply has no project yet. Nothing is claimed.
+  }
+}
+
 export async function resolveBuilderProject(input: {
   prompt: string;
   isNewProduct: boolean;
@@ -23,6 +40,8 @@ export async function resolveBuilderProject(input: {
   conversationId?: string | null;
 }): Promise<string | undefined> {
   if (!BUILDER_ENABLED || input.hasRepositoryTarget) return undefined;
+  // The project belongs to the chat it was started in: a different chat starts with no project, and a reopened chat finds its own.
+  if (input.conversationId) await syncBuilderConversation(input.conversationId);
   const store = useBuilderProjectStore.getState();
   let createNew = input.isNewProduct;
   if (store.projectId && !input.isNewProduct) {
@@ -31,9 +50,17 @@ export async function resolveBuilderProject(input: {
       if (decision.intent === 'followup' && decision.projectId) return decision.projectId;
       if (decision.intent === 'other') return undefined;
       createNew = decision.intent === 'new_product';
-    } catch {
-      // If the decision cannot be made, keep working on the same project rather than creating a duplicate.
-      return store.projectId;
+    } catch (error) {
+      // The stored project is not this user's, or no longer exists (a shared browser, a deleted project): forget it rather than
+      // sending an id the server will refuse for the whole message.
+      if (error instanceof BuilderApiError && error.status === 404) {
+        store.setProjectId(null);
+        createNew = input.isNewProduct;
+        if (!createNew) return undefined;
+      } else {
+        // If the decision cannot be made, keep working on the same project rather than creating a duplicate.
+        return store.projectId ?? undefined;
+      }
     }
   }
   if (!createNew) return store.projectId ?? undefined;
@@ -42,7 +69,11 @@ export async function resolveBuilderProject(input: {
     const { project } = await builderApi.create({ prompt: input.prompt, requestKey: key, conversationId: input.conversationId ?? null });
     store.setProjectId(project.id);
     return project.id;
-  } catch {
+  } catch (error) {
+    // Not silent: the user is told when the project builder refused the request, then the existing path continues.
+    if (error instanceof BuilderApiError && (error.status === 422 || error.status === 400) && error.message) {
+      toast(error.message, { duration: 6000 });
+    }
     return undefined;
   }
 }

@@ -107,11 +107,11 @@ export class SupabaseDataService {
   }
 
   approve(userId: string, projectId: string, operationId: string, digest: string) {
-    return this.ops.approve(userId, projectId, operationId, { digest });
+    return this.ops.approve(userId, projectId, operationId, { digest }, { provider: 'supabase', actions: ['bind_supabase_project', 'apply_migration'] });
   }
 
   cancel(userId: string, projectId: string, operationId: string) {
-    return this.ops.cancel(userId, projectId, operationId);
+    return this.ops.cancel(userId, projectId, operationId, { provider: 'supabase', actions: ['bind_supabase_project', 'apply_migration'] });
   }
 
   operations(userId: string, projectId: string) {
@@ -142,6 +142,15 @@ export class SupabaseDataService {
   }
 
   /** The reviewed schema this project's requirements call for, or null when no database is needed. */
+  /** Whether this app needs a customer database schema, and whether the reviewed schema has been applied and verified. */
+  async databaseStatus(userId: string, projectId: string): Promise<{ required: boolean; applied: boolean }> {
+    const project = await this.deps.builder.requireProject(userId, projectId);
+    const required = schemaFor(project.spec) !== null;
+    if (!required) return { required: false, applied: false };
+    const applied = (await this.ops.succeeded(userId, projectId, 'supabase')).some((operation) => operation.action === 'apply_migration');
+    return { required, applied };
+  }
+
   async schemaFor(userId: string, projectId: string): Promise<GeneratedSchema | null> {
     const project = await this.deps.builder.requireProject(userId, projectId);
     return schemaFor(project.spec);

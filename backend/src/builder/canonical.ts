@@ -43,7 +43,10 @@ function runtimeExec(userId: string, sessionId: string): RuntimeExec {
 }
 
 async function strictReadiness(userId: string, sessionId: string, revision: BuilderRevision): Promise<PreviewLaunchResult> {
-  const report = await verifyAppReadiness({ exec: runtimeExec(userId, sessionId), files: revision.files });
+  // Probe the port the application actually listens on (the runtime records it), not an assumed 3000.
+  const ports = await createProjectRuntimeManager(userId).listPorts(sessionId).catch(() => []);
+  const http = ports.filter((entry) => entry.protocol === 'http' && entry.port > 0);
+  const report = await verifyAppReadiness({ exec: runtimeExec(userId, sessionId), files: revision.files, port: http.length > 0 ? http[http.length - 1].port : undefined });
   return { started: true, strictReady: report.ready, reason: report.reason };
 }
 

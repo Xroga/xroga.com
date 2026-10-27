@@ -4965,11 +4965,14 @@
         "backend/src/ai/patchWorkspace.test.ts",
         "backend/src/ai/patches.test.ts",
         "backend/src/ai/qa.test.ts",
+        "backend/src/builder/audit.preview.test.ts",
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/cancel.test.ts",
         "backend/src/builder/export/archive.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/builder/qa/qa.browser.integration.test.ts",
         "backend/src/builder/qa/qa.test.ts",
         "backend/src/builder/qa/repair.integration.test.ts",
@@ -7310,6 +7313,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts:8",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:5",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.ts:1",
+        "backend/src/builder/swarmBridge.ts:2",
         "backend/src/index.ts:60",
         "backend/src/routes/dashboard.ts:6",
         "backend/src/routes/swarm.notificationAuthority.test.ts:6",
@@ -10952,16 +10956,18 @@
       "id": "surface:76fa33edd61545407353",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/canonical.ts",
-      "sha256": "6173a5dec6f80b526ed0a0c1809a85f5e02d0a96c095fc38e37301793ae67e7c",
+      "sha256": "a147ca7a33679ae61f94727663fe2ea60ad86614ebd56f0d3e9eff26da9095d5",
       "symbols": [
         "binding",
         "canonicalBuildRunner",
         "canonicalPreviewPort",
         "grant",
+        "http",
         "latest",
         "none",
         "parent",
         "plan",
+        "ports",
         "probe",
         "process",
         "processRunning",
@@ -11007,8 +11013,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/builder/phase2Bridge.ts:25",
-        "backend/src/builder/swarmBridge.ts:2"
+        "backend/src/builder/phase2Bridge.ts:26",
+        "backend/src/builder/swarmBridge.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11306,7 +11312,7 @@
       "id": "surface:eb962119ea48d1a54962",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/data/schema.ts",
-      "sha256": "9ce979d825c9ad47d2360e5e7b69b65ba3e8ceb2e1dcb96a3a6e61c6de9ab807",
+      "sha256": "e421a6e5af2cef64e70c5ffd9bf734a53e5e865fb745023cb8bdbd1588041b50",
       "symbols": [
         "BOOKING",
         "BOOKING_RE",
@@ -11319,9 +11325,14 @@
         "TASKS_RE",
         "chooseSchemaArchetype",
         "common",
+        "databaseArtifacts",
         "generateSchema",
+        "have",
         "id",
         "markTables",
+        "migration",
+        "out",
+        "schema",
         "schemaFor",
         "schemaMarker",
         "text",
@@ -11339,6 +11350,8 @@
         "backend/src/builder/data/schema.integration.test.ts:11",
         "backend/src/builder/data/schema.test.ts:5",
         "backend/src/builder/data/service.ts:7",
+        "backend/src/builder/export/service.ts:4",
+        "backend/src/builder/github/service.ts:5",
         "backend/src/builder/golden.test.ts:6"
       ],
       "reachable": true,
@@ -11366,7 +11379,7 @@
       "id": "surface:ac42fb9f6ebb84a1c9e4",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/data/service.ts",
-      "sha256": "9196412d20c5ac26e88e4afba8ea71e391f21a6a38927a6687ae444a346a0b21",
+      "sha256": "eb4766bdf70ad1654b8c7984c472e832e6babc18c58d62279fdd3873883d230e",
       "symbols": [
         "BindPlan",
         "MigrationPlan",
@@ -11391,6 +11404,7 @@
         "plan",
         "problems",
         "project",
+        "required",
         "review",
         "schema",
         "table",
@@ -11578,7 +11592,7 @@
       "id": "surface:636f83ffe0ca065ab742",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/export/archive.ts",
-      "sha256": "401ca64dd6589e950fee084cf53e690ccacc0f0dde6d4266397548da22d89115",
+      "sha256": "918438de91ae99feafdb798d8f85843b32796637b83c28aa9908782b33d416b5",
       "symbols": [
         "ArchiveVerdict",
         "BuiltArchive",
@@ -11620,6 +11634,7 @@
         "excluded",
         "excludedPaths",
         "exported",
+        "extra",
         "extraLength",
         "file",
         "included",
@@ -11636,6 +11651,7 @@
         "parsed",
         "path",
         "pkg",
+        "present",
         "problems",
         "raw",
         "readZip",
@@ -11667,9 +11683,11 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:4",
         "backend/src/builder/export/archive.test.ts:10",
-        "backend/src/builder/export/service.ts:4",
+        "backend/src/builder/export/service.ts:5",
         "backend/src/builder/github/service.ts:4",
+        "backend/src/builder/journey.test.ts:6",
         "backend/src/routes/builderPhase2.test.ts:8"
       ],
       "reachable": true,
@@ -11686,7 +11704,9 @@
         "backend/src/builder/export/archive.ts#verifyArchive"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
         "backend/src/builder/export/archive.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -11700,7 +11720,7 @@
       "id": "surface:d2179257b69ba367c144",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/export/service.ts",
-      "sha256": "93b65b638f25cc84a40f189e04b15bc022a7eaf4000247a1646185153072d7bf",
+      "sha256": "49742f1e4bc7b07d12bdfd2d4abd3d5f157c665182d2247c08c2062baf893cb6",
       "symbols": [
         "ExportService",
         "archive",
@@ -11709,12 +11729,14 @@
         "saved"
       ],
       "imports": [
+        "../data/schema.js",
         "../phase2Store.js",
         "../service.js",
         "../types.js",
         "./archive.js"
       ],
       "runtimeImports": [
+        "backend/src/builder/data/schema.ts",
         "backend/src/builder/export/archive.ts",
         "backend/src/builder/types.ts"
       ],
@@ -11826,7 +11848,7 @@
         "backend/src/builder/github/fakeGitHub.testsupport.ts:3",
         "backend/src/builder/github/restPort.test.ts:4",
         "backend/src/builder/github/restPort.ts:6",
-        "backend/src/builder/github/service.ts:9"
+        "backend/src/builder/github/service.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11936,7 +11958,7 @@
       "id": "surface:f23963ddfa1269798b31",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/github/service.ts",
-      "sha256": "75cafc2802f313b8c7610fc7ac35b6e855925fdd65508b1239eedf86f79e6139",
+      "sha256": "3c8a0edf63738fd5d3cfcb37d5f000fe5f1aecc9913c6ecd2a151412af1fe8c2",
       "symbols": [
         "APPROVAL_TTL_MS",
         "COST_NOTE",
@@ -11959,6 +11981,7 @@
         "done",
         "error",
         "existing",
+        "existingBinding",
         "expires",
         "fail",
         "files",
@@ -11988,6 +12011,7 @@
       ],
       "imports": [
         "../../ai/patches.js",
+        "../data/schema.js",
         "../export/archive.js",
         "../operations.js",
         "../phase2Store.js",
@@ -11997,6 +12021,7 @@
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/builder/data/schema.ts",
         "backend/src/builder/export/archive.ts",
         "backend/src/builder/github/port.ts",
         "backend/src/builder/operations.ts",
@@ -12203,7 +12228,7 @@
       "id": "surface:d084f6a5c32bea9d4bbb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/hosting/service.ts",
-      "sha256": "0223bb159c425eb43b392e49d5768046457c107bbe3ae6530b77ddfe82748dad",
+      "sha256": "fe31ca1c3f9b596e7ab2bf94b7ab982979dd3475f2122825695046b1619f4090",
       "symbols": [
         "COST_NOTE",
         "DEFAULT_MAX_POLLS",
@@ -12217,6 +12242,7 @@
         "RemoteVerification",
         "attempt",
         "connection",
+        "database",
         "deployment",
         "environment",
         "error",
@@ -12234,6 +12260,7 @@
         "name",
         "operation",
         "operations",
+        "owned",
         "parsed",
         "partial",
         "plan",
@@ -12246,6 +12273,7 @@
         "receipt",
         "remote",
         "results",
+        "reuse",
         "revision",
         "route",
         "routes",
@@ -12325,6 +12353,7 @@
       ],
       "callers": [
         "backend/src/builder/iteration.test.ts:7",
+        "backend/src/builder/journey.test.ts:7",
         "backend/src/routes/builderPhase2.ts:6"
       ],
       "reachable": true,
@@ -12336,7 +12365,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/builder/iteration.test.ts"
+        "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -12349,7 +12379,7 @@
       "id": "surface:1168be21153aaeae5516",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/operations.ts",
-      "sha256": "aa584a994bb145c9a5464eb2e8446297796c9e34406d045b5f2b0e0be8933785",
+      "sha256": "7e9df14f5ee0e60c150dd8202eeed70b85631da5bcf7b53b1439247db0801d28",
       "symbols": [
         "APPROVAL_TTL_MS",
         "OperationDeps",
@@ -12383,7 +12413,7 @@
       "callers": [
         "backend/src/builder/data/data.test.ts:5",
         "backend/src/builder/data/service.ts:3",
-        "backend/src/builder/github/service.ts:5",
+        "backend/src/builder/github/service.ts:6",
         "backend/src/builder/golden.test.ts:7",
         "backend/src/builder/hosting/hosting.test.ts:4",
         "backend/src/builder/hosting/service.ts:3"
@@ -12417,9 +12447,10 @@
       "id": "surface:83858c253ee3c7f3255c",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/phase2Bridge.ts",
-      "sha256": "986b16689c93e89a8d81b0a9c7ad0a95b6e35f920b1187876491ff898ee9b43f",
+      "sha256": "0cf3dc15be4104e51ca8628f4c47a56b5480efcf424bcd199bb83d4ebbc05a57",
       "symbols": [
         "Phase2Services",
+        "PreviewControl",
         "active",
         "base",
         "binding",
@@ -12433,14 +12464,19 @@
         "github",
         "hosting",
         "httpProbe",
+        "inProcessQaAllowed",
         "latest",
         "marker",
+        "openQaDriver",
         "parsed",
         "phase2",
         "phase2ServicesFor",
+        "preview",
+        "project",
         "protectedBySso",
         "provenance",
         "qa",
+        "remote",
         "repairRunnerFor",
         "report",
         "response",
@@ -12449,7 +12485,9 @@
         "started",
         "status",
         "store",
-        "text"
+        "target",
+        "text",
+        "verdict"
       ],
       "imports": [
         "../ai/pipeline.js",
@@ -12474,6 +12512,7 @@
         "./phase2Store.js",
         "./qa/playwrightQaDriver.js",
         "./qa/qaService.js",
+        "./qa/remoteQa.js",
         "./service.js",
         "./snapshot.js",
         "./store.js",
@@ -12494,6 +12533,7 @@
         "backend/src/builder/phase2Store.ts",
         "backend/src/builder/qa/playwrightQaDriver.ts",
         "backend/src/builder/qa/qaService.ts",
+        "backend/src/builder/qa/remoteQa.ts",
         "backend/src/builder/service.ts",
         "backend/src/builder/snapshot.ts",
         "backend/src/builder/store.ts",
@@ -12511,7 +12551,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/builder/swarmBridge.ts:3",
+        "backend/src/builder/audit.verification.test.ts:84",
+        "backend/src/builder/swarmBridge.ts:4",
         "backend/src/routes/builderPhase2.ts:7",
         "backend/src/routes/builderPhase3.ts:4"
       ],
@@ -12528,6 +12569,7 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -12775,10 +12817,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.verification.test.ts:4",
         "backend/src/builder/golden.browser.integration.test.ts:8",
         "backend/src/builder/qa/qa.browser.integration.test.ts:9",
         "backend/src/builder/qa/qa.test.ts:6",
-        "backend/src/builder/qa/qaService.ts:7"
+        "backend/src/builder/qa/qaService.ts:7",
+        "backend/src/builder/qa/remoteQa.test.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12791,9 +12835,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/qa/qa.browser.integration.test.ts",
-        "backend/src/builder/qa/qa.test.ts"
+        "backend/src/builder/qa/qa.test.ts",
+        "backend/src/builder/qa/remoteQa.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -12851,6 +12897,7 @@
         "backend/src/builder/golden.browser.integration.test.ts:9",
         "backend/src/builder/phase2Bridge.ts:20",
         "backend/src/builder/qa/qa.browser.integration.test.ts:10",
+        "backend/src/builder/qa/qaHostMain.ts:16",
         "backend/src/builder/qa/repair.integration.test.ts:12"
       ],
       "reachable": true,
@@ -12874,10 +12921,59 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:40aa783c11c995255a9b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/qaHostMain.ts",
+      "sha256": "0925ce8ba36212a6a5d2b78c95e4879dabf7869a868b144e2d373a3a7f453ac6",
+      "symbols": [
+        "active",
+        "app",
+        "createQaHostApp",
+        "driver",
+        "execute",
+        "limit",
+        "secret"
+      ],
+      "imports": [
+        "./playwrightQaDriver.js",
+        "./remoteQa.js",
+        "./runner.js",
+        "express"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/qa/playwrightQaDriver.ts",
+        "backend/src/builder/qa/remoteQa.ts",
+        "backend/src/builder/qa/runner.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/builder/qa/qaHostMain.test.ts:6"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "express"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/qa/qaHostMain.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:bbfaa8438f1bbee4cd88",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/qa/qaService.ts",
-      "sha256": "4aae6a921e64a3a6a2b48d9438ffb59ae8580b422aab38f8fcc0aa5e406da140",
+      "sha256": "94c05f42795933f465399f29d7e8223aae193923db0984ea89d7f0f2ab2d3169",
       "symbols": [
         "QaService",
         "QaServiceDeps",
@@ -12917,6 +13013,7 @@
         "../store.js",
         "../types.js",
         "./plan.js",
+        "./remoteQa.js",
         "./repair.js",
         "./runner.js",
         "./types.js",
@@ -12933,8 +13030,9 @@
       ],
       "callers": [
         "backend/src/builder/golden.browser.integration.test.ts:10",
-        "backend/src/builder/phase2Bridge.ts:21",
+        "backend/src/builder/phase2Bridge.ts:22",
         "backend/src/builder/qa/qaService.test.ts:8",
+        "backend/src/builder/qa/remoteQa.test.ts:15",
         "backend/src/builder/qa/repair.integration.test.ts:13",
         "backend/src/builder/servicesFixture.testsupport.ts:11",
         "backend/src/routes/builderPhase2.test.ts:13"
@@ -12954,8 +13052,113 @@
       "testCoverage": [
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/qa/qaService.test.ts",
+        "backend/src/builder/qa/remoteQa.test.ts",
         "backend/src/builder/qa/repair.integration.test.ts",
         "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:50901d8c59b8962620ef",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/remoteQa.ts",
+      "sha256": "c7617f5d458eada623e67d997c2673d9b715ffb9d8813da2612e7f92d50162c0",
+      "symbols": [
+        "BASE64",
+        "FAILURE_CLASSES",
+        "LOOPBACK",
+        "QaHostDeps",
+        "QaHostRequest",
+        "RemoteQaClient",
+        "RemoteQaClientOptions",
+        "RemoteQaExecutor",
+        "RemoteQaInput",
+        "allowedPreviewHosts",
+        "asked",
+        "base",
+        "body",
+        "check",
+        "clean",
+        "clip",
+        "createQaHostRouter",
+        "duration",
+        "e",
+        "env",
+        "executed",
+        "failureClass",
+        "got",
+        "host",
+        "hostUrl",
+        "item",
+        "lines",
+        "nonces",
+        "now",
+        "parsed",
+        "planSchema",
+        "reason",
+        "remoteQaFromEnv",
+        "report",
+        "reported",
+        "request",
+        "requestSchema",
+        "response",
+        "results",
+        "router",
+        "screenshot",
+        "screenshots",
+        "sealEvidence",
+        "sealRemoteReport",
+        "secret",
+        "signal",
+        "status",
+        "step",
+        "summary",
+        "target",
+        "text",
+        "timeout",
+        "unavailable"
+      ],
+      "imports": [
+        "../../workers/browserCoordinator.js",
+        "./runner.js",
+        "./types.js",
+        "express",
+        "zod"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/qa/runner.ts",
+        "backend/src/builder/qa/types.ts",
+        "backend/src/workers/browserCoordinator.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/phase2Bridge.ts:21",
+        "backend/src/builder/qa/qaHostMain.ts:17",
+        "backend/src/builder/qa/remoteQa.test.ts:14"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "express",
+        "zod"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/builder/qa/remoteQa.ts#sealEvidence",
+        "backend/src/builder/qa/remoteQa.ts#verifyRequest"
+      ],
+      "testCoverage": [
+        "backend/src/builder/qa/remoteQa.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -13062,7 +13265,7 @@
       "id": "surface:50e5a756503c2d2a9c1d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/qa/runner.ts",
-      "sha256": "4e28c09db066559c181f27715725ed9d22b0bdca6c0d0d68e780f168ff24b9ca",
+      "sha256": "7b99e9c1f752a499466a1e777234ada68a89296e13a31836075296a8d2c9f316",
       "symbols": [
         "FEEDBACK_SELECTOR",
         "QaAssertion",
@@ -13107,7 +13310,7 @@
         "startedAt",
         "state",
         "step",
-        "summarize",
+        "summarizeChecks",
         "summary",
         "text"
       ],
@@ -13121,10 +13324,14 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.verification.test.ts:5",
         "backend/src/builder/golden.browser.integration.test.ts:11",
         "backend/src/builder/qa/qa.browser.integration.test.ts:11",
         "backend/src/builder/qa/qa.test.ts:7",
+        "backend/src/builder/qa/qaHostMain.ts:18",
         "backend/src/builder/qa/qaService.ts:9",
+        "backend/src/builder/qa/remoteQa.test.ts:16",
+        "backend/src/builder/qa/remoteQa.ts:24",
         "backend/src/builder/qa/repair.ts:5"
       ],
       "reachable": true,
@@ -13140,9 +13347,11 @@
         "backend/src/builder/qa/runner.ts#evidence"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/qa/qa.browser.integration.test.ts",
-        "backend/src/builder/qa/qa.test.ts"
+        "backend/src/builder/qa/qa.test.ts",
+        "backend/src/builder/qa/remoteQa.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -13182,6 +13391,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/qa/remoteQa.ts:25",
         "backend/src/builder/qa/runner.ts:1"
       ],
       "reachable": true,
@@ -13196,7 +13406,9 @@
       ],
       "testCoverage": [
         "backend/src/builder/qa/qa.test.ts",
+        "backend/src/builder/qa/qaHostMain.test.ts",
         "backend/src/builder/qa/qaService.test.ts",
+        "backend/src/builder/qa/remoteQa.test.ts",
         "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13210,7 +13422,7 @@
       "id": "surface:d344898f401969621e7c",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/readiness.ts",
-      "sha256": "b2142aeabe617a45441b0de9c278ea4552b97276143c2992ea0d95cf473ee758",
+      "sha256": "07f00ae887207284e2238f9c2a43e250c6afb0bf5ddd29515b6e7dbe1d6a926f",
       "symbols": [
         "ERROR_MARKERS",
         "ExecResult",
@@ -13274,7 +13486,7 @@
       "id": "surface:0349146c468fe4e18282",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/service.ts",
-      "sha256": "719fd7a3aeff6805f785b28f1813cfd663b0a6bd261da9a87ece124c93b5c82d",
+      "sha256": "d015f04de6912fd8a0aa6f2ccbff892522d8284ab2540a0ce35ea7e31aea2cdd",
       "symbols": [
         "BuildRunner",
         "BuildRunnerInput",
@@ -13286,7 +13498,9 @@
         "MAX_PROJECTS_PER_OWNER",
         "PreviewLaunchResult",
         "PreviewPort",
+        "RunSuperseded",
         "STALE_RUN_MS",
+        "active",
         "before",
         "blocked",
         "buildTimeline",
@@ -13302,12 +13516,14 @@
         "fromId",
         "head",
         "holder",
+        "holder_",
         "kept",
         "launch",
         "origin",
         "outcome",
         "preview",
         "project",
+        "projects",
         "prompt",
         "reason",
         "result",
@@ -13353,16 +13569,19 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.preview.test.ts:6",
         "backend/src/builder/builder.test.ts:9",
+        "backend/src/builder/cancel.test.ts:14",
+        "backend/src/builder/conversation.test.ts:8",
         "backend/src/builder/data/data.test.ts:6",
         "backend/src/builder/github/github.test.ts:7",
         "backend/src/builder/hosting/hosting.test.ts:6",
         "backend/src/builder/iteration.test.ts:8",
-        "backend/src/builder/phase2Bridge.ts:22",
+        "backend/src/builder/phase2Bridge.ts:23",
         "backend/src/builder/qa/qaService.test.ts:5",
         "backend/src/builder/qa/repair.integration.test.ts:9",
         "backend/src/builder/servicesFixture.testsupport.ts:13",
-        "backend/src/builder/swarmBridge.ts:4",
+        "backend/src/builder/swarmBridge.ts:5",
         "backend/src/routes/builder.test.ts:7",
         "backend/src/routes/builderPhase2.test.ts:15"
       ],
@@ -13380,11 +13599,16 @@
         "backend/src/builder/service.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.preview.test.ts",
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/cancel.test.ts",
+        "backend/src/builder/conversation.test.ts",
         "backend/src/builder/data/data.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/hosting/hosting.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/builder/qa/qaService.test.ts",
         "backend/src/builder/qa/repair.integration.test.ts",
         "backend/src/routes/builder.test.ts",
@@ -13401,7 +13625,7 @@
       "id": "surface:d342d83ce1086354d886",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/servicesFixture.testsupport.ts",
-      "sha256": "645c6b833fa779bf4571c97373f36256685258c8b96476c5548f3dd40b752d37",
+      "sha256": "9ca15512e040a0eecdc144de6251a06aaaff48b04fbd9972df8a7b7a2799342d",
       "symbols": [
         "ServicesFixture",
         "builder",
@@ -13409,10 +13633,14 @@
         "github",
         "githubService",
         "hosting",
+        "href",
         "makeServices",
         "okDriver",
         "okPage",
+        "path",
         "phase2",
+        "preview",
+        "project",
         "provenance",
         "qa",
         "remote",
@@ -13438,7 +13666,8 @@
         "./qa/qaService.js",
         "./qa/types.js",
         "./service.js",
-        "./store.js"
+        "./store.js",
+        "./types.js"
       ],
       "runtimeImports": [
         "backend/src/builder/data/fakeSupabase.testsupport.ts",
@@ -13452,12 +13681,18 @@
         "backend/src/builder/phase2Store.ts",
         "backend/src/builder/qa/qaService.ts",
         "backend/src/builder/service.ts",
-        "backend/src/builder/store.ts"
+        "backend/src/builder/store.ts",
+        "backend/src/builder/types.ts"
       ],
       "entryPoints": [],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:5",
+        "backend/src/builder/audit.test.ts:4",
+        "backend/src/builder/audit.verification.test.ts:7",
         "backend/src/builder/golden.browser.integration.test.ts:12",
         "backend/src/builder/golden.test.ts:8",
+        "backend/src/builder/journey.test.ts:8",
+        "backend/src/builder/qa/remoteQa.test.ts:12",
         "backend/src/routes/builderPhase2.test.ts:18",
         "backend/src/routes/builderPhase3.test.ts:7"
       ],
@@ -13474,8 +13709,13 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
+        "backend/src/builder/audit.test.ts",
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/golden.test.ts",
+        "backend/src/builder/journey.test.ts",
+        "backend/src/builder/qa/remoteQa.test.ts",
         "backend/src/routes/builderPhase2.test.ts",
         "backend/src/routes/builderPhase3.test.ts"
       ],
@@ -13490,13 +13730,15 @@
       "id": "surface:e8f56d40c08bd1bc11d4",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/snapshot.ts",
-      "sha256": "0292619f1488edc3cd89f62d073eacbc6ffcf110f2bdc06f02a46fca6f8b1d8a",
+      "sha256": "dde214801c137e21ea94b7f8e3d5e32ad8646f787bcf7483513e2c55caecc7bf",
       "symbols": [
         "ALLOWED_ENV_EXAMPLE",
+        "JWT",
         "SECRET_CONTENT",
         "SECRET_PATH",
         "assertSnapshotAcceptable",
         "bytes",
+        "containsServiceRoleJwt",
         "created",
         "deleted",
         "diffSnapshots",
@@ -13504,9 +13746,12 @@
         "hash",
         "hashSnapshot",
         "isSafeProjectPath",
+        "looksLikeSecret",
+        "match",
         "modified",
         "next",
         "path",
+        "payload",
         "prior",
         "seen",
         "snapshotBytes"
@@ -13523,11 +13768,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:61",
         "backend/src/builder/builder.test.ts:10",
         "backend/src/builder/canonical.ts:10",
         "backend/src/builder/export/archive.test.ts:7",
         "backend/src/builder/export/archive.ts:6",
-        "backend/src/builder/phase2Bridge.ts:23",
+        "backend/src/builder/phase2Bridge.ts:24",
         "backend/src/builder/qa/repair.ts:3",
         "backend/src/builder/service.ts:8",
         "backend/src/builder/starters.ts:6",
@@ -13544,6 +13790,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/export/archive.test.ts"
       ],
@@ -13603,6 +13850,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.verification.test.ts:8",
         "backend/src/builder/builder.test.ts:8",
         "backend/src/builder/data/schema.test.ts:4",
         "backend/src/builder/export/archive.test.ts:6",
@@ -13623,6 +13871,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/data/schema.test.ts",
         "backend/src/builder/export/archive.test.ts",
@@ -13705,7 +13954,7 @@
       "id": "surface:d99ae49579eb8b9fd671",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/store.ts",
-      "sha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
+      "sha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "symbols": [
         "AppendRevisionInput",
         "AppendRevisionResult",
@@ -13719,11 +13968,13 @@
         "RevisionRow",
         "SupabaseBuilderStore",
         "active",
+        "after",
         "assertRequestKey",
         "changeSummary",
         "claimed",
         "clone",
         "contentSha256",
+        "current",
         "existing",
         "inserted",
         "next",
@@ -13758,17 +14009,20 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.preview.test.ts:7",
         "backend/src/builder/builder.test.ts:12",
+        "backend/src/builder/cancel.test.ts:15",
+        "backend/src/builder/conversation.test.ts:9",
         "backend/src/builder/data/data.test.ts:7",
         "backend/src/builder/github/github.test.ts:8",
         "backend/src/builder/hosting/hosting.test.ts:7",
         "backend/src/builder/iteration.test.ts:9",
-        "backend/src/builder/phase2Bridge.ts:24",
+        "backend/src/builder/phase2Bridge.ts:25",
         "backend/src/builder/qa/qaService.test.ts:6",
         "backend/src/builder/qa/repair.integration.test.ts:10",
         "backend/src/builder/service.ts:12",
-        "backend/src/builder/servicesFixture.testsupport.ts:14",
-        "backend/src/builder/swarmBridge.ts:5",
+        "backend/src/builder/servicesFixture.testsupport.ts:15",
+        "backend/src/builder/swarmBridge.ts:6",
         "backend/src/routes/builder.test.ts:8",
         "backend/src/routes/builderPhase2.test.ts:16"
       ],
@@ -13782,21 +14036,28 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/builder/store.ts:265 (user_id)",
-        "backend/src/builder/store.ts:274 (user_id)",
-        "backend/src/builder/store.ts:283 (user_id)",
-        "backend/src/builder/store.ts:290 (user_id)",
-        "backend/src/builder/store.ts:299 (user_id)",
-        "backend/src/builder/store.ts:309 (user_id)",
-        "backend/src/builder/store.ts:349 (user_id)",
-        "backend/src/builder/store.ts:356 (user_id)",
-        "backend/src/builder/store.ts:366 (user_id)"
+        "backend/src/builder/store.ts:311 (user_id)",
+        "backend/src/builder/store.ts:320 (user_id)",
+        "backend/src/builder/store.ts:329 (user_id)",
+        "backend/src/builder/store.ts:336 (user_id)",
+        "backend/src/builder/store.ts:345 (user_id)",
+        "backend/src/builder/store.ts:352 (user_id)",
+        "backend/src/builder/store.ts:366 (user_id)",
+        "backend/src/builder/store.ts:385 (user_id)",
+        "backend/src/builder/store.ts:402 (user_id)",
+        "backend/src/builder/store.ts:411 (user_id)",
+        "backend/src/builder/store.ts:451 (user_id)",
+        "backend/src/builder/store.ts:458 (user_id)",
+        "backend/src/builder/store.ts:468 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.preview.test.ts",
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/cancel.test.ts",
+        "backend/src/builder/conversation.test.ts",
         "backend/src/builder/data/data.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/hosting/hosting.test.ts",
@@ -13817,12 +14078,13 @@
       "id": "surface:0576bf3489c187a1470e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/swarmBridge.ts",
-      "sha256": "f738b626401508c64a6ffad544627e980a149fa7ae6a31917e207b8c9bb6e976",
+      "sha256": "8bc674b86b3d241d3292e7469174910a2012296658ca031c0f04653623ebe314",
       "symbols": [
         "BuilderRunResult",
         "builderProjectExists",
         "builderServiceFor",
         "closeBuilderRun",
+        "closedRuns",
         "context",
         "error",
         "openBuilderRun",
@@ -13830,6 +14092,7 @@
         "store"
       ],
       "imports": [
+        "../ai/runStore.js",
         "../security/tenantContext.js",
         "./canonical.js",
         "./phase2Bridge.js",
@@ -13838,6 +14101,7 @@
         "./types.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/runStore.ts",
         "backend/src/builder/canonical.ts",
         "backend/src/builder/phase2Bridge.ts",
         "backend/src/builder/service.ts",
@@ -13872,7 +14136,7 @@
       "id": "surface:bd7f38d93d1a0ea6942e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/types.ts",
-      "sha256": "3276ac27f09a8cd43010ffd5e93afc0a71813ae959c92ad57feabbcfa06ff562",
+      "sha256": "27d3f9313bf3235b15cc5f9a34ee76590ee6039cfb28778a7f6243f4a6f34240",
       "symbols": [
         "BuildSpec",
         "BuilderError",
@@ -13902,31 +14166,37 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:6",
+        "backend/src/builder/audit.test.ts:5",
         "backend/src/builder/builder.test.ts:13",
+        "backend/src/builder/cancel.test.ts:16",
+        "backend/src/builder/conversation.test.ts:10",
         "backend/src/builder/data/data.test.ts:8",
         "backend/src/builder/data/env.ts:1",
         "backend/src/builder/data/service.ts:2",
         "backend/src/builder/export/archive.ts:7",
         "backend/src/builder/export/service.ts:3",
         "backend/src/builder/github/github.test.ts:9",
-        "backend/src/builder/github/service.ts:8",
+        "backend/src/builder/github/service.ts:9",
         "backend/src/builder/golden.test.ts:9",
         "backend/src/builder/hosting/hosting.test.ts:8",
         "backend/src/builder/hosting/service.ts:5",
         "backend/src/builder/iteration.test.ts:10",
+        "backend/src/builder/journey.test.ts:10",
         "backend/src/builder/operations.ts:5",
-        "backend/src/builder/phase2Bridge.ts:26",
+        "backend/src/builder/phase2Bridge.ts:27",
         "backend/src/builder/phase2Store.ts:6",
         "backend/src/builder/qa/qaService.test.ts:7",
         "backend/src/builder/qa/qaService.ts:6",
         "backend/src/builder/qa/repair.integration.test.ts:11",
         "backend/src/builder/qa/repair.ts:4",
         "backend/src/builder/service.ts:13",
+        "backend/src/builder/servicesFixture.testsupport.ts:14",
         "backend/src/builder/snapshot.ts:4",
         "backend/src/builder/spec.ts:5",
         "backend/src/builder/starters.ts:5",
         "backend/src/builder/store.ts:12",
-        "backend/src/builder/swarmBridge.ts:6",
+        "backend/src/builder/swarmBridge.ts:7",
         "backend/src/routes/builder.ts:6",
         "backend/src/routes/builderPhase2.ts:8",
         "backend/src/routes/builderPhase3.ts:5"
@@ -13945,13 +14215,18 @@
         "backend/src/builder/types.ts#VerificationStatus"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
+        "backend/src/builder/audit.test.ts",
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/cancel.test.ts",
+        "backend/src/builder/conversation.test.ts",
         "backend/src/builder/data/data.test.ts",
         "backend/src/builder/export/archive.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/golden.test.ts",
         "backend/src/builder/hosting/hosting.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/builder/qa/qaService.test.ts",
         "backend/src/builder/qa/repair.integration.test.ts"
       ],
@@ -21618,7 +21893,7 @@
       "id": "surface:4a749cbfb48190d1393c",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/builder.ts",
-      "sha256": "921f9650c6f5d7797f3576cd1734f637150de019e7dcfe412a57f620698977b6",
+      "sha256": "8959da0527739e5615b640746191bc1ed043c835c02fede592d68980410f8108",
       "symbols": [
         "BuilderServiceFactory",
         "STATUS",
@@ -21660,6 +21935,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/cancel.test.ts:11",
+        "backend/src/builder/conversation.test.ts:6",
         "backend/src/index.ts:56",
         "backend/src/routes/builder.test.ts:10",
         "backend/src/routes/builderPhase2.test.ts:19",
@@ -21678,6 +21955,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/cancel.test.ts",
+        "backend/src/builder/conversation.test.ts",
         "backend/src/routes/builder.test.ts",
         "backend/src/routes/builderPhase2.test.ts",
         "backend/src/routes/builderPhase3.test.ts"
@@ -21693,7 +21972,7 @@
       "id": "surface:18308761a6b13a22efcc",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "sha256": "286dc018ef3eba611c5b2104d28dbdb921fbf530b74eceb1a7f7b87ad4c95615",
+      "sha256": "73d193b5be2061478b988f2f985c8cd85858aa7ed8eeb1a900a87a207575a868",
       "symbols": [
         "OPERATION_KEY",
         "Phase2ServicesFactory",
@@ -26562,6 +26841,8 @@
         "backend/src/ai/runStore.ts:12",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
+        "backend/src/builder/cancel.test.ts:12",
+        "backend/src/builder/conversation.test.ts:7",
         "backend/src/builder/phase2Bridge.ts:3",
         "backend/src/builder/phase2Store.ts:4",
         "backend/src/builder/store.ts:5",
@@ -26724,6 +27005,8 @@
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
+        "backend/src/builder/cancel.test.ts",
+        "backend/src/builder/conversation.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/middleware/admin.test.ts",
         "backend/src/middleware/auth.tenantContext.remote.test.ts",
@@ -41836,9 +42119,12 @@
       ],
       "testCoverage": [
         "backend/src/ai/providerPolicy.test.ts",
+        "backend/src/builder/audit.preview.test.ts",
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/cancel.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/synthesis/universalEntrypoint.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -42889,6 +43175,9 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/qa/qaHostMain.test.ts:5",
+        "backend/src/builder/qa/remoteQa.test.ts:11",
+        "backend/src/builder/qa/remoteQa.ts:23",
         "backend/src/routes/browserRuns.ts:22",
         "backend/src/workers/browserCoordinator.test.ts:5",
         "scripts/browser/browser-coordinator.mts:12"
@@ -42910,6 +43199,8 @@
         "backend/src/workers/browserCoordinator.ts#verifyRequest"
       ],
       "testCoverage": [
+        "backend/src/builder/qa/qaHostMain.test.ts",
+        "backend/src/builder/qa/remoteQa.test.ts",
         "backend/src/workers/browserCoordinator.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -77090,7 +77381,7 @@
       "id": "surface:fc7df3b8d9533185c8de",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
-      "sha256": "c10882a8bc592ff5a4ced8b540c3b70d275a04e922c7d468d9107e14c2d9d4da",
+      "sha256": "e6969fd4481e4d91eeb8b02f66f4ef95f00a1e04e984a05bf356975fb81f9ae1",
       "symbols": [
         "BuilderProjectPanel",
         "PREVIEW_LABEL",
@@ -77101,6 +77392,7 @@
         "active",
         "caught",
         "load",
+        "stop",
         "timer"
       ],
       "imports": [
@@ -77112,6 +77404,7 @@
         "./builder/BuilderTests",
         "@/lib/builderApi",
         "@/lib/utils",
+        "@/store/useBuilderProjectStore",
         "lucide-react",
         "react"
       ],
@@ -77123,7 +77416,8 @@
         "frontend/src/components/terminal/builder/BuilderProvenance.tsx",
         "frontend/src/components/terminal/builder/BuilderTests.tsx",
         "frontend/src/lib/builderApi.ts",
-        "frontend/src/lib/utils.ts"
+        "frontend/src/lib/utils.ts",
+        "frontend/src/store/useBuilderProjectStore.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -77867,7 +78161,7 @@
       "id": "surface:b8d1b0d4b81701631055",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "sha256": "c19928333adc9a57e59246319068e528c1dd99e390d02c7de061130a74916c0d",
+      "sha256": "643800b20271521de980bd4c52bee1a0c2921d78422eceb127013bb1671e0762",
       "symbols": [
         "DevWorkspacePanel",
         "PROJECT_TAB",
@@ -77875,6 +78169,7 @@
         "TABS",
         "activeFile",
         "activeTab",
+        "boundConversation",
         "buildTree",
         "builderProjectId",
         "closeFileTab",
@@ -77890,6 +78185,7 @@
         "lastChanges",
         "lastFileTrail",
         "lastUpdateAt",
+        "live",
         "name",
         "openFilePath",
         "openFilePaths",
@@ -77902,6 +78198,7 @@
         "runtimeUrl",
         "sandboxDoc",
         "setActiveTab",
+        "setBuilderProjectId",
         "setOpenFilePath",
         "setWorkspaceOpen",
         "status",
@@ -82292,7 +82589,7 @@
       "id": "surface:30d1cd09ce59a5713f6b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
-      "sha256": "3afad16684167d137c3ca702d2d5f0de6723011d644103b744659ec84b5910e5",
+      "sha256": "fd684c05f180af0131cd35321141c8b860968893bdb87dbfcd7a2c458c231260",
       "symbols": [
         "BuilderDatabase",
         "Pending",
@@ -82323,7 +82620,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:15"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82348,7 +82645,7 @@
       "id": "surface:ac37752e3dd32f9768dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
-      "sha256": "a318150907ce793a9836d457eb91e5ba7a8c4a54a693a3c0c24302e14ffce479",
+      "sha256": "3afe31c3c7a5faef73a02cd1d76849e969b9ade17c340eae2e3bbed3b95be414",
       "symbols": [
         "BuilderDelivery",
         "STATUS_TEXT",
@@ -82380,7 +82677,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:16"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82431,7 +82728,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:17"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82456,11 +82753,12 @@
       "id": "surface:d979e03132893e2884c7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderHosting.tsx",
-      "sha256": "dfb07936dd1af29aa814c030c15e1fdb2f2c7f816e96e9cadff58d2af8260273",
+      "sha256": "e536f1e106471b9ca2991fb5bf617270fb13bd0d966115297451b66279f56cde",
       "symbols": [
         "BuilderHosting",
         "STATUS_TEXT",
         "cancel",
+        "connected",
         "error",
         "guarded",
         "latestPreview",
@@ -82469,9 +82767,15 @@
         "open",
         "preparePreview",
         "prepareProduction",
+        "previewIsOld",
         "previewUrl",
+        "previewedRevision",
+        "previousScopeId",
+        "productionCard",
+        "productionIsOld",
         "productionUrl",
         "publish",
+        "publishedRevision",
         "remote",
         "remoteStatus",
         "result",
@@ -82493,7 +82797,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:18"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82543,7 +82847,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:19"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82568,7 +82872,7 @@
       "id": "surface:3facbfbe4fdd3be082c1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderTests.tsx",
-      "sha256": "aa6af047e02b27da46fca08d07f1eee9b58400bc62f9d38a178f7ea84340a78b",
+      "sha256": "fd391ef4fb052676fba61f54e8297d7f7f4f63dfaeb1124e9b3109b7ed3a22a7",
       "symbols": [
         "BuilderTests",
         "Icon",
@@ -82577,6 +82881,7 @@
         "failed",
         "fix",
         "load",
+        "restartPreview",
         "result",
         "run"
       ],
@@ -82596,7 +82901,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:20"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84803,7 +85108,7 @@
       "id": "surface:c5f31b4c34d87af3ac75",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "c78e2850907cb39f30cb3f3bd642c8d1265455ba0aee020cfb0e53f8c5abc4d9",
+      "sha256": "705b47eea65bbd3618e6f578549d240e5a36dbaadb3ea73ead4de971a097e771",
       "symbols": [
         "ChatMessage",
         "GENERIC_SWARM_FALLBACK",
@@ -86790,7 +87095,7 @@
       "id": "surface:6d125e40598ad06e474b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/builderApi.ts",
-      "sha256": "ecaa2f6a92710aee508fcfe6a66aada6c43d27949dccf1e334f78fe0b679a6b1",
+      "sha256": "b7a72da5b4716ffbf6fbaa1c4f727c51623c4b8aee5cba728b2c7028cadf7b6c",
       "symbols": [
         "BUILDER_ENABLED",
         "BUILDER_STATE_LABEL",
@@ -86831,7 +87136,7 @@
         "frontend/src/components/terminal/builder/BuilderTests.tsx:6",
         "frontend/src/lib/builderApiPhase2.ts:5",
         "frontend/src/lib/builderApiPhase3.ts:3",
-        "frontend/src/lib/builderChat.ts:3"
+        "frontend/src/lib/builderChat.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86853,7 +87158,7 @@
       "id": "surface:e3db39ea0a320487989b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/builderApiPhase2.ts",
-      "sha256": "be69b888c42d22151791f761547d924b84c68a4195a775182c53e92c0c0f4059",
+      "sha256": "14c5c4bd11f8e0678d4dc86ac4e8759887f127ae155a2ea986cd8b6414dc6c6e",
       "symbols": [
         "FileDiff",
         "GitHubOperation",
@@ -86901,7 +87206,7 @@
         "frontend/src/components/terminal/builder/BuilderHistory.tsx:7",
         "frontend/src/components/terminal/builder/BuilderHosting.tsx:7",
         "frontend/src/components/terminal/builder/BuilderTests.tsx:7",
-        "frontend/src/lib/builderChat.ts:4"
+        "frontend/src/lib/builderChat.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86985,18 +87290,21 @@
       "id": "surface:5a4fd8fff7f7a25154e4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/builderChat.ts",
-      "sha256": "7be3fcebff010c2b2e4b2286419975a0e3034408e3636f581f20ed02da3a8115",
+      "sha256": "1f2d4306df17476b7e21134d13999cf30e14835679fd8046869cb0d3aa714fba",
       "symbols": [
         "createNew",
         "decision",
+        "error",
         "key",
         "resolveBuilderProject",
-        "store"
+        "store",
+        "syncBuilderConversation"
       ],
       "imports": [
         "@/lib/builderApi",
         "@/lib/builderApiPhase2",
-        "@/store/useBuilderProjectStore"
+        "@/store/useBuilderProjectStore",
+        "react-hot-toast"
       ],
       "runtimeImports": [
         "frontend/src/lib/builderApi.ts",
@@ -87015,7 +87323,9 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "react-hot-toast"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -87577,7 +87887,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:45",
-        "frontend/src/context/TerminalChatContext.tsx:1947",
+        "frontend/src/context/TerminalChatContext.tsx:1951",
         "frontend/src/lib/restoreRepoTerminal.ts:10",
         "frontend/src/lib/syncRepoTerminalSessions.ts:17",
         "frontend/src/lib/terminalHistory.ts:14",
@@ -89433,10 +89743,10 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:21",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
         "frontend/src/components/terminal/TerminalChatBar.tsx:274",
-        "frontend/src/context/TerminalChatContext.tsx:1800",
-        "frontend/src/context/TerminalChatContext.tsx:3226",
+        "frontend/src/context/TerminalChatContext.tsx:1804",
+        "frontend/src/context/TerminalChatContext.tsx:3231",
         "frontend/src/context/TerminalChatContext.tsx:59",
-        "frontend/src/context/TerminalChatContext.tsx:933",
+        "frontend/src/context/TerminalChatContext.tsx:937",
         "frontend/src/lib/projectResume.ts:6"
       ],
       "reachable": true,
@@ -90152,8 +90462,8 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:1326",
-        "frontend/src/context/TerminalChatContext.tsx:3860",
+        "frontend/src/context/TerminalChatContext.tsx:1330",
+        "frontend/src/context/TerminalChatContext.tsx:3865",
         "frontend/src/lib/rehydratePersistedMessages.ts:3"
       ],
       "reachable": true,
@@ -93135,7 +93445,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/context/TerminalChatContext.tsx:1256",
+        "frontend/src/context/TerminalChatContext.tsx:1260",
         "frontend/src/lib/workspacePersistence.ts:148"
       ],
       "reachable": true,
@@ -93286,7 +93596,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
         "frontend/src/components/terminal/TerminalChatBar.tsx:248",
         "frontend/src/components/terminal/TerminalChatBar.tsx:40",
-        "frontend/src/context/TerminalChatContext.tsx:1793",
+        "frontend/src/context/TerminalChatContext.tsx:1797",
         "frontend/src/context/TerminalChatContext.tsx:49",
         "frontend/src/lib/buildDefaultTodos.ts:2",
         "frontend/src/lib/chatArchive.ts:2",
@@ -96196,10 +96506,10 @@
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:40",
         "frontend/src/components/terminal/RepoContextBar.tsx:355",
-        "frontend/src/context/TerminalChatContext.tsx:1038",
-        "frontend/src/context/TerminalChatContext.tsx:1359",
-        "frontend/src/context/TerminalChatContext.tsx:2359",
-        "frontend/src/context/TerminalChatContext.tsx:3870"
+        "frontend/src/context/TerminalChatContext.tsx:1042",
+        "frontend/src/context/TerminalChatContext.tsx:1363",
+        "frontend/src/context/TerminalChatContext.tsx:2363",
+        "frontend/src/context/TerminalChatContext.tsx:3875"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -96871,8 +97181,8 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:23",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:29",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:22",
-        "frontend/src/context/TerminalChatContext.tsx:1806",
-        "frontend/src/context/TerminalChatContext.tsx:1948",
+        "frontend/src/context/TerminalChatContext.tsx:1810",
+        "frontend/src/context/TerminalChatContext.tsx:1952",
         "frontend/src/context/TerminalChatContext.tsx:40",
         "frontend/src/lib/restoreRepoTerminal.ts:6",
         "frontend/src/lib/syncRepoTerminalSessions.ts:9",
@@ -97644,7 +97954,7 @@
         "frontend/src/components/terminal/BlackHoleVButton.tsx:5",
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:7",
         "frontend/src/components/terminal/BuildTodoList.tsx:4",
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:14",
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:15",
         "frontend/src/components/terminal/CapacityUnavailableCard.tsx:5",
         "frontend/src/components/terminal/ChatBarActionsMenu.tsx:13",
         "frontend/src/components/terminal/ChatBarButtons.tsx:3",
@@ -99569,13 +99879,14 @@
       "id": "surface:7855ec75f2cacd66431f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/store/useBuilderProjectStore.ts",
-      "sha256": "b30a782c188f6f88c9899f636e2b317ab08aac6f07b00698ef866923558c73d3",
+      "sha256": "030709cab9d77bc1cc80489a94092dd7cbb6284de7c6ed91bc8b63caec074d83",
       "symbols": [
         "BuilderProjectStore",
         "KEY",
         "read",
         "useBuilderProjectStore",
-        "value"
+        "value",
+        "write"
       ],
       "imports": [
         "zustand"
@@ -99589,8 +99900,9 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:14",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:44",
-        "frontend/src/lib/builderChat.ts:5"
+        "frontend/src/lib/builderChat.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -100042,12 +100354,12 @@
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:9",
         "frontend/src/context/TerminalChatContext.tsx:163",
         "frontend/src/context/TerminalChatContext.tsx:202",
-        "frontend/src/context/TerminalChatContext.tsx:2647",
+        "frontend/src/context/TerminalChatContext.tsx:2651",
         "frontend/src/context/TerminalChatContext.tsx:28",
-        "frontend/src/context/TerminalChatContext.tsx:3308",
+        "frontend/src/context/TerminalChatContext.tsx:3313",
         "frontend/src/context/TerminalChatContext.tsx:342",
-        "frontend/src/context/TerminalChatContext.tsx:3672",
-        "frontend/src/context/TerminalChatContext.tsx:819",
+        "frontend/src/context/TerminalChatContext.tsx:3677",
+        "frontend/src/context/TerminalChatContext.tsx:823",
         "frontend/src/hooks/useRuntimePreviewHydration.ts:16",
         "frontend/src/lib/projectResume.ts:8",
         "frontend/src/lib/repoContext.ts:1",
@@ -107161,6 +107473,46 @@
   ],
   "routeRegistrations": [
     {
+      "id": "registration:22fcf2db1b6ef6f1e97c",
+      "sourcePath": "backend/src/builder/qa/qaHostMain.ts",
+      "line": 36,
+      "receiver": "app",
+      "method": "get",
+      "path": "/healthz",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createQaHostApp",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:ecf8bcec313ec03520b0",
+      "sourcePath": "backend/src/builder/qa/qaHostMain.ts",
+      "line": 37,
+      "receiver": "app",
+      "method": "use",
+      "path": null,
+      "handlers": [
+        "createQaHostRouter()"
+      ],
+      "scope": "function",
+      "functionName": "createQaHostApp",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:65b5e7f2a6324037612f",
+      "sourcePath": "backend/src/builder/qa/remoteQa.ts",
+      "line": 228,
+      "receiver": "router",
+      "method": "post",
+      "path": "/qa",
+      "handlers": [
+        "raw()"
+      ],
+      "scope": "function",
+      "functionName": "createQaHostRouter",
+      "inlineResponse": true
+    },
+    {
       "id": "registration:90bb78e20a2e290773e1",
       "sourcePath": "backend/src/index.ts",
       "line": 95,
@@ -108349,9 +108701,21 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:00543eb115d1ab461e24",
+      "id": "registration:73a1550bb98704050abc",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 70,
+      "line": 71,
+      "receiver": "router",
+      "method": "get",
+      "path": "/conversations/:conversationId/project",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createBuilderRouter",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:456742f6781537a0bbe4",
+      "sourcePath": "backend/src/routes/builder.ts",
+      "line": 80,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId",
@@ -108361,9 +108725,21 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:88e8cfd9a7c8e1f53a44",
+      "id": "registration:c2ab6ea4d3a99c1d2298",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 79,
+      "line": 90,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/cancel",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createBuilderRouter",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:88be67f2e1e60f53ae3a",
+      "sourcePath": "backend/src/routes/builder.ts",
+      "line": 99,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/revisions",
@@ -108373,9 +108749,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0da3b7a68f6a932e6734",
+      "id": "registration:502eab44e3b4424daa77",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 88,
+      "line": 108,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/revisions/:revisionId",
@@ -108385,9 +108761,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b56696951a95a67849ad",
+      "id": "registration:cb5689b7cf7279eba49e",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 99,
+      "line": 119,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/files",
@@ -108425,7 +108801,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3f227621d6b3fa50175a",
+      "id": "registration:3ac8b2b390becbc81859",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
       "line": 89,
       "receiver": "router",
@@ -108439,9 +108815,23 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c922afa0849ecbd634ea",
+      "id": "registration:3b8fa71e486a710e312b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 94,
+      "line": 99,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/preview/restart",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:a03c1c87eac051826e97",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 104,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/qa",
@@ -108453,9 +108843,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1aae89a9aade8f7e8a2b",
+      "id": "registration:c56fbaded26b933800f2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 99,
+      "line": 109,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/verify-and-repair",
@@ -108467,9 +108857,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9620fe1cb4be0950daf5",
+      "id": "registration:1c20e1cc5261e7fbc46b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 107,
+      "line": 117,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/qa",
@@ -108481,9 +108871,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:188823433f65a83614b0",
+      "id": "registration:1a52ddc122e11d189ece",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 114,
+      "line": 124,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/qa/:verificationId",
@@ -108495,9 +108885,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:203b41b0fb4a0e49c502",
+      "id": "registration:8dbac1258373fad560f3",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 119,
+      "line": 129,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/export.zip",
@@ -108509,9 +108899,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0b337e6c08e1ceb2e2b4",
+      "id": "registration:a35efd59ae15724bec90",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 132,
+      "line": 142,
       "receiver": "router",
       "method": "get",
       "path": "/github/targets",
@@ -108523,9 +108913,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8d6475ed3d056ceebea9",
+      "id": "registration:665faf9a1f826904a6f7",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 136,
+      "line": 146,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/github",
@@ -108537,9 +108927,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b1d8ff59f9af19b5dfd5",
+      "id": "registration:3fbdb9b56aa41fc292d2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 141,
+      "line": 151,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/prepare",
@@ -108551,9 +108941,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e5c592f43b5825365d2a",
+      "id": "registration:d392081e1db66d898e77",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 152,
+      "line": 162,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/sync/prepare",
@@ -108565,9 +108955,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:637f7b4f7d5b653a7154",
+      "id": "registration:22d389839e30c370514d",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 158,
+      "line": 168,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/operations/:operationId/approve",
@@ -108579,9 +108969,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4d38cea49f46e27eb115",
+      "id": "registration:362ef9775950349ee4c9",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 164,
+      "line": 174,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/operations/:operationId/execute",
@@ -108593,9 +108983,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:38a946fbe097c3d1ed60",
+      "id": "registration:37ab775afe43144725ac",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 168,
+      "line": 178,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/operations/:operationId/cancel",
@@ -114148,10 +114538,27 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:3d2848bc7c315fda59cb",
-      "registrationId": "registration:00543eb115d1ab461e24",
+      "id": "route:044cdd5c34a649d11448",
+      "registrationId": "registration:73a1550bb98704050abc",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 70,
+      "line": 71,
+      "method": "GET",
+      "path": "/api/builder/conversations/:conversationId/project",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:fc9eca0373dd3c61d48f",
+      "registrationId": "registration:456742f6781537a0bbe4",
+      "sourcePath": "backend/src/routes/builder.ts",
+      "line": 80,
       "method": "GET",
       "path": "/api/builder/projects/:projectId",
       "mountChain": [
@@ -114165,10 +114572,27 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:e395c66aae183a91984e",
-      "registrationId": "registration:88e8cfd9a7c8e1f53a44",
+      "id": "route:8b0eb25b895d5a86ca79",
+      "registrationId": "registration:c2ab6ea4d3a99c1d2298",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 79,
+      "line": 90,
+      "method": "POST",
+      "path": "/api/builder/projects/:projectId/cancel",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:1b6a9d5a5cdfda185aff",
+      "registrationId": "registration:88be67f2e1e60f53ae3a",
+      "sourcePath": "backend/src/routes/builder.ts",
+      "line": 99,
       "method": "GET",
       "path": "/api/builder/projects/:projectId/revisions",
       "mountChain": [
@@ -114182,10 +114606,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:48090845d1c44710696e",
-      "registrationId": "registration:0da3b7a68f6a932e6734",
+      "id": "route:543f82693720c28f7788",
+      "registrationId": "registration:502eab44e3b4424daa77",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 88,
+      "line": 108,
       "method": "GET",
       "path": "/api/builder/projects/:projectId/revisions/:revisionId",
       "mountChain": [
@@ -114199,10 +114623,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:a4788d6afb438faa4045",
-      "registrationId": "registration:b56696951a95a67849ad",
+      "id": "route:f790bb082d7c741606ec",
+      "registrationId": "registration:cb5689b7cf7279eba49e",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 99,
+      "line": 119,
       "method": "GET",
       "path": "/api/builder/projects/:projectId/files",
       "mountChain": [
@@ -115839,6 +116263,32 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
+      "id": "route-unmounted:6858ce58ed633cd48607",
+      "registrationId": "registration:22fcf2db1b6ef6f1e97c",
+      "sourcePath": "backend/src/builder/qa/qaHostMain.ts",
+      "line": 36,
+      "method": "GET",
+      "path": "/healthz",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:afb703a03c4a11519752",
+      "registrationId": "registration:65b5e7f2a6324037612f",
+      "sourcePath": "backend/src/builder/qa/remoteQa.ts",
+      "line": 228,
+      "method": "POST",
+      "path": "/qa",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
       "id": "route-unmounted:03e80482eab95856a881",
       "registrationId": "registration:d312ed3604dbb7081aca",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
@@ -115865,8 +116315,8 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:ba352fa5b6e0b1c0cf3a",
-      "registrationId": "registration:3f227621d6b3fa50175a",
+      "id": "route-unmounted:3c18755e51ca455ea5d1",
+      "registrationId": "registration:3ac8b2b390becbc81859",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
       "line": 89,
       "method": "POST",
@@ -115878,10 +116328,23 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:06f3b0ee1d97f7ae520f",
-      "registrationId": "registration:c922afa0849ecbd634ea",
+      "id": "route-unmounted:4c87742b8269b347ef24",
+      "registrationId": "registration:3b8fa71e486a710e312b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 94,
+      "line": 99,
+      "method": "POST",
+      "path": "/projects/:projectId/preview/restart",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:0507479bc5205c1ec1c1",
+      "registrationId": "registration:a03c1c87eac051826e97",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 104,
       "method": "POST",
       "path": "/projects/:projectId/qa",
       "mountChain": [],
@@ -115891,10 +116354,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:9ad0bdc7c769990b386e",
-      "registrationId": "registration:1aae89a9aade8f7e8a2b",
+      "id": "route-unmounted:22f7a8c8a322760d5756",
+      "registrationId": "registration:c56fbaded26b933800f2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 99,
+      "line": 109,
       "method": "POST",
       "path": "/projects/:projectId/verify-and-repair",
       "mountChain": [],
@@ -115904,10 +116367,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:bb37a65baff25f97bf7a",
-      "registrationId": "registration:9620fe1cb4be0950daf5",
+      "id": "route-unmounted:1fb0312d75f83519abdb",
+      "registrationId": "registration:1c20e1cc5261e7fbc46b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 107,
+      "line": 117,
       "method": "GET",
       "path": "/projects/:projectId/qa",
       "mountChain": [],
@@ -115917,10 +116380,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:c4d341d27f563aef3d14",
-      "registrationId": "registration:188823433f65a83614b0",
+      "id": "route-unmounted:3f1cd7e4db4018b61a1f",
+      "registrationId": "registration:1a52ddc122e11d189ece",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 114,
+      "line": 124,
       "method": "GET",
       "path": "/projects/:projectId/qa/:verificationId",
       "mountChain": [],
@@ -115930,10 +116393,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:e34782899ae18f612c12",
-      "registrationId": "registration:203b41b0fb4a0e49c502",
+      "id": "route-unmounted:2f9cb64611bfcc2e55b3",
+      "registrationId": "registration:8dbac1258373fad560f3",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 119,
+      "line": 129,
       "method": "GET",
       "path": "/projects/:projectId/export.zip",
       "mountChain": [],
@@ -115943,10 +116406,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:4fbc63876b3222a1149f",
-      "registrationId": "registration:0b337e6c08e1ceb2e2b4",
+      "id": "route-unmounted:d4b1d7e255416a8b6113",
+      "registrationId": "registration:a35efd59ae15724bec90",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 132,
+      "line": 142,
       "method": "GET",
       "path": "/github/targets",
       "mountChain": [],
@@ -115956,10 +116419,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:69dda6dd69f7fb619562",
-      "registrationId": "registration:8d6475ed3d056ceebea9",
+      "id": "route-unmounted:53e98c1c32f5ba314b24",
+      "registrationId": "registration:665faf9a1f826904a6f7",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 136,
+      "line": 146,
       "method": "GET",
       "path": "/projects/:projectId/github",
       "mountChain": [],
@@ -115969,10 +116432,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:13723ed390d77983b95d",
-      "registrationId": "registration:b1d8ff59f9af19b5dfd5",
+      "id": "route-unmounted:5a8120828f130b024b22",
+      "registrationId": "registration:3fbdb9b56aa41fc292d2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 141,
+      "line": 151,
       "method": "POST",
       "path": "/projects/:projectId/github/prepare",
       "mountChain": [],
@@ -115982,10 +116445,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:f2248dad647bb90efd1e",
-      "registrationId": "registration:e5c592f43b5825365d2a",
+      "id": "route-unmounted:0f7d3bbd99d41d99e8e6",
+      "registrationId": "registration:d392081e1db66d898e77",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 152,
+      "line": 162,
       "method": "POST",
       "path": "/projects/:projectId/github/sync/prepare",
       "mountChain": [],
@@ -115995,10 +116458,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:cf3c0cdce49c6b494967",
-      "registrationId": "registration:637f7b4f7d5b653a7154",
+      "id": "route-unmounted:92c5c6b2fe018b5f479c",
+      "registrationId": "registration:22d389839e30c370514d",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 158,
+      "line": 168,
       "method": "POST",
       "path": "/projects/:projectId/github/operations/:operationId/approve",
       "mountChain": [],
@@ -116008,10 +116471,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:016bc29886baffbce409",
-      "registrationId": "registration:4d38cea49f46e27eb115",
+      "id": "route-unmounted:082920eed2ff36119b07",
+      "registrationId": "registration:362ef9775950349ee4c9",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 164,
+      "line": 174,
       "method": "POST",
       "path": "/projects/:projectId/github/operations/:operationId/execute",
       "mountChain": [],
@@ -116021,10 +116484,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:4313ef2d28133ee085d6",
-      "registrationId": "registration:38a946fbe097c3d1ed60",
+      "id": "route-unmounted:b8c51f9adfe1dac6df4d",
+      "registrationId": "registration:37ab775afe43144725ac",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 168,
+      "line": 178,
       "method": "POST",
       "path": "/projects/:projectId/github/operations/:operationId/cancel",
       "mountChain": [],
@@ -117662,7 +118125,7 @@
       "sourcePath": "supabase/migrations/20261026010000_builder_phase2.sql",
       "version": "20261026010000",
       "order": 150,
-      "sha256": "100554d72f9722e429cf80cd356f31f2659177833a1bf63fdddee36829b8cb48"
+      "sha256": "70d5fe9f8ddcdd15c5a31c65a697cebd490275c51cd79940c87203208dab507f"
     },
     {
       "id": "migration:b389be1e1c3285b5e60e",
@@ -117672,10 +118135,17 @@
       "sha256": "80aad5ff43a0d1fd3c3664941e587257a44617cd77e852c71bb3600da62606b1"
     },
     {
+      "id": "migration:5405002f46cf78eee721",
+      "sourcePath": "supabase/migrations/20261026030000_builder_preview_readiness.sql",
+      "version": "20261026030000",
+      "order": 152,
+      "sha256": "c218d33db5fad878574556451146800d029a573ec8a2f2ce4452a55b1ba5cf7c"
+    },
+    {
       "id": "migration:23d324e44157d29d5205",
       "sourcePath": "supabase/migrations/20261026100000_browser_runs_durable.sql",
       "version": "20261026100000",
-      "order": 152,
+      "order": 153,
       "sha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b"
     }
   ],
@@ -117710,7 +118180,7 @@
     {
       "id": "workflow:61c79996988bb0bc60bd",
       "sourcePath": ".github/workflows/builder-phase1.yml",
-      "sha256": "756120c5fb4d81b0a38c70a49087e150b0212adcd13fda0fb61fb456c9fc20bd",
+      "sha256": "eb3f558fbcf1da0d6170b4dac874078d8c0ad982df979f7c033262470c579a7c",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
@@ -118022,9 +118492,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:41b3360ee76a219364e0",
+      "id": "finding:ead59e372fbd5d96a711",
       "sourcePath": "backend/src/builder/data/schema.ts",
-      "line": 182,
+      "line": 184,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -120562,9 +121032,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:58b433b5734dd03fbb38",
+      "id": "finding:b82de9052fa6a9c3f600",
       "sourcePath": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "line": 392,
+      "line": 402,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -120762,7 +121232,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bf1b84ce72b8f6f97230",
+      "id": "finding:4938151be18b405a3614",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 531,
       "kind": "TODO",
@@ -120772,7 +121242,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d52b351f50f2cfb1fa4b",
+      "id": "finding:d4926e10fd769d5d806e",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 778,
       "kind": "TODO",
@@ -120782,9 +121252,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a6948636129318809fac",
+      "id": "finding:7ed5634f1ed00511d2c2",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1866,
+      "line": 1870,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -120792,9 +121262,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:044c06c1e1245f927758",
+      "id": "finding:9026eb13ad2b7875fecb",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1868,
+      "line": 1872,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -120802,9 +121272,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:033df94a1e3dcc6cf6ca",
+      "id": "finding:01ae37a5994c659abde7",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1868,
+      "line": 1872,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -120812,9 +121282,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0702b24bee52e2c22d00",
+      "id": "finding:bc8530de27c8fb980153",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3198,
+      "line": 3203,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -123937,247 +124407,247 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:62d02bf22e8756d10d45",
+      "id": "frontend-call:9f300624dadf20f71046",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 731,
       "callee": "api.dashboard.summary().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:fbfb0d7559a8c6afff52",
+      "id": "frontend-call:4ed2306124ab11ff189b",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 731,
       "callee": "api.dashboard.summary().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:5ea0ccbbd93519138f0d",
+      "id": "frontend-call:051a98d1a9cad53517d2",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 731,
       "callee": "api.dashboard.summary",
       "reachable": true
     },
     {
-      "id": "frontend-call:61b1d95952190d30b740",
+      "id": "frontend-call:f063d6bd5563141e27d6",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1066,
+      "line": 1070,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:78623c6b2e42b91ef870",
+      "id": "frontend-call:ab02fe793bbfffe4255b",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1066,
+      "line": 1070,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:6d3344beb78b8d6949a7",
+      "id": "frontend-call:98b643d6ba74d6e48ade",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1085,
+      "line": 1089,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:74bb04d31c7894133ce6",
+      "id": "frontend-call:584855015ebe3a84ff42",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1085,
+      "line": 1089,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:d1de5ed22519b96c21bd",
+      "id": "frontend-call:3a88f2da688596b94f3f",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1126,
+      "line": 1130,
       "callee": "api.vercel.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:f7c8377644739e4ee576",
+      "id": "frontend-call:1ebc687497a5e44ec0cb",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1126,
+      "line": 1130,
       "callee": "api.vercel.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:fd27c8c933fce79f5c3b",
+      "id": "frontend-call:1634d6cb4cc5d767e330",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1126,
+      "line": 1130,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:3084ce33e3645c5ec46d",
+      "id": "frontend-call:6795b758c413bfba705a",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1139,
+      "line": 1143,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:1b268aed137f31399fe7",
+      "id": "frontend-call:5eb3cd850e7d6aa0f085",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1139,
+      "line": 1143,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:4bfe1d7bc2765a15df05",
+      "id": "frontend-call:1eeb4d645ae9d5d811e4",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1139,
+      "line": 1143,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:bb0517a517dfc5db840c",
+      "id": "frontend-call:bb250820110bfc8a9b81",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1637,
+      "line": 1641,
       "callee": "api.swarm.cancelRun().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:534bbcc4ac6b574c46db",
+      "id": "frontend-call:6301e1fbade7b8d83884",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1637,
+      "line": 1641,
       "callee": "api.swarm.cancelRun().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:4ca496b635150e5fc8e4",
+      "id": "frontend-call:82052cbd3a09f899b385",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1637,
+      "line": 1641,
       "callee": "api.swarm.cancelRun",
       "reachable": true
     },
     {
-      "id": "frontend-call:48babb64398207a87c4d",
+      "id": "frontend-call:4e2d548114491b3fd48f",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1919,
+      "line": 1923,
       "callee": "api.billing.setPacing",
       "reachable": true
     },
     {
-      "id": "frontend-call:07924df085748fa44464",
+      "id": "frontend-call:8e872bea8e4449abcb85",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2725,
+      "line": 2729,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:43f177b834fcc7d0570c",
+      "id": "frontend-call:440d1e8dfb14a61ce44c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2779,
+      "line": 2783,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:f161477b5a2708bcbcd0",
+      "id": "frontend-call:e24d4d86eb2d2cf0740c",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2779,
+      "line": 2783,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:8f78e488746c0025b882",
+      "id": "frontend-call:0d1b3728f4d82f389d9f",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2779,
+      "line": 2783,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:20da2776ad6e1a709c82",
+      "id": "frontend-call:42f6809a8c476445b9fa",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2858,
+      "line": 2862,
       "callee": "api.phase1.chat",
       "reachable": true
     },
     {
-      "id": "frontend-call:eba065ba78b6186f5099",
+      "id": "frontend-call:6e652c9b1448d905e2b7",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3224,
+      "line": 3229,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:d25210a2273401459c6d",
+      "id": "frontend-call:2a03277372bb0a109226",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3224,
+      "line": 3229,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:0b71bd3efb35bf96fd85",
+      "id": "frontend-call:11780fa61403fa43c3a0",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3834,
+      "line": 3839,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:8521bd4817b4dd94fe96",
+      "id": "frontend-call:b2c9b3c71c1eed728444",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3834,
+      "line": 3839,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:e22aa82c72544dfc6baf",
+      "id": "frontend-call:95bfab5b5d0e158f53be",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3919,
+      "line": 3924,
       "callee": "api.swarm.saveConversation().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:896fe52487b91565d9cc",
+      "id": "frontend-call:9ef613c84688058d0227",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3919,
+      "line": 3924,
       "callee": "api.swarm.saveConversation",
       "reachable": true
     },
     {
-      "id": "frontend-call:f13da56fd861d4bd14fb",
+      "id": "frontend-call:f8b86dc1a80dcc5e2c14",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3940,
+      "line": 3945,
       "callee": "api.github.updateSettings().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:26175c3522b6db4aa8c6",
+      "id": "frontend-call:a22f89715e42c56ff7e6",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3940,
+      "line": 3945,
       "callee": "api.github.updateSettings",
       "reachable": true
     },
     {
-      "id": "frontend-call:ddee153bcb798c7b60d0",
+      "id": "frontend-call:751ffb4fcd6be16da5be",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3942,
+      "line": 3947,
       "callee": "api.projects.create().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:21ee05bef662e4d864a8",
+      "id": "frontend-call:fad94e815db83df66ac5",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3942,
+      "line": 3947,
       "callee": "api.projects.create().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:9b7275d7387a0020359a",
+      "id": "frontend-call:3090ac5bb3c851a74512",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3942,
+      "line": 3947,
       "callee": "api.projects.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:311667da7a1a735e4552",
+      "id": "frontend-call:ff4e316b8025d835fe02",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4681,
+      "line": 4686,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:27f65e4b46ee31a6f8c7",
+      "id": "frontend-call:99d347a77ab125263f16",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 4681,
+      "line": 4686,
       "callee": "api.github.status",
       "reachable": true
     },
@@ -125598,9 +126068,51 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:0ed6f73056a2fadca31b",
+      "sourcePath": "backend/src/builder/audit.delivery.test.ts",
+      "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3a3dab327f67e6a75359",
+      "sourcePath": "backend/src/builder/audit.preview.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:1bec6a399cd03d0abff9",
+      "sourcePath": "backend/src/builder/audit.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bef66b14cc5168963755",
+      "sourcePath": "backend/src/builder/audit.verification.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9c8f19792bf12d2488df",
       "sourcePath": "backend/src/builder/builder.test.ts",
       "declaredTests": 38,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:261067afa02c4941a918",
+      "sourcePath": "backend/src/builder/cancel.test.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:192fab4aa2b3ed0d97ae",
+      "sourcePath": "backend/src/builder/conversation.test.ts",
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -125689,6 +126201,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:93fa25fb6180cff6405a",
+      "sourcePath": "backend/src/builder/journey.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:4c723fa75bf2f47450c6",
       "sourcePath": "backend/src/builder/phase2Store.integration.test.ts",
       "declaredTests": 9,
@@ -125710,9 +126229,23 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:5002ea17fcd6fbe58cc1",
+      "sourcePath": "backend/src/builder/qa/qaHostMain.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:1b63d1df0dc999eb7c8b",
       "sourcePath": "backend/src/builder/qa/qaService.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:06f5b98a95eb9dd48bf1",
+      "sourcePath": "backend/src/builder/qa/remoteQa.test.ts",
+      "declaredTests": 20,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -125733,7 +126266,7 @@
     {
       "id": "test-suite:8571d5c89abe127a7946",
       "sourcePath": "backend/src/builder/store.integration.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -126449,7 +126982,7 @@
     {
       "id": "test-suite:6cb70cbc2ce87b1d9052",
       "sourcePath": "backend/src/routes/builderPhase3.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -129133,9 +129666,23 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:5d61f72e5d124072f44d",
+      "sourcePath": "frontend/src/lib/builderApiContract.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:1078182935a6c6bb59cf",
       "sourcePath": "frontend/src/lib/builderApiPhase3.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3a6127aa2568ba50b3d7",
+      "sourcePath": "frontend/src/lib/builderContinuity.test.ts",
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

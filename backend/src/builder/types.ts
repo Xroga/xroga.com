@@ -75,6 +75,8 @@ export interface BuilderProject {
   readonly activeRunId: string | null;
   readonly currentRevisionId: string | null;
   readonly currentRevisionNumber: number;
+  /** The last strict readiness result and the revision it tested: '<revision id>:ready' or '<revision id>:failed'. */
+  readonly previewReadiness: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 }

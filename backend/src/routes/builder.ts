@@ -67,10 +67,30 @@ export function createBuilderRouter(serviceFor: BuilderServiceFactory = builderS
     }
   });
 
+  /** The project this chat conversation is building, or null. Lets a reopened chat continue the same project. */
+  router.get('/conversations/:conversationId/project', async (req: AuthRequest, res) => {
+    try {
+      const tenant = requireTenantContext(req.tenantContext);
+      return res.json({ project: await serviceFor(tenant).projectForConversation(tenant.userId, String(req.params.conversationId ?? '')) });
+    } catch (error) {
+      return fail(res, error);
+    }
+  });
+
   router.get('/projects/:projectId', async (req: AuthRequest, res) => {
     try {
       const tenant = requireTenantContext(req.tenantContext);
       return res.json(await serviceFor(tenant).getState(tenant.userId, id(req.params.projectId)));
+    } catch (error) {
+      return fail(res, error);
+    }
+  });
+
+  /** Stops the build holding the project's run slot. Owner only; idempotent; the state change is durable and compare-and-set. */
+  router.post('/projects/:projectId/cancel', async (req: AuthRequest, res) => {
+    try {
+      const tenant = requireTenantContext(req.tenantContext);
+      return res.json(await serviceFor(tenant).cancelBuild(tenant.userId, id(req.params.projectId)));
     } catch (error) {
       return fail(res, error);
     }

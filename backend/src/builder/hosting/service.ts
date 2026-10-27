@@ -38,6 +38,8 @@ export interface HostingDeps extends OperationDeps {
   readonly appEnvironment: (userId: string, projectId: string) => Promise<Record<string, string> | null>;
   /** The verified source files for a revision (the same set the export and GitHub use). */
   readonly filesFor: (project: BuilderProject, revision: BuilderRevision) => ProjectFile[];
+  /** Whether the app needs a customer database schema and whether it has been applied. Production is blocked until it has. */
+  readonly databaseStatus?: (userId: string, projectId: string) => Promise<{ required: boolean; applied: boolean }>;
   /** The GitHub commit that holds this revision, when it has been exported. Provenance only. */
   readonly githubCommitFor: (userId: string, projectId: string, revisionId: string) => Promise<string | null>;
   /** Real-browser tests against a deployed URL. Never run with real user data. */
@@ -128,6 +130,21 @@ export class HostingService {
     return { project, revision };
   }
 
+  /**
+   * Vercel projects that an earlier Xroga operation for THIS builder project created (or deployed into), by id.
+   * A retry, or a newer version of the same app, may reuse such a project. A project that merely has the same name
+   * is never adopted: it could be the customer's own.
+   */
+  private async ownedProjects(userId: string, projectId: string): Promise<Map<string, string>> {
+    const owned = new Map<string, string>();
+    for (const operation of await this.ops.list(userId, projectId, 'vercel')) {
+      if (operation.action !== 'deploy_preview') continue;
+      const project = (operation.receipt as { project?: { id?: unknown; name?: unknown } } | null)?.project;
+      if (typeof project?.id === 'string' && typeof project.name === 'string') owned.set(project.id, project.name);
+    }
+    return owned;
+  }
+
   async preparePreview(userId: string, projectId: string, input: { operationKey: string; scopeId: string | null; projectName?: string; existingProject?: boolean; revisionId?: string }) {
     const { project, revision } = await this.head(userId, projectId, input.revisionId);
     const files = this.deps.filesFor(project, revision); // proves the source is exportable and secret-free
@@ -136,10 +153,13 @@ export class HostingService {
     // The scope must be an account or team the connected user can act for, as Vercel reports it.
     const scope = (await this.deps.vercel.scopes(connection.token, connection.viewer)).find((candidate) => candidate.id === input.scopeId);
     if (!scope) throw new BuilderError('invalid_input', 'That Vercel account or team is not available to your connected account.');
-    const name = input.projectName ?? `${PROJECT_NAME_SLUG(project.title)}-${markerFor(projectId, input.operationKey).slice(-6)}`;
+    const owned = await this.ownedProjects(userId, projectId);
+    // With no name given, a newer version goes to the project Xroga already made for this app.
+    const name = input.projectName ?? [...owned.values()].pop() ?? `${PROJECT_NAME_SLUG(project.title)}-${markerFor(projectId, input.operationKey).slice(-6)}`;
     if (!VERCEL_PROJECT_NAME.test(name)) throw new BuilderError('invalid_input', 'That Vercel project name is not valid.');
-    const mode = input.existingProject ? 'existing' : 'create';
     const existing = await this.deps.vercel.getProject(connection.token, scope, name);
+    const reuse = Boolean(existing && owned.has(existing.id));
+    const mode = input.existingProject || reuse ? 'existing' : 'create';
     if (mode === 'create' && existing) throw new BuilderError('conflict', `A Vercel project named "${name}" already exists in that account. Choose another name, or select it as an existing project.`);
     if (mode === 'existing') {
       if (!existing) throw new BuilderError('not_found', `There is no Vercel project named "${name}" in that account.`);
@@ -163,11 +183,12 @@ export class HostingService {
   }
 
   approve(userId: string, projectId: string, operationId: string, digest: string) {
-    return this.ops.approve(userId, projectId, operationId, { digest });
+    // A preview approval can never approve a production release: that has its own approvePromotion with a typed confirmation.
+    return this.ops.approve(userId, projectId, operationId, { digest }, { provider: 'vercel', actions: ['prepare_preview', 'deploy_preview'] });
   }
 
   cancel(userId: string, projectId: string, operationId: string) {
-    return this.ops.cancel(userId, projectId, operationId);
+    return this.ops.cancel(userId, projectId, operationId, { provider: 'vercel', actions: ['prepare_preview', 'deploy_preview', 'promote_production'] });
   }
 
   operations(userId: string, projectId: string) {
@@ -218,7 +239,11 @@ export class HostingService {
 
       let vercelProject: VercelProject | null = await this.deps.vercel.getProject(token, scope, plan.project.name);
       if (plan.project.mode === 'create') {
-        if (vercelProject) return await fail('failed', `A Vercel project named "${plan.project.name}" already exists and was not created by this deployment. Nothing was changed.`);
+        // A project that an earlier attempt of THIS app created (it carries a receipt with its id) is resumed, not refused.
+        if (vercelProject && (await this.ownedProjects(userId, projectId)).has(vercelProject.id)) {
+          // adopt: continue into the same project
+        } else if (vercelProject) return await fail('failed', `A Vercel project named "${plan.project.name}" already exists and was not created by this deployment. Nothing was changed.`);
+        else {
         try {
           vercelProject = await this.deps.vercel.createProject(token, scope, { name: plan.project.name, framework: plan.framework });
         } catch (error) {
@@ -227,6 +252,7 @@ export class HostingService {
             vercelProject = await this.deps.vercel.getProject(token, scope, plan.project.name).catch(() => null);
             if (!vercelProject) return await fail('ambiguous', 'Vercel did not confirm whether the project was created. Check your Vercel account, then retry.');
           } else throw error;
+        }
         }
       }
       if (!vercelProject) return await fail('failed', 'The Vercel project could not be found. Nothing was changed.');
@@ -284,6 +310,10 @@ export class HostingService {
       throw new BuilderError('conflict', 'Production needs a successful, verified preview first.');
     }
     const receipt = preview.receipt as { project: { id: string; name: string }; deployment: { id: string; url: string; target: string }; source: { revisionId: string; revisionNumber: number; contentSha256: string }; remote: RemoteVerification };
+    const database = await this.deps.databaseStatus?.(userId, projectId);
+    if (database?.required && !database.applied) {
+      throw new BuilderError('conflict', 'Production is blocked: this app needs its database schema, and it has not been applied to your Supabase project yet. Review and apply it first, then publish.');
+    }
     if (receipt.remote.status !== 'passed') {
       throw new BuilderError('conflict', `Production is blocked: the remote browser tests on this preview have not passed (${receipt.remote.status.replace(/_/g, ' ')}). ${receipt.remote.reason}`);
     }
@@ -294,12 +324,17 @@ export class HostingService {
     const connection = await this.connection(userId);
     if (!connection) throw new BuilderError('conflict', 'Vercel is not connected. Reconnect it first.');
     const previewPlan = preview.plan as PreviewPlan;
+    // The release must be made by the same Vercel account that built and tested the preview.
+    if (connection.viewer.id !== previewPlan.viewer.id) throw new BuilderError('conflict', 'The connected Vercel account is not the one that built and tested this preview. Reconnect that account, or deploy a new preview.');
     const plan: PromotionPlan = {
       provider: 'vercel', action: 'promote_production', viewer: connection.viewer, scope: previewPlan.scope, previewOperationId: preview.id, deploymentId: receipt.deployment.id, vercelProjectId: receipt.project.id,
       projectName: receipt.project.name, revision: { id: revision.id, number: revision.revisionNumber, contentSha256: revision.contentSha256 }, previewUrl: receipt.deployment.url,
       productionUrl: `https://${receipt.project.name}.vercel.app`, remoteTests: receipt.remote, confirmationPhrase: `publish ${receipt.project.name}`,
       warnings: [
+        ...(previewPlan.project.mode === 'existing' ? [`This replaces whatever is currently live in your existing Vercel project "${receipt.project.name}".`] : []),
         'This makes your app PUBLIC on the internet at its Vercel production address.',
+        'The remote browser tests are read-only: they did not submit forms, sign in or save data, so those flows have not been tested on the deployed app.',
+        'The production address is expected to be the Vercel-provided one for this project. After publishing, the receipt records exactly what answered there.',
         'It uses the same public database address as the preview. Real visitors will create real records in your own database.',
         'Xroga does not set up custom domains or email. Only the Vercel-provided address is used.',
       ],
@@ -314,7 +349,7 @@ export class HostingService {
     if (operation.provider !== 'vercel' || operation.action !== 'promote_production') throw new BuilderError('not_found', 'Operation not found.');
     const plan = operation.plan as PromotionPlan;
     if (input.confirmation.trim() !== plan.confirmationPhrase) throw new BuilderError('conflict', `To publish, type exactly: ${plan.confirmationPhrase}`);
-    return this.ops.approve(userId, projectId, operationId, { digest: input.digest });
+    return this.ops.approve(userId, projectId, operationId, { digest: input.digest }, { provider: 'vercel', actions: ['promote_production'] });
   }
 
   async executePromotion(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {

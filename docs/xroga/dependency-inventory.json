@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b0f9b8ce10a9cab6d5a61ba18ad242300b34d33d",
+  "source_sha": "e9a288ebf4168a81180a447e815b18805103683a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7630,6 +7630,9 @@
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "backend/src/builder/phase2Bridge.ts",
+        "backend/src/builder/qa/qaHostMain.ts",
+        "backend/src/builder/qa/remoteQa.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/platformEnvironment.ts",
         "backend/src/config/universalAgentFlags.ts",
@@ -7776,6 +7779,9 @@
         "XROGA_BROWSER_COORDINATOR_SECRET",
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_WORKER_URL",
+        "XROGA_BUILDER_INPROCESS_QA",
+        "XROGA_BUILDER_QA_HOST_SECRET",
+        "XROGA_BUILDER_QA_HOST_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
         "XROGA_CREDENTIAL_KMS_PROVIDER",
         "XROGA_DEV_CREDENTIAL_KEK",
@@ -7812,6 +7818,9 @@
         "XROGA_PROXY_PASSWORD",
         "XROGA_PROXY_PORT",
         "XROGA_PROXY_USERNAME",
+        "XROGA_QA_HOST_ALLOWED_SUFFIXES",
+        "XROGA_QA_HOST_MAX_CONCURRENT",
+        "XROGA_QA_HOST_SECRET",
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
         "XROGA_REQUIRE_MANAGED_CUSTODY",
         "XROGA_ROUTING_MODE",
@@ -7842,6 +7851,9 @@
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "backend/src/builder/phase2Bridge.ts",
+        "backend/src/builder/qa/qaHostMain.ts",
+        "backend/src/builder/qa/remoteQa.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/platformEnvironment.ts",
         "backend/src/config/universalAgentFlags.ts",
@@ -10630,6 +10642,7 @@
       "consuming_sources": [
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/runStore.ts",
+        "backend/src/builder/phase2Bridge.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
         "backend/src/runtime/startupPolicy.ts",
@@ -10857,6 +10870,7 @@
     {
       "name": "PORT",
       "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts",
         "backend/src/index.ts"
       ],
       "environments": [
@@ -13020,6 +13034,63 @@
       ]
     },
     {
+      "name": "XROGA_BUILDER_INPROCESS_QA",
+      "consuming_sources": [
+        "backend/src/builder/phase2Bridge.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BUILDER_QA_HOST_SECRET",
+      "consuming_sources": [
+        "backend/src/builder/qa/remoteQa.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BUILDER_QA_HOST_URL",
+      "consuming_sources": [
+        "backend/src/builder/qa/remoteQa.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_CIRCUIT_FAILURE_THRESHOLD",
       "consuming_sources": [
         "backend/src/ai/providerRuntime.ts",
@@ -14218,6 +14289,63 @@
       ]
     },
     {
+      "name": "XROGA_QA_HOST_ALLOWED_SUFFIXES",
+      "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_QA_HOST_MAX_CONCURRENT",
+      "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_QA_HOST_SECRET",
+      "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_RELEASE_SHA",
       "consuming_sources": [
         "backend/src/lib/safeHealth.ts",
@@ -14822,7 +14950,7 @@
     },
     {
       "path": ".github/workflows/builder-phase1.yml",
-      "sha256": "756120c5fb4d81b0a38c70a49087e150b0212adcd13fda0fb61fb456c9fc20bd"
+      "sha256": "eb3f558fbcf1da0d6170b4dac874078d8c0ad982df979f7c033262470c579a7c"
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
@@ -15454,7 +15582,7 @@
     },
     {
       "path": "backend/src/builder/canonical.ts",
-      "sha256": "6173a5dec6f80b526ed0a0c1809a85f5e02d0a96c095fc38e37301793ae67e7c"
+      "sha256": "a147ca7a33679ae61f94727663fe2ea60ad86614ebd56f0d3e9eff26da9095d5"
     },
     {
       "path": "backend/src/builder/data/env.ts",
@@ -15478,11 +15606,11 @@
     },
     {
       "path": "backend/src/builder/data/schema.ts",
-      "sha256": "9ce979d825c9ad47d2360e5e7b69b65ba3e8ceb2e1dcb96a3a6e61c6de9ab807"
+      "sha256": "e421a6e5af2cef64e70c5ffd9bf734a53e5e865fb745023cb8bdbd1588041b50"
     },
     {
       "path": "backend/src/builder/data/service.ts",
-      "sha256": "9196412d20c5ac26e88e4afba8ea71e391f21a6a38927a6687ae444a346a0b21"
+      "sha256": "eb4766bdf70ad1654b8c7984c472e832e6babc18c58d62279fdd3873883d230e"
     },
     {
       "path": "backend/src/builder/delivery.ts",
@@ -15494,11 +15622,11 @@
     },
     {
       "path": "backend/src/builder/export/archive.ts",
-      "sha256": "401ca64dd6589e950fee084cf53e690ccacc0f0dde6d4266397548da22d89115"
+      "sha256": "918438de91ae99feafdb798d8f85843b32796637b83c28aa9908782b33d416b5"
     },
     {
       "path": "backend/src/builder/export/service.ts",
-      "sha256": "93b65b638f25cc84a40f189e04b15bc022a7eaf4000247a1646185153072d7bf"
+      "sha256": "49742f1e4bc7b07d12bdfd2d4abd3d5f157c665182d2247c08c2062baf893cb6"
     },
     {
       "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
@@ -15514,7 +15642,7 @@
     },
     {
       "path": "backend/src/builder/github/service.ts",
-      "sha256": "75cafc2802f313b8c7610fc7ac35b6e855925fdd65508b1239eedf86f79e6139"
+      "sha256": "3c8a0edf63738fd5d3cfcb37d5f000fe5f1aecc9913c6ecd2a151412af1fe8c2"
     },
     {
       "path": "backend/src/builder/hosting/fakeVercel.testsupport.ts",
@@ -15530,7 +15658,7 @@
     },
     {
       "path": "backend/src/builder/hosting/service.ts",
-      "sha256": "0223bb159c425eb43b392e49d5768046457c107bbe3ae6530b77ddfe82748dad"
+      "sha256": "fe31ca1c3f9b596e7ab2bf94b7ab982979dd3475f2122825695046b1619f4090"
     },
     {
       "path": "backend/src/builder/intent.ts",
@@ -15538,11 +15666,11 @@
     },
     {
       "path": "backend/src/builder/operations.ts",
-      "sha256": "aa584a994bb145c9a5464eb2e8446297796c9e34406d045b5f2b0e0be8933785"
+      "sha256": "7e9df14f5ee0e60c150dd8202eeed70b85631da5bcf7b53b1439247db0801d28"
     },
     {
       "path": "backend/src/builder/phase2Bridge.ts",
-      "sha256": "986b16689c93e89a8d81b0a9c7ad0a95b6e35f920b1187876491ff898ee9b43f"
+      "sha256": "0cf3dc15be4104e51ca8628f4c47a56b5480efcf424bcd199bb83d4ebbc05a57"
     },
     {
       "path": "backend/src/builder/phase2Store.ts",
@@ -15565,8 +15693,16 @@
       "sha256": "88891b6242b0c817182552fbdad182bfccb7119a5323ea3cd2f0ee021fef3137"
     },
     {
+      "path": "backend/src/builder/qa/qaHostMain.ts",
+      "sha256": "0925ce8ba36212a6a5d2b78c95e4879dabf7869a868b144e2d373a3a7f453ac6"
+    },
+    {
       "path": "backend/src/builder/qa/qaService.ts",
-      "sha256": "4aae6a921e64a3a6a2b48d9438ffb59ae8580b422aab38f8fcc0aa5e406da140"
+      "sha256": "94c05f42795933f465399f29d7e8223aae193923db0984ea89d7f0f2ab2d3169"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "sha256": "c7617f5d458eada623e67d997c2673d9b715ffb9d8813da2612e7f92d50162c0"
     },
     {
       "path": "backend/src/builder/qa/repair.ts",
@@ -15574,7 +15710,7 @@
     },
     {
       "path": "backend/src/builder/qa/runner.ts",
-      "sha256": "4e28c09db066559c181f27715725ed9d22b0bdca6c0d0d68e780f168ff24b9ca"
+      "sha256": "7b99e9c1f752a499466a1e777234ada68a89296e13a31836075296a8d2c9f316"
     },
     {
       "path": "backend/src/builder/qa/types.ts",
@@ -15582,19 +15718,19 @@
     },
     {
       "path": "backend/src/builder/readiness.ts",
-      "sha256": "b2142aeabe617a45441b0de9c278ea4552b97276143c2992ea0d95cf473ee758"
+      "sha256": "07f00ae887207284e2238f9c2a43e250c6afb0bf5ddd29515b6e7dbe1d6a926f"
     },
     {
       "path": "backend/src/builder/service.ts",
-      "sha256": "719fd7a3aeff6805f785b28f1813cfd663b0a6bd261da9a87ece124c93b5c82d"
+      "sha256": "d015f04de6912fd8a0aa6f2ccbff892522d8284ab2540a0ce35ea7e31aea2cdd"
     },
     {
       "path": "backend/src/builder/servicesFixture.testsupport.ts",
-      "sha256": "645c6b833fa779bf4571c97373f36256685258c8b96476c5548f3dd40b752d37"
+      "sha256": "9ca15512e040a0eecdc144de6251a06aaaff48b04fbd9972df8a7b7a2799342d"
     },
     {
       "path": "backend/src/builder/snapshot.ts",
-      "sha256": "0292619f1488edc3cd89f62d073eacbc6ffcf110f2bdc06f02a46fca6f8b1d8a"
+      "sha256": "dde214801c137e21ea94b7f8e3d5e32ad8646f787bcf7483513e2c55caecc7bf"
     },
     {
       "path": "backend/src/builder/spec.ts",
@@ -15606,15 +15742,15 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477"
+      "sha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066"
     },
     {
       "path": "backend/src/builder/swarmBridge.ts",
-      "sha256": "f738b626401508c64a6ffad544627e980a149fa7ae6a31917e207b8c9bb6e976"
+      "sha256": "8bc674b86b3d241d3292e7469174910a2012296658ca031c0f04653623ebe314"
     },
     {
       "path": "backend/src/builder/types.ts",
-      "sha256": "3276ac27f09a8cd43010ffd5e93afc0a71813ae959c92ad57feabbcfa06ff562"
+      "sha256": "27d3f9313bf3235b15cc5f9a34ee76590ee6039cfb28778a7f6243f4a6f34240"
     },
     {
       "path": "backend/src/capabilities/generated.ts",
@@ -16250,11 +16386,11 @@
     },
     {
       "path": "backend/src/routes/builder.ts",
-      "sha256": "921f9650c6f5d7797f3576cd1734f637150de019e7dcfe412a57f620698977b6"
+      "sha256": "8959da0527739e5615b640746191bc1ed043c835c02fede592d68980410f8108"
     },
     {
       "path": "backend/src/routes/builderPhase2.ts",
-      "sha256": "286dc018ef3eba611c5b2104d28dbdb921fbf530b74eceb1a7f7b87ad4c95615"
+      "sha256": "73d193b5be2061478b988f2f985c8cd85858aa7ed8eeb1a900a87a207575a868"
     },
     {
       "path": "backend/src/routes/builderPhase3.ts",
@@ -19994,7 +20130,7 @@
     },
     {
       "path": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
-      "sha256": "c10882a8bc592ff5a4ced8b540c3b70d275a04e922c7d468d9107e14c2d9d4da"
+      "sha256": "e6969fd4481e4d91eeb8b02f66f4ef95f00a1e04e984a05bf356975fb81f9ae1"
     },
     {
       "path": "frontend/src/components/terminal/CapacityUnavailableCard.tsx",
@@ -20046,7 +20182,7 @@
     },
     {
       "path": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "sha256": "c19928333adc9a57e59246319068e528c1dd99e390d02c7de061130a74916c0d"
+      "sha256": "643800b20271521de980bd4c52bee1a0c2921d78422eceb127013bb1671e0762"
     },
     {
       "path": "frontend/src/components/terminal/EngineeringArtifactView.tsx",
@@ -20302,11 +20438,11 @@
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
-      "sha256": "3afad16684167d137c3ca702d2d5f0de6723011d644103b744659ec84b5910e5"
+      "sha256": "fd684c05f180af0131cd35321141c8b860968893bdb87dbfcd7a2c458c231260"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
-      "sha256": "a318150907ce793a9836d457eb91e5ba7a8c4a54a693a3c0c24302e14ffce479"
+      "sha256": "3afe31c3c7a5faef73a02cd1d76849e969b9ade17c340eae2e3bbed3b95be414"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderHistory.tsx",
@@ -20314,7 +20450,7 @@
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderHosting.tsx",
-      "sha256": "dfb07936dd1af29aa814c030c15e1fdb2f2c7f816e96e9cadff58d2af8260273"
+      "sha256": "e536f1e106471b9ca2991fb5bf617270fb13bd0d966115297451b66279f56cde"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderProvenance.tsx",
@@ -20322,7 +20458,7 @@
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderTests.tsx",
-      "sha256": "aa6af047e02b27da46fca08d07f1eee9b58400bc62f9d38a178f7ea84340a78b"
+      "sha256": "fd391ef4fb052676fba61f54e8297d7f7f4f63dfaeb1124e9b3109b7ed3a22a7"
     },
     {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
@@ -20506,7 +20642,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "c78e2850907cb39f30cb3f3bd642c8d1265455ba0aee020cfb0e53f8c5abc4d9"
+      "sha256": "705b47eea65bbd3618e6f578549d240e5a36dbaadb3ea73ead4de971a097e771"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -20602,11 +20738,11 @@
     },
     {
       "path": "frontend/src/lib/builderApi.ts",
-      "sha256": "ecaa2f6a92710aee508fcfe6a66aada6c43d27949dccf1e334f78fe0b679a6b1"
+      "sha256": "b7a72da5b4716ffbf6fbaa1c4f727c51623c4b8aee5cba728b2c7028cadf7b6c"
     },
     {
       "path": "frontend/src/lib/builderApiPhase2.ts",
-      "sha256": "be69b888c42d22151791f761547d924b84c68a4195a775182c53e92c0c0f4059"
+      "sha256": "14c5c4bd11f8e0678d4dc86ac4e8759887f127ae155a2ea986cd8b6414dc6c6e"
     },
     {
       "path": "frontend/src/lib/builderApiPhase3.ts",
@@ -20614,7 +20750,7 @@
     },
     {
       "path": "frontend/src/lib/builderChat.ts",
-      "sha256": "7be3fcebff010c2b2e4b2286419975a0e3034408e3636f581f20ed02da3a8115"
+      "sha256": "1f2d4306df17476b7e21134d13999cf30e14835679fd8046869cb0d3aa714fba"
     },
     {
       "path": "frontend/src/lib/capabilityPageArt.ts",
@@ -21450,7 +21586,7 @@
     },
     {
       "path": "frontend/src/store/useBuilderProjectStore.ts",
-      "sha256": "b30a782c188f6f88c9899f636e2b317ab08aac6f07b00698ef866923558c73d3"
+      "sha256": "030709cab9d77bc1cc80489a94092dd7cbb6284de7c6ed91bc8b63caec074d83"
     },
     {
       "path": "frontend/src/store/useCompanionStore.ts",
@@ -22528,7 +22664,7 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/builder/servicesFixture.testsupport.ts",
-      "line": 66,
+      "line": 72,
       "credentialsInUrl": false
     },
     {
@@ -26665,7 +26801,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3949,
+      "line": 3954,
       "credentialsInUrl": false
     },
     {
@@ -29492,6 +29628,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/builder/data/schema.ts",
+      "line": 222,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/builder/delivery.ts",
       "line": 46,
       "scope": "FUNCTION_LOCAL",
@@ -29542,21 +29685,28 @@
     },
     {
       "path": "backend/src/builder/export/archive.ts",
-      "line": 219,
+      "line": 118,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/export/archive.ts",
-      "line": 243,
+      "line": 226,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/export/archive.ts",
-      "line": 251,
+      "line": 250,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "line": 258,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29653,6 +29803,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/builder/hosting/service.ts",
+      "line": 139,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/builder/qa/plan.ts",
       "line": 38,
       "scope": "FUNCTION_LOCAL",
@@ -29668,8 +29825,36 @@
     },
     {
       "path": "backend/src/builder/qa/qaService.ts",
-      "line": 62,
+      "line": 68,
       "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 105,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 161,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 240,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 240,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -29696,7 +29881,7 @@
     },
     {
       "path": "backend/src/builder/qa/runner.ts",
-      "line": 232,
+      "line": 236,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29710,42 +29895,42 @@
     },
     {
       "path": "backend/src/builder/servicesFixture.testsupport.ts",
-      "line": 44,
+      "line": 50,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/servicesFixture.testsupport.ts",
-      "line": 44,
+      "line": 50,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/servicesFixture.testsupport.ts",
-      "line": 44,
+      "line": 50,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/snapshot.ts",
-      "line": 29,
+      "line": 48,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/snapshot.ts",
-      "line": 62,
+      "line": 81,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/snapshot.ts",
-      "line": 63,
+      "line": 82,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29759,14 +29944,14 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 78,
+      "line": 96,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 79,
+      "line": 97,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33665,14 +33850,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1994,
+      "line": 1998,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2027,
+      "line": 2031,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -184,7 +184,7 @@ async function runCheck(check: QaCheck, driver: QaDriver, budget: { screenshots:
   }
 }
 
-function summarize(checks: readonly QaCheckResult[]): { status: QaStatus; reason: string } {
+export function summarizeChecks(checks: readonly QaCheckResult[]): { status: QaStatus; reason: string } {
   const executed = checks.filter((check) => check.executed);
   if (executed.length === 0) return { status: 'pending_runtime', reason: 'No check was executed: there was no running application to test.' };
   const failed = checks.filter((check) => check.status === 'failed');
@@ -204,13 +204,17 @@ export async function runQa(input: RunQaInput): Promise<QaReport> {
   try {
     browser = await input.driver.browserVersion().catch(() => null);
     for (const check of selected) {
-      if (input.signal?.aborted) break;
+      if (input.signal?.aborted) {
+        // A cancelled run never reports a check it did not execute as passed: it is pending, so the run cannot be PASSED.
+        results.push({ id: check.id, title: check.title, category: check.category, viewport: check.viewport, required: check.required, status: 'pending', executed: false, failureClass: null, durationMs: 0, pendingReason: 'The run was cancelled before this check executed.', evidence: null, regression: false });
+        continue;
+      }
       results.push(await runCheck(check, input.driver, budget, input));
     }
   } finally {
     await input.driver.close().catch(() => undefined);
   }
-  const summary = summarize(results);
+  const summary = summarizeChecks(results);
   return {
     version: 1,
     status: summary.status,

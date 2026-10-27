@@ -18,6 +18,7 @@ import { createRestVercelPort } from './hosting/restPort.js';
 import { deliveryByRevision } from './delivery.js';
 import { SupabasePhase2Store } from './phase2Store.js';
 import { openPlaywrightQaDriver } from './qa/playwrightQaDriver.js';
+import { remoteQaFromEnv } from './qa/remoteQa.js';
 import { QaService, type QaTarget, type RepairRunner } from './qa/qaService.js';
 import { BuilderService } from './service.js';
 import { hashSnapshot } from './snapshot.js';
@@ -35,6 +36,23 @@ import { BuilderError } from './types.js';
  * Until a working runtime exists (the Google runtime of the migration PR), QA reports pending_runtime
  * and never a pass.
  */
+
+/**
+ * Browser QA drives a real Chromium against GENERATED code. In production that must not happen inside the customer-facing API
+ * container: generated pages are untrusted. So outside development and tests the in-process browser is off unless an operator
+ * deliberately enables it for a deployment that is isolated for that purpose (a dedicated worker), and QA is then honestly
+ * reported as not run. XROGA_BUILDER_INPROCESS_QA=1 is that deliberate switch.
+ */
+export function inProcessQaAllowed(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.NODE_ENV !== 'production' || env.XROGA_BUILDER_INPROCESS_QA === '1';
+}
+
+export function openQaDriver(baseUrl: string, env: NodeJS.ProcessEnv = process.env, open: typeof openPlaywrightQaDriver = openPlaywrightQaDriver) {
+  if (!inProcessQaAllowed(env)) {
+    return Promise.reject(Object.assign(new Error('Browser tests are not enabled in this environment: they need an isolated browser host, so nothing was tested.'), { code: 'BROWSER_UNAVAILABLE' }));
+  }
+  return open({ baseUrl });
+}
 
 /** Finds, or restarts, the running application for a revision. Null when there is no runtime to test. */
 export function canonicalQaTarget(): QaTarget {
@@ -94,8 +112,14 @@ function repairRunnerFor(tenant: TenantContext, builder: BuilderService): Repair
   };
 }
 
+/** Starts (or restarts) the isolated preview from the project's latest SAVED version, then checks that its pages respond. */
+export interface PreviewControl {
+  restart(userId: string, projectId: string): Promise<{ readonly started: boolean; readonly ready: boolean; readonly reason: string; readonly revisionNumber: number }>;
+}
+
 export interface Phase2Services {
   readonly builder: BuilderService;
+  readonly preview: PreviewControl;
   readonly qa: QaService;
   readonly github: GitHubExportService;
   readonly exporter: ExportService;
@@ -125,15 +149,34 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
   const store = new SupabaseBuilderStore(context);
   const phase2 = new SupabasePhase2Store(context, store);
   const builder = new BuilderService({ store, runBuild: canonicalBuildRunner, preview: canonicalPreviewPort });
+  const remote = remoteQaFromEnv();
   const qa = new QaService({
     builder, store, phase2, target: canonicalQaTarget(), repair: repairRunnerFor(context, builder), budgetAllows: (userId) => budgetAllowsRepair(userId),
-    openDriver: (baseUrl) => openPlaywrightQaDriver({ baseUrl }),
+    openDriver: (baseUrl) => openQaDriver(baseUrl),
+    ...(remote ? { remote } : {}),
   });
+  const preview: PreviewControl = {
+    async restart(userId, projectId) {
+      const project = await builder.requireProject(userId, projectId);
+      const { revision } = await builder.headFiles(userId, project);
+      if (!revision) throw new BuilderError('not_found', 'The project has no saved version to preview.');
+      // Recreated from the durable source of the head revision, so an expired or destroyed sandbox is recoverable.
+      const target = await canonicalQaTarget().ensure({ userId, project, revision });
+      if (!target) {
+        await store.markPreviewReadiness(userId, projectId, { revisionId: revision.id, ready: false });
+        return { started: false, ready: false, reason: 'The isolated runtime could not start this version. Nothing is reported as running.', revisionNumber: revision.revisionNumber };
+      }
+      const verdict = await canonicalPreviewPort.verify({ userId, projectId, revision });
+      await store.markPreviewReadiness(userId, projectId, verdict.strictReady === null ? null : { revisionId: revision.id, ready: verdict.strictReady });
+      return { started: true, ready: verdict.strictReady === true, reason: verdict.reason, revisionNumber: revision.revisionNumber };
+    },
+  };
   const github = new GitHubExportService({ phase2, builder, github: createRestGitHubPort(ghFetch), tokenFor: (userId) => getGitHubToken(userId) });
   const data = new SupabaseDataService({ phase2, builder, supabase: createRestSupabasePort(), tokenFor: (userId) => getSupabaseOAuthAccessToken(userId) });
   const hosting = new HostingService({
     phase2, builder, vercel: createRestVercelPort(), tokenFor: (userId) => getVercelToken(userId),
     appEnvironment: (userId, projectId) => data.appEnvironment(userId, projectId),
+    databaseStatus: (userId, projectId) => data.databaseStatus(userId, projectId),
     filesFor: (project, revision) => github.filesFor(project, revision),
     githubCommitFor: async (userId, projectId, revisionId) => (await github.binding(userId, projectId))?.commits.find((commit) => commit.revisionId === revisionId)?.commitSha ?? null,
     remoteQa: async ({ userId, projectId, revision, baseUrl }): Promise<RemoteVerification> => {
@@ -151,5 +194,5 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
     const [github1, supabase, vercel, revisions] = await Promise.all([github.operations(userId, projectId), data.operations(userId, projectId), hosting.operations(userId, projectId), builder.history(userId, projectId)]);
     return deliveryByRevision([...github1, ...supabase, ...vercel], revisions);
   };
-  return { builder, qa, github, exporter: new ExportService({ builder, phase2 }), data, hosting, provenance };
+  return { builder, preview, qa, github, exporter: new ExportService({ builder, phase2 }), data, hosting, provenance };
 }

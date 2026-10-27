@@ -9,7 +9,7 @@ import pg from 'pg';
 import { PG_TEST_URL } from '../storage/testing/pgFixture.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const MIGRATION = path.resolve(here, '../../../supabase/migrations/20261026000100_builder_projects.sql');
+const MIGRATIONS = ['20261026000100_builder_projects.sql', '20261026030000_builder_preview_readiness.sql'].map((name) => path.resolve(here, '../../../supabase/migrations', name));
 const STUB = path.resolve(here, '../storage/testing/supabaseStub.sql');
 const skip = PG_TEST_URL ? false : 'STORAGE_TEST_DATABASE_URL not set: the builder SQL is only exercised against a real PostgreSQL';
 
@@ -38,7 +38,7 @@ describe('builder projects against real PostgreSQL', { skip }, () => {
     };
     await pool.query(readFileSync(STUB, 'utf8'));
     await pool.query('insert into auth.users(id) values ($1),($2)', [OWNER, OTHER]);
-    await pool.query(readFileSync(MIGRATION, 'utf8'));
+    for (const file of MIGRATIONS) await pool.query(readFileSync(file, 'utf8'));
   });
   after(async () => {
     await drop?.();
@@ -133,6 +133,18 @@ describe('builder projects against real PostgreSQL', { skip }, () => {
     await assert.rejects(asUser(OWNER, 'authenticated', (c) => c.query('update public.builder_projects set title=$1 where id=$2', ['x', mine])), (e: { code?: string }) => e.code === '42501');
     await assert.rejects(asUser(OWNER, 'authenticated', (c) => c.query("select public.append_builder_revision($1,$2,'r','generation',$3,1,1,'[]'::jsonb,'{}'::jsonb,null)", [mine, OWNER, SHA_A])), (e: { code?: string }) => e.code === '42501');
     await assert.rejects(asUser(OWNER, 'anon', (c) => c.query('select 1 from public.builder_projects')), (e: { code?: string }) => e.code === '42501');
+  });
+
+  it('records the preview readiness against a revision, accepts only the documented shapes, and the migration is idempotent', async () => {
+    const f = await project();
+    const id = '0f3c1a1e-5d2b-4c6a-9e8f-1a2b3c4d5e6f';
+    await pool.query('update public.builder_projects set preview_readiness=$2 where id=$1', [f, `${id}:ready`]);
+    await pool.query('update public.builder_projects set preview_readiness=$2 where id=$1', [f, `${id}:failed`]);
+    await pool.query('update public.builder_projects set preview_readiness=null where id=$1', [f]);
+    for (const bad of ['ready', `${id}:maybe`, `${id}`, 'x:ready']) {
+      await assert.rejects(pool.query('update public.builder_projects set preview_readiness=$2 where id=$1', [f, bad]), (e: { code?: string }) => e.code === '23514', bad);
+    }
+    await pool.query(readFileSync(MIGRATIONS[1], 'utf8'));
   });
 
   it('deleting the project removes its revisions and the schema rejects bad states and hashes', async () => {

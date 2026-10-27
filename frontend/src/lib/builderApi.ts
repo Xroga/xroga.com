@@ -80,6 +80,10 @@ export const builderApi = {
   create: (input: { prompt: string; requestKey: string; conversationId?: string | null }) =>
     request<{ project: BuilderProject; created: boolean }>('/projects', { method: 'POST', body: input }),
   list: () => request<{ projects: BuilderProject[] }>('/projects'),
+  /** The project a chat conversation is building (null when none), so reopening that chat continues the same project. */
+  forConversation: (conversationId: string) => request<{ project: BuilderProject | null }>(`/conversations/${encodeURIComponent(conversationId)}/project`),
+  /** Stops the build that is running. Saved before the stop is kept; reports whether anything was running. */
+  cancel: (projectId: string) => request<{ cancelled: boolean; state: BuilderState }>(`/projects/${projectId}/cancel`, { method: 'POST', body: {} }),
   state: (projectId: string) => request<BuilderState>(`/projects/${projectId}`),
   revisions: (projectId: string) => request<{ revisions: BuilderRevisionSummary[] }>(`/projects/${projectId}/revisions`),
   files: (projectId: string) =>
