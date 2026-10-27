@@ -131,3 +131,42 @@ export class BuilderError extends Error {
 
 export const MAX_SNAPSHOT_FILES = 2_000;
 export const MAX_SNAPSHOT_BYTES = 8 * 1024 * 1024;
+
+export type VerificationKind = 'browser_qa' | 'export';
+export type VerificationStatus = 'passed' | 'failed' | 'partial' | 'pending_runtime';
+
+export interface VerificationRecord {
+  readonly id: string;
+  readonly projectId: string;
+  readonly userId: string;
+  readonly revisionId: string;
+  readonly runId: string;
+  readonly kind: VerificationKind;
+  readonly status: VerificationStatus;
+  readonly executedChecks: number;
+  readonly summary: Record<string, unknown>;
+  /** Full report. Omitted from list results. */
+  readonly report?: unknown;
+  readonly createdAt: string;
+}
+
+export type ExternalOperationStatus = 'prepared' | 'approved' | 'executing' | 'succeeded' | 'failed' | 'ambiguous' | 'diverged' | 'cancelled';
+
+export interface ExternalOperation {
+  readonly id: string;
+  readonly projectId: string;
+  readonly userId: string;
+  readonly provider: 'github';
+  readonly action: 'create_repository' | 'push_revision';
+  readonly operationKey: string;
+  readonly revisionId: string;
+  readonly status: ExternalOperationStatus;
+  readonly plan: Record<string, unknown>;
+  readonly planDigest: string;
+  readonly approvedAt: string | null;
+  readonly approvalExpiresAt: string | null;
+  readonly receipt: Record<string, unknown> | null;
+  readonly failure: string | null;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}

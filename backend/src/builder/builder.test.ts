@@ -291,7 +291,9 @@ describe('build generation', () => {
   });
 
   it('follow-up changes extend the same project and keep earlier revisions readable', async () => {
-    const { service, project } = await setup(runner([{ path: 'index.html', content: '<h1>v2</h1>' }]), readyPreview(true));
+    let version = 1;
+    const evolving: BuildRunner = (input) => runner([{ path: 'index.html', content: `<h1>v${++version}</h1>` }])(input);
+    const { service, project } = await setup(evolving, readyPreview(true));
     await service.generate(OWNER_A, project.id, {});
     const second = await service.generate(OWNER_A, project.id, { prompt: 'add a search field and dark mode' });
     assert.equal(second.project.id, project.id);

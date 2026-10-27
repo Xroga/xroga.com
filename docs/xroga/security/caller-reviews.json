@@ -15903,6 +15903,105 @@
           "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
         }
       ]
+    },
+    {
+      "path": "backend/src/builder/diff.ts",
+      "sourceSha256": "333a2ff95cc3d7f5551d0142528636041ed12c89c76974f7257e944aeb22609a",
+      "callIds": [
+        "001b4016dbbe7ce74c52"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected each receiver and surrounding expression in this module. These calls use the built-in Array, Buffer or similar conversion, not a database, object storage or provider transport.",
+      "reason": "Exclude only these in-memory conversions from the privileged persistence register. Network, storage and database operations in this module are performed elsewhere and retain their own security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/diff.ts",
+          "marker": "const table: number[][] = Array.from({ length: a.length + 1 }, () => new Array<number>(b.length + 1).fill(0));"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "sourceSha256": "401ca64dd6589e950fee084cf53e690ccacc0f0dde6d4266397548da22d89115",
+      "callIds": [
+        "bdeccba318b0562fd267",
+        "221f8d1426f1d74def35"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected each receiver and surrounding expression in this module. These calls use the built-in Array, Buffer or similar conversion, not a database, object storage or provider transport.",
+      "reason": "Exclude only these in-memory conversions from the privileged persistence register. Network, storage and database operations in this module are performed elsewhere and retain their own security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/export/archive.ts",
+          "marker": "const eocd = buffer.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/github/restPort.ts",
+      "sourceSha256": "9789bc1736f6ff2b09f7d577629b1dade6830c24bb7721336570e5733744d5c8",
+      "callIds": [
+        "df54381d0ade7d765f26",
+        "20118326fe9c6771a859",
+        "05ddfe5bb68c0959be2a"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected each receiver and surrounding expression in this module. These calls use the built-in Array, Buffer or similar conversion, not a database, object storage or provider transport.",
+      "reason": "Exclude only these in-memory conversions from the privileged persistence register. Network, storage and database operations in this module are performed elsewhere and retain their own security obligations.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/github/restPort.ts",
+          "marker": "const data = Buffer.from(content, 'utf8');"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/phase2Store.ts",
+      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "callIds": [
+        "61d98f1ac872902ed86b",
+        "7c22f92ad19d4ec859f8",
+        "e88a623b104c465798f9",
+        "f999a78d64edbfb626fd",
+        "191043851ebd294fcdd0",
+        "6ac45895b0904f8698a5",
+        "9bd82d91c4843130cf50",
+        "537b7e8c92d50cfd879d"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
+      "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/phase2Store.ts",
+          "marker": "return getTenantSupabaseAdmin(this.tenant);"
+        },
+        {
+          "path": "backend/src/builder/phase2Store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/phase2Store.ts",
+      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "callIds": [
+        "daed95748190fd08018c",
+        "b555483a911513e9e6c7"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Inserts set user_id from the verified issued tenant owner only after the project and revision have been confirmed to belong to that owner through the owner-scoped builder store.",
+      "reason": "These inserts have no read predicate because they create rows owned by the verified identity, and each is preceded by an ownership check of the project and revision. Unique constraints make retries resolve to the stored row.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/phase2Store.ts",
+          "marker": "return getTenantSupabaseAdmin(this.tenant);"
+        },
+        {
+          "path": "backend/src/builder/phase2Store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
+        }
+      ]
     }
   ]
 }

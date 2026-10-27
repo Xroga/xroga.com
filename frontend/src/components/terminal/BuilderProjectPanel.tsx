@@ -12,6 +12,12 @@ import {
   type BuilderState,
 } from '@/lib/builderApi';
 import { cn } from '@/lib/utils';
+import { BuilderDelivery } from './builder/BuilderDelivery';
+import { BuilderHistory } from './builder/BuilderHistory';
+import { BuilderTests } from './builder/BuilderTests';
+
+type PanelTab = 'overview' | 'history' | 'tests' | 'export';
+const TAB_LABEL: Record<PanelTab, string> = { overview: 'Overview', history: 'Versions', tests: 'Tests', export: 'Export' };
 
 const PREVIEW_LABEL: Record<BuilderPreviewLifecycle, string> = {
   not_started: 'Not started',
@@ -48,6 +54,7 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
   const [revisions, setRevisions] = useState<BuilderRevisionSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<PanelTab>('overview');
 
   const load = useCallback(async () => {
     try {
@@ -115,6 +122,17 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
       {project.stateReason ? <p className="text-[11px] text-[var(--muted)]">{project.stateReason}</p> : null}
       {error ? <p className="text-[11px] text-amber-400">{error}</p> : null}
 
+      <nav aria-label="Project sections" className="flex gap-1 border-b border-[var(--card-border)]/40">
+        {(Object.keys(TAB_LABEL) as PanelTab[]).map((id) => (
+          <button key={id} type="button" onClick={() => setTab(id)} aria-current={tab === id ? 'page' : undefined} className={cn('px-2 py-1 text-[11px]', tab === id ? 'border-b-2 border-[var(--accent)] text-[var(--foreground)]' : 'text-[var(--muted)]')}>
+            {TAB_LABEL[id]}
+          </button>
+        ))}
+      </nav>
+
+      {tab === 'overview' ? (
+      <>
+
       <section aria-label="What Xroga actually did">
         <ol className="space-y-1.5">
           {timeline.map((entry) => (
@@ -161,19 +179,12 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
         </ul>
       </section>
 
-      <section aria-label="Revision history">
-        <p className="font-medium">History</p>
-        <ul className="mt-1 space-y-1">
-          {revisions.map((revision) => (
-            <li key={revision.id} className="flex items-center justify-between gap-2 text-[11px]">
-              <span>
-                #{revision.revisionNumber} · {revision.origin} · {revision.fileCount} files
-              </span>
-              <span className="text-[var(--muted)]">{revision.verificationStatus}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      </>
+      ) : null}
+
+      {tab === 'history' ? <BuilderHistory projectId={projectId} revisions={revisions} currentRevisionId={project.currentRevisionId} onChanged={() => void load()} /> : null}
+      {tab === 'tests' ? <BuilderTests projectId={projectId} onChanged={() => void load()} /> : null}
+      {tab === 'export' ? <BuilderDelivery projectId={projectId} title={project.title} onChanged={() => void load()} /> : null}
 
       <p className="text-[10px] text-[var(--muted)]">
         Starter {project.starter.starterId}@{project.starter.starterVersion} ({project.starter.license}). Your source is saved on Xroga and survives the preview ending.

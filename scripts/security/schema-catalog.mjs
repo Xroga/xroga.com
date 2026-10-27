@@ -20,6 +20,8 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     worker_task_leases:['20261024000000_worker_task_leases.sql','20261024000000_worker_task_leases.sql'],
     builder_projects:['20261026000100_builder_projects.sql','20261026000100_builder_projects.sql'],
     builder_revisions:['20261026000100_builder_projects.sql','20261026000100_builder_projects.sql'],
+    builder_verifications:['20261026010000_builder_phase2.sql','20261026010000_builder_phase2.sql'],
+    builder_external_operations:['20261026010000_builder_phase2.sql','20261026010000_builder_phase2.sql'],
     google_canonical_deliveries:['20261026000000_google_canonical_deliveries.sql','20261026000000_google_canonical_deliveries.sql'],
     browser_runs:['20261026100000_browser_runs_durable.sql','20261026100000_browser_runs_durable.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
