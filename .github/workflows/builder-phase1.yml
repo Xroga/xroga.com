@@ -1,0 +1,56 @@
+# Batch 2 Phase 1 (AI Product Builder foundation) verification. SAFE BY CONSTRUCTION:
+#   - runs only on pushes to the Batch 2 development branch, or when dispatched by hand; it is NOT triggered by pull_request or by main
+#   - uses no repository/environment secrets and no GitHub Environment (nothing can reach Supabase, Fly, Google Cloud, Vercel or production)
+#   - read-only token; the database is a disposable service container
+#   - no deploy, no migration of any real database, no paid resource
+# It does NOT replace the repository's own required checks.
+name: builder-phase1
+
+on:
+  push:
+    branches: ['claude/batch2-phase1-product-builder']
+    paths:
+      - 'backend/src/builder/**'
+      - 'backend/src/routes/builder*'
+      - 'backend/src/routes/swarm.ts'
+      - 'backend/src/ai/pipeline.ts'
+      - 'supabase/migrations/20261026000100_builder_projects.sql'
+      - '.github/workflows/builder-phase1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: builder-phase1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci-disposable
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      STORAGE_TEST_DATABASE_URL: postgresql://postgres:ci-disposable@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Backend typecheck
+        run: npx tsc --noEmit -p backend
+      - name: Builder unit, integration and API tests (real PostgreSQL for the SQL)
+        run: node node_modules/tsx/dist/cli.mjs --test backend/src/builder/*.test.ts backend/src/routes/builder.test.ts

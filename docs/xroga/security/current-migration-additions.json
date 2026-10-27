@@ -184,6 +184,30 @@
     },
     {
       "schema": "public",
+      "table_name": "builder_projects",
+      "migration": "20261026000100_builder_projects.sql",
+      "migrationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
+      "authorizationMigration": "20261026000100_builder_projects.sql",
+      "authorizationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
+      "boundary": "RLS enabled. Authenticated SELECT only, restricted to user_id = auth.uid(). No browser INSERT, UPDATE or DELETE and no anon access. All writes go through the server with an explicit owner predicate. Unique (user_id, request_key) makes creation idempotent.",
+      "tests": "backend/src/builder/store.integration.test.ts",
+      "evidence": "Batch 2 Phase 1 migration, not applied to production. Real-PostgreSQL tests run in the builder-phase1 workflow on a disposable database (uniqueness, gapless numbering, replay, conflict, 12-way concurrency, foreign owner, browser-role grants). Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "builder_revisions",
+      "migration": "20261026000100_builder_projects.sql",
+      "migrationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
+      "authorizationMigration": "20261026000100_builder_projects.sql",
+      "authorizationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
+      "boundary": "RLS enabled. Authenticated SELECT only, restricted to user_id = auth.uid(). No browser writes and no anon access. Revisions are appended only by append_builder_revision (service_role execute only): owner-checked, row-locked, gapless, idempotent per (run, content hash), stale parents return a conflict.",
+      "tests": "backend/src/builder/store.integration.test.ts",
+      "evidence": "Batch 2 Phase 1 migration, not applied to production. Real-PostgreSQL tests run in the builder-phase1 workflow on a disposable database (uniqueness, gapless numbering, replay, conflict, 12-way concurrency, foreign owner, browser-role grants). Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
       "table_name": "google_canonical_deliveries",
       "migration": "20261026000000_google_canonical_deliveries.sql",
       "migrationSha256": "8038463a25c4f3bde741fc768ddd781595685267e582af915a5edef4b1070d9b",

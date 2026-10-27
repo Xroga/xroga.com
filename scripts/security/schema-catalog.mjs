@@ -18,6 +18,8 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     storage_migration_jobs:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
     storage_migration_items:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
     worker_task_leases:['20261024000000_worker_task_leases.sql','20261024000000_worker_task_leases.sql'],
+    builder_projects:['20261026000100_builder_projects.sql','20261026000100_builder_projects.sql'],
+    builder_revisions:['20261026000100_builder_projects.sql','20261026000100_builder_projects.sql'],
     google_canonical_deliveries:['20261026000000_google_canonical_deliveries.sql','20261026000000_google_canonical_deliveries.sql'],
     browser_runs:['20261026100000_browser_runs_durable.sql','20261026100000_browser_runs_durable.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));

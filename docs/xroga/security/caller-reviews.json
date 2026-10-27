@@ -3499,9 +3499,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
+      "sourceSha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
       "callIds": [
-        "9ab485ef74dd2e3e9650"
+        "e43c0c026554038ec87c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3538,9 +3538,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
+      "sourceSha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
       "callIds": [
-        "d205ee73c1aaa2673d9c"
+        "b816c75c093ae03d4826"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -15851,6 +15851,56 @@
         {
           "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
           "marker": "export function createOciWorkloadFederation"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/store.ts",
+      "sourceSha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
+      "callIds": [
+        "1ed4c93d1d2252799103",
+        "a03a814dd5e1bb46d78a",
+        "e83957111fa59e197a6f",
+        "858cc9587f95f11b3451",
+        "e9055cd3f971b703fed1",
+        "6664342f254e9517f6a9",
+        "3a0109a731f9459915b3",
+        "6ac855f73998aeabbdfc",
+        "75b295fb0d465a20ee4a",
+        "c2d64e71abb4961304f5"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
+      "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "return getTenantSupabaseAdmin(this.tenant);"
+        },
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/store.ts",
+      "sourceSha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
+      "callIds": [
+        "46a6989a561482c75519",
+        "a804f3845253e3f48d89"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",
+      "reason": "The project insert has no read predicate because it creates a row owned by the verified identity (unique on user_id and request_key). The append_builder_revision function is executable by service_role only and returns null for a project not owned by p_user_id, so a foreign project id cannot be written to.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "return getTenantSupabaseAdmin(this.tenant);"
+        },
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
         }
       ]
     }

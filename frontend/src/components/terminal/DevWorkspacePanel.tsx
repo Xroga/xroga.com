@@ -39,6 +39,9 @@ import { RuntimePreviewControls } from './RuntimePreviewControls';
 import {
   ProjectDeliveryPanel,
 } from './ProjectDeliveryPanel';
+import { BuilderProjectPanel } from './BuilderProjectPanel';
+import { BUILDER_ENABLED } from '@/lib/builderApi';
+import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
   { id: 'code', label: 'Code', Icon: Code2 },
@@ -47,6 +50,7 @@ const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree 
   { id: 'preview', label: 'Preview', Icon: Eye },
   { id: 'deploy', label: 'Deploy', Icon: Rocket },
 ];
+const PROJECT_TAB: { id: DevWorkspaceTab; label: string; Icon: typeof FolderTree } = { id: 'project', label: 'Project', Icon: Eye };
 
 function buildTree(files: ProjectFileEntry[]): Record<string, ProjectFileEntry[]> {
   const root: Record<string, ProjectFileEntry[]> = { '': [] };
@@ -257,6 +261,8 @@ export function DevWorkspacePanel({
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const activeTab = useProjectWorkspaceStore((s) => s.activeTab);
   const setActiveTab = useProjectWorkspaceStore((s) => s.setActiveTab);
+  const builderProjectId = useBuilderProjectStore((s) => s.projectId);
+  const tabs = BUILDER_ENABLED && builderProjectId ? [PROJECT_TAB, ...TABS] : TABS;
   const projectFiles = useProjectWorkspaceStore((s) => s.projectFiles);
   const openFilePath = useProjectWorkspaceStore((s) => s.openFilePath);
   const openFilePaths = useProjectWorkspaceStore((s) => s.openFilePaths);
@@ -339,7 +345,7 @@ export function DevWorkspacePanel({
     >
       <header className="xv-ws-tabs">
         <nav className="xv-ws-tabs__scroller" aria-label="Project edit views">
-          {TABS.map(({ id, label, Icon }) => (
+          {tabs.map(({ id, label, Icon }) => (
             <button
               key={id}
               type="button"
@@ -373,6 +379,9 @@ export function DevWorkspacePanel({
       </header>
 
       <div className="flex-1 min-h-0 overflow-hidden">
+        {activeTab === 'project' && builderProjectId ? (
+          <BuilderProjectPanel projectId={builderProjectId} onOpenPreview={() => setActiveTab('preview')} />
+        ) : null}
         {activeTab === 'files' ? (
           <div className="h-full flex flex-col">
             <div className="flex items-center gap-2 px-2 py-1.5 border-b border-[var(--card-border)]/40">

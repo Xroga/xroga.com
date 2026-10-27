@@ -333,6 +333,16 @@
       "review_date": "2026-12-15"
     },
     {
+      "id": "28dc1490566773beaea9dcdd1f59d6d67fa6bdffe5afec15c8980ef14bc442d1",
+      "path": "backend/src/builder/store.integration.test.ts",
+      "title": "builder projects against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run by the builder-phase1 workflow, which provides one.",
+      "issue_or_command": "Batch 2 Phase 1 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
       "id": "0cb49b665f69e7f970ab3b616fe8dc04537b0c2e7ad9dde51d2c350bef78f4cf",
       "path": "backend/src/workers/browserRunStore.integration.test.ts",
       "title": "durable browser runs against real PostgreSQL",

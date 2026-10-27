@@ -2336,12 +2336,12 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
+          "sha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
           "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
         },
         {
           "path": "backend/src/routes/swarm.ts",
-          "sha256": "38b1350f04641b110436d4d202a93c5645b0bacb6b7844f9e9cf7df65227943a",
+          "sha256": "63795687816e87356bd0b45009f2386610efacafef0a98861d39aaf0439e5b32",
           "preGoogleMigrationSha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
         },
         {
