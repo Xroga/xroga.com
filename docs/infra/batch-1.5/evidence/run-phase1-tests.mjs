@@ -15,6 +15,7 @@ import { closeSync, mkdirSync, openSync, readFileSync, readdirSync, rmSync, stat
 import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { safeTestEnvironment } from '../../../../scripts/ci/run-baseline.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../../../..');
@@ -76,11 +77,12 @@ const steps = [
   { id: '03d-phase2-seccomp-derivation', cmd: ['node', 'deploy/browser-worker/derive-seccomp.mjs', '--check'], cwd: '.', required: true, kind: 'exit' },
   { id: '04-s3-wire-emulator-SYNTHETIC', cmd: ['npx', 'tsx', '--test', ...wireTests], cwd: 'backend', required: true, fixture: 's3Emulator' },
   { id: '05-r2-provider-REAL', cmd: ['npx', 'tsx', '--test', ...providerTests], cwd: 'backend', required: false, fixture: 'r2Provider', needs: 'AUTHORISED' },
-  // The whole backend suite (about 3 minutes in the `unit` workflow, which has no fixtures) is run WITHOUT the disposable PostgreSQL and S3 emulator
-  // variables. Those fixtures are exercised by the dedicated steps above (03, 03b, 03c, 04); leaving them set made every fixture-aware test file in the
-  // 300-file suite connect to the one shared database and emulator at once, and the step never finished (it also hangs on pristine main, run 40373053674,
-  // with the same fixtures). An empty value is falsy for every `skip = value ? false : reason` guard. A step that still hangs is a FAIL with its log.
-  { id: '06-full-backend-suite', cmd: ['npm', 'test'], cwd: 'backend', required: true, kind: 'full', timeoutMs: 20 * 60_000, env: { STORAGE_TEST_DATABASE_URL: '', STORAGE_TEST_S3_ENDPOINT: '', REQUIRE_PHASE1_FIXTURES: '' } },
+  // The whole backend suite runs in the SAME sanitized environment as the `unit` workflow (scripts/ci/run-baseline.mjs `safeTestEnvironment`: NODE_ENV=test,
+  // CI=true, no inherited secrets or fixture variables). The `unit` job finishes this suite in about 3 minutes; in this job's ambient environment (NODE_ENV unset)
+  // it never finished and ten credential-vault tests failed, on this branch and on pristine main (run 40373053674). Stripping only the PostgreSQL and S3
+  // fixture variables was tried first and did not help (run 40485147375), so the difference is the environment, not those fixtures. The dedicated steps above
+  // still use the fixtures. A step that still hangs is a FAIL with its log.
+  { id: '06-full-backend-suite', cmd: ['npm', 'test'], cwd: 'backend', required: true, kind: 'full', timeoutMs: 20 * 60_000, cleanEnv: true },
 ];
 
 const baseline = JSON.parse(readFileSync(path.join(here, 'baseline-failures.json'), 'utf8')).tests;
@@ -97,7 +99,7 @@ for (const s of steps) {
   // background process behind stalls the job after all tests have finished (proven in a Linux container: pipes 6.0 s vs file 0.0 s).
   const rawPath = path.join(out, `${s.id}.raw`);
   const fd = openSync(rawPath, 'w');
-  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), stdio: ['ignore', fd, fd], timeout: s.timeoutMs ?? (Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000), killSignal: 'SIGKILL', env: { ...process.env, ...(s.env ?? {}) } });
+  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), stdio: ['ignore', fd, fd], timeout: s.timeoutMs ?? (Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000), killSignal: 'SIGKILL', env: s.cleanEnv ? safeTestEnvironment() : { ...process.env, ...(s.env ?? {}) } });
   closeSync(fd);
   p.stdout = readFileSync(rawPath, 'utf8'); p.stderr = ''; rmSync(rawPath, { force: true });
   const timedOut = p.error?.code === 'ETIMEDOUT'; // a hung step fails with its partial output instead of stalling the whole job
