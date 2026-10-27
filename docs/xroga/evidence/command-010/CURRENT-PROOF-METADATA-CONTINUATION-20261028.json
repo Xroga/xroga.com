@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "4af7bd665d3a377bfa0b8c88e00c5b3a9e93f5e4b7247c9526b4c36182896915"
+      "currentSha256": "50ad38145b4ad37fd414f1d00192f976285336ef7163b65dd759cfc2df977f0a"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -18,7 +18,7 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "b72363c0eb8df193c7ac69f4e1fc2f92b9e8f44d462b5a95cd9eeddafa08461b"
+      "currentSha256": "34d1fc42a1db2d611c572fdc67bc95fb75cc08765900b6a2415f4fc5f484e981"
     }
   ],
   "exactPersistenceRemaps": [

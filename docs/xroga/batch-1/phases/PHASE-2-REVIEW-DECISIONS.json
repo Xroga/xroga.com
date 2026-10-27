@@ -2382,7 +2382,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+          "sha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
           "historicalBinding": {
             "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
             "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"

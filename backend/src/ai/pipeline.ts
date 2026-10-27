@@ -4253,6 +4253,8 @@ publicationReason:
     });
     try {
       const zipped = await shipChromeExtensionZip({
+        tenantContext,
+        signal:opts.signal,
         userId: opts.userId,
         repoFullName: githubRepoName,
         files: nextFiles,
@@ -4350,6 +4352,8 @@ publicationReason:
     });
     try {
       const portable = await shipElectronPortableZip({
+        tenantContext,
+        signal:opts.signal,
         userId: opts.userId,
         repoFullName: githubRepoName,
         files: nextFiles,
@@ -4391,6 +4395,8 @@ publicationReason:
         repoFullName: githubRepoName,
       });
       const released = await triggerElectronDesktopRelease({
+        tenantContext,
+        signal:opts.signal,
         userId: opts.userId,
         repoFullName: githubRepoName,
         commitSha,
@@ -4400,6 +4406,8 @@ publicationReason:
       if (released.releasesUrl) desktopReleasesUrl = released.releasesUrl;
       if (released.ok) {
         const waited = await waitForDesktopReleaseZip({
+          tenantContext,
+          signal:opts.signal,
           userId: opts.userId,
           repoFullName: githubRepoName,
           tag: released.tag,

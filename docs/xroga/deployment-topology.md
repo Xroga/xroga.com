@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `9db3921f93c1c384f853847148f6ec65ccca19bc`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `585d02c886e77e01407de8cb70e4342e8350140e`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -146,6 +146,7 @@ Source SHA: `9db3921f93c1c384f853847148f6ec65ccca19bc`; exact current source/con
 | endpoint-token-actions-githubusercontent-com | Source-defined endpoint token.actions.githubusercontent.com | CONFIGURED_BUT_UNVERIFIED | token.actions.githubusercontent.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-twitter-com | Source-defined endpoint twitter.com | CONFIGURED_BUT_UNVERIFIED | twitter.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-upload-wikimedia-org | Source-defined endpoint upload.wikimedia.org | CONFIGURED_BUT_UNVERIFIED | upload.wikimedia.org | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-uploads-github-com | Source-defined endpoint uploads.github.com | CONFIGURED_BUT_UNVERIFIED | uploads.github.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-v0-dev | Source-defined endpoint v0.dev | CONFIGURED_BUT_UNVERIFIED | v0.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-vercel-com | Source-defined endpoint vercel.com | CONFIGURED_BUT_UNVERIFIED | vercel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-wa-me | Source-defined endpoint wa.me | CONFIGURED_BUT_UNVERIFIED | wa.me | NOT_INDEPENDENTLY_VERIFIED |
@@ -226,4 +227,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-829 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+830 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

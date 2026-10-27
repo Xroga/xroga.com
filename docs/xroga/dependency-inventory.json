@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9db3921f93c1c384f853847148f6ec65ccca19bc",
+  "source_sha": "585d02c886e77e01407de8cb70e4342e8350140e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -5686,6 +5686,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/marketing/SoftwareHeroParticleImage.tsx"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-uploads-github-com",
+      "provider": "Source-defined endpoint uploads.github.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/services/publish/nonWebShip.ts"
+      ],
+      "hostnames": [
+        "uploads.github.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/services/publish/nonWebShip.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -14878,7 +14912,7 @@
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17"
+      "sha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
@@ -14898,7 +14932,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9"
+      "sha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16590,7 +16624,7 @@
     },
     {
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "sha256": "ece5cb2243d79e690df008ccb150a89e4aa942008b98f33a09df01d337b54672"
+      "sha256": "415bfc28e7d178b901bd7ce2d078d46d75302bf65806a7a8f027ff99aef932dd"
     },
     {
       "path": "backend/src/services/publish/userOwnedPublish.ts",
@@ -22056,7 +22090,7 @@
       "hostname": "api.parallel.ai",
       "protocol": "https:",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 61,
+      "line": 68,
       "credentialsInUrl": false
     },
     {
@@ -24261,21 +24295,42 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 18,
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "uploads.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "line": 58,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 293,
+      "line": 60,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 294,
+      "line": 65,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "line": 389,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "line": 390,
       "credentialsInUrl": false
     },
     {
@@ -28510,7 +28565,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4926,
+      "line": 4934,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30856,6 +30911,13 @@
     {
       "path": "backend/src/services/publish/easCredentials.ts",
       "line": 636,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "line": 71,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

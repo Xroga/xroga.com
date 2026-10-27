@@ -4752,7 +4752,7 @@
       "id": "surface:78d9ec4b29ef687ea76d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17",
+      "sha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
       "symbols": [
         "Operation",
         "amount",
@@ -4762,6 +4762,7 @@
         "chunks",
         "completed",
         "context",
+        "credential",
         "data",
         "db",
         "denied",
@@ -4774,7 +4775,6 @@
         "free",
         "idempotencyKey",
         "internalRoute",
-        "key",
         "next",
         "operation",
         "reader",
@@ -4796,6 +4796,7 @@
       "imports": [
         "../config/envSecrets.js",
         "../security/authority/digest.js",
+        "../security/authority/enforce.js",
         "../security/egress/dataClassification.js",
         "../security/egress/egressPolicy.js",
         "../security/egress/securityDecision.js",
@@ -4817,6 +4818,7 @@
         "backend/src/ai/webBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
         "backend/src/security/egress/dataClassification.ts",
         "backend/src/security/egress/egressPolicy.ts",
         "backend/src/security/egress/securityDecision.ts",
@@ -4837,9 +4839,11 @@
       "externalProviderDependencies": [
         "node:crypto"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/parallelDispatch.ts#AuthorityError"
+      ],
       "tenantBoundary": [
-        "backend/src/ai/parallelDispatch.ts:36 (user_id)"
+        "backend/src/ai/parallelDispatch.ts:42 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelDispatch.ts#digest",
@@ -5219,7 +5223,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+      "sha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6648,6 +6652,7 @@
         "backend/src/services/integrations/composioClient.security.test.ts:6",
         "backend/src/services/integrations/githubDeploy.ts:67",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:9",
+        "backend/src/services/publish/nonWebShip.security.test.ts:4",
         "backend/src/services/systemErrorLog.ts:2",
         "backend/src/synthesis/coherentImplementation.ts:10",
         "backend/src/synthesis/incrementalImplementation.ts:29",
@@ -6682,7 +6687,8 @@
         "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
         "backend/src/services/integrations/businessAccounting.failure.test.ts",
         "backend/src/services/integrations/composioClient.security.test.ts",
-        "backend/src/services/integrations/githubSourceRead.transport.security.test.ts"
+        "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
+        "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -14775,7 +14781,8 @@
         "backend/src/lib/vercel.ts:2",
         "backend/src/lib/vercelDomains.ts:1",
         "backend/src/lib/vercelEnv.ts:1",
-        "backend/src/services/integrations/githubDeploy.ts:68"
+        "backend/src/services/integrations/githubDeploy.ts:68",
+        "backend/src/services/publish/nonWebShip.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23388,6 +23395,7 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.test.ts:16",
+        "backend/src/ai/parallelDispatch.ts:15",
         "backend/src/ai/providerRuntime.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:13",
         "backend/src/ai/tenantModelDispatch.ts:7",
@@ -23404,6 +23412,7 @@
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6",
+        "backend/src/services/publish/nonWebShip.ts:11",
         "backend/tests/securityReceipt.local.integration.ts:13"
       ],
       "reachable": true,
@@ -23773,6 +23782,7 @@
         "backend/src/security/egress/securityDecision.ts:5",
         "backend/src/services/BillingService.ts:22",
         "backend/src/services/integrations/composioClient.ts:10",
+        "backend/src/services/publish/nonWebShip.ts:12",
         "backend/tests/securityReceipt.local.integration.ts:10"
       ],
       "reachable": true,
@@ -24605,6 +24615,8 @@
         "backend/src/services/notificationService.receipt.test.ts:5",
         "backend/src/services/notificationService.ts:2",
         "backend/src/services/publish/chromeWebStore.ts:12",
+        "backend/src/services/publish/nonWebShip.security.test.ts:5",
+        "backend/src/services/publish/nonWebShip.ts:14",
         "backend/src/services/referralService.failure.test.ts:5",
         "backend/src/services/referralService.relations.test.ts:5",
         "backend/src/services/responseCache.receipt.test.ts:3",
@@ -24748,6 +24760,7 @@
         "backend/src/services/memory/buildProjectStore.failure.test.ts",
         "backend/src/services/memory/buildProjectStore.receipt.test.ts",
         "backend/src/services/notificationService.receipt.test.ts",
+        "backend/src/services/publish/nonWebShip.security.test.ts",
         "backend/src/services/referralService.failure.test.ts",
         "backend/src/services/referralService.relations.test.ts",
         "backend/src/services/responseCache.receipt.test.ts",
@@ -27875,7 +27888,8 @@
       ],
       "callers": [
         "backend/src/services/integrations/githubDeploy.ts:66",
-        "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:7"
+        "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:7",
+        "backend/src/services/publish/nonWebShip.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -30045,43 +30059,67 @@
       "id": "surface:0498def24c96cb0b7a98",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/nonWebShip.ts",
-      "sha256": "ece5cb2243d79e690df008ccb150a89e4aa942008b98f33a09df01d337b54672",
+      "sha256": "415bfc28e7d178b901bd7ce2d078d46d75302bf65806a7a8f027ff99aef932dd",
       "symbols": [
         "ChromeZipShipResult",
         "DesktopReleaseResult",
         "actionsUrl",
-        "asset",
         "assetUrl",
-        "assets",
         "assetsRes",
         "attempt",
+        "base",
+        "bytes",
+        "check",
+        "chunks",
+        "context",
         "created",
+        "credential",
         "data",
         "dispatch",
         "dispatchMaster",
+        "downloadUrl",
         "err",
         "existing",
         "ghFetch",
         "htmlUrl",
         "installerRe",
         "intervalMs",
+        "item",
         "master",
-        "old",
+        "method",
+        "nativeReleaseLifetime",
+        "oldId",
+        "oldReleaseAsset",
         "parsed",
         "parts",
         "path",
         "paths",
         "preferred",
+        "prefix",
+        "readReleaseResponse",
+        "reader",
         "ready",
         "ref",
         "refRes",
+        "releaseAsset",
         "releaseId",
+        "releaseTarget",
         "releasesUrl",
+        "removed",
+        "repo",
+        "request",
         "res",
+        "response",
+        "routes",
+        "row",
+        "rows",
         "sha",
         "shipChromeExtensionZip",
         "shipElectronPortableZip",
+        "signal",
+        "size",
         "sleep",
+        "source",
         "splitRepo",
         "started",
         "tag",
@@ -30093,33 +30131,49 @@
         "triggerElectronDesktopRelease",
         "upload",
         "uploadUrl",
+        "url",
         "waitForDesktopReleaseZip",
         "zip"
       ],
       "imports": [
+        "../../lib/publishingProviderRequest.js",
+        "../../security/authority/enforce.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/tenantContext.js",
         "../integrations/githubAuth.js",
         "../integrations/githubDeploy.js",
+        "../integrations/githubSourceRead.js",
         "../scaffolds/packageBuildZip.js"
       ],
       "runtimeImports": [
+        "backend/src/lib/publishingProviderRequest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAuth.ts",
+        "backend/src/services/integrations/githubSourceRead.ts",
         "backend/src/services/scaffolds/packageBuildZip.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:167"
+        "backend/src/ai/pipeline.ts:167",
+        "backend/src/services/publish/nonWebShip.security.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/services/publish/nonWebShip.ts#AuthorityError"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/services/publish/nonWebShip.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -30741,7 +30795,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:187",
-        "backend/src/services/publish/nonWebShip.ts:11",
+        "backend/src/services/publish/nonWebShip.ts:16",
         "backend/src/services/scaffolds/scaffolds.test.ts:8",
         "backend/src/synthesis/delivery/projectDelivery.ts:9"
       ],
@@ -124671,6 +124725,13 @@
       "id": "test-suite:7b6ff2b3bdbe75a3d708",
       "sourcePath": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2cdae43440ba3e859865",
+      "sourcePath": "backend/src/services/publish/nonWebShip.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -8,6 +8,11 @@
 
 import { getGitHubToken } from '../integrations/githubAuth.js';
 import type { ProjectFile } from '../integrations/githubDeploy.js';
+import {AuthorityError} from '../../security/authority/enforce.js';
+import {EgressDenied} from '../../security/egress/egressPolicy.js';
+import {snapshotPublishingSource} from '../../lib/publishingProviderRequest.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
+import {createGitHubSourceReader} from '../integrations/githubSourceRead.js';
 import {
   chromeExtensionZipFilter,
   electronPortableZipFilter,
@@ -15,21 +20,83 @@ import {
 } from '../scaffolds/packageBuildZip.js';
 
 async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
-  return fetch(`https://api.github.com${path}`, {
+  const method=(init?.method??'GET').toUpperCase();
+  const prefix='^/repos/[A-Za-z0-9-]{1,39}/[A-Za-z0-9_.-]{1,100}/';
+  const routes:Record<string,RegExp>={
+    GET:new RegExp(prefix+'(?:releases/(?:tags/[A-Za-z0-9_.-]{1,100}|latest|[1-9][0-9]*/assets)|git/ref/heads/(?:main|master))$'),
+    POST:new RegExp(prefix+'(?:releases|git/(?:tags|refs)|actions/workflows/release\\.yml/dispatches)$'),
+    DELETE:new RegExp(prefix+'releases/assets/[1-9][0-9]*$'),
+  };
+  if(!routes[method]?.test(path)||path.includes('..'))throw new EgressDenied('UNSAFE_DESTINATION');
+  return readReleaseResponse(await fetch(`https://api.github.com${path}`, {
     ...init,
+    redirect:'manual',
+    signal:AbortSignal.any([AbortSignal.timeout(30000),...(init?.signal?[init.signal]:[])]),
     headers: {
+      ...(init?.headers ?? {}),
       Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
-      ...(init?.headers ?? {}),
+      'Content-Type':'application/json',
     },
-  });
+  }));
+}
+
+/** Response metadata never grants a new upload origin or action authority.
+ * Account ownership, exact consequential approval and source provenance remain
+ * separate native-caller obligations. This is the fixed transport boundary. */
+async function readReleaseResponse(response:Response):Promise<Response>{
+  if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
+  if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('GITHUB_RELEASE_PROVIDER_DENIED');}
+  if(!response.ok){await response.body?.cancel().catch(()=>undefined);return new Response('Release provider request failed.',{status:response.status});}
+  const chunks:Uint8Array[]=[];let size=0;const reader=response.body?.getReader();
+  try{if(reader)for(;;){const item=await reader.read();if(item.done)break;size+=item.value.length;if(size>256*1024)throw new EgressDenied('INVALID_EGRESS_INPUT');chunks.push(item.value);}}
+  finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+  return new Response([204,205].includes(response.status)?null:Buffer.concat(chunks),{status:response.status,headers:{'Content-Type':'application/json'}});
+}
+function releaseTarget(uploadUrl:string,releaseId:number,htmlUrl:string|undefined,owner:string,repo:string,tag:string,name:string):string{
+  const base=`https://uploads.github.com/repos/${owner}/${repo}/releases/${releaseId}/assets`;
+  if(!Number.isSafeInteger(releaseId)||releaseId<1||![base,base+'{?name,label}'].includes(uploadUrl)
+    ||htmlUrl!==`https://github.com/${owner}/${repo}/releases/tag/${tag}`)throw new EgressDenied('UNSAFE_DESTINATION');
+  return base+'?name='+encodeURIComponent(name);
+}
+function releaseAsset(value:unknown,owner:string,repo:string,tag:string,name:string,size:number):string{
+  const row=value as Record<string,unknown>|null;
+  const url=`https://github.com/${owner}/${repo}/releases/download/${tag}/${name}`;
+  if(!row||typeof row!=='object'||!Number.isSafeInteger(row.id)||Number(row.id)<1||row.name!==name||row.size!==size||row.state!=='uploaded'||row.browser_download_url!==url)throw new EgressDenied('INVALID_EGRESS_INPUT');
+  return url;
+}
+function oldReleaseAsset(value:unknown,name:string):number|undefined{
+  if(!Array.isArray(value)||value.length>100||value.some(row=>!row||!Number.isSafeInteger(row.id)||row.id<1||typeof row.name!=='string')
+    ||new Set(value.map(row=>row.id)).size!==value.length)throw new EgressDenied('INVALID_EGRESS_INPUT');
+  const rows=value.filter(row=>row.name===name);if(rows.length>1)throw new EgressDenied('INVALID_EGRESS_INPUT');
+  return rows[0]?.id;
 }
 
 function splitRepo(fullName: string): { owner: string; repo: string } | null {
+  if(typeof fullName!=='string'||fullName!==fullName.trim())return null;
   const parts = fullName.replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '').split('/');
-  if (parts.length < 2 || !parts[0] || !parts[1]) return null;
-  return { owner: parts[0], repo: parts[1].replace(/\.git$/, '') };
+  if (parts.length !== 2 || !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(parts[0]??'')) return null;
+  const repo=(parts[1]??'').replace(/\.git$/, '');
+  if(!/^[A-Za-z0-9_.-]{1,100}$/.test(repo)||repo==='.'||repo==='..')return null;
+  return { owner: parts[0]!, repo };
+}
+
+async function nativeReleaseLifetime(opts:{userId:string;tenantContext?:TenantContext;signal?:AbortSignal;files?:ProjectFile[]},repo:{owner:string;repo:string}){
+  const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
+  const signal=opts.signal;signal?.throwIfAborted();
+  const token=await getGitHubToken(context.userId);if(!token)throw new AuthorityError('GITHUB_RELEASE_CREDENTIAL_REQUIRED');
+  if(opts.files){
+    const source=JSON.stringify(opts.files),bytes=Buffer.from(token);
+    if(token.length>=8&&[token,encodeURIComponent(token),bytes.toString('base64'),bytes.toString('base64url'),JSON.stringify(token).slice(1,-1)].some(value=>source.includes(value)))throw new EgressDenied('SECRET_EGRESS_DENIED');
+  }
+  // Reuse the existing vault-revision lifetime check, without using source-read
+  // admission as a consequential-write grant. The exact write grant is still
+  // a separate unresolved obligation for these native callers.
+  const credential=await createGitHubSourceReader(context.userId,token,`${repo.owner}/${repo.repo}`,context);
+  const check=async()=>{signal?.throwIfAborted();await credential.assertCurrent();signal?.throwIfAborted();};
+  const request=async(path:string,init?:RequestInit)=>{await check();const response=await ghFetch(token,path,{...init,signal});await check();return response;};
+  await check();return{token,request,check};
 }
 
 export type ChromeZipShipResult = {
@@ -46,14 +113,19 @@ export type ChromeZipShipResult = {
  */
 export async function shipChromeExtensionZip(opts: {
   userId: string;
+  tenantContext?: TenantContext;
+  signal?: AbortSignal;
   repoFullName: string;
   files: ProjectFile[];
   version?: string;
 }): Promise<ChromeZipShipResult> {
-  const token = await getGitHubToken(opts.userId);
-  if (!token) return { ok: false, error: 'GitHub not connected' };
+  opts={...opts,files:snapshotPublishingSource(opts.files)};
+  if(opts.version!==undefined&&(!/^[A-Za-z0-9_.-]{1,90}$/.test(opts.version)||opts.version.includes('..')))throw new EgressDenied('INVALID_EGRESS_INPUT');
+  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
+  opts={...opts};
   const parsed = splitRepo(opts.repoFullName);
   if (!parsed) return { ok: false, error: 'Invalid repo name' };
+  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
 
   const zip = packageBuildZip(opts.files, { include: chromeExtensionZipFilter });
   if (zip.length < 64) return { ok: false, error: 'Zip empty — missing extension files' };
@@ -66,18 +138,21 @@ export async function shipChromeExtensionZip(opts: {
   let uploadUrl: string | null = null;
   let htmlUrl: string | undefined;
 
-  const existing = await ghFetch(token, `/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`);
+  const existing = await request(`/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`);
   if (existing.ok) {
     const data = (await existing.json()) as {
       id: number;
+      tag_name?: unknown;
       upload_url?: string;
       html_url?: string;
     };
+    if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
   } else {
-    const created = await ghFetch(token, `/repos/${owner}/${repo}/releases`, {
+    if(existing.status!==404)return {ok:false,error:'Release lookup is unavailable.'};
+    const created = await request(`/repos/${owner}/${repo}/releases`, {
       method: 'POST',
       body: JSON.stringify({
         tag_name: tag,
@@ -93,9 +168,11 @@ export async function shipChromeExtensionZip(opts: {
     }
     const data = (await created.json()) as {
       id: number;
+      tag_name?: unknown;
       upload_url?: string;
       html_url?: string;
     };
+    if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
@@ -106,19 +183,19 @@ export async function shipChromeExtensionZip(opts: {
   }
 
   // upload_url looks like .../assets{?name,label}
-  const assetUrl = `${uploadUrl.replace(/\{[^}]*\}/, '')}?name=${encodeURIComponent('extension.zip')}`;
+  const assetUrl = releaseTarget(uploadUrl,releaseId,htmlUrl,owner,repo,tag,'extension.zip');
 
   // Delete existing extension.zip asset if re-shipping same tag
-  const assetsRes = await ghFetch(token, `/repos/${owner}/${repo}/releases/${releaseId}/assets`);
-  if (assetsRes.ok) {
-    const assets = (await assetsRes.json()) as Array<{ id: number; name: string }>;
-    const old = assets.find((a) => a.name === 'extension.zip');
-    if (old) {
-      await ghFetch(token, `/repos/${owner}/${repo}/releases/assets/${old.id}`, { method: 'DELETE' });
-    }
+  const assetsRes = await request(`/repos/${owner}/${repo}/releases/${releaseId}/assets`);
+  if(!assetsRes.ok)return {ok:false,error:'Release asset lookup is unavailable.',releaseUrl:htmlUrl,tag};
+  const oldId=oldReleaseAsset(await assetsRes.json(),'extension.zip');
+  if(oldId!==undefined){
+    const removed=await request(`/repos/${owner}/${repo}/releases/assets/${oldId}`,{method:'DELETE'});
+    if(removed.status!==204)return {ok:false,error:'Existing release asset could not be removed.',releaseUrl:htmlUrl,tag};
   }
 
-  const upload = await fetch(assetUrl, {
+  await check();
+  const upload = await readReleaseResponse(await fetch(assetUrl, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -127,8 +204,11 @@ export async function shipChromeExtensionZip(opts: {
       'X-GitHub-Api-Version': '2022-11-28',
     },
     body: zip,
-  });
+    redirect:'manual',
+    signal:AbortSignal.any([AbortSignal.timeout(30000),...(opts.signal?[opts.signal]:[])]),
+  }));
 
+  await check();
   if (!upload.ok) {
     const err = await upload.text();
     return {
@@ -139,12 +219,12 @@ export async function shipChromeExtensionZip(opts: {
     };
   }
 
-  const asset = (await upload.json()) as { browser_download_url?: string; url?: string };
+  const downloadUrl=releaseAsset(await upload.json(),owner,repo,tag,'extension.zip',zip.length);
   return {
     ok: true,
     tag,
     releaseUrl: htmlUrl,
-    downloadUrl: asset.browser_download_url || htmlUrl,
+    downloadUrl,
   };
 }
 
@@ -154,14 +234,19 @@ export async function shipChromeExtensionZip(opts: {
  */
 export async function shipElectronPortableZip(opts: {
   userId: string;
+  tenantContext?: TenantContext;
+  signal?: AbortSignal;
   repoFullName: string;
   files: ProjectFile[];
   version?: string;
 }): Promise<ChromeZipShipResult> {
-  const token = await getGitHubToken(opts.userId);
-  if (!token) return { ok: false, error: 'GitHub not connected' };
+  opts={...opts,files:snapshotPublishingSource(opts.files)};
+  if(opts.version!==undefined&&(!/^[A-Za-z0-9_.-]{1,90}$/.test(opts.version)||opts.version.includes('..')))throw new EgressDenied('INVALID_EGRESS_INPUT');
+  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
+  opts={...opts};
   const parsed = splitRepo(opts.repoFullName);
   if (!parsed) return { ok: false, error: 'Invalid repo name' };
+  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
 
   const zip = packageBuildZip(opts.files, { include: electronPortableZipFilter });
   if (zip.length < 64) return { ok: false, error: 'Zip empty — missing Electron files' };
@@ -175,18 +260,21 @@ export async function shipElectronPortableZip(opts: {
   let uploadUrl: string | null = null;
   let htmlUrl: string | undefined;
 
-  const existing = await ghFetch(token, `/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`);
+  const existing = await request(`/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`);
   if (existing.ok) {
     const data = (await existing.json()) as {
       id: number;
+      tag_name?: unknown;
       upload_url?: string;
       html_url?: string;
     };
+    if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
   } else {
-    const created = await ghFetch(token, `/repos/${owner}/${repo}/releases`, {
+    if(existing.status!==404)return {ok:false,error:'Release lookup is unavailable.'};
+    const created = await request(`/repos/${owner}/${repo}/releases`, {
       method: 'POST',
       body: JSON.stringify({
         tag_name: tag,
@@ -210,9 +298,11 @@ export async function shipElectronPortableZip(opts: {
     }
     const data = (await created.json()) as {
       id: number;
+      tag_name?: unknown;
       upload_url?: string;
       html_url?: string;
     };
+    if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
@@ -222,18 +312,18 @@ export async function shipElectronPortableZip(opts: {
     return { ok: false, error: 'Release missing upload URL', releaseUrl: htmlUrl };
   }
 
-  const assetUrl = `${uploadUrl.replace(/\{[^}]*\}/, '')}?name=${encodeURIComponent('desktop.zip')}`;
+  const assetUrl = releaseTarget(uploadUrl,releaseId,htmlUrl,owner,repo,tag,'desktop.zip');
 
-  const assetsRes = await ghFetch(token, `/repos/${owner}/${repo}/releases/${releaseId}/assets`);
-  if (assetsRes.ok) {
-    const assets = (await assetsRes.json()) as Array<{ id: number; name: string }>;
-    const old = assets.find((a) => a.name === 'desktop.zip');
-    if (old) {
-      await ghFetch(token, `/repos/${owner}/${repo}/releases/assets/${old.id}`, { method: 'DELETE' });
-    }
+  const assetsRes = await request(`/repos/${owner}/${repo}/releases/${releaseId}/assets`);
+  if(!assetsRes.ok)return {ok:false,error:'Release asset lookup is unavailable.',releaseUrl:htmlUrl,tag};
+  const oldId=oldReleaseAsset(await assetsRes.json(),'desktop.zip');
+  if(oldId!==undefined){
+    const removed=await request(`/repos/${owner}/${repo}/releases/assets/${oldId}`,{method:'DELETE'});
+    if(removed.status!==204)return {ok:false,error:'Existing release asset could not be removed.',releaseUrl:htmlUrl,tag};
   }
 
-  const upload = await fetch(assetUrl, {
+  await check();
+  const upload = await readReleaseResponse(await fetch(assetUrl, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -242,8 +332,11 @@ export async function shipElectronPortableZip(opts: {
       'X-GitHub-Api-Version': '2022-11-28',
     },
     body: zip,
-  });
+    redirect:'manual',
+    signal:AbortSignal.any([AbortSignal.timeout(30000),...(opts.signal?[opts.signal]:[])]),
+  }));
 
+  await check();
   if (!upload.ok) {
     const err = await upload.text();
     return {
@@ -254,12 +347,12 @@ export async function shipElectronPortableZip(opts: {
     };
   }
 
-  const asset = (await upload.json()) as { browser_download_url?: string };
+  const downloadUrl=releaseAsset(await upload.json(),owner,repo,tag,'desktop.zip',zip.length);
   return {
     ok: true,
     tag,
     releaseUrl: htmlUrl,
-    downloadUrl: asset.browser_download_url || htmlUrl,
+    downloadUrl,
   };
 }
 
@@ -279,14 +372,17 @@ export type DesktopReleaseResult = {
  */
 export async function triggerElectronDesktopRelease(opts: {
   userId: string;
+  tenantContext?: TenantContext;
+  signal?: AbortSignal;
   repoFullName: string;
   commitSha?: string;
   version?: string;
 }): Promise<DesktopReleaseResult> {
-  const token = await getGitHubToken(opts.userId);
-  if (!token) return { ok: false, error: 'GitHub not connected' };
+  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
+  opts={...opts};
   const parsed = splitRepo(opts.repoFullName);
   if (!parsed) return { ok: false, error: 'Invalid repo name' };
+  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
   const { owner, repo } = parsed;
 
   const tag = opts.version?.startsWith('v') ? opts.version : `v${opts.version || '1.0.0'}`;
@@ -296,13 +392,13 @@ export async function triggerElectronDesktopRelease(opts: {
   // Resolve SHA for the tag
   let sha = opts.commitSha;
   if (!sha) {
-    const ref = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/main`);
+    const ref = await request(`/repos/${owner}/${repo}/git/ref/heads/main`);
     if (ref.ok) {
       const data = (await ref.json()) as { object?: { sha?: string } };
       sha = data.object?.sha;
     }
     if (!sha) {
-      const master = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/master`);
+      const master = await request(`/repos/${owner}/${repo}/git/ref/heads/master`);
       if (master.ok) {
         const data = (await master.json()) as { object?: { sha?: string } };
         sha = data.object?.sha;
@@ -312,7 +408,7 @@ export async function triggerElectronDesktopRelease(opts: {
   if (!sha) return { ok: false, error: 'No commit SHA to tag', actionsUrl, releasesUrl };
 
   // Create annotated tag object + ref (idempotent-ish: if tag exists, try dispatch)
-  const tagObj = await ghFetch(token, `/repos/${owner}/${repo}/git/tags`, {
+  const tagObj = await request(`/repos/${owner}/${repo}/git/tags`, {
     method: 'POST',
     body: JSON.stringify({
       tag,
@@ -325,7 +421,7 @@ export async function triggerElectronDesktopRelease(opts: {
   let tagged = false;
   if (tagObj.ok) {
     const tagData = (await tagObj.json()) as { sha?: string };
-    const refRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
+    const refRes = await request(`/repos/${owner}/${repo}/git/refs`, {
       method: 'POST',
       body: JSON.stringify({
         ref: `refs/tags/${tag}`,
@@ -339,13 +435,12 @@ export async function triggerElectronDesktopRelease(opts: {
 
   if (!tagged) {
     // Fallback: workflow_dispatch on release.yml
-    const dispatch = await ghFetch(token, `/repos/${owner}/${repo}/actions/workflows/release.yml/dispatches`, {
+    const dispatch = await request(`/repos/${owner}/${repo}/actions/workflows/release.yml/dispatches`, {
       method: 'POST',
       body: JSON.stringify({ ref: 'main' }),
     });
     if (!(dispatch.status === 204 || dispatch.ok)) {
-      const dispatchMaster = await ghFetch(
-        token,
+      const dispatchMaster = await request(
         `/repos/${owner}/${repo}/actions/workflows/release.yml/dispatches`,
         {
           method: 'POST',
@@ -377,6 +472,8 @@ function sleep(ms: number): Promise<void> {
  */
 export async function waitForDesktopReleaseZip(opts: {
   userId: string;
+  tenantContext?: TenantContext;
+  signal?: AbortSignal;
   repoFullName: string;
   tag?: string;
   /** Default 12 minutes — multi-OS matrix needs longer than linux-only */
@@ -390,10 +487,11 @@ export async function waitForDesktopReleaseZip(opts: {
   releaseUrl?: string;
   error?: string;
 }> {
-  const token = await getGitHubToken(opts.userId);
-  if (!token) return { ok: false, error: 'GitHub not connected' };
+  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
+  opts={...opts};
   const parsed = splitRepo(opts.repoFullName);
   if (!parsed) return { ok: false, error: 'Invalid repo name' };
+  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
   const { owner, repo } = parsed;
   const timeoutMs = opts.timeoutMs ?? 12 * 60 * 1000;
   const intervalMs = opts.intervalMs ?? 20_000;
@@ -414,7 +512,7 @@ export async function waitForDesktopReleaseZip(opts: {
     paths.push(`/repos/${owner}/${repo}/releases/latest`);
 
     for (const path of paths) {
-      const res = await ghFetch(token, path);
+      const res = await request(path);
       if (!res.ok) continue;
       const data = (await res.json()) as {
         html_url?: string;

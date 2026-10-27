@@ -4025,7 +4025,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+      "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
       "callIds": [
         "acfbdb182d9e682cce3f"
       ],
@@ -4184,11 +4184,18 @@
         },
         "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
       },
-      "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json"
+      "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+      "beforeNativeReleaseContinuation": {
+        "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+        "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+        "callIds": [
+          "acfbdb182d9e682cce3f"
+        ]
+      }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+      "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
       "callIds": [
         "8c2f244d2269c3ff06ae"
       ],
@@ -4347,7 +4354,14 @@
         },
         "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
       },
-      "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json"
+      "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+      "beforeNativeReleaseContinuation": {
+        "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+        "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+        "callIds": [
+          "8c2f244d2269c3ff06ae"
+        ]
+      }
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -20884,14 +20898,14 @@
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sourceSha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17",
+      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
       "callIds": [
-        "7f21a82745cdb3340773",
-        "2bd8300b0463880a6e3c",
-        "4980ad45b150a99c9693",
-        "8e7c51dd4e34d2f73d6c",
-        "df8252f381f17dee4349",
-        "2fef898f25273817dd83"
+        "6c99f563cb991fc4b6b9",
+        "42ee937494dc19f5f8a8",
+        "ceb185c7249df748e570",
+        "c1e349666641c6258a7f",
+        "5a3c93b2ea16190402db",
+        "170612bbffde0e9ba826"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
@@ -20931,7 +20945,19 @@
           }
         ]
       },
-      "parallelRedirectSourceReviewProof": "docs/xroga/evidence/command-010/PARALLEL-REDIRECT-PERSISTENCE-REBINDING.json"
+      "parallelRedirectSourceReviewProof": "docs/xroga/evidence/command-010/PARALLEL-REDIRECT-PERSISTENCE-REBINDING.json",
+      "beforeNativeReleaseContinuation": {
+        "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+        "sourceSha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17",
+        "callIds": [
+          "7f21a82745cdb3340773",
+          "2bd8300b0463880a6e3c",
+          "4980ad45b150a99c9693",
+          "8e7c51dd4e34d2f73d6c",
+          "df8252f381f17dee4349",
+          "2fef898f25273817dd83"
+        ]
+      }
     },
     {
       "path": "backend/src/routes/github.ts",

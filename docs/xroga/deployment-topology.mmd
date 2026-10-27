@@ -142,6 +142,7 @@ flowchart LR
   endpoint_token_actions_githubusercontent_com["Source-defined endpoint token.actions.githubusercontent.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_twitter_com["Source-defined endpoint twitter.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_upload_wikimedia_org["Source-defined endpoint upload.wikimedia.org - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_uploads_github_com["Source-defined endpoint uploads.github.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_v0_dev["Source-defined endpoint v0.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_vercel_com["Source-defined endpoint vercel.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_wa_me["Source-defined endpoint wa.me - CONFIGURED_BUT_UNVERIFIED"]
@@ -326,6 +327,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_token_actions_githubusercontent_com
   frontend -. "source host/reference; unverified" .-> endpoint_twitter_com
   frontend -. "source host/reference; unverified" .-> endpoint_upload_wikimedia_org
+  api -. "source host/reference; unverified" .-> endpoint_uploads_github_com
   frontend -. "source host/reference; unverified" .-> endpoint_v0_dev
   api -. "source host/reference; unverified" .-> endpoint_vercel_com
   frontend -. "source host/reference; unverified" .-> endpoint_wa_me

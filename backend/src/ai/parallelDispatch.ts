@@ -12,6 +12,7 @@ import {requireModelProjectBinding,type TenantModelScope} from './tenantModelDis
 import {finishFailedProviderReservation,type ProviderReservation} from './providerBudget.js';
 import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 import {WEB_PRICE_VERSION} from './webBudget.js';
+import {AuthorityError} from '../security/authority/enforce.js';
 
 type Operation='search'|'extract'|'responses';
 const denied=()=>Object.assign(new Error('Research dispatch admission is unavailable.'),{code:'PROVIDER_RESERVATION_DENIED',retryable:false});
@@ -27,6 +28,11 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   const context=requireTenantContext(input.scope?.context);requireResourceOwner(context,input.userId);
   const scope={...input.scope!,context},body=structuredClone(input.body),operation=input.operation,signal=input.signal;
   const attempt=scope.runAttempt?requireAdmittedRunAttempt(scope.runAttempt):undefined;
+  // One dispatch remains bound to the platform credential present at admission.
+  // Rotation or removal cannot silently substitute a different credential after
+  // ownership, audit, reservation or provider-response waits.
+  const credential=getSecret('PARALLEL_API_KEY');
+  if(!credential)throw denied();
   const check=async()=>{
     signal?.throwIfAborted();requireResourceOwner(context,scope.userId);
     await requireModelProjectBinding(scope);
@@ -38,6 +44,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
       if(error||!data||data.id!==attempt.runId||data.user_id!==context.userId||data.project_id!==(scope.projectId??null)
         ||data.status!=='running'||data.worker_id!==attempt.workerId||data.lease_generation!==attempt.generation)throw denied();
     }
+    if(!credential||getSecret('PARALLEL_API_KEY')!==credential)throw denied();
     signal?.throwIfAborted();
   };
   let amount:number,units=1,route:string;
@@ -66,6 +73,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     if((error as {name?:string})?.name==='EgressDenied'||(error as {reason?:unknown})?.reason)throw error;
     throw denied();
   }
+  await check();
   // Production always needs the durable canonical store. There is no local
   // user-ID fallback, memory budget or telemetry-as-accounting path here.
   if(!process.env.SUPABASE_SERVICE_ROLE_KEY)throw denied();
@@ -86,11 +94,11 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   const reservation:ProviderReservation={id:row.id,reservedMicroUsd:amount,priceVersion:WEB_PRICE_VERSION};
   let completed=false,settledVerified=false;
   try{
-    const key=getSecret('PARALLEL_API_KEY');if(!key)throw denied();
     await check();
-    const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',...(operation==='responses'?{Authorization:`Bearer ${key}`}:{'x-api-key':key})},
+    const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',...(operation==='responses'?{Authorization:`Bearer ${credential}`}:{'x-api-key':credential})},
       body:JSON.stringify(body),signal:AbortSignal.any([AbortSignal.timeout(operation==='responses'?45000:25000),...(signal?[signal]:[])])});
     if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
+    if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('PARALLEL_PROVIDER_AUTHORIZATION_DENIED');}
     if(!response.ok){void response.body?.cancel().catch(()=>undefined);throw Object.assign(new Error(`Parallel provider request failed (${response.status}).`),{status:response.status});}
     completed=true;
     const reader=response.body?.getReader();let size=0;const chunks:Uint8Array[]=[];
