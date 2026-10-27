@@ -3112,6 +3112,7 @@
         "backend/src/ai/contextPreparation.test.ts:3",
         "backend/src/ai/pipeline.ts:237",
         "backend/src/ai/repositoryTools.ts:23",
+        "backend/src/existingSource/change/delivery.ts:15",
         "backend/src/existingSource/change/testRunner.ts:12",
         "backend/src/existingSource/change/toolHost.ts:11",
         "backend/src/synthesis/coherentImplementation.ts:12"
@@ -7485,7 +7486,7 @@
         "backend/src/ai/benchmarkExecutor.ts:29",
         "backend/src/ai/pipeline.ts:197",
         "backend/src/ai/securityScan.test.ts:3",
-        "backend/src/existingSource/change/delivery.ts:15",
+        "backend/src/existingSource/change/delivery.ts:16",
         "backend/src/synthesis/coherentImplementation.ts:13"
       ],
       "reachable": true,
@@ -7847,6 +7848,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
         "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -8285,7 +8287,8 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.test.ts",
         "backend/src/ai/softwareAgent/verificationContinuationPolicy.test.ts",
-        "backend/src/existingSource/change/change.test.ts"
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -12454,7 +12457,7 @@
         "backend/src/existingSource/archive/importer.ts:8",
         "backend/src/existingSource/change/change.test.ts:19",
         "backend/src/existingSource/change/delivery.test.ts:8",
-        "backend/src/existingSource/change/delivery.ts:23",
+        "backend/src/existingSource/change/delivery.ts:24",
         "backend/src/existingSource/change/gitFake.testsupport.ts:11",
         "backend/src/existingSource/change/snapshot.ts:13",
         "backend/src/existingSource/change/workspace.ts:13",
@@ -12807,7 +12810,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/delivery.ts:20"
+        "backend/src/existingSource/change/delivery.ts:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12831,7 +12834,7 @@
       "id": "surface:aed2206854e9c8ec1c96",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/delivery.ts",
-      "sha256": "5a12cbcae82f6910da9a22fe0574088f00714ba319cb2c51352e1dd264d40d99",
+      "sha256": "5d27d5c5f0f77dc05b095f14ff6749c5ac79d8c5932c121006a9190152e2eb1e",
       "symbols": [
         "ChangeDelivery",
         "DeliveryApi",
@@ -12880,6 +12883,7 @@
         "verified"
       ],
       "imports": [
+        "../../ai/contextPreparation.js",
         "../../ai/securityScan.js",
         "../../services/integrations/githubAtomicWrite.js",
         "../../services/integrations/githubBranchAuthorization.js",
@@ -12894,6 +12898,7 @@
         "./unifiedDiff.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/contextPreparation.ts",
         "backend/src/ai/securityScan.ts",
         "backend/src/existingSource/archive/archivePort.ts",
         "backend/src/existingSource/archive/zipWriter.ts",
@@ -12907,6 +12912,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/delivery.test.ts:14",
+        "backend/src/existingSource/change/golden.test.ts:21",
         "backend/src/routes/existingSource.ts:23",
         "backend/src/routes/existingSourceChanges.test.ts:7"
       ],
@@ -12926,6 +12932,7 @@
       ],
       "testCoverage": [
         "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -12966,6 +12973,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/existingSource/change/delivery.test.ts:15",
+        "backend/src/existingSource/change/golden.test.ts:22",
         "backend/src/routes/existingSourceChanges.test.ts:8"
       ],
       "reachable": false,
@@ -12980,6 +12988,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -13026,6 +13035,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:11",
+        "backend/src/existingSource/change/golden.test.ts:23",
         "backend/src/routes/existingSourceChanges.test.ts:9"
       ],
       "reachable": false,
@@ -13043,6 +13053,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -13118,8 +13129,9 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "8197e5826daf5737f4a0d7accbb4d7727238f1276d94d15882ae5f78483597f0",
+      "sha256": "56cd711dd2755eb5b7043a720719f532efde4b162ee372e8f913cba803b6e99e",
       "symbols": [
+        "ALWAYS_ALLOWED",
         "AgentRunner",
         "AgentRunnerResult",
         "BUG_WORDS",
@@ -13166,6 +13178,8 @@
         "out",
         "outcome",
         "p",
+        "parent",
+        "parentChangeId",
         "r",
         "reproduction",
         "result",
@@ -13178,12 +13192,16 @@
         "set",
         "sink",
         "snapshot",
+        "staleQueued",
+        "startFrom",
         "targets",
         "task",
         "tests",
         "text",
         "verified",
-        "workspace"
+        "workspace",
+        "write",
+        "writing"
       ],
       "imports": [
         "../../ai/softwareAgent/AgentSoftwareExecutor.js",
@@ -13215,6 +13233,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:12",
+        "backend/src/existingSource/change/golden.test.ts:24",
         "backend/src/routes/existingSource.ts:25",
         "backend/src/routes/existingSourceChanges.test.ts:10"
       ],
@@ -13237,6 +13256,7 @@
       ],
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13352,6 +13372,7 @@
       "callers": [
         "backend/src/existingSource/change/change.test.ts:13",
         "backend/src/existingSource/change/delivery.test.ts:16",
+        "backend/src/existingSource/change/golden.test.ts:25",
         "backend/src/routes/existingSource.ts:26",
         "backend/src/routes/existingSourceChanges.test.ts:11"
       ],
@@ -13368,6 +13389,7 @@
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13381,7 +13403,7 @@
       "id": "surface:c16291d87a091474ff12",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/testRunner.ts",
-      "sha256": "33947e12f277141d413bca7e1985744e1f464e8bf12bf724745bf8305244722d",
+      "sha256": "d0e59bc562730ee6debe6980c6678671da7e0d4eb43b98e8a39a1d137b7465a0",
       "symbols": [
         "ChangeRuntime",
         "ExecutionPort",
@@ -13409,6 +13431,7 @@
         "kind",
         "locked",
         "manifestRoot",
+        "missing",
         "n",
         "nearestRoot",
         "nodeStages",
@@ -13467,6 +13490,7 @@
       ],
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/change/testRunner.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13480,7 +13504,7 @@
       "id": "surface:fef4ab59435c864f5975",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/toolHost.ts",
-      "sha256": "0d84159a7c3cf11ef18b83378e8908d400a056a9922c9598761aa3b54d3ff48d",
+      "sha256": "46fd2cab419b6ebc2b243614edfc12c60f82744e47258ad1c69976fe006d24f1",
       "symbols": [
         "ExistingSourceToolHost",
         "HostOptions",
@@ -13537,6 +13561,7 @@
       ],
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13550,7 +13575,7 @@
       "id": "surface:ca4dcefda54f6049e3d0",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/types.ts",
-      "sha256": "0fb9b5f9bea487961bbfaf07bb6ce66d77069e637f1c863e0b84d4c41bbafbf7",
+      "sha256": "e43f425e12a1101c20ad91cb179465b140c6e418551c7120eb5f3396c82c4d65",
       "symbols": [
         "ChangeEvent",
         "ChangeRevision",
@@ -13659,7 +13684,7 @@
       "callers": [
         "backend/src/existingSource/change/change.test.ts:17",
         "backend/src/existingSource/change/delivery.test.ts:18",
-        "backend/src/existingSource/change/delivery.ts:26",
+        "backend/src/existingSource/change/delivery.ts:27",
         "backend/src/existingSource/change/workspace.ts:16"
       ],
       "reachable": true,
@@ -13685,7 +13710,7 @@
       "id": "surface:ff8c1e257350a37cd5e3",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/workspace.ts",
-      "sha256": "640e2c4ace6f3ff76a63b1a338a5d3ce54f115bc4b2f6a2b14031c4128179ff0",
+      "sha256": "6f9e8ac6da6a4d3657dbe5de66fd7c339e2014069bc6c3c9838d09ea8f433594",
       "symbols": [
         "BaseFile",
         "BaseSnapshot",
@@ -13825,6 +13850,7 @@
       "callers": [
         "backend/src/existingSource/change/change.test.ts:5",
         "backend/src/existingSource/change/delivery.test.ts:10",
+        "backend/src/existingSource/change/golden.test.ts:14",
         "backend/src/existingSource/intelligence/polyglot.test.ts:4",
         "backend/src/existingSource/intelligence/service.test.ts:5",
         "backend/src/existingSource/service.test.ts:4",
@@ -13846,6 +13872,7 @@
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
@@ -14016,6 +14043,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:6",
+        "backend/src/existingSource/change/golden.test.ts:15",
         "backend/src/existingSource/intelligence/polyglot.test.ts:7",
         "backend/src/existingSource/intelligence/service.test.ts:9",
         "backend/src/routes/existingSource.ts:29",
@@ -14035,6 +14063,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
@@ -14405,6 +14434,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/existingSource/change/golden.test.ts:16",
         "backend/src/existingSource/intelligence/service.test.ts:11",
         "backend/src/routes/existingSourceIntelligence.test.ts:8"
       ],
@@ -14417,6 +14447,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
@@ -14637,6 +14668,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:7",
+        "backend/src/existingSource/change/golden.test.ts:17",
         "backend/src/existingSource/intelligence/polyglot.test.ts:8",
         "backend/src/existingSource/intelligence/service.test.ts:10",
         "backend/src/routes/existingSource.ts:30",
@@ -14656,6 +14688,7 @@
       ],
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
@@ -14928,6 +14961,7 @@
       "callers": [
         "backend/src/existingSource/change/change.test.ts:8",
         "backend/src/existingSource/change/delivery.test.ts:11",
+        "backend/src/existingSource/change/golden.test.ts:18",
         "backend/src/existingSource/intelligence/polyglot.test.ts:5",
         "backend/src/existingSource/intelligence/service.test.ts:6",
         "backend/src/existingSource/service.test.ts:5",
@@ -14953,6 +14987,7 @@
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
@@ -15014,6 +15049,7 @@
       "callers": [
         "backend/src/existingSource/change/change.test.ts:9",
         "backend/src/existingSource/change/delivery.test.ts:12",
+        "backend/src/existingSource/change/golden.test.ts:19",
         "backend/src/existingSource/intelligence/polyglot.test.ts:6",
         "backend/src/existingSource/intelligence/service.test.ts:7",
         "backend/src/existingSource/service.test.ts:6",
@@ -15042,6 +15078,7 @@
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
@@ -15137,7 +15174,8 @@
         "backend/src/existingSource/archive/zipReader.ts:11",
         "backend/src/existingSource/change/change.test.ts:10",
         "backend/src/existingSource/change/delivery.test.ts:13",
-        "backend/src/existingSource/change/delivery.ts:22",
+        "backend/src/existingSource/change/delivery.ts:23",
+        "backend/src/existingSource/change/golden.test.ts:20",
         "backend/src/existingSource/change/production.ts:7",
         "backend/src/existingSource/change/service.ts:21",
         "backend/src/existingSource/change/store.ts:4",
@@ -15171,6 +15209,7 @@
         "backend/src/existingSource/archive/zipReader.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/provider.test.ts",
         "backend/src/existingSource/service.test.ts"
@@ -21872,7 +21911,7 @@
       "id": "surface:9de73948fcfe2a99b724",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "sha256": "b25ea8c3ce0f8b42efc822d2cdcf9540082bdc50b7bfdcb878d9637edc0680c4",
+      "sha256": "f749749a79544759c3e406aa8e8f140091da3b654b8224e9bc6421ec51662fb7",
       "symbols": [
         "ARCHIVE_UPLOAD_LIMIT",
         "ExistingSourceChanges",
@@ -28407,7 +28446,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:22",
-        "backend/src/existingSource/change/delivery.ts:16",
+        "backend/src/existingSource/change/delivery.ts:17",
         "backend/src/services/integrations/githubAtomicWrite.test.ts:3",
         "backend/src/services/integrations/githubDeploy.ts:35",
         "backend/src/synthesis/universalCommit.ts:34"
@@ -29316,7 +29355,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/delivery.ts:19",
+        "backend/src/existingSource/change/delivery.ts:20",
         "backend/src/services/integrations/githubAtomicWrite.ts:51",
         "backend/src/services/integrations/githubDeploy.ts:47",
         "backend/src/services/integrations/githubTreeSnapshot.test.ts:3"
@@ -55338,10 +55377,139 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:77e7d990f5da249eb762",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/existing-source/ChangeDetail.tsx",
+      "sha256": "3f283867032589e1d98aacadb70ae6c403f682019a08fd7f120dbe8a3a169d00",
+      "symbols": [
+        "ChangeDetail",
+        "ChangeDetailProps",
+        "LINE",
+        "TONE",
+        "active",
+        "current",
+        "delivery",
+        "diff",
+        "receipt",
+        "repro"
+      ],
+      "imports": [
+        "./changeView",
+        "@/lib/existingSourceApi",
+        "@/lib/utils",
+        "lucide-react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/existing-source/changeView.ts",
+        "frontend/src/lib/utils.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/existing-source/ChangeWorkbench.tsx:9",
+        "frontend/src/components/existing-source/changeView.test.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/existing-source/ChangeDetail.tsx#receipt"
+      ],
+      "testCoverage": [
+        "frontend/src/components/existing-source/changeView.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:5950ba77d925773cdfc6",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/existing-source/ChangeWorkbench.tsx",
+      "sha256": "787310a580ad27acc1d17f59b89b8b6f513acb3efd3786cc9fd0d97255a0666d",
+      "symbols": [
+        "ChangeWorkbench",
+        "POLL_MS",
+        "SLOW_POLL_MS",
+        "a",
+        "active",
+        "activeStatus",
+        "canBuildOn",
+        "cancel",
+        "cancelled",
+        "deliver",
+        "e",
+        "exportChange",
+        "failures",
+        "merge",
+        "r",
+        "resume",
+        "run",
+        "stopped",
+        "submit",
+        "text",
+        "tick",
+        "timer",
+        "url"
+      ],
+      "imports": [
+        "./ChangeDetail",
+        "./changeView",
+        "@/lib/api",
+        "@/lib/existingSourceApi",
+        "@/lib/utils",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/existing-source/ChangeDetail.tsx",
+        "frontend/src/components/existing-source/changeView.ts",
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/existingSourceApi.ts",
+        "frontend/src/lib/utils.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/existing-source/ExistingSourcePanel.tsx:20"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1c7652dac59ae17c2174",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "sha256": "44299b0edd447d495213fa868a126e832cfebd0468527415c93199c4a1d36c9c",
+      "sha256": "4e65ba797f19373ca8f2c4ad6069c8386dccdfcb9b3468f0ed0674f4b1bd13c9",
       "symbols": [
         "ExistingSourcePanel",
         "STATE_LABEL",
@@ -55370,20 +55538,24 @@
         "visibleChoices"
       ],
       "imports": [
+        "./ChangeWorkbench",
         "@/lib/existingSourceApi",
         "@/lib/utils",
         "lucide-react",
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/existing-source/ChangeWorkbench.tsx",
         "frontend/src/lib/existingSourceApi.ts",
         "frontend/src/lib/utils.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx"
+        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx:4"
+        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx:4",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:38"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -55404,6 +55576,101 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:62607affd5d6d68de69a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/existing-source/changeView.ts",
+      "sha256": "7b103a2344f200b1beca4fff0174ff1fdbb57d636bec635178261ee796144c29",
+      "symbols": [
+        "ACTIVE",
+        "DeliveryState",
+        "DiffLine",
+        "STATUS_LABEL",
+        "StatusTone",
+        "ago",
+        "canExport",
+        "classifyDiff",
+        "deliveryState",
+        "finishedWithResult",
+        "hasChange",
+        "inHunk",
+        "isActive",
+        "isFinished",
+        "out",
+        "progressSteps",
+        "raw",
+        "reproductionNote",
+        "s",
+        "shown",
+        "statusTone",
+        "testHeadline",
+        "text"
+      ],
+      "imports": [
+        "@/lib/existingSourceApi"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/existing-source/ChangeDetail.tsx:5",
+        "frontend/src/components/existing-source/ChangeWorkbench.tsx:10",
+        "frontend/src/components/existing-source/changeView.test.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/existing-source/changeView.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ea0b9f956048ccf5962d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/existing-source/reactGlobal.testsupport.ts",
+      "sha256": "079a6d7dfc187af0c4338d8a7f0b9b14065af72ab8db5975b14aa5e3e2ee5d4f",
+      "symbols": [],
+      "imports": [
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "frontend/src/components/existing-source/changeView.test.ts:1"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/existing-source/changeView.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -62704,7 +62971,7 @@
         "frontend/src/components/terminal/ChatBarParts.tsx:6",
         "frontend/src/components/terminal/ChatBarSendIcon.tsx:4",
         "frontend/src/components/terminal/ChatPromptQueue.tsx:6",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:33",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:34",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:7",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:9",
         "frontend/src/components/terminal/MessageShareModal.tsx:20",
@@ -63408,7 +63675,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/ChatPromptQueue.tsx:7",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:30",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:31",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:12"
       ],
       "reachable": true,
@@ -63743,7 +64010,7 @@
         "frontend/src/components/dashboard/DashboardView.tsx:21",
         "frontend/src/components/layout/PageFullscreenFrame.tsx:6",
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:10",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:34",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:35",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:8",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:49"
       ],
@@ -64718,7 +64985,7 @@
         "frontend/src/components/dashboard/DashboardView.tsx:22",
         "frontend/src/components/layout/PageFullscreenFrame.tsx:7",
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:11",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:35",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:36",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:9",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:50"
       ],
@@ -77112,7 +77379,7 @@
       "id": "surface:b8d1b0d4b81701631055",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "sha256": "1581572619608594e56a0a4cf70e5cd6930d086bc92e62dfe2048ca401438a5e",
+      "sha256": "61ce40e9200bbdf6cda9dc38ac1e4df81631c7e20104be228d0e83e27b5f5199",
       "symbols": [
         "DevWorkspacePanel",
         "PreviewPane",
@@ -77159,12 +77426,14 @@
         "./LiveBuildTimeline",
         "./ProjectDeliveryPanel",
         "./RuntimePreviewControls",
+        "@/components/existing-source/ExistingSourcePanel",
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/CopyIcon",
         "@/components/icons/animated/ExpandIcon",
         "@/components/icons/animated/MinimizeIcon",
         "@/hooks/useHydrated",
         "@/hooks/useRuntimePreviewHydration",
+        "@/lib/existingSourceApi",
         "@/lib/landingPreview",
         "@/lib/utils",
         "@/store/useLiveBuildStore",
@@ -77173,6 +77442,7 @@
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
         "frontend/src/components/icons/animated/CopyIcon.tsx",
         "frontend/src/components/icons/animated/ExpandIcon.tsx",
@@ -77182,6 +77452,7 @@
         "frontend/src/components/terminal/RuntimePreviewControls.tsx",
         "frontend/src/hooks/useHydrated.ts",
         "frontend/src/hooks/useRuntimePreviewHydration.ts",
+        "frontend/src/lib/existingSourceApi.ts",
         "frontend/src/lib/landingPreview.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useLiveBuildStore.ts",
@@ -78009,7 +78280,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:37"
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:40"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -78343,7 +78614,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:39"
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:42"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -78883,7 +79154,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:38"
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:41"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84525,7 +84796,7 @@
         "frontend/src/components/layout/IncognitoModeButton.tsx:7",
         "frontend/src/components/layout/Sidebar.tsx:75",
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:32",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:33",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:33",
         "frontend/src/components/terminal/TerminalChatBar.tsx:10",
@@ -84670,7 +84941,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:26",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:27",
         "frontend/src/hooks/useRuntimePreviewHydration.test.ts:5"
       ],
       "reachable": true,
@@ -85124,6 +85395,7 @@
         "frontend/src/components/dashboard/SwarmRunHistory.tsx:6",
         "frontend/src/components/dashboard/TasksView.tsx:6",
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:24",
+        "frontend/src/components/existing-source/ChangeWorkbench.tsx:6",
         "frontend/src/components/integrations/AiIntegrationsPanel.tsx:5",
         "frontend/src/components/integrations/ConnectShipWizard.tsx:7",
         "frontend/src/components/integrations/CustomCredentialsSection.tsx:11",
@@ -87319,7 +87591,7 @@
       "id": "surface:0581b211a5fccaf8c38e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "165cb2ff9c9f6af0395699c28e9d050853a3fd213692a3a14ede76da39bf8652",
+      "sha256": "385b36c721e257bccb0f84c8c01ba496708051c7f178bb8abaf5734ec3eeec3b",
       "symbols": [
         "ArchiveImport",
         "BindingState",
@@ -87356,11 +87628,14 @@
         "frontend/src/lib/api.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx"
+        "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
         "frontend/src/app/(shell)/dashboard/existing-source/page.tsx:5",
-        "frontend/src/components/existing-source/ExistingSourcePanel.tsx:6"
+        "frontend/src/components/existing-source/ChangeWorkbench.tsx:7",
+        "frontend/src/components/existing-source/ExistingSourcePanel.tsx:6",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:39"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87373,7 +87648,9 @@
         "frontend/src/lib/existingSourceApi.ts#DeliveryReceipt",
         "frontend/src/lib/existingSourceApi.ts#VerifiedBinding"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/components/existing-source/changeView.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -88950,7 +89227,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:5",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:29",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:30",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:6",
         "frontend/src/components/terminal/ProjectPreviewDock.tsx:6"
       ],
@@ -96132,6 +96409,8 @@
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:12",
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:18",
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:9",
+        "frontend/src/components/existing-source/ChangeDetail.tsx:4",
+        "frontend/src/components/existing-source/ChangeWorkbench.tsx:8",
         "frontend/src/components/existing-source/ExistingSourcePanel.tsx:19",
         "frontend/src/components/game-builder/GameFaq.tsx:6",
         "frontend/src/components/icons/GitHubIcon.tsx:3",
@@ -96254,7 +96533,7 @@
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx:15",
         "frontend/src/components/terminal/ChatPromptQueue.tsx:8",
         "frontend/src/components/terminal/ChatTurnRail.tsx:6",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:31",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:32",
         "frontend/src/components/terminal/ExecutionMotion.tsx:3",
         "frontend/src/components/terminal/GitHubActivationOverlay.tsx:5",
         "frontend/src/components/terminal/HomepageChatBar.tsx:7",
@@ -98366,7 +98645,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:36",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:37",
         "frontend/src/components/terminal/LiveBuildTimeline.tsx:10",
         "frontend/src/components/terminal/ProjectDeliveryPanel.tsx:18",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:7",
@@ -98514,7 +98793,7 @@
       "id": "surface:a1907dadf4cac9f7eaff",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "sha256": "6c3a61c1a189ffaf370ae43bf2233eb72df537835366c2de07719a0f0459f6ca",
+      "sha256": "2ec35b2a70d4999b66949755b0b4d0a81a8c5b3e4d6f36ca64247179ae5e97a9",
       "symbols": [
         "DevWorkspaceTab",
         "FileTrailItem",
@@ -98581,7 +98860,7 @@
         "frontend/src/components/dashboard/DashboardView.tsx:15",
         "frontend/src/components/layout/Sidebar.tsx:96",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:8",
-        "frontend/src/components/terminal/DevWorkspacePanel.tsx:21",
+        "frontend/src/components/terminal/DevWorkspacePanel.tsx:22",
         "frontend/src/components/terminal/ProjectDeliveryPanel.tsx:33",
         "frontend/src/components/terminal/ProjectPreviewDock.tsx:5",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:4",
@@ -107371,7 +107650,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5fd9b1e6b4d933cb06b5",
+      "id": "registration:d77600733ad7adf78de8",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 121,
       "receiver": "router",
@@ -107383,7 +107662,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6286d601867ae97c53c9",
+      "id": "registration:82189f0cb9852a9ee8e7",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 122,
       "receiver": "router",
@@ -107395,7 +107674,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a634b86236e81b4532fb",
+      "id": "registration:59f23cd63dd2b73d1c07",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 141,
       "receiver": "router",
@@ -107409,7 +107688,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:78a261d06a0a85dfd3b6",
+      "id": "registration:c7b26fd8f0d8a4e4f3ee",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 142,
       "receiver": "router",
@@ -107423,7 +107702,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c79c08fdb819521bcde0",
+      "id": "registration:31e277053fb7987e0810",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 147,
       "receiver": "router",
@@ -107437,7 +107716,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1b4566e5480ded21e3ba",
+      "id": "registration:3e31f0368ddba79e8320",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 148,
       "receiver": "router",
@@ -107451,7 +107730,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c7befb2f3906810241fc",
+      "id": "registration:10db54fcfcf66cdfabff",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 149,
       "receiver": "router",
@@ -107465,7 +107744,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:287684b27547baa04ddc",
+      "id": "registration:2de9f02b74f636bc4e4e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 150,
       "receiver": "router",
@@ -107479,7 +107758,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9d605e0849d94b4aeb9f",
+      "id": "registration:908d06bdd6479e653e9a",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 151,
       "receiver": "router",
@@ -107493,7 +107772,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:69d997d3cf1a909348c5",
+      "id": "registration:432a15b9ba0ed18c403e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 154,
       "receiver": "router",
@@ -107507,7 +107786,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:186c5f8c2e59e0f2f8d4",
+      "id": "registration:5b73605ca0993dabf879",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 155,
       "receiver": "router",
@@ -107521,7 +107800,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7674aa2e0bcb28540f11",
+      "id": "registration:9772fbe5524a80e33b5e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 160,
       "receiver": "router",
@@ -107535,7 +107814,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:957947be82e1e637c346",
+      "id": "registration:d20738cbf255b87d3350",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 161,
       "receiver": "router",
@@ -107549,7 +107828,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e5462d51f1d22faa7bfa",
+      "id": "registration:a2fc53d2f8edd899ee97",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 162,
       "receiver": "router",
@@ -107563,7 +107842,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:08d5d813cdf2f686e436",
+      "id": "registration:ba9ed8cdb2b8721818b2",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 163,
       "receiver": "router",
@@ -107578,7 +107857,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:bc9810a0de6461bcfced",
+      "id": "registration:547c2c4bc3d2e0703437",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 172,
       "receiver": "router",
@@ -107592,7 +107871,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9409225a21e0904e13ed",
+      "id": "registration:10b198a0ab8d271c4c4e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 178,
       "receiver": "router",
@@ -107606,7 +107885,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1a76535a9cc12e689822",
+      "id": "registration:4b166d3d2459bd9e27c6",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 179,
       "receiver": "router",
@@ -107620,7 +107899,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:53d20e1ee10512b3acb2",
+      "id": "registration:812ae09b2f132522a210",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 180,
       "receiver": "router",
@@ -107634,7 +107913,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e3927fb843b7a728a9d7",
+      "id": "registration:afc2118228937231334c",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 181,
       "receiver": "router",
@@ -107648,7 +107927,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7b5151b3db3e08300347",
+      "id": "registration:d18b17c4ea6ab40f65c0",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 187,
       "receiver": "router",
@@ -107662,7 +107941,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:63d883deb09a508c6ba2",
+      "id": "registration:1e0f4b61a3b9fa5ae03f",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 193,
       "receiver": "router",
@@ -107676,7 +107955,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:eb62abb39e8f577e06d2",
+      "id": "registration:af007552fa1e0a8ec90d",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 200,
       "receiver": "router",
@@ -107690,7 +107969,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b9eeb12c9a89a3c151d5",
+      "id": "registration:f5602c642721e51adc94",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 201,
       "receiver": "router",
@@ -112651,8 +112930,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6df316b9bcbd95253dba",
-      "registrationId": "registration:a634b86236e81b4532fb",
+      "id": "route:78205a5286e95124d8b4",
+      "registrationId": "registration:59f23cd63dd2b73d1c07",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 141,
       "method": "GET",
@@ -112668,8 +112947,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:2c6514bfe8c05976d2bf",
-      "registrationId": "registration:78a261d06a0a85dfd3b6",
+      "id": "route:ece83f31450bf8869bf9",
+      "registrationId": "registration:c7b26fd8f0d8a4e4f3ee",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 142,
       "method": "POST",
@@ -112685,8 +112964,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:31e1d43046eab5e332a5",
-      "registrationId": "registration:c79c08fdb819521bcde0",
+      "id": "route:b84638540bd5c5c2a55d",
+      "registrationId": "registration:31e277053fb7987e0810",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 147,
       "method": "GET",
@@ -112702,8 +112981,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:3e8d7487719249c81032",
-      "registrationId": "registration:1b4566e5480ded21e3ba",
+      "id": "route:a45ab4a093e1eb7fe01a",
+      "registrationId": "registration:3e31f0368ddba79e8320",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 148,
       "method": "GET",
@@ -112719,8 +112998,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:42469f45d5e2b33003d3",
-      "registrationId": "registration:c7befb2f3906810241fc",
+      "id": "route:55f82cbee442eeb717f3",
+      "registrationId": "registration:10db54fcfcf66cdfabff",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 149,
       "method": "POST",
@@ -112736,8 +113015,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ef4e599b15f742fa7683",
-      "registrationId": "registration:287684b27547baa04ddc",
+      "id": "route:3f93e678aaf0d1eec052",
+      "registrationId": "registration:2de9f02b74f636bc4e4e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 150,
       "method": "DELETE",
@@ -112753,8 +113032,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:55945b656ec246b3623a",
-      "registrationId": "registration:9d605e0849d94b4aeb9f",
+      "id": "route:07d091ca1086dbc14114",
+      "registrationId": "registration:908d06bdd6479e653e9a",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 151,
       "method": "GET",
@@ -112770,8 +113049,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:6a9dea9d79c5ad74a556",
-      "registrationId": "registration:69d997d3cf1a909348c5",
+      "id": "route:3d0f633a8d15c11170e6",
+      "registrationId": "registration:432a15b9ba0ed18c403e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 154,
       "method": "GET",
@@ -112787,8 +113066,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:2eedb8b7eda45370a8f9",
-      "registrationId": "registration:186c5f8c2e59e0f2f8d4",
+      "id": "route:e59ff313810a0fec801e",
+      "registrationId": "registration:5b73605ca0993dabf879",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 155,
       "method": "POST",
@@ -112804,8 +113083,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:05ce70891576e35b07c8",
-      "registrationId": "registration:7674aa2e0bcb28540f11",
+      "id": "route:8dd1eeef5145008bfb46",
+      "registrationId": "registration:9772fbe5524a80e33b5e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 160,
       "method": "GET",
@@ -112821,8 +113100,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:df5c774eaa75d6adad07",
-      "registrationId": "registration:957947be82e1e637c346",
+      "id": "route:ec42795b41f9ef4454d5",
+      "registrationId": "registration:d20738cbf255b87d3350",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 161,
       "method": "POST",
@@ -112838,8 +113117,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:3b74f4ab3cfe0d914763",
-      "registrationId": "registration:e5462d51f1d22faa7bfa",
+      "id": "route:c04815dfbeac2789691d",
+      "registrationId": "registration:a2fc53d2f8edd899ee97",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 162,
       "method": "GET",
@@ -112855,8 +113134,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:7580de1efcfd97affaa8",
-      "registrationId": "registration:08d5d813cdf2f686e436",
+      "id": "route:5dd8e3f71278b21f4fa6",
+      "registrationId": "registration:ba9ed8cdb2b8721818b2",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 163,
       "method": "POST",
@@ -112872,8 +113151,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:bed9460e9b7dbafd4e37",
-      "registrationId": "registration:bc9810a0de6461bcfced",
+      "id": "route:d447ff0fc8f5ad39fbd8",
+      "registrationId": "registration:547c2c4bc3d2e0703437",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 172,
       "method": "POST",
@@ -112889,8 +113168,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:5f3935030841b68469f4",
-      "registrationId": "registration:9409225a21e0904e13ed",
+      "id": "route:ea4aba7f2a91d5183c7e",
+      "registrationId": "registration:10b198a0ab8d271c4c4e",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 178,
       "method": "GET",
@@ -112906,8 +113185,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:4c62528d9156565c10a5",
-      "registrationId": "registration:1a76535a9cc12e689822",
+      "id": "route:88e27aa3a53c50de7a90",
+      "registrationId": "registration:4b166d3d2459bd9e27c6",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 179,
       "method": "GET",
@@ -112923,8 +113202,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:da202eb0e80ec3fbf63e",
-      "registrationId": "registration:53d20e1ee10512b3acb2",
+      "id": "route:7e9323f5e21614800bc8",
+      "registrationId": "registration:812ae09b2f132522a210",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 180,
       "method": "POST",
@@ -112940,8 +113219,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:44971b376e3af7544799",
-      "registrationId": "registration:e3927fb843b7a728a9d7",
+      "id": "route:d02840d90b57a5a698a7",
+      "registrationId": "registration:afc2118228937231334c",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 181,
       "method": "POST",
@@ -112957,8 +113236,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:cadf21ff5ed1c11babc2",
-      "registrationId": "registration:7b5151b3db3e08300347",
+      "id": "route:694c02ae14836f26fc5d",
+      "registrationId": "registration:d18b17c4ea6ab40f65c0",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 187,
       "method": "POST",
@@ -112974,8 +113253,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:437da52fb93ca178bfb9",
-      "registrationId": "registration:63d883deb09a508c6ba2",
+      "id": "route:e3528d708ecf982970e0",
+      "registrationId": "registration:1e0f4b61a3b9fa5ae03f",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 193,
       "method": "GET",
@@ -112991,8 +113270,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:5ec42a66954164c0137f",
-      "registrationId": "registration:eb62abb39e8f577e06d2",
+      "id": "route:d8708e40ee4a5d8e300e",
+      "registrationId": "registration:af007552fa1e0a8ec90d",
       "sourcePath": "backend/src/routes/existingSource.ts",
       "line": 200,
       "method": "GET",
@@ -117105,9 +117384,19 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:33106266ca15937f7554",
-      "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "line": 192,
+      "id": "finding:603d5fa46b8610f357fb",
+      "sourcePath": "frontend/src/components/existing-source/ChangeWorkbench.tsx",
+      "line": 18,
+      "kind": "SIMULATED",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:781453bcad89c9989299",
+      "sourcePath": "frontend/src/components/existing-source/ChangeWorkbench.tsx",
+      "line": 99,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -117115,9 +117404,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4071287aeca2bda2b9b1",
+      "id": "finding:f2590b6b6acc8e599eb8",
       "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "line": 209,
+      "line": 195,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -117125,9 +117414,19 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:45974773cbfc62c5c629",
+      "id": "finding:609873cf9d75bda88976",
       "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "line": 335,
+      "line": 212,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:1fd7d262b78f3056eb12",
+      "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
+      "line": 338,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118545,9 +118844,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b3c9e6661043b98d8fc3",
+      "id": "finding:1d11b5e6a23079f6f26a",
       "sourcePath": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "line": 383,
+      "line": 388,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -123686,6 +123985,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:c3435cce9987621761a0",
+      "sourcePath": "backend/src/existingSource/change/golden.test.ts",
+      "declaredTests": 32,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:cebdaf182e023ff72c40",
       "sourcePath": "backend/src/existingSource/change/testRunner.test.ts",
       "declaredTests": 10,
@@ -126818,6 +127124,13 @@
       "id": "test-suite:55b7937d6f07b6a08e4f",
       "sourcePath": "frontend/src/components/automations/catalog.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bbc37a283e5cf34ff5e7",
+      "sourcePath": "frontend/src/components/existing-source/changeView.test.ts",
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

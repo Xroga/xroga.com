@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `0f80a1642c1da917781b8fda5150a6c1fadbb89c`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `0acd737cefa6018334536f3590dd9c0c4d7080d9`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |

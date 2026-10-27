@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0f80a1642c1da917781b8fda5150a6c1fadbb89c",
+  "source_sha": "0acd737cefa6018334536f3590dd9c0c4d7080d9",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15399,7 +15399,7 @@
     },
     {
       "path": "backend/src/existingSource/change/delivery.ts",
-      "sha256": "5a12cbcae82f6910da9a22fe0574088f00714ba319cb2c51352e1dd264d40d99"
+      "sha256": "5d27d5c5f0f77dc05b095f14ff6749c5ac79d8c5932c121006a9190152e2eb1e"
     },
     {
       "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
@@ -15415,7 +15415,7 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "sha256": "8197e5826daf5737f4a0d7accbb4d7727238f1276d94d15882ae5f78483597f0"
+      "sha256": "56cd711dd2755eb5b7043a720719f532efde4b162ee372e8f913cba803b6e99e"
     },
     {
       "path": "backend/src/existingSource/change/snapshot.ts",
@@ -15427,15 +15427,15 @@
     },
     {
       "path": "backend/src/existingSource/change/testRunner.ts",
-      "sha256": "33947e12f277141d413bca7e1985744e1f464e8bf12bf724745bf8305244722d"
+      "sha256": "d0e59bc562730ee6debe6980c6678671da7e0d4eb43b98e8a39a1d137b7465a0"
     },
     {
       "path": "backend/src/existingSource/change/toolHost.ts",
-      "sha256": "0d84159a7c3cf11ef18b83378e8908d400a056a9922c9598761aa3b54d3ff48d"
+      "sha256": "46fd2cab419b6ebc2b243614edfc12c60f82744e47258ad1c69976fe006d24f1"
     },
     {
       "path": "backend/src/existingSource/change/types.ts",
-      "sha256": "0fb9b5f9bea487961bbfaf07bb6ce66d77069e637f1c863e0b84d4c41bbafbf7"
+      "sha256": "e43f425e12a1101c20ad91cb179465b140c6e418551c7120eb5f3396c82c4d65"
     },
     {
       "path": "backend/src/existingSource/change/unifiedDiff.ts",
@@ -15443,7 +15443,7 @@
     },
     {
       "path": "backend/src/existingSource/change/workspace.ts",
-      "sha256": "640e2c4ace6f3ff76a63b1a338a5d3ce54f115bc4b2f6a2b14031c4128179ff0"
+      "sha256": "6f9e8ac6da6a4d3657dbe5de66fd7c339e2014069bc6c3c9838d09ea8f433594"
     },
     {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
@@ -16035,7 +16035,7 @@
     },
     {
       "path": "backend/src/routes/existingSource.ts",
-      "sha256": "b25ea8c3ce0f8b42efc822d2cdcf9540082bdc50b7bfdcb878d9637edc0680c4"
+      "sha256": "f749749a79544759c3e406aa8e8f140091da3b654b8224e9bc6421ec51662fb7"
     },
     {
       "path": "backend/src/routes/github.ts",
@@ -18334,8 +18334,24 @@
       "sha256": "68c434299cd081ea502607e55916f05fbb90854a0e052349e505a0ba2adfb590"
     },
     {
+      "path": "frontend/src/components/existing-source/ChangeDetail.tsx",
+      "sha256": "3f283867032589e1d98aacadb70ae6c403f682019a08fd7f120dbe8a3a169d00"
+    },
+    {
+      "path": "frontend/src/components/existing-source/ChangeWorkbench.tsx",
+      "sha256": "787310a580ad27acc1d17f59b89b8b6f513acb3efd3786cc9fd0d97255a0666d"
+    },
+    {
       "path": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "sha256": "44299b0edd447d495213fa868a126e832cfebd0468527415c93199c4a1d36c9c"
+      "sha256": "4e65ba797f19373ca8f2c4ad6069c8386dccdfcb9b3468f0ed0674f4b1bd13c9"
+    },
+    {
+      "path": "frontend/src/components/existing-source/changeView.ts",
+      "sha256": "7b103a2344f200b1beca4fff0174ff1fdbb57d636bec635178261ee796144c29"
+    },
+    {
+      "path": "frontend/src/components/existing-source/reactGlobal.testsupport.ts",
+      "sha256": "079a6d7dfc187af0c4338d8a7f0b9b14065af72ab8db5975b14aa5e3e2ee5d4f"
     },
     {
       "path": "frontend/src/components/feedback/FeedbackModal.tsx",
@@ -19767,7 +19783,7 @@
     },
     {
       "path": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "sha256": "1581572619608594e56a0a4cf70e5cd6930d086bc92e62dfe2048ca401438a5e"
+      "sha256": "61ce40e9200bbdf6cda9dc38ac1e4df81631c7e20104be228d0e83e27b5f5199"
     },
     {
       "path": "frontend/src/components/terminal/EngineeringArtifactView.tsx",
@@ -20411,7 +20427,7 @@
     },
     {
       "path": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "165cb2ff9c9f6af0395699c28e9d050853a3fd213692a3a14ede76da39bf8652"
+      "sha256": "385b36c721e257bccb0f84c8c01ba496708051c7f178bb8abaf5734ec3eeec3b"
     },
     {
       "path": "frontend/src/lib/exportUserData.ts",
@@ -21151,7 +21167,7 @@
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "sha256": "6c3a61c1a189ffaf370ae43bf2233eb72df537835366c2de07719a0f0459f6ca"
+      "sha256": "2ec35b2a70d4999b66949755b0b4d0a81a8c5b3e4d6f36ca64247179ae5e97a9"
     },
     {
       "path": "frontend/src/store/useThemeStore.ts",
@@ -29222,21 +29238,21 @@
     },
     {
       "path": "backend/src/existingSource/change/delivery.ts",
-      "line": 151,
+      "line": 160,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/delivery.ts",
-      "line": 151,
+      "line": 160,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/delivery.ts",
-      "line": 166,
+      "line": 175,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29341,21 +29357,21 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 196,
+      "line": 220,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 223,
+      "line": 247,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 260,
+      "line": 284,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29390,7 +29406,7 @@
     },
     {
       "path": "backend/src/existingSource/change/toolHost.ts",
-      "line": 83,
+      "line": 90,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34325,28 +34341,28 @@
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1021,
+      "line": 1022,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1223,
+      "line": 1224,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1352,
+      "line": 1353,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1410,
+      "line": 1411,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
