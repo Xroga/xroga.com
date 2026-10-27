@@ -9,7 +9,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. Phases 1 and 2 of 3 (Work Packages A to E): authorised connection of an EXISTING GitHub repository or ZIP, commit-keyed code map, and safe AI change execution with isolated real tests, bounded repair, durable revisions, draft-PR delivery and patch/ZIP export. Extends the existing SoftwareAgent tool-host contract, sandbox runtime and atomic GitHub writer; adds no scheduler or runtime.",
+  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. All three phases (Work Packages A to G): existing GitHub repository or ZIP connection, commit-keyed code map, safe AI change execution with isolated real tests, bounded repair, durable revisions and stacked follow-ups, draft-PR delivery and export, the Existing project workspace tab, and certification (Golden A to L, negative matrix). Extends the existing SoftwareAgent tool-host contract, sandbox runtime and atomic GitHub writer; adds no scheduler or runtime.",
   "changedFiles": [
     "backend/scripts/benchmarkCodeMap.ts",
     "backend/src/existingSource/archive/archivePort.ts",
@@ -23,6 +23,7 @@
     "backend/src/existingSource/change/delivery.test.ts",
     "backend/src/existingSource/change/delivery.ts",
     "backend/src/existingSource/change/gitFake.testsupport.ts",
+    "backend/src/existingSource/change/golden.test.ts",
     "backend/src/existingSource/change/localProcessPort.testsupport.ts",
     "backend/src/existingSource/change/production.ts",
     "backend/src/existingSource/change/service.ts",
@@ -65,6 +66,8 @@
     "backend/src/services/integrations/githubAtomicTransport.ts",
     "backend/src/services/integrations/githubAtomicWrite.ts",
     "docs/infra/batch-3/BATCH3-PHASE-2-COMPLETE.md",
+    "docs/infra/batch-3/BATCH3-PHASE-3-COMPLETE.md",
+    "docs/infra/batch-3/CERTIFICATION.md",
     "docs/infra/batch-3/PHASE-1-COMPLETE.md",
     "docs/infra/batch-3/PHASE-1-STATUS.md",
     "docs/infra/batch-3/PHASE-2-BENCHMARK.md",
@@ -75,10 +78,17 @@
     "docs/xroga/security/caller-reviews.json",
     "docs/xroga/security/current-migration-additions.json",
     "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+    "frontend/src/components/existing-source/ChangeDetail.tsx",
+    "frontend/src/components/existing-source/ChangeWorkbench.tsx",
     "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
+    "frontend/src/components/existing-source/changeView.test.ts",
+    "frontend/src/components/existing-source/changeView.ts",
+    "frontend/src/components/existing-source/reactGlobal.testsupport.ts",
+    "frontend/src/components/terminal/DevWorkspacePanel.tsx",
     "frontend/src/lib/api.ts",
     "frontend/src/lib/existingSourceApi.ts",
     "frontend/src/lib/existingSourceApiContract.test.ts",
+    "frontend/src/store/useProjectWorkspaceStore.ts",
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
     "supabase/migrations/20261027000000_existing_source_projects.sql",
@@ -122,7 +132,7 @@
     },
     "approval": {
       "changed": true,
-      "description": "Delivery writes a NEW review branch and opens a draft PR only after the binding is re-verified at the provider, the account can push, the remote head is re-read, credentials and workflow paths are scanned out, and the change is verified (or explicitly confirmed unverified). It never writes the base or a protected branch and never force-pushes."
+      "description": "Delivery writes a NEW review branch and opens a draft PR only after the binding is re-verified at the provider, the account can push, the remote head is re-read, credentials and workflow paths are scanned out, and the change is verified (or explicitly confirmed unverified). It never writes the base or a protected branch and never force-pushes. An unverified change needs an explicit acknowledgement before a draft PR."
     },
     "credentials": {
       "changed": true,
@@ -177,6 +187,18 @@
       "scope": "Real Node and Python test runs, reproduction check, bounded repair, honest statuses, cancellation and recovery, injection and abuse, tenant isolation, draft PR delivery, divergence, idempotency, export",
       "negative": true,
       "reference": "backend/src/existingSource/change/change.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/golden.test.ts",
+      "scope": "Golden A to L and the negative matrix: real node and python runs, honest not-run labels, conflict and rebase, injection obedience, recovery, outages",
+      "negative": true,
+      "reference": "backend/src/existingSource/change/golden.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/components/existing-source/changeView.test.ts",
+      "scope": "Change screen rules and rendering: honest statuses, escaped diff, delivery gating, unverified acknowledgement, conflict display",
+      "negative": true,
+      "reference": "frontend/src/components/existing-source/changeView.test.ts"
     }
   ],
   "architecture": {
@@ -190,8 +212,9 @@
     "No live GitHub verification (needs an authorised disposable account)",
     "No real model (Cline) run: no provider spend was authorised",
     "Google isolated execution not connected: it needs a canonical run attempt per change, so changes there end unverified",
-    "Go tests planned but not executed; Preview and browser verification not connected",
-    "Supabase stores have no real-database test",
+    "Go tests not executed (no toolchain here); Preview and browser verification not connected; Golden E blocked, Golden H not run",
+    "UI verified by render and contract tests only, not in a live browser or with assistive technology",
+    "Stores have no real-database test; no retention policy for old changes",
     "Measured only on generated repositories"
   ],
   "placeholderClaimsRemaining": [
@@ -202,7 +225,9 @@
     "docs/infra/batch-3/PHASE-2-STATUS.md",
     "docs/infra/batch-3/PHASE-2-BENCHMARK.md",
     "docs/infra/batch-3/PHASE-1-COMPLETE.md",
-    "docs/infra/batch-3/BATCH3-PHASE-2-COMPLETE.md"
+    "docs/infra/batch-3/BATCH3-PHASE-2-COMPLETE.md",
+    "docs/infra/batch-3/BATCH3-PHASE-3-COMPLETE.md",
+    "docs/infra/batch-3/CERTIFICATION.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

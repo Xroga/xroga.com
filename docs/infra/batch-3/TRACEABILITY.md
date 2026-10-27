@@ -17,7 +17,7 @@ Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permissi
 | 5 | Add features to existing software | 3 | PARTIAL: same engine and limits; no dedicated feature scenario or real-model run | `change/change.test.ts` |
 | 6 | Edit precisely without damage | 3 | VERIFIED (contract): immutable base, base-hash per file, scope policy, CRLF and rewrite warnings, credentials excluded | `change/change.test.ts` |
 | 7 | Work across languages | 2, 3 | PARTIAL: analysis for JS/TS, Python, Go; real test execution for Node and Python; Go planned only (no toolchain here) | `languageAdapters.test.ts`, `polyglot.test.ts` |
-| 8 | Reuse previews, tests and repair | 3, 5 | NOT STARTED | |
+| 8 | Reuse previews, tests and repair | 3, 5 | PARTIAL: tests and bounded repair verified; preview and browser verification NOT connected | `change/change.test.ts`, `golden.test.ts` (E blocked) |
 | 9 | Deliver a GitHub review PR | 4 | VERIFIED against a faithful git host; live GitHub BLOCKED | `change/delivery.test.ts`, `routes/existingSourceChanges.test.ts` |
 | 10 | Preserve revisions and recover | 3, 4 | VERIFIED in memory (revisions, diffs, evidence, interrupted/resume, cancel); real database BLOCKED | `change/change.test.ts` |
 
@@ -30,8 +30,8 @@ Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permissi
 | C | Incremental intelligence | 2 | VERIFIED (development level) |
 | D | Safe modify, test, repair | 3 | PARTIAL: verified except real-model run and Google execution (needs a canonical run attempt) |
 | E | GitHub review delivery | 4 | VERIFIED against a faithful git host; live GitHub BLOCKED |
-| F | Integrated UX | 5 | PARTIAL: link, browse and read screen exists (Phase 1); source navigator, diffs, tests, PR status in Phase 5 |
-| G | Certification | 6 | NOT STARTED |
+| F | Integrated UX | 5 | PARTIAL: workspace tab, workbench, diff, evidence, stacked follow-ups verified by render and contract tests; no live browser run; preview not connected |
+| G | Certification | 6 | DONE for development: `CERTIFICATION.md`; production activation not claimed |
 
 ## Definition of done (section 16)
 
@@ -53,18 +53,18 @@ Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permissi
 
 | Case | Phase | Status |
 |---|---|---|
-| A Existing Next.js bug repair | 6 | NOT STARTED |
-| B Large TypeScript monorepo and incremental intelligence | 2, 6 | PARTIAL: map, ground truth, reuse and incremental measured in Phase 2; final certification in Phase 6 |
-| C Python API correction | 6 | NOT STARTED |
-| D Go CLI feature | 6 | NOT STARTED |
-| E Existing frontend visual repair | 6 | NOT STARTED |
-| F Remote-source revision race | 4, 6 | PARTIAL: conflict, rebase, protected base and lost-response adoption verified against the git fake; final certification in Phase 3 |
-| G GitHub account and PR lifecycle | 4, 6 | NOT STARTED (account/ownership parts exercised in Phase 1 contract tests) |
-| H Database migration and CRM feature | 6 | NOT STARTED |
-| I Repeated follow-up edits in one project | 5, 6 | NOT STARTED |
+| A Existing Next.js bug repair | 6 | PARTIAL (real process + contract; not Next.js, no browser or preview) |
+| B Large TypeScript monorepo and incremental intelligence | 2, 6 | PARTIAL: measured on a generated monorepo; no real repository; slow-path variant not run |
+| C Python API correction | 6 | PARTIAL (real python unittest; FastAPI and pytest not installed here) |
+| D Go CLI feature | 6 | NOT RUN (no Go toolchain; planning and honest labelling verified) |
+| E Existing frontend visual repair | 6 | BLOCKED (no preview or browser verification connected) |
+| F Remote-source revision race | 4, 6 | VERIFIED (contract) |
+| G GitHub account and PR lifecycle | 4, 6 | VERIFIED (contract); live GitHub BLOCKED |
+| H Database migration and CRM feature | 6 | BLOCKED / NOT RUN (migration flagged as unapplied only) |
+| I Repeated follow-up edits in one project | 5, 6 | VERIFIED (real process + contract) |
 | J Cross-tenant security and prompt injection | 6 | PARTIAL (read-side parts exercised in Phase 1) |
-| K Unsupported test-runtime honesty | 3, 6 | NOT STARTED |
-| L Durable recovery and cancellation | 3, 6 | NOT STARTED |
+| K Unsupported test-runtime honesty | 3, 6 | VERIFIED (contract) |
+| L Durable recovery and cancellation | 3, 6 | VERIFIED (real process + contract) |
 
 ## Negative and adversarial matrix (section 14)
 
@@ -82,4 +82,4 @@ Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permissi
 | Malicious repository instruction asks to leak secrets | VERIFIED for an agent that OBEYS it: every credential read, write, shell and exfiltration attempt is refused | `change/change.test.ts` |
 | npm postinstall network/metadata access | PARTIAL: installs run with `--ignore-scripts` and registry-only network, tests with none; the Google sandbox enforcement itself is not exercised here | `testRunner.test.ts` |
 | Patch applies to changed version of file | VERIFIED: delivery compares base and remote blob per changed path and returns a structured conflict | `change/delivery.test.ts` |
-| Concurrent pushes, lost PR response, missing PR permission, force-push, cancellation, crashes, failing tests, provider timeout, unapproved migration/deploy, public-PR leak, evidence-store failure, budget exhaustion, parser crash (map: malformed files and hostile input VERIFIED in Phase 2; force-push of the base VERIFIED for the map), protected branch, ZIP traversal/bomb (VERIFIED, `zipReader.test.ts`), model outage | NOT STARTED (Phases 2 to 6) | |
+| Concurrent pushes, lost PR response, missing PR permission, force-push, cancellation, crashes, failing tests, provider timeout, unapproved migration/deploy, public-PR leak, evidence-store failure, budget exhaustion, parser crash, protected branch, ZIP traversal/bomb, model outage | VERIFIED (contract) for every row: `golden.test.ts` negative matrix, `delivery.test.ts`, `change.test.ts`, `zipReader.test.ts`, `intelligence/service.test.ts`. Not exercised against real providers | `golden.test.ts` |
