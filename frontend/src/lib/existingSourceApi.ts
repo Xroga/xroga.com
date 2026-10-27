@@ -75,6 +75,56 @@ export interface FileContent {
   redactions: number;
 }
 
+export type MapStatus = 'not_indexed' | 'valid' | 'partial' | 'stale' | 'unavailable';
+
+export interface CodeMapStatus {
+  bindingId: string;
+  status: MapStatus;
+  baseCommitSha: string;
+  indexedCommitSha: string | null;
+  behindHead: boolean | null;
+  filesIndexed: number | null;
+  coverage: { filesKnown: number; filesIndexed: number; treeComplete: boolean; partialReason: string | null } | null;
+  builtAt: string | null;
+  reason: string;
+}
+
+export interface CodeMapBuild {
+  status: 'valid' | 'partial';
+  commitSha: string;
+  filesIndexed: number;
+  packages: number;
+  persisted: boolean;
+  metrics: { kind: 'cold' | 'incremental' | 'reused'; blobFetches: number; bytesFetched: number; durationMs: number };
+}
+
+export interface SearchHit {
+  path: string;
+  name: string | null;
+  kind: string;
+  line: number | null;
+  signature: string | null;
+  exported: boolean | null;
+  score: number;
+}
+
+export interface SearchResult {
+  commitSha: string;
+  results: SearchHit[];
+  totalMatches: number;
+  complete: boolean;
+  coverageNote: string | null;
+}
+
+export interface ScoredFile { path: string; score: number; role: string; reasons: string[]; symbols: string[] }
+
+export interface LocateResult {
+  commitSha: string;
+  status: 'valid' | 'partial';
+  relevance: { targets: ScoredFile[]; consumers: ScoredFile[]; tests: ScoredFile[]; dependencies: ScoredFile[]; confidence: 'high' | 'medium' | 'low' };
+  passport: { estimatedTokens: number; files: string[]; truncated: boolean };
+}
+
 const base = '/api/existing-source';
 
 export const existingSourceApi = {
@@ -89,6 +139,11 @@ export const existingSourceApi = {
     return apiFetch<DirectoryListing>(`${base}/links/${id}/directory${query}`);
   },
   file: (id: string, path: string) => apiFetch<FileContent>(`${base}/links/${id}/file?path=${encodeURIComponent(path)}`),
+  indexStatus: (id: string) => apiFetch<CodeMapStatus>(`${base}/links/${id}/index`),
+  buildIndex: (id: string) => apiFetch<CodeMapBuild>(`${base}/links/${id}/index`, { method: 'POST', body: '{}' }),
+  search: (id: string, q: string) => apiFetch<SearchResult>(`${base}/links/${id}/search?q=${encodeURIComponent(q)}`),
+  locate: (id: string, instruction: string) => apiFetch<LocateResult>(`${base}/links/${id}/locate`, { method: 'POST', body: JSON.stringify({ instruction }) }),
+  neighborhood: (id: string, path: string) => apiFetch<{ path: string; dependsOn: string[]; dependedOnBy: string[]; tests: string[]; affected: string[] }>(`${base}/links/${id}/neighborhood?path=${encodeURIComponent(path)}`),
 };
 
 /** What a person should read for a failure: never provider detail, never a token. */
@@ -103,6 +158,8 @@ export function existingSourceErrorMessage(error: unknown): string {
     case 'ACCOUNT_CHANGED': return 'A different GitHub account is connected now. Reconnect the original account or link the repository again.';
     case 'REPO_EMPTY': return 'That repository has no commits yet.';
     case 'BRANCH_NOT_FOUND': return 'That branch was not found in the repository.';
+    case 'INDEX_UNAVAILABLE': return 'The code map is not current for the linked commit. Build it first.';
+    case 'INDEX_BUSY': return 'Xroga is already building code maps for you. Try again in a moment.';
     case 'SENSITIVE_PATH': return 'This file can hold credentials, so its content is never shown.';
     case 'SOURCE_UNREADABLE': return error instanceof ApiError && error.message ? error.message : 'That file could not be read at the linked commit.';
     case 'PROVIDER_RATE_LIMITED': return 'GitHub is limiting requests. Try again shortly.';

@@ -17,6 +17,8 @@
 import { Router, type Response } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
+import { SupabaseCodeIndexStore } from '../existingSource/intelligence/codeIndexStore.js';
+import { ExistingSourceIntelligence } from '../existingSource/intelligence/service.js';
 import { ExistingSourceService } from '../existingSource/service.js';
 import { createRestSourcePort } from '../existingSource/provider.js';
 import { SupabaseSourceBindingStore } from '../existingSource/store.js';
@@ -47,22 +49,38 @@ async function projectFor(tenant: TenantContext, input: { ownerId: string; repos
 
 export const defaultExistingSourceService: ExistingSourceServiceFactory = (tenant) => {
   const context = requireTenantContext(tenant);
+  const codeIndexes = new SupabaseCodeIndexStore(context);
   return new ExistingSourceService({
     store: new SupabaseSourceBindingStore(context),
     tokenFor: (userId) => getGitHubToken(userId),
     portFor: (token) => createRestSourcePort(token),
     projectFor: (input) => projectFor(context, input),
+    // an unlinked repository, a removed connection or a lost access takes its derived code map with it
+    onBindingClosed: (userId, bindingId) => codeIndexes.deleteForBinding(userId, bindingId),
   });
 };
+
+export type ExistingSourceIntelligenceFactory = (tenant: TenantContext, service: ExistingSourceService) => ExistingSourceIntelligence;
+
+export const defaultExistingSourceIntelligence: ExistingSourceIntelligenceFactory = (tenant, service) =>
+  new ExistingSourceIntelligence({ source: service, store: new SupabaseCodeIndexStore(requireTenantContext(tenant)) });
 
 const id = z.string().uuid();
 const link = z.object({ repositoryId: z.string().regex(/^[0-9]{1,20}$/), branch: z.string().min(1).max(200).optional() }).strict();
 const page = z.coerce.number().int().min(1).max(50).default(1);
 const directory = z.object({ path: z.string().max(1_000).optional() });
+const indexBody = z.object({ force: z.boolean().optional() }).strict();
+const searchQuery = z.object({ q: z.string().min(2).max(120), kind: z.enum(['symbol', 'file', 'any']).optional(), limit: z.coerce.number().int().min(1).max(50).optional() });
+const locateBody = z.object({ instruction: z.string().min(3).max(8_000), budgetTokens: z.number().int().min(500).max(12_000).optional() }).strict();
+const neighborhoodQuery = z.object({ path: z.string().min(1).max(1_000) });
 const file = z.object({ path: z.string().min(1).max(1_000), startLine: z.coerce.number().int().min(1).optional(), endLine: z.coerce.number().int().min(1).optional() })
   .refine((q) => (q.startLine === undefined) === (q.endLine === undefined), 'startLine and endLine go together');
 
-export function createExistingSourceRouter(serviceFor: ExistingSourceServiceFactory = defaultExistingSourceService, enabled: () => boolean = () => existingSourceEnabled()): Router {
+export function createExistingSourceRouter(
+  serviceFor: ExistingSourceServiceFactory = defaultExistingSourceService,
+  enabled: () => boolean = () => existingSourceEnabled(),
+  intelligenceFor: ExistingSourceIntelligenceFactory = defaultExistingSourceIntelligence,
+): Router {
   const router = Router();
   router.use((_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
   router.use((_req, res, next) => {
@@ -95,6 +113,17 @@ export function createExistingSourceRouter(serviceFor: ExistingSourceServiceFact
   router.post('/links/:id/refresh', handle(async (t, s, req, res) => { res.json(await s.refreshBase(t.userId, id.parse(req.params.id))); }));
   router.delete('/links/:id', handle(async (t, s, req, res) => { await s.unlink(t.userId, id.parse(req.params.id)); res.status(204).end(); }));
   router.get('/links/:id/directory', handle(async (t, s, req, res) => { res.json(await s.listDirectory(t.userId, id.parse(req.params.id), directory.parse(req.query))); }));
+  // The code map: derived, owner-scoped, current only for the linked commit.
+  const withIntelligence = (fn: (t: TenantContext, i: ExistingSourceIntelligence, req: AuthRequest, res: Response) => Promise<unknown>) => handle((t, s, req, res) => fn(t, intelligenceFor(t, s), req, res));
+  router.get('/links/:id/index', withIntelligence(async (t, i, req, res) => { res.json(await i.status(t.userId, id.parse(req.params.id))); }));
+  router.post('/links/:id/index', withIntelligence(async (t, i, req, res) => {
+    const body = indexBody.parse(req.body ?? {});
+    const { index, metrics, persisted } = await i.ensure(t.userId, id.parse(req.params.id), body);
+    res.json({ status: index.status, commitSha: index.commitSha, coverage: index.coverage, filesIndexed: index.files.length, packages: index.packages.length, contentFingerprint: index.contentFingerprint, metrics, persisted });
+  }));
+  router.get('/links/:id/search', withIntelligence(async (t, i, req, res) => { const q = searchQuery.parse(req.query); res.json(await i.search(t.userId, id.parse(req.params.id), { query: q.q, kind: q.kind, limit: q.limit })); }));
+  router.post('/links/:id/locate', withIntelligence(async (t, i, req, res) => { const b = locateBody.parse(req.body); res.json(await i.locate(t.userId, id.parse(req.params.id), { instruction: b.instruction, budgetTokens: b.budgetTokens })); }));
+  router.get('/links/:id/neighborhood', withIntelligence(async (t, i, req, res) => { res.json(await i.neighborhood(t.userId, id.parse(req.params.id), { path: neighborhoodQuery.parse(req.query).path })); }));
   router.get('/links/:id/file', handle(async (t, s, req, res) => { res.json(await s.readFile(t.userId, id.parse(req.params.id), file.parse(req.query))); }));
   return router;
 }

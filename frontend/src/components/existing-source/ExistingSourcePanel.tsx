@@ -7,8 +7,11 @@ import {
   EXISTING_SOURCE_ENABLED,
   existingSourceApi,
   existingSourceErrorMessage,
+  type CodeMapStatus,
   type DirectoryListing,
   type FileContent,
+  type LocateResult,
+  type SearchResult,
   type RepositoryChoice,
   type SourceBinding,
   type VerifiedBinding,
@@ -53,6 +56,14 @@ export function ExistingSourcePanel() {
   const [listing, setListing] = useState<DirectoryListing | null>(null);
   const [file, setFile] = useState<FileContent | null>(null);
   const [browseError, setBrowseError] = useState<string | null>(null);
+  const [map, setMap] = useState<CodeMapStatus | null>(null);
+  const [mapNote, setMapNote] = useState<string | null>(null);
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [found, setFound] = useState<SearchResult | null>(null);
+  const [ask, setAsk] = useState('');
+  const [located, setLocated] = useState<LocateResult | null>(null);
+  const [related, setRelated] = useState<{ path: string; dependedOnBy: string[]; tests: string[] } | null>(null);
 
   const loadLinks = useCallback(async () => {
     try { setLinks((await existingSourceApi.list()).links); setError(null); } catch (caught) { setError(existingSourceErrorMessage(caught)); } finally { setLoading(false); }
@@ -96,9 +107,38 @@ export function ExistingSourcePanel() {
 
   const openFile = async (path: string) => {
     if (!active) return;
-    setBrowseError(null);
-    try { setFile(await existingSourceApi.file(active.binding.id, path)); } catch (caught) { setFile(null); setBrowseError(existingSourceErrorMessage(caught)); }
+    setBrowseError(null); setRelated(null);
+    try { setFile(await existingSourceApi.file(active.binding.id, path)); } catch (caught) { setFile(null); setBrowseError(existingSourceErrorMessage(caught)); return; }
+    if (map && (map.status === 'valid' || map.status === 'partial')) {
+      try { const n = await existingSourceApi.neighborhood(active.binding.id, path); setRelated({ path, dependedOnBy: n.dependedOnBy, tests: n.tests }); } catch { /* the file is shown without its relations */ }
+    }
   };
+
+  const runMap = async (what: 'status' | 'build' | 'search' | 'locate') => {
+    if (!active) return;
+    const id = active.binding.id;
+    setBusy(`map-${what}`); setMapError(null);
+    try {
+      if (what === 'status') setMap(await existingSourceApi.indexStatus(id));
+      if (what === 'build') {
+        const built = await existingSourceApi.buildIndex(id);
+        setMapNote(built.metrics.kind === 'reused' ? 'The code map was already current; nothing was read again.' : `Read ${built.metrics.blobFetches} files (${Math.round(built.metrics.bytesFetched / 1024)} KB) in ${built.metrics.durationMs} ms.`);
+        setMap(await existingSourceApi.indexStatus(id));
+      }
+      if (what === 'search') setFound(await existingSourceApi.search(id, query.trim()));
+      if (what === 'locate') setLocated(await existingSourceApi.locate(id, ask.trim()));
+    } catch (caught) { setMapError(existingSourceErrorMessage(caught)); } finally { setBusy(null); }
+  };
+
+  // each time a link is opened, show whether a code map already exists for its commit
+  useEffect(() => {
+    setMap(null); setMapNote(null); setMapError(null); setFound(null); setLocated(null); setRelated(null); setQuery(''); setAsk('');
+    const current = active?.binding;
+    if (!current || current.state !== 'linked') return;
+    let cancelled = false;
+    existingSourceApi.indexStatus(current.id).then((s) => { if (!cancelled) setMap(s); }).catch(() => { /* the status stays unknown */ });
+    return () => { cancelled = true; };
+  }, [active?.binding.id, active?.binding.baseCommitSha, active?.binding.state]);
 
   const refresh = async () => {
     if (!active) return;
@@ -232,7 +272,57 @@ export function ExistingSourcePanel() {
                     <pre className="max-h-80 overflow-auto rounded border border-[var(--card-border)]/60 p-2 text-[11px] leading-snug"><code>{file.content}</code></pre>
                   </div>
                 ) : <p className="text-[11px] text-[var(--muted)]">Choose a file to read it at the linked commit.</p>}
+                {file && related?.path === file.path ? (
+                  <p className="mt-1 text-[11px] text-[var(--muted)]" data-testid="existing-source-related">
+                    Used by {related.dependedOnBy.length} file{related.dependedOnBy.length === 1 ? '' : 's'}; covered by {related.tests.length === 0 ? 'no test in the map' : related.tests.slice(0, 3).join(', ')}.
+                  </p>
+                ) : null}
               </div>
+            </div>
+          ) : null}
+
+          {active.binding.state === 'linked' ? (
+            <div className="space-y-2 border-t border-[var(--card-border)]/40 pt-3" data-testid="existing-source-map">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">Code map</h3>
+                <span className="text-[11px]">{map ? map.status.replace(/_/g, ' ') : 'checking'}</span>
+                <button type="button" onClick={() => void runMap('build')} disabled={busy === 'map-build'} className="ml-auto rounded border border-[var(--card-border)] px-2 py-0.5 text-[11px] disabled:opacity-60">
+                  {busy === 'map-build' ? 'Building' : map && (map.status === 'valid' || map.status === 'partial') ? 'Check the map' : 'Build the map'}
+                </button>
+              </div>
+              {map ? <p className="text-[11px] text-[var(--muted)]">{map.reason}{map.filesIndexed !== null ? ` ${map.filesIndexed} files indexed.` : ''}</p> : null}
+              {map?.status === 'partial' ? <p className="text-[11px] text-amber-400">The map is partial. A missing result does not prove the code is absent.</p> : null}
+              {mapNote ? <p className="text-[11px] text-[var(--muted)]">{mapNote}</p> : null}
+              {mapError ? <p role="alert" className="text-[11px] text-amber-400">{mapError}</p> : null}
+              {map && (map.status === 'valid' || map.status === 'partial') ? (
+                <div className="grid gap-3 md:grid-cols-2">
+                  <form onSubmit={(e) => { e.preventDefault(); if (query.trim().length >= 2) void runMap('search'); }} className="space-y-1">
+                    <label className="block text-[11px] text-[var(--muted)]" htmlFor="map-search">Find a symbol or file</label>
+                    <div className="flex gap-1"><input id="map-search" value={query} onChange={(e) => setQuery(e.target.value)} className="min-w-0 flex-1 rounded border border-[var(--card-border)] bg-transparent px-2 py-1 text-xs" /><button type="submit" disabled={query.trim().length < 2 || busy === 'map-search'} className="rounded border border-[var(--card-border)] px-2 text-[11px] disabled:opacity-50">Search</button></div>
+                    {found ? (
+                      <ul aria-label="Search results" className="max-h-40 divide-y divide-[var(--card-border)]/30 overflow-y-auto rounded border border-[var(--card-border)]/60 text-[11px]">
+                        {found.results.length === 0 ? <li className="p-1.5 text-[var(--muted)]">No match{found.complete ? '' : ' in the indexed part'}.</li> : found.results.map((r, i) => (
+                          <li key={`${r.path}:${r.name ?? ''}:${i}`}><button type="button" onClick={() => void openFile(r.path)} className="block w-full truncate p-1.5 text-left hover:bg-[var(--accent)]/5">{r.name ? <><strong>{r.name}</strong> <span className="text-[var(--muted)]">{r.kind} in </span></> : null}{r.path}{r.line ? `:${r.line}` : ''}</button></li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </form>
+                  <form onSubmit={(e) => { e.preventDefault(); if (ask.trim().length >= 3) void runMap('locate'); }} className="space-y-1">
+                    <label className="block text-[11px] text-[var(--muted)]" htmlFor="map-locate">Where would this change go?</label>
+                    <div className="flex gap-1"><input id="map-locate" value={ask} onChange={(e) => setAsk(e.target.value)} placeholder="Describe the change" className="min-w-0 flex-1 rounded border border-[var(--card-border)] bg-transparent px-2 py-1 text-xs" /><button type="submit" disabled={ask.trim().length < 3 || busy === 'map-locate'} className="rounded border border-[var(--card-border)] px-2 text-[11px] disabled:opacity-50">Locate</button></div>
+                    {located ? (
+                      <div className="space-y-1 text-[11px]" data-testid="existing-source-located">
+                        <p className="text-[var(--muted)]">Confidence {located.relevance.confidence}. About {located.passport.estimatedTokens} tokens of context instead of the whole repository.</p>
+                        <ul aria-label="Likely files" className="divide-y divide-[var(--card-border)]/30 rounded border border-[var(--card-border)]/60">
+                          {located.relevance.targets.length === 0 ? <li className="p-1.5 text-[var(--muted)]">No file stands out. Name a function, a file or an error.</li> : located.relevance.targets.map((t) => (
+                            <li key={t.path} className="p-1.5"><button type="button" onClick={() => void openFile(t.path)} className="block w-full truncate text-left">{t.path}</button><span className="text-[var(--muted)]">{t.reasons.slice(0, 2).join('; ')}</span></li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </form>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </section>

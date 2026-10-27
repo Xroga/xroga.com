@@ -15880,11 +15880,11 @@
     },
     {
       "path": "backend/src/routes/existingSource.ts",
-      "sourceSha256": "3b01d5c3d0e262affb4cf55282e2a69735022384600eeb41b54cfc273f0d04ad",
+      "sourceSha256": "7307723e342095966515d16644e6cc39cbbed34f9a8cdab9807565763a34232b",
       "callIds": [
-        "47de1238a683ce3dab82",
-        "abc79cffdaf1bc0f6374",
-        "99ae37ea479806027a06"
+        "ce3faeca57669ab800a1",
+        "f772fb6d8d34bb63ea22",
+        "2c90cbd312221c19cb27"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
@@ -15893,6 +15893,28 @@
         {
           "path": "backend/src/routes/existingSource.ts",
           "marker": "eq('user_id', input.ownerId)"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/existingSource/intelligence/codeIndexStore.ts",
+      "sourceSha256": "58e2ee7d510b9193d02e360be4c835ba899cd6513d9236f54df430c287acf736",
+      "callIds": [
+        "7a2986f39f4586a2f168",
+        "2fe712adbd7ddb696655",
+        "b76e00771201e10bf200",
+        "6cae58edcf5cfe02071f",
+        "e700104959a5b3a6441b",
+        "9f1e9ad1970c749e3f78",
+        "f5d15b9b3a3c882bea66"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "SupabaseCodeIndexStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+      "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the stored map is derived data that cascades away when the binding is deleted.",
+      "evidence": [
+        {
+          "path": "backend/src/existingSource/intelligence/codeIndexStore.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
         }
       ]
     }

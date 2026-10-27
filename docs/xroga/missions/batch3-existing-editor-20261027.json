@@ -9,9 +9,22 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. Phase 1 of 6: authorised connection of an EXISTING GitHub repository, exact-commit read-only inspection, tenant and revocation safety. Extends the existing repositoryTools session; adds no scheduler, agent loop or runtime. Not for merge or deployment until the founder authorises release.",
+  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. Phases 1 and 2 of 6: authorised connection of an EXISTING GitHub repository with exact-commit read-only inspection (Phase 1), and an incremental, commit-keyed code map with search, relevance and a model passport (Phase 2). Extends the existing RepositoryToolSession, repository index and file selection; adds no scheduler, agent loop or runtime.",
   "changedFiles": [
+    "backend/scripts/benchmarkCodeMap.ts",
     "backend/src/existingSource/fakeGitHub.testsupport.ts",
+    "backend/src/existingSource/intelligence/codeIndex.ts",
+    "backend/src/existingSource/intelligence/codeIndexStore.ts",
+    "backend/src/existingSource/intelligence/exclusions.ts",
+    "backend/src/existingSource/intelligence/graph.ts",
+    "backend/src/existingSource/intelligence/languageAdapters.test.ts",
+    "backend/src/existingSource/intelligence/languageAdapters.ts",
+    "backend/src/existingSource/intelligence/monorepoFixture.testsupport.ts",
+    "backend/src/existingSource/intelligence/polyglot.test.ts",
+    "backend/src/existingSource/intelligence/relevance.ts",
+    "backend/src/existingSource/intelligence/service.test.ts",
+    "backend/src/existingSource/intelligence/service.ts",
+    "backend/src/existingSource/intelligence/types.ts",
     "backend/src/existingSource/provider.test.ts",
     "backend/src/existingSource/provider.ts",
     "backend/src/existingSource/sensitivePaths.ts",
@@ -23,10 +36,15 @@
     "backend/src/index.ts",
     "backend/src/routes/existingSource.test.ts",
     "backend/src/routes/existingSource.ts",
+    "backend/src/routes/existingSourceIntelligence.test.ts",
     "backend/src/routes/github.ts",
     "docs/infra/batch-3/PHASE-1-STATUS.md",
+    "docs/infra/batch-3/PHASE-2-BENCHMARK.md",
+    "docs/infra/batch-3/PHASE-2-STATUS.md",
     "docs/infra/batch-3/TRACEABILITY.md",
+    "docs/infra/batch-3/phase2-benchmark.json",
     "docs/xroga/missions/batch3-existing-editor-20261027.json",
+    "docs/xroga/security/caller-reviews.json",
     "docs/xroga/security/current-migration-additions.json",
     "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
     "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
@@ -34,7 +52,8 @@
     "frontend/src/lib/existingSourceApiContract.test.ts",
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
-    "supabase/migrations/20261027000000_existing_source_projects.sql"
+    "supabase/migrations/20261027000000_existing_source_projects.sql",
+    "supabase/migrations/20261027010000_existing_source_indexes.sql"
   ],
   "decisions": {
     "keep": [
@@ -53,10 +72,11 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
-      "supabase/migrations/20261027000000_existing_source_projects.sql"
+      "supabase/migrations/20261027000000_existing_source_projects.sql",
+      "supabase/migrations/20261027010000_existing_source_indexes.sql"
     ],
     "rollout": "Additive service-role-only table with RLS and no public grants. Not applied by this change; apply through the verified migration workflow after authorisation.",
-    "rollback": "DROP TABLE public.existing_source_projects; (nothing else references it)."
+    "rollback": "DROP TABLE public.existing_source_indexes; DROP TABLE public.existing_source_projects; (nothing else references them; the map is derived and rebuildable)."
   },
   "securityImpact": {
     "auth": {
@@ -65,7 +85,7 @@
     },
     "tenant": {
       "changed": true,
-      "description": "Every binding query carries the verified owner; another owner's binding id is indistinguishable from one that does not exist; the same repository linked by two owners stays two bindings."
+      "description": "Every binding query carries the verified owner; another owner's binding id is indistinguishable from one that does not exist; the same repository linked by two owners stays two bindings. Code maps are stored per owner and binding, service-role only with RLS, cascade on unlink, purged on revocation, transfer, account change and removed connection; another owner's map is indistinguishable from a missing one."
     },
     "approval": {
       "changed": false,
@@ -77,11 +97,11 @@
     },
     "egress": {
       "changed": false,
-      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; no repository content reaches a model in this phase."
+      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; blob fetches for the map skip sensitive, vendored, generated, binary and oversize files. No repository content reaches a model in these phases; the passport carries signatures and paths, not bodies."
     },
     "cost": {
       "changed": false,
-      "description": "Bounded tree walks (entry and fetch limits) and the existing per-session blob budget; no model spend."
+      "description": "Map builds are bounded (1500 blob fetches, 24 MB, one build at a time per owner, shared in-flight builds); persisted map capped at 8 MB. No model spend."
     },
     "billing": {
       "changed": false,
@@ -90,16 +110,28 @@
   },
   "tests": [
     {
-      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/service.test.ts backend/src/existingSource/provider.test.ts backend/src/routes/existingSource.test.ts",
-      "scope": "Link, tenant isolation, revocation, rename and transfer, account change, pinned reads, truncated trees, sensitive paths, traversal, REST error classification and the HTTP routes.",
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/service.test.ts backend/src/existingSource/provider.test.ts backend/src/routes/existingSource.test.ts backend/src/routes/existingSourceIntelligence.test.ts",
+      "scope": "Link, tenant isolation, revocation, exact-commit reads, and the code map routes over HTTP",
       "negative": true,
-      "reference": "backend/src/existingSource/service.test.ts"
+      "reference": "backend/src/routes/existingSourceIntelligence.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/intelligence/languageAdapters.test.ts backend/src/existingSource/intelligence/service.test.ts backend/src/existingSource/intelligence/polyglot.test.ts",
+      "scope": "Language adapters, graph, ground-truth relevance on a 638-file monorepo, reuse, incremental equals cold build, stale never served, overlay, limits, concurrency, Python and Go",
+      "negative": true,
+      "reference": "backend/src/existingSource/intelligence/service.test.ts"
     },
     {
       "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/existingSourceApiContract.test.ts",
-      "scope": "Every client call is a served route with the same method; the router is authenticated; the feature is off by default.",
-      "negative": false,
+      "scope": "Every client call is a served route with the same method; the screen reports partial maps and builds only on request",
+      "negative": true,
       "reference": "frontend/src/lib/existingSourceApiContract.test.ts"
+    },
+    {
+      "command": "node --test scripts/security/schema-catalog.test.mjs scripts/security/audit-tenant-policies.test.mjs",
+      "scope": "Migration registration and tenant audit register",
+      "negative": true,
+      "reference": "scripts/security/schema-catalog.test.mjs"
     }
   ],
   "architecture": {
@@ -111,14 +143,19 @@
   "rollback": "Leave XROGA_EXISTING_SOURCE and NEXT_PUBLIC_XROGA_EXISTING_SOURCE unset: routes answer 503 and the page is absent. Drop the table with the statement above if the migration was applied.",
   "knownGaps": [
     "No live GitHub verification (needs an authorised disposable account)",
-    "No code index, edit, test or PR delivery yet (Phases 2 to 4)",
+    "Measured only on a generated monorepo; no real third-party repository; timings exclude network latency",
+    "Python and Go analysis is structural, not type-checked",
+    "No edit, test execution or PR delivery yet (Phases 3 to 5)",
+    "Supabase stores have no real-database test",
     "Installation (GitHub App) binding is recorded as null: the existing connection is an OAuth user token"
   ],
   "placeholderClaimsRemaining": [
     "Live provider behaviour is unverified; only a faithful in-memory GitHub was exercised"
   ],
   "evidenceRefs": [
-    "docs/infra/batch-3/PHASE-1-STATUS.md"
+    "docs/infra/batch-3/PHASE-1-STATUS.md",
+    "docs/infra/batch-3/PHASE-2-STATUS.md",
+    "docs/infra/batch-3/PHASE-2-BENCHMARK.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

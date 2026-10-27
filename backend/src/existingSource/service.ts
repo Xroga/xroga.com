@@ -26,6 +26,10 @@ export interface ExistingSourceDeps {
   /** Creates (or finds) the Xroga project a binding shows up as. Failure never blocks the link. */
   readonly projectFor?: (input: { ownerId: string; repositoryFullName: string; repositoryUrl: string; branch: string }) => Promise<string | null>;
   readonly now?: () => number;
+  /** Complete-tree cache; defaults to a process-wide one. */
+  readonly treeCache?: Map<string, { tree: CompleteTree; treeSha: string }>;
+  /** Called when a binding stops being usable (unlinked, or its connection was removed) so derived data can be discarded. */
+  readonly onBindingClosed?: (userId: string, bindingId: string) => Promise<void>;
   /** How long a successful provider verification is trusted for reads. Writes (later phases) always re-verify. */
   readonly verifyMaxAgeMs?: number;
 }
@@ -60,6 +64,7 @@ export interface DirectoryEntry {
 
 const BRANCH = /^(?!-)(?!.*\.\.)(?!.*\/\/)(?!.*\.lock$)(?!.*[\/.]$)(?!\/)[A-Za-z0-9._\/-]{1,200}$/;
 const TREE_CACHE_MAX = 12;
+const sharedTreeCache = new Map<string, { tree: CompleteTree; treeSha: string }>();
 const DEFAULT_VERIFY_MAX_AGE_MS = 60_000;
 
 const STATE_ERROR: Record<string, ExistingSourceError['code']> = {
@@ -78,10 +83,13 @@ function providerToError(error: unknown): never {
 }
 
 export class ExistingSourceService {
-  /** Complete-tree cache. Keyed by binding id AND commit, and only reachable after the owner-checked binding lookup. */
-  private readonly trees = new Map<string, { tree: CompleteTree; treeSha: string }>();
+  /**
+   * Complete-tree cache. Keyed by binding id AND commit, and only reachable after the owner-checked binding lookup. Shared by every
+   * service instance in the process (the HTTP layer builds one per request), so a second request at the same commit does not refetch.
+   */
+  private readonly trees: Map<string, { tree: CompleteTree; treeSha: string }>;
 
-  constructor(private readonly deps: ExistingSourceDeps) {}
+  constructor(private readonly deps: ExistingSourceDeps) { this.trees = deps.treeCache ?? sharedTreeCache; }
 
   private now(): number { return this.deps.now?.() ?? Date.now(); }
 
@@ -146,7 +154,10 @@ export class ExistingSourceService {
   }
 
   private async mark(userId: string, binding: SourceBinding, patch: BindingPatch): Promise<SourceBinding> {
-    return (await this.deps.store.update(userId, binding.id, patch)) ?? binding;
+    const updated = (await this.deps.store.update(userId, binding.id, patch)) ?? binding;
+    // a binding that stops being usable takes its derived data (code map) with it
+    if (patch.state && patch.state !== 'linked') { this.forget(binding.id); await this.deps.onBindingClosed?.(userId, binding.id).catch(() => undefined); }
+    return updated;
   }
 
   /**
@@ -206,6 +217,18 @@ export class ExistingSourceService {
     } catch (error) { return providerToError(error); }
   }
 
+  /** Verifies the binding (bounded age) and requires it to be active. The single gate every read-side feature goes through. */
+  async activeBinding(userId: string, bindingId: string): Promise<VerifiedBinding> {
+    const verified = await this.verify(userId, bindingId);
+    this.assertActive(verified.binding);
+    return verified;
+  }
+
+  /** Records the code-map status on the binding (display state only; the map itself is the authority on what it covers). */
+  async setIndexStatus(userId: string, bindingId: string, indexStatus: SourceBinding['indexStatus']): Promise<void> {
+    await this.deps.store.update(userId, bindingId, { indexStatus });
+  }
+
   /** Moves the base to where the branch points now, on purpose and recorded. Reads before this stay pinned to the old commit. */
   async refreshBase(userId: string, bindingId: string): Promise<{ binding: SourceBinding; previousCommitSha: string; changed: boolean }> {
     const verified = await this.verify(userId, bindingId, { maxAgeMs: 0 });
@@ -224,13 +247,14 @@ export class ExistingSourceService {
   async unlink(userId: string, bindingId: string): Promise<void> {
     const binding = await this.require(userId, bindingId);
     await this.mark(userId, binding, { state: 'unlinked', stateReason: 'Unlinked by the owner.' });
-    this.forget(binding.id);
   }
 
   /** Called when the GitHub connection is removed: every active binding stops reading at once. */
   async connectionRemoved(userId: string): Promise<number> {
+    const active = await this.deps.store.list(userId);
     const n = await this.deps.store.markAllAccessLost(userId, 'The GitHub connection was removed.');
     for (const key of [...this.trees.keys()]) this.trees.delete(key);
+    for (const b of active) await this.deps.onBindingClosed?.(userId, b.id).catch(() => undefined);
     return n;
   }
 
@@ -256,6 +280,33 @@ export class ExistingSourceService {
     this.trees.set(key, value);
     while (this.trees.size > TREE_CACHE_MAX) this.trees.delete(this.trees.keys().next().value as string);
     return value;
+  }
+
+  /**
+   * Read access to the complete tree and the blobs at the base commit, for the code map. Re-verifies the binding first, so a lost
+   * connection, transfer or changed account stops indexing exactly as it stops reading.
+   */
+  async openForIndex(userId: string, bindingId: string): Promise<{
+    binding: SourceBinding; tree: CompleteTree; treeSha: string; head: VerifiedBinding['head']; blobs: { text(path: string, blobSha: string): Promise<string | null> };
+  }> {
+    const verified = await this.verify(userId, bindingId);
+    this.assertActive(verified.binding);
+    const binding = verified.binding;
+    const port = await this.portFor(userId);
+    try {
+      const { tree, treeSha } = await this.completeTree(binding, port);
+      return {
+        binding, tree, treeSha, head: verified.head,
+        blobs: {
+          text: async (_path, blobSha) => {
+            const payload = await port.getBlob(binding.providerRepositoryId, blobSha);
+            if (!payload) return null;
+            const text = payload.encoding === 'base64' ? Buffer.from(payload.content, 'base64').toString('utf8') : payload.content;
+            return text.slice(0, 4096).includes(' ') ? null : text;
+          },
+        },
+      };
+    } catch (error) { return providerToError(error); }
   }
 
   /** One directory level at the base commit. Sensitive files are listed and marked; their content is never offered. */

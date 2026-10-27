@@ -48,6 +48,14 @@ describe('existing-repository frontend and backend are connected', () => {
     assert.doesNotMatch(api + panel, /access_token|Authorization|localStorage|sessionStorage/);
   });
 
+  it('the code map screen says when the map is partial and builds only on request', () => {
+    const panel = read('frontend/src/components/existing-source/ExistingSourcePanel.tsx');
+    assert.match(panel, /does not prove the code is absent/);
+    assert.match(panel, /nothing was read again/);
+    assert.match(panel, /runMap\('build'\)/);
+    assert.doesNotMatch(panel, /buildIndex\([^)]*\)\s*;?\s*\}\s*,\s*\[/, 'the map is never built by an effect');
+  });
+
   it('shows the recorded link state and never opens a credential file from the list', () => {
     const panel = read('frontend/src/components/existing-source/ExistingSourcePanel.tsx');
     assert.match(panel, /disabled=\{e\.sensitive \|\| e\.type === 'symlink' \|\| e\.type === 'submodule'\}/);
