@@ -15,7 +15,14 @@
     "docs/xroga/blockers.md",
     "docs/xroga/current-state-schema.json",
     "docs/xroga/current-state.json",
-    "docs/xroga/current-state.md"
+    "docs/xroga/current-state.md",
+    "docs/xroga/feature-coverage.csv",
+    "docs/xroga/repository-candidate-register.md",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/requirements-ledger.md",
+    "docs/xroga/requirements-ledger.schema.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md"
   ],
   "decisions": {
     "keep": [
