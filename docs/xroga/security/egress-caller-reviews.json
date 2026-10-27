@@ -2550,6 +2550,26 @@
           "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
         }
       ]
+    },
+    {
+      "id": "c09bb8607fa4d00f23b7",
+      "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+      "sourceFileSha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
+      "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "b830330a137571a774d5a46c65ebcef8355ae089fd89c3b0ccd082cde90305bf"
+        },
+        {
+          "path": "frontend/e2e/phase4-api-clients.security.mjs",
+          "marker": "actual Chromium opaque redirects are terminal before any outside request",
+          "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+        }
+      ]
     }
   ]
 }

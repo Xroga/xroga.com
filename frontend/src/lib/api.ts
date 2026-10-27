@@ -424,7 +424,7 @@ async function waitForPersistedSwarmRun(
 
     try {
       response =
-        await fetch(
+        await fetchApiResponse(
           `${API_URL}/api/swarm/runs/${runId}?afterSequence=${Math.max(
             0,
             lastSequence,
@@ -446,6 +446,7 @@ async function waitForPersistedSwarmRun(
     } catch (
       error
     ) {
+      if(error instanceof ApiError&&error.data.code==='API_DESTINATION_DENIED')throw error;
       if (
         error instanceof
           DOMException &&
@@ -726,7 +727,7 @@ export async function streamSwarmExecute(
     );
 
   const res =
-    await fetch(
+    await fetchApiResponse(
       `${API_URL}/api/swarm/execute`,
 
       {
@@ -1410,6 +1411,27 @@ export class ApiError extends Error {
   }
 }
 
+/** First-party transport only. This doesn't issue authentication or authorize a
+ * backend effect. Credentials and private bodies stay at the configured API
+ * origin, and a redirect denial cannot become durable-polling recovery.
+ */
+export async function fetchApiResponse(destination:string,options:RequestInit={}):Promise<Response>{
+  const denied=()=>new ApiError('The API destination was denied by security policy.',403,{code:'API_DESTINATION_DENIED'});
+  let target:URL;
+  try{target=new URL(destination);if(target.origin!==API_URL||target.username||target.password||target.hash)throw new Error();}
+  catch{throw denied();}
+  const assertActive=()=>{if(options.signal?.aborted)throw new DOMException('Request cancelled.','AbortError');};
+  assertActive();
+  const response=await fetch(target.href,{...options,redirect:'manual'});
+  if(options.signal?.aborted){await response.body?.cancel().catch(()=>undefined);assertActive();}
+  // Browsers intentionally hide manual cross-origin redirects as opaque
+  // responses. Node exposes status. Both representations are a terminal denial.
+  if(response.type==='opaqueredirect'||response.redirected||response.status>=300&&response.status<400){
+    await response.body?.cancel().catch(()=>undefined);throw denied();
+  }
+  return response;
+}
+
 let cachedAccessToken:
   string |
   null =
@@ -1641,7 +1663,7 @@ export async function apiFetch<
 
   try {
     res =
-      await fetch(
+      await fetchApiResponse(
         `${API_URL}${path}`,
 
         {
@@ -1652,6 +1674,7 @@ export async function apiFetch<
   } catch (
     err
   ) {
+    if(err instanceof ApiError&&err.data.code==='API_DESTINATION_DENIED')throw err;
     const raw =
       (
         err as Error

@@ -203,6 +203,9 @@ jobs:
       - name: Verify image client proxy admission
         if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
         run: node --test frontend/e2e/phase4-image-client.browser.mjs
+      - name: Verify first-party API client destinations
+        if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
+        run: node --test frontend/e2e/phase4-api-clients.security.mjs
       - name: Start isolated application
         id: start-application
         shell: bash

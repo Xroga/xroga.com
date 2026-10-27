@@ -1,10 +1,10 @@
-import { API_URL, ApiError, getAccessToken } from '@/lib/api';
+import { API_URL, ApiError, getAccessToken,fetchApiResponse } from '@/lib/api';
 
 export async function transcribeVoiceAudio(audio: Blob): Promise<string> {
   const token = await getAccessToken();
   if (!token) throw new ApiError('Please sign in to use voice input.', 401);
 
-  const response = await fetch(`${API_URL}/api/voice/transcribe`, {
+  const response = await fetchApiResponse(`${API_URL}/api/voice/transcribe`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,

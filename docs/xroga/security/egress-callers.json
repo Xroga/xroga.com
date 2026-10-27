@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "ed331eaf031a05317f80aee57e8e816ee18abc4ebf2453d35f5e1646bc4f3016",
+  "sourceTreeDigest": "c4653000b7a75094b9e89896c8756d2a735e7694c8eb14280bbab79bd4bf7084",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -3694,52 +3694,31 @@
       "evidence": null
     },
     {
-      "id": "594c4c06e1eb42babe1f",
+      "id": "c09bb8607fa4d00f23b7",
       "file": "frontend/src/lib/api.ts",
-      "line": 427,
-      "entryPoint": "waitForPersistedSwarmRun",
+      "line": 1425,
+      "entryPoint": "fetchApiResponse",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "1e48540ecc2a41091ccbc687506eae25d7ffffada9228aaa3d5d881a200149e4",
+      "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
+      "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "d662166dec7cf609667f",
-      "file": "frontend/src/lib/api.ts",
-      "line": 729,
-      "entryPoint": "streamSwarmExecute",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "28527716ddc6c073a66877881bcf091b9e35e63bf1f00abc71edf47ecafffd5a",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "b2c3a4c3942f15272501",
-      "file": "frontend/src/lib/api.ts",
-      "line": 1644,
-      "entryPoint": "apiFetch",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "794960ae8db63165c93cabb921641e33bb13b79b8861dba35862237e76c76942",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "b830330a137571a774d5a46c65ebcef8355ae089fd89c3b0ccd082cde90305bf"
+        },
+        {
+          "path": "frontend/e2e/phase4-api-clients.security.mjs",
+          "marker": "actual Chromium opaque redirects are terminal before any outside request",
+          "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+        }
+      ]
     },
     {
       "id": "333b8a4c447a6b53b794",
@@ -3749,22 +3728,6 @@
       "transport": "upload",
       "callee": "bucket.upload",
       "callSha256": "d08ef83e96316166767d550d425bf198e8d63477d9bb1d5a8b99e7582a0a06a6",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "f0a6db0f8e8ede2098a2",
-      "file": "frontend/src/lib/community.ts",
-      "line": 56,
-      "entryPoint": "request",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "c7ec007db9ebd2982b8697e5754c8d935547f0d6b30a5e8dd8abc20f27a65b40",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -3806,70 +3769,6 @@
       ]
     },
     {
-      "id": "08afb35f3ce6baa20271",
-      "file": "frontend/src/lib/projectDeliveryApi.ts",
-      "line": 232,
-      "entryPoint": "request",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "7fac39cbf109801333947189964632c2b69191360eb417f8acd8ce65d431954e",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "603effc7da2a5dddb8aa",
-      "file": "frontend/src/lib/projectDeliveryApi.ts",
-      "line": 357,
-      "entryPoint": "download",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "b58d5a14b2c4916fadbf2210408989d86cc496ba4c30200a05eb3efed1441153",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "32301aa73e76e947953b",
-      "file": "frontend/src/lib/projectRuntimeApi.ts",
-      "line": 54,
-      "entryPoint": "request",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "0c72e33e2778fa411b5d7cbf488f8a15f2e8bbe13f7636d9893accb64e305a58",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "3b185c5710e3409a8052",
-      "file": "frontend/src/lib/runGuestLaneChat.ts",
-      "line": 38,
-      "entryPoint": "runGuestLaneChat",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "1be40ca3eb1225a80e04401002e2ec07f1e17d0822cfcc3e666030de780d7548",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
       "id": "20618341b2f95ca0ba5e",
       "file": "frontend/src/lib/setProfileFromImage.ts",
       "line": 21,
@@ -3909,22 +3808,6 @@
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "a8fa05842d933a640eca6fae3f77ac1892a87fa716e49e992785def4e2297fbb",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "dce82d37d6c2a0911667",
-      "file": "frontend/src/lib/voiceApi.ts",
-      "line": 7,
-      "entryPoint": "transcribeVoiceAudio",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "32b0561e685e55e1b0402e5626e0bc94ae553ecdd53831d580b06168f72c76e8",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -4049,19 +3932,11 @@
         "fe9ce5d32d8c52cdd3c3",
         "52851686fc818e0e4c5f",
         "d836bcd400bd13ddac6c",
-        "594c4c06e1eb42babe1f",
-        "d662166dec7cf609667f",
-        "b2c3a4c3942f15272501",
-        "f0a6db0f8e8ede2098a2",
+        "c09bb8607fa4d00f23b7",
         "3b970c32a8efb294a7fd",
-        "08afb35f3ce6baa20271",
-        "603effc7da2a5dddb8aa",
-        "32301aa73e76e947953b",
-        "3b185c5710e3409a8052",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
         "68df836263d1eff0010b",
-        "dce82d37d6c2a0911667",
         "e1ddea7115498d92341b"
       ]
     },
@@ -4186,9 +4061,9 @@
     }
   ],
   "counts": {
-    "total": 153,
-    "reviewed": 93,
-    "pending": 60,
-    "unresolvedHighRiskBypasses": 39
+    "total": 145,
+    "reviewed": 94,
+    "pending": 51,
+    "unresolvedHighRiskBypasses": 30
   }
 }

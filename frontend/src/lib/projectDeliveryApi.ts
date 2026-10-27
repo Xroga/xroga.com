@@ -2,6 +2,7 @@
 
 import {
   API_URL,
+  fetchApiResponse,
 } from '@/lib/api';
 
 import {
@@ -229,7 +230,7 @@ async function request<T>(
     await accessToken();
 
   const response =
-    await fetch(
+    await fetchApiResponse(
       `${API_URL}${path}`,
 
       {
@@ -354,7 +355,7 @@ export const projectDeliveryApi = {
       await accessToken();
 
     const response =
-      await fetch(
+      await fetchApiResponse(
         `${API_URL}/api/delivery/${encodeURIComponent(
           projectId,
         )}/download.zip`,

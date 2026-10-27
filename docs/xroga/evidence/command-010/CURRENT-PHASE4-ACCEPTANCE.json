@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-27T17:05:42.826213+00:00",
+  "atUtc": "2026-10-27T17:31:37.081993+00:00",
   "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
   "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
   "formalAcceptedCriteria": 0,
@@ -92,10 +92,10 @@
     }
   ],
   "strictAudit": {
-    "total": 153,
-    "reviewed": 93,
-    "pending": 60,
-    "unresolvedHighRiskBypasses": 39
+    "total": 145,
+    "reviewed": 94,
+    "pending": 51,
+    "unresolvedHighRiskBypasses": 30
   },
   "ci": "FINAL_CURRENT_SOURCE_REQUIRED_NOT_RUN_WHILE_CALLER_COVERAGE_INCOMPLETE",
   "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
@@ -106,5 +106,7 @@
     "Orphan reaper single-host ownership proof",
     "Full browser consequential-action approval and side-effect admission, including unmarked page effects. Public supplied/planner write grants now fail closed"
   ],
-  "publishingObligations": "Fixed provider transports have individual source-bound review. Higher exact tenant/project/credential/confirmation/data-egress and cancellation callers remain unpromoted."
+  "publishingObligations": "Fixed provider transports have individual source-bound review. Higher exact tenant/project/credential/confirmation/data-egress and cancellation callers remain unpromoted.",
+  "backendTypes": "PASS_3f8aa572",
+  "frontendTypes": "PASS_4e0a3b9e"
 }

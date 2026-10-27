@@ -10,7 +10,10 @@ import {evaluateWritePolicy} from './writePolicy.js';
 function fixture(){
   const writes:unknown[]=[];
   const contract=createSoftwareExecutionContract({goal:'Modify only the existing owned source file',taskKind:'bug_fix',allowedPaths:['src/**'],allowCreate:false,allowDelete:true,verificationAuthority:'universal'});
-  const host=new ProductionSoftwareAgentToolHost({listFiles:async()=>[{path:'src/existing.ts'}],writeFile:async(_contract,path,content,intent)=>{writes.push({path,content,intent});return{path,created:true};}} as ProductionSoftwareAgentOperations);
+  const unused=async()=>{throw Error('Unexpected operation in the isolated tool admission fixture');};
+  const operations:ProductionSoftwareAgentOperations={listFiles:async()=>[{path:'src/existing.ts'}],writeFile:async(_contract,path,content,intent)=>{writes.push({path,content,intent});return{path,created:true};},
+    readFiles:unused,searchProject:unused,deleteFile:unused,renameFile:unused,runCommand:unused,runChecks:unused,gitDiff:unused,verifyPreview:unused,createReviewBranch:unused};
+  const host=new ProductionSoftwareAgentToolHost(operations);
   const tools=createXrogaSoftwareTools({contract,host,events:new InMemorySoftwareRunEventSink(),evidence:createAgentEvidence()});
   const write=tools.tools.find(t=>t.name==='project_write_file')!;
   assert.ok(write,'Production fixed tool is present');
