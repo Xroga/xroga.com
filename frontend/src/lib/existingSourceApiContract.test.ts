@@ -23,6 +23,8 @@ function used(): string[] {
   for (const m of source.matchAll(/apiFetch<[^>]*(?:<[^>]*>[^>]*)*>\(\s*[`'](\/api\/existing-source[^`']*)[`']\s*(?:,\s*\{([^}]*)\})?/g)) {
     calls.push(`${/method:\s*'(\w+)'/.exec(m[2] ?? '')?.[1] ?? 'GET'} ${normalise(m[1]!)}`);
   }
+  // the download helper fetches the export route as a file rather than JSON
+  for (const m of source.matchAll(/apiDownload\(`(\/api\/existing-source\/changes[^`]*)`/g)) calls.push(`GET ${normalise(m[1]!)}`);
   return calls;
 }
 

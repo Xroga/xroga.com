@@ -21,7 +21,8 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     google_canonical_deliveries:['20261026000000_google_canonical_deliveries.sql','20261026000000_google_canonical_deliveries.sql'],
     existing_source_projects:['20261027000000_existing_source_projects.sql','20261027000000_existing_source_projects.sql'],
     existing_source_indexes:['20261027010000_existing_source_indexes.sql','20261027010000_existing_source_indexes.sql'],
-    existing_source_archives:['20261027020000_existing_source_archives.sql','20261027020000_existing_source_archives.sql']};
+    existing_source_archives:['20261027020000_existing_source_archives.sql','20261027020000_existing_source_archives.sql'],
+    existing_source_changes:['20261027030000_existing_source_changes.sql','20261027030000_existing_source_changes.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

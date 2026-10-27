@@ -9,9 +9,31 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. Phase 1 of 3 (Work Packages A, B, C): authorised connection of an EXISTING GitHub repository with exact-commit read-only inspection (including permitted ZIP import), and an incremental, commit-keyed code map with search, relevance and a model passport . Extends the existing RepositoryToolSession, repository index and file selection; adds no scheduler, agent loop or runtime.",
+  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. Phases 1 and 2 of 3 (Work Packages A to E): authorised connection of an EXISTING GitHub repository or ZIP, commit-keyed code map, and safe AI change execution with isolated real tests, bounded repair, durable revisions, draft-PR delivery and patch/ZIP export. Extends the existing SoftwareAgent tool-host contract, sandbox runtime and atomic GitHub writer; adds no scheduler or runtime.",
   "changedFiles": [
     "backend/scripts/benchmarkCodeMap.ts",
+    "backend/src/existingSource/archive/archivePort.ts",
+    "backend/src/existingSource/archive/archiveStore.ts",
+    "backend/src/existingSource/archive/importer.ts",
+    "backend/src/existingSource/archive/zipBuilder.testsupport.ts",
+    "backend/src/existingSource/archive/zipReader.test.ts",
+    "backend/src/existingSource/archive/zipReader.ts",
+    "backend/src/existingSource/archive/zipWriter.ts",
+    "backend/src/existingSource/change/change.test.ts",
+    "backend/src/existingSource/change/delivery.test.ts",
+    "backend/src/existingSource/change/delivery.ts",
+    "backend/src/existingSource/change/gitFake.testsupport.ts",
+    "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+    "backend/src/existingSource/change/production.ts",
+    "backend/src/existingSource/change/service.ts",
+    "backend/src/existingSource/change/snapshot.ts",
+    "backend/src/existingSource/change/store.ts",
+    "backend/src/existingSource/change/testRunner.test.ts",
+    "backend/src/existingSource/change/testRunner.ts",
+    "backend/src/existingSource/change/toolHost.ts",
+    "backend/src/existingSource/change/types.ts",
+    "backend/src/existingSource/change/unifiedDiff.ts",
+    "backend/src/existingSource/change/workspace.ts",
     "backend/src/existingSource/fakeGitHub.testsupport.ts",
     "backend/src/existingSource/intelligence/codeIndex.ts",
     "backend/src/existingSource/intelligence/codeIndexStore.ts",
@@ -36,8 +58,14 @@
     "backend/src/index.ts",
     "backend/src/routes/existingSource.test.ts",
     "backend/src/routes/existingSource.ts",
+    "backend/src/routes/existingSourceArchive.test.ts",
+    "backend/src/routes/existingSourceChanges.test.ts",
     "backend/src/routes/existingSourceIntelligence.test.ts",
     "backend/src/routes/github.ts",
+    "backend/src/services/integrations/githubAtomicTransport.ts",
+    "backend/src/services/integrations/githubAtomicWrite.ts",
+    "docs/infra/batch-3/BATCH3-PHASE-2-COMPLETE.md",
+    "docs/infra/batch-3/PHASE-1-COMPLETE.md",
     "docs/infra/batch-3/PHASE-1-STATUS.md",
     "docs/infra/batch-3/PHASE-2-BENCHMARK.md",
     "docs/infra/batch-3/PHASE-2-STATUS.md",
@@ -48,12 +76,15 @@
     "docs/xroga/security/current-migration-additions.json",
     "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
     "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
+    "frontend/src/lib/api.ts",
     "frontend/src/lib/existingSourceApi.ts",
     "frontend/src/lib/existingSourceApiContract.test.ts",
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
     "supabase/migrations/20261027000000_existing_source_projects.sql",
-    "supabase/migrations/20261027010000_existing_source_indexes.sql"
+    "supabase/migrations/20261027010000_existing_source_indexes.sql",
+    "supabase/migrations/20261027020000_existing_source_archives.sql",
+    "supabase/migrations/20261027030000_existing_source_changes.sql"
   ],
   "decisions": {
     "keep": [
@@ -74,10 +105,11 @@
     "migrations": [
       "supabase/migrations/20261027000000_existing_source_projects.sql",
       "supabase/migrations/20261027010000_existing_source_indexes.sql",
-      "supabase/migrations/20261027020000_existing_source_archives.sql"
+      "supabase/migrations/20261027020000_existing_source_archives.sql",
+      "supabase/migrations/20261027030000_existing_source_changes.sql"
     ],
     "rollout": "Additive service-role-only table with RLS and no public grants. Not applied by this change; apply through the verified migration workflow after authorisation.",
-    "rollback": "DROP TABLE public.existing_source_archives; DROP TABLE public.existing_source_indexes; DROP TABLE public.existing_source_projects; (the archive migration also relaxes the origin_kind check; nothing else references these tables)."
+    "rollback": "DROP TABLE public.existing_source_changes; DROP TABLE public.existing_source_archives; DROP TABLE public.existing_source_indexes; DROP TABLE public.existing_source_projects; (the archive migration also relaxes the origin_kind check; nothing else references these tables)."
   },
   "securityImpact": {
     "auth": {
@@ -89,8 +121,8 @@
       "description": "Every binding query carries the verified owner; another owner's binding id is indistinguishable from one that does not exist; the same repository linked by two owners stays two bindings. Code maps are stored per owner and binding, service-role only with RLS, cascade on unlink, purged on revocation, transfer, account change and removed connection; another owner's map is indistinguishable from a missing one."
     },
     "approval": {
-      "changed": false,
-      "description": "Read-only in this phase: no remote write, branch or PR is possible from these routes."
+      "changed": true,
+      "description": "Delivery writes a NEW review branch and opens a draft PR only after the binding is re-verified at the provider, the account can push, the remote head is re-read, credentials and workflow paths are scanned out, and the change is verified (or explicitly confirmed unverified). It never writes the base or a protected branch and never force-pushes."
     },
     "credentials": {
       "changed": true,
@@ -98,7 +130,7 @@
     },
     "egress": {
       "changed": false,
-      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; blob fetches for the map skip sensitive, vendored, generated, binary and oversize files. No repository content reaches a model in these phases; the passport carries signatures and paths, not bodies. A ZIP import is read only from the owner's own upload; entries are validated (no traversal, symlink, encrypted, bomb), and credentials and binaries are never stored."
+      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; blob fetches for the map skip sensitive, vendored, generated, binary and oversize files. No repository content reaches a model in these phases; the passport carries signatures and paths, not bodies. A ZIP import is read only from the owner's own upload; entries are validated (no traversal, symlink, encrypted, bomb), and credentials and binaries are never stored. Change execution and tests run only through the isolation runtime port (never on the API host); with no runtime the change ends unverified."
     },
     "cost": {
       "changed": false,
@@ -139,6 +171,12 @@
       "scope": "Hostile ZIP handling, import, link, read, map, tenant isolation, unlink cleanup",
       "negative": true,
       "reference": "backend/src/existingSource/archive/zipReader.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/change.test.ts backend/src/existingSource/change/testRunner.test.ts backend/src/existingSource/change/delivery.test.ts backend/src/routes/existingSourceChanges.test.ts",
+      "scope": "Real Node and Python test runs, reproduction check, bounded repair, honest statuses, cancellation and recovery, injection and abuse, tenant isolation, draft PR delivery, divergence, idempotency, export",
+      "negative": true,
+      "reference": "backend/src/existingSource/change/change.test.ts"
     }
   ],
   "architecture": {
@@ -150,11 +188,11 @@
   "rollback": "Leave XROGA_EXISTING_SOURCE and NEXT_PUBLIC_XROGA_EXISTING_SOURCE unset: routes answer 503 and the page is absent. Drop the table with the statement above if the migration was applied.",
   "knownGaps": [
     "No live GitHub verification (needs an authorised disposable account)",
-    "Measured only on a generated monorepo; no real third-party repository; timings exclude network latency",
-    "Python and Go analysis is structural, not type-checked",
-    "No edit, test execution or PR delivery yet (Phases 2 and 3)",
+    "No real model (Cline) run: no provider spend was authorised",
+    "Google isolated execution not connected: it needs a canonical run attempt per change, so changes there end unverified",
+    "Go tests planned but not executed; Preview and browser verification not connected",
     "Supabase stores have no real-database test",
-    "Installation (GitHub App) binding is recorded as null: the existing connection is an OAuth user token"
+    "Measured only on generated repositories"
   ],
   "placeholderClaimsRemaining": [
     "Live provider behaviour is unverified; only a faithful in-memory GitHub was exercised"
@@ -163,7 +201,8 @@
     "docs/infra/batch-3/PHASE-1-STATUS.md",
     "docs/infra/batch-3/PHASE-2-STATUS.md",
     "docs/infra/batch-3/PHASE-2-BENCHMARK.md",
-    "docs/infra/batch-3/PHASE-1-COMPLETE.md"
+    "docs/infra/batch-3/PHASE-1-COMPLETE.md",
+    "docs/infra/batch-3/BATCH3-PHASE-2-COMPLETE.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
@@ -171,8 +210,10 @@
     "state": "BLOCKED",
     "blockers": [
       "Batch 3 is development only until the founder authorises release",
+      "Google execution needs a canonical run attempt for existing-project changes",
       "Migration not applied",
-      "No approved disposable GitHub account for live verification"
+      "No approved disposable GitHub account for live verification",
+      "No real model run"
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

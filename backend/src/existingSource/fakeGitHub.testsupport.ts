@@ -4,6 +4,7 @@
  * Tests only. It records every call so a test can prove that a refused request read nothing.
  */
 import { createHash } from 'node:crypto';
+import { gitBlobSha } from './archive/archivePort.js';
 import { ProviderError } from './types.js';
 import type { BranchHead, GitHubSourcePort, RawBlob, RawGitTree, RawGitTreeEntry, RepositorySummary, ViewerAccount } from './provider.js';
 
@@ -65,7 +66,7 @@ export class FakeGitHub {
       const entries: RawGitTreeEntry[] = [];
       for (const f of byDir.get(dir) ?? []) {
         const name = f.path.split('/').pop()!;
-        const blobSha = f.type === 'commit' ? sha1(`submodule:${f.path}`) : sha1(`blob:${f.content}`);
+        const blobSha = f.type === 'commit' ? sha1(`submodule:${f.path}`) : gitBlobSha(f.content ?? '');
         if (f.type !== 'commit') repo.blobs.set(blobSha, f.content);
         entries.push({ path: name, mode: f.mode ?? '100644', type: f.type ?? 'blob', sha: blobSha, size: f.content.length });
       }

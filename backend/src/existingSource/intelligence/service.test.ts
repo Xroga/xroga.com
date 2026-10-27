@@ -10,10 +10,11 @@ import { InMemoryCodeIndexStore } from './codeIndexStore.js';
 import { ExistingSourceIntelligence, IndexCoordinator } from './service.js';
 import { GROUND_TRUTH, monorepoFiles } from './monorepoFixture.testsupport.js';
 import { PARSER_VERSION } from './types.js';
+import { gitBlobSha } from '../archive/archivePort.js';
 
 const ALICE = '11111111-1111-4111-8111-111111111111';
 const BOB = '22222222-2222-4222-8222-222222222222';
-const blobPrefix = (content: string) => createHash('sha1').update(`blob:${content}`).digest('hex').slice(0, 7);
+const blobPrefix = (content: string) => gitBlobSha(content).slice(0, 7);
 const refused = (code: string) => (e: unknown) => e instanceof ExistingSourceError && e.code === code;
 
 function setup(files: FakeFile[], options: { recursiveLimit?: number; limits?: { maxBlobFetches?: number }; maxBuildsPerOwner?: number } = {}) {

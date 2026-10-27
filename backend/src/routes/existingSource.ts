@@ -10,6 +10,8 @@
  *   DELETE /links/:id                unlink (the repository itself is untouched)
  *   GET    /links/:id/directory      one directory level at the base commit (?path=)
  *   POST   /archives                 import a ZIP of an existing project (raw body, ?name=); linked like a repository, never written back
+ *   POST   /links/:id/changes        request a change in plain language (runs in isolation; progress is the durable record)
+ *   GET    /changes/:changeId        status, scope, revisions with diffs and test evidence; POST .../cancel, .../resume, .../deliver; GET .../export?format=patch|zip
  *   GET    /links/:id/file           one file at the base commit (?path=, optional ?startLine=&endLine=), redacted and bounded
  *
  * Identity comes only from the issued TenantContext. A repository is named by GitHub's immutable id and judged with the caller's own
@@ -18,6 +20,11 @@
 import express, { Router, type Response } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
+import { ChangeDelivery } from '../existingSource/change/delivery.js';
+import { githubDeliveryApi, productionAgentRunner, productionExecutionPort, selectCodingModelRoute } from '../existingSource/change/production.js';
+import { ChangeService } from '../existingSource/change/service.js';
+import { SupabaseChangeStore } from '../existingSource/change/store.js';
+import type { ChangeTask } from '../existingSource/change/types.js';
 import { SupabaseArchiveStore } from '../existingSource/archive/archiveStore.js';
 import { SupabaseCodeIndexStore } from '../existingSource/intelligence/codeIndexStore.js';
 import { ExistingSourceIntelligence } from '../existingSource/intelligence/service.js';
@@ -53,6 +60,7 @@ export const defaultExistingSourceService: ExistingSourceServiceFactory = (tenan
   const context = requireTenantContext(tenant);
   const codeIndexes = new SupabaseCodeIndexStore(context);
   const archives = new SupabaseArchiveStore(context);
+  const changeStore = new SupabaseChangeStore(context);
   return new ExistingSourceService({
     store: new SupabaseSourceBindingStore(context),
     tokenFor: (userId) => getGitHubToken(userId),
@@ -60,7 +68,7 @@ export const defaultExistingSourceService: ExistingSourceServiceFactory = (tenan
     archives,
     projectFor: (input) => projectFor(context, input),
     // an unlinked repository, a removed connection or a lost access takes its derived code map with it
-    onBindingClosed: async (userId, bindingId) => { await codeIndexes.deleteForBinding(userId, bindingId); await archives.deleteForBinding(userId, bindingId); },
+    onBindingClosed: async (userId, bindingId) => { await codeIndexes.deleteForBinding(userId, bindingId); await archives.deleteForBinding(userId, bindingId); await changeStore.deleteForBinding(userId, bindingId); },
   });
 };
 
@@ -69,7 +77,28 @@ export type ExistingSourceIntelligenceFactory = (tenant: TenantContext, service:
 export const defaultExistingSourceIntelligence: ExistingSourceIntelligenceFactory = (tenant, service) =>
   new ExistingSourceIntelligence({ source: service, store: new SupabaseCodeIndexStore(requireTenantContext(tenant)) });
 
+export interface ExistingSourceChanges { readonly changes: ChangeService; readonly delivery: ChangeDelivery }
+export type ExistingSourceChangesFactory = (tenant: TenantContext, service: ExistingSourceService, intel: ExistingSourceIntelligence) => ExistingSourceChanges;
+
+export const defaultExistingSourceChanges: ExistingSourceChangesFactory = (tenant, service, intel) => {
+  const store = new SupabaseChangeStore(requireTenantContext(tenant));
+  return {
+    changes: new ChangeService({ source: service, intel, store, execution: productionExecutionPort, runAgent: productionAgentRunner, modelRouteFor: selectCodingModelRoute }),
+    delivery: new ChangeDelivery({ source: service, store, apiFor: githubDeliveryApi }),
+  };
+};
+
 const id = z.string().uuid();
+const changeBody = z.object({ instruction: z.string().min(3).max(8_000), maxAttempts: z.number().int().min(1).max(5).optional() }).strict();
+const deliverBody = z.object({ mode: z.enum(['pull_request', 'branch']).optional(), allowUnverified: z.boolean().optional(), title: z.string().min(3).max(200).optional() }).strict();
+const exportQuery = z.object({ format: z.enum(['patch', 'zip']) });
+
+/** A change as a client sees it: statuses, evidence and diffs, but not the full content of every changed file. */
+const publicChange = (t: ChangeTask) => ({
+  id: t.id, bindingId: t.bindingId, instruction: t.instruction, status: t.status, statusReason: t.statusReason, baseCommitSha: t.baseCommitSha, scope: t.scope, acceptanceCriteria: t.acceptanceCriteria,
+  attempts: t.attempts, maxAttempts: t.maxAttempts, revisions: t.revisions, events: t.events, files: t.result.map((r) => ({ path: r.path, kind: r.kind })), reproduction: t.reproduction,
+  regressionTestAdded: t.regressionTestAdded, deliveries: t.deliveries, createdAt: t.createdAt, updatedAt: t.updatedAt,
+});
 const archiveQuery = z.object({ name: z.string().min(1).max(120).optional() });
 export const ARCHIVE_UPLOAD_LIMIT = '10mb';
 const link = z.object({ repositoryId: z.string().regex(/^[0-9]{1,20}$/), branch: z.string().min(1).max(200).optional() }).strict();
@@ -86,6 +115,7 @@ export function createExistingSourceRouter(
   serviceFor: ExistingSourceServiceFactory = defaultExistingSourceService,
   enabled: () => boolean = () => existingSourceEnabled(),
   intelligenceFor: ExistingSourceIntelligenceFactory = defaultExistingSourceIntelligence,
+  changesFor: ExistingSourceChangesFactory = defaultExistingSourceChanges,
 ): Router {
   const router = Router();
   router.use((_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
@@ -136,6 +166,36 @@ export function createExistingSourceRouter(
     if (!Buffer.isBuffer(body) || body.length === 0) throw new ExistingSourceError('INVALID_ARCHIVE', 'Send the ZIP file as the request body (Content-Type: application/zip).');
     const result = await s.importZip(t.userId, body, q.name ?? 'project');
     res.status(result.created ? 201 : 200).json(result);
+  }));
+  // Changes: a plain-language request against a linked project, run in isolation, verified, then exported or delivered as a draft PR.
+  const withChanges = (fn: (t: TenantContext, c: ExistingSourceChanges, req: AuthRequest, res: Response) => Promise<unknown>) => handle((t, s, req, res) => fn(t, changesFor(t, s, intelligenceFor(t, s)), req, res));
+  router.post('/links/:id/changes', withChanges(async (t, c, req, res) => {
+    const body = changeBody.parse(req.body);
+    const task = await c.changes.create(t.userId, id.parse(req.params.id), body.instruction, { maxAttempts: body.maxAttempts });
+    c.changes.start(t.userId, task.id);
+    res.status(202).json({ change: publicChange(task) });
+  }));
+  router.get('/links/:id/changes', withChanges(async (t, c, req, res) => { res.json({ changes: (await c.changes.list(t.userId, id.parse(req.params.id))).map(publicChange) }); }));
+  router.get('/changes/:changeId', withChanges(async (t, c, req, res) => { res.json({ change: publicChange(await c.changes.get(t.userId, id.parse(req.params.changeId))) }); }));
+  router.post('/changes/:changeId/cancel', withChanges(async (t, c, req, res) => { res.json({ change: publicChange(await c.changes.cancel(t.userId, id.parse(req.params.changeId))) }); }));
+  router.post('/changes/:changeId/resume', withChanges(async (t, c, req, res) => {
+    const task = await c.changes.get(t.userId, id.parse(req.params.changeId));
+    if (task.status !== 'interrupted') throw new ExistingSourceError('CHANGE_CONFLICT', 'Only an interrupted change can be resumed.');
+    c.changes.start(t.userId, task.id);
+    res.status(202).json({ change: publicChange(task) });
+  }));
+  router.post('/changes/:changeId/deliver', withChanges(async (t, c, req, res) => {
+    const body = deliverBody.parse(req.body ?? {});
+    const outcome = await c.delivery.deliver(t.userId, id.parse(req.params.changeId), body);
+    if (outcome.status === 'conflict') { res.status(409).json({ code: 'DELIVERY_CONFLICT', error: 'The branch changed files this change also touches.', ...outcome }); return; }
+    res.json({ receipt: outcome.receipt, alreadyDelivered: outcome.alreadyDelivered, change: publicChange(outcome.task) });
+  }));
+  router.get('/changes/:changeId/export', withChanges(async (t, c, req, res) => {
+    const { format } = exportQuery.parse(req.query);
+    const changeId = id.parse(req.params.changeId);
+    if (format === 'patch') { const p = await c.delivery.exportPatch(t.userId, changeId); res.setHeader('Content-Type', 'text/x-diff; charset=utf-8'); res.setHeader('Content-Disposition', `attachment; filename="${p.filename}"`); res.send(p.content); return; }
+    const z = await c.delivery.exportZip(t.userId, changeId);
+    res.setHeader('Content-Type', 'application/zip'); res.setHeader('Content-Disposition', `attachment; filename="${z.filename}"`); res.send(z.data);
   }));
   router.get('/links/:id/file', handle(async (t, s, req, res) => { res.json(await s.readFile(t.userId, id.parse(req.params.id), file.parse(req.query))); }));
   router.use((error: unknown, _req: unknown, res: Response, next: (e?: unknown) => void) => {

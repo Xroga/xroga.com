@@ -1,6 +1,6 @@
 'use client';
 
-import { ApiError, apiFetch } from '@/lib/api';
+import { ApiError, apiDownload, apiFetch } from '@/lib/api';
 
 /**
  * Existing-repository editor: client for /api/existing-source. Everything shown is what the backend recorded about the linked
@@ -132,6 +132,29 @@ export interface LocateResult {
   passport: { estimatedTokens: number; files: string[]; truncated: boolean };
 }
 
+export type ChangeStatus = 'queued' | 'planning' | 'working' | 'verifying' | 'repairing' | 'verified' | 'unverified' | 'failed' | 'cancelled' | 'interrupted' | 'delivered';
+
+export interface ChangeRevision {
+  n: number; at: string; digest: string; additions: number; deletions: number; warnings: string[]; diff: string; diffTruncated: boolean; note: string;
+  files: { path: string; kind: 'created' | 'modified' | 'deleted'; additions: number; deletions: number; warnings: string[] }[];
+  tests: { status: string; summary: string; runtime: string | null; evidence: string; stages: { label: string; kind: string; exitCode: number | null; timedOut: boolean; durationMs: number }[] } | null;
+}
+
+export interface DeliveryReceipt {
+  kind: 'pull_request' | 'branch' | 'patch_export' | 'zip_export'; at: string; branch: string | null; commitSha: string | null; pullRequestNumber: number | null; pullRequestUrl: string | null;
+  baseBranch: string | null; baseCommitSha: string; headAtDelivery: string | null; rebased: boolean; verified: boolean; draft: boolean; note: string;
+}
+
+export interface ChangeView {
+  id: string; bindingId: string; instruction: string; status: ChangeStatus; statusReason: string; baseCommitSha: string;
+  scope: { confidence: 'high' | 'medium' | 'low'; targets: string[]; consumers: string[]; tests: string[]; mapStatus: string } | null;
+  acceptanceCriteria: string[]; attempts: number; maxAttempts: number; revisions: ChangeRevision[]; events: { at: string; type: string; message: string }[];
+  files: { path: string; kind: 'created' | 'modified' | 'deleted' }[]; reproduction: 'reproduced' | 'not_reproduced' | 'not_applicable' | 'unavailable'; regressionTestAdded: boolean;
+  deliveries: DeliveryReceipt[]; createdAt: string; updatedAt: string;
+}
+
+export interface DeliveryConflict { path: string; baseBlobSha: string | null; remoteBlobSha: string | null; reason: 'changed_on_remote' | 'created_on_remote' | 'deleted_on_remote' }
+
 const base = '/api/existing-source';
 
 export const existingSourceApi = {
@@ -147,12 +170,24 @@ export const existingSourceApi = {
     return apiFetch<DirectoryListing>(`${base}/links/${id}/directory${query}`);
   },
   file: (id: string, path: string) => apiFetch<FileContent>(`${base}/links/${id}/file?path=${encodeURIComponent(path)}`),
+  createChange: (bindingId: string, instruction: string) => apiFetch<{ change: ChangeView }>(`${base}/links/${bindingId}/changes`, { method: 'POST', body: JSON.stringify({ instruction }) }),
+  changes: (bindingId: string) => apiFetch<{ changes: ChangeView[] }>(`${base}/links/${bindingId}/changes`),
+  change: (changeId: string) => apiFetch<{ change: ChangeView }>(`${base}/changes/${changeId}`),
+  cancelChange: (changeId: string) => apiFetch<{ change: ChangeView }>(`${base}/changes/${changeId}/cancel`, { method: 'POST', body: '{}' }),
+  resumeChange: (changeId: string) => apiFetch<{ change: ChangeView }>(`${base}/changes/${changeId}/resume`, { method: 'POST', body: '{}' }),
+  deliverChange: (changeId: string, options: { mode?: 'pull_request' | 'branch'; allowUnverified?: boolean } = {}) => apiFetch<{ receipt: DeliveryReceipt; alreadyDelivered: boolean; change: ChangeView }>(`${base}/changes/${changeId}/deliver`, { method: 'POST', body: JSON.stringify(options) }),
   indexStatus: (id: string) => apiFetch<CodeMapStatus>(`${base}/links/${id}/index`),
   buildIndex: (id: string) => apiFetch<CodeMapBuild>(`${base}/links/${id}/index`, { method: 'POST', body: '{}' }),
   search: (id: string, q: string) => apiFetch<SearchResult>(`${base}/links/${id}/search?q=${encodeURIComponent(q)}`),
   locate: (id: string, instruction: string) => apiFetch<LocateResult>(`${base}/links/${id}/locate`, { method: 'POST', body: JSON.stringify({ instruction }) }),
   neighborhood: (id: string, path: string) => apiFetch<{ path: string; dependsOn: string[]; dependedOnBy: string[]; tests: string[]; affected: string[] }>(`${base}/links/${id}/neighborhood?path=${encodeURIComponent(path)}`),
 };
+
+/** Downloads the patch or ZIP of a change with the signed-in session. */
+export async function downloadChange(changeId: string, format: 'patch' | 'zip'): Promise<{ blob: Blob; filename: string }> {
+  const { blob, filename } = await apiDownload(`${base}/changes/${changeId}/export?format=${format}`);
+  return { blob, filename: filename ?? `xroga-change.${format === 'zip' ? 'zip' : 'patch'}` };
+}
 
 /** What a person should read for a failure: never provider detail, never a token. */
 export function existingSourceErrorMessage(error: unknown): string {
@@ -170,6 +205,12 @@ export function existingSourceErrorMessage(error: unknown): string {
     case 'INDEX_BUSY': return 'Xroga is already building code maps for you. Try again in a moment.';
     case 'INVALID_ARCHIVE': return error instanceof ApiError && error.message ? error.message : 'That ZIP could not be imported.';
     case 'ARCHIVE_UNAVAILABLE': return 'The imported archive is no longer available. Import it again.';
+    case 'CHANGE_NOT_FOUND': return 'That change was not found.';
+    case 'CHANGE_BUSY': return 'Finish or cancel a running change before starting another.';
+    case 'CHANGE_CONFLICT': return error instanceof ApiError && error.message ? error.message : 'The project changed while this was in progress. Start the change again.';
+    case 'DELIVERY_REFUSED': return error instanceof ApiError && error.message ? error.message : 'This change cannot be delivered right now.';
+    case 'DELIVERY_CONFLICT': return 'The branch changed files this change also touches. Export the patch or create the change again from the new commit.';
+    case 'EXECUTION_UNAVAILABLE': return error instanceof ApiError && error.message ? error.message : 'Isolated execution is not available right now.';
     case 'SENSITIVE_PATH': return 'This file can hold credentials, so its content is never shown.';
     case 'SOURCE_UNREADABLE': return error instanceof ApiError && error.message ? error.message : 'That file could not be read at the linked commit.';
     case 'PROVIDER_RATE_LIMITED': return 'GitHub is limiting requests. Try again shortly.';

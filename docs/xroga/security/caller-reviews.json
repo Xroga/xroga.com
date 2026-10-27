@@ -3815,7 +3815,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
-      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0",
+      "sourceSha256": "8b4337f5a98c4c3ca9ad5fdb8c929a4d163fe6b3f98264de999e47669303d7c6",
       "callIds": [
         "61043cdc80b90c8d957b"
       ],
@@ -3831,7 +3831,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
-      "sourceSha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0",
+      "sourceSha256": "8b4337f5a98c4c3ca9ad5fdb8c929a4d163fe6b3f98264de999e47669303d7c6",
       "callIds": [
         "2a24d09993972e551d3a"
       ],
@@ -15880,11 +15880,11 @@
     },
     {
       "path": "backend/src/routes/existingSource.ts",
-      "sourceSha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02",
+      "sourceSha256": "b25ea8c3ce0f8b42efc822d2cdcf9540082bdc50b7bfdcb878d9637edc0680c4",
       "callIds": [
-        "b0c36d1f7f5b256a0a2a",
-        "672b64d503852941df0c",
-        "a17e998b82a209ec45dd"
+        "d529a1021bc746415e9e",
+        "8aaa1848fd3162d7c7a4",
+        "57cb416ebf53e89b0ba5"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
@@ -15937,6 +15937,26 @@
         {
           "path": "backend/src/existingSource/archive/archiveStore.ts",
           "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/existingSource/change/store.ts",
+      "sourceSha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "callIds": [
+        "9637092680f5e153ff83",
+        "ebd1ba43e6e803461d05",
+        "23fe4bcc08652fe7bd5a",
+        "92abca7ddd92b63dba03",
+        "b49471879960e3772176"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+      "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the change records are removed with their binding on unlink.",
+      "evidence": [
+        {
+          "path": "backend/src/existingSource/change/store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('CHANGE_NOT_FOUND'"
         }
       ]
     }
