@@ -16,10 +16,12 @@ procedures, without rewriting the original security or acceptance rules.
 
 - Project `project-c40d4821-e647-4fa2-92d`, number `574998934848`.
 - Cloud Run service `xroga-api`, region `us-east4`.
-- Forward revision `xroga-api-google-faf56ff8-r2`.
-- Compatible recovery revision `xroga-api-google-faf56ff8-recovery-r2`.
+- Forward revision `xroga-api-google-faf56ff8-r3`.
+- Compatible recovery revision `xroga-api-google-faf56ff8-recovery-r3`.
 - Runtime identity `xroga-api-runtime`, native metadata identity, no Fly WIF.
 - Protected secret `xroga-platform-production`, pinned version `1`.
+- Existing API-only `WHOP_WEBHOOK_SECRET`, pinned version `1`, retained from
+  the pre-release Google configuration. Shared secret comparisons all match.
 - Existing production credential key `xroga-production-credentials` in
   `us-central1`, key ring `xroga-p3-verify-20261023`. Preserve every required key
   version, ciphertext revision, ownership field and tombstone.
@@ -38,12 +40,33 @@ at the same digest. Both references were actually started with native production
 configuration, and `/health` and `/ready` passed at the baked source SHA. Readiness
 performs managed KMS wrap/unwrap and database connectivity checks.
 
-The unchanged native API preflight passes on actual r2 readbacks. Production
+The unchanged native API preflight passes on actual native readbacks. Production
 Cloud Tasks OIDC dispatch and the existing authenticated Scheduler both returned
 204. Native Job `xroga-canonical-production-l7cqt` succeeded after denying an absent
 delivery claim. This verifies real startup and claim denial, not successful model
 generation. Accepted isolated worker lifecycle, Preview and recovery tests remain
 separately source-bound evidence. Final authenticated frontend cutover is pending.
+
+The active Whop callback now uses `https://api.xroga.com/api/billing/webhook/whop`,
+with its existing signing secret and nine subscribed events preserved. A signed
+malformed body reached signature verification and was rejected before database
+writes. Unsigned events are denied. Ingress is internal/load-balancer only.
+Internal Scheduler and Tasks still return 204 after that restriction.
+
+All required CI, including two complete feature and integration baselines and
+authenticated tenant tests, passed at `5e8b4e7b33517486751ca060864228f2ab1bead6`.
+The final follow-up retires the two local Fly deploy/credential scripts and
+records operational evidence. Preserve the earlier exact-source results.
+
+Production acceptance is blocked on private-storage configuration approval and
+the final frontend cutover. Both preserved deployments lack all five names used
+by current private R2 storage. The copied legacy xroga-assets credential returned
+401 on a read-only bucket check and is not used by that private-storage code.
+Cloudflare lists six retained empty buckets. Do not repurpose Claude's separate
+`xroga-drive-test` bucket. The exact additional credential/bucket proposal is
+`outputs/fly-to-gcp-20261025/PRODUCTION-PRIVATE-STORAGE-CONFIGURATION-ADDITION.md`
+in the operator workspace, pending founder approval. No storage access is granted
+by this document and no private-storage check is promoted to PASS.
 
 ## Protected recovery and schema
 
@@ -67,6 +90,10 @@ Never replay historical migrations or apply unrelated Batch1.5 SQL.
 Keep automatic Fly deployments and the existing Google Cloud Build deployment
 trigger disabled. The retired Fly workflows deliberately refuse new operations.
 No production deployment may be inferred from a main merge or green build.
+Both `scripts/deploy-api.sh` and `scripts/setup-fly-auth.sh` also refuse all
+operations. Historical manifests and frozen audit fixtures remain preserved,
+with optional Fly adapters inactive because no Fly configuration is admitted
+to the Google production environment. A string inventory is not live evidence.
 
 Use the named HTTPS front door and only `api.xroga.com` and
 `*.preview.xroga.com` DNS records. Preserve apex/Vercel, mail records and unrelated

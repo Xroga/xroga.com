@@ -1,0 +1,86 @@
+{
+  "sourceSha": "5e8b4e7b33517486751ca060864228f2ab1bead6",
+  "result": "PASS_ALL_REQUIRED_CHECKS",
+  "checks": [
+    {
+      "link": "https://vercel.com/github",
+      "name": "Vercel Preview Comments",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493798/job/122085969220",
+      "name": "integrated-candidate",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473495018/job/122085972877",
+      "name": "lock",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493799/job/122085969116",
+      "name": "deterministic-golden",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493843/job/122085968948",
+      "name": "build",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493864/job/122085969016",
+      "name": "static-contracts",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493823/job/122085969076",
+      "name": "Validate migration sources without production mutation",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493798/job/122085969007",
+      "name": "unit",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493849/job/122085969027",
+      "name": "structured-mission-policy",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493783/job/122085968958",
+      "name": "disposable-policy-database",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493796/job/122085968922",
+      "name": "authenticated-browser",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493787/job/122085969211",
+      "name": "authority-contracts",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493773/job/122085968762",
+      "name": "build",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493796/job/122085970342",
+      "name": "oci-managed-custody",
+      "state": "SKIPPED"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/40473493864/job/122085970137",
+      "name": "production-discovery",
+      "state": "SKIPPED"
+    },
+    {
+      "link": "https://vercel.com/xrogas-projects/xrogaai.com/ZVC8kom9cdgYTK1oWXzDCGkL6RXC",
+      "name": "Vercel",
+      "state": "SUCCESS"
+    }
+  ]
+}
