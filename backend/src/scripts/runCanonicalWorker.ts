@@ -10,6 +10,8 @@ import {withRunAttempt,currentRunWorkerId,appendRunEvent,isRunCancellationReques
   failRun,persistTerminalRunAuthority,hasAdmittedRunAttempt} from '../ai/runStore.js';
 import {failInFlightRuns} from '../ai/runReconciler.js';
 import {notifyBuildComplete,notifyBuildFailed} from '../services/notificationService.js';
+import {openBuilderRun,closeBuilderRun} from '../builder/swarmBridge.js';
+import type {BuilderRunBinding} from '../builder/service.js';
 
 const controller=new AbortController();let runId:string|undefined;let ownerId:string|undefined;
 let cancellationCheck:ReturnType<typeof setInterval>|undefined;let checking=false;
@@ -36,10 +38,16 @@ try{
       void isRunCancellationRequested(claim.runId,claim.userId,{requireRunning:true}).then(cancelled=>{if(cancelled)controller.abort();},()=>controller.abort())
         .finally(()=>{checking=false;});
     },1500);cancellationCheck.unref();
+    // AI Product Builder: a chat build into a durable project saves its revision through the run binding. The id in the queued input is
+    // never trusted on its own; opening the run re-verifies the project against the persisted owner and takes its single run slot.
+    let builderRun:BuilderRunBinding|null=null;
+    const {builderProjectId,...pipelineInput}=input;
     try{
-      const result=await runBuildPipeline({...input,runId:claim.runId,userId:claim.userId,tenantContext:context,deliveryClaim:claim,
+      builderRun=builderProjectId?await openBuilderRun(context,builderProjectId,claim.runId):null;
+      const result=await runBuildPipeline({...pipelineInput,...(builderRun?{builder:builderRun}:{}),runId:claim.runId,userId:claim.userId,tenantContext:context,deliveryClaim:claim,
         signal:controller.signal,onProgress:event=>{appendRunEvent(claim.runId,'progress',event as Record<string,unknown>);},
         onDelta:delta=>{appendRunEvent(claim.runId,'progress',{__transportDelta:delta});}});
+      if(builderRun)await closeBuilderRun(context,builderRun,{ok:result.success});
       const output=result.output as Record<string,unknown>;
       const status=await persistTerminalRunAuthority(claim.runId,claim.userId);
       if(status==='complete')await deliveryStore.recordResult(claim,result.success,result.followUps);
@@ -57,6 +65,9 @@ try{
       }
       console.log(JSON.stringify({scope:'CANONICAL_GOOGLE_JOB',runId:claim.runId,status,sourceSha:config.sourceSha}));
     }catch(error){
+      const code=(error as {code?:string})?.code;
+      if(builderRun)await closeBuilderRun(context,builderRun,{ok:false,cancelled:code==='BUILD_CANCELLED'||controller.signal.aborted,
+        blocked:code==='BUILDER_ENGINE_DISABLED',reason:error instanceof Error?error.message:'The build stopped.'});
       if(hasAdmittedRunAttempt(claim.runId)){
         failRun(claim.runId,'The build worker stopped. Durable checkpoints are retained. Check connected providers before retrying.','error',{code:'BUILD_INTERRUPTED'});
         await persistTerminalRunAuthority(claim.runId,claim.userId);

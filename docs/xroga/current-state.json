@@ -14114,7 +14114,8 @@
       ],
       "callers": [
         "backend/src/routes/builder.ts:5",
-        "backend/src/routes/swarm.ts:7"
+        "backend/src/routes/swarm.ts:7",
+        "backend/src/scripts/runCanonicalWorker.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24364,7 +24365,7 @@
       "id": "surface:10d425da4453da6d649f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "sha256": "63795687816e87356bd0b45009f2386610efacafef0a98861d39aaf0439e5b32",
+      "sha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622",
       "symbols": [
         "ac",
         "activeBuildControllers",
@@ -25958,12 +25959,14 @@
       "id": "surface:7bc8939729d3985b5f35",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/scripts/runCanonicalWorker.ts",
-      "sha256": "00178d5ca32c4b0b42024edae3e1670e50281329aafaa5c586733468ddc6d05c",
+      "sha256": "7e8a8b5abbc6aab694ff22b76c1c5620e86f93a1fd3c29e71e7bfaef87510b83",
       "symbols": [
         "assistantMessageId",
+        "builderRun",
         "cancellationCheck",
         "checking",
         "claim",
+        "code",
         "config",
         "controller",
         "deadline",
@@ -25980,6 +25983,8 @@
         "../ai/pipeline.js",
         "../ai/runReconciler.js",
         "../ai/runStore.js",
+        "../builder/service.js",
+        "../builder/swarmBridge.js",
         "../loadPlatformEnvironment.js",
         "../runtime/installSafeLogging.js",
         "../services/integrations/credentialVaultStartup.js",
@@ -25991,6 +25996,7 @@
         "backend/src/ai/pipeline.ts",
         "backend/src/ai/runReconciler.ts",
         "backend/src/ai/runStore.ts",
+        "backend/src/builder/swarmBridge.ts",
         "backend/src/loadPlatformEnvironment.ts",
         "backend/src/runtime/installSafeLogging.ts",
         "backend/src/services/integrations/credentialVaultStartup.ts",
@@ -26978,6 +26984,7 @@
         "backend/src/synthesis/universalPersistence.ts:23",
         "backend/src/workers/browserCapability.ts:14",
         "backend/src/workers/browserRunDurability.test.ts:8",
+        "backend/src/workers/googleDeliveryStore.test.ts:6",
         "backend/src/workers/googleDeliveryStore.ts:3",
         "backend/src/workers/googleSwarmQueue.test.ts:7",
         "backend/src/workers/googleSwarmQueue.ts:2",
@@ -27086,6 +27093,7 @@
         "backend/src/synthesis/universalPersistence.owner.test.ts",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts",
         "backend/src/workers/browserRunDurability.test.ts",
+        "backend/src/workers/googleDeliveryStore.test.ts",
         "backend/src/workers/googleSwarmQueue.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -44217,7 +44225,7 @@
       "id": "surface:97528249b6af89789095",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/workers/googleDeliveryStore.ts",
-      "sha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d",
+      "sha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76",
       "symbols": [
         "CanonicalDeliveryClaim",
         "CanonicalQueuedInput",
@@ -44278,7 +44286,7 @@
         "backend/src/workers/googleDeliveryStore.ts#verifyAttachedGoogleIdentity"
       ],
       "tenantBoundary": [
-        "backend/src/workers/googleDeliveryStore.ts:90 (user_id)"
+        "backend/src/workers/googleDeliveryStore.ts:95 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -111681,7 +111689,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:543e2cc1679e39337420",
+      "id": "registration:395a63a0ff015cb199c4",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 46,
       "receiver": "router",
@@ -111693,7 +111701,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:52140e883e5145f61d32",
+      "id": "registration:0693361ea13b53312e3e",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 379,
       "receiver": "router",
@@ -111705,7 +111713,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:75cbe19b2cff3d7c865e",
+      "id": "registration:8d644834b63ee602cce1",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 395,
       "receiver": "router",
@@ -111717,7 +111725,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d6f2fce3065a33854926",
+      "id": "registration:05c72ac4bbf6fe1f6778",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 434,
       "receiver": "router",
@@ -111729,7 +111737,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b3d2edd95b2a725a5b5e",
+      "id": "registration:c01f6783f2c1f877d139",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 491,
       "receiver": "router",
@@ -111743,7 +111751,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3128a5ad9e9568d70dd3",
+      "id": "registration:9dd7dd3e76da7b85c88f",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 492,
       "receiver": "router",
@@ -112335,8 +112343,8 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:2c27b5c5570e2b502eb8",
-      "registrationId": "registration:543e2cc1679e39337420",
+      "id": "route:2805fa3f9c8a4154a5af",
+      "registrationId": "registration:395a63a0ff015cb199c4",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 46,
       "method": "POST",
@@ -112352,8 +112360,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f00c5b4349e113d318da",
-      "registrationId": "registration:52140e883e5145f61d32",
+      "id": "route:4354629c92f2f08bd187",
+      "registrationId": "registration:0693361ea13b53312e3e",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 379,
       "method": "GET",
@@ -112369,8 +112377,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ad76b8d8a62dd24f21fa",
-      "registrationId": "registration:75cbe19b2cff3d7c865e",
+      "id": "route:360084d7635a8054f3ac",
+      "registrationId": "registration:8d644834b63ee602cce1",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 395,
       "method": "GET",
@@ -112386,8 +112394,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4d790c3413c251df2c95",
-      "registrationId": "registration:d6f2fce3065a33854926",
+      "id": "route:852fb02d68b564bc4408",
+      "registrationId": "registration:05c72ac4bbf6fe1f6778",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 434,
       "method": "POST",
@@ -112403,8 +112411,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:690419cc98e6b7a51c66",
-      "registrationId": "registration:b3d2edd95b2a725a5b5e",
+      "id": "route:d6b288cdd340197f981f",
+      "registrationId": "registration:c01f6783f2c1f877d139",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 491,
       "method": "POST",
@@ -112420,8 +112428,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:643ec5e17f8fc44c294b",
-      "registrationId": "registration:3128a5ad9e9568d70dd3",
+      "id": "route:5d6ddd73b8eb2dbeadbc",
+      "registrationId": "registration:9dd7dd3e76da7b85c88f",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 492,
       "method": "PATCH",
@@ -116826,7 +116834,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:c103eeeafba052f35bfd",
+      "id": "schedule:ed3d9f5704d027db083d",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 151,
       "kind": "setInterval",
@@ -116835,7 +116843,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:fad240c648358b5ceb05",
+      "id": "schedule:a1161670ef8c6021d8bf",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 161,
       "kind": "setInterval",
@@ -116853,9 +116861,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:6b7e123241cb5f3a948f",
+      "id": "schedule:6eca2670c22993abd04a",
       "sourcePath": "backend/src/scripts/runCanonicalWorker.ts",
-      "line": 34,
+      "line": 36,
       "kind": "setInterval",
       "symbol": "<module>",
       "reachable": false,
@@ -118674,7 +118682,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:decc591cd7362d6d7db7",
+      "id": "finding:42ea8e62dea7bb77b3b2",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 482,
       "kind": "STUB",
@@ -129206,7 +129214,7 @@
     {
       "id": "test-suite:2132596885b429e3fb45",
       "sourcePath": "backend/src/workers/googleDeliveryStore.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
