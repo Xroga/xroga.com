@@ -65,3 +65,12 @@ test('patch writes must match canonical content and deletion cannot remove a can
   await assert.rejects(f.admit({userId:f.userId,projectId:'project',action:'write',session:f.session,deletePaths:['index.ts']}));
   await f.admit({userId:f.userId,projectId:'project',action:'write',session:f.session,deletePaths:['obsolete.ts']});
 });
+
+test('a substituted pending creation operation cannot enter any runtime operation',async()=>{
+  const f=fixture();const saved=structuredClone(f.session);
+  (saved.providerState.gce as Record<string,unknown>).creationOperationName='operation-owned';f.setSession(saved);
+  await f.admit({userId:f.userId,projectId:'project',action:'destroy',session:saved});
+  const supplied=structuredClone(saved);
+  (supplied.providerState.gce as Record<string,unknown>).creationOperationName='operation-foreign';
+  await assert.rejects(f.admit({userId:f.userId,projectId:'project',action:'destroy',session:supplied}));
+});

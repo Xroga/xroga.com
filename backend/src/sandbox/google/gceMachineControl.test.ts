@@ -189,3 +189,60 @@ test('a recycled physical slot never accepts or deletes a stale instance handle'
   await assert.rejects(f.control.destroy(f.handle),{message:'GCE_RUNTIME_IDENTITY_OR_OWNER_MISMATCH'});
   assert.equal(f.calls.some(call=>call.method==='DELETE'),false);
 });
+
+test('a cold native insert lasting beyond the old poll budget retains its receipt and creates only once',async()=>{
+  const f=fixture();const original=f.api.request.bind(f.api);let polls=0,recorded=0;
+  f.api.request=async<T>(options:Parameters<GceApi['request']>[0])=>{
+    if(options.method==='POST'){
+      const result=await original<T>(options);
+      return {data:{...result.data,targetId:f.handle.instanceId} as T};
+    }
+    if(options.url.includes('/operations/operation-synthetic')){
+      polls++;return {data:{status:polls>216?'DONE':'RUNNING',targetId:f.handle.instanceId} as T};
+    }
+    return original<T>(options);
+  };
+  const control=new GceMachineControl(configuration,f.api,workerSource,async()=>{});
+  const handle=await control.create(f.creation,async allocated=>{
+    recorded++;assert.equal(polls,0);assert.equal(allocated.instanceId,f.handle.instanceId);
+    assert.equal(allocated.creationOperationName,'operation-synthetic');
+  });
+  assert.equal(polls,217);assert.equal(recorded,1);assert.equal(handle.instanceId,f.handle.instanceId);
+  assert.equal(f.calls.filter(call=>call.method==='POST').length,1);
+});
+
+test('an unresolved insert retains an owned cleanup obligation without declaring absent cleanup or reprovisioning',async()=>{
+  const f=fixture();const original=f.api.request.bind(f.api);let recorded=0,operationReads=0;
+  f.api.request=async<T>(options:Parameters<GceApi['request']>[0])=>{
+    if(options.method==='POST'){
+      const result=await original<T>(options);return{data:{...result.data,targetId:f.handle.instanceId} as T};
+    }
+    if(options.url.includes('/operations/operation-synthetic')){
+      operationReads++;return{data:{status:'RUNNING',targetId:f.handle.instanceId} as T};
+    }
+    return original<T>(options);
+  };
+  await assert.rejects(new GceMachineControl(configuration,f.api,workerSource,async()=>{}).create(f.creation,async()=>{recorded++;}),
+    (error:unknown)=>!!error&&typeof error==='object'&&'code' in error&&error.code==='GCE_ALLOCATION_CLEANUP_PENDING'
+      &&'allocation' in error&&(error.allocation as GceExecutionHandle).creationOperationName==='operation-synthetic');
+  assert.equal(recorded,1);assert.equal(operationReads,720);
+  assert.equal(f.calls.filter(call=>call.method==='POST').length,1);
+  assert.equal(f.calls.filter(call=>call.method==='DELETE').length,0);
+  assert.equal(f.calls.some(call=>call.url.endsWith('/instances/xroga-exec-slot-1')),false);
+});
+
+test('pending-insert cleanup waits for terminal creation and rejects substituted operation targets',async()=>{
+  for(const mismatch of [false,true]){
+    const f=fixture();const original=f.api.request.bind(f.api);let reads=0;
+    f.api.request=async<T>(options:Parameters<GceApi['request']>[0])=>{
+      if(options.url.includes('/operations/operation-synthetic')){
+        reads++;return{data:{status:reads<3?'RUNNING':'DONE',targetId:mismatch?'9999999':f.handle.instanceId} as T};
+      }
+      return original<T>(options);
+    };
+    const control=new GceMachineControl(configuration,f.api,workerSource,async()=>{});
+    const handle={...f.handle,creationOperationName:'operation-synthetic'};
+    if(mismatch){await assert.rejects(control.destroy(handle),{message:'GCE_CREATION_OPERATION_IDENTITY_MISMATCH'});assert.equal(f.calls.length,0);}
+    else{await control.destroy(handle);assert.equal(reads,3);assert.equal(f.calls.filter(call=>call.method==='DELETE').length,1);}
+  }
+});
