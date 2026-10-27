@@ -1,0 +1,107 @@
+{
+  "startedAt": "2026-10-22T09:45:38.433Z",
+  "observations": [
+    {
+      "step": "presigned-put",
+      "status": 200,
+      "requestId": null,
+      "cfRay": "a4e792048b9eb7dc-KHI",
+      "url": "https://xroga-drive-test.f14d36fd540c59ad410272122edc1a7e.r2.cloudflarestorage.com/v1/tenants/462fdb98-64db-4aab-8c46-c641e3ff764b/projects/_none/upload/dc968f40-5aea-498f-96cd-55077338ce09/small.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=[redacted]&X-Amz-Date=20261022T094538Z&X-Amz-Expires=900&X-Amz-Signature=[redacted]&X-Amz-SignedHeaders=content-length%3Bcontent-type%3Bhost%3Bx-amz-checksum-sha256&x-id=PutObject"
+    },
+    {
+      "step": "presigned-get",
+      "status": 200,
+      "requestId": null,
+      "cfRay": "a4e79214ce56b7dc-KHI"
+    },
+    {
+      "step": "get-without-signature",
+      "status": 400,
+      "requestId": null,
+      "cfRay": "a4e79226addab7dc-KHI"
+    },
+    {
+      "step": "get-tampered-signature",
+      "status": 403,
+      "requestId": null,
+      "cfRay": "a4e792272c7d7eb3-KHI"
+    },
+    {
+      "step": "public-r2dev-url",
+      "status": 500
+    },
+    {
+      "step": "expired-url",
+      "status": 403,
+      "requestId": null,
+      "cfRay": "a4e792530acab7dc-KHI"
+    },
+    {
+      "step": "cors-allowed-origin",
+      "status": 204,
+      "requestId": null,
+      "cfRay": "a4e79253bf82a813-KHI",
+      "allowOrigin": "http://localhost:3000",
+      "allowHeaders": "content-type, x-amz-checksum-sha256",
+      "expose": null
+    },
+    {
+      "step": "cors-foreign-origin",
+      "status": 403,
+      "requestId": null,
+      "cfRay": "a4e792540e26b7dc-KHI",
+      "allowOrigin": null
+    },
+    {
+      "step": "tamper-enforcement",
+      "wrongChecksum": 400,
+      "wrongContentType": 403,
+      "longerBody": 403,
+      "signedContentLength": true
+    },
+    {
+      "step": "tamper-result",
+      "objectExistsAfterTamperAttempts": false
+    },
+    {
+      "step": "part-1",
+      "status": 200,
+      "requestId": null,
+      "cfRay": "a4e7925e8b83b7dc-KHI"
+    },
+    {
+      "step": "part-2",
+      "status": 200,
+      "requestId": null,
+      "cfRay": "a4e79268dff4a813-KHI"
+    },
+    {
+      "step": "part-3",
+      "status": 200,
+      "requestId": null,
+      "cfRay": "a4e79276fce4b7dc-KHI"
+    },
+    {
+      "step": "migration-multipart-partial",
+      "partsOnProvider": 0
+    },
+    {
+      "step": "migration-multipart-complete",
+      "size": 11534343,
+      "resumedParts": 0,
+      "readyAfterResume": true
+    },
+    {
+      "step": "list-pagination",
+      "pages": 3,
+      "seen": 5
+    },
+    {
+      "step": "cleanup",
+      "createdKeys": 13,
+      "leftInPrefix": 0
+    }
+  ],
+  "finishedAt": "2026-10-22T09:46:47.112Z",
+  "bucketNameHash": "64845c54d146"
+}

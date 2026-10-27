@@ -384,7 +384,10 @@ test('project rows preserve expansion, labels and navigation in the current orga
   // PR839 deliberately makes project and conversation rows text-only.
   assert.match(organizer, /renderRow\('project',p\.id,projectTitle\(p\.id,p\.label\),\(\)=>openProject\(p\.id\),false\)/);
   assert.match(organizer, /expandedProject \? <div[^>]*aria-label=\{p\.label\+' conversations'\}/);
-  assert.match(HISTORY, /router\.push\(`\/dashboard\/projects\/\$\{encodeURIComponent\(p\.actual\.id\)\}`\)/);
+  const resume = HISTORY.slice(HISTORY.indexOf('  function openProject(id:string)'), HISTORY.indexOf('  useEffect', HISTORY.indexOf('  function openProject(id:string)')));
+  assert.match(resume, /if\(!p\)\{toast\.error\('This project is not available'\);return;\}/);
+  assert.match(resume, /if\(activeSidebarProjectId===p\.id\)\{router\.push\('\/workspace'\);return;\}/);
+  assert.match(resume, /const latest=getProjectChats\(p\)\[0\];\s*if\(latest\)\{void openSession\(latest\);return;\}\s*beginProjectTask\(p\);/);
   assert.doesNotMatch(organizer, /<RepositoryFilterPopover\b|icon=\{GitForkIcon\}|<FolderGit2\b|<FolderOpen\b|<MessageSquare\b/);
 });
 

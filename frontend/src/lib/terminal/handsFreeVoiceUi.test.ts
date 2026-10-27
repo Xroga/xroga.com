@@ -7,12 +7,12 @@ function source(relativePath: string): string {
   return fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
 }
 
-test('voice uses the supplied AudioLines icon with no pill, circle, settings, or fake Voice off UI', () => {
+test('voice uses an idle microphone and supplied listening AudioLines with no fake Voice off UI', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
   const icon = source('../../components/terminal/AudioLinesIcon.tsx');
   const css = source('../../styles/uiverse.css');
 
-  assert.match(voice, /<AudioLinesIcon size=\{22\} active=\{mode === 'listening'\}/);
+  assert.match(voice, /mode === 'listening' \? <AudioLinesIcon size=\{22\} active \/> : <Mic/);
   assert.match(icon, /<m\.path/);
   assert.match(icon, /scaleY: \[1, scale, 1\]/);
   assert.match(icon, /controls\.start\(active && canAnimate \? 'animate' : 'normal'\)/);

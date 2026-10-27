@@ -1,3 +1,5 @@
+import './runtime/installSafeLogging.js';
+import './loadPlatformEnvironment.js';
 import 'dotenv/config';
 import { createServer } from 'http';
 import express from 'express';
@@ -6,6 +8,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { authMiddleware } from './middleware/auth.js';
 import swarmRouter from './routes/swarm.js';
+import {googleBackgroundSelected} from './workers/googleSwarmQueue.js';
+import {googleDispatchConfiguration} from './workers/googleDispatch.js';
+import {canonicalDispatchHandler} from './workers/googleDispatchHandler.js';
 import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
 import terminalSessionsRouter from './routes/terminalSessions.js';
@@ -27,6 +32,10 @@ import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
 import guestChatRouter from './routes/guestChat.js';
 import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
+import businessAutomationsRouter from './routes/businessAutomations.js';
+import businessAutomationWebhookRouter from './routes/businessAutomationWebhook.js';
+import businessAutomationSchedulerRouter from './routes/businessAutomationScheduler.js';
+import { startBusinessAutomationScheduler } from './services/integrations/businessAutomations.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
 import referralsRouter from './routes/referrals.js';
@@ -40,6 +49,9 @@ import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddlewar
 import { getSupabaseCounterText } from './lib/supabaseCallCounters.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
+import driveRouter from './routes/drive.js';
+import browserRunsRouter from './routes/browserRuns.js';
+import { resolveStorageConfig } from './storage/runtime.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import {
@@ -127,12 +139,17 @@ app.use(cors(corsOptions));
 
 // Whop Standard Webhooks signatures cover the untouched raw body.
 app.use('/api/billing/webhook', billingWebhookRouter);
+app.use('/api/integrations/composio/webhook', businessAutomationWebhookRouter);
+app.use('/internal/business-automations', businessAutomationSchedulerRouter);
 
 // Guest preview is deliberately much smaller than authenticated upload/build
 // requests. Parse it first with a strict body ceiling so an anonymous caller never
 // reaches the general 10 MB JSON allowance.
 app.use('/api/guest', express.json({ limit: '32kb' }), guestChatRouter);
 
+if(googleBackgroundSelected()){
+  app.post('/internal/canonical-dispatch',express.json({limit:'1kb'}),canonicalDispatchHandler(googleDispatchConfiguration()));
+}
 app.use(express.json({ limit: '10mb' }));
 
 app.get('/', (_req, res) => {
@@ -201,6 +218,7 @@ app.use(
   '/api/phase1',
   phase1AuthMiddleware,
   phase1BusinessPreflightRouter,
+  businessAutomationsRouter,
   phase1Router,
 );
 app.use('/api/dashboard', authMiddleware, dashboardRouter);
@@ -230,6 +248,8 @@ app.use('/api/profile', authMiddleware, profileRouter);
 // Showcase template export writes to a user's repository, so it is auth-gated.
 app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
+app.use('/api/drive', authMiddleware, driveRouter);
+app.use('/api/browser/runs', authMiddleware, browserRunsRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
@@ -274,6 +294,9 @@ attachRuntimePreviewWebSocketGateway(
 );
 
 server.listen(port, '0.0.0.0', () => {
+  if (process.env.XROGA_AUTOMATION_SCHEDULER_MODE !== 'cloud') {
+    stopBusinessAutomationScheduler = startBusinessAutomationScheduler();
+  }
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
   console.log('[AI] Converter→Builder online — DeepSeek@OpenRouter + Kimi/GLM/Grok official + Tavily');
@@ -281,6 +304,10 @@ server.listen(port, '0.0.0.0', () => {
   console.log('[AI] Routes:', JSON.stringify(modelTransportStatus()));
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
+  }
+  { // an invalid storage switch must be loud at boot; writes then fail closed (see storage/runtime.ts)
+    const storageCfg = resolveStorageConfig();
+    if (storageCfg.problems.length) console.error('[storage] INVALID CONFIGURATION:', storageCfg.problems.join('; '));
   }
   // Schema changes belong to the migration gate, never request/startup credentials.
   // Provider health survives this restart (§15). Without it a circuit opened against a
@@ -330,9 +357,11 @@ server.listen(port, '0.0.0.0', () => {
  * routine API deploy silently killed user builds. Now they end truthfully first.
  */
 let shuttingDown = false;
+let stopBusinessAutomationScheduler: (() => void) | null = null;
 async function shutdown(signal: NodeJS.Signals) {
   if (shuttingDown) return;
   shuttingDown = true;
+  stopBusinessAutomationScheduler?.();
   const active = activeRunIds();
   if (active.length) {
     console.warn(`[shutdown] ${signal}: failing ${active.length} in-flight run(s) before exit`);

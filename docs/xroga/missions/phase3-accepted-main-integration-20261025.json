@@ -1,0 +1,147 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-P3-ACCEPTED-MAIN-INTEGRATION-20261025",
+  "baseSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+  "requirementIds": [
+    "XB01-C009"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Integrate founder-accepted Phase3 with pinned main 519045ac34a456cbd4f91fae23757d587d16f54e through existing PR845, preserve main connected-app workflows and frontend changes, and retain the production custody deployment interlock. Phase4 remains suspended.",
+  "changedFiles": [
+    "backend/src/routes/phase1.ts",
+    "backend/src/routes/phase1BusinessPreflight.ts",
+    "backend/src/routes/phase1BusinessPreflight.test.ts",
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessActionConfirmations.ts",
+    "backend/src/services/integrations/businessWorkflowRuns.ts",
+    "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
+    "backend/src/services/integrations/businessAutomations.ts",
+    "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
+    ".github/workflows/supabase-migrate.yml",
+    "docs/xroga/missions/phase3-accepted-main-integration-20261025.json",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/security/full-supabase-history.mjs",
+    "docs/xroga/security/current-migration-additions.json",
+    "frontend/e2e/composer-polish.spec.ts",
+    "frontend/src/lib/sidebarCompactSmooth.test.ts",
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "frontend/src/lib/sidebarHistoryScroll.test.ts",
+    "frontend/src/lib/workspaceConversationRail.test.ts",
+    "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Founder-accepted Phase3 source, immutable forward and compatible recovery images, custody evidence and strict evaluator",
+      "All current-main frontend and connected-app features and separate Claude Batch1.5 branches",
+      "Exact reviewed-action digest, connected-account authority and one-use confirmation finalization"
+    ],
+    "extend": [
+      "Issued tenant context through newly introduced workflow callers",
+      "Secret-free SQL validation on every migration workflow event instead of replaying production history"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No production SQL. Preserve main workflow migration for mandatory isolated fresh/upgrade validation. Previously accepted production schema effects must not be replayed automatically.",
+    "rollback": "No database operation. Preserve ciphertext, revisions and tombstones."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Preserve canonical Phase3 security boundaries and verified managed custody. New workflow integration requires issued actor context and exact owner filtering. No new provider, IAM, billing or credential mutation."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Preserve canonical Phase3 security boundaries and verified managed custody. New workflow integration requires issued actor context and exact owner filtering. No new provider, IAM, billing or credential mutation."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Preserve canonical Phase3 security boundaries and verified managed custody. New workflow integration requires issued actor context and exact owner filtering. No new provider, IAM, billing or credential mutation."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Preserve canonical Phase3 security boundaries and verified managed custody. New workflow integration requires issued actor context and exact owner filtering. No new provider, IAM, billing or credential mutation."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Preserve canonical Phase3 security boundaries and verified managed custody. New workflow integration requires issued actor context and exact owner filtering. No new provider, IAM, billing or credential mutation."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Preserve canonical Phase3 security boundaries and verified managed custody. New workflow integration requires issued actor context and exact owner filtering. No new provider, IAM, billing or credential mutation."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Preserve canonical Phase3 security boundaries and verified managed custody. New workflow integration requires issued actor context and exact owner filtering. No new provider, IAM, billing or credential mutation."
+    }
+  },
+  "tests": [
+    {
+      "negative": true,
+      "command": "node --import tsx --test backend/src/services/integrations/businessWorkflowRuns.context.test.ts backend/src/services/integrations/businessWorkflow.test.ts backend/src/services/integrations/businessActionConfirmationsPreview.test.ts backend/src/routes/phase1BusinessPreflight.test.ts",
+      "reference": "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
+      "scope": "10 focused merge compatibility tests passed, including unissued actor and foreign-owner denial, safe preview and ambiguous confirmation denial."
+    },
+    {
+      "negative": true,
+      "command": "npm run verify:baseline and existing PR845 required workflows",
+      "reference": "scripts/ci/run-baseline.mjs",
+      "scope": "Required final source-bound integration baseline and isolated authenticated/fresh-upgrade proof must pass before main merge."
+    },
+    {
+      "reference": "scripts/security/schema-catalog.test.mjs",
+      "command": "node --test scripts/security/schema-catalog.test.mjs",
+      "scope": "Three exact-catalog provenance tests pass. All eight selected additions reject missing source, source drift, unknown tables, changed authorization migration and claimed production mutation. Actual fresh/upgrade CI retains unknown-table denial and adds browser-denied/service-allowed checks for the three main workflow tables.",
+      "negative": true
+    },
+    {
+      "command": "Existing Conversation dash guest browser verification workflow",
+      "reference": "frontend/e2e/composer-polish.spec.ts",
+      "negative": false,
+      "scope": "Preserve main519045 idle microphone and listening audio-line behavior. Replace stale six-path idle-waveform expectation with enabled Start voice typing and exact microphone glyph. Real rendered guest CI required."
+    },
+    {
+      "scope": "All28 focused existing UI contracts pass after reproducing five stale source-text assertions against current main grouping and idle/listening icons. Preserve every other assertion and all current frontend implementation.",
+      "reference": "frontend/src/lib/sidebarHistoryScroll.test.ts",
+      "command": "node --import tsx --test frontend/src/lib/sidebarCompactSmooth.test.ts frontend/src/lib/sidebarComposerRegression20261023.test.ts frontend/src/lib/sidebarHistoryScroll.test.ts frontend/src/lib/workspaceConversationRail.test.ts frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "negative": true
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Extend existing workflow callers with canonical issued context. Preserve scheduler, execution, custody and confirmation mechanisms.",
+    "rfc": null
+  },
+  "rollout": "Founder authorized Phase3 integration and merge. Push existing PR845 and merge only after final required integration checks. Fly workflow remains disabled and production retains admitted forward and recovery images until any new release is admitted and verified.",
+  "rollback": "Retain currently healthy forward image 57979db6a41a1a924ac6c3e733ab272c9d1aaf5f33d976feaaf306ec7e02f592 and managed-compatible recovery cf65b66f539bc5be05daea247a30e4728ec33fe82c43d05544dba1b8fcecc73c. Preserve all customer ciphertext, revisions, tombstones and encrypted recovery points. Never deploy a legacy custody image.",
+  "knownGaps": [
+    "Final integrated source checks pending",
+    "Any new production image requires exact digest admission and compatible schema readback before rollout. Existing approved production image remains live."
+  ],
+  "placeholderClaimsRemaining": [
+    "No new integrated source verification or deployment claim before final checks"
+  ],
+  "evidenceRefs": [
+    "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
+    "scripts/ci/run-baseline.mjs",
+    ".github/workflows/command3-auth-browser.yml"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Final integrated source checks pending",
+      "New merged image not yet verified or admitted"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

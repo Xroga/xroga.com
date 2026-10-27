@@ -1,0 +1,61 @@
+{
+  "scope": "CURRENT_SOURCE_HAS_NO_PRODUCTION_RUNTIME_IMPORTER_NOT_BROWSER_WORKER_ACCEPTANCE",
+  "testJob": "a24a698c-6c91-4095-849a-a6004ea4c82d",
+  "callers": [
+    {
+      "id": "e9dc57ffb85d97538903",
+      "file": "backend/src/lib/browserbase.ts",
+      "line": 18,
+      "entryPoint": "createBrowserbaseSession",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "e9121045fb23d983cc10fa0cbc1f0e29e9f334b7819e5e0f0296065e9e5b26ff",
+      "destination": "https://www.browserbase.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "106b94d3512761440fc9",
+      "file": "backend/src/lib/browserbase.ts",
+      "line": 46,
+      "entryPoint": "runBrowserbaseScript",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "3bf32f809cc930e7e528c10a3fd2f37f7113555411d243149890aec4dba45b08",
+      "destination": "https://www.browserbase.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "b43397505cfcf3799292",
+      "file": "backend/src/synthesis/playwrightDriver.ts",
+      "line": 270,
+      "entryPoint": "runViewport",
+      "transport": "goto",
+      "callee": "page.goto",
+      "callSha256": "4c218501d2b27b1cdbfd823ef3bac74ee2ee234c40a2d0bc231ed405274c26c1",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "reason": "Browserbase create/evaluate adapters are referenced only within their own unused module. The API-host Playwright driver is used only by disposable browser tests. Its two legitimate production imports are import type for DomExpectation and InteractionExpectation and are erased at runtime. Explicit AST regression rejects a new runtime import, alias, wildcard or literal dynamic module load. This does not certify generated code/reflection or future callers.",
+  "preserved": "Canonical inSandboxBrowser and Google browser-worker hosting remain separate with all original security gates. No active capability is disabled or removed.",
+  "evidence": {
+    "path": "backend/src/security/egress/unreachableBrowserAdapters.test.ts",
+    "marker": "unused hosted Browserbase adapters and API-host Playwright driver have no current production runtime importer",
+    "sha256": "b4d25ae323bcf432c9fa94567afe45f2912b1cdd2ebf92569a64a658242acd71"
+  }
+}

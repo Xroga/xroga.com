@@ -4,6 +4,8 @@ import test from 'node:test';
 import { applyRequestedSourcePolicy, runWebIntelligence, webDecisionFromGoalContract } from './webIntelligence.js';
 import { normalizeResearch } from './researchRouter.js';
 import { goalContractSchema } from '../universal/goalContract.js';
+import {createTenantContext} from '../../security/tenantContext.js';
+import {randomUUID} from 'node:crypto';
 
 test('a validated freshness contract deterministically selects evidence without a second model decision', () => {
   const goal = goalContractSchema.parse({
@@ -59,6 +61,11 @@ test('production web intelligence uses Parallel for public URLs and x_search-onl
   const priorFetch = globalThis.fetch;
   const priorParallel = process.env.PARALLEL_API_KEY;
   const priorXai = process.env.XAI_API_KEY;
+  const priorUrl=process.env.SUPABASE_URL,priorService=process.env.SUPABASE_SERVICE_ROLE_KEY;
+  process.env.SUPABASE_URL='http://127.0.0.1:55439';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';
+  const owner='11111111-1111-4111-8111-111111111111';
+  const dispatchScope={userId:owner,context:createTenantContext({userId:owner,via:'remote_getuser'})};
+  let reservation:Record<string,unknown>|undefined;
   const urls: string[] = [];
   const bodies: Array<Record<string, unknown>> = [];
 
@@ -67,6 +74,18 @@ test('production web intelligence uses Parallel for public URLs and x_search-onl
 
   globalThis.fetch = (async (url, init) => {
     const requestUrl = String(url);
+    const local=new URL(requestUrl),row=init?.body?JSON.parse(String(init.body)):{};
+    if(local.origin===process.env.SUPABASE_URL){
+      if(local.pathname==='/rest/v1/production_audit_log')return Response.json(row);
+      if(local.pathname==='/rest/v1/rpc/reserve_xroga_provider_budget'){
+        reservation={id:randomUUID(),user_id:owner,idempotency_key:row.p_idempotency_key,internal_route:row.p_internal_route,price_version:row.p_price_version,purpose:row.p_purpose,status:'reserved',estimated_input_tokens:0,maximum_output_tokens:0,reserved_micro_usd:row.p_reservation_micro_usd};
+        return Response.json(reservation);
+      }
+      if(local.pathname==='/rest/v1/rpc/settle_xroga_provider_budget')return Response.json({...reservation,status:'settled',settled_micro_usd:row.p_actual_micro_usd,provider_request_id:row.p_provider_request_id,actual_input_tokens:0,cached_input_tokens:0,output_tokens:0,reasoning_tokens:0,tool_calls:0,search_calls:row.p_search_calls});
+      if(local.pathname==='/rest/v1/xroga_billing_cycles')return Response.json({id:randomUUID()});
+      if(local.pathname==='/rest/v1/xroga_web_usage')return new Response(null,{status:201});
+      throw Error('Unexpected isolated accounting request '+local.pathname);
+    }
     urls.push(requestUrl);
     bodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
 
@@ -99,11 +118,11 @@ test('production web intelligence uses Parallel for public URLs and x_search-onl
 
   try {
     const web = await runWebIntelligence({
-      userId: 'test-user',
+      userId: owner,dispatchScope,
       prompt: 'Read https://docs.example.com/current',
     });
     const x = await runWebIntelligence({
-      userId: 'test-user',
+      userId: owner,dispatchScope,
       prompt: 'Read https://x.com/example/status/1',
     });
 
@@ -114,6 +133,8 @@ test('production web intelligence uses Parallel for public URLs and x_search-onl
     assert.equal(urls.some((url) => /tavily|searx/i.test(url)), false);
   } finally {
     globalThis.fetch = priorFetch;
+    if(priorUrl===undefined)delete process.env.SUPABASE_URL;else process.env.SUPABASE_URL=priorUrl;
+    if(priorService===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=priorService;
     if (priorParallel === undefined) delete process.env.PARALLEL_API_KEY;
     else process.env.PARALLEL_API_KEY = priorParallel;
     if (priorXai === undefined) delete process.env.XAI_API_KEY;

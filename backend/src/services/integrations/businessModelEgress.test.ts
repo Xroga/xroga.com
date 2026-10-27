@@ -73,6 +73,24 @@ function fixture(t: TestContext) {
   return {state,request,call,context,owner,foreign};
 }
 
+test('dependent business evidence requires explicit review before discovery or model dispatch',async t=>{
+  const f=fixture(t);f.state.lane='action';
+  await assert.rejects(prepareBusinessAction({...f.request(),referenceEvidence:[{
+    sourceRequest:'Owned preceding read',toolkit:'slack',toolSlug:'SLACK_LIST_MESSAGES',data:'Synthetic owned result',
+  }]}),{code:'BUSINESS_ACTION_REFERENCE_REVIEW_REQUIRED'});
+  assert.equal(f.state.composio,0);assert.equal(f.state.reservations,0);assert.equal(f.state.effects,0);
+});
+
+test('explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence',async t=>{
+  const f=fixture(t);f.state.lane='action';
+  const referenceEvidence=[{sourceRequest:'Owned preceding read',toolkit:'slack',toolSlug:'SLACK_LIST_MESSAGES',data:'Synthetic owned result'}];
+  f.state.mutate=()=>{referenceEvidence[0]!.data='synthetic-business-platform-credential';};
+  const result=await prepareBusinessAction({...f.request(),forceConfirmation:true,referenceEvidence});
+  assert.equal(result.status,'ready');
+  if(result.status==='ready'){assert.equal(result.plan.requiresConfirmation,true);assert.equal(result.plan.forceConfirmation,true);}
+  assert.equal(f.state.effects,1);assert.equal(f.state.readExecutions,0);
+});
+
 test('actual business selectors preserve invalid reservation denial before trying another model',async t=>{
   const f=fixture(t);
   for(const lane of ['read','action']){

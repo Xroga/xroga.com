@@ -43,12 +43,15 @@ interface SafeConfirmation {
   createdAt: string;
 
   expiresAt: string;
+  request?: string;
   approval?: {
     preparedActionId: string; actionDigest: string; accountReference: string; operation: string;
     actionClass: string; destination: unknown; criticalParameters: unknown;
     spendMaximumMicroUsd: string | null; currency: string | null;
   };
   receipt?: { id: string; outcome: string; recordedAt: string; resultDigest?: string };
+  toolSlug?: string;
+  argumentsPreview?: string;
 }
 
 function displayToolkitName(
@@ -133,6 +136,8 @@ export default function BusinessActionConfirmationPage() {
     useState(
       '',
     );
+
+  const [nextConfirmationId, setNextConfirmationId] = useState<string | null>(null);
 
   const [
     error,
@@ -278,6 +283,8 @@ export default function BusinessActionConfirmationPage() {
 
             confirmation:
               SafeConfirmation;
+
+            nextConfirmationId?: string | null;
           }>(
             `/api/phase1/business-actions/confirmations/${encodeURIComponent(
               confirmationId,
@@ -302,6 +309,7 @@ export default function BusinessActionConfirmationPage() {
           result.response ||
             'Action completed.',
         );
+        setNextConfirmationId(result.nextConfirmationId ?? null);
       } catch (
         confirmError
       ) {
@@ -439,6 +447,10 @@ export default function BusinessActionConfirmationPage() {
               </p>
             </div>
 
+            {confirmation.request ? <div className="rounded-xl border border-blue-500/25 bg-blue-500/[0.06] px-4 py-3"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-500">Your original request</p><p className="mt-1 text-sm leading-6 text-[var(--text-primary)]">{confirmation.request}</p></div> : null}
+
+            {confirmation.toolSlug ? <div className="rounded-xl border border-[var(--border-subtle)] px-4 py-3"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)]">Prepared app operation</p><p className="mt-1 break-all font-mono text-sm text-[var(--text-primary)]">{confirmation.toolSlug}</p><p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)]">Arguments to review (secrets redacted)</p><pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap break-all text-xs leading-5 text-[var(--text-primary)]">{confirmation.argumentsPreview ?? '{}'}</pre></div> : null}
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <p className="text-xs text-[var(--text-secondary)]">
@@ -518,6 +530,8 @@ export default function BusinessActionConfirmationPage() {
                 {message}
               </p>
             ) : null}
+
+            {nextConfirmationId ? <a className="inline-flex rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white" href={`/dashboard/actions/confirm/${encodeURIComponent(nextConfirmationId)}`}>Review next workflow step</a> : null}
 
             {error ? (
               <p className="text-sm text-red-500">

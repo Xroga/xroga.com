@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Sidebar } from './Sidebar';
+import { CompactScrollIndicator } from './SidebarNavScroller';
 import { MobileNav } from './MobileNav';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
 import { TerminalChatProvider } from '@/context/TerminalChatContext';
@@ -36,6 +37,7 @@ interface AppShellProps {
  */
 
 export function AppShell({ children, displayName, email }: AppShellProps) {
+  const pageScrollRef = useRef<HTMLDivElement>(null);
   const workspaceIdentity = useWorkspaceIdentity();
   const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
@@ -97,7 +99,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               // only covers the workspace column, so the strip beside it — the sidebar's
               // column — showed the marketing page's own background instead of the
               // selected theme.
-              isDashboard
+              isDashboard || isFramedAppPage
                 ? 'xv-app-ground h-[100dvh] max-h-[100dvh] overflow-hidden'
                 : 'min-h-screen'
             )}
@@ -109,7 +111,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
             <div
               className={cn(
                 'xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full overflow-x-hidden relative z-[2]',
-                isDashboard ? 'h-full min-h-0' : 'min-h-screen'
+                isDashboard || isFramedAppPage ? 'h-full min-h-0' : 'min-h-screen'
               )}
             >
               {!isDashboard ? <BetaExpectationBanner compact /> : null}
@@ -149,7 +151,8 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               >
                 {isFramedAppPage ? (
                   <div className="xv-page-stage">
-                    <div className="xv-page-surface">{children}</div>
+                    <div id="xv-dashboard-page-scroll" ref={pageScrollRef} className="xv-page-surface">{children}</div>
+                    <CompactScrollIndicator targetRef={pageScrollRef} controlsId="xv-dashboard-page-scroll" label="Page" className="xv-page-scroll-controls" />
                   </div>
                 ) : (
                   children

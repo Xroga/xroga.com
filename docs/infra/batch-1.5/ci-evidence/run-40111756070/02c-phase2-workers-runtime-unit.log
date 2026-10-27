@@ -1,0 +1,1590 @@
+# cmd: npx tsx --test --test-reporter=tap src/workers/admission.test.ts src/workers/browserJob.test.ts src/workers/browserTaskHandler.test.ts src/workers/chromiumLaunch.test.ts src/workers/containerSpec.test.ts src/workers/egressProxy.test.ts src/workers/imagePins.test.ts src/workers/leaseStore.test.ts src/workers/processTree.test.ts src/workers/proxySidecar.test.ts src/workers/resumeRecovery.test.ts src/runtime/bootGuard.test.ts src/runtime/migrationCheck.test.ts src/runtime/readiness.test.ts src/runtime/safeLogging.test.ts src/runtime/sourceEquivalence.test.ts src/runtime/startupPolicy.test.ts src/security/boundedPublicGet.test.ts
+TAP version 13
+# Subtest: boot duties are gated by the startup policy
+    # Subtest: every schema-ensure call is inside `if (startup.duties.ensureSchemas)`
+    ok 1 - every schema-ensure call is inside `if (startup.duties.ensureSchemas)`
+      ---
+      duration_ms: 1.830571
+      type: 'test'
+      ...
+    # Subtest: orphaned-run reconciliation is inside `if (startup.duties.reconcileOrphanedRuns)`
+    ok 2 - orphaned-run reconciliation is inside `if (startup.duties.reconcileOrphanedRuns)`
+      ---
+      duration_ms: 0.281404
+      type: 'test'
+      ...
+    # Subtest: the decision is made before any duty runs
+    ok 3 - the decision is made before any duty runs
+      ---
+      duration_ms: 0.183607
+      type: 'test'
+      ...
+    # Subtest: /ready uses the shared evaluator, so it can never report ready on a missing mandatory dependency
+    ok 4 - /ready uses the shared evaluator, so it can never report ready on a missing mandatory dependency
+      ---
+      duration_ms: 0.25185
+      type: 'test'
+      ...
+    1..4
+ok 1 - boot duties are gated by the startup policy
+  ---
+  duration_ms: 3.557226
+  type: 'suite'
+  ...
+# Subtest: credential-safe logging is installed before anything can log
+    # Subtest: the safe-logging module is the first import after environment loading
+    ok 1 - the safe-logging module is the first import after environment loading
+      ---
+      duration_ms: 0.351781
+      type: 'test'
+      ...
+    # Subtest: HTTP request logging goes through the redactor (morgan bypasses console)
+    ok 2 - HTTP request logging goes through the redactor (morgan bypasses console)
+      ---
+      duration_ms: 0.264209
+      type: 'test'
+      ...
+    1..2
+ok 2 - credential-safe logging is installed before anything can log
+  ---
+  duration_ms: 0.789161
+  type: 'suite'
+  ...
+# Subtest: offline migration check (the pull-request replacement for the live dry run)
+    # Subtest: the repository's real migrations pass
+    ok 1 - the repository's real migrations pass
+      ---
+      duration_ms: 68.071297
+      type: 'test'
+      ...
+    # Subtest: accepts ordinary migrations
+    ok 2 - accepts ordinary migrations
+      ---
+      duration_ms: 68.054211
+      type: 'test'
+      ...
+    # Subtest: refuses a bad file name, a duplicate prefix and an empty file
+    ok 3 - refuses a bad file name, a duplicate prefix and an empty file
+      ---
+      duration_ms: 110.56225
+      type: 'test'
+      ...
+    # Subtest: refuses statements that can never be a migration
+    ok 4 - refuses statements that can never be a migration
+      ---
+      duration_ms: 154.650854
+      type: 'test'
+      ...
+    # Subtest: lists destructive statements for human review without failing, but only for files this change touches
+    ok 5 - lists destructive statements for human review without failing, but only for files this change touches
+      ---
+      duration_ms: 38.991194
+      type: 'test'
+      ...
+    # Subtest: flags destructive statements in the files a change adds or edits (listed, not failed)
+    ok 6 - flags destructive statements in the files a change adds or edits (listed, not failed)
+      ---
+      duration_ms: 95.425522
+      type: 'test'
+      ...
+    # Subtest: needs no environment, makes no connection and prints no environment value
+    ok 7 - needs no environment, makes no connection and prints no environment value
+      ---
+      duration_ms: 37.477441
+      type: 'test'
+      ...
+    1..7
+ok 3 - offline migration check (the pull-request replacement for the live dry run)
+  ---
+  duration_ms: 575.614602
+  type: 'suite'
+  ...
+# Subtest: the migration workflow keeps secrets and the Production environment away from pull requests
+    # Subtest: the pull-request job exists, has no environment, no secret, and runs only the offline check
+    ok 1 - the pull-request job exists, has no environment, no secret, and runs only the offline check
+      ---
+      duration_ms: 0.466755
+      type: 'test'
+      ...
+    # Subtest: the live job never runs on a pull request and keeps the Production environment
+    ok 2 - the live job never runs on a pull request and keeps the Production environment
+      ---
+      duration_ms: 0.423028
+      type: 'test'
+      ...
+    1..2
+ok 4 - the migration workflow keeps secrets and the Production environment away from pull requests
+  ---
+  duration_ms: 1.110776
+  type: 'suite'
+  ...
+# Subtest: readiness evaluator
+    # Subtest: ready only when every required probe passes; an optional failure is reported but not blocking
+    ok 1 - ready only when every required probe passes; an optional failure is reported but not blocking
+      ---
+      duration_ms: 7.151067
+      type: 'test'
+      ...
+    # Subtest: never leaks exception text, hosts or credentials: only fixed reason codes
+    ok 2 - never leaks exception text, hosts or credentials: only fixed reason codes
+      ---
+      duration_ms: 0.580585
+      type: 'test'
+      ...
+    # Subtest: a probe that never answers is not ready after the timeout
+    ok 3 - a probe that never answers is not ready after the timeout
+      ---
+      duration_ms: 51.109009
+      type: 'test'
+      ...
+    1..3
+ok 5 - readiness evaluator
+  ---
+  duration_ms: 59.988765
+  type: 'suite'
+  ...
+# Subtest: API readiness
+    # Subtest: the production app with a reachable database is ready
+    ok 1 - the production app with a reachable database is ready
+      ---
+      duration_ms: 1.453593
+      type: 'test'
+      ...
+    # Subtest: missing database configuration or an unreachable database is not ready
+    ok 2 - missing database configuration or an unreachable database is not ready
+      ---
+      duration_ms: 0.637942
+      type: 'test'
+      ...
+    # Subtest: an unclassified environment is not ready: a host nobody identified is never routed traffic
+    ok 3 - an unclassified environment is not ready: a host nobody identified is never routed traffic
+      ---
+      duration_ms: 0.357258
+      type: 'test'
+      ...
+    # Subtest: storage (Drive)
+        # Subtest: legacy mode needs nothing from Drive: a missing bucket does not block readiness
+        ok 1 - legacy mode needs nothing from Drive: a missing bucket does not block readiness
+          ---
+          duration_ms: 0.328896
+          type: 'test'
+          ...
+        # Subtest: write mode r2 without credentials or bucket is not ready
+        ok 2 - write mode r2 without credentials or bucket is not ready
+          ---
+          duration_ms: 0.388185
+          type: 'test'
+          ...
+        # Subtest: an invalid switch is not ready even in legacy mode (a typo must be loud)
+        ok 3 - an invalid switch is not ready even in legacy mode (a typo must be loud)
+          ---
+          duration_ms: 0.282536
+          type: 'test'
+          ...
+        # Subtest: a database URL that asks to skip verification is refused by the same planner the pool uses
+        ok 4 - a database URL that asks to skip verification is refused by the same planner the pool uses
+          ---
+          duration_ms: 1.422355
+          type: 'test'
+          ...
+        # Subtest: a TLS verification failure is not ready; a verified handshake is ready
+        ok 5 - a TLS verification failure is not ready; a verified handshake is ready
+          ---
+          duration_ms: 1.890962
+          type: 'test'
+          ...
+        # Subtest: no database URL while Drive is on is not ready
+        ok 6 - no database URL while Drive is on is not ready
+          ---
+          duration_ms: 0.238249
+          type: 'test'
+          ...
+        1..6
+    ok 4 - storage (Drive)
+      ---
+      duration_ms: 4.933963
+      type: 'suite'
+      ...
+    # Subtest: managed credential custody (Batch 1 environment contract: XROGA_CREDENTIAL_KMS_PROVIDER)
+        # Subtest: is not required unless declared; once declared it needs a provider
+        ok 1 - is not required unless declared; once declared it needs a provider
+          ---
+          duration_ms: 0.476138
+          type: 'test'
+          ...
+        # Subtest: accepts exactly the combinations Batch 1's startup accepts
+        ok 2 - accepts exactly the combinations Batch 1's startup accepts
+          ---
+          duration_ms: 0.600576
+          type: 'test'
+          ...
+        # Subtest: refuses the combinations Batch 1's startup refuses: missing, mixed, partial or unknown
+        ok 3 - refuses the combinations Batch 1's startup refuses: missing, mixed, partial or unknown
+          ---
+          duration_ms: 1.035472
+          type: 'test'
+          ...
+        # Subtest: development or test key material beside required managed custody is not ready, even with a valid provider
+        ok 4 - development or test key material beside required managed custody is not ready, even with a valid provider
+          ---
+          duration_ms: 0.489889
+          type: 'test'
+          ...
+        # Subtest: uses Batch 1's live round trip when it is supplied, and reports only a fixed code when it fails
+        ok 5 - uses Batch 1's live round trip when it is supplied, and reports only a fixed code when it fails
+          ---
+          duration_ms: 0.694277
+          type: 'test'
+          ...
+        1..5
+    ok 5 - managed credential custody (Batch 1 environment contract: XROGA_CREDENTIAL_KMS_PROVIDER)
+      ---
+      duration_ms: 3.535343
+      type: 'suite'
+      ...
+    1..5
+ok 6 - API readiness
+  ---
+  duration_ms: 11.296982
+  type: 'suite'
+  ...
+# Subtest: redaction of known credential shapes
+    # Subtest: removes: GitHub token
+    ok 1 - removes: GitHub token
+      ---
+      duration_ms: 2.362104
+      type: 'test'
+      ...
+    # Subtest: removes: GitHub fine-grained
+    ok 2 - removes: GitHub fine-grained
+      ---
+      duration_ms: 0.409838
+      type: 'test'
+      ...
+    # Subtest: removes: OpenAI-style key
+    ok 3 - removes: OpenAI-style key
+      ---
+      duration_ms: 0.148594
+      type: 'test'
+      ...
+    # Subtest: removes: Anthropic-style key
+    ok 4 - removes: Anthropic-style key
+      ---
+      duration_ms: 0.135324
+      type: 'test'
+      ...
+    # Subtest: removes: AWS access key id
+    ok 5 - removes: AWS access key id
+      ---
+      duration_ms: 0.214584
+      type: 'test'
+      ...
+    # Subtest: removes: Slack token
+    ok 6 - removes: Slack token
+      ---
+      duration_ms: 0.109415
+      type: 'test'
+      ...
+    # Subtest: removes: Supabase PAT
+    ok 7 - removes: Supabase PAT
+      ---
+      duration_ms: 0.098158
+      type: 'test'
+      ...
+    # Subtest: removes: JWT
+    ok 8 - removes: JWT
+      ---
+      duration_ms: 0.156656
+      type: 'test'
+      ...
+    # Subtest: removes: bearer header
+    ok 9 - removes: bearer header
+      ---
+      duration_ms: 0.265341
+      type: 'test'
+      ...
+    # Subtest: removes: bearer bare
+    ok 10 - removes: bearer bare
+      ---
+      duration_ms: 0.37087
+      type: 'test'
+      ...
+    # Subtest: removes: basic header
+    ok 11 - removes: basic header
+      ---
+      duration_ms: 0.121674
+      type: 'test'
+      ...
+    # Subtest: removes: url user info
+    ok 12 - removes: url user info
+      ---
+      duration_ms: 0.109575
+      type: 'test'
+      ...
+    # Subtest: removes: signed url
+    ok 13 - removes: signed url
+      ---
+      duration_ms: 0.104818
+      type: 'test'
+      ...
+    # Subtest: removes: token query
+    ok 14 - removes: token query
+      ---
+      duration_ms: 0.095825
+      type: 'test'
+      ...
+    # Subtest: removes: cookie header
+    ok 15 - removes: cookie header
+      ---
+      duration_ms: 0.09994
+      type: 'test'
+      ...
+    # Subtest: removes: set-cookie
+    ok 16 - removes: set-cookie
+      ---
+      duration_ms: 0.076936
+      type: 'test'
+      ...
+    # Subtest: removes: json field
+    ok 17 - removes: json field
+      ---
+      duration_ms: 0.075223
+      type: 'test'
+      ...
+    # Subtest: removes: colon field
+    ok 18 - removes: colon field
+      ---
+      duration_ms: 0.063636
+      type: 'test'
+      ...
+    # Subtest: removes: equals field
+    ok 19 - removes: equals field
+      ---
+      duration_ms: 0.065869
+      type: 'test'
+      ...
+    # Subtest: removes: quoted token
+    ok 20 - removes: quoted token
+      ---
+      duration_ms: 0.060291
+      type: 'test'
+      ...
+    # Subtest: removes: private key block
+    ok 21 - removes: private key block
+      ---
+      duration_ms: 0.065368
+      type: 'test'
+      ...
+    # Subtest: removes: truncated private key
+    ok 22 - removes: truncated private key
+      ---
+      duration_ms: 0.065319
+      type: 'test'
+      ...
+    # Subtest: keeps the useful, non-secret part of the line
+    ok 23 - keeps the useful, non-secret part of the line
+      ---
+      duration_ms: 1.098487
+      type: 'test'
+      ...
+    # Subtest: leaves ordinary log text alone
+    ok 24 - leaves ordinary log text alone
+      ---
+      duration_ms: 0.215465
+      type: 'test'
+      ...
+    1..24
+ok 7 - redaction of known credential shapes
+  ---
+  duration_ms: 8.432921
+  type: 'suite'
+  ...
+# Subtest: redaction of the secrets this process holds
+    # Subtest: removes an exact secret value from any message, in any position
+    ok 1 - removes an exact secret value from any message, in any position
+      ---
+      duration_ms: 0.688389
+      type: 'test'
+      ...
+    # Subtest: removes a secret that appears URL-encoded (a password inside a connection string)
+    ok 2 - removes a secret that appears URL-encoded (a password inside a connection string)
+      ---
+      duration_ms: 0.144688
+      type: 'test'
+      ...
+    # Subtest: does not treat modes, flags, short or numeric values as secrets
+    ok 3 - does not treat modes, flags, short or numeric values as secrets
+      ---
+      duration_ms: 0.139801
+      type: 'test'
+      ...
+    # Subtest: removes the longer secret whole when one contains another
+    ok 4 - removes the longer secret whole when one contains another
+      ---
+      duration_ms: 0.115153
+      type: 'test'
+      ...
+    # Subtest: picks up secrets that are added to the environment after the redactor was created
+    ok 5 - picks up secrets that are added to the environment after the redactor was created
+      ---
+      duration_ms: 0.124999
+      type: 'test'
+      ...
+    1..5
+ok 8 - redaction of the secrets this process holds
+  ---
+  duration_ms: 1.388585
+  type: 'suite'
+  ...
+# Subtest: credential-safe console
+    # Subtest: redacts every method, including objects and errors
+    ok 1 - redacts every method, including objects and errors
+      ---
+      duration_ms: 2.615145
+      type: 'test'
+      ...
+    # Subtest: is idempotent and restorable
+    ok 2 - is idempotent and restorable
+      ---
+      duration_ms: 0.197048
+      type: 'test'
+      ...
+    # Subtest: fails closed: if redaction throws, the raw text is withheld
+    ok 3 - fails closed: if redaction throws, the raw text is withheld
+      ---
+      duration_ms: 0.804443
+      type: 'test'
+      ...
+    1..3
+ok 9 - credential-safe console
+  ---
+  duration_ms: 3.737678
+  type: 'suite'
+  ...
+# Subtest: source equivalence between a CI-tested commit and a later one
+    # Subtest: documentation and recorded evidence output are equivalent
+    ok 1 - documentation and recorded evidence output are equivalent
+      ---
+      duration_ms: 28.639564
+      type: 'test'
+      ...
+    # Subtest: a source file change is not equivalent
+    ok 2 - a source file change is not equivalent
+      ---
+      duration_ms: 27.600175
+      type: 'test'
+      ...
+    # Subtest: files CI executes are code even though they live under docs/: the strict runner and the rollback SQL
+    ok 3 - files CI executes are code even though they live under docs/: the strict runner and the rollback SQL
+      ---
+      duration_ms: 82.990012
+      type: 'test'
+      ...
+    # Subtest: a script or workflow outside docs/ is code; one code file among many docs makes the whole range not equivalent
+    ok 4 - a script or workflow outside docs/ is code; one code file among many docs makes the whole range not equivalent
+      ---
+      duration_ms: 33.947441
+      type: 'test'
+      ...
+    # Subtest: an unknown commit is an error, not a pass
+    ok 5 - an unknown commit is an error, not a pass
+      ---
+      duration_ms: 4.060035
+      type: 'test'
+      ...
+    # Subtest: the same commit is trivially equivalent
+    ok 6 - the same commit is trivially equivalent
+      ---
+      duration_ms: 11.490984
+      type: 'test'
+      ...
+    1..6
+ok 10 - source equivalence between a CI-tested commit and a later one
+  ---
+  duration_ms: 245.808548
+  type: 'suite'
+  ...
+# Subtest: deployment environment resolution
+    # Subtest: the production Fly app is production with no new configuration, so today's deployment is unchanged
+    ok 1 - the production Fly app is production with no new configuration, so today's deployment is unchanged
+      ---
+      duration_ms: 1.430768
+      type: 'test'
+      ...
+    # Subtest: an explicit environment is honoured
+    ok 2 - an explicit environment is honoured
+      ---
+      duration_ms: 0.336487
+      type: 'test'
+      ...
+    # Subtest: an unknown or empty-meaning value is unclassified, not a guess
+    ok 3 - an unknown or empty-meaning value is unclassified, not a guess
+      ---
+      duration_ms: 0.234834
+      type: 'test'
+      ...
+    # Subtest: a declaration that contradicts the platform is unclassified (staging claim on the production app, production claim on another app)
+    ok 4 - a declaration that contradicts the platform is unclassified (staging claim on the production app, production claim on another app)
+      ---
+      duration_ms: 0.176576
+      type: 'test'
+      ...
+    # Subtest: anything not positively identified is unclassified: another Fly app, Cloud Run, a bare host
+    ok 5 - anything not positively identified is unclassified: another Fly app, Cloud Run, a bare host
+      ---
+      duration_ms: 0.284669
+      type: 'test'
+      ...
+    # Subtest: NODE_ENV alone identifies only local development and test
+    ok 6 - NODE_ENV alone identifies only local development and test
+      ---
+      duration_ms: 0.143617
+      type: 'test'
+      ...
+    1..6
+ok 11 - deployment environment resolution
+  ---
+  duration_ms: 3.617107
+  type: 'suite'
+  ...
+# Subtest: boot duties
+    # Subtest: only production and local development may write to the database at boot
+    ok 1 - only production and local development may write to the database at boot
+      ---
+      duration_ms: 0.297529
+      type: 'test'
+      ...
+    # Subtest: a staging service holding a live service-role key performs no reconcile and no DDL, and the boot log says so
+    ok 2 - a staging service holding a live service-role key performs no reconcile and no DDL, and the boot log says so
+      ---
+      duration_ms: 0.376768
+      type: 'test'
+      ...
+    # Subtest: a host nobody classified performs no mutating duty even with production credentials present
+    ok 3 - a host nobody classified performs no mutating duty even with production credentials present
+      ---
+      duration_ms: 0.317629
+      type: 'test'
+      ...
+    1..3
+ok 12 - boot duties
+  ---
+  duration_ms: 1.519032
+  type: 'suite'
+  ...
+# Subtest: public address admission rejects local, metadata, special and IPv4-in-IPv6 targets
+ok 13 - public address admission rejects local, metadata, special and IPv4-in-IPv6 targets
+  ---
+  duration_ms: 7.055834
+  type: 'test'
+  ...
+# Subtest: URL admission canonicalizes integer/octal/hex IPs and denies credentials, custom ports and non-HTTPS
+ok 14 - URL admission canonicalizes integer/octal/hex IPs and denies credentials, custom ports and non-HTTPS
+  ---
+  duration_ms: 1.514264
+  type: 'test'
+  ...
+# Subtest: DNS admits no mixed private answers and pins a copied address without a second resolution
+ok 15 - DNS admits no mixed private answers and pins a copied address without a second resolution
+  ---
+  duration_ms: 2.929099
+  type: 'test'
+  ...
+# Subtest: redirects get independent URL and DNS admission and share a strict redirect cap
+ok 16 - redirects get independent URL and DNS admission and share a strict redirect cap
+  ---
+  duration_ms: 6.529469
+  type: 'test'
+  ...
+# Subtest: body budget checks streamed bytes, declared length and compression before returning content
+ok 17 - body budget checks streamed bytes, declared length and compression before returning content
+  ---
+  duration_ms: 2.191015
+  type: 'test'
+  ...
+# Subtest: one deadline bounds stalled DNS, headers and body, with redacted transport errors
+ok 18 - one deadline bounds stalled DNS, headers and body, with redacted transport errors
+  ---
+  duration_ms: 61.966768
+  type: 'test'
+  ...
+# Subtest: invalid limits fail before DNS or transport
+ok 19 - invalid limits fail before DNS or transport
+  ---
+  duration_ms: 0.537201
+  type: 'test'
+  ...
+# Subtest: caller mutation during DNS cannot enlarge the admitted byte budget
+ok 20 - caller mutation during DNS cannot enlarge the admitted byte budget
+  ---
+  duration_ms: 0.859546
+  type: 'test'
+  ...
+# Subtest: browser job admission
+    # Subtest: grants up to the global cap and queues the rest
+    ok 1 - grants up to the global cap and queues the rest
+      ---
+      duration_ms: 13.872923
+      type: 'test'
+      ...
+    # Subtest: one tenant can never hold more than its share, even with idle capacity
+    ok 2 - one tenant can never hold more than its share, even with idle capacity
+      ---
+      duration_ms: 2.136153
+      type: 'test'
+      ...
+    # Subtest: a noisy tenant with a deep backlog cannot starve a quiet tenant
+    ok 3 - a noisy tenant with a deep backlog cannot starve a quiet tenant
+      ---
+      duration_ms: 1.513012
+      type: 'test'
+      ...
+    # Subtest: waiting tenants are served fewest-running first, then by who has waited longest
+    ok 4 - waiting tenants are served fewest-running first, then by who has waited longest
+      ---
+      duration_ms: 2.621124
+      type: 'test'
+      ...
+    # Subtest: the queue is bounded per tenant and in total: overflow fails fast with a typed error
+    ok 5 - the queue is bounded per tenant and in total: overflow fails fast with a typed error
+      ---
+      duration_ms: 0.74904
+      type: 'test'
+      ...
+    # Subtest: a job that is cancelled while waiting leaves the queue and never takes a slot
+    ok 6 - a job that is cancelled while waiting leaves the queue and never takes a slot
+      ---
+      duration_ms: 2.227411
+      type: 'test'
+      ...
+    # Subtest: an already aborted signal is refused before queueing
+    ok 7 - an already aborted signal is refused before queueing
+      ---
+      duration_ms: 0.358461
+      type: 'test'
+      ...
+    # Subtest: release is idempotent: a double release cannot free someone else's slot
+    ok 8 - release is idempotent: a double release cannot free someone else's slot
+      ---
+      duration_ms: 1.754006
+      type: 'test'
+      ...
+    # Subtest: rejects nonsense configuration and tenant ids
+    ok 9 - rejects nonsense configuration and tenant ids
+      ---
+      duration_ms: 0.545012
+      type: 'test'
+      ...
+    # Subtest: stress: many tenants, random completion, never exceeds a cap and always drains
+    ok 10 - stress: many tenants, random completion, never exceeds a cap and always drains
+      ---
+      duration_ms: 128.431111
+      type: 'test'
+      ...
+    1..10
+ok 21 - browser job admission
+  ---
+  duration_ms: 158.269417
+  type: 'suite'
+  ...
+# Subtest: browser job contract
+    # Subtest: accepts a well formed job and normalises origins
+    ok 1 - accepts a well formed job and normalises origins
+      ---
+      duration_ms: 7.070105
+      type: 'test'
+      ...
+    # Subtest: refuses unknown fields, so a credential has nowhere to ride along
+    ok 2 - refuses unknown fields, so a credential has nowhere to ride along
+      ---
+      duration_ms: 0.754023
+      type: 'test'
+      ...
+    # Subtest: every origin and the start URL must pass the canonical egress policy
+    ok 3 - every origin and the start URL must pass the canonical egress policy
+      ---
+      duration_ms: 2.018555
+      type: 'test'
+      ...
+    # Subtest: the start URL must be inside the allowed origins
+    ok 4 - the start URL must be inside the allowed origins
+      ---
+      duration_ms: 0.158429
+      type: 'test'
+      ...
+    # Subtest: limits may not exceed the ceilings and must be whole numbers in range
+    ok 5 - limits may not exceed the ceilings and must be whole numbers in range
+      ---
+      duration_ms: 1.450529
+      type: 'test'
+      ...
+    # Subtest: identifiers are short and plain; non objects and wrong versions are refused
+    ok 6 - identifiers are short and plain; non objects and wrong versions are refused
+      ---
+      duration_ms: 1.280281
+      type: 'test'
+      ...
+    # Subtest: origin lists are bounded
+    ok 7 - origin lists are bounded
+      ---
+      duration_ms: 0.159521
+      type: 'test'
+      ...
+    # Subtest: navigation, including every redirect hop, must stay in scope and pass egress policy
+    ok 8 - navigation, including every redirect hop, must stay in scope and pass egress policy
+      ---
+      duration_ms: 0.38443
+      type: 'test'
+      ...
+    # Subtest: idempotency key is stable across attempts and differs across tenant, run and task
+    ok 9 - idempotency key is stable across attempts and differs across tenant, run and task
+      ---
+      duration_ms: 0.441516
+      type: 'test'
+      ...
+    1..9
+ok 22 - browser job contract
+  ---
+  duration_ms: 15.032292
+  type: 'suite'
+  ...
+# Subtest: browser task handler on the canonical scheduler
+    # Subtest: runs through ExecutionScheduler, stores verified private evidence, and releases the lease
+    ok 1 - runs through ExecutionScheduler, stores verified private evidence, and releases the lease
+      ---
+      duration_ms: 18.560338
+      type: 'test'
+      ...
+    # Subtest: builds the job from issued authority only; the worker sees the actor, project, run and task, not anything a scope could inject
+    ok 2 - builds the job from issued authority only; the worker sees the actor, project, run and task, not anything a scope could inject
+      ---
+      duration_ms: 3.437555
+      type: 'test'
+      ...
+    # Subtest: refuses a scope that smuggles a credential field, before any worker runs
+    ok 3 - refuses a scope that smuggles a credential field, before any worker runs
+      ---
+      duration_ms: 0.892196
+      type: 'test'
+      ...
+    # Subtest: a private or out-of-scope start page never reaches a worker
+    ok 4 - a private or out-of-scope start page never reaches a worker
+      ---
+      duration_ms: 5.772773
+      type: 'test'
+      ...
+    # Subtest: authority
+        # Subtest: another tenant cannot write into a project it does not own, even if the authorise hook is wrong (Drive itself refuses)
+        ok 1 - another tenant cannot write into a project it does not own, even if the authorise hook is wrong (Drive itself refuses)
+          ---
+          duration_ms: 1.616439
+          type: 'test'
+          ...
+        # Subtest: a denied authorisation stops before dispatch: no worker, no lease, no writes
+        ok 2 - a denied authorisation stops before dispatch: no worker, no lease, no writes
+          ---
+          duration_ms: 0.827098
+          type: 'test'
+          ...
+        # Subtest: permission revoked while the job runs: nothing is stored
+        ok 3 - permission revoked while the job runs: nothing is stored
+          ---
+          duration_ms: 1.541185
+          type: 'test'
+          ...
+        # Subtest: permission revoked between two artifact writes: the second is not written
+        ok 4 - permission revoked between two artifact writes: the second is not written
+          ---
+          duration_ms: 2.005946
+          type: 'test'
+          ...
+        1..4
+    ok 5 - authority
+      ---
+      duration_ms: 6.345933
+      type: 'suite'
+      ...
+    # Subtest: leases and fencing
+        # Subtest: a worker that lost its lease mid-job cannot store anything and its result is discarded
+        ok 1 - a worker that lost its lease mid-job cannot store anything and its result is discarded
+          ---
+          duration_ms: 102.446122
+          type: 'test'
+          ...
+        # Subtest: a late result from a worker that lost its lease is refused even when it has no artifacts to store
+        ok 2 - a late result from a worker that lost its lease is refused even when it has no artifacts to store
+          ---
+          duration_ms: 101.493485
+          type: 'test'
+          ...
+        # Subtest: a lease lost between two artifact writes stops the second write
+        ok 3 - a lease lost between two artifact writes stops the second write
+          ---
+          duration_ms: 1.846776
+          type: 'test'
+          ...
+        # Subtest: two dispatches of the same task: one runs, the other is refused
+        ok 4 - two dispatches of the same task: one runs, the other is refused
+          ---
+          duration_ms: 32.901818
+          type: 'test'
+          ...
+        # Subtest: the heartbeat keeps a long job alive past its first ttl
+        ok 5 - the heartbeat keeps a long job alive past its first ttl
+          ---
+          duration_ms: 903.703912
+          type: 'test'
+          ...
+        1..5
+    ok 6 - leases and fencing
+      ---
+      duration_ms: 1142.951968
+      type: 'suite'
+      ...
+    # Subtest: untrusted results
+        # Subtest: pages outside the scope or egress policy
+        ok 1 - pages outside the scope or egress policy
+          ---
+          duration_ms: 1.668888
+          type: 'test'
+          ...
+        # Subtest: counters over the job limits or not whole numbers
+        ok 2 - counters over the job limits or not whole numbers
+          ---
+          duration_ms: 7.430979
+          type: 'test'
+          ...
+        # Subtest: artifacts with bad names, types, sizes or duplicates
+        ok 3 - artifacts with bad names, types, sizes or duplicates
+          ---
+          duration_ms: 3.356454
+          type: 'test'
+          ...
+        # Subtest: credential-like artifacts are never stored, by name or by content, and the good ones in the same job are not stored either
+        ok 4 - credential-like artifacts are never stored, by name or by content, and the good ones in the same job are not stored either
+          ---
+          duration_ms: 0.99439
+          type: 'test'
+          ...
+        # Subtest: too many artifacts
+        ok 5 - too many artifacts
+          ---
+          duration_ms: 0.708248
+          type: 'test'
+          ...
+        # Subtest: a worker error never leaks its message into the task
+        ok 6 - a worker error never leaks its message into the task
+          ---
+          duration_ms: 0.540816
+          type: 'test'
+          ...
+        1..6
+    ok 7 - untrusted results
+      ---
+      duration_ms: 14.897864
+      type: 'suite'
+      ...
+    # Subtest: the worker's free-text summary is stored without any credential it may have copied from a page
+    ok 8 - the worker's free-text summary is stored without any credential it may have copied from a page
+      ---
+      duration_ms: 2.480923
+      type: 'test'
+      ...
+    # Subtest: idempotency and recovery
+        # Subtest: a retry reuses artifacts an earlier attempt stored, so a crash between writes leaves no duplicates
+        ok 1 - a retry reuses artifacts an earlier attempt stored, so a crash between writes leaves no duplicates
+          ---
+          duration_ms: 2.655707
+          type: 'test'
+          ...
+        # Subtest: reuse requires identical content: the same name with different bytes is a new object
+        ok 2 - reuse requires identical content: the same name with different bytes is a new object
+          ---
+          duration_ms: 2.428133
+          type: 'test'
+          ...
+        # Subtest: the same task in another tenant never reuses or sees this tenant's artifacts
+        ok 3 - the same task in another tenant never reuses or sees this tenant's artifacts
+          ---
+          duration_ms: 2.781065
+          type: 'test'
+          ...
+        1..3
+    ok 9 - idempotency and recovery
+      ---
+      duration_ms: 7.996543
+      type: 'suite'
+      ...
+    # Subtest: admission (bounded concurrency, tenant fairness)
+        # Subtest: the same tenant queues behind its own cap, one job at a time
+        ok 1 - the same tenant queues behind its own cap, one job at a time
+          ---
+          duration_ms: 126.297262
+          type: 'test'
+          ...
+        # Subtest: two tenants run side by side while each respects its own cap
+        ok 2 - two tenants run side by side while each respects its own cap
+          ---
+          duration_ms: 83.742767
+          type: 'test'
+          ...
+        # Subtest: a full queue fails fast with a typed error and never reaches the worker
+        ok 3 - a full queue fails fast with a typed error and never reaches the worker
+          ---
+          duration_ms: 64.72191
+          type: 'test'
+          ...
+        # Subtest: authority revoked while a job waits in the queue stops it: the worker is never started
+        ok 4 - authority revoked while a job waits in the queue stops it: the worker is never started
+          ---
+          duration_ms: 62.032978
+          type: 'test'
+          ...
+        # Subtest: a failed or cancelled job gives its slot back
+        ok 5 - a failed or cancelled job gives its slot back
+          ---
+          duration_ms: 1.765633
+          type: 'test'
+          ...
+        1..5
+    ok 10 - admission (bounded concurrency, tenant fairness)
+      ---
+      duration_ms: 338.95108
+      type: 'suite'
+      ...
+    # Subtest: cancellation and limits
+        # Subtest: run cancellation reaches the worker, stores nothing and releases the lease
+        ok 1 - run cancellation reaches the worker, stores nothing and releases the lease
+          ---
+          duration_ms: 21.691241
+          type: 'test'
+          ...
+        # Subtest: the job deadline stops a worker that never answers
+        ok 2 - the job deadline stops a worker that never answers
+          ---
+          duration_ms: 61.571722
+          type: 'test'
+          ...
+        1..2
+    ok 11 - cancellation and limits
+      ---
+      duration_ms: 83.509105
+      type: 'suite'
+      ...
+    1..11
+ok 23 - browser task handler on the canonical scheduler
+  ---
+  duration_ms: 1627.190191
+  type: 'suite'
+  ...
+# Subtest: chromium launch builder
+    # Subtest: turns the sandbox on explicitly (Playwright defaults it to off) and routes everything through the job proxy
+    ok 1 - turns the sandbox on explicitly (Playwright defaults it to off) and routes everything through the job proxy
+      ---
+      duration_ms: 1.699393
+      type: 'test'
+      ...
+    # Subtest: gives each tenant, run, task and attempt its own profile under the fixed root, named by a hash
+    ok 2 - gives each tenant, run, task and attempt its own profile under the fixed root, named by a hash
+      ---
+      duration_ms: 0.97466
+      type: 'test'
+      ...
+    # Subtest: passes only allow-listed environment variables, never a worker secret
+    ok 3 - passes only allow-listed environment variables, never a worker secret
+      ---
+      duration_ms: 1.068923
+      type: 'test'
+      ...
+    # Subtest: works with Windows style roots too (local development)
+    ok 4 - works with Windows style roots too (local development)
+      ---
+      duration_ms: 0.362257
+      type: 'test'
+      ...
+    1..4
+ok 24 - chromium launch builder
+  ---
+  duration_ms: 6.4863
+  type: 'suite'
+  ...
+# Subtest: chromium launch checker
+    # Subtest: accepts exactly what the builder produces
+    ok 1 - accepts exactly what the builder produces
+      ---
+      duration_ms: 0.68955
+      type: 'test'
+      ...
+    # Subtest: refuses a launch with the sandbox off or unspecified
+    ok 2 - refuses a launch with the sandbox off or unspecified
+      ---
+      duration_ms: 0.704072
+      type: 'test'
+      ...
+    # Subtest: refuses every isolation-weakening flag, in any spelling
+    ok 3 - refuses every isolation-weakening flag, in any spelling
+      ---
+      duration_ms: 3.551728
+      type: 'test'
+      ...
+    # Subtest: refuses a network DevTools port or address (CDP must stay private)
+    ok 4 - refuses a network DevTools port or address (CDP must stay private)
+      ---
+      duration_ms: 1.078957
+      type: 'test'
+      ...
+    # Subtest: refuses ignoring Playwright default arguments
+    ok 5 - refuses ignoring Playwright default arguments
+      ---
+      duration_ms: 0.558763
+      type: 'test'
+      ...
+    # Subtest: requires a loopback proxy with per-job credentials and the exact loopback bypass rule
+    ok 6 - requires a loopback proxy with per-job credentials and the exact loopback bypass rule
+      ---
+      duration_ms: 1.118557
+      type: 'test'
+      ...
+    # Subtest: keeps the profile and downloads inside a per-job directory under the root
+    ok 7 - keeps the profile and downloads inside a per-job directory under the root
+      ---
+      duration_ms: 0.899026
+      type: 'test'
+      ...
+    # Subtest: refuses secret-looking and unlisted environment variables
+    ok 8 - refuses secret-looking and unlisted environment variables
+      ---
+      duration_ms: 1.827407
+      type: 'test'
+      ...
+    # Subtest: reports every violation at once, so one edit cannot hide behind another
+    ok 9 - reports every violation at once, so one edit cannot hide behind another
+      ---
+      duration_ms: 0.248504
+      type: 'test'
+      ...
+    # Subtest: a proxy on the internal network of the container is allowed only as the one declared host
+    ok 10 - a proxy on the internal network of the container is allowed only as the one declared host
+      ---
+      duration_ms: 0.785786
+      type: 'test'
+      ...
+    # Subtest: the builder itself refuses an unsafe context
+    ok 11 - the builder itself refuses an unsafe context
+      ---
+      duration_ms: 0.186932
+      type: 'test'
+      ...
+    1..11
+ok 25 - chromium launch checker
+  ---
+  duration_ms: 12.233274
+  type: 'suite'
+  ...
+# Subtest: the committed browser worker container spec
+    # Subtest: passes its own checker, including the existence of its seccomp profile
+    ok 1 - passes its own checker, including the existence of its seccomp profile
+      ---
+      duration_ms: 1.421124
+      type: 'test'
+      ...
+    # Subtest: the committed Dockerfile passes the static review (digest pinned, numeric non-root USER, no sandbox-disabling flag)
+    ok 2 - the committed Dockerfile passes the static review (digest pinned, numeric non-root USER, no sandbox-disabling flag)
+      ---
+      duration_ms: 1.253301
+      type: 'test'
+      ...
+    # Subtest: the seccomp profile is the Docker default plus exactly clone, clone3, unshare, setns and chroot
+    ok 3 - the seccomp profile is the Docker default plus exactly clone, clone3, unshare, setns and chroot
+      ---
+      duration_ms: 0.791725
+      type: 'test'
+      ...
+    # Subtest: turns into the expected docker run flags: no privileged, no capability, read only, seccomp, limits, tmpfs only
+    ok 4 - turns into the expected docker run flags: no privileged, no capability, read only, seccomp, limits, tmpfs only
+      ---
+      duration_ms: 0.502738
+      type: 'test'
+      ...
+    1..4
+ok 26 - the committed browser worker container spec
+  ---
+  duration_ms: 6.428458
+  type: 'suite'
+  ...
+# Subtest: the container checker refuses every weakening
+    # Subtest: privilege: privileged mode, root, added or undropped capabilities, writable root, escalation
+    ok 1 - privilege: privileged mode, root, added or undropped capabilities, writable root, escalation
+      ---
+      duration_ms: 1.69004
+      type: 'test'
+      ...
+    # Subtest: seccomp: absent, unconfined, or pointing at a file that does not exist
+    ok 2 - seccomp: absent, unconfined, or pointing at a file that does not exist
+      ---
+      duration_ms: 0.528367
+      type: 'test'
+      ...
+    # Subtest: namespaces and network: host namespaces, host network, published ports, host mappings
+    ok 3 - namespaces and network: host namespaces, host network, published ports, host mappings
+      ---
+      duration_ms: 1.819795
+      type: 'test'
+      ...
+    # Subtest: mounts: only bounded, nosuid, nodev, noexec tmpfs; never a bind, a socket or a sensitive path
+    ok 4 - mounts: only bounded, nosuid, nodev, noexec tmpfs; never a bind, a socket or a sensitive path
+      ---
+      duration_ms: 1.824542
+      type: 'test'
+      ...
+    # Subtest: resources: every limit is required and bounded; swap equals memory
+    ok 5 - resources: every limit is required and bounded; swap equals memory
+      ---
+      duration_ms: 1.202855
+      type: 'test'
+      ...
+    # Subtest: secrets: no secret-looking environment variable
+    ok 6 - secrets: no secret-looking environment variable
+      ---
+      duration_ms: 0.661268
+      type: 'test'
+      ...
+    # Subtest: image: pinned by digest, or the locally built probe tag only
+    ok 7 - image: pinned by digest, or the locally built probe tag only
+      ---
+      duration_ms: 0.447404
+      type: 'test'
+      ...
+    # Subtest: egress: the deployment must declare network-level denial of every private, loopback, link-local and metadata range
+    ok 8 - egress: the deployment must declare network-level denial of every private, loopback, link-local and metadata range
+      ---
+      duration_ms: 2.663347
+      type: 'test'
+      ...
+    # Subtest: reports every violation together
+    ok 9 - reports every violation together
+      ---
+      duration_ms: 0.268184
+      type: 'test'
+      ...
+    1..9
+ok 27 - the container checker refuses every weakening
+  ---
+  duration_ms: 11.68055
+  type: 'suite'
+  ...
+# Subtest: the Dockerfile review refuses
+    # Subtest: accepts a minimal safe file
+    ok 1 - accepts a minimal safe file
+      ---
+      duration_ms: 0.304269
+      type: 'test'
+      ...
+    # Subtest: an unpinned or partially pinned base
+    ok 2 - an unpinned or partially pinned base
+      ---
+      duration_ms: 0.208755
+      type: 'test'
+      ...
+    # Subtest: root or a non-numeric or missing USER
+    ok 3 - root or a non-numeric or missing USER
+      ---
+      duration_ms: 0.313633
+      type: 'test'
+      ...
+    # Subtest: sandbox-disabling flags anywhere
+    ok 4 - sandbox-disabling flags anywhere
+      ---
+      duration_ms: 0.19179
+      type: 'test'
+      ...
+    # Subtest: remote scripts, secrets, exposed ports and world-writable trees
+    ok 5 - remote scripts, secrets, exposed ports and world-writable trees
+      ---
+      duration_ms: 0.280322
+      type: 'test'
+      ...
+    # Subtest: comments do not count as instructions
+    ok 6 - comments do not count as instructions
+      ---
+      duration_ms: 0.102504
+      type: 'test'
+      ...
+    1..6
+ok 28 - the Dockerfile review refuses
+  ---
+  duration_ms: 2.49919
+  type: 'suite'
+  ...
+# Subtest: browser egress proxy
+    # Subtest: tunnels an allowed host, resolving once and pinning the connection to the admitted address
+    ok 1 - tunnels an allowed host, resolving once and pinning the connection to the admitted address
+      ---
+      duration_ms: 16.813584
+      type: 'test'
+      ...
+    # Subtest: refuses without the per-job proxy credential, before any DNS work
+    ok 2 - refuses without the per-job proxy credential, before any DNS work
+      ---
+      duration_ms: 3.882717
+      type: 'test'
+      ...
+    # Subtest: the 407 carries a Proxy-Authenticate challenge, or a real browser cannot authenticate at all
+    ok 3 - the 407 carries a Proxy-Authenticate challenge, or a real browser cannot authenticate at all
+      ---
+      duration_ms: 2.020508
+      type: 'test'
+      ...
+    # Subtest: refuses hosts outside the job scope and ports other than 443, before DNS
+    ok 4 - refuses hosts outside the job scope and ports other than 443, before DNS
+      ---
+      duration_ms: 9.543327
+      type: 'test'
+      ...
+    # Subtest: refuses an allowed name whose DNS answer is private, loopback, metadata or mixed
+    ok 5 - refuses an allowed name whose DNS answer is private, loopback, metadata or mixed
+      ---
+      duration_ms: 11.176319
+      type: 'test'
+      ...
+    # Subtest: DNS rebinding: a second, private answer is never consulted because the connection is pinned to the first lookup
+    ok 6 - DNS rebinding: a second, private answer is never consulted because the connection is pinned to the first lookup
+      ---
+      duration_ms: 2.715867
+      type: 'test'
+      ...
+    # Subtest: the pinned lookup refuses a different host name
+    ok 7 - the pinned lookup refuses a different host name
+      ---
+      duration_ms: 3.563135
+      type: 'test'
+      ...
+    # Subtest: a DNS failure is a refusal, not an open door
+    ok 8 - a DNS failure is a refusal, not an open door
+      ---
+      duration_ms: 1.797182
+      type: 'test'
+      ...
+    # Subtest: refuses plain http proxy requests
+    ok 9 - refuses plain http proxy requests
+      ---
+      duration_ms: 5.752948
+      type: 'test'
+      ...
+    # Subtest: enforces the total byte budget by cutting the tunnel
+    ok 10 - enforces the total byte budget by cutting the tunnel
+      ---
+      duration_ms: 7.072429
+      type: 'test'
+      ...
+    # Subtest: caps the number of tunnels
+    ok 11 - caps the number of tunnels
+      ---
+      duration_ms: 2.933866
+      type: 'test'
+      ...
+    # Subtest: listens on loopback unless a bind address is given (the sidecar on an internal network needs 0.0.0.0)
+    ok 12 - listens on loopback unless a bind address is given (the sidecar on an internal network needs 0.0.0.0)
+      ---
+      duration_ms: 1.50468
+      type: 'test'
+      ...
+    # Subtest: uses the credentials it is given (the sidecar case) and refuses weak ones
+    ok 13 - uses the credentials it is given (the sidecar case) and refuses weak ones
+      ---
+      duration_ms: 2.282933
+      type: 'test'
+      ...
+    # Subtest: a throwing decision listener never changes the verdict
+    ok 14 - a throwing decision listener never changes the verdict
+      ---
+      duration_ms: 2.640778
+      type: 'test'
+      ...
+    # Subtest: close() tears down open tunnels
+    ok 15 - close() tears down open tunnels
+      ---
+      duration_ms: 3.735851
+      type: 'test'
+      ...
+    # Subtest: records host and verdict only, never credentials or paths
+    ok 16 - records host and verdict only, never credentials or paths
+      ---
+      duration_ms: 2.766924
+      type: 'test'
+      ...
+    1..16
+ok 29 - browser egress proxy
+  ---
+  duration_ms: 83.358008
+  type: 'suite'
+  ...
+# Subtest: browser worker image pins
+    # Subtest: the committed pins are exact, locked, integrity checked, licence checked, and Stagehand is not wired
+    ok 1 - the committed pins are exact, locked, integrity checked, licence checked, and Stagehand is not wired
+      ---
+      duration_ms: 2.212457
+      type: 'test'
+      ...
+    # Subtest: refuses a version range, however small
+    ok 2 - refuses a version range, however small
+      ---
+      duration_ms: 2.229012
+      type: 'test'
+      ...
+    # Subtest: refuses a lockfile that is out of step with package.json
+    ok 3 - refuses a lockfile that is out of step with package.json
+      ---
+      duration_ms: 0.597261
+      type: 'test'
+      ...
+    # Subtest: refuses a locked package with no integrity hash, a weak hash, or a source that is not the npm registry
+    ok 4 - refuses a locked package with no integrity hash, a weak hash, or a source that is not the npm registry
+      ---
+      duration_ms: 0.911495
+      type: 'test'
+      ...
+    # Subtest: refuses a dependency with an unlisted licence or none, and one that runs code at install time
+    ok 5 - refuses a dependency with an unlisted licence or none, and one that runs code at install time
+      ---
+      duration_ms: 1.269335
+      type: 'test'
+      ...
+    # Subtest: refuses an unpinned or mismatched base image
+    ok 6 - refuses an unpinned or mismatched base image
+      ---
+      duration_ms: 0.891915
+      type: 'test'
+      ...
+    # Subtest: refuses installing dependencies in a way that runs install scripts
+    ok 7 - refuses installing dependencies in a way that runs install scripts
+      ---
+      duration_ms: 0.621748
+      type: 'test'
+      ...
+    # Subtest: refuses wiring Stagehand into the probe: that is INFRA-007
+    ok 8 - refuses wiring Stagehand into the probe: that is INFRA-007
+      ---
+      duration_ms: 0.405953
+      type: 'test'
+      ...
+    # Subtest: backend source does not import Stagehand or the hosted Browserbase SDK either
+    ok 9 - backend source does not import Stagehand or the hosted Browserbase SDK either
+      ---
+      duration_ms: 28.448876
+      type: 'test'
+      ...
+    1..9
+ok 30 - browser worker image pins
+  ---
+  duration_ms: 38.803837
+  type: 'suite'
+  ...
+# Subtest: LeaseStore contract: MemoryLeaseStore
+    # Subtest: grants one live holder at a time
+    ok 1 - grants one live holder at a time
+      ---
+      duration_ms: 0.977975
+      type: 'test'
+      ...
+    # Subtest: fencing tokens strictly increase across expiry and release, never repeat
+    ok 2 - fencing tokens strictly increase across expiry and release, never repeat
+      ---
+      duration_ms: 0.239351
+      type: 'test'
+      ...
+    # Subtest: a stalled worker cannot act after takeover (assertCurrent and renew both refuse)
+    ok 3 - a stalled worker cannot act after takeover (assertCurrent and renew both refuse)
+      ---
+      duration_ms: 0.591262
+      type: 'test'
+      ...
+    # Subtest: a late release by the old holder never frees the new holder
+    ok 4 - a late release by the old holder never frees the new holder
+      ---
+      duration_ms: 0.189897
+      type: 'test'
+      ...
+    # Subtest: renew extends the expiry; an unrenewed lease expires
+    ok 5 - renew extends the expiry; an unrenewed lease expires
+      ---
+      duration_ms: 0.180492
+      type: 'test'
+      ...
+    # Subtest: released leases are immediately available
+    ok 6 - released leases are immediately available
+      ---
+      duration_ms: 0.187102
+      type: 'test'
+      ...
+    # Subtest: is scoped by tenant: identical run and task ids in two tenants are independent
+    ok 7 - is scoped by tenant: identical run and task ids in two tenants are independent
+      ---
+      duration_ms: 0.162485
+      type: 'test'
+      ...
+    # Subtest: rejects blank identifiers and unreasonable ttls
+    ok 8 - rejects blank identifiers and unreasonable ttls
+      ---
+      duration_ms: 0.509068
+      type: 'test'
+      ...
+    # Subtest: a forged token is refused even for the right worker
+    ok 9 - a forged token is refused even for the right worker
+      ---
+      duration_ms: 0.294575
+      type: 'test'
+      ...
+    1..9
+ok 31 - LeaseStore contract: MemoryLeaseStore
+  ---
+  duration_ms: 4.418225
+  type: 'suite'
+  ...
+# Subtest: bounded process trees
+    # Subtest: cancel kills the child and its descendants, and reports it
+    ok 1 - cancel kills the child and its descendants, and reports it
+      ---
+      duration_ms: 31.628653
+      type: 'test'
+      ...
+    # Subtest: the deadline kills the whole tree and reports a timeout
+    ok 2 - the deadline kills the whole tree and reports a timeout
+      ---
+      duration_ms: 605.909626
+      type: 'test'
+      ...
+    # Subtest: an already aborted signal never lets the job run
+    ok 3 - an already aborted signal never lets the job run
+      ---
+      duration_ms: 2.487692
+      type: 'test'
+      ...
+    # Subtest: a clean exit reports its code and does not claim a timeout
+    ok 4 - a clean exit reports its code and does not claim a timeout
+      ---
+      duration_ms: 41.402275
+      type: 'test'
+      ...
+    # Subtest: the child gets only the environment it is given
+    ok 5 - the child gets only the environment it is given
+      ---
+      duration_ms: 21.936717
+      type: 'test'
+      ...
+    # Subtest: a missing binary is a failed run, not a crash
+    ok 6 - a missing binary is a failed run, not a crash
+      ---
+      duration_ms: 1.839885
+      type: 'test'
+      ...
+    # Subtest: rejects a non positive deadline
+    ok 7 - rejects a non positive deadline
+      ---
+      duration_ms: 0.471481
+      type: 'test'
+      ...
+    # Subtest: sweeps orphans left behind by a child that exited normally
+    ok 8 - sweeps orphans left behind by a child that exited normally
+      ---
+      duration_ms: 53.916348
+      type: 'test'
+      ...
+    1..8
+ok 32 - bounded process trees
+  ---
+  duration_ms: 760.850574
+  type: 'suite'
+  ...
+# Subtest: egress proxy sidecar configuration
+    # Subtest: accepts a valid job and credentials, with 3128 as the default port
+    ok 1 - accepts a valid job and credentials, with 3128 as the default port
+      ---
+      duration_ms: 5.232914
+      type: 'test'
+      ...
+    # Subtest: refuses a missing, malformed or out-of-contract job (the same strict parser the worker uses)
+    ok 2 - refuses a missing, malformed or out-of-contract job (the same strict parser the worker uses)
+      ---
+      duration_ms: 0.686736
+      type: 'test'
+      ...
+    # Subtest: refuses weak or missing credentials and bad ports
+    ok 3 - refuses weak or missing credentials and bad ports
+      ---
+      duration_ms: 0.534947
+      type: 'test'
+      ...
+    # Subtest: never echoes the job or the credentials in its error
+    ok 4 - never echoes the job or the credentials in its error
+      ---
+      duration_ms: 0.289928
+      type: 'test'
+      ...
+    # Subtest: runs the production proxy: listens, streams decisions, and enforces the job scope
+    ok 5 - runs the production proxy: listens, streams decisions, and enforces the job scope
+      ---
+      duration_ms: 11.230391
+      type: 'test'
+      ...
+    1..5
+ok 33 - egress proxy sidecar configuration
+  ---
+  duration_ms: 18.875344
+  type: 'suite'
+  ...
+# Subtest: restart recovery with leases
+    # Subtest: a crashed worker's task is resumed after its lease expires, with a higher fencing token, and finishes without duplicating evidence
+    ok 1 - a crashed worker's task is resumed after its lease expires, with a higher fencing token, and finishes without duplicating evidence
+      ---
+      duration_ms: 116.875579
+      type: 'test'
+      ...
+    # Subtest: a task still held by a live worker is NOT resumed: it stays running and no second worker starts
+    ok 2 - a task still held by a live worker is NOT resumed: it stays running and no second worker starts
+      ---
+      duration_ms: 0.505333
+      type: 'test'
+      ...
+    # Subtest: if a worker takes the task between the check and the resume, the lease still refuses the second copy
+    ok 3 - if a worker takes the task between the check and the resume, the lease still refuses the second copy
+      ---
+      duration_ms: 4.481861
+      type: 'test'
+      ...
+    # Subtest: another tenant's lease on the same run and task ids does not count as "held"
+    ok 4 - another tenant's lease on the same run and task ids does not count as "held"
+      ---
+      duration_ms: 0.325241
+      type: 'test'
+      ...
+    # Subtest: keeps the canonical safety rule: an interrupted publish is blocked, never replayed, whatever the leases say
+    ok 5 - keeps the canonical safety rule: an interrupted publish is blocked, never replayed, whatever the leases say
+      ---
+      duration_ms: 0.334655
+      type: 'test'
+      ...
+    # Subtest: does not mutate its input
+    ok 6 - does not mutate its input
+      ---
+      duration_ms: 0.318851
+      type: 'test'
+      ...
+    1..6
+ok 34 - restart recovery with leases
+  ---
+  duration_ms: 123.756119
+  type: 'suite'
+  ...
+1..34
+# tests 223
+# suites 34
+# pass 223
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4767.466369
+
+
+# exit: 0

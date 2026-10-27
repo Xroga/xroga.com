@@ -1,20 +1,20 @@
-# Deployment topology — read-only truth
+# Deployment topology, source and dated evidence
 
-Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `87e33b94b3d85deaac12d4bcc691363f4876fa64`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
 | frontend | Vercel | ACTIVE | xroga.com, www.xroga.com | Observed evidence explicitly scoped below; not full journey certification |
-| api | Fly.io | ACTIVE | xroga-api.fly.dev | Observed evidence explicitly scoped below; not full journey certification |
+| api | Google Cloud Run | ACTIVE | api.xroga.com | Observed evidence explicitly scoped below; not full journey certification |
 | supabase | Supabase | ACTIVE | nzenxdfumxrnsmybazmo.supabase.co | Observed evidence explicitly scoped below; not full journey certification |
 | supabase-legacy | Supabase | LEGACY | lztqfktsahpzitybthld.supabase.co | Observed evidence explicitly scoped below; not full journey certification |
 | redis | Redis / BullMQ | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
-| r2 | Cloudflare R2 (S3-compatible) | CONFIGURED_BUT_UNVERIFIED | *.r2.cloudflarestorage.com, api.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
+| r2 | Cloudflare R2 (S3-compatible) | ACTIVE | *.r2.cloudflarestorage.com, api.cloudflare.com | Observed evidence explicitly scoped below; not full journey certification |
 | local-media | Retained legacy API filesystem cache | LEGACY | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
-| fly-sandbox | Fly Machines / existing remote worker adapters | CONFIGURED_BUT_UNVERIFIED | api.machines.dev | Observed evidence explicitly scoped below; not full journey certification |
-| credential-store | Existing Supabase-backed vault / private storage mirror | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
-| browserbase | Browserbase | CONFIGURED_BUT_UNVERIFIED | www.browserbase.com | NOT_INDEPENDENTLY_VERIFIED |
-| cloud-run-proposal | Google Cloud Run / Jobs | PROPOSED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
+| google-execution | Google Compute Engine private execution slots | ACTIVE | compute.googleapis.com, oslogin.googleapis.com | Observed evidence explicitly scoped below; not full journey certification |
+| credential-store | Google Cloud KMS with canonical Supabase CredentialVault | ACTIVE | cloudkms.googleapis.com, secretmanager.googleapis.com | Observed evidence explicitly scoped below; not full journey certification |
+| browserbase | Browserbase | LEGACY | www.browserbase.com | NOT_INDEPENDENTLY_VERIFIED |
+| google-delivery | Google Cloud Tasks and Cloud Run Jobs | ACTIVE | cloudtasks.googleapis.com, run.googleapis.com | Observed evidence explicitly scoped below; not full journey certification |
 | cloudflare-workers-proposal | Cloudflare Workers | PROPOSED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-127-0-0-1 | Source-defined endpoint 127.0.0.1 | LOCAL_ONLY | 127.0.0.1 | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-about-meta-com | Source-defined endpoint about.meta.com | CONFIGURED_BUT_UNVERIFIED | about.meta.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -37,6 +37,7 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-api-groq-com | Source-defined endpoint api.groq.com | CONFIGURED_BUT_UNVERIFIED | api.groq.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-lemonsqueezy-com | Source-defined endpoint api.lemonsqueezy.com | CONFIGURED_BUT_UNVERIFIED | api.lemonsqueezy.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-lumalabs-ai | Source-defined endpoint api.lumalabs.ai | CONFIGURED_BUT_UNVERIFIED | api.lumalabs.ai | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-api-machines-dev | Source-defined endpoint api.machines.dev | CONFIGURED_BUT_UNVERIFIED | api.machines.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-minimax-io | Source-defined endpoint api.minimax.io | CONFIGURED_BUT_UNVERIFIED | api.minimax.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-moonshot-ai | Source-defined endpoint api.moonshot.ai | CONFIGURED_BUT_UNVERIFIED | api.moonshot.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-netlify-com | Source-defined endpoint api.netlify.com | CONFIGURED_BUT_UNVERIFIED | api.netlify.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -62,7 +63,7 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-cheatsheetseries-owasp-org | Source-defined endpoint cheatsheetseries.owasp.org | CONFIGURED_BUT_UNVERIFIED | cheatsheetseries.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chrome-google-com | Source-defined endpoint chrome.google.com | CONFIGURED_BUT_UNVERIFIED | chrome.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-cloudkms-googleapis-com | Source-defined endpoint cloudkms.googleapis.com | CONFIGURED_BUT_UNVERIFIED | cloudkms.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-coordinator | Source-defined endpoint coordinator | CONFIGURED_BUT_UNVERIFIED | coordinator | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-android-com | Source-defined endpoint developer.android.com | CONFIGURED_BUT_UNVERIFIED | developer.android.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -77,6 +78,7 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-docs-anthropic-com | Source-defined endpoint docs.anthropic.com | CONFIGURED_BUT_UNVERIFIED | docs.anthropic.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-aws-amazon-com | Source-defined endpoint docs.aws.amazon.com | CONFIGURED_BUT_UNVERIFIED | docs.aws.amazon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-base44-com | Source-defined endpoint docs.base44.com | CONFIGURED_BUT_UNVERIFIED | docs.base44.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-docs-chain-link | Source-defined endpoint docs.chain.link | CONFIGURED_BUT_UNVERIFIED | docs.chain.link | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-cursor-com | Source-defined endpoint docs.cursor.com | CONFIGURED_BUT_UNVERIFIED | docs.cursor.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-github-com | Source-defined endpoint docs.github.com | CONFIGURED_BUT_UNVERIFIED | docs.github.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-lovable-dev | Source-defined endpoint docs.lovable.dev | CONFIGURED_BUT_UNVERIFIED | docs.lovable.dev | NOT_INDEPENDENTLY_VERIFIED |
@@ -86,7 +88,9 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-docs-windsurf-com | Source-defined endpoint docs.windsurf.com | CONFIGURED_BUT_UNVERIFIED | docs.windsurf.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dorahacks-io | Source-defined endpoint dorahacks.io | CONFIGURED_BUT_UNVERIFIED | dorahacks.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-duckduckgo-com | Source-defined endpoint duckduckgo.com | CONFIGURED_BUT_UNVERIFIED | duckduckgo.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-ethereum-org | Source-defined endpoint ethereum.org | CONFIGURED_BUT_UNVERIFIED | ethereum.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-ethglobal-com | Source-defined endpoint ethglobal.com | CONFIGURED_BUT_UNVERIFIED | ethglobal.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-example-com | Source-defined endpoint example.com | CONFIGURED_BUT_UNVERIFIED | example.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-example-invalid | Source-defined endpoint example.invalid | CONFIGURED_BUT_UNVERIFIED | example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
@@ -103,6 +107,7 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-hardhat-org | Source-defined endpoint hardhat.org | CONFIGURED_BUT_UNVERIFIED | hardhat.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-huggingface-co | Source-defined endpoint huggingface.co | CONFIGURED_BUT_UNVERIFIED | huggingface.co | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-i-postimg-cc | Source-defined endpoint i.postimg.cc | CONFIGURED_BUT_UNVERIFIED | i.postimg.cc | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-iamcredentials-googleapis-com | Source-defined endpoint iamcredentials.googleapis.com | CONFIGURED_BUT_UNVERIFIED | iamcredentials.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-islamic-relief-org | Source-defined endpoint islamic-relief.org | CONFIGURED_BUT_UNVERIFIED | islamic-relief.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-jobs-example-com | Source-defined endpoint jobs.example.com | CONFIGURED_BUT_UNVERIFIED | jobs.example.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-linear-app | Source-defined endpoint linear.app | CONFIGURED_BUT_UNVERIFIED | linear.app | NOT_INDEPENDENTLY_VERIFIED |
@@ -112,6 +117,8 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-lovable-dev | Source-defined endpoint lovable.dev | CONFIGURED_BUT_UNVERIFIED | lovable.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mailchimp-com | Source-defined endpoint mailchimp.com | CONFIGURED_BUT_UNVERIFIED | mailchimp.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mcp-example-com | Source-defined endpoint mcp.example.com | CONFIGURED_BUT_UNVERIFIED | mcp.example.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-memory-invalid | Source-defined endpoint memory.invalid | CONFIGURED_BUT_UNVERIFIED | memory.invalid | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-metadata-google-internal | Source-defined endpoint metadata.google.internal | CONFIGURED_BUT_UNVERIFIED | metadata.google.internal | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mixpanel-com | Source-defined endpoint mixpanel.com | CONFIGURED_BUT_UNVERIFIED | mixpanel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-neon-com | Source-defined endpoint neon.com | CONFIGURED_BUT_UNVERIFIED | neon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-nextjs-org | Source-defined endpoint nextjs.org | CONFIGURED_BUT_UNVERIFIED | nextjs.org | NOT_INDEPENDENTLY_VERIFIED |
@@ -126,10 +133,13 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-public-example-invalid | Source-defined endpoint public.example.invalid | CONFIGURED_BUT_UNVERIFIED | public.example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-railway-app | Source-defined endpoint railway.app | CONFIGURED_BUT_UNVERIFIED | railway.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-react-dev | Source-defined endpoint react.dev | CONFIGURED_BUT_UNVERIFIED | react.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-registry-npmjs-org | Source-defined endpoint registry.npmjs.org | CONFIGURED_BUT_UNVERIFIED | registry.npmjs.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-schema-org | Source-defined endpoint schema.org | CONFIGURED_BUT_UNVERIFIED | schema.org | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-scs-owasp-org | Source-defined endpoint scs.owasp.org | CONFIGURED_BUT_UNVERIFIED | scs.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-sentry-io | Source-defined endpoint sentry.io | CONFIGURED_BUT_UNVERIFIED | sentry.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-solana-com | Source-defined endpoint solana.com | CONFIGURED_BUT_UNVERIFIED | solana.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-stripe-com | Source-defined endpoint stripe.com | CONFIGURED_BUT_UNVERIFIED | stripe.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-sts-googleapis-com | Source-defined endpoint sts.googleapis.com | CONFIGURED_BUT_UNVERIFIED | sts.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-studio-youtube-com | Source-defined endpoint studio.youtube.com | CONFIGURED_BUT_UNVERIFIED | studio.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
@@ -177,9 +187,17 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 | endpoint-www-xero-com | Source-defined endpoint www.xero.com | CONFIGURED_BUT_UNVERIFIED | www.xero.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-youtube-com | Source-defined endpoint www.youtube.com | CONFIGURED_BUT_UNVERIFIED | www.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-x-com | Source-defined endpoint x.com | CONFIGURED_BUT_UNVERIFIED | x.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-xroga-api-fly-dev | Source-defined endpoint xroga-api.fly.dev | CONFIGURED_BUT_UNVERIFIED | xroga-api.fly.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xroga-local | Source-defined endpoint xroga.local | LOCAL_ONLY | xroga.local | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xrogaaicom-vercel-app | Source-defined endpoint xrogaaicom.vercel.app | CONFIGURED_BUT_UNVERIFIED | xrogaaicom.vercel.app | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-your-website-com | Source-defined endpoint your-website.com | CONFIGURED_BUT_UNVERIFIED | your-website.com | NOT_INDEPENDENTLY_VERIFIED |
 | runtime-controls-and-conditional-aliases | Existing operator/system configuration | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
+
+## Accepted infrastructure checkpoint
+
+Google Cloud Run hosts the API at api.xroga.com. Native Google identity, managed KMS, private Compute execution, Cloud Tasks and Cloud Run Jobs replace Fly runtime dependencies. The immutable forward/recovery images, live revisions, private Preview and cleanup receipts are preserved in docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json. This generation reuses that dated acceptance. It makes no new live-health, Phase4 or Batch1.5/2 activation claim.
+
+Vercel remains the frontend, Supabase remains Auth/Postgres, and Cloudflare R2 remains private object storage. Historical October13 Fly facts remain in runtime-facts.mjs for provenance. Cold Fly resources and inert compatibility files are not active runtime dependencies and must not be re-enabled. Optional file-link signing was unconfigured at migration acceptance. Drive entitlement and activation remain separately gated.
 
 ## Evidence
 
@@ -191,10 +209,11 @@ Source SHA: `2dc69b2b3df123f30e7e6b493266b10b7e2acad8`; source/config hashes are
 - VERCEL-PROJECT-20261013: Authenticated Vercel project metadata; observed 2026-10-13 (UTC day; RPC timestamp not returned); NEXTJS_CONFIGURED_NODE_24_X; no application SHA claimed.
 - FLY-RELEASE-CI: https://github.com/Xroga/xroga.com/actions/runs/38135445708; observed 2026-10-13 (UTC observation day); EXISTING_DEPLOYMENT_SUCCESS; 41665b7f9a8e593c1d4d0ce42272c32f6ee7c6b2.
 - FLY-SANDBOX-HISTORICAL: https://github.com/Xroga/xroga.com/actions/runs/37031296255; observed 2026-10-13 (UTC observation day); HISTORICAL_VERIFICATION_SUCCESS_NOT_CURRENT_LIVENESS; fc65cc3783cd307f180ee3e383d0d9859906a58f.
+- GOOGLE-MIGRATION-20261027: docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json; observed 2026-10-27T11:55:15.691159+00:00; EXISTING_DEPLOYMENT_SUCCESS_ZERO_FLY_ACCEPTED; b11841ead316913cb46316fa7c16e76c6519b392.
 
-Frontend release 3b2bad and API release 41665b legitimately differ: the initial main/backend/config tree is equivalent to the last API release. Different component SHAs alone do not prove stale API code. Vercel's configured Node 24.x differs from canonical CI/API 22.21.1; no hosting setting was changed. Local Fly CLI has no token; deeper current app/resource/secret metadata remains unverified. Supabase's older LOGIN project is inactive and is not an approved test project. DNS registrar ownership is not established by a checked-in hostname.
+## Candidate risks and independent release gates
 
-## Risks and incomplete evidence
+Historical findings below remain as review obligations, not fresh observations. Accepted Phase1-3 and Google migration evidence supersede only their exact proven scope. New source, caller provenance, security, schema and product activation still require the original acceptance gates.
 
 - P1 TEST_REALM_PIN: Production realm stays pinned; an explicit isolated CI build is now admitted, but real authenticated E2E configuration and verification remain blocked. Owner command: 007; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 EPHEMERAL_ARTIFACT_FALLBACK: Canonical file fallback removed; legacy cached/public objects not migrated and full private R2/staging durability/quota acceptance remains blocked. Owner command: 007–010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
@@ -207,8 +226,4 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-728 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
-
-## Boundaries
-
-Frontend → API routing: canonical xroga.com/xroga-api.fly.dev, with explicitly local development overrides. OAuth redirects target the existing dashboard callback paths; user-owned integrations are separate from platform auth. Whop platform billing and user-owned publishing/payment integrations must not be conflated. Callback/billing/provider readiness is not inferred from metadata or configuration names. Region/timeout/retry gaps remain explicit in each record. No new secret, payment, external action, DNS setting, provider or database was changed.
+827 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

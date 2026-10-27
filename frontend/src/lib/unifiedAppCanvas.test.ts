@@ -19,14 +19,14 @@ test('workspace keeps a visible outside frame and preserves breathing room insid
   assert.match(UIVERSE, /--xv-sidebar-inset:\s*var\(--xv-app-gutter\)/);
 });
 
-test('desktop pages meet the sidebar edge while retaining top, right, and bottom framing', () => {
+test('desktop pages keep balanced side gutters while the workspace retains its own framing', () => {
   assert.match(
     UIVERSE,
     /\.xv-app-stage:not\(\.xv-app-stage--fullscreen\)\s*\{[\s\S]*?padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*0\s*!important/,
   );
   assert.match(
     UIVERSE,
-    /\.xv-page-stage:not\(\.xv-page-fullscreen-stage\)\s*\{[\s\S]*?padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*0/,
+    /\.xv-page-stage:not\(\.xv-page-fullscreen-stage\)\s*\{[\s\S]*?--xv-content-gutter-inline:\s*18px;[\s\S]*?padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)/,
   );
 });
 

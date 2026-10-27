@@ -20,7 +20,8 @@ import { browserVerificationAdapter } from './browserVerificationAdapter.js';
  */
 
 import type { ProjectFile } from '../ai/patches.js';
-import { executeSandboxed } from '../sandbox/sandboxRuntime.js';
+import { executeCanonicalSandboxed } from '../sandbox/sandboxRuntime.js';
+import {googleProjectRuntimeSelected} from './projectRuntime/googleFactory.js';
 import { reviewBuildOutput } from '../ai/qa.js';
 import type {TenantModelScope} from '../ai/tenantModelDispatch.js';
 import {isTerminalModelFailure} from '../ai/providerRuntime.js';
@@ -178,7 +179,8 @@ export function sandboxValidationRunner(): ValidationRunner {
     // Straight through the Command 1 boundary. The adapter already decided the network
     // policy per command. A stateless sandbox may temporarily need registry access for its
     // setup commands; the actual phase is put in a denied network namespace before it runs.
-    const result = await executeSandboxed({
+    const native=googleProjectRuntimeSelected();
+    const result = await executeCanonicalSandboxed('universal-validation',{
       files: [...(context?.files ?? [])],
       command: needsWrapper ? '/bin/sh' : command.command,
       args: needsWrapper ? ['-c', script] : [...command.args],
@@ -186,6 +188,10 @@ export function sandboxValidationRunner(): ValidationRunner {
       networkPolicy: setupNeedsNetwork ? 'registry-only' : command.networkPolicy,
       environment: buildSandboxEnvironment(),
       ...(context?.image ? { image: context.image } : {}),
+      ...(native?{stages:[...setupCommands.map((setup,index)=>({id:'setup-'+index,command:setup.command,args:[...setup.args],
+        cwd:setup.cwd??command.cwd,networkPolicy:setup.networkPolicy,timeoutMs:Math.floor(300000/Math.max(1,setupCommands.length))})),
+        {id:'validation',command:command.command,args:[...command.args],cwd:command.cwd,networkPolicy:command.networkPolicy,
+          timeoutMs:setupCommands.length?300000:600000}]}:{}),
     });
     return { exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr };
   };

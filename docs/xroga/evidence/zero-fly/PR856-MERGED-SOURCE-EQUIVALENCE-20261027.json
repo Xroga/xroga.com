@@ -1,0 +1,11 @@
+{
+  "mergedCommit": "3c3bc0f54b9e1f38e67641284de4b16073016fdb",
+  "validatedVirtualMerge": "4739c0e336e5ae8bd276585857697009f63ba4dd",
+  "mergedTree": "fe53f89a69271531052d898966e4b0779951b484",
+  "validatedTree": "fe53f89a69271531052d898966e4b0779951b484",
+  "exactTreeMatch": true,
+  "mainUnitRun": 40485138292,
+  "mainUnitConclusion": "success",
+  "previousHead": "1c11569ff097ff2f608158ab6853678ab4df3acf",
+  "atUtc": "2026-10-27T10:16:16.504633+00:00"
+}

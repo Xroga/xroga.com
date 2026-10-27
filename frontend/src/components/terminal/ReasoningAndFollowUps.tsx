@@ -1,8 +1,8 @@
 'use client';
 
 import { memo, type ReactNode } from 'react';
-import { MessageSquareText } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { BlackHoleWordmark } from './BlackHoleMark';
 import {
   extractImagesFromContent,
   stripImageMarkdown,
@@ -16,9 +16,9 @@ import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
 
 function ResponseBody({ children, streaming }: { children: ReactNode; streaming?: boolean }) {
-  return <div className={cn('xv-response-text flex min-w-0 items-start gap-2.5', streaming && 'xv-streaming')}>
-    <MessageSquareText className="mt-1 h-4 w-4 shrink-0 text-[var(--muted)]" aria-hidden="true" />
-    <div className="min-w-0 flex-1">{children}</div>
+  return <div className={cn('xv-response-text min-w-0', streaming && 'xv-streaming')}>
+    {streaming ? <div className="xv-response-identity"><BlackHoleWordmark active /></div> : null}
+    <div className="min-w-0">{children}</div>
   </div>;
 }
 
@@ -27,12 +27,14 @@ export const ModernResponseText = memo(function ModernResponseText({
   content,
   streaming,
   sources,
+  afterIntro,
 }: {
   content: string;
   streaming?: boolean;
   sources?: CitationSource[];
+  afterIntro?: ReactNode;
 }) {
-  const safeContent = typeof content === 'string' ? content : '';
+  const safeContent = typeof content === 'string' ? content.replace(/[—–]/g, '-') : '';
 
   if (!safeContent && streaming) {
     return null;
@@ -57,7 +59,7 @@ export const ModernResponseText = memo(function ModernResponseText({
       <ResponseBody streaming={streaming}>
         <div className="space-y-2">
           {textOnly && (
-            <FormattedAiMarkdown content={textOnly} streaming={streaming} sources={sources} />
+            <FormattedAiMarkdown content={textOnly} streaming={streaming} sources={sources} afterIntro={afterIntro} />
           )}
 
           {images.map((img, i) => (
@@ -85,7 +87,7 @@ export const ModernResponseText = memo(function ModernResponseText({
           mathMode
         />
       ) : (
-        <FormattedAiMarkdown content={safeContent} streaming={streaming} sources={sources} />
+        <FormattedAiMarkdown content={safeContent} streaming={streaming} sources={sources} afterIntro={afterIntro} />
       )}
     </ResponseBody>
   );

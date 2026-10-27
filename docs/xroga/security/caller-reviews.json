@@ -2,10 +2,27 @@
   "version": "1.0",
   "reviews": [
     {
-      "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sourceSha256": "7b886fe8c8422b8e530ccf7082934b366483826f46b83562eb73a0d3037e85af",
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "sourceSha256": "9bd1a0a08eb68cd52773f00c6b861f5cfcf8f75d2bd2a9c1d2e032fd377c719f",
       "callIds": [
-        "f236ae4444d81d62c17c"
+        "f7cf4d72de3f0a43a18c",
+        "bd1cdd4ac74c2e9b91c5"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Exactly two native Buffer.from calls decode bounded JWT header and payload bytes locally before defense-in-depth claim checks. Neither receiver is a database, storage bucket or provider. Decoding is not signature verification or authority. Google STS and exact IAM conditions remain independently required.",
+      "reason": "AST review identifies only these two local conversions. This excludes no Fly socket, Google STS/IAM/KMS operation, workload identity, customer credential, production effect or acceptance requirement. Live identity and final source-bound CI remain unverified.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+          "marker": "export function flySubjectTokenSupplier"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+      "sourceSha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
+      "callIds": [
+        "37347768912b9e614cea"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
@@ -92,10 +109,10 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "08fa3351d8cb19a04571",
-        "dd16f90263b54684c181"
+        "6ed50f9fc731b3a94f89",
+        "d6a2d0f1eafe32f09954"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
@@ -109,18 +126,34 @@
           "path": "backend/src/ai/runStore.historyAdmission.test.ts",
           "marker": "history hydration cannot replace an admitted worker"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "08fa3351d8cb19a04571",
+          "dd16f90263b54684c181"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "1dec69321380b532d6ad",
-        "aaa2bb0b83359368e76c"
+        "bc1c802d7afea2658481",
+        "69147b3a0b1c10adba2a"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
       "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
-      "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification.",
+      "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification. Google migration adds requireRunning to reject terminal authority at dispatch. Owner and generation predicates remain, but changed cancellation function requires exact-source integration proof. Historical scoped disposition is retained only in preGooglePositionBinding.",
       "evidence": [
         {
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -130,7 +163,23 @@
           "path": "backend/src/ai/runStore.cancellationRace.test.ts",
           "marker": "a delayed cancellation read cannot admit an old callback"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "1dec69321380b532d6ad",
+          "aaa2bb0b83359368e76c"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -2164,11 +2213,11 @@
     },
     {
       "path": "backend/src/ai/webBudget.ts",
-      "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+      "sourceSha256": "0970dd0edfcf52dfd97e0ce6b7397d8be00777491d2dcffb29a0baf864738d2d",
       "callIds": [
-        "3a079bb3694a289488d7",
-        "cb5da87d32bfae7b42b8",
-        "b3cacfdb187f1405097d"
+        "31295ac3c56f1f0e3ba7",
+        "3c8e385b0938e532fbec",
+        "0066574fb806e32ec9ec"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The only production accounting producers are the existing Parallel and internal web-intelligence wrappers. Research and admitted pipeline chains pass their original server userId, not model/body identity. The accounting helper snapshots all scalar owner/provider/request fields before awaiting the bounded current-owner cycle query. The fixed private insert uses that captured actor and optional cycle ID. The composite database foreign key validates cycle_id plus user_id at the decisive write, takes PostgreSQL referential locks and refuses a cycle transferred to a different owner while the insert waits. Browser roles have no accounting-table privileges. Diagnostics remain best-effort with no claimed execution or billing receipt on a failed insert.",
@@ -2252,7 +2301,100 @@
         "originalReviewReason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
-      }
+      },
+      "phase4PriorSourceReview": {
+        "path": "backend/src/ai/webBudget.ts",
+        "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+        "callIds": [
+          "3a079bb3694a289488d7",
+          "cb5da87d32bfae7b42b8",
+          "b3cacfdb187f1405097d"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The only production accounting producers are the existing Parallel and internal web-intelligence wrappers. Research and admitted pipeline chains pass their original server userId, not model/body identity. The accounting helper snapshots all scalar owner/provider/request fields before awaiting the bounded current-owner cycle query. The fixed private insert uses that captured actor and optional cycle ID. The composite database foreign key validates cycle_id plus user_id at the decisive write, takes PostgreSQL referential locks and refuses a cycle transferred to a different owner while the insert waits. Browser roles have no accounting-table privileges. Diagnostics remain best-effort with no claimed execution or billing receipt on a failed insert.",
+        "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Three original query/factory/insert sites, one shared relationship correction. Actual local Auth/database tests preserve exact captured owner/provider/request/amount/price receipts despite input mutation during the actual cycle response, reject service-role foreign cycle substitution and browser reads/writes, observe the real delayed FK insert losing to committed parent ownership change, preserve valid concurrent current-owner appends and deny later parent transfer while children exist. Cycle deletion retains only those same-owner receipts with null cycle, preserving legacy semantics. Migration validation stops on mismatched old history without rewriting it. No web provider executes and no008 budget, paid spend or exactly-once provider claim is made. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/webBudget.ts",
+            "marker": "recordWebSpend"
+          },
+          {
+            "path": "backend/src/security/webAccounting.local.integration.ts",
+            "marker": "real web accounting retains captured owner intent and cycle ownership across an observed database lock wait"
+          },
+          {
+            "path": "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+            "marker": "xroga_web_usage_cycle_owner_fkey"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/ai/webBudget.ts",
+          "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+          "callIds": [
+            "3a079bb3694a289488d7",
+            "cb5da87d32bfae7b42b8",
+            "b3cacfdb187f1405097d"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
+          "reason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/webBudget.ts",
+              "marker": "recordWebSpend"
+            },
+            {
+              "path": "backend/src/security/webAccounting.local.integration.ts",
+              "marker": "real web accounting retains captured owner intent and cycle ownership across an observed database lock wait"
+            },
+            {
+              "path": "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+              "marker": "xroga_web_usage_cycle_owner_fkey"
+            }
+          ],
+          "historicalReview": {
+            "path": "backend/src/ai/webBudget.ts",
+            "sourceSha256": "e102c18bfe549af599b7479cfc3a57a1366ceab59620ed0d2c9afa4084ffa92d",
+            "callIds": [
+              "6d55007bf3ddd2edc540",
+              "d97bbed18063d9cc41d7",
+              "5a8e3957447bad08faa1"
+            ],
+            "disposition": "REVIEWED_GAP",
+            "authority": "recordWebSpend accepts a userId and performs an owner-filtered active billing-cycle lookup followed by insertion into xroga_web_usage. This is explicitly post-facto spend observability, not a pre-execution reservation boundary.",
+            "reason": "No hard-limit acceptance: missing store skips accounting, lookup errors can produce a null cycle, and failures are logged. Full caller ownership, provider reservation coverage, numeric validation and reconciliation after partial writes remain open. Do not use this telemetry as proof of zero spend.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/webBudget.ts",
+                "marker": "recordWebSpend"
+              }
+            ]
+          }
+        },
+        "command007Proof": {
+          "sourceSha": "8b3adfc9b6cdedc56c442e70ff84eb22685e626b",
+          "inputArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/input.json",
+          "inputSha256": "ba6ba232912fa1c649d52574b46e1a94ba9d583738957ef42af6053ed798a703",
+          "observationsArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/observations.json",
+          "observationsSha256": "2d3e1f336f4e0a8cdd8e33da04f04df11134547c215d0fcfd2ec99cea1385307",
+          "resultArtifact": "artifacts/phase-2-proof/8b3adfc9b6cdedc56c442e70ff84eb22685e626b/result.json",
+          "resultSha256": "585002ac9393b02bc5dff75342d7216c8eaa371271830bf3354cda14f08316ad",
+          "obligationIds": [
+            "OB-0fbb2964e9911f44:observed-captured-web-owner-and-cycle-parent"
+          ],
+          "passedTests": [
+            "real web accounting retains captured owner intent and cycle ownership across an observed database lock wait"
+          ],
+          "scope": "EXACT_ORIGINAL_007_BOUNDARIES_ONLY_FULL_INTEGRATED_REGRESSION_STILL_REQUIRED"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "A held real-SDK loopback cycle lookup reproduced mutable input producing one owner cycle with another owner user/provider/request tuple. The input is now captured before awaiting. A composite current cycle-owner foreign key fences the decisive insert against parent changes and retains existing null-cycle deletion behavior. Actual changed-source PostgreSQL lock, actor-isolation, browser-denial and exact receipt evidence is still required. This remains an original007 gap, not a spending-policy certificate.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
+        }
+      },
+      "phase4SourceReviewProof": "docs/xroga/evidence/command-010/SCOPED-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
@@ -2274,10 +2416,10 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "f0e3b232c2f87f3c0cdb35e3982f557da4fb8a8d86ea2a98ea44e62274929aa6",
       "callIds": [
-        "6cb302dec6a7d693df42",
-        "09b6dc142ebd7f16df10"
+        "b0890e13b2718629037e",
+        "1b90517b37251b8ee7c7"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "This record covers only canonical checkpoint load. SupabaseExecutionStateStore builds issued tenant context from constructor userId, filters owner/run and validates stored owner/run/project against embedded state. Writes have a separate issued-attempt row-lock disposition.",
@@ -2287,7 +2429,47 @@
           "path": "backend/src/ai/executionRuntime.ts",
           "marker": "restoreOwnerBoundExecutionState"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+        "callIds": [
+          "6cb302dec6a7d693df42",
+          "09b6dc142ebd7f16df10"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/executionRuntime.ts",
+        "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+        "callIds": [
+          "b0890e13b2718629037e",
+          "1b90517b37251b8ee7c7"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "This record covers only canonical checkpoint load. SupabaseExecutionStateStore builds issued tenant context from constructor userId, filters owner/run and validates stored owner/run/project against embedded state. Writes have a separate issued-attempt row-lock disposition.",
+        "reason": "Reconciled unchanged source atd9b13e09 disposable39171571259. Both production constructors are runBuildPipeline, which requires original issued context and matching user. Resume reads only that user's exact run, validates embedded row/project/repository/branch lineage and rechecks current database project before durable worker admission. After admission the constructor receives the captured original run/user attempt. Actual canonical execution-store case proves permitted own load, foreign canary denial, corrupt run/project rejection and preserved concurrent owner receipt. Separate current-parent admission and checkpoint epoch tests pass. These two loader/factory calls are scoped, not whole runtime/provider lifecycle or a permission to read a foreign run.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/executionRuntime.ts",
+            "marker": "restoreOwnerBoundExecutionState"
+          }
+        ],
+        "preGooglePositionBinding": {
+          "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+          "callIds": [
+            "6cb302dec6a7d693df42",
+            "09b6dc142ebd7f16df10"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "structuredOrigin": null,
+          "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+          "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
@@ -2551,7 +2733,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "72439f834416b3fd90eb",
         "fd09b17779296225433f"
@@ -2566,7 +2748,7 @@
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
-          "marker": "const target = authorizedPreviewTarget(grant, session);"
+          "marker": "}else target=authorizedPreviewTarget(grant,session);"
         },
         {
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -2582,7 +2764,7 @@
         "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
         "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
         "fixture": "backend/src/security/previewConsumer.local.integration.ts",
-        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
       },
       "historicalReview": {
@@ -2773,6 +2955,14 @@
           "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
         }
+      },
+      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance.",
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
       }
     },
     {
@@ -3272,9 +3462,9 @@
     },
     {
       "path": "frontend/src/lib/supabase/middleware.ts",
-      "sourceSha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e",
+      "sourceSha256": "97122c2d487c2960d803b3b6e9d0fccab5b6f41164f6b5dc0bd97ff9017a3d91",
       "callIds": [
-        "5c64aa680a603f460991"
+        "58a4e78e527a34053c20"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
@@ -3288,7 +3478,28 @@
           "path": "supabase/migrations/20260729192159_community_platform.sql",
           "marker": "where id = (select auth.uid())"
         }
-      ]
+      ],
+      "phase4PriorSourceReview": {
+        "path": "frontend/src/lib/supabase/middleware.ts",
+        "sourceSha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e",
+        "callIds": [
+          "5c64aa680a603f460991"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
+        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/supabase/server.ts",
+            "marker": "config.publishableKey"
+          },
+          {
+            "path": "supabase/migrations/20260729192159_community_platform.sql",
+            "marker": "where id = (select auth.uid())"
+          }
+        ]
+      },
+      "phase4SourceReviewProof": "docs/xroga/evidence/command-010/SCOPED-SOURCE-REBINDING.json"
     },
     {
       "path": "frontend/src/lib/avatarPersistence.ts",
@@ -3405,9 +3616,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
       "callIds": [
-        "af88e0f5ab6048f75011"
+        "b092008f2d41b3ddf1d9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3441,13 +3652,54 @@
           "6c962371859b256ff96c"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "googleIntegrationOriginalReview": {
+        "path": "backend/src/ai/pipeline.ts",
+        "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+        "callIds": [
+          "af88e0f5ab6048f75011"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+          }
+        ],
+        "historicalBeforeRoutingContextArgument": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+          "callIds": [
+            "f816225ee7eecbfbd7ae"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+            }
+          ]
+        },
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "callIds": [
+            "6c962371859b256ff96c"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
       "callIds": [
-        "863e45f48048017eb977"
+        "40b6d116790751a2b569"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3481,7 +3733,48 @@
           "8db8b524179b45694274"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "googleIntegrationOriginalReview": {
+        "path": "backend/src/ai/pipeline.ts",
+        "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+        "callIds": [
+          "863e45f48048017eb977"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+          }
+        ],
+        "historicalBeforeRoutingContextArgument": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+          "callIds": [
+            "4b3b93bfa4bbc1f26e10"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+            }
+          ]
+        },
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "callIds": [
+            "8db8b524179b45694274"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -3661,9 +3954,9 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sourceSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+      "sourceSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
       "callIds": [
-        "5f28d665d687ff7e0502"
+        "be5069f3467fad24f1c5"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3680,7 +3973,107 @@
           "37aeba5e7ba598d930da"
         ],
         "reason": "An export modifier exposes the unchanged actual resolver to the disposable test. This shifted only the position of an unchanged Buffer.from expression, which remains a non-persistence conversion. No security-sensitive caller is exempted."
-      }
+      },
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+        "callIds": [
+          "b9d29af2f2ef47d2dbd8"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+      },
+      "googleIntegrationOriginalReview": {
+        "path": "backend/src/middleware/runtimePreviewGateway.ts",
+        "sourceSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+        "callIds": [
+          "5f28d665d687ff7e0502"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "                        : Buffer.from(\n                            data as\n                              ArrayBuffer,"
+          }
+        ],
+        "previousSourcePosition": {
+          "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+          "callIds": [
+            "37aeba5e7ba598d930da"
+          ],
+          "reason": "An export modifier exposes the unchanged actual resolver to the disposable test. This shifted only the position of an unchanged Buffer.from expression, which remains a non-persistence conversion. No security-sensitive caller is exempted."
+        },
+        "beforeGoogleMigrationBinding": {
+          "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+          "callIds": [
+            "b9d29af2f2ef47d2dbd8"
+          ],
+          "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+        }
+      },
+      "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+      "phase4PriorSourceReview": {
+        "path": "backend/src/middleware/runtimePreviewGateway.ts",
+        "sourceSha256": "11a6d1a269461778e103b016c98f27c99256038ff57b2cc6bb1856b9070cf4d9",
+        "callIds": [
+          "a81c2e8a1a0fcd8b0d6b"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/middleware/runtimePreviewGateway.ts",
+            "marker": "                        : Buffer.from(\n                            data as\n                              ArrayBuffer,"
+          }
+        ],
+        "previousSourcePosition": {
+          "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+          "callIds": [
+            "37aeba5e7ba598d930da"
+          ],
+          "reason": "An export modifier exposes the unchanged actual resolver to the disposable test. This shifted only the position of an unchanged Buffer.from expression, which remains a non-persistence conversion. No security-sensitive caller is exempted."
+        },
+        "beforeGoogleMigrationBinding": {
+          "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+          "callIds": [
+            "b9d29af2f2ef47d2dbd8"
+          ],
+          "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+        },
+        "googleIntegrationOriginalReview": {
+          "path": "backend/src/middleware/runtimePreviewGateway.ts",
+          "sourceSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+          "callIds": [
+            "5f28d665d687ff7e0502"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/middleware/runtimePreviewGateway.ts",
+              "marker": "                        : Buffer.from(\n                            data as\n                              ArrayBuffer,"
+            }
+          ],
+          "previousSourcePosition": {
+            "sourceSha256": "179586848e2233dcc2752083bbc1027979bbad308bf06032c3d39a457969d383",
+            "callIds": [
+              "37aeba5e7ba598d930da"
+            ],
+            "reason": "An export modifier exposes the unchanged actual resolver to the disposable test. This shifted only the position of an unchanged Buffer.from expression, which remains a non-persistence conversion. No security-sensitive caller is exempted."
+          },
+          "beforeGoogleMigrationBinding": {
+            "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+            "callIds": [
+              "b9d29af2f2ef47d2dbd8"
+            ],
+            "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+          }
+        },
+        "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+      },
+      "phase4SourceReviewProof": "docs/xroga/evidence/command-010/SCOPED-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/routes/voice.ts",
@@ -3941,9 +4334,9 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/signing.ts",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "sourceSha256": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c",
       "callIds": [
-        "fe7f31cd086bdc19c02d"
+        "bb71c8f1e400499a5efa"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3953,13 +4346,20 @@
           "path": "backend/src/synthesis/livePreview/signing.ts",
           "marker": "    Buffer.from(\n      expected,\n      'utf8',"
         }
-      ]
+      ],
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+        "callIds": [
+          "fe7f31cd086bdc19c02d"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+      }
     },
     {
       "path": "backend/src/synthesis/livePreview/signing.ts",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "sourceSha256": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c",
       "callIds": [
-        "de255983f758d3faeee7"
+        "bee2cf1db23c710add27"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3969,7 +4369,14 @@
           "path": "backend/src/synthesis/livePreview/signing.ts",
           "marker": "    Buffer.from(\n      signature,\n      'utf8',"
         }
-      ]
+      ],
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+        "callIds": [
+          "de255983f758d3faeee7"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+      }
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
@@ -4053,9 +4460,9 @@
     },
     {
       "path": "frontend/src/app/crypto/page.tsx",
-      "sourceSha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3",
+      "sourceSha256": "4265371512e9c8ed4f554f651979db3cbd451cbfca5d05bedd830ca04e5700ba",
       "callIds": [
-        "1cf0586f7cd93a578782"
+        "0fd74b05d65465065102"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GlowButton, with no database or Storage client receiver.",
@@ -4181,7 +4588,7 @@
     },
     {
       "path": "frontend/src/components/community/CommunityFeed.tsx",
-      "sourceSha256": "2e4465a70ed9f9e9c20ccc287cc2329ede24a937948b5a684bc2ace878590672",
+      "sourceSha256": "95ca80699a63df7fc757896b76ad7e30c8b0b9b9ee5ee507430a782689f13775",
       "callIds": [
         "229f69845215b3f79181"
       ],
@@ -4421,9 +4828,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
+      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
       "callIds": [
-        "b8ef33bd57715ef2cbbe"
+        "a291f26c3c5001de01f9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -4437,9 +4844,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
+      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
       "callIds": [
-        "5f13844b2f1b712e7919"
+        "f8d5eaf0193282882763"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -4645,9 +5052,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "a49cae58957810667768e12b253cdf01b1974185364e276c9e8510a93d5d0da6",
+      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
       "callIds": [
-        "ee3a52d31fb1a4645f1c"
+        "18f7c2043f2ceb0ebac3"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
@@ -4661,9 +5068,9 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
-      "sourceSha256": "50d499b0b3f231805056051c5651995f849ac0864010857db8857e52700e7664",
+      "sourceSha256": "456bcddeced123a22c4655c4f3837357c7092158f6b5af677414daa32bdc92fa",
       "callIds": [
-        "8bee3dafa232d3071008"
+        "8e9b157c7d4fd26ad135"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ComparisonRenderer, with no database or Storage client receiver.",
@@ -4677,9 +5084,9 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sourceSha256": "f6ca1c376e8ef4cf690055d67cc2a98168257dafba0074c989d4b81add68d88e",
+      "sourceSha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad",
       "callIds": [
-        "6520ef22b7832bcb902c"
+        "8f3c7995974f0b7357a6"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
@@ -6223,7 +6630,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "callIds": [
         "d84df34ff692e4fb31c1"
       ],
@@ -6404,10 +6811,10 @@
         }
       },
       "structuredOrigin": {
-        "id": "OB-efb3ff72a0bb848e",
+        "id": "OB-d2ad32e6402233db",
         "callIds": [
           "d84df34ff692e4fb31c1",
-          "5c97508c3ec30ba78c4e"
+          "cfcd9a8afee3dabccf13"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -6607,14 +7014,31 @@
           "OB-efb3ff72a0bb848e:verified-construction-getTenantSupabaseAdmin"
         ],
         "scope": "EXACT_ORIGINAL007_ROUTING_CONSTRUCTION_AND_ENDPOINTS_NEW_SOURCE_ACCEPTANCE_REQUIRED"
+      },
+      "preGooglePositionBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "callIds": [
+          "d84df34ff692e4fb31c1"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": {
+          "id": "OB-efb3ff72a0bb848e",
+          "callIds": [
+            "d84df34ff692e4fb31c1",
+            "5c97508c3ec30ba78c4e"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
       }
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "callIds": [
-        "fae128d168b634c4b083",
-        "8e4b6e7d9718371f3e6b"
+        "7fa0b75d1947b7252b32",
+        "475ce22bc32e3c36e043"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -6767,6 +7191,17 @@
             "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
           }
         }
+      },
+      "preGooglePositionBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "callIds": [
+          "fae128d168b634c4b083",
+          "8e4b6e7d9718371f3e6b"
+        ],
+        "disposition": "NARROW_EXCEPTION",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
       }
     },
     {
@@ -6791,12 +7226,12 @@
     },
     {
       "path": "backend/src/services/storage/privateFileDelivery.ts",
-      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+      "sourceSha256": "86846ff80cd83a6afd9d26cd768e1797e741bab0575552c4ec9608bd9aa3cf47",
       "callIds": [
-        "1592c394d8f566b6b5c6",
-        "1dc21b8de955c5a67410",
-        "a3fd57e400ae93dcf1bc",
-        "c0d01dcfb09596ce1894"
+        "ccf4650f84e96b85761d",
+        "a7c08fd36aa24b3b90b9",
+        "2c697c1d1bf48f921843",
+        "6824d62216fce2d409a3"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Issued context and validated project/file UUIDs precede owner-joined retrieval. Returned payload is independently Zod validated and matched against actor/project/file even when an injected SDK is used. Revocation uses the server actor, not a request owner.",
@@ -6810,14 +7245,38 @@
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real RLS and metadata trigger deny client delivery forgery"
         }
-      ]
+      ],
+      "phase4PriorSourceReview": {
+        "path": "backend/src/services/storage/privateFileDelivery.ts",
+        "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+        "callIds": [
+          "1592c394d8f566b6b5c6",
+          "1dc21b8de955c5a67410",
+          "a3fd57e400ae93dcf1bc",
+          "c0d01dcfb09596ce1894"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Issued context and validated project/file UUIDs precede owner-joined retrieval. Returned payload is independently Zod validated and matched against actor/project/file even when an injected SDK is used. Revocation uses the server actor, not a request owner.",
+        "reason": "Link verification and file read restore current owner before object access; metadata owner/key, bytes and digest are verified without fetching legacy public/data URLs. Revocation's owner-parent predicate is atomic in its existing RPC. Real R2 privacy, key management, staging compatibility and upstream writer identity remain blocked separately.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real durable database file delivery is owner-only"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real RLS and metadata trigger deny client delivery forgery"
+          }
+        ]
+      },
+      "phase4SourceReviewProof": "docs/xroga/evidence/command-010/SCOPED-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/storage/privateFileDelivery.ts",
-      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+      "sourceSha256": "86846ff80cd83a6afd9d26cd768e1797e741bab0575552c4ec9608bd9aa3cf47",
       "callIds": [
-        "fb08a2d7689ff8e64794",
-        "0052e85ad523398c7685"
+        "212280eaba78bf80925c",
+        "e0ed69e337d5095baf97"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Both expressions use the built-in Buffer.from to encode already owner-checked database content; neither invokes the database SDK or an external object store.",
@@ -6827,7 +7286,25 @@
           "path": "backend/src/services/storage/privateFileDelivery.ts",
           "marker": "buffer=Buffer.from(row.content)"
         }
-      ]
+      ],
+      "phase4PriorSourceReview": {
+        "path": "backend/src/services/storage/privateFileDelivery.ts",
+        "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+        "callIds": [
+          "fb08a2d7689ff8e64794",
+          "0052e85ad523398c7685"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Both expressions use the built-in Buffer.from to encode already owner-checked database content; neither invokes the database SDK or an external object store.",
+        "reason": "This classification is limited to two buffer conversions, not the surrounding storage lifecycle. The actual privileged reads and revocation RPC in this module have separate semantic dispositions, and the external private R2 acceptance gate remains pending.",
+        "evidence": [
+          {
+            "path": "backend/src/services/storage/privateFileDelivery.ts",
+            "marker": "buffer=Buffer.from(row.content)"
+          }
+        ]
+      },
+      "phase4SourceReviewProof": "docs/xroga/evidence/command-010/SCOPED-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
@@ -7018,16 +7495,16 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "cb05c4e7cb4f3b73155f",
-        "eeb2bd25e4456d58a465",
-        "8796931131b8f3173ef9",
-        "24e9a07a40a70d9bd103",
-        "e81906b392bf21ef067d",
-        "3e4ef8e15d7b836d3557",
-        "b47a9af1f31012f1a675",
-        "9a5ebc5d27638e21a19f"
+        "f280dbf81344931da30f",
+        "06708d2c84b319622b11",
+        "ac5a1c58a85da7a69076",
+        "1df986c6dad802e3813b",
+        "ae9a98ddd675f4a5288c",
+        "109b247634f32645ac05",
+        "0f4cd46668bdefa4e8e9",
+        "63358e8789c46a7bbb09"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
@@ -7049,14 +7526,36 @@
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "cb05c4e7cb4f3b73155f",
+          "eeb2bd25e4456d58a465",
+          "8796931131b8f3173ef9",
+          "24e9a07a40a70d9bd103",
+          "e81906b392bf21ef067d",
+          "3e4ef8e15d7b836d3557",
+          "b47a9af1f31012f1a675",
+          "9a5ebc5d27638e21a19f"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "305655721877fdc8af8d",
-        "19cd1b0c28a37907906a"
+        "613a8526c208ac2754f6",
+        "c026c348ff7a940e10e9"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
@@ -7066,7 +7565,23 @@
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
           "marker": "real concurrent cancellation claims produce one receipt"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "305655721877fdc8af8d",
+          "19cd1b0c28a37907906a"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
@@ -7104,10 +7619,10 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "f0e3b232c2f87f3c0cdb35e3982f557da4fb8a8d86ea2a98ea44e62274929aa6",
       "callIds": [
-        "77dae5d737d7faa0bdd1",
-        "840a0babdc3449f56be3"
+        "1bb8bd89204f01a7253f",
+        "024ec43cb6e858b32b18"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
@@ -7117,7 +7632,47 @@
           "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
           "marker": "real checkpoint fence rejects wrong owner epoch lineage"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+        "callIds": [
+          "77dae5d737d7faa0bdd1",
+          "840a0babdc3449f56be3"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/executionRuntime.ts",
+        "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+        "callIds": [
+          "1bb8bd89204f01a7253f",
+          "024ec43cb6e858b32b18"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
+        "reason": "Exact canonical-state write boundary VERIFIED at01bd07160817927799a043bbfb46d2c433ab85a8 disposable38822065088. Real current-owner issued attempt persists, wrong owner/worker/generation/lineage and browser-role attempts fail, observed two-session parent-lock races deny stale writes after resume and cancellation. Forged/cloned descriptors, immutable snapshots and failed queues have focused proof. Separate software checkpoints, runtime revisions, external effects and full run lifecycle remain independent open obligations, not covered by this disposition.",
+        "evidence": [
+          {
+            "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
+            "marker": "real checkpoint fence rejects wrong owner epoch lineage"
+          }
+        ],
+        "preGooglePositionBinding": {
+          "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+          "callIds": [
+            "77dae5d737d7faa0bdd1",
+            "840a0babdc3449f56be3"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "structuredOrigin": null,
+          "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+          "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
@@ -7815,12 +8370,12 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "a6d30f02806fc550256d"
       ],
       "disposition": "SCOPED_BOUNDARY",
-      "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader and authorizedPreviewTarget validate the private target. Service-only transaction locks exact current owner/session, compares full expected session JSON and identity/status/provider columns, requires running interactive session with the declared HTTP port, then checks database expiry after locking before inserting. Exact single returned capability receipt is required. Gateway independently revalidates signature, revocation and current session on resolution.",
+      "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader validates the exact running interactive session and declared HTTP port. Google grant creation uses provider-independent session admission, while other providers retain their existing target validation. The service-only SQL transaction locks the current owner/session, compares full session JSON and identity/status/provider columns, samples expiry after locking and requires the exact returned capability. Native Google identity, immutable owned handle and private endpoint remain independently mandatory at gateway resolution.",
       "reason": "Exact current-session grant insertion boundary VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660:110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. Actual observed grant-write waits reject session state/status/port changes and expiry before insertion, foreign/browser denial and injected rollback pass. Runtime invocation, SQL and fixture unchanged. Only parent-bound admission/insertion closes. Complete coordinator/run provenance, canonical project lifecycle, revoke/create and in-flight socket semantics and signing-key custody remain unresolved. No live provider or whole-preview certification.",
       "evidence": [
         {
@@ -7831,7 +8386,14 @@
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
           "marker": "preview grant input and returned capability stay bound"
         }
-      ]
+      ],
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
+      }
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
@@ -7895,9 +8457,9 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "300193e2a9a49a1a57e2"
+        "e772b4943b42c4a2d452"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private heartbeat timer runs only for locally owned run IDs and captured original generation. Only production creation/resume consumers are the existing pipeline's durable calls, using server actor and owner-checked resume. History hydration never claims local worker identity. This factory passes only issued owner context, server process worker ID and original generation to the dedicated heartbeat helper, with no caller-selected table or mutation payload.",
@@ -7915,7 +8477,22 @@
           "path": "backend/src/ai/pipeline.ts",
           "marker": "await createRunDurable("
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "300193e2a9a49a1a57e2"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/growth/growthService.ts",
@@ -8617,7 +9194,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "260f546643a88434ec35",
         "62f2c45d96306d0c651c",
@@ -8635,7 +9212,7 @@
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
-          "marker": "const target = authorizedPreviewTarget(grant, session);"
+          "marker": "}else target=authorizedPreviewTarget(grant,session);"
         },
         {
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -8651,7 +9228,7 @@
         "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
         "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
         "fixture": "backend/src/security/previewConsumer.local.integration.ts",
-        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
       },
       "historicalReview": {
@@ -8842,6 +9419,14 @@
           "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
         }
+      },
+      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance.",
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
       }
     },
     {
@@ -8959,9 +9544,9 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "callIds": [
-        "5c97508c3ec30ba78c4e"
+        "cfcd9a8afee3dabccf13"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "This internal constructor requires an exact own key of the immutable17-entry global operation registry and has no public administrative endpoint. Every named recipient independently proves its fixed operation, limited data projection, current staff/signature/capability authority where needed and actual positive/negative behavior. All other633 receiving inventory sites are already verified before this constructor is considered. Actual unknown, prototype and missing names fail before SDK construction, valid private routing/readiness uses execute, and revoked readiness SELECT denies without leaking identities. Returned SDK is privileged, not an enforced query sandbox. This exemption covers only named actual internal recipients, never arbitrary future queries or a user-selectable admin handle.",
@@ -9140,10 +9725,10 @@
         }
       },
       "structuredOrigin": {
-        "id": "OB-efb3ff72a0bb848e",
+        "id": "OB-d2ad32e6402233db",
         "callIds": [
           "d84df34ff692e4fb31c1",
-          "5c97508c3ec30ba78c4e"
+          "cfcd9a8afee3dabccf13"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -9343,6 +9928,23 @@
           "OB-efb3ff72a0bb848e:verified-construction-getGlobalSupabaseAdmin"
         ],
         "scope": "EXACT_ORIGINAL007_ROUTING_CONSTRUCTION_AND_ENDPOINTS_NEW_SOURCE_ACCEPTANCE_REQUIRED"
+      },
+      "preGooglePositionBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "callIds": [
+          "5c97508c3ec30ba78c4e"
+        ],
+        "disposition": "NARROW_EXCEPTION",
+        "structuredOrigin": {
+          "id": "OB-efb3ff72a0bb848e",
+          "callIds": [
+            "d84df34ff692e4fb31c1",
+            "5c97508c3ec30ba78c4e"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
       }
     },
     {
@@ -9382,18 +9984,18 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "d9d2547770aa24b0841c",
-        "d58b6fdbfd8c7bd723ea",
-        "0b783f584a470b13209e",
-        "dd1e78725f475509a9cd",
-        "7f2df45a035153bcbf55",
-        "408a89ba73f0f4572071",
-        "456ab4492b8fe9318933",
-        "138a7b9c83878cb3dc82",
-        "9393c7ce95c3aee1b590",
-        "3e7f7e1fcb903f426f23"
+        "99ba24aefa7f2c2f6de9",
+        "3c64dc5d4a7058fb12f8",
+        "fc3b3f4bab00e81fbc31",
+        "94f936dfc30fe898eebe",
+        "1f375890c653535bb84b",
+        "9614e2de1a77eacffe05",
+        "b3a2b5af5ead58408dba",
+        "1f7c11b7359e0958073e",
+        "0f9bdee0b411ef2f246d",
+        "adbc1ef16d0ec277edb7"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
@@ -9473,7 +10075,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
       "callIds": [
         "d406c0b568fd6ec5e544",
         "de6707af035c2d7fe760"
@@ -9687,7 +10289,226 @@
           "2fbd469f16851f3b71ab"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "callIds": [
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
+        "reason": "Four exact dormant original007 callable budget contracts verified at f703fd6a46b441d7d7a4e58abb0a371e50ead020, disposable39408219627/job118579265766 and aggregate39408219586. Original issued context, exact captured subject and payment period, full paid-cycle receipt, owner/tier/budget read-back, actual two-owner concurrent replay, browser denial and forced SQL rollback/recovery pass. Four complete21-stage branch/integrated baselines pass. No active payment producer is invented, no real provider payment is made, and Phase3 grant/approval/financial authority isn't certified. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "marker": "dormant budget writers require original issued owners and exact durable receipts"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "marker": "real dormant budget contracts retain issued owners through concurrent replay and SQL failures"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-e316498540d10d15",
+          "callIds": [
+            "d406c0b568fd6ec5e544",
+            "de6707af035c2d7fe760",
+            "5ffa627faeaa6803aab8",
+            "7fb0d4feb0707259368b",
+            "abe158166765391a38bb",
+            "cd6fb0dc4aecaa924a23",
+            "48010eb67a70f9160a4e",
+            "c79d0afb3ebeabc76c2d",
+            "f8840556255dc425215c",
+            "3c5c04328c11bf512dba",
+            "88e420183bcb296b87a4",
+            "df66c5e789c6e8f1dd46",
+            "1523f7744eed6083f0b6",
+            "4c1b535638e8a0a197f8",
+            "88789f83425415184ffc",
+            "5fc4041577ba475ddde3"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "historicalBeforeDormantBudgetOwnerRepair": {
+          "path": "backend/src/ai/providerBudget.ts",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "callIds": [
+            "00d351afbe045a136c66",
+            "254a91383e3a8af0310b"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+          "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/providerBudget.evidence.test.ts",
+              "marker": "malformed durable reservation evidence never reaches provider execution"
+            },
+            {
+              "path": "backend/src/ai/providerBudget.test.ts",
+              "marker": "production cannot authorize provider execution using process-memory accounting"
+            }
+          ],
+          "structuredOrigin": {
+            "id": "OB-392b9b628a9b92be",
+            "callIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "disposition": "REVIEWED_GAP"
+          }
+        },
+        "historicalBeforeVerifiedDormantBudgetProof": {
+          "path": "backend/src/ai/providerBudget.ts",
+          "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+          "callIds": [
+            "046674e946dedc2dbd0a",
+            "f7d8e33dac1c0de787f8"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
+          "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/providerBudget.evidence.test.ts",
+              "marker": "malformed durable reservation evidence never reaches provider execution"
+            },
+            {
+              "path": "backend/src/ai/providerBudget.test.ts",
+              "marker": "production cannot authorize provider execution using process-memory accounting"
+            },
+            {
+              "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+              "marker": "dormant budget writers require original issued owners and exact durable receipts"
+            },
+            {
+              "path": "backend/src/security/budgetOwner.local.integration.ts",
+              "marker": "real dormant budget contracts retain issued owners through concurrent replay and SQL failures"
+            }
+          ],
+          "structuredOrigin": {
+            "id": "OB-4a863cd8672fa6c2",
+            "callIds": [
+              "046674e946dedc2dbd0a",
+              "f7d8e33dac1c0de787f8",
+              "2384f6f1c188f4f6ce83",
+              "03557d58e528c5852636",
+              "e2e547f8796cd0aad243",
+              "f602ab2d6bfebc170a02",
+              "8a48ae3957449eee9587",
+              "685bdab3b4b31bd28d43",
+              "9a847ab5769bb707c1f2",
+              "e489f9a48f400005cb2d",
+              "d9435c22813b64a1f1f5",
+              "1d3ef9e110d2f000f590",
+              "0b24ee0eecebdda0e6f3",
+              "ace18dec175b4875e7f7",
+              "c07b5b1f63ae0e361ae7",
+              "fba07b765dafacccf133"
+            ],
+            "disposition": "REVIEWED_GAP"
+          },
+          "historicalBeforeDormantBudgetOwnerRepair": {
+            "path": "backend/src/ai/providerBudget.ts",
+            "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+            "callIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b"
+            ],
+            "disposition": "REVIEWED_GAP",
+            "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+            "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/providerBudget.evidence.test.ts",
+                "marker": "malformed durable reservation evidence never reaches provider execution"
+              },
+              {
+                "path": "backend/src/ai/providerBudget.test.ts",
+                "marker": "production cannot authorize provider execution using process-memory accounting"
+              }
+            ],
+            "structuredOrigin": {
+              "id": "OB-392b9b628a9b92be",
+              "callIds": [
+                "00d351afbe045a136c66",
+                "254a91383e3a8af0310b",
+                "590df28cdc2b297e03b6",
+                "39a1f4163240597da04d",
+                "613d8e71ddafb0d6bd0c",
+                "a80e4804742dfd6bcc0a",
+                "6285818c6e8220770b29",
+                "090fe734dc5d1d3dc6e3",
+                "3f66673813dee0d85b85",
+                "746985044f7d3ee62aff",
+                "e030677c7ecb6b0dd90e",
+                "e35278adbe80b78c8d41",
+                "b5a82155e981259a207e",
+                "564673e6f6b21c690fce",
+                "5ed8ef26b72e26561f26",
+                "3fc72ec34d884b871909"
+              ],
+              "disposition": "REVIEWED_GAP"
+            }
+          }
+        },
+        "command007Proof": {
+          "sourceSha": "f703fd6a46b441d7d7a4e58abb0a371e50ead020",
+          "inputArtifact": "artifacts/phase-2-proof/f703fd6a46b441d7d7a4e58abb0a371e50ead020/input.json",
+          "inputSha256": "6afc12ee371fa22a34106da56f40327860cc07d4567d167fa7e3bd586b9291fd",
+          "observationsArtifact": "artifacts/phase-2-proof/f703fd6a46b441d7d7a4e58abb0a371e50ead020/observations.json",
+          "observationsSha256": "f134f82155e969a81d8f9f8e48189591ad5c53c42bb31c81d09b95334067c4bb",
+          "resultArtifact": "artifacts/phase-2-proof/f703fd6a46b441d7d7a4e58abb0a371e50ead020/result.json",
+          "resultSha256": "bdde43b66ea48b7dce9d363c430ca598fbc3d569413c44d559d77e9c7645c594",
+          "obligationIds": [
+            "OB-4a863cd8672fa6c2:observed-dormant-issued-budget-owner-and-persistence-receipt"
+          ],
+          "scope": "EXACT_ORIGINAL007_DORMANT_OWNER_CONTRACTS_NOT_PHASE3_FINANCIAL_AUTHORITY"
+        },
+        "acceptedPhaseTwoReview": {
+          "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+          "callIds": [
+            "046674e946dedc2dbd0a",
+            "f7d8e33dac1c0de787f8"
+          ]
+        },
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "callIds": [
+            "1169e490665cdec7b3a3",
+            "2fbd469f16851f3b71ab"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
@@ -9798,9 +10619,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+      "sourceSha256": "c39b7e3b3c17442c56c575628bbcf6fdcb56e11453a67190f449da09c5e2e3be",
       "callIds": [
-        "ebede146c851a085d2b8"
+        "29043e1b2d0f9c86568b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -9817,7 +10638,45 @@
         "callIds": [
           "74229d60e093f2e44542"
         ]
-      }
+      },
+      "mergeSeedMixedBindingPreserved": {
+        "sourceSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+        "callIds": [
+          "29043e1b2d0f9c86568b"
+        ],
+        "scope": "INVALID_PARTIAL_MERGE_SEED_NOT_ACCEPTED_REVIEW"
+      },
+      "googleIntegrationOriginalReview": {
+        "path": "backend/src/routes/phase1.ts",
+        "sourceSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+        "callIds": [
+          "ebede146c851a085d2b8"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/phase1.ts",
+            "marker": "    Buffer\n      .from(\n        JSON.stringify("
+          }
+        ],
+        "acceptedPhaseTwoReview": {
+          "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "sourceSha256": "4bfbc1d8eec9c4e146da3d76344e05a1c29e8950153b1cd8f2cd451e70d7989a",
+          "callIds": [
+            "74229d60e093f2e44542"
+          ]
+        },
+        "mergeSeedMixedBindingPreserved": {
+          "sourceSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+          "callIds": [
+            "29043e1b2d0f9c86568b"
+          ],
+          "scope": "INVALID_PARTIAL_MERGE_SEED_NOT_ACCEPTED_REVIEW"
+        }
+      },
+      "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -9913,9 +10772,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990",
+      "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
       "callIds": [
-        "bdf5ffe6c8a34bf8d3af"
+        "f40cf50a136b33e64174"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -12148,9 +13007,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "1638b66c83949be618af"
+        "c2ce222ac0cc6f913871"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
@@ -12440,9 +13299,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "2de50011885a1231ce06"
+        "8f3d42e8e45d7fb2252a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
@@ -12819,7 +13678,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
       "callIds": [
         "5ffa627faeaa6803aab8",
         "7fb0d4feb0707259368b",
@@ -13072,7 +13931,265 @@
           "e5f59ad9b6097a1bb115"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "callIds": [
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
+        "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/ai/providerBudget.ts",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "callIds": [
+            "00d351afbe045a136c66",
+            "254a91383e3a8af0310b",
+            "590df28cdc2b297e03b6",
+            "39a1f4163240597da04d",
+            "613d8e71ddafb0d6bd0c",
+            "a80e4804742dfd6bcc0a",
+            "6285818c6e8220770b29",
+            "090fe734dc5d1d3dc6e3",
+            "3f66673813dee0d85b85",
+            "746985044f7d3ee62aff",
+            "e030677c7ecb6b0dd90e",
+            "e35278adbe80b78c8d41",
+            "b5a82155e981259a207e",
+            "564673e6f6b21c690fce",
+            "5ed8ef26b72e26561f26",
+            "3fc72ec34d884b871909"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+          "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/providerBudget.evidence.test.ts",
+              "marker": "malformed durable reservation evidence never reaches provider execution"
+            },
+            {
+              "path": "backend/src/ai/providerBudget.test.ts",
+              "marker": "production cannot authorize provider execution using process-memory accounting"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+          "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+          "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+          "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+          "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+          "obligationIds": [
+            "OB-392b9b628a9b92be:observed-owned-entitlement",
+            "OB-392b9b628a9b92be:authenticated-pacing",
+            "OB-392b9b628a9b92be:observed-owner-reservation-settlement"
+          ],
+          "passedTests": [
+            "real billing routes use the authenticated owner for status pacing and management regardless of forged body identity",
+            "real reservation concurrency and foreign settlement cannot transfer budget between tenants"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+          "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+        },
+        "structuredOrigin": {
+          "id": "OB-e316498540d10d15",
+          "callIds": [
+            "d406c0b568fd6ec5e544",
+            "de6707af035c2d7fe760",
+            "5ffa627faeaa6803aab8",
+            "7fb0d4feb0707259368b",
+            "abe158166765391a38bb",
+            "cd6fb0dc4aecaa924a23",
+            "48010eb67a70f9160a4e",
+            "c79d0afb3ebeabc76c2d",
+            "f8840556255dc425215c",
+            "3c5c04328c11bf512dba",
+            "88e420183bcb296b87a4",
+            "df66c5e789c6e8f1dd46",
+            "1523f7744eed6083f0b6",
+            "4c1b535638e8a0a197f8",
+            "88789f83425415184ffc",
+            "5fc4041577ba475ddde3"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "historicalBeforeDormantBudgetOwnerRepair": {
+          "path": "backend/src/ai/providerBudget.ts",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "callIds": [
+            "590df28cdc2b297e03b6",
+            "39a1f4163240597da04d",
+            "613d8e71ddafb0d6bd0c",
+            "a80e4804742dfd6bcc0a",
+            "6285818c6e8220770b29",
+            "090fe734dc5d1d3dc6e3",
+            "3f66673813dee0d85b85",
+            "746985044f7d3ee62aff",
+            "b5a82155e981259a207e",
+            "564673e6f6b21c690fce"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
+          "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/providerBudget.evidence.test.ts",
+              "marker": "malformed durable reservation evidence never reaches provider execution"
+            },
+            {
+              "path": "backend/src/ai/providerBudget.test.ts",
+              "marker": "production cannot authorize provider execution using process-memory accounting"
+            }
+          ],
+          "historicalReview": {
+            "path": "backend/src/ai/providerBudget.ts",
+            "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+            "callIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "disposition": "REVIEWED_GAP",
+            "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+            "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/providerBudget.evidence.test.ts",
+                "marker": "malformed durable reservation evidence never reaches provider execution"
+              },
+              {
+                "path": "backend/src/ai/providerBudget.test.ts",
+                "marker": "production cannot authorize provider execution using process-memory accounting"
+              }
+            ]
+          },
+          "command007Proof": {
+            "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+            "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+            "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+            "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+            "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+            "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+            "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+            "obligationIds": [
+              "OB-392b9b628a9b92be:observed-owned-entitlement",
+              "OB-392b9b628a9b92be:authenticated-pacing",
+              "OB-392b9b628a9b92be:observed-owner-reservation-settlement"
+            ],
+            "passedTests": [
+              "real billing routes use the authenticated owner for status pacing and management regardless of forged body identity",
+              "real reservation concurrency and foreign settlement cannot transfer budget between tenants"
+            ],
+            "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+          },
+          "separateUncertifiedScope": {
+            "state": "PRESERVED_NOT_CERTIFIED",
+            "originalReviewReason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+            "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+            "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+            "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+          },
+          "structuredOrigin": {
+            "id": "OB-392b9b628a9b92be",
+            "callIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "disposition": "REVIEWED_GAP"
+          }
+        },
+        "acceptedPhaseTwoReview": {
+          "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+          "callIds": [
+            "2384f6f1c188f4f6ce83",
+            "03557d58e528c5852636",
+            "e2e547f8796cd0aad243",
+            "f602ab2d6bfebc170a02",
+            "8a48ae3957449eee9587",
+            "685bdab3b4b31bd28d43",
+            "9a847ab5769bb707c1f2",
+            "e489f9a48f400005cb2d",
+            "0b24ee0eecebdda0e6f3",
+            "ace18dec175b4875e7f7"
+          ]
+        },
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "callIds": [
+            "6f058d1957df9ddef58e",
+            "263d64635be54643daaf",
+            "28c7a352253f65a4d63b",
+            "ec7738731d0c6be00798",
+            "0882d94061fd33117251",
+            "ba74f371a047c8305b9a",
+            "9e5ee446a0fb192d8f39",
+            "3a904e92ac521ad89ef0",
+            "a50ebf735a3e2d6e8587",
+            "e5f59ad9b6097a1bb115"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -14196,7 +15313,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
       "callIds": [
         "88e420183bcb296b87a4",
         "df66c5e789c6e8f1dd46",
@@ -14441,7 +15558,257 @@
           "60a088c3f2c03ec9402c"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "callIds": [
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerBudget.evidence.test.ts",
+            "marker": "malformed durable reservation evidence never reaches provider execution"
+          },
+          {
+            "path": "backend/src/ai/providerBudget.test.ts",
+            "marker": "production cannot authorize provider execution using process-memory accounting"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-e316498540d10d15",
+          "callIds": [
+            "d406c0b568fd6ec5e544",
+            "de6707af035c2d7fe760",
+            "5ffa627faeaa6803aab8",
+            "7fb0d4feb0707259368b",
+            "abe158166765391a38bb",
+            "cd6fb0dc4aecaa924a23",
+            "48010eb67a70f9160a4e",
+            "c79d0afb3ebeabc76c2d",
+            "f8840556255dc425215c",
+            "3c5c04328c11bf512dba",
+            "88e420183bcb296b87a4",
+            "df66c5e789c6e8f1dd46",
+            "1523f7744eed6083f0b6",
+            "4c1b535638e8a0a197f8",
+            "88789f83425415184ffc",
+            "5fc4041577ba475ddde3"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "historicalReview": {
+          "path": "backend/src/ai/providerBudget.ts",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "callIds": [
+            "00d351afbe045a136c66",
+            "254a91383e3a8af0310b",
+            "e030677c7ecb6b0dd90e",
+            "e35278adbe80b78c8d41",
+            "5ed8ef26b72e26561f26",
+            "3fc72ec34d884b871909"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+          "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/providerBudget.evidence.test.ts",
+              "marker": "malformed durable reservation evidence never reaches provider execution"
+            },
+            {
+              "path": "backend/src/ai/providerBudget.test.ts",
+              "marker": "production cannot authorize provider execution using process-memory accounting"
+            }
+          ],
+          "structuredOrigin": {
+            "id": "OB-392b9b628a9b92be",
+            "callIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "disposition": "REVIEWED_GAP"
+          }
+        },
+        "command007Proof": {
+          "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+          "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+          "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+          "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+          "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+          "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+          "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+          "obligationIds": [
+            "OB-392b9b628a9b92be:observed-owned-free-fallback-failed-reservation"
+          ],
+          "passedTests": [
+            "real failed reservation wrapper releases only the matching owner and retains uncertain holds"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+        },
+        "historicalBeforeDormantBudgetOwnerRepair": {
+          "path": "backend/src/ai/providerBudget.ts",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "callIds": [
+            "e030677c7ecb6b0dd90e",
+            "e35278adbe80b78c8d41",
+            "5ed8ef26b72e26561f26",
+            "3fc72ec34d884b871909"
+          ],
+          "disposition": "SCOPED_BOUNDARY",
+          "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
+          "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/providerBudget.evidence.test.ts",
+              "marker": "malformed durable reservation evidence never reaches provider execution"
+            },
+            {
+              "path": "backend/src/ai/providerBudget.test.ts",
+              "marker": "production cannot authorize provider execution using process-memory accounting"
+            }
+          ],
+          "structuredOrigin": {
+            "id": "OB-392b9b628a9b92be",
+            "callIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "disposition": "REVIEWED_GAP"
+          },
+          "historicalReview": {
+            "path": "backend/src/ai/providerBudget.ts",
+            "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+            "callIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "disposition": "REVIEWED_GAP",
+            "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
+            "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/providerBudget.evidence.test.ts",
+                "marker": "malformed durable reservation evidence never reaches provider execution"
+              },
+              {
+                "path": "backend/src/ai/providerBudget.test.ts",
+                "marker": "production cannot authorize provider execution using process-memory accounting"
+              }
+            ],
+            "structuredOrigin": {
+              "id": "OB-392b9b628a9b92be",
+              "callIds": [
+                "00d351afbe045a136c66",
+                "254a91383e3a8af0310b",
+                "590df28cdc2b297e03b6",
+                "39a1f4163240597da04d",
+                "613d8e71ddafb0d6bd0c",
+                "a80e4804742dfd6bcc0a",
+                "6285818c6e8220770b29",
+                "090fe734dc5d1d3dc6e3",
+                "3f66673813dee0d85b85",
+                "746985044f7d3ee62aff",
+                "e030677c7ecb6b0dd90e",
+                "e35278adbe80b78c8d41",
+                "b5a82155e981259a207e",
+                "564673e6f6b21c690fce",
+                "5ed8ef26b72e26561f26",
+                "3fc72ec34d884b871909"
+              ],
+              "disposition": "REVIEWED_GAP"
+            }
+          },
+          "command007Proof": {
+            "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+            "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+            "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+            "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+            "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+            "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+            "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+            "obligationIds": [
+              "OB-392b9b628a9b92be:observed-owned-free-fallback-failed-reservation"
+            ],
+            "passedTests": [
+              "real failed reservation wrapper releases only the matching owner and retains uncertain holds"
+            ],
+            "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+          },
+          "separateUncertifiedScope": {
+            "state": "PRESERVED_NOT_CERTIFIED",
+            "originalReviewReason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+            "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+            "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+          }
+        },
+        "acceptedPhaseTwoReview": {
+          "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+          "callIds": [
+            "d9435c22813b64a1f1f5",
+            "1d3ef9e110d2f000f590",
+            "c07b5b1f63ae0e361ae7",
+            "fba07b765dafacccf133"
+          ]
+        },
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "callIds": [
+            "495469d5a798cf52f829",
+            "4ac1c2be7bfccf034c8e",
+            "8b8545e8ee1fbbfb3fbf",
+            "60a088c3f2c03ec9402c"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -14985,9 +16352,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "9ad5f0d15e0e54d3d953"
+        "16c8e03100d592b72118"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -15005,9 +16372,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "b3a2b5af5ead58408dba"
+        "402d88eda8e20ef83be0"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -15025,9 +16392,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "a48d99cb6019142baf77"
+        "d8dd240dbf1cb3f97b7d"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -15045,7 +16412,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
       "callIds": [
         "3ff444168109d6f2d8a7"
       ],
@@ -15070,11 +16437,41 @@
           "8aa7e4818165f80a2954"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "callIds": [
+          "3ff444168109d6f2d8a7"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
+        "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+            "marker": "registerOperationsProviderBudgetTests"
+          }
+        ],
+        "phase3Requirements": [
+          "XB01-C008-AC05",
+          "XB01-C008-AC06",
+          "XB01-C008-AC07"
+        ],
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "callIds": [
+            "8aa7e4818165f80a2954"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
       "callIds": [
         "e838e61e27730ca3c3a9"
       ],
@@ -15099,11 +16496,41 @@
           "0dc96ad35c877b5c6b81"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "callIds": [
+          "e838e61e27730ca3c3a9"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
+        "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+            "marker": "registerOperationsProviderBudgetTests"
+          }
+        ],
+        "phase3Requirements": [
+          "XB01-C008-AC05",
+          "XB01-C008-AC06",
+          "XB01-C008-AC07"
+        ],
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "callIds": [
+            "0dc96ad35c877b5c6b81"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
       "callIds": [
         "d483200769e782169fd9"
       ],
@@ -15128,11 +16555,41 @@
           "1e296c319fef476f484e"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "callIds": [
+          "d483200769e782169fd9"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
+        "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+            "marker": "registerOperationsProviderBudgetTests"
+          }
+        ],
+        "phase3Requirements": [
+          "XB01-C008-AC05",
+          "XB01-C008-AC06",
+          "XB01-C008-AC07"
+        ],
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "callIds": [
+            "1e296c319fef476f484e"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
       "callIds": [
         "5f776647ab77d7a35536"
       ],
@@ -15157,7 +16614,37 @@
           "10d24b0a58511aa77d5a"
         ],
         "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
-      }
+      },
+      "browserPriorSourceReview": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "callIds": [
+          "5f776647ab77d7a35536"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
+        "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+            "marker": "registerOperationsProviderBudgetTests"
+          }
+        ],
+        "phase3Requirements": [
+          "XB01-C008-AC05",
+          "XB01-C008-AC06",
+          "XB01-C008-AC07"
+        ],
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "callIds": [
+            "10d24b0a58511aa77d5a"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        }
+      },
+      "browserSourceReviewProof": "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
@@ -15612,13 +17099,24 @@
     },
     {
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "sourceSha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "sourceSha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50",
       "callIds": [
-        "8eb4738a24cf9aa75051",
-        "91a6564e80b0e68d4568",
-        "06eaca75f76beddc6077",
-        "d409058bdea94f6230eb"
+        "740ab1780025cfef90bd",
+        "fd200ed8ed9f0e1a4228",
+        "27b7f2af1ab4fd07f909",
+        "653d1975581c4f1d514b"
       ],
+      "previousSourceBinding": {
+        "source": "2bb72563b2a940bcf906d2a7346cf408cbbd5440",
+        "sha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+        "callIds": [
+          "8eb4738a24cf9aa75051",
+          "91a6564e80b0e68d4568",
+          "06eaca75f76beddc6077",
+          "d409058bdea94f6230eb"
+        ],
+        "comparison": "All four Buffer.from AST expressions are byte-identical. Only source positions changed. The new authentication transport is outside this local conversion review."
+      },
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
       "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -15627,7 +17125,17 @@
           "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
           "marker": "export class GoogleCloudKmsCryptoProvider"
         }
-      ]
+      ],
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
+        "callIds": [
+          "40e92e9644eb0296fe11",
+          "ae4afbcbef62e88edc30",
+          "d8a806b779eb8d10543c",
+          "3936c61b550b6e7554dd"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+      }
     },
     {
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
@@ -15663,6 +17171,51 @@
         {
           "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
           "marker": "export function createOciWorkloadFederation"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/security/egress/dataClassification.ts",
+      "sourceSha256": "726082d23297dfeb3e8b7fdc6f0288cc61e72b28b5fb27839fe7ee101fbcf530",
+      "callIds": [
+        "135997e375f52a030d46"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "The single unshadowed native Buffer.from encodes an already-held server credential transiently for comparison with base64/base64url text. It performs no database or object-store call, no credential decryption, no return of credential values and no external effect.",
+      "reason": "Only this exact local byte conversion is excluded from persistence candidates. Opaque credential/canary, original authority, egress, DLP limitations and all reachable callers remain separate security obligations. No acceptance criterion is promoted.",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/dataClassification.ts",
+          "marker": "const bytes=Buffer.from(held)"
+        },
+        {
+          "path": "backend/src/security/egress/heldCredentialFloor.test.ts",
+          "marker": "opaque held credentials cannot escape through innocent text labels or simple encodings"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "sourceSha256": "d5fc61960cb0b75bce2c548c1b46501bbc3d0e2638fb4ec970efa8e91e0cf137",
+      "callIds": [
+        "7e7b5e81355e9a2bd831",
+        "75cbf034c044cf32b892",
+        "9ba49df0a3b0dbcb6499",
+        "4d5d2f4b9bd33a701568",
+        "f4b4fed45844e6530265",
+        "0061fed247982bdbe46e"
+      ],
+      "disposition": "REVIEWED_GAP",
+      "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
+      "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/parallelDispatch.ts",
+          "marker": "export async function executeParallelRequest"
+        },
+        {
+          "path": "backend/src/ai/parallelWeb.security.test.ts",
+          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement"
         }
       ]
     }

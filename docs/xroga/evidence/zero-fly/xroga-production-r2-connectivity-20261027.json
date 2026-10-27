@@ -1,0 +1,7 @@
+{
+  "atUtc": "2026-10-27T08:30:08.076700+00:00",
+  "scope": "EXISTING_PRODUCTION_R2_HEAD_BUCKET",
+  "customerObjectsRead": false,
+  "writePerformed": false,
+  "status": 401
+}

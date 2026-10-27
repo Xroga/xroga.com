@@ -61,6 +61,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   scope:TenantModelScope;modelId:ModelId;payload:ModelPayload;
   estimatedInputTokens:number;maximumOutputTokens:number;
   purpose?:BudgetPurpose;
+  idempotencyKey?:string;
   validateResponse?:(result:T)=>void;
   execute:(dispatch:BoundModelDispatch)=>Promise<T>;
 }):Promise<T>{
@@ -117,7 +118,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   checkAuthority();
   let sdk:ReturnType<typeof registerModelSdkAdmission>|undefined;
   const result=await withProviderReservation({userId:context.userId,modelId,
-    estimatedInputTokens,maximumOutputTokens,purpose,
+    estimatedInputTokens,maximumOutputTokens,purpose,idempotencyKey:input.idempotencyKey,
     execute:async()=>{
       let active=true;
       try{

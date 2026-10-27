@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8ce54f2421039d724571bb727ecce234bcc02a03",
+  "source_sha": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2089,6 +2089,10 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/sandbox/flyMachineSandbox.ts",
+        "backend/src/sandbox/google/executionBinding.ts",
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/sandbox/google/gceSshTransport.ts",
+        "backend/src/sandbox/google/googleSandbox.ts",
         "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
         "backend/src/sandbox/sandboxProviders.ts",
@@ -3477,7 +3481,9 @@
         "scripts/security/audit-egress-callers.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/caller-reviews.mjs",
+        "scripts/security/check-cloudrun-staging.mjs",
         "scripts/security/collect-local-security-logs.mjs",
+        "scripts/security/compare-production-migrations.mjs",
         "scripts/security/dependency-advisories.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/evaluate-phase-three.mjs",

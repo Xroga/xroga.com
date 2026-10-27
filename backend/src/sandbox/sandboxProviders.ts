@@ -23,6 +23,8 @@ import { spawn } from 'child_process';
 import { buildSandboxEnvironment } from './sandboxEnvironment.js';
 import { remoteSandboxFromEnvironment } from './remoteSandbox.js';
 import { flyMachineSandboxFromEnvironment } from './flyMachineSandbox.js';
+import {GoogleSandboxRuntime} from './google/googleSandbox.js';
+import {googleProjectRuntimeSelected} from '../synthesis/projectRuntime/googleFactory.js';
 import {
   SandboxUnavailableError,
   requireEnforcedSandboxNetworkPolicy,
@@ -247,6 +249,7 @@ async function runIsolated(
  * A hosted provider would be registered here too — see `registerSandboxProvider`.
  */
 function defaultProviders(): SandboxRuntime[] {
+  if(googleProjectRuntimeSelected())return [new GoogleSandboxRuntime()];
   return [
     new ContainerSandboxRuntime({ name: 'docker', binary: 'docker' }),
     new ContainerSandboxRuntime({ name: 'podman', binary: 'podman' }),
@@ -306,6 +309,7 @@ export function setSandboxProvidersForTesting(runtimes: SandboxRuntime[] | null)
 export function configureRemoteSandboxProvider(
   env: NodeJS.ProcessEnv = process.env,
 ): SandboxRuntime | null {
+  if(googleProjectRuntimeSelected(env))return null;
   const remote = remoteSandboxFromEnvironment(env);
   if (!remote) return null;
   if (providers().some((p) => p.name === remote.name)) return null;
@@ -328,6 +332,7 @@ export function configureRemoteSandboxProvider(
 export function configureFlyMachineSandboxProvider(
   env: NodeJS.ProcessEnv = process.env,
 ): SandboxRuntime | null {
+  if(googleProjectRuntimeSelected(env))return null;
   const fly = flyMachineSandboxFromEnvironment(env);
   if (!fly) return null;
   if (providers().some((p) => p.name === fly.name)) return null;
@@ -352,7 +357,7 @@ export async function selectSandboxProvider(): Promise<{
   probes: ProviderProbe[];
 }> {
   const probes: ProviderProbe[] = [];
-  const candidates = providers();
+  const candidates = providers().filter(provider=>!googleProjectRuntimeSelected()||provider.name==='google-gce');
 
   if (!candidates.length) {
     return {

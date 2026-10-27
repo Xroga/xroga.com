@@ -6,7 +6,7 @@
  * Browser Automation: an Xroga desktop with one browser window. Xroga's blue X cursor works across its tabs, findings
  * are pinned where they happen, and a result card waits for approval and lets the visitor inspect every step.
  *
- * AI Employees: the selected employee's conversation beside that employee's own computer (Workforce.tsx). No
+ * AI Employees: the selected employee's conversation beside that employee's own computer (WorkforceStage.tsx). No
  * cursor drives the employees: they are a different product, owning ongoing jobs and reporting back in chat.
  *
  * The selectors (four missions, or six employees) live ABOVE the computer, in S02Work.
@@ -15,7 +15,7 @@ import { useRef, useState } from 'react';
 import { makeCtx, type Ctx } from './ctx';
 import { Pins, Pointer, usePush } from './motion';
 import { MISSION_APPS } from './Missions';
-import { Workforce, WorkforceMenu } from './WorkforceSurface';
+import { Workforce, WorkforceMenu } from './WorkforceStage';
 import { COPY, missionOf, stepsOf, type Mission, type Mode, type Step, type TrackId } from './script';
 import type { WfAction, WfState } from './workforce';
 import { inertIf } from './inert';

@@ -1,8 +1,9 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MessageSuggestions } from '@/lib/messageHelpers';
+import { BlackHoleMark } from './BlackHoleMark';
 
 interface MessageSuggestionChipsProps {
   suggestions: MessageSuggestions;
@@ -13,27 +14,27 @@ interface MessageSuggestionChipsProps {
 export function MessageSuggestionChips({ suggestions, onSelect, className }: MessageSuggestionChipsProps) {
   const { followUps, refine } = suggestions;
   const all = [
-    ...followUps.map((q) => ({ key: q, text: q, label: q, tone: 'next' as const })),
-    ...refine.map((idea) => ({ key: idea, text: idea, label: idea, tone: 'refine' as const })),
-  ];
+    ...followUps.slice(0, 2),
+    ...refine.slice(0, 2),
+  ].filter((item, index, rows) => rows.indexOf(item) === index);
 
   if (all.length === 0) return null;
 
   return (
     <div className={cn('mt-2 xv-suggestions-enter', className)}>
       <p className="xv-suggest-label">
-        <Sparkles className="w-3 h-3" />
+        <span className="xv-suggest-mark"><BlackHoleMark /></span>
         Suggested next steps
       </p>
       <div className="xv-suggest-row">
         {all.map((item) => (
           <button
-            key={item.key}
+            key={item}
             type="button"
-            onClick={() => onSelect(item.text)}
-            className={cn('xv-suggest-chip', item.tone === 'next' && 'is-next')}
+            onClick={() => onSelect(item)}
+            className="xv-suggest-chip"
           >
-            {item.label}
+            <span>{item}</span><ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           </button>
         ))}
       </div>

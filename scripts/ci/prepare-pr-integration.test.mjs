@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { validateIntegrationIdentity,projectVanishedNonPersistenceReviews,projectStableArrayConversionReviews,integrationAdmissionProjection } from './prepare-pr-integration.mjs';
 import { discoverPersistenceCalls } from '../security/audit-tenant-policies.mjs';
-import {readFileSync} from 'node:fs';
 const fixture={ci:'true',event:'pull_request',head:'a'.repeat(40),parents:['b'.repeat(40),'c'.repeat(40)],expectedBase:'b'.repeat(40),expectedHead:'c'.repeat(40)};
 
 test('current Phase4 conversion reviews bind feature bytes before virtual merge projection',()=>{
@@ -20,6 +20,33 @@ test('current Phase4 conversion reviews bind feature bytes before virtual merge 
   assert.equal(projectStableArrayConversionReviews(registry,{readFeature:read,readIntegrated:read}).rebound.length,0);
   const bad={...registry,reviews:registry.reviews.map(r=>r.path===paths[0]?{...r,sourceSha256:'0'.repeat(64)}:r)};
   assert.throws(()=>projectStableArrayConversionReviews(bad,{readFeature:read,readIntegrated:read}),/Unbound original/);
+});
+test('current-main native conversion reviews bind source without waiving adjacent sidebar DML',()=>{
+  const read=path=>readFileSync(new URL(`../../${path}`,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const registry=JSON.parse(read('docs/xroga/security/caller-reviews.json'));
+  const paths=['frontend/src/components/dashboard/WorkspaceNewTerminal.tsx','frontend/src/app/crypto/page.tsx',
+    'frontend/src/components/community/CommunityFeed.tsx','frontend/src/components/layout/SidebarProjectHistory.tsx',
+    'frontend/src/components/terminal/TerminalChatBar.tsx','frontend/src/lib/formatAiMarkdown.tsx'];
+  let reviewed=0;
+  for(const path of paths){
+    const source=read(path),hash=createHash('sha256').update(source).digest('hex');
+    const candidates=discoverPersistenceCalls(path,source);
+    for(const record of registry.reviews.filter(row=>row.path===path)){
+      assert.equal(record.disposition,'NOT_PERSISTENCE');
+      assert.equal(record.sourceSha256,hash);
+      for(const id of record.callIds){
+        const candidate=candidates.find(row=>row.id===id);
+        assert.ok(candidate);
+        assert.match(source.split('\n')[candidate.line-1],/(?:Array|Uint8Array)\.from\(/);
+        reviewed++;
+      }
+    }
+    for(const candidate of candidates.filter(row=>['projects','xroga_sidebar_items'].includes(row.target))){
+      assert.ok(!registry.reviews.some(row=>row.callIds.includes(candidate.id)), 'New DML remains an unreviewed obligation');
+      assert.equal(candidate.ownerPredicateCandidate,true);
+    }
+  }
+  assert.equal(reviewed,7);
 });
 test('candidate evidence binds exact virtual merge, base and feature identities without release approval',()=>{
   const result=validateIntegrationIdentity(fixture);
@@ -83,6 +110,29 @@ test('integration rebinds only unique byte-identical native Array conversion fun
     'const Array = database;\n'+old,'import Array from "database";\n'+old,
     'Array.from = database.from;\n'+old,'globalThis.Array = database;\n'+old,
     'globalThis["Array"] = database;\n'+old,'Object.assign(Array, database);\n'+old])assert.equal(project(unsafe).rebound.length,0,unsafe);
+  for(const disposition of ['SCOPED_BOUNDARY','REVIEWED_GAP','NARROW_EXCEPTION'])assert.equal(project(current,{disposition}).rebound.length,0);
+  assert.equal(project(current,{structuredOrigin:{id:'partitioned'}}).rebound.length,0);
+  assert.throws(()=>project(current,{sourceSha256:'0'.repeat(64)}),/Unbound original/);
+});
+
+test('unchanged native Uint8Array conversion survives unrelated rendering changes without certifying DML',()=>{
+  const path='frontend/typed-conversion.tsx';
+  const old='type Sources = Array<string>;\nfunction decode(list) { return Uint8Array.from(list); }\n';
+  const current='import { createPortal } from "react-dom";\n'+old+'db.from("new_private_table");\n';
+  const hash=text=>createHash('sha256').update(text).digest('hex');
+  const record={path,sourceSha256:hash(old),callIds:[discoverPersistenceCalls(path,old)[0].id],disposition:'NOT_PERSISTENCE'};
+  const project=(text,change={})=>projectStableArrayConversionReviews({reviews:[{...record,...change}]},{readFeature:()=>old,readIntegrated:()=>text});
+  const result=project(current);
+  assert.equal(result.rebound.length,1);
+  const dml=discoverPersistenceCalls(path,current).find(call=>call.target==='new_private_table');
+  assert.ok(dml&&!result.registry.reviews[0].callIds.includes(dml.id));
+  for(const unsafe of [
+    'const Uint8Array = db;\n'+current, 'import Uint8Array from "db";\n'+current,
+    'Uint8Array.from = db.from;\n'+current, 'globalThis.Uint8Array = db;\n'+current,
+    'globalThis["Uint8Array"] = db;\n'+current, 'Object.assign(Uint8Array, db);\n'+current,
+    current.replace('return Uint8Array.from(list);','return Uint8Array.from(list).reverse();'),
+    current+old,
+  ])assert.equal(project(unsafe).rebound.length,0);
   for(const disposition of ['SCOPED_BOUNDARY','REVIEWED_GAP','NARROW_EXCEPTION'])assert.equal(project(current,{disposition}).rebound.length,0);
   assert.equal(project(current,{structuredOrigin:{id:'partitioned'}}).rebound.length,0);
   assert.throws(()=>project(current,{sourceSha256:'0'.repeat(64)}),/Unbound original/);

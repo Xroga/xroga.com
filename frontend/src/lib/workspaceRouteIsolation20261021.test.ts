@@ -22,8 +22,8 @@ test('composer only mounts on /workspace; never paints above projects, plugins o
 
 test('repo header is only the actual repository name; menu still has complete identity', () => {
   assert.match(identity, /activeProject\?\.repo\.split\('\/'\)\.pop\(\)/);
-  assert.match(identity, /max-w-\[136px\] truncate/);
-  assert.doesNotMatch(identity.slice(identity.indexOf('className="xv-term-title xv-term-title--button"'), identity.indexOf('<AnchoredPortalPopover open={open}')), /title=|ChevronDown/);
+  assert.match(identity, /<h3 className="xv-repo-name" title=\{repoIdentity\.fullName\}><SidebarMovingTitle text=\{repoIdentity\.label\} \/><\/h3>/);
+  assert.doesNotMatch(identity.slice(identity.indexOf('className="xv-term-title xv-term-title--button"'), identity.indexOf('<AnchoredPortalPopover open={open}')), /ChevronDown/);
   assert.match(identity, /repoIdentity\.fullName \|\| 'No GitHub repository'/);
 });
 
@@ -62,8 +62,9 @@ test('conversation navigation uses 1 marker per user request and reply with adap
   assert.match(css, /xv-chat-rail-page--newer/);
 });
 
-test('automatic intro replaces first line in the same position; scroll control is animated', () => {
+test('automatic intro replaces first line in the same position; scroll control has direct arrows', () => {
   assert.match(starter, /className=\{styles\.automaticFirst\} data-visible=\{!showDetail\}/);
   assert.match(starter, /className=\{styles\.automaticDetail\} data-visible=\{showDetail\}/);
-  assert.match(dock, /<SquareChevronUpIcon size=\{19\}/);
+  assert.match(dock, /<ArrowDown size=\{19\}/);
+  assert.match(dock, /<ArrowUp size=\{19\}/);
 });

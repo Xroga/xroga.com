@@ -67,3 +67,33 @@ test('preview grant input and returned capability stay bound across a held sessi
   }
   outage=true;assert.equal(await getLivePreviewGrant(receipt.preview_id),null);
 });
+
+test('native Google grant admission uses the owned declared session without requiring Fly routing fields',async t=>{
+  const owner=randomUUID(),project=randomUUID(),sessionId=randomUUID(),run=randomUUID(),now=new Date().toISOString();
+  const oldUrl=process.env.SUPABASE_URL,oldKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
+  process.env.SUPABASE_URL='http://127.0.0.1:49239';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-preview-fixture-only';
+  t.after(()=>{
+    if(oldUrl===undefined)delete process.env.SUPABASE_URL;else process.env.SUPABASE_URL=oldUrl;
+    if(oldKey===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=oldKey;
+  });
+  const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId,userId:owner,projectId:project,providerId:'google-gce',runtimeClass:'interactive',status:'running',
+    image:'synthetic-pinned-image',workspaceRevision:1,knownFiles:[],processes:[],createdAt:now,updatedAt:now,
+    ports:[{port:3000,protocol:'http',processId:'fixture',status:'declared'}],
+    providerState:{gce:{name:'xroga-exec-slot-1',runtimeId:sessionId,instanceId:'123'},project:'synthetic-project',zone:'us-central1-a',baseImageId:'123'},
+    expiresAt:new Date(Date.now()+120_000).toISOString()};
+  let current:ProjectRuntimeSession|null=session,calls=0;
+  t.mock.method(SupabaseProjectRuntimeStore.prototype,'loadSession',async()=>current);
+  t.mock.method(globalThis,'fetch',async(input:unknown,init?:RequestInit)=>{
+    assert.equal(String(input),'http://127.0.0.1:49239/rest/v1/rpc/create_project_preview_grant');
+    calls++;const args=JSON.parse(String(init?.body));assert.equal(args.p_owner,owner);assert.deepEqual(args.p_session,session);
+    return Response.json([{...args.p_grant,created_at:now,revoked_at:null}]);
+  });
+  const input={userId:owner,projectId:project,sessionId,runId:run,kind:'browser' as const,port:3000,expiresAt:new Date(Date.now()+60_000).toISOString()};
+  assert.equal((await createLivePreviewGrant(input)).sessionId,sessionId);assert.equal(calls,1);
+  for(const patch of [{userId:randomUUID()},{projectId:randomUUID()},{sessionId:randomUUID()},{status:'stopped'},
+    {runtimeClass:'verification'},{ports:[]},{expiresAt:new Date(Date.now()-1).toISOString()}]){
+    current={...session,...patch} as ProjectRuntimeSession;
+    await assert.rejects(createLivePreviewGrant(input),{status:404,code:'RESOURCE_NOT_FOUND'});assert.equal(calls,1);
+  }
+  current=null;await assert.rejects(createLivePreviewGrant(input),{status:404,code:'RESOURCE_NOT_FOUND'});assert.equal(calls,1);
+});

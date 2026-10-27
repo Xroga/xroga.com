@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `8ce54f2421039d724571bb727ecce234bcc02a03`. Branch observed: `codex/xroga-batch-01`. Audit started: 2026-10-21T15:13:45.536Z.
+Source SHA: `87e33b94b3d85deaac12d4bcc691363f4876fa64`. Branch observed: `codex/xroga-phase4-prep-20261023`. Audit started: 2026-10-27T14:19:38.849Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1481
-- routeRegistrations: 266
-- routes: 222
-- reachableRoutes: 222
+- surfaces: 1618
+- routeRegistrations: 294
+- routes: 244
+- reachableRoutes: 233
 - queues: 4
-- migrations: 141
-- workflows: 19
-- testSuites: 754
-- declaredTests: 5185
-- classifiedMarkers: 360
-- reachableMarkers: 312
+- migrations: 148
+- workflows: 20
+- testSuites: 860
+- declaredTests: 5931
+- classifiedMarkers: 384
+- reachableMarkers: 324
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
@@ -61,8 +61,8 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 | frontend/src/lib/xrogaBlocks.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | frontend/src/lib/xrogaRichResults.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | frontend/src/lib/xrogaEvent.ts | PRESENT | DEAD_OR_UNREACHABLE |
-| frontend/src/app/(shell)/dashboard/automations/page.tsx | PRESENT | PLACEHOLDER |
-| frontend/src/app/(shell)/dashboard/library/page.tsx | PRESENT | PLACEHOLDER |
+| frontend/src/app/(shell)/dashboard/automations/page.tsx | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
+| frontend/src/app/(shell)/dashboard/library/page.tsx | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 
 ## Queue processing
 

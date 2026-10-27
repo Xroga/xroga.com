@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-24T15:56:30Z",
+  "arch": "x86_64",
+  "kernel": "3.6.7-fb42d713.x86_64",
+  "os": "unknown",
+  "docker": "29.7.2",
+  "dockerSecurityOptions": ["name=seccomp,profile=builtin","name=cgroupns"],
+  "userNamespaces": {
+    "user.max_user_namespaces": "null",
+    "kernel.unprivileged_userns_clone": "null",
+    "kernel.apparmor_restrict_unprivileged_userns": "null"
+  },
+  "oci": {
+    "shape": null,
+    "region": null,
+    "availabilityDomain": null
+  }
+}

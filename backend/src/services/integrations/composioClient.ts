@@ -3,12 +3,13 @@ import { createHash } from 'node:crypto';
 import { redactOperationsValue } from '../../operations/operationsEngine.js';
 export { xrogaCustomToolkitPrefix, canUserAccessComposioToolkit, canUserAccessComposioToolSlug } from './composioNamespace.js';
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
-import { assertAuthorityPermit, consumeAuthorityPermit } from '../../security/authority/enforce.js';
+import { assertAuthorityPermit, consumeAuthorityPermit,authorityContextForPermit } from '../../security/authority/enforce.js';
 import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
 import { businessActionClass } from '../../security/authority/risk.js';
-import { createTenantContext } from '../../security/tenantContext.js';
-import { enforceEgress } from '../../security/egress/egressPolicy.js';
+import { requireTenantContext,requireResourceOwner,type TenantContext } from '../../security/tenantContext.js';
+import { enforceEgress,EgressDenied } from '../../security/egress/egressPolicy.js';
 import { persistSecurityDecision } from '../../security/egress/securityDecision.js';
+import {classifyOutboundData} from '../../security/egress/dataClassification.js';
 
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
@@ -16,7 +17,8 @@ const DEFAULT_TIMEOUT_MS = 15_000;
 const EXECUTE_TIMEOUT_MS = 30_000;
 const MAX_RESPONSE_SIZE = 8_000_000;
 const MAX_SEARCH_RESULTS = 20;
-const MAX_TOOLKIT_PAGE_SIZE = 100;
+// Composio's session toolkit endpoint rejects limit values above 50.
+const MAX_TOOLKIT_PAGE_SIZE = 50;
 const MAX_CATALOG_PAGE_SIZE = 250;
 const MAX_TRIGGER_PAGE_SIZE = 50;
 const COMPOSIO_CACHE_TTL_MS = 5 * 60 * 1_000;
@@ -192,6 +194,7 @@ interface ComposioCatalogToolkitResponse {
   no_auth?: boolean;
   auth_guide_url?: string;
   deprecated?: unknown;
+  is_deprecated?: boolean;
   meta?: {
     created_at?: string;
     updated_at?: string;
@@ -1199,7 +1202,9 @@ function mapCatalogToolkit(
         ? Math.max(0, item.meta.tools_count)
         : 0,
     version: item.meta?.version,
-    deprecated: Boolean(item.deprecated),
+    // Composio also uses `deprecated` for a legacy metadata object containing
+    // toolkitId/proxy details. Only actual boolean flags mean retired.
+    deprecated: item.is_deprecated === true || item.deprecated === true,
   };
 
   return {
@@ -1274,16 +1279,14 @@ const WRITE_TOKENS = new Set([
   'SUBMIT',
 ]);
 
+const READ_TOKENS = new Set(['GET','LIST','SEARCH','FETCH','FIND','READ','RETRIEVE','LOOKUP','QUERY','DESCRIBE','INSPECT','VIEW','CHECK','DOWNLOAD']);
+
 export function classifyComposioToolRisk(
   toolSlug: string,
   tags: readonly string[] = [],
 ): XrogaConnectToolRisk {
   if (tags.includes(DESTRUCTIVE_TAG)) {
     return 'destructive';
-  }
-
-  if (tags.includes(READ_ONLY_TAG)) {
-    return 'read';
   }
 
   const tokens = toolTokens(toolSlug);
@@ -1295,6 +1298,10 @@ export function classifyComposioToolRisk(
   if (tokens.some((token) => WRITE_TOKENS.has(token))) {
     return 'write';
   }
+
+  // Remote readOnlyHint is descriptive data. It cannot downgrade a write or
+  // turn an opaque operation into a locally admitted read capability.
+  if(tokens.some(token=>READ_TOKENS.has(token)))return 'read';
 
   return 'unknown';
 }
@@ -1336,6 +1343,7 @@ async function composioRequest<T>(
     method?: string;
     body?: unknown;
     timeoutMs?: number;
+    signal?: AbortSignal;
   } = {},
 ): Promise<T> {
   const controller = new AbortController();
@@ -1345,8 +1353,10 @@ async function composioRequest<T>(
   );
 
   try {
+    options.signal?.throwIfAborted();
     const response = await fetch(`${COMPOSIO_API_BASE}${path}`, {
       method: options.method ?? 'GET',
+      redirect:'error',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -1356,7 +1366,7 @@ async function composioRequest<T>(
         options.body === undefined
           ? undefined
           : JSON.stringify(options.body),
-      signal: controller.signal,
+      signal: AbortSignal.any([controller.signal,...(options.signal?[options.signal]:[])]),
     });
 
     const declaredLength = Number(
@@ -1367,6 +1377,7 @@ async function composioRequest<T>(
       Number.isFinite(declaredLength) &&
       declaredLength > MAX_RESPONSE_SIZE
     ) {
+      await response.body?.cancel().catch(()=>undefined);
       throw new ComposioClientError(
         'External integration response was too large.',
         {
@@ -1376,17 +1387,14 @@ async function composioRequest<T>(
       );
     }
 
-    const text = await response.text();
-
-    if (text.length > MAX_RESPONSE_SIZE) {
-      throw new ComposioClientError(
-        'External integration response was too large.',
-        {
-          status: 502,
-          code: 'COMPOSIO_RESPONSE_TOO_LARGE',
-        },
-      );
-    }
+    const chunks:Uint8Array[]=[];let size=0;const reader=response.body?.getReader();
+    try{
+      if(reader)for(;;){const next=await reader.read();if(next.done)break;size+=next.value.byteLength;
+        if(size>MAX_RESPONSE_SIZE)throw new ComposioClientError('External integration response was too large.',{status:502,code:'COMPOSIO_RESPONSE_TOO_LARGE'});
+        chunks.push(next.value);
+      }
+    }finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    const text=Buffer.concat(chunks).toString('utf8');
 
     let payload: unknown = {};
 
@@ -1409,14 +1417,20 @@ async function composioRequest<T>(
 
       if (response.status === 401 || response.status === 403) {
         message = 'Xroga Connect authorization failed.';
+      } else if (response.status === 400 || response.status === 422) {
+        message = 'Xroga Connect rejected this app request. Please check the selected app and required details, then try again.';
       } else if (response.status === 404) {
         message = 'The requested Xroga Connect resource was not found.';
+      } else if (response.status === 409) {
+        message = 'Xroga Connect reported a conflict with this app request. Refresh the connection and try again.';
       } else if (response.status === 408) {
         message = 'Xroga Connect request timed out.';
       } else if (response.status === 413) {
         message = 'The external request was too large.';
       } else if (response.status === 429) {
         message = 'Xroga Connect is temporarily rate limited.';
+      } else if (response.status >= 500) {
+        message = 'Xroga Connect is temporarily unavailable. Please try again shortly.';
       }
 
       throw new ComposioClientError(message, {
@@ -1427,6 +1441,8 @@ async function composioRequest<T>(
 
     return payload as T;
   } catch (error) {
+    // Caller cancellation is terminal, not a provider timeout or retry signal.
+    options.signal?.throwIfAborted();
     if (error instanceof ComposioClientError) {
       throw error;
     }
@@ -2258,6 +2274,35 @@ export async function listComposioTriggerTypes(
   });
 }
 
+/** Register an event only for a connected, allowed toolkit owned by this user. */
+export async function upsertComposioTriggerForUser(
+  userId: string,
+  input: { toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown> },
+): Promise<string> {
+  const toolkit = cleanToolkit(input.toolkit);
+  const triggerSlug = input.triggerSlug.trim().toUpperCase();
+  if (!/^[A-Z][A-Z0-9_]{2,119}$/.test(triggerSlug)
+    || !canUserAccessComposioToolkit(userId, toolkit)
+    || JSON.stringify(input.triggerConfig).length > 8_000) {
+    throw new ComposioClientError('This trigger is not available for your connected apps.', { status: 403, code: 'COMPOSIO_TRIGGER_NOT_ALLOWED' });
+  }
+  const type = await composioRequest<ComposioTriggerTypeResponse>(`/triggers_types/${encodeURIComponent(triggerSlug)}`);
+  if (type.toolkit?.slug?.trim().toLowerCase() !== toolkit) {
+    throw new ComposioClientError('The selected trigger does not belong to that app.', { status: 422, code: 'COMPOSIO_TRIGGER_TOOLKIT_MISMATCH' });
+  }
+  const session = await createReadOnlyComposioSession(userId);
+  const connected = await listConnectedComposioToolkits(userId, { sessionId: session.session_id, toolkits: [toolkit] });
+  if (!connected.some((item) => item.connected && item.toolkit.trim().toLowerCase() === toolkit)) {
+    throw new ComposioClientError('Connect this app before enabling its trigger.', { status: 409, code: 'COMPOSIO_TRIGGER_CONNECTION_REQUIRED' });
+  }
+  const result = await composioRequest<{ trigger_id?: string }>(`/trigger_instances/${encodeURIComponent(triggerSlug)}/upsert`, {
+    method: 'POST',
+    body: { user_id: composioUserId(userId), trigger_config: input.triggerConfig },
+  });
+  if (!result.trigger_id?.startsWith('ti_')) throw new ComposioClientError('Composio did not return a trigger instance.', { status: 502, code: 'COMPOSIO_TRIGGER_CREATE_FAILED' });
+  return result.trigger_id;
+}
+
 export async function getComposioToolDetails(
   toolSlug: string,
 ): Promise<XrogaConnectToolDetails> {
@@ -2382,16 +2427,26 @@ async function executeDiscoveredComposioTool(
     mode: XrogaConnectMode;
     authorityPermit?: AuthorityPermit;
     authorityBinding?: AuthorityDispatchBinding;
+    tenantContext?: TenantContext;
+    signal?: AbortSignal;
   },
 ): Promise<ComposioExecuteResponse> {
   // Snapshot before any metadata wait. The actual dispatch must match this
   // exact payload, not a mutable object still held by its caller.
-  userId = String(userId);
+  const context=input.mode==='action'?authorityContextForPermit(input.authorityPermit,input.authorityBinding!):requireTenantContext(input.tenantContext);
+  const signal=input.signal;signal?.throwIfAborted();
+  requireResourceOwner(context,userId);
+  userId = context.userId;
   input = { ...input, arguments: canonicalAuthorityValue(input.arguments) as Record<string, unknown>,
     ...(input.authorityBinding ? { authorityBinding: { ...input.authorityBinding } } : {}) };
+  // Metadata discovery itself transmits the use case. Apply the shared secret
+  // floor before discovery, not only at the later consequential-action gate.
+  // This denial floor never grants authority or certifies a read's provenance.
+  if(classifyOutboundData({useCase:input.useCase,arguments:input.arguments}).classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   const sessionId = cleanSessionId(input.sessionId);
 
   await assertComposioSession(userId, sessionId, input.mode);
+  signal?.throwIfAborted();
 
   const toolSlug = cleanToolSlug(input.toolSlug);
 
@@ -2400,6 +2455,7 @@ async function executeDiscoveredComposioTool(
     query: input.useCase,
     mode: input.mode,
   });
+  signal?.throwIfAborted();
 
   const allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
   const allowed =
@@ -2430,6 +2486,7 @@ async function executeDiscoveredComposioTool(
       targetDigest: preparedActionDigest({ sessionId, useCase: input.useCase, toolSlug, arguments: input.arguments }) };
     assertAuthorityPermit(input.authorityPermit, actualBinding);
     const accounts = await listComposioToolkits(userId, { sessionId, mode: 'action', toolkits: [toolkit] });
+    signal?.throwIfAborted();
     const current = accounts.find(item => item.toolkit.trim().toLowerCase() === toolkit);
     const accountId = current?.noAuth ? `no-auth:${toolkit}` : current?.connectedAccountId;
     if (!current?.connected || !accountId || accountId !== binding.connectedAccountId) {
@@ -2440,14 +2497,22 @@ async function executeDiscoveredComposioTool(
     account = current.noAuth ? undefined : accountId;
     // Existing exact permit and live account readback precede the egress gate.
     // Provider headers/credentials are attached only inside composioRequest.
-    const context=createTenantContext({userId,via:'persisted_owner'});
     await enforceEgress({context,actionClass:businessActionClass(toolSlug),binding:actualBinding,
       authorityPermit:input.authorityPermit,destination:COMPOSIO_API_BASE,
       recipient:accountId,purpose:'confirmed_business_action',
       payload:{sessionId,useCase:input.useCase,toolSlug,arguments:input.arguments},
       toolTrust:toolkit.startsWith(xrogaCustomToolkitPrefix(userId))?'UNTRUSTED_CAPABILITY_METADATA':'SERVER_REGISTERED',
     },receipt=>persistSecurityDecision(context,receipt));
+    signal?.throwIfAborted();
     await consumeAuthorityPermit(input.authorityPermit, actualBinding);
+    signal?.throwIfAborted();
+    // Egress receipt persistence and durable claim consumption can wait. A
+    // session/account reassigned during either wait cannot inherit this permit.
+    const finalAccounts=await listComposioToolkits(userId,{sessionId,mode:'action',toolkits:[toolkit]});
+    signal?.throwIfAborted();
+    const final=finalAccounts.find(item=>item.toolkit.trim().toLowerCase()===toolkit);
+    const finalAccountId=final?.noAuth?`no-auth:${toolkit}`:final?.connectedAccountId;
+    if(!final?.connected||finalAccountId!==accountId)throw new ComposioClientError('The connected application account changed. Prepare the action again.',{status:409,code:'COMPOSIO_ACTION_ACCOUNT_CHANGED'});
   }
 
   const response = await composioRequest<ComposioExecuteResponse>(
@@ -2463,6 +2528,7 @@ async function executeDiscoveredComposioTool(
         enable_auto_workbench_offload: false,
       },
       timeoutMs: EXECUTE_TIMEOUT_MS,
+      signal,
     },
   );
   // v3.1 can report input_required or failed with HTTP 200. Neither is a
@@ -2494,11 +2560,14 @@ export async function executeComposioReadTool(
     useCase: string;
     toolSlug: string;
     arguments: Record<string, unknown>;
+    /** Original authenticated context, required at runtime before any network. */
+    tenantContext?: TenantContext;
+    signal?: AbortSignal;
   },
 ): Promise<ComposioExecuteResponse> {
   const toolSlug = cleanToolSlug(input.toolSlug);
 
-  if (looksMutatingToolSlug(toolSlug)) {
+  if (classifyComposioToolRisk(toolSlug)!=='read') {
     throw new ComposioClientError(
       'This action is not available through the Xroga Connect read capability.',
       {
@@ -2527,6 +2596,7 @@ export async function executeComposioActionTool(
     };
     authorityPermit?: AuthorityPermit;
     authorityBinding?: AuthorityDispatchBinding;
+    signal?: AbortSignal;
   },
 ): Promise<ComposioExecuteResponse> {
   if (input.authorization.confirmed !== true || !input.authorityBinding || !input.authorityPermit) {
@@ -2551,5 +2621,6 @@ export async function executeComposioActionTool(
     mode: 'action',
     authorityPermit: input.authorityPermit,
     authorityBinding: input.authorityBinding,
+    signal:input.signal,
   });
 }

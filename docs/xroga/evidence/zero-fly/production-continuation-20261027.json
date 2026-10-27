@@ -1,0 +1,58 @@
+{
+  "sourceSha": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3",
+  "status": "PRODUCTION_CUTOVER_IN_PROGRESS_NOT_COMPLETE",
+  "acceptedCI": "13 successful workflows, source-bound to faf56ff8. No rerun of unchanged backend requested.",
+  "acceptedStaging": {
+    "C": "Native allocation, secure transfer, signed Preview HTTP/WebSocket/reconnect/expiry, tenant/cancel/duplicate denial and durable API recreation passed. Manual fixtures remain labelled.",
+    "E": "Native dispatch admission and canonical Job ownership passed.",
+    "G": "Controlled Google execution cancellation and same-run changed-checkpoint recovery passed under a new worker generation. Foreign ownership denied. Third execution stopped at cleanup margin and is not a new duplicate pass."
+  },
+  "modelFunctionality": {
+    "status": "KNOWN_LIMITATION",
+    "issues": [
+      "GLM insufficient provider balance",
+      "OpenRouter empty response",
+      "bounded reservation denial"
+    ],
+    "noFurtherModelRequests": true
+  },
+  "productionRemaining": [
+    "final frontend URL release and merge gates",
+    "authenticated production and deterministic workload acceptance",
+    "Fly retirement only after Google acceptance and verified rollback"
+  ],
+  "sourceEvidence": [
+    {
+      "file": "G-NATIVE-RECOVERY-SUMMARY.json",
+      "sha256": "ee25767d090f4e53c0da91a3abc651e0733464e0437b69aec10f8da54a9faef5"
+    },
+    {
+      "file": "xroga-google-migration-backup-receipt-20261027-v4.json",
+      "sha256": "c76045187fdd109dd94a662873e4fe1415cac2d42a7af29d56d36ad53680e752"
+    },
+    {
+      "file": "xroga-google-migration-restore-receipt-20261027-v4.json",
+      "sha256": "5ecdf17b9cc95187ea1d4a33f56155d5dfc08c14942bb7ebc302326a521edcbf"
+    },
+    {
+      "file": "xroga-google-migration-restore-cleanup-complete-20261027v4.json",
+      "sha256": "fd9a2a90b061bb8b0188b24dd912399389213ffb2dbdaa20f91c2d87ae5c8860"
+    },
+    {
+      "file": "xroga-production-recovery-readiness-20261027.json",
+      "sha256": "d3b1e5eb4a9bc16556a03c55963acbe8fbdb4d885c5129309587698811a70bcc"
+    },
+    {
+      "file": "xroga-production-r1-readiness-20261027.json",
+      "sha256": "04eb62f47910f8d8c2f63a3512912cb4be5a159937070c820e4083960c9274b5"
+    },
+    {
+      "file": "PRODUCTION-SCHEMA-EXPANSION-20261027.json",
+      "sha256": "453e470577963a56b11e4f923894519b91edd4a1d185dfe546b07fa93ea6227e"
+    },
+    {
+      "file": "BILLING-CURRENT-20261027.json",
+      "sha256": "581c848c492bc13ff6abcab5d6e9f16b74feb385df66aeb018c5be671225aca3"
+    }
+  ]
+}

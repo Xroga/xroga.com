@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: dependent business evidence requires explicit review before discovery or model dispatch
+not ok 1 - dependent business evidence requires explicit review before discovery or model dispatch
+  ---
+  duration_ms: 51.2505
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\integrations\\businessModelEgress.test.ts:1:6451'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'BUSINESS_ACTION_REFERENCE_REVIEW_REQUIRED'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\integrations\businessModelEgress.test.ts:78:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4293.5917

@@ -9,7 +9,8 @@
       "historicalSourceSha256": "48efff750a375aaaeb81bb90d5376a160b539a6748ac377119da62ec2a13be06",
       "currentSourceSha256": "2d5bb74f472c8559cd4d415ef19af8f45ad6a6ce18022e3324f37e52bef650d8",
       "testCallSha256": "ecb814ca961b98053e35d1db29e63f62ae81dd64bd427e6116c36bbd017452d1",
-      "reason": "Phase 4 replaces the separate obsolete registry-only bridge assertion with fail-closed rejection. The complete fork-isolation test invocation is unchanged. Preserve the original candidate hash without certifying current security or rewriting the frozen Phase 2 ledger."
+      "reason": "Phase 4 replaces the separate obsolete registry-only bridge assertion with fail-closed rejection. The complete fork-isolation test invocation is unchanged. Preserve the original candidate hash without certifying current security or rewriting the frozen Phase 2 ledger. Google integration preserves this exact complete historical test invocation. Additional native Google tests changed the surrounding file. Current focused project/runtime regression passed in d3cfb26b-1e42-4bfd-9d76-38d518c71d0b. This retains a historical candidate, never whole-phase acceptance.",
+      "preGoogleIntegrationCurrentSourceSha256": "2d5bb74f472c8559cd4d415ef19af8f45ad6a6ce18022e3324f37e52bef650d8"
     }
   ]
 }

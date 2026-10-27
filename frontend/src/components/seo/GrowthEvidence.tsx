@@ -2,7 +2,7 @@ import Image from 'next/image';
 import '@/styles/growth-evidence.css';
 
 export type GrowthVisual = {
-  type: 'PRODUCT_SCREENSHOT' | 'ILLUSTRATION' | 'WORKFLOW_DIAGRAM';
+  type: 'PRODUCT_SCREENSHOT' | 'ILLUSTRATION' | 'EDITORIAL_IMAGE' | 'WORKFLOW_DIAGRAM';
   src?: string;
   alt: string;
   caption: string;
@@ -15,7 +15,7 @@ export function EvidenceFigure({ visual }: { visual: GrowthVisual }) {
   return (
     <figure className="xv-growth-figure">
       <Image src={visual.src} alt={visual.alt} width={1600} height={900} sizes="(max-width: 760px) 100vw, 1040px" />
-      <figcaption>{visual.caption}<small>Evidence verified {visual.verified}</small></figcaption>
+      <figcaption>{visual.caption}<small>{visual.type === 'EDITORIAL_IMAGE' ? 'Editorial illustration' : `Evidence verified ${visual.verified}`}</small></figcaption>
     </figure>
   );
 }

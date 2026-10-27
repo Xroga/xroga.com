@@ -1,0 +1,35 @@
+{
+ "observedAt": "2026-10-24T10:52:22.593Z",
+ "target": "aws-1-ap-northeast-1.pooler.supabase.com:5432",
+ "results": {
+  "default plan (pinned Supabase root)": {
+   "mode": "verified-supabase-root",
+   "probe": {
+    "ok": true,
+    "stage": "tls",
+    "protocol": "TLSv1.3",
+    "peer": {
+     "subject": "*.pooler.supabase.com",
+     "issuer": "Supabase Intermediate 2021 CA",
+     "validTo": "Mar 11 15:56:33 2030 GMT"
+    }
+   }
+  },
+  "negative control (an unrelated CA supplied)": {
+   "mode": "verified-custom-ca",
+   "probe": {
+    "ok": false,
+    "stage": "tls",
+    "error": "SELF_SIGNED_CERT_IN_CHAIN"
+   }
+  },
+  "negative control (system store only, via a non-Supabase host name for the same server)": {
+   "probe": {
+    "ok": false,
+    "stage": "tls",
+    "error": "SELF_SIGNED_CERT_IN_CHAIN"
+   },
+   "note": "platform CA store does not trust the Supabase root, and the host name does not match"
+  }
+ }
+}

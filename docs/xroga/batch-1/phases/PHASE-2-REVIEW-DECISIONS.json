@@ -1467,7 +1467,7 @@
     },
     {
       "packetId": "B1-P2-b8b2050b4efeeb5b",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_EXECUTION_RECOVERY_OWNER_AND_PRODUCER_PROOF_RECONCILED",
       "actorTrace": "Only production constructors occur inside runBuildPipeline after original issued actor and user match. Resume loads exact server owner/run, validates stored and embedded lineage and current database project before durable worker admission. New writes additionally require captured original attempt. No body owner can choose another checkpoint.",
@@ -1505,6 +1505,21 @@
         "remaining": [
           "Bind final-source receipts, preserve separate checkpoint writes and other worker callers",
           "Do not infer whole worker or provider-effect completion from checkpoint reads"
+        ]
+      },
+      "preGoogleMigrationSourceBinding": {
+        "path": "backend/src/ai/executionRuntime.ts",
+        "sha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d"
+      },
+      "googleMigrationReview": {
+        "changedSources": [
+          "backend/src/ai/executionRuntime.ts"
+        ],
+        "scope": "CURRENT_SOURCE_REVIEW_NOT_INHERITED_CALLER_CERTIFICATION",
+        "finding": "Canonical execution preserves original issued actor and attempt. Queued transport adopts only the private database claim, checks current owner/project and rolls back failed admission. Sandbox authority denial now propagates rather than becoming a recoverable task failure. Original historical proof remains bound to its recorded SHA. Newly added handoff and transport require independent exact-source integrated database and live Google proof.",
+        "evidence": [
+          "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+          "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
         ]
       }
     },
@@ -2327,7 +2342,7 @@
     },
     {
       "packetId": "B1-P2-24934749677f47d8",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_REAL_DATABASE_PROOF_AT_D9B13E09",
       "actualVerification": {
@@ -2343,17 +2358,20 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+          "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
           "historicalBinding": {
             "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
             "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
           },
           "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
-          "previousGenericSdkSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc"
+          "previousGenericSdkSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "preGoogleIntegrationSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+          "googleIntegrationSourceReview": "docs/xroga/evidence/command-010/GOOGLE-PHASE2-SOURCE-RECONCILIATION.json"
         },
         {
           "path": "backend/src/routes/swarm.ts",
-          "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
+          "sha256": "38b1350f04641b110436d4d202a93c5645b0bacb6b7844f9e9cf7df65227943a",
+          "preGoogleMigrationSha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
         },
         {
           "path": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
@@ -2425,6 +2443,28 @@
           "Reconcile authenticated producer through current-parent and existing scheduler/attempt writers before whole007.5 acceptance",
           "Other worker writers and provider-account consumers remain independent, no authority or vault implementation"
         ]
+      },
+      "preGoogleMigrationSourceBinding": {
+        "path": "backend/src/ai/runStore.ts",
+        "sha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46"
+      },
+      "googleMigrationReview": {
+        "changedSources": [
+          "backend/src/ai/runStore.ts",
+          "backend/src/ai/pipeline.ts",
+          "backend/src/routes/swarm.ts"
+        ],
+        "scope": "CURRENT_SOURCE_REVIEW_NOT_INHERITED_CALLER_CERTIFICATION",
+        "finding": "Canonical execution preserves original issued actor and attempt. Queued transport adopts only the private database claim, checks current owner/project and rolls back failed admission. Sandbox authority denial now propagates rather than becoming a recoverable task failure. Original historical proof remains bound to its recorded SHA. Newly added handoff and transport require independent exact-source integrated database and live Google proof.",
+        "evidence": [
+          "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+          "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
+        ]
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
       }
     },
     {
@@ -2637,7 +2677,7 @@
     },
     {
       "packetId": "B1-P2-84b9011a0d2b4754",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
       "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2658,16 +2698,16 @@
         "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
         "verifiedCurrentCallerIds": [],
         "remainingCurrentCallerIds": [
-          "d9d2547770aa24b0841c",
-          "d58b6fdbfd8c7bd723ea",
-          "0b783f584a470b13209e",
-          "dd1e78725f475509a9cd",
-          "7f2df45a035153bcbf55",
-          "408a89ba73f0f4572071",
-          "456ab4492b8fe9318933",
-          "138a7b9c83878cb3dc82",
-          "9393c7ce95c3aee1b590",
-          "3e7f7e1fcb903f426f23"
+          "bc1b1e147cebbd6366f0",
+          "45b5c3fc4d40bba6fa2b",
+          "291386bd727275995fd2",
+          "bc58f82c7f7e2845c1f2",
+          "f4bc3b2f0ff69fdf1cd7",
+          "225429dd5a6aaf987f63",
+          "c9d53e8b321a8eca7bb6",
+          "495566fa0852f3aef30f",
+          "de3d23efab5d7a3e8980",
+          "fdb08e6a79fda69e2cbe"
         ],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
         "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
@@ -2678,7 +2718,8 @@
         "historicalSourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
-      }
+      },
+      "integrationReview20261025": "Reconciled main519045 and accepted9fb. Confirmation persistence functions are byte-identical and remain owner-bound with exact one-use CAS. Main workflow callers pass issued actor context. Safe display adds redacted operation arguments only. Prior execution receipts retain original source identities. Final integrated authenticated proof required, no candidate or acceptance promotion."
     },
     {
       "packetId": "B1-P2-079a87ae5cea7b51",
@@ -2753,7 +2794,7 @@
     },
     {
       "packetId": "B1-P2-a26f798a697bc8a6",
-      "sourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+      "sourceSha256": "0970dd0edfcf52dfd97e0ce6b7397d8be00777491d2dcffb29a0baf864738d2d",
       "executionStatus": "IN_PROGRESS",
       "finding": "REPRODUCED_WEB_ACCOUNTING_OWNER_SNAPSHOT_AND_CYCLE_PARENT_REPAIR_PENDING_REAL_PROOF",
       "actorTrace": "Existing internal web adapters retain server pipeline userId. recordWebSpend captures the entire scalar owner/provider/request intent before the cycle lookup. The fixed private accounting row uses that actor and an optional current owner cycle. No web provider executes in the tests.",
@@ -2774,7 +2815,9 @@
         "Run actual disposable observed parent-lock wait, same-owner capture and concurrent writes, wrong-owner replay, browser denial and exact persistence/deletion receipts",
         "Authenticate changed-source complete branch/integrated and fresh/upgrade evidence",
         "Reconcile only these three verified007 caller outcomes, preserving independent008 budgets and provider egress"
-      ]
+      ],
+      "commentOnlyPriorSourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+      "commentOnlySourceReview": "docs/xroga/evidence/command-010/GOOGLE-PHASE2-SOURCE-RECONCILIATION.json"
     },
     {
       "packetId": "B1-P2-76b294c090331cc4",
@@ -2835,7 +2878,7 @@
     },
     {
       "packetId": "B1-P2-11526c9c3e6a8aa3",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "executionStatus": "IN_PROGRESS",
       "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
       "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
@@ -2850,7 +2893,8 @@
       "remaining": [
         "Execute the exact new disposable case and authenticate its complete successful source-bound run",
         "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
-      ]
+      ],
+      "googleMigrationReview": "Google grant admission now validates the exact loaded owned active interactive session and declared port without requiring Fly address fields. Locked SQL and exact grant receipt checks remain unchanged. Native identity, immutable handle and private endpoint are still validated independently by the Google gateway. All eight persistence caller IDs are preserved. Focused regression passes 33/33. Live Google grant/HTTP/WebSocket acceptance remains pending. No disposition or acceptance promotion."
     },
     {
       "packetId": "B1-P2-f1384a65c2d70a16",
@@ -3181,7 +3225,7 @@
     },
     {
       "packetId": "B1-P2-f8cb123dcb4c4a53",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
       "originalCriteria": [
@@ -3189,7 +3233,7 @@
         4,
         10
       ],
-      "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
+      "actorTrace": "Tenant construction still requires the original issued context and global construction an exact registered operation. Google canonical delivery adds a fixed private dispatcher and native Job handoff registration. Its SQL source/owner/generation locks, launch limits, OIDC and native Job checks remain independent receiving-path obligations. The authenticated scheduler may sweep ten pending IDs and reconcile stale runs. These changes do not certify this shared constructor or arbitrary recipients. The review-only key is still denied before SDK construction. Both SDK handles remain privileged rather than RLS sandboxes.",
       "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
       "evidence": [
         {
@@ -3237,6 +3281,10 @@
           "Prove every actual shared-constructor recipient before factory closure",
           "Preserve later authority, credential custody and egress obligations"
         ]
+      },
+      "beforeGoogleDeliveryBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox."
       }
     },
     {

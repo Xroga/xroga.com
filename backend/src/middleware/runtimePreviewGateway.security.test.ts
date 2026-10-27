@@ -20,16 +20,22 @@ test('actual shared HTTP/WebSocket resolver binds signed grant, persisted owner/
     assert.equal(url.pathname,'/rest/v1/project_runtime_sessions');assert.equal(url.searchParams.get('user_id'),'eq.'+owner);assert.equal(url.searchParams.get('session_id'),'eq.'+session);return Response.json(row);
   });
   const host=new URL(livePreviewUrl(grant)).hostname;
-  assert.deepEqual(await resolveTarget(host),{host:'abc123.vm.xroga-isolated-runtime.internal',port:3000,publicHost:host});
+  const admitted=await resolveTarget(host);assert.ok(admitted);
+  assert.deepEqual({host:admitted.host,port:admitted.port,publicHost:admitted.publicHost},
+    {host:'abc123.vm.xroga-isolated-runtime.internal',port:3000,publicHost:host});
+  assert.equal(admitted.expiresAt,Date.parse(grant.expiresAt));
+  assert.equal(typeof admitted.revalidate,'function');assert.equal(await admitted.revalidate(),true);
   for(const change of [{user_id:randomUUID()},{project_id:randomUUID()},{session_id:randomUUID()},
     {state:{...state,userId:randomUUID()}},{state:{...state,projectId:randomUUID()}},{state:{...state,status:'stopped'}},
     {state:{...state,expiresAt:'invalid'}},{state:{...state,ports:[]}},{state:{...state,providerState:{machineId:'127.0.0.1/metadata',app:'xroga'}}},
     {state:{...state,providerId:undefined}},{state:{...state,providerId:'unknown-provider'}},{state:{...state,providerState:{machineId:'abc123',app:'other-valid-app'}}}]){
     row={user_id:owner,project_id:project,session_id:session,state,...change};assert.equal(await resolveTarget(host),null);
+    assert.equal(await admitted.revalidate(),false);
   }
   row={user_id:owner,project_id:project,session_id:session,state};
   for(const change of [{revoked_at:now},{expires_at:new Date(Date.now()-1).toISOString()},{expires_at:'invalid'},{project_id:randomUUID()}]){
     grantRow={...originalGrant,...change};assert.equal(await resolveTarget(host),null);
+    assert.equal(await admitted.revalidate(),false);
   }
   grantRow={...originalGrant};assert.equal(await resolveTarget(host.replace(grant.previewId.replaceAll('-',''),'0'.repeat(32))),null);
 });

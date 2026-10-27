@@ -1,9 +1,9 @@
-import { getSecret } from '../config/envSecrets.js';
+import { executeParallelRequest } from './parallelDispatch.js';
+import type { TenantModelScope } from './tenantModelDispatch.js';
 import { redactSecrets } from '../lib/truthfulExecution.js';
 import { validateResearchUrl } from '../synthesis/research/researchEngine.js';
 import { recordWebSpend } from './webBudget.js';
 
-const PARALLEL_BASE_URL = 'https://api.parallel.ai/v1';
 
 export interface ParallelSource {
   title: string;
@@ -16,16 +16,6 @@ export interface ParallelResult {
   answer: string;
   sources: ParallelSource[];
   requestId?: string;
-}
-
-function requireParallelKey(): string {
-  const key = getSecret('PARALLEL_API_KEY');
-
-  if (!key) {
-    throw new Error('PARALLEL_API_KEY is not configured');
-  }
-
-  return key;
 }
 
 function safePublicUrl(value: unknown): value is string {
@@ -53,6 +43,8 @@ function safeText(value: string, max: number): string {
  */
 export async function parallelSearch(input: {
   userId: string;
+  /** Mandatory issued scope at runtime, never inferred from userId. */
+  dispatchScope?: TenantModelScope;
   objective: string;
   queries: string[];
   signal?: AbortSignal;
@@ -75,24 +67,7 @@ export async function parallelSearch(input: {
     };
   }
 
-  const response = await fetch(
-    `${PARALLEL_BASE_URL}/search`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': requireParallelKey(),
-      },
-      body: JSON.stringify({
-        mode: 'turbo',
-        objective,
-        search_queries: queries,
-      }),
-      signal:
-        input.signal ??
-        AbortSignal.timeout(20_000),
-    },
-  );
+  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'search',body:{mode:'turbo',objective,search_queries:queries},signal:input.signal});
 
   if (!response.ok) {
     throw new Error(
@@ -153,6 +128,8 @@ export async function parallelSearch(input: {
  */
 export async function parallelExtract(input: {
   userId: string;
+  /** Mandatory issued scope at runtime, never inferred from userId. */
+  dispatchScope?: TenantModelScope;
   urls: string[];
   objective: string;
   signal?: AbortSignal;
@@ -168,26 +145,7 @@ export async function parallelExtract(input: {
     };
   }
 
-  const response = await fetch(
-    `${PARALLEL_BASE_URL}/extract`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': requireParallelKey(),
-      },
-      body: JSON.stringify({
-        urls,
-        objective: safeText(
-          input.objective,
-          4_000,
-        ),
-      }),
-      signal:
-        input.signal ??
-        AbortSignal.timeout(25_000),
-    },
-  );
+  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'extract',body:{urls,objective:safeText(input.objective,4_000)},signal:input.signal});
 
   if (!response.ok) {
     throw new Error(
@@ -251,38 +209,13 @@ export async function parallelExtract(input: {
  */
 export async function parallelResponses(input: {
   userId: string;
+  /** Mandatory issued scope at runtime, never inferred from userId. */
+  dispatchScope?: TenantModelScope;
   question: string;
   effort: 'low' | 'medium';
   signal?: AbortSignal;
 }): Promise<ParallelResult> {
-  const response = await fetch(
-    `${PARALLEL_BASE_URL}/responses`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization:
-          `Bearer ${requireParallelKey()}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'parallel',
-        input: safeText(
-          input.question,
-          10_000,
-        ),
-        reasoning: {
-          effort: input.effort,
-        },
-      }),
-      signal:
-        input.signal ??
-        AbortSignal.timeout(
-          input.effort === 'medium'
-            ? 45_000
-            : 25_000,
-        ),
-    },
-  );
+  const response = await executeParallelRequest({scope:input.dispatchScope,userId:input.userId,operation:'responses',body:{model:'parallel',input:safeText(input.question,10_000),reasoning:{effort:input.effort}},signal:input.signal});
 
   if (!response.ok) {
     throw new Error(

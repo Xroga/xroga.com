@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUp, ChevronDown, MicOff, Pause, PhoneOff, Play, Square, VolumeX, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, Mic, MicOff, Pause, PhoneOff, Play, Square, VolumeX, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -826,7 +826,7 @@ export function XrogaVoiceControl({
         }}
         aria-label={captureReady ? 'Stop voice typing and keep text' : 'Start voice typing'}
       >
-        <AudioLinesIcon size={22} active={mode === 'listening'} />
+        {mode === 'listening' ? <AudioLinesIcon size={22} active /> : <Mic className="h-[22px] w-[22px]" aria-hidden="true" />}
       </button>
       <button type="button" className="xv-voice-v8-options-trigger" onClick={() => setOptionsOpen((value) => !value)} aria-label="Voice options" aria-expanded={optionsOpen}><ChevronDown className="h-3.5 w-3.5" aria-hidden /></button>
       {optionsOpen ? <div className="xv-voice-v8-menu"><button type="button" onClick={() => { setOptionsOpen(false); setPrivacyVisible(true); void startVoice(); }}>Dictate message</button><button type="button" onClick={startConversation}>Start voice conversation</button><label className="xv-voice-v8-language">Live caption language<select value={speechLanguage} onChange={(event) => setSpeechLanguage(event.target.value)}><option value="auto">Device language</option><option value="en-US">English</option><option value="ur-PK">Urdu</option><option value="hi-IN">Hindi</option><option value="ar-SA">Arabic</option></select></label></div> : null}

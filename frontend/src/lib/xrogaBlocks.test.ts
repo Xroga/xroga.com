@@ -1,10 +1,31 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { test } from 'node:test';
 
-import { canRender, getRenderer } from '../components/terminal/XrogaBlockView';
 import { parseXrogaBlock, parseXrogaOutput, xrogaApprovalSchema, xrogaEvidenceSchema, xrogaReceiptSchema } from './xrogaBlocks';
 import { adaptOutputToXrogaDocument, universalOutputToXrogaBlocks } from './xrogaOutputAdapters';
+
+// This Node-only contract test imports real renderers, not a Next CSS bundle.
+// Read actual CSS-module class names during import, then restore the loader.
+// Styling itself remains covered by the Next build and browser verification.
+const requireRenderer = createRequire(import.meta.url);
+const originalCssLoader = requireRenderer.extensions['.css'];
+function loadRendererRegistry(): typeof import('../components/terminal/XrogaBlockView') {
+  try {
+    requireRenderer.extensions['.css'] = (module, filename) => {
+      assert.ok(filename.endsWith('.module.css'), 'Only CSS modules are supported by this test adapter');
+      const classes = [...readFileSync(filename, 'utf8').matchAll(/\.([a-zA-Z_][a-zA-Z0-9_-]*)/g)];
+      module.exports = Object.fromEntries(classes.map(match => [match[1], match[1]]));
+    };
+    return requireRenderer('../components/terminal/XrogaBlockView');
+  } finally {
+    if (originalCssLoader) requireRenderer.extensions['.css'] = originalCssLoader;
+    else delete requireRenderer.extensions['.css'];
+  }
+}
+const { canRender, getRenderer } = loadRendererRegistry();
+assert.equal(requireRenderer.extensions['.css'], originalCssLoader, 'Renderer import must not leak its CSS loader');
 
 test('canonical output validation accepts semantic blocks and rejects malformed blocks', () => {
   const valid = parseXrogaOutput({
@@ -15,6 +36,16 @@ test('canonical output validation accepts semantic blocks and rejects malformed 
   });
   assert.equal(valid?.status, 'partial');
   assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'bad', type: 'receipt', receipt: {} }), null);
+});
+
+test('market quote and conversion blocks require observed, safe source data', () => {
+  const source = { title: 'Rate provider', url: 'https://example.com/rate', observedAt: '2026-10-24T10:00:00.000Z' };
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'quote', type: 'market-quote', symbol: 'BTC', name: 'Bitcoin', price: 10, currency: 'USD', source })?.type, 'market-quote');
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'conversion', type: 'conversion', from: 'USD', to: 'EUR', rate: 0.9, amount: 100, source })?.type, 'conversion');
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'bad-quote', type: 'market-quote', symbol: 'BTC', name: 'Bitcoin', price: 10, currency: 'USD' }), null);
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'bad-source', type: 'conversion', from: 'USD', to: 'EUR', rate: 0.9, amount: 100, source: { ...source, url: 'javascript:alert(1)' } }), null);
+  assert.equal(canRender('market-quote'), true);
+  assert.equal(canRender('conversion'), true);
 });
 
 test('evidence, approval, and receipt contracts retain real linkage', () => {

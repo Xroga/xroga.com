@@ -5,6 +5,7 @@ import { applyDeletes, applyPatches, buildFileTrail } from './patches.js';
 import type { ModelId } from './models.js';
 import { createTenantContext } from '../security/tenantContext.js';
 import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import {SandboxAdmissionError} from '../sandbox/sandboxTypes.js';
 import { requireAdmittedRunAttempt, type AdmittedRunAttempt } from './runStore.js';
 import type { IntelligentRoutePlan } from './intelligentRouter.js';
 import { MODELS } from './models.js';
@@ -539,6 +540,10 @@ export class ExecutionScheduler {
             : `${task.operationType} produced evidence but did not pass its validation rule`;
       }
     } catch (error) {
+      if(error instanceof SandboxAdmissionError){
+        task.status='blocked';task.blocker=error.message;
+        throw error;
+      }
       const failure = persistedTaskFailure(error);
       // Preserve a typed, already-sanitized failure across the scheduler boundary. Without
       // this, a coherent implementation failure becomes a generic CanonicalTaskFailure and
@@ -549,7 +554,7 @@ export class ExecutionScheduler {
         ? failure.safeReasons.join('; ').slice(0, 500)
         : redactSecrets(error instanceof Error ? error.message : String(error)).slice(0, 500);
       const mutation = isMutationOperation(task);
-      if (!mutation && task.attempts < task.retryPolicy.maximumAttempts) {
+      if (!mutation && (error as {retryable?:unknown})?.retryable!==false && task.attempts < task.retryPolicy.maximumAttempts) {
         task.status = 'waiting_for_provider';
         await this.persist(state);
         const delay = Math.min(task.retryPolicy.maximumBackoffMs, task.retryPolicy.initialBackoffMs * 2 ** (task.attempts - 1));

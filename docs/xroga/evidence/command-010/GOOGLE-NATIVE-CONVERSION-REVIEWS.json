@@ -1,0 +1,69 @@
+{
+  "scope": "LOCAL_CONVERSIONS_ONLY_NO_SECURITY_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "parent": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+      "previousFileSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "currentFileSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+      "disposition": "NOT_PERSISTENCE",
+      "scope": "ONLY_UNSHADOWED_NATIVE_CONVERSIONS_NOT_ADJACENT_SECURITY_OR_EGRESS",
+      "mapping": [
+        {
+          "previousId": "af88e0f5ab6048f75011",
+          "currentId": "b092008f2d41b3ddf1d9",
+          "expression": "Array.from(byPath.values())",
+          "unchangedStatementSha256": "dc69e7a8b1cdb89c49f400c9e08bdb51c5580a54f45feb33fcf30e13594d9a49"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "parent": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+      "previousFileSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "currentFileSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+      "disposition": "NOT_PERSISTENCE",
+      "scope": "ONLY_UNSHADOWED_NATIVE_CONVERSIONS_NOT_ADJACENT_SECURITY_OR_EGRESS",
+      "mapping": [
+        {
+          "previousId": "863e45f48048017eb977",
+          "currentId": "40b6d116790751a2b569",
+          "expression": "Array.from(byPath.values())",
+          "unchangedStatementSha256": "d0b34ca3a35e3edc4f405b4462cfe4897bf83f308a397564e540e6b082c7bad7"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "parent": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+      "previousFileSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+      "currentFileSha256": "11a6d1a269461778e103b016c98f27c99256038ff57b2cc6bb1856b9070cf4d9",
+      "disposition": "NOT_PERSISTENCE",
+      "scope": "ONLY_UNSHADOWED_NATIVE_CONVERSIONS_NOT_ADJACENT_SECURITY_OR_EGRESS",
+      "mapping": [
+        {
+          "previousId": "5f28d665d687ff7e0502",
+          "currentId": "a81c2e8a1a0fcd8b0d6b",
+          "expression": "Buffer.from(\n                            data as\n                              ArrayBuffer,\n                          )",
+          "unchangedStatementSha256": "b182bab2ff57b123bbe2218ad0bdd046ccc8cb542b81e01133d9d595653eb834"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "parent": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+      "previousFileSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+      "currentFileSha256": "c39b7e3b3c17442c56c575628bbcf6fdcb56e11453a67190f449da09c5e2e3be",
+      "disposition": "NOT_PERSISTENCE",
+      "scope": "ONLY_UNSHADOWED_NATIVE_CONVERSIONS_NOT_ADJACENT_SECURITY_OR_EGRESS",
+      "mapping": [
+        {
+          "previousId": "ebede146c851a085d2b8",
+          "currentId": "29043e1b2d0f9c86568b",
+          "expression": "Buffer\n      .from(\n        JSON.stringify(\n          descriptor,\n        ),\n        'utf8',\n      )",
+          "unchangedStatementSha256": "3dcee95670014dfb395385d6f3ad92fbaf67e758ea2f933076b75c509f530a76"
+        }
+      ]
+    }
+  ]
+}

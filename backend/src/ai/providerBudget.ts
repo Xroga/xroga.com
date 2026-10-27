@@ -598,6 +598,7 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   estimatedInputTokens: number;
   maximumOutputTokens: number;
   purpose?: BudgetPurpose;
+  idempotencyKey?: string;
   execute: () => Promise<T>;
 }): Promise<T> {
   let reservation: ProviderReservation;

@@ -5,55 +5,55 @@
   "remappings": [
     {
       "previousCallerId": "74229d60e093f2e44542",
-      "currentCallerId": "ebede146c851a085d2b8"
+      "currentCallerId": "29043e1b2d0f9c86568b"
     },
     {
       "previousCallerId": "c37a93be0605e64b3156",
-      "currentCallerId": "d9d2547770aa24b0841c"
+      "currentCallerId": "99ba24aefa7f2c2f6de9"
     },
     {
       "previousCallerId": "94fb30ec710f32d062c2",
-      "currentCallerId": "d58b6fdbfd8c7bd723ea"
+      "currentCallerId": "3c64dc5d4a7058fb12f8"
     },
     {
       "previousCallerId": "36d0fbfc5ddf864ad6ea",
-      "currentCallerId": "0b783f584a470b13209e"
+      "currentCallerId": "fc3b3f4bab00e81fbc31"
     },
     {
       "previousCallerId": "bda77ff34ad9e973cbde",
-      "currentCallerId": "dd1e78725f475509a9cd"
+      "currentCallerId": "94f936dfc30fe898eebe"
     },
     {
       "previousCallerId": "a1e1f647efb6e7002993",
-      "currentCallerId": "7f2df45a035153bcbf55"
+      "currentCallerId": "1f375890c653535bb84b"
     },
     {
       "previousCallerId": "7c2970e3ea0940d5d136",
-      "currentCallerId": "408a89ba73f0f4572071"
+      "currentCallerId": "9614e2de1a77eacffe05"
     },
     {
       "previousCallerId": "986c86eebabfae033939",
-      "currentCallerId": "456ab4492b8fe9318933"
+      "currentCallerId": "b3a2b5af5ead58408dba"
     },
     {
       "previousCallerId": "884cad1975974abc0599",
-      "currentCallerId": "138a7b9c83878cb3dc82"
+      "currentCallerId": "1f7c11b7359e0958073e"
     },
     {
       "previousCallerId": "1a3d2ad705ca358ebbe3",
-      "currentCallerId": "2de50011885a1231ce06"
+      "currentCallerId": "8f3d42e8e45d7fb2252a"
     },
     {
       "previousCallerId": "b6708d08741254f6da06",
-      "currentCallerId": "9393c7ce95c3aee1b590"
+      "currentCallerId": "0f9bdee0b411ef2f246d"
     },
     {
       "previousCallerId": "85d5a147aa59e4f62e68",
-      "currentCallerId": "3e7f7e1fcb903f426f23"
+      "currentCallerId": "adbc1ef16d0ec277edb7"
     },
     {
       "previousCallerId": "bbf934631616a292169c",
-      "currentCallerId": "1638b66c83949be618af"
+      "currentCallerId": "c2ce222ac0cc6f913871"
     },
     {
       "previousCallerId": "840920438b3c862c0e91",
@@ -77,7 +77,7 @@
     },
     {
       "previousCallerId": "c7d109715d2f37cc95b2",
-      "currentCallerId": "bdf5ffe6c8a34bf8d3af"
+      "currentCallerId": "f40cf50a136b33e64174"
     },
     {
       "previousCallerId": "046674e946dedc2dbd0a",
@@ -908,37 +908,37 @@
   ],
   "newCalls": [
     {
-      "id": "9ad5f0d15e0e54d3d953",
+      "id": "926fc795645f2f0bc36d",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 530,
+      "line": 532,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f"
     },
     {
-      "id": "b3a2b5af5ead58408dba",
+      "id": "727627f9887ab81f288b",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 530,
+      "line": 532,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f"
     },
     {
-      "id": "a48d99cb6019142baf77",
+      "id": "d40fe91b6a6c8b94ab3f",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 779,
+      "line": 781,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "authorize_business_action_dispatch",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f"
     },
     {
       "id": "3ff444168109d6f2d8a7",

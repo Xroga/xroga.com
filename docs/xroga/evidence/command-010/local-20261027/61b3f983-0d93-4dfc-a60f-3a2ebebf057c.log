@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: actual shared HTTP/WebSocket resolver binds signed grant, persisted owner/project/session, lifetime and declared target
+ok 1 - actual shared HTTP/WebSocket resolver binds signed grant, persisted owner/project/session, lifetime and declared target
+  ---
+  duration_ms: 7132.6812
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8327.9855

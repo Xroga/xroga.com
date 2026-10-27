@@ -1,3 +1,4 @@
+import {requireTenantContext} from '../security/tenantContext.js';
 import {
   Router,
   type Response,
@@ -2122,7 +2123,7 @@ router.post(
       const result =
         await executeComposioReadTool(
           req.userId!,
-          parsed.data,
+          {...parsed.data,tenantContext:requireTenantContext(req.tenantContext)},
         );
 
       res.json({

@@ -19,12 +19,13 @@ interface Draft {
 interface FeedbackModalProps {
   open: boolean;
   onClose: () => void;
+  initialCategory?: CommunityCategory;
 }
 
-export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
+export function FeedbackModal({ open, onClose, initialCategory = 'feedback' }: FeedbackModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
-  const [draft, setDraft] = useState<Draft>({ category: 'feedback', title: '', body: '' });
+  const [draft, setDraft] = useState<Draft>({ category: initialCategory, title: '', body: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [publishedId, setPublishedId] = useState<string | null>(null);
@@ -36,16 +37,18 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
       try {
         const value = JSON.parse(stored) as Partial<Draft>;
         setDraft({
-          category: categories.some(([key]) => key === value.category) ? value.category as CommunityCategory : 'feedback',
+          category: initialCategory === 'bug' ? 'bug' : categories.some(([key]) => key === value.category) ? value.category as CommunityCategory : 'feedback',
           title: typeof value.title === 'string' ? value.title : '',
           body: typeof value.body === 'string' ? value.body : '',
         });
       } catch {
         window.sessionStorage.removeItem(DRAFT_KEY);
       }
+    } else {
+      setDraft({ category: initialCategory, title: '', body: '' });
     }
     window.setTimeout(() => titleRef.current?.focus(), 0);
-  }, [open]);
+  }, [open, initialCategory]);
 
   useEffect(() => {
     if (!open) return;

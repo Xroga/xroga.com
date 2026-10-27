@@ -2,8 +2,13 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { createRequire } from 'node:module';
 import { FormattedAiMarkdown } from './formatAiMarkdown';
 import { remarkSourceCitations, safeSourceUrl } from './xrogaCitations';
+
+const nodeRequire = createRequire(__filename);
+nodeRequire.extensions['.css'] = (module) => { module.exports = { __esModule: true, default: new Proxy({}, { get: (_target, key) => String(key) }) }; };
+const { renderBlock } = nodeRequire('../components/terminal/XrogaBlockView.tsx') as typeof import('@/components/terminal/XrogaBlockView');
 
 const sources = [
   { title: 'Official report', url: 'https://example.com/report', snippet: 'Evidence.' },
@@ -41,7 +46,14 @@ test('the answer renderer shows an accessible source preview and exact source li
     content: 'The finding is sourced [1].',
     sources,
   }));
-  assert.match(html, /Preview source 1: Official report/);
-  assert.match(html, /Open source 1/);
+  assert.match(html, /Open source 1: Official report/);
+  assert.match(html, /xv-citation-chip/);
   assert.match(html, /https:\/\/example\.com\/report/);
+  assert.doesNotMatch(html, /More evidence/, 'unrelated source snippets must not flood the answer');
+});
+
+test('structured-output narrative retains the same inline citations as plain answers', () => {
+  const html = renderToStaticMarkup(renderBlock({ schemaVersion: 1, id: 'answer', type: 'narrative', text: 'A verified claim [2].' }, undefined, sources));
+  assert.match(html, /Open source 2: Second report/);
+  assert.match(html, /href="https:\/\/example\.org\/two"/);
 });

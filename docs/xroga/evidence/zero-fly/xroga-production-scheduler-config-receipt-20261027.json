@@ -1,0 +1,40 @@
+{
+  "atUtc": "2026-10-27T08:16:05.263769+00:00",
+  "reason": "Route and local scheduler mode require cloud, not google_scheduler",
+  "checks": [
+    {
+      "revision": "xroga-api-google-faf56ff8-recovery-r2",
+      "path": "/health",
+      "status": 200,
+      "release": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3"
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-recovery-r2",
+      "path": "/ready",
+      "status": 200,
+      "release": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3"
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-recovery-r2",
+      "unauthenticatedScheduler": 401
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-r2",
+      "path": "/health",
+      "status": 200,
+      "release": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3"
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-r2",
+      "path": "/ready",
+      "status": 200,
+      "release": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3"
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-r2",
+      "unauthenticatedScheduler": 401
+    }
+  ],
+  "status": "PASS_SCHEDULER_CONFIG_AND_NATIVE_READINESS",
+  "queueHeld": true
+}

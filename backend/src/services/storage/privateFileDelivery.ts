@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { requireTenantContext,type TenantContext } from '../../security/tenantContext.js';
 import { downloadFromR2,assertOwnedR2Key } from '../../lib/r2.js';
-import { FileDeliveryError,storageMetadataSchema,digestBytes,privateFileUrl,signFileLink,verifyFileLink,MAX_PRIVATE_FILE_BYTES,type OwnedFileRow } from './fileDeliveryPolicy.js';
+import { FileDeliveryError,storageMetadataSchema,digestBytes,fileFingerprint,privateFileUrl,signFileLink,verifyFileLink,MAX_PRIVATE_FILE_BYTES,type OwnedFileRow } from './fileDeliveryPolicy.js';
 
 const fileSchema=z.object({id:z.string().uuid(),project_id:z.string().uuid(),file_name:z.string(),file_type:z.string().nullable().optional(),file_path:z.string().nullable(),file_url:z.string().nullable(),content:z.string().nullable(),storage_metadata:z.unknown().optional(),delivery_version:z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),projects:z.object({user_id:z.string().uuid()})});
 export async function ownedFile(context:TenantContext,projectId:string,fileId:string,db?:SupabaseClient):Promise<OwnedFileRow> {
@@ -56,9 +56,18 @@ export async function revokePrivateFileLinks(context:TenantContext,projectId:str
   if(!Number.isSafeInteger(data)||data<1)throw new FileDeliveryError(404,'FILE_NOT_FOUND');
 }
 export async function downloadPrivateFile(context:TenantContext,projectId:string,fileId:string,link?:string,db?:SupabaseClient,now=Date.now()) {
+  const started=Date.now();
   const row=await ownedFile(context,projectId,fileId,db);
   if(link!==undefined)await verifyFileLink(context,row,link,now);
-  return {row,...await readPrivateFile(context,row)};
+  const result=await readPrivateFile(context,row);
+  try {
+    // Provider I/O can outlive project access or a link's revocation epoch.
+    // Do not release bytes using only the ownership snapshot from before I/O.
+    const current=await ownedFile(context,projectId,fileId,db);
+    if(fileFingerprint(current)!==fileFingerprint(row))throw new FileDeliveryError(409,'FILE_CHANGED');
+    if(link!==undefined)await verifyFileLink(context,current,link,now+Math.max(0,Date.now()-started));
+    return {row:current,...result};
+  } catch(error) {result.buffer.fill(0);throw error;}
 }
 /** Do not serialize internal bucket metadata or legacy public/data URLs in ordinary responses. */
 export function publicFileView(row:Record<string,unknown>):Record<string,unknown> {

@@ -1,0 +1,24 @@
+{
+  "atUtc": "2026-10-27T08:51:19.235501+00:00",
+  "ingress": "internal-and-cloud-load-balancing",
+  "requests": [
+    {
+      "atUtc": "2026-10-27T08:50:05.403550Z",
+      "status": 204,
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/business-automations/tick",
+      "revision": "xroga-api-google-faf56ff8-r3"
+    },
+    {
+      "atUtc": "2026-10-27T08:45:19.597799Z",
+      "status": 204,
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/canonical-dispatch",
+      "revision": "xroga-api-google-faf56ff8-r3"
+    },
+    {
+      "atUtc": "2026-10-27T08:45:04.495821Z",
+      "status": 204,
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/business-automations/tick",
+      "revision": "xroga-api-google-faf56ff8-r3"
+    }
+  ]
+}

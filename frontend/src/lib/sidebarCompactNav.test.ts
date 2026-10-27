@@ -11,8 +11,8 @@ const NOTIFICATIONS = read('../components/notifications/SidebarNotificationCente
 
 test('primary navigation retains the requested order and does not duplicate old groups', () => {
   const table = NAV.slice(NAV.indexOf('const navItems: NavEntry[] = ['), NAV.indexOf('interface SidebarProps'));
-  const markers = ["label: 'Workspace'", "label: 'Dashboard'", "label: 'Projects'", "label: 'Plugins'",
-    "id: 'automations'", "id: 'library'", "label: 'Publish'", "id: 'more'"];
+  const markers = ["label: 'Dashboard'", "id: 'automations'", "label: 'AI Employees'", "label: 'Plugins'",
+    "id: 'library'", "label: 'Publish'", "id: 'more'"];
   let last = -1;
   for (const marker of markers) {
     const pos = table.indexOf(marker);
@@ -21,6 +21,8 @@ test('primary navigation retains the requested order and does not duplicate old 
   }
   assert.doesNotMatch(table, /id: 'launch'|id: 'explore'/);
   assert.doesNotMatch(table, /href: '\/os-preview'/);
+  assert.doesNotMatch(table, /label: 'Workspace'|label: 'Projects'/);
+  assert.match(NAV, /<SidebarProjectHistory expanded=\{navExpanded\}/);
 });
 test('planned capabilities stay clickable as informative sections', () => {
   assert.doesNotMatch(NAV, /aria-disabled="true"/);
@@ -57,6 +59,7 @@ test('utility controls retain accessible names without the retired global toolti
   assert.doesNotMatch(read('../components/layout/AppShell.tsx'), /CompactAppTooltip/);
   assert.match(NAV, /className="xv-sidebar-utilities" aria-label="Sidebar utilities"/);
   assert.match(read('../components/terminal/WorkspaceSearchButton.tsx'), /aria-label="Search workspace"/);
+  assert.match(NAV, /<SidebarNotificationButton/);
   assert.match(LAUNCHER, /data-short-tip=\{chatbarHidden \? 'Show chatbar' : 'Hide chatbar'\}/);
   assert.doesNotMatch(NOTIFICATIONS, /title="Notifications"/);
 });

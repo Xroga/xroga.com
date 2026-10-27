@@ -29,6 +29,9 @@ import {
   selectSandboxProvider,
   setSandboxProvidersForTesting,
 } from './sandboxProviders.js';
+import {googleProjectRuntimeSelected} from '../synthesis/projectRuntime/googleFactory.js';
+import {issueSandboxExecutionBinding,requireSandboxExecutionBinding,type SandboxCaller} from './google/executionBinding.js';
+import {snapshotSandboxRequest} from './google/googleSandbox.js';
 
 export {
   ContainerSandboxRuntime,
@@ -101,6 +104,8 @@ export async function executeSandboxed(
   },
 ): Promise<SandboxExecutionResult> {
   requireEnforcedSandboxNetworkPolicy(request.networkPolicy, 'sandbox');
+  const admitted={...request,limits:{...DEFAULT_SANDBOX_LIMITS,...request.limits}};
+  if(googleProjectRuntimeSelected())await requireSandboxExecutionBinding(admitted);
   const { runtime, availability } = await selectSandboxProvider();
   cachedProbe = { at: Date.now(), value: availability };
   if (!runtime || !availability.available) throw new SandboxUnavailableError(availability);
@@ -123,8 +128,18 @@ export async function executeSandboxed(
     });
   }
 
-  return runtime.execute({
-    ...request,
-    limits: { ...DEFAULT_SANDBOX_LIMITS, ...(request.limits ?? {}) },
-  });
+  return runtime.execute(admitted);
+}
+
+/** Only the inspected production seams issue this provenance witness. Calling
+ * executeSandboxed directly in Google mode never manufactures authority. */
+export async function executeCanonicalSandboxed(caller:SandboxCaller,
+  request:Omit<SandboxExecutionRequest,'limits'|'executionBinding'>&{limits?:Partial<SandboxExecutionRequest['limits']>}):Promise<SandboxExecutionResult>{
+  if(!googleProjectRuntimeSelected()){
+    if(request.stages)throw new SandboxUnavailableError({available:false,runtime:'none',reason:'policy_disabled',detail:'This provider cannot honor isolated execution stages.'});
+    return executeSandboxed(request);
+  }
+  const captured=snapshotSandboxRequest({...request,limits:{...DEFAULT_SANDBOX_LIMITS,...request.limits}});
+  captured.executionBinding=await issueSandboxExecutionBinding(caller,captured);
+  return executeSandboxed(captured);
 }

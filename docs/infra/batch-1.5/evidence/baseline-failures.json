@@ -1,0 +1,26 @@
+{
+  "note": "Tests that fail identically on pristine origin/main 80d1f417 on the same toolchain. Classified BASELINE_FAILURE, not Phase 1 regressions (this branch changes nothing under backend/src/ai or backend/src/organicIntelligence). Any other failure is a regression.",
+  "main_sha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
+  "tests": [
+    "intelligence and report expose product opportunities and missing data honestly",
+    "CLI validation and report commands execute as non-destructive dry runs",
+    "every CLI command performs a real dry-run and supports JSON and verbose output",
+    "actual repository snapshot reuses Command 1, keeps missing data explicit, and produces two valid FIX briefs",
+    "validated demand evidence flows into the matching content brief without duplicates",
+    "a missing compiler reports tscRan=false, not a type-check failure"
+  ],
+  "groups": [
+    {
+      "file": "backend/src/organicIntelligence/organicIntelligence.test.ts",
+      "cause": "STALE_FACT: product facts carry a verification date that the clock has passed (3 tests)"
+    },
+    {
+      "file": "backend/src/organicIntelligence/content/engine.test.ts",
+      "cause": "repository-snapshot tests; fail on pristine main on Windows AND Linux (node:22-bookworm container) on 2026-10-22 (2 tests)"
+    },
+    {
+      "file": "backend/src/ai/compileCommand.test.ts",
+      "cause": "POSIX-only test; fails on pristine main in Linux when npm puts node_modules/.bin (a tsc) on PATH, skipped on Windows (1 test)"
+    }
+  ]
+}

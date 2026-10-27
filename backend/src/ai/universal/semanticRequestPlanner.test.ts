@@ -3,7 +3,9 @@ import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import {
   dispatchForGoal,
+  enforceExplicitBusinessWorkflowControls,
   enforceExplicitExecutionControls,
+  enforceExplicitPublicResearchControls,
   executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
@@ -52,6 +54,95 @@ function goal(overrides: Partial<GoalContract> = {}): GoalContract {
 }
 
 describe('semantic request dispatch', () => {
+  it('preserves read and action capabilities for an explicit multi-app request', () => {
+    const previousKey = process.env.COMPOSIO_API_KEY;
+    process.env.COMPOSIO_API_KEY = 'test-key';
+    try {
+      const corrected = enforceExplicitBusinessWorkflowControls({
+        goalContract: goal({ requiredCapabilities: ['business.read'] }),
+        dispatch: 'chat', capabilityIds: ['business.read'], rationale: 'model collapsed request', blockers: [], usage: {} as never,
+      }, 'Find clients in my CRM and email them an introduction');
+      assert.deepEqual(corrected.capabilityIds, ['business.read', 'business.action']);
+      assert.equal(corrected.goalContract.semanticIntent, 'MIXED');
+      assert.equal(corrected.dispatch, 'chat');
+    } finally {
+      if (previousKey === undefined) delete process.env.COMPOSIO_API_KEY;
+      else process.env.COMPOSIO_API_KEY = previousKey;
+    }
+  });
+
+  it('keeps an explicit public web search out of connected-app discovery', () => {
+    const previousKey = process.env.PARALLEL_API_KEY;
+    process.env.PARALLEL_API_KEY = 'test-key';
+    try {
+      const misroutedGoal = goal({
+        semanticIntent: 'INVESTIGATE',
+        requiredCapabilities: ['business.read'],
+      });
+      const corrected = enforceExplicitPublicResearchControls({
+        goalContract: misroutedGoal,
+        dispatch: 'chat',
+        capabilityIds: ['business.read'],
+        rationale: 'model-selected app search',
+        blockers: [],
+        usage: {} as never,
+      }, 'Do the web searches and plan a trip to Europe from Pakistan');
+
+      assert.deepEqual(corrected.capabilityIds, ['research.public-web', 'conversation.respond']);
+      assert.equal(corrected.goalContract.freshnessRequirement, 'CURRENT_REQUIRED');
+      assert.equal(corrected.dispatch, 'chat');
+    } finally {
+      if (previousKey === undefined) delete process.env.PARALLEL_API_KEY;
+      else process.env.PARALLEL_API_KEY = previousKey;
+    }
+  });
+
+  it('reports provider unavailability instead of falling back to Composio for public search', () => {
+    const previousKey = process.env.PARALLEL_API_KEY;
+    delete process.env.PARALLEL_API_KEY;
+    try {
+      const corrected = enforceExplicitPublicResearchControls({
+        goalContract: goal({ requiredCapabilities: ['business.read'] }),
+        dispatch: 'chat',
+        capabilityIds: ['business.read'],
+        rationale: 'model-selected app search',
+        blockers: [],
+        usage: {} as never,
+      }, 'Search the web for flight fares');
+      assert.equal(corrected.dispatch, 'blocked');
+      assert.match(corrected.blockers.join(' '), /research.*provider.*not configured/i);
+    } finally {
+      if (previousKey !== undefined) process.env.PARALLEL_API_KEY = previousKey;
+    }
+  });
+
+  it('does not override connected-app reads or a request not to browse', () => {
+    const appPlan = {
+      goalContract: goal({ requiredCapabilities: ['business.read'] }),
+      dispatch: 'chat' as const,
+      capabilityIds: ['business.read'],
+      rationale: 'connected app read',
+      blockers: [],
+      usage: {} as never,
+    };
+    assert.equal(enforceExplicitPublicResearchControls(appPlan, 'Search my Gmail messages'), appPlan);
+    assert.equal(enforceExplicitPublicResearchControls(appPlan, 'Do not search the web; read my Gmail'), appPlan);
+  });
+
+  it('does not silently drop a requested app action after public web research', () => {
+    const plan = {
+      goalContract: goal({ requiredCapabilities: ['business.read'] }),
+      dispatch: 'chat' as const,
+      capabilityIds: ['business.read'],
+      rationale: 'model collapsed request',
+      blockers: [],
+      usage: {} as never,
+    };
+    const guarded = enforceExplicitPublicResearchControls(plan, 'Search the web for flights and email the results to Jane');
+    assert.equal(guarded.dispatch, 'blocked');
+    assert.match(guarded.blockers.join(' '), /no action was executed/i);
+  });
+
   it('keeps a normal answer and public research out of the build path', () => {
     assert.equal(dispatchForGoal(goal(), ['conversation.respond']), 'chat');
     assert.equal(

@@ -61,11 +61,32 @@ export interface SafeBusinessActionConfirmation {
   risk: XrogaConnectToolRisk;
   createdAt: string;
   expiresAt: string;
+  request?: string;
   approval?: {
     preparedActionId: string; actionDigest: string; accountReference: string; operation: string;
     actionClass: string; destination: unknown; criticalParameters: unknown; spendMaximumMicroUsd: string | null; currency: string | null;
   };
   receipt?: { id: string; outcome: string; recordedAt: string; resultDigest?: string };
+  toolSlug?: string;
+  argumentsPreview?: string;
+}
+
+export function previewBusinessActionArguments(argumentsValue: Record<string, unknown>): string {
+  const scrub = (value: unknown, depth: number): unknown => {
+    if (depth > 8) return '[nested value omitted]';
+    if (typeof value === 'string') return value.slice(0, 4_000);
+    if (Array.isArray(value)) return value.slice(0, 50).map((item) => scrub(item, depth + 1));
+    if (value && typeof value === 'object') {
+      return Object.fromEntries(Object.entries(value).slice(0, 50).map(([key, item]) => [
+        key,
+        /token|secret|password|credential|api[_-]?key|authorization|cookie|private[_-]?key/i.test(key)
+          ? '[redacted]'
+          : scrub(item, depth + 1),
+      ]));
+    }
+    return value;
+  };
+  return JSON.stringify(scrub(redactOperationsValue(argumentsValue), 0), null, 2).slice(0, 24_000);
 }
 
 function cleanConfirmationId(
@@ -153,6 +174,7 @@ function isBusinessActionPlan(
     ) &&
     typeof value.requiresConfirmation ===
       'boolean' &&
+    (value.forceConfirmation === undefined || typeof value.forceConfirmation === 'boolean') &&
     typeof value.summary ===
       'string' &&
     Array.isArray(
@@ -214,6 +236,7 @@ function safeConfirmation(
 
     expiresAt:
       row.expires_at,
+    ...(plan ? { request: redactOperationsValue(plan.useCase) as string } : {}),
     ...(plan ? { approval: { preparedActionId: row.id, actionDigest: row.plan_digest,
       accountReference: plan.authority!.connectedAccountId, operation: plan.toolSlug,
       actionClass: plan.authority!.actionClass,
@@ -226,6 +249,7 @@ function safeConfirmation(
       ? { receipt: { id: row.id, outcome: String(row.effect_receipt.outcome), recordedAt: String(row.effect_receipt.recordedAt),
           ...(typeof row.effect_receipt.resultDigest === 'string' && /^[a-f0-9]{64}$/.test(row.effect_receipt.resultDigest)
             ? { resultDigest: row.effect_receipt.resultDigest } : {}) } } : {}),
+    ...(plan ? { toolSlug: plan.toolSlug, argumentsPreview: previewBusinessActionArguments(plan.arguments) } : {}),
   };
 }
 

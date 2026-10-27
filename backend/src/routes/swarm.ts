@@ -4,6 +4,7 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { requireTenantContext, requireResourceOwner } from '../security/tenantContext.js';
 import { TenantAccessError } from '../security/tenantErrors.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
+import {enqueueGoogleSwarm,googleBackgroundSelected} from '../workers/googleSwarmQueue.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 import { slimOutputForSse } from '../lib/slimOutputForSse.js';
 import { bindBuildStreamDisconnect } from '../lib/buildStreamLifecycle.js';
@@ -25,6 +26,7 @@ import {
   isRunCancellationRequested,
   withRunAttempt,
   hasAdmittedRunAttempt,
+  persistTerminalRunAuthority,
 } from '../ai/runStore.js';
 
 const router = Router();
@@ -32,16 +34,7 @@ const activeBuildControllers = new Map<string, AbortController>();
 
 /** A local terminal label alone cannot authorize a user-facing notification. */
 export async function persistTerminalNotificationAuthority(runId: string, userId: string): Promise<'complete' | 'error' | 'cancelled'> {
-  const record = getRun(runId);
-  if (!record || record.userId !== userId || record.status === 'running') {
-    throw new Error('Terminal run authority is unavailable.');
-  }
-  const status = record.status;
-  await persistRunState(runId);
-  if (getRun(runId) !== record || record.status !== status) {
-    throw new Error('Terminal run authority changed.');
-  }
-  return status;
+  return persistTerminalRunAuthority(runId,userId);
 }
 
 /**
@@ -73,6 +66,17 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
       ? (req.body.clientMeta as Record<string, unknown>)
       : undefined;
   const wantStream = req.body?.stream !== false;
+
+  if(googleBackgroundSelected()){
+    const runId=isValidClientRunId(req.body?.runId)?req.body.runId:randomUUID();
+    try{return await enqueueGoogleSwarm(req,res,requireTenantContext(req.tenantContext),runId,
+      {prompt:prompt.trim(),history,projectId,clientMeta,attachments},wantStream);}
+    catch(error){
+      if(error instanceof TenantAccessError)return res.status(error.status).json({error:error.message,code:error.code});
+      if((error as {code?:string})?.code==='OUT_OF_TOKENS')return res.status(402).json({error:publicAiText((error as Error).message),code:'OUT_OF_ACTIONS',paymentLink:'/pricing'});
+      return res.status(503).json({runId,error:'Durable execution admission is unavailable.',code:'RUN_ADMISSION_UNAVAILABLE'});
+    }
+  }
 
   if (!wantStream) {
     try {
@@ -370,7 +374,9 @@ router.get('/history', async (req: AuthRequest, res) => {
 router.get('/runs/:runId', async (req: AuthRequest, res) => {
   if (!req.userId) return res.status(401).json({ error: 'Sign in again and retry.' });
   const runId = String(req.params.runId || '');
-  const run = await getRunAsync(runId, req.userId);
+  let run;
+  try{run=await getRunAsync(runId,req.userId,googleBackgroundSelected());}
+  catch{return res.status(503).json({error:'Durable run status is temporarily unavailable.',code:'RUN_STATUS_UNAVAILABLE'});}
   if (!run) {
     return res.json({
       id: runId,

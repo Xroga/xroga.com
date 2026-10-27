@@ -62,6 +62,15 @@ jobs:
         run: |
           docker pull node@sha256:63538dfe497cc29dfafdda25ada09b46db68a3f4cc205abf1f5d6bf0913f3384
           node node_modules/tsx/dist/cli.mjs --test backend/tests/sandboxNetwork.local.integration.ts
+      - name: Google queued handoff, cancellation and real database concurrency
+        run: |
+          mkdir -p artifacts/batch-01-integration
+          python3 -B scripts/infrastructure/test-google-delivery-postgres.py \
+            --migration supabase/migrations/20261026000000_google_canonical_deliveries.sql \
+            --attempt-fence supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql \
+            --cancel supabase/migrations/20261016000600_cancelled_build_outcome_receipt.sql \
+            --image postgres@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3 \
+            --receipt artifacts/batch-01-integration/google-canonical-delivery.json
       - name: Preserve exact integrated audit provenance
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4

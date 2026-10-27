@@ -21,6 +21,20 @@ const START = read('../components/dashboard/WorkspaceNewTerminal.tsx');
 const START_CSS = read('../components/dashboard/WorkspaceNewTerminal.module.css');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
+const LAUNCHER = read('../components/terminal/WorkspaceLauncher.tsx');
+const PROJECTS = read('../components/layout/SidebarProjectHistory.tsx');
+
+test('an empty workspace cannot become a blank shell due to a saved hidden chatbar', () => {
+  assert.match(DOCK, /dockSuppressed = chatbarHidden && !emptyWorkspace/);
+  assert.match(DOCK, /if \(isDashboard && emptyWorkspace && chatbarHidden\)/);
+  assert.match(DOCK, /setChatbarHidden\(false\)/);
+  assert.match(LAUNCHER, /disabled=\{emptyWorkspace\}/);
+  assert.match(LAUNCHER, /function toggleChatbar\(\)\s*\{\s*if \(emptyWorkspace\) return;/);
+  assert.match(LAUNCHER, /draftForExplicitHide\(snapshots/);
+  assert.match(LAUNCHER, /flushSync\(\(\) => setPrompt\(latestDraft\)\)/);
+  assert.match(PROJECTS, /setWorkspaceOpen\(false\);[\s\S]*setChatbarHidden\(false\);[\s\S]*router\.push\('\/workspace'\)/);
+});
+
 test('an empty terminal centers the one canonical composer without duplicate suggestion tabs', () => {
   assert.match(DOCK, /messages\.length === 0/);
 
@@ -328,22 +342,21 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 
   assert.match(
     DOCK,
-    /setNavigationPressed\(true\);\s*if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
+    /if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
   );
 
-  assert.match(
-    DOCK,
-    /<SquareChevronUpIcon size=\{19\} direction=\{showJumpToLatest \? 'down' : 'up'\}/,
-  );
+  assert.match(DOCK, /<ArrowDown size=\{19\}/);
+  assert.match(DOCK, /<ArrowUp size=\{19\}/);
 
   assert.match(
     CSS,
     /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
   );
 
-  assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?width:\s*2\.25rem[\s\S]*?border-radius:\s*0\.62rem/);
   assert.match(DOCK, /aria-label=\{showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'\}/);
   assert.doesNotMatch(DOCK, /data-tooltip|data-short-tip/);
+  assert.match(CSS, /\.xv-conversation-navigator,\s*\.xv-conversation-navigator:hover,\s*\.xv-conversation-navigator:active\s*\{[\s\S]*?border:\s*0\s*!important/);
+  assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
   assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
 });
 
@@ -462,7 +475,7 @@ test('repository updates cannot resize or bounce the whole workspace dock', () =
 });
 
 
-test('the companion sits outside the composer while model identity stays beside the primary action', () => {
+test('the current composer keeps its compact model identity without the retired outside anchor', () => {
   assert.doesNotMatch(
     CSS,
     /\.xv-terminal-dock--idle \.xv-companion-composer-anchor/,
@@ -470,7 +483,7 @@ test('the companion sits outside the composer while model identity stays beside 
 
   assert.doesNotMatch(CHATBAR, /<CompanionComposerAnchor \/>/);
   assert.match(CHATBAR, /<BlackHoleVButton compact className="xv-companion-blackhole" \/>/);
-  assert.match(DOCK, /!incognito && !showStarterExperience \? <CompanionComposerAnchor \/> : null/);
+  assert.doesNotMatch(DOCK, /<CompanionComposerAnchor/);
 
   assert.match(
     CSS,
@@ -714,7 +727,8 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
   assert.doesNotMatch(START, /cardImage|1536/);
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
   assert.match(START_CSS, /background-clip: text/);
-  assert.equal((START.match(/id: '/g) ?? []).length, 7);
+  assert.deepEqual([...START.matchAll(/id: '([^']+)'/g)].map(match => match[1]),
+    ['create', 'find', 'build', 'ship', 'workflows', 'scheduled-tasks', 'employees', 'work-packs', 'browser-automation', 'apps-mcp']);
   assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);
   assert.match(START_CSS, /color: var\(--foreground\)/);
   assert.match(START_CSS, /font: 12px\/1\.5/);
@@ -739,7 +753,7 @@ test('starter cards preserve immediate local drafts and do not auto-submit', () 
 
 test('new terminal styling stays scoped while approved active composer controls retain parity', () => {
   assert.match(DOCK, /!sessionRestoring &&\s*messages\.length === 0 &&\s*!loading/);
-  assert.match(DOCK, /showStarterExperience && !incognito && !chatbarHidden && startStyles.dock/);
+  assert.match(DOCK, /showStarterExperience && !incognito && !dockSuppressed && startStyles.dock/);
   assert.match(DASHBOARD, /showNewTerminal && startStyles.window/);
   assert.match(CHATBAR, /arrowSend=\{!incognito\}/);
   assert.match(CHATBAR, /plusIcon=\{!incognito\}/);

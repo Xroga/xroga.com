@@ -723,6 +723,7 @@ export async function runWebIntelligence(
     const result =
       await parallelExtract({
         userId: input.userId,
+        dispatchScope: input.dispatchScope,
 
         urls:
           decision.urls,
@@ -746,6 +747,7 @@ export async function runWebIntelligence(
     const result =
       await parallelSearch({
         userId: input.userId,
+        dispatchScope: input.dispatchScope,
 
         objective:
           [
@@ -783,6 +785,7 @@ export async function runWebIntelligence(
     const result =
       await parallelResponses({
         userId: input.userId,
+        dispatchScope: input.dispatchScope,
 
         question:
           decision.objective ||

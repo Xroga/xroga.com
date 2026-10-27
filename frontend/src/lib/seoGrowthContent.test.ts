@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { existsSync } from 'node:fs';
 import { ALTERNATIVES, BLOG_ARTICLES, BUILD_GUIDES, COMPARISONS, FUTURE_SEO_FACTORIES, INTEGRATION_GUIDES } from './seoGrowthContent';
 
 test('SEO seed records have unique routes, titles, descriptions, and meaningful sections', () => {
@@ -53,4 +54,27 @@ test('priority authority articles satisfy comparison and production-readiness in
   assert.match(definitionText, /prototype-to-production/i);
   assert.match(definitionText, /authorization/i);
   assert.match(definitionText, /production-readiness checklist/i);
+});
+
+test('five distinct crypto guides have full text, source links and local editorial images', () => {
+  const slugs = [
+    'how-to-build-blockchain-app-with-ai',
+    'smart-wallet-ux-account-abstraction',
+    'stablecoin-payment-app-guide',
+    'smart-contract-security-checklist',
+    'crypto-dashboard-data-guide',
+  ];
+  for (const slug of slugs) {
+    const article = BLOG_ARTICLES.find((item) => item.slug === slug);
+    assert.ok(article, `${slug} is not in the blog inventory`);
+    const prose = article.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])]).join(' ');
+    assert.ok(prose.split(/\s+/).length >= 575, `${slug} is too thin`);
+    assert.ok(article.sources?.length && article.sources.length >= 2, `${slug} needs primary sources`);
+    assert.ok(article.sources.every(({ href }) => href.startsWith('https://')), `${slug} has an invalid source`);
+    const visual = article.visual;
+    assert.ok(visual?.alt && visual.alt.length > 45, `${slug} needs useful image alt text`);
+    assert.ok(existsSync(new URL(`../../public${visual.src}`, import.meta.url)), `${slug} image is missing`);
+    assert.equal(article.updated, '2026-10-23');
+    assert.ok(article.related.includes('/crypto'));
+  }
 });

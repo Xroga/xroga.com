@@ -15,6 +15,20 @@ const ownerEmail = `command3-owner-${run}@example.com`;
 const outsiderEmail = `command3-outsider-${run}@example.invalid`;
 const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = ''; let privateFileId=''; let foreignFileId='';
+const conversations = {
+  first: { id: `draft-owner-first-${run}`, title: `Owner first ${run}`, reply: `Persisted owner first conversation ${run}` },
+  second: { id: `draft-owner-second-${run}`, title: `Owner second ${run}`, reply: `Persisted owner second conversation ${run}` },
+  workflow: { id: `draft-owner-workflow-${run}`, title: `Owner workflow ${run}`, reply: `Persisted owner workflow conversation ${run}` },
+  outsider: { id: `draft-outsider-${run}`, title: `Outsider conversation ${run}`, reply: `Persisted outsider conversation ${run}` },
+};
+
+async function openPersistedConversation(page: import('@playwright/test').Page, conversation: typeof conversations.first) {
+  await page.getByRole('region', { name: 'Recent conversations' })
+    .getByRole('button', { name: conversation.title, exact: true }).click();
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-session', conversation.id);
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-restoring', 'false');
+  await expect(page.getByText(conversation.reply, { exact: true })).toBeVisible();
+}
 
 test.setTimeout(180_000);
 
@@ -79,6 +93,19 @@ test.beforeAll(async () => {
   if(files.error || files.data?.length!==2)throw new Error('Private file browser fixtures could not be created');
   privateFileId=files.data.find(item=>item.project_id===ownerProjectId)!.id;
   foreignFileId=files.data.find(item=>item.project_id===outsiderProjectId)!.id;
+  const savedConversations = await admin.from('xroga_sidebar_chats').insert(
+    Object.entries(conversations).map(([key, conversation]) => ({
+      user_id: key === 'outsider' ? outsiderId : ownerId,
+      id: conversation.id, title: conversation.title, prompt: '', preview: conversation.reply,
+      kind: 'chat', status: 'complete', message_count: 2,
+      messages: [
+        { id: `${conversation.id}-input`, role: 'user', content: 'Isolated persisted conversation fixture', createdAt: Date.now() },
+        { id: `${conversation.id}-reply`, role: 'assistant', content: conversation.reply, createdAt: Date.now() },
+      ],
+    })),
+  ).select('user_id,id');
+  expect(savedConversations.error).toBeNull();
+  expect(savedConversations.data).toHaveLength(4);
 });
 
 test.afterAll(async () => {
@@ -101,6 +128,8 @@ test('explicit hide preserves drafts without crossing real account and conversat
   const header = page.getByTestId('terminal-identity-header');
   await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
   await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  await expect(header.getByRole('button', { name: 'Composer stays visible in a new workspace', exact: true })).toBeDisabled();
+  await openPersistedConversation(page, conversations.first);
   const firstConversation = await composer.getAttribute('data-draft-session');
   const canary = `OWNER_DRAFT_${run}`;
   await composer.fill(canary);
@@ -110,6 +139,9 @@ test('explicit hide preserves drafts without crossing real account and conversat
   await page.getByRole('button', { name: 'New Work', exact: true }).click();
   await expect(composer).toHaveValue('');
   await expect(composer).not.toHaveAttribute('data-draft-session', firstConversation!);
+  await expect(header.getByRole('button', { name: 'Composer stays visible in a new workspace', exact: true })).toBeDisabled();
+  await openPersistedConversation(page, conversations.second);
+  await expect(composer).toHaveValue('');
   await composer.fill('');
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
   await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
@@ -126,6 +158,9 @@ test('explicit hide preserves drafts without crossing real account and conversat
   await login(outsiderEmail);
   await expect(composer).toHaveAttribute('data-draft-owner', outsiderId);
   await expect(composer).toHaveValue('');
+  await expect(page.getByRole('region', { name: 'Recent conversations' }).getByRole('button', { name: conversations.first.title, exact: true })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Recent conversations' }).getByRole('button', { name: conversations.second.title, exact: true })).toHaveCount(0);
+  await openPersistedConversation(page, conversations.outsider);
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
   await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
   await expect(composer).toHaveValue('');
@@ -282,11 +317,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // page itself already use that word for the whole surface, so the button that opens
   // the file tree and the diff says what it opens instead.
   await expect(terminalHeader.getByRole('button', { name: 'Project edits' })).toBeVisible();
-  // WorkspaceLauncher owns the one hide/restore control in the title bar.
-  // Hiding must remove the composer without leaving a floating replacement.
+  // Empty work keeps its composer visible. Exercise hide/restore only after
+  // restoring a real owner-bound PostgreSQL conversation through the current UI.
+  await expect(terminalHeader.getByRole('button', { name: 'Composer stays visible in a new workspace', exact: true })).toBeDisabled();
+  await openPersistedConversation(page, conversations.workflow);
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
   await expect(composerInput).toBeVisible();
+
   await hideChatbar.click();
   await expect(terminalDock.locator('.xv-chatbar-solid')).toHaveCount(0);
   await expect(composerInput).toHaveCount(0);
@@ -309,6 +347,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(hideChatbar).toHaveAttribute('aria-pressed', 'false');
   await expect(composerInput).toHaveCount(1);
   await expect(composerInput).toBeVisible();
+
+  // The remaining empty-workspace layout checks keep their original state.
+  await page.getByRole('button', { name: 'New Work', exact: true }).click();
+  await expect(terminalDock).toHaveAttribute('data-workspace-state', 'empty');
+  await expect(composerInput).toHaveValue('');
 
   // The portal intentionally floats 8 px above the composer (see
   // ChatBarActionsMenu's rect-based bottom offset). Keep its positioning close,
@@ -521,7 +564,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // Current owning UI names this dashboard destination Overview in both modes.
   await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toBeVisible();
   await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toHaveAttribute('href', '/dashboard');
-  await expect(rail.getByRole('link', { name: 'Projects' })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Integrations', exact: true })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Integrations', exact: true })).toHaveAttribute('href', '/dashboard/integrations');
 
   /*
    * Scoped to the anchor that contains the mark rather than the first link in the brand
@@ -863,11 +907,25 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(shellState.overflow).toBe(false);
   }
   const companion = page.getByTestId('xroga-companion-floating');
-  await expect(companion).toBeVisible();
-  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
-  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
-  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  await expect(companion).toHaveCount(0);
+  // Main removed the global floating companion. Usage is owned by the current
+  // workspace model control, while durable skin preferences remain in Settings.
+  await page.goto('/workspace');
+  const modelUsage = page.getByRole('button', { name: 'Black Hole model and usage', exact: true });
+  await expect(modelUsage).toBeVisible();
+  await modelUsage.click();
+  const modelPanel = page.getByTestId('black-hole-model-panel');
+  await expect(modelPanel).toBeVisible();
+  await expect(modelPanel.getByText('Sensitive actions require approval.', { exact: true })).toBeVisible();
+  await expect(modelPanel.getByRole('link', { name: 'View plan and usage', exact: true })).toHaveAttribute('href', '/dashboard#plan-usage');
+  await expect(page.getByRole('button', { name: 'Start voice input', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
+  // The viewport-clamped menu can cover its anchor. Use its supported keyboard
+  // dismissal rather than forcing a pointer through the app-permissions select.
+  await page.keyboard.press('Escape');
+  await expect(modelPanel).toHaveCount(0);
+  await expect(modelUsage).toHaveAttribute('aria-expanded', 'false');
 
   for (const viewport of [
     { width: 390, height: 844 },
@@ -909,6 +967,41 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
   expect((await page.request.get(signed.url)).status()).toBe(404);
   await page.goto(`/dashboard/projects/${ownerProjectId}`);
+  await expect(page).toHaveURL(new RegExp(`/workspace\\?project=${ownerProjectId}`));
+  // Keep main's unified Workspace navigation. Private saved-file delivery now
+  // lives in Library, using the same owner-only download/copy/revoke controls.
+  const projectsLoaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/projects' && response.request().method() === 'GET');
+  await page.goto('/dashboard/library#my-files');
+  const projectsResponse = await projectsLoaded;
+  const libraryProjects = await projectsResponse.json() as Array<{ id: string }>;
+  expect(projectsResponse.status()).toBe(200);
+  expect(libraryProjects.some(project => project.id === ownerProjectId)).toBe(true);
+  expect(libraryProjects.some(project => project.id === outsiderProjectId)).toBe(false);
+  await expect(page).toHaveURL(/\/dashboard\/library#my-files$/);
+  await expect(page.getByRole('heading', { name: 'Everything worth keeping.', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Library sections' }).getByRole('link', { name: 'My Files', exact: true })).toHaveAttribute('aria-current', 'page');
+  const librarySession = await browserSession(page);
+  expect(librarySession).toEqual({ status: 200, authenticated: true });
+  // Native label text includes its nested option text for getByLabel. The
+  // combobox's computed accessible name excludes those options.
+  const libraryProject = page.getByRole('combobox', { name: 'Choose project', exact: true });
+  await expect(libraryProject).toBeEnabled();
+  await mkdir('test-results', { recursive: true });
+  await writeFile('test-results/library-selector-evidence.json', JSON.stringify({
+    sourceSha: expectedRelease,
+    path: new URL(page.url()).pathname + new URL(page.url()).hash,
+    session: librarySession,
+    projectsStatus: projectsResponse.status(),
+    ownerProjectAvailable: libraryProjects.some(project => project.id === ownerProjectId),
+    foreignProjectAvailable: libraryProjects.some(project => project.id === outsiderProjectId),
+    exactTextLabelMatches: await page.getByLabel('Choose project', { exact: true }).count(),
+    comboboxMatches: await libraryProject.count(),
+    selector: await libraryProject.evaluate(element => ({ tag: element.tagName, labelText: (element as HTMLSelectElement).labels?.[0]?.textContent, disabled: (element as HTMLSelectElement).disabled })),
+    accessibility: await libraryProject.ariaSnapshot(),
+  }, null, 2));
+  await libraryProject.selectOption(ownerProjectId);
+  await expect(libraryProject.locator(`option[value="${outsiderProjectId}"]`)).toHaveCount(0);
+  await page.getByRole('button', { name: 'private-browser-fixture.txt' }).click();
   await expect(page.getByRole('link',{name:'Download selected file'})).toHaveAttribute('href',`/api/private-files/${ownerProjectId}/${privateFileId}`);
   await expect(page.getByRole('button',{name:'Download All'})).toHaveCount(0);
   await page.getByRole('button',{name:'Copy 60-second link'}).click();

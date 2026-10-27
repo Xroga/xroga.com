@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: hosted Auth cookie and SDK storage key enforce host-only HTTPS session isolation
+ok 1 - hosted Auth cookie and SDK storage key enforce host-only HTTPS session isolation
+  ---
+  duration_ms: 36.3853
+  type: 'test'
+  ...
+# Subtest: only the admitted disposable realm retains local HTTP cookie behavior
+ok 2 - only the admitted disposable realm retains local HTTP cookie behavior
+  ---
+  duration_ms: 1.0643
+  type: 'test'
+  ...
+# Subtest: all actual SSR constructors share the cookie policy without legacy fallback
+ok 3 - all actual SSR constructors share the cookie policy without legacy fallback
+  ---
+  duration_ms: 1.3509
+  type: 'test'
+  ...
+# Subtest: public content and guest-browse app pages do not cost an auth round trip
+ok 4 - public content and guest-browse app pages do not cost an auth round trip
+  ---
+  duration_ms: 2.7616
+  type: 'test'
+  ...
+# Subtest: private pages still cost one, because the answer decides the response
+ok 5 - private pages still cost one, because the answer decides the response
+  ---
+  duration_ms: 0.5921
+  type: 'test'
+  ...
+# Subtest: private OS preview denies before streaming and reuses server identity, role and MFA policy
+ok 6 - private OS preview denies before streaming and reuses server identity, role and MFA policy
+  ---
+  duration_ms: 1.2994
+  type: 'test'
+  ...
+# Subtest: auth pages keep the lookup even though they are public
+ok 7 - auth pages keep the lookup even though they are public
+  ---
+  duration_ms: 0.3868
+  type: 'test'
+  ...
+# Subtest: the middleware returns before building an auth client
+ok 8 - the middleware returns before building an auth client
+  ---
+  duration_ms: 0.7044
+  type: 'test'
+  ...
+# Subtest: both redirects still happen, so the gate is not merely skipped
+ok 9 - both redirects still happen, so the gate is not merely skipped
+  ---
+  duration_ms: 0.3113
+  type: 'test'
+  ...
+# Subtest: files that can never be gated do not reach the middleware
+ok 10 - files that can never be gated do not reach the middleware
+  ---
+  duration_ms: 0.451
+  type: 'test'
+  ...
+# Subtest: the root error boundary records what it claims to record
+ok 11 - the root error boundary records what it claims to record
+  ---
+  duration_ms: 1.0603
+  type: 'test'
+  ...
+# Subtest: uses the approved public endpoint even when hosting configuration is stale
+ok 12 - uses the approved public endpoint even when hosting configuration is stale
+  ---
+  duration_ms: 2.3063
+  type: 'test'
+  ...
+# Subtest: rejects a server credential in browser configuration
+ok 13 - rejects a server credential in browser configuration
+  ---
+  duration_ms: 1.2509
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 896.7176

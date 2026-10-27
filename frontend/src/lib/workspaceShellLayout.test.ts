@@ -306,14 +306,17 @@ test('terminal output is sized like a console, not like a landing page', () => {
   assert.match(CSS, /\.xv-terminal-scroll \.xv-response-text h1,\s*\n\.xv-terminal-scroll \.xv-response-text h2 \{\s*\n\s*font-size:\s*18px/);
 });
 
-test('the prompt bubble and the chips lost their outlines but kept their shape', () => {
+test('the prompt bubble keeps its shape and the current suggestion rows remain flat', () => {
   const bubble = rule('.xv-user-bubble') ?? '';
   assert.match(bubble, /background:\s*rgba\(255, 255, 255, 0\.045\)/);
   assert.match(bubble, /border:\s*1px solid rgba\(255, 255, 255, 0\.075\)/);
   assert.match(bubble, /border-radius:\s*12px/);
   assert.equal(/gradient/.test(bubble), false, 'the blue gradient bubble came back');
 
-  assert.match(rule('.xv-suggest-chip') ?? '', /background:\s*rgba\(255, 255, 255, 0\.035\)/);
+  const suggestion = rule('.xv-suggest-chip') ?? '';
+  assert.match(suggestion, /background:\s*transparent/);
+  assert.match(suggestion, /border-radius:\s*0/);
+  assert.match(suggestion, /border-bottom:\s*1px solid/);
 });
 
 test('the Workspace button uses filled states rather than a border', () => {

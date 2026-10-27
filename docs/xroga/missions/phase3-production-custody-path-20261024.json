@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-P3-PRODUCTION-CUSTODY-PATH-20261024",
+  "baseSha": "2bb72563b2a940bcf906d2a7346cf408cbbd5440",
+  "requirementIds": [
+    "XB01-C009"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Close demonstrated production identity and PostgreSQL MAINTAIN compatibility gaps through the existing canonical KMS provider. Resolve six ambiguous migration effects and order controlled production cutover. No live operation or acceptance claim.",
+  "changedFiles": [
+    "backend/.env.example",
+    "backend/src/services/integrations/credentialVaultStartup.ts",
+    "backend/src/services/integrations/credentialVaultStartup.test.ts",
+    "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+    "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+    "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts",
+    "backend/src/security/browserMaintain.local.integration.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "supabase/migrations/20261024111128_browser_maintain_privilege.sql",
+    "deploy/cloudrun/PHASE3-STAGING-RUNBOOK.md",
+    "docs/xroga/missions/phase3-production-custody-path-20261024.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/deployment-topology.mmd",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical vault, Google auth library, existing Fly production and selected private Cloud Run staging",
+      "All original criteria, evaluator and historical evidence"
+    ],
+    "extend": [
+      "Explicit keyless Fly identity supplier and fail-closed configuration",
+      "Forward PostgreSQL17+ MAINTAIN correction and actual mandatory disposable assertion"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261024111128_browser_maintain_privilege.sql"
+    ],
+    "rollout": "Unapplied CLI-generated forward migration. Revoke only browser MAINTAIN on public tables and migration-executor defaults on PG17+, retain DML/RLS/service-role grants. Production SQL needs exact authorization.",
+    "rollback": "No production SQL occurred. A code revert retains revoked maintenance rights. Do not restore broad browser grants, ciphertext, revisions or tombstones from stale state."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Fly must explicitly federate a bounded current machine OIDC token through pinned Google STS and exact service-account impersonation. No operator ADC fallback on Fly."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant identity or customer scope policy changed. No customer rows or secrets read."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Pending isolated staging request retained. Production resources, IAM, drain/deploy/SQL and customer transitions remain separately itemized approval-gated."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Extend the existing Google KMS transport, no second vault or key download. Exact current workload/image binding, token renewal and denial tested with synthetic HTTP only."
+    },
+    "egress": {
+      "changed": true,
+      "description": "New Fly token request only at fixed local unix socket. Fixed Google STS/IAM endpoints in installed library. No arbitrary network/file/token-source configuration."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No cloud resource or production effect. Actual KMS/IAM operation still approval-gated, no new cloud experiment."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No customer accounting or commercial billing change."
+    }
+  },
+  "tests": [
+    {
+      "command": "Canonical Node22 isolated tsx startup and Fly workload identity tests",
+      "scope": "Missing exact Fly federation RED before repair. Configuration/claim denial, fixed local socket limits, installed Google library STS/impersonation/renewal with synthetic responses. Live federation not claimed.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts"
+    },
+    {
+      "command": "Mandatory disposable Supabase PostgreSQL test after source migrations",
+      "scope": "Registered exact MAINTAIN forward correction, positive DML and zero browser MAINTAIN grants. New-source execution pending.",
+      "negative": true,
+      "reference": "backend/src/security/browserMaintain.local.integration.ts"
+    },
+    {
+      "command": "Backend TypeScript noEmit and focused migration syntax/local CloudRun constraint checks",
+      "scope": "Affected compilation and syntax only. Source-bound final CI, staged identity and real backup/recovery remain mandatory.",
+      "negative": false,
+      "reference": "supabase/migrations/20261024111128_browser_maintain_privilege.sql"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing KMS transport gains a bounded identity supplier using installed library. No provider migration, extra vault, ledger, orchestrator or control plane.",
+    "rfc": null
+  },
+  "rollout": "Keep preparation isolated. Finish exact-source CI/build/image/config and full-API schema review, then existing approved staging if granted. Before separately authorized production operations attest numeric Fly org ID, WIF IAM, backup/recovery image and runtime drain. Never merge to force deploy or permit mixed legacy/v3 readers/writers.",
+  "rollback": "Reject or revert the isolated code candidate before release. After v3 production writing, use only an independently verified managed-compatible image/config retaining key versions, ciphertext, revisions and revocations. Legacy releases1247/1246 excluded. No reverse migration or plaintext downgrade.",
+  "knownGaps": [
+    "New-source full CI and actual disposable MAINTAIN execution pending",
+    "Numeric Fly org ID, immutable release/recovery images, real identity/IAM and production backup/restore remain unattested",
+    "Eleven-file credential fixture is not whole-API rollout selection",
+    "No resource/IAM/SQL/deploy/customer transition authorization or formal acceptance"
+  ],
+  "placeholderClaimsRemaining": [
+    "No production, live federation or ready release/recovery pair claim"
+  ],
+  "evidenceRefs": [
+    "deploy/cloudrun/PHASE3-STAGING-RUNBOOK.md",
+    "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Unapproved production operations",
+      "Final release/recovery pair and schema compatibility/restore proof pending",
+      "Original VERIFIED_MANAGED_PROVIDER_AND_CUTOVER unmet"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

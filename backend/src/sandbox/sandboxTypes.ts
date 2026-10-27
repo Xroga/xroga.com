@@ -1,4 +1,5 @@
 import type { ProjectFile } from '../ai/patches.js';
+import type {SandboxExecutionBinding} from './google/executionBinding.js';
 
 /**
  * The execution boundary for AI-generated code.
@@ -38,6 +39,12 @@ export interface SandboxLimits {
 }
 
 export interface SandboxExecutionRequest {
+  /** Opaque existing-run binding, issued only by the inspected server callers. */
+  executionBinding?:SandboxExecutionBinding;
+  /** Original owned files when a first-party collector adds its own artifacts. */
+  sourceFiles?:readonly ProjectFile[];
+  signal?:AbortSignal;
+  stages?:readonly SandboxExecutionStage[];
   files: ProjectFile[];
   command: string;
   args: string[];
@@ -64,7 +71,23 @@ export interface SandboxExecutionRequest {
   image?: string;
 }
 
+export interface SandboxExecutionStage {
+  id:string;
+  command:string;
+  args:readonly string[];
+  networkPolicy:SandboxNetworkPolicy;
+  timeoutMs:number;
+  cwd?:string;
+}
+
+export class SandboxAdmissionError extends Error {
+  readonly code='SANDBOX_ADMISSION_DENIED';
+  cleanupPending=false;
+  constructor(){super('Sandbox execution authority is no longer available.');this.name='SandboxAdmissionError';}
+}
+
 export interface SandboxExecutionResult {
+  stages?:readonly (SandboxExecutionResult&{id:string;networkPolicy?:SandboxNetworkPolicy})[];
   exitCode: number | null;
   stdout: string;
   stderr: string;

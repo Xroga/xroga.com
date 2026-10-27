@@ -59,12 +59,13 @@ test('the current rail opens deliberately by click, never by passing hover', () 
   assert.match(code, /description=\{navExpanded \? 'Workspace home' : 'Click to open the sidebar'\}/);
 });
 
-test('the rail carries workspace and the destinations people actually go to', () => {
+test('the current rail starts new work and retains overview and integrations', () => {
   const rail = code.slice(code.indexOf('xv-sidebar-collapsed-actions'));
   const block = rail.slice(0, rail.indexOf('</div>'));
-  assert.match(block, /href="\/workspace"[\s\S]{0,100}aria-label="Workspace"/, 'Workspace should be first on the rail');
+  assert.match(block, /onClick=\{handleNewChat\} aria-label="New Work"/);
   assert.match(block, /href="\/dashboard"[\s\S]{0,80}aria-label="Overview"/, 'Overview should link to the dashboard on the rail');
-  assert.match(block, /href="\/dashboard\/projects"[\s\S]{0,80}aria-label="Projects"/, 'Projects should be on the rail');
+  assert.match(block, /href="\/dashboard\/integrations"[\s\S]{0,80}aria-label="Integrations"/);
+  assert.doesNotMatch(block, /aria-label="Projects"|aria-label="Workspace"/);
 });
 
 test('the collapsed rail keeps theme selection available', () => {

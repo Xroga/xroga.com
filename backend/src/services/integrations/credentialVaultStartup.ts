@@ -1,14 +1,15 @@
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import type { CryptoProvider } from './cryptoProvider.js';
 import { requireCryptoProvider } from './cryptoProvider.js';
-import { GoogleCloudKmsCryptoProvider } from './googleCloudKmsCryptoProvider.js';
+import { GoogleCloudKmsCryptoProvider, ApplicationDefaultGoogleKmsTransport } from './googleCloudKmsCryptoProvider.js';
+import {flyGoogleWorkloadConfiguration, type FlyGoogleWorkloadConfiguration} from './flyGoogleWorkloadIdentity.js';
 import { createOciKmsCryptoProvider, validateOciKmsConfiguration } from './ociKmsCryptoProvider.js';
 import { validateOciFederationConfiguration, type OciFederationConfiguration } from './ociWorkloadFederation.js';
 import { configureCredentialVaultProvider } from './credentialVaultRuntime.js';
 import type { RequestHandler } from 'express';
 
 type Environment = Readonly<Record<string, string | undefined>>;
-type ManagedConfiguration = { provider: 'google_cloud'; keyName: string }
+type ManagedConfiguration = { provider: 'google_cloud'; keyName: string; federation?:FlyGoogleWorkloadConfiguration }
   | { provider: 'oci'; keyId: string; endpoint: string; encryptVersionId: string; expectedPrincipalId: string;
       authMode: 'instance_principal' | 'resource_principal' | 'workload_federation'; federation?: OciFederationConfiguration };
 const invalid = (): never => { throw new Error('CredentialVault startup configuration is invalid.'); };
@@ -24,8 +25,12 @@ export function managedCredentialConfiguration(env: Environment): ManagedConfigu
   if (provider === 'google_cloud') {
     if (!env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME || oci.some(Boolean)) return invalid();
     // Constructor validates the exact resource without making an API request.
-    new GoogleCloudKmsCryptoProvider(env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME);
-    return { provider, keyName: env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME };
+    let federation:FlyGoogleWorkloadConfiguration|undefined;
+    try {federation = flyGoogleWorkloadConfiguration(env,env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME);} catch {return invalid();}
+    try {
+      new GoogleCloudKmsCryptoProvider(env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME,new ApplicationDefaultGoogleKmsTransport(federation, env));
+    } catch { return invalid(); }
+    return { provider, keyName: env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME, federation };
   }
   if (provider !== 'oci' || env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME || oci.some(value => !value)
     || !['instance_principal', 'resource_principal', 'workload_federation'].includes(env.XROGA_OCI_KMS_AUTH_MODE!)
@@ -59,7 +64,7 @@ export function managedOciFederationConfiguration(env: Environment): OciFederati
 async function createManaged(configuration: ManagedConfiguration): Promise<CryptoProvider> {
   return configuration.provider === 'oci'
     ? createOciKmsCryptoProvider(configuration)
-    : new GoogleCloudKmsCryptoProvider(configuration.keyName);
+    : new GoogleCloudKmsCryptoProvider(configuration.keyName,new ApplicationDefaultGoogleKmsTransport(configuration.federation));
 }
 
 export function credentialVaultReadinessMiddleware(state: { checkReadiness(): Promise<boolean> }): RequestHandler {

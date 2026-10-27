@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { test } from 'node:test';
 import { executePreparedBusinessAction, verifyPlanDigest, type BusinessActionPlan } from './businessAction.js';
-import { createBusinessActionConfirmation } from './businessActionConfirmations.js';
+import { createBusinessActionConfirmation, getBusinessActionConfirmation } from './businessActionConfirmations.js';
 
 function canonical(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(canonical);
@@ -15,6 +15,45 @@ function fixture(): BusinessActionPlan {
     risk: 'destructive' as const, requiresConfirmation: true, requiredScopes: ['fixture.delete'], scopeRequirements: null };
   return { ...unsigned, planDigest: createHash('sha256').update(JSON.stringify(canonical(unsigned))).digest('hex') };
 }
+
+test('original request display requires a digest-verified scoped plan and preserves redacted approval metadata', async t => {
+  const owner = '11111111-1111-4111-8111-111111111111';
+  const id = '22222222-2222-4222-8222-222222222222';
+  const previous = new Map(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'].map(key => [key, process.env[key]]));
+  process.env.SUPABASE_URL = 'http://127.0.0.1:1';
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'SYNTHETIC_NO_DATABASE_CALL';
+  t.after(() => { for (const [key, value] of previous) value === undefined ? delete process.env[key] : process.env[key] = value; });
+  const { planDigest: _digest, ...base } = fixture();
+  const unsigned = { ...base, useCase: 'Delete selected message using Bearer SYNTHETIC_REQUEST_CANARY', arguments: { ...base.arguments, access_token: 'synthetic-private-canary' }, authority: {
+    version: '1' as const, userId: owner, tenantId: owner, connectedAccountId: 'fixture-account',
+    actionClass: 'DELETE' as const, projectId: null, runId: null, issuedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 60_000).toISOString(), nonce: 'fixture-nonce', maxSpendMicroUsd: null, currency: null,
+  } };
+  const plan = { ...unsigned, planDigest: createHash('sha256').update(JSON.stringify(canonical(unsigned))).digest('hex') };
+  let storedPlan: BusinessActionPlan = plan;
+  t.mock.method(globalThis, 'fetch', async (input: string | URL | Request) => {
+    const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
+    assert.equal(url.origin, 'http://127.0.0.1:1');
+    assert.equal(url.pathname, '/rest/v1/business_action_confirmations');
+    assert.equal(url.searchParams.get('user_id'), `eq.${owner}`);
+    assert.equal(url.searchParams.get('id'), `eq.${id}`);
+    assert.match(url.searchParams.get('select')!, /effect_receipt/);
+    return new Response(JSON.stringify({ id, user_id: owner, status: 'pending', plan: storedPlan,
+      plan_digest: plan.planDigest, summary: plan.summary, toolkit: plan.toolkit, risk: plan.risk,
+      created_at: plan.authority.issuedAt, expires_at: plan.authority.expiresAt,
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  });
+  const displayed = await getBusinessActionConfirmation(owner, id);
+  assert.equal(displayed.request, 'Delete selected message using [REDACTED]');
+  assert.ok(!JSON.stringify(displayed).includes('SYNTHETIC_REQUEST_CANARY'));
+  assert.equal(displayed.approval?.actionDigest, plan.planDigest);
+  assert.equal(displayed.approval?.accountReference, 'fixture-account');
+  assert.ok(!JSON.stringify(displayed).includes('synthetic-private-canary'));
+  storedPlan = { ...plan, useCase: 'Substituted request' };
+  const changed = await getBusinessActionConfirmation(owner, id);
+  assert.equal(changed.request, undefined);
+  assert.equal(changed.approval, undefined);
+});
 
 test('existing action digest binds exact display, target, arguments, session and authority metadata', async t => {
   let externalCalls = 0;

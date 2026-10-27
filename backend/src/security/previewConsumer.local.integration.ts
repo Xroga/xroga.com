@@ -30,7 +30,10 @@ export function registerPreviewConsumerTests(admin:SupabaseClient,getUsers:()=>r
   };
   const own=await seed(owner.id),foreign=await seed(other.id);let outage=false;
   globalThis.fetch=async(input,init)=>{const url=new URL(String(input instanceof Request?input.url:input));assert.equal(url.origin,'http://127.0.0.1:54321','Resolver may query only disposable authority, never a provider');if(outage&&url.pathname==='/rest/v1/project_preview_grants')return Response.json({message:'SYNTHETIC_AUTHORITY_OUTAGE'},{status:503});return original(input,init);};
-  assert.deepEqual(await resolveTarget(own.host),{host:'abc123.vm.fixture-private.internal',port:3000,publicHost:own.host});
+  const target=await resolveTarget(own.host);assert.ok(target);
+  const {revalidate,expiresAt,...route}=target;
+  assert.deepEqual(route,{host:'abc123.vm.fixture-private.internal',port:3000,publicHost:own.host});
+  assert.equal(expiresAt,Date.parse(own.grant.expiresAt));assert.equal(await revalidate(),true);
   const parts=own.host.split('.');parts[1]=parts[1][0]==='a'?'b'+parts[1].slice(1):'a'+parts[1].slice(1);assert.equal(await resolveTarget(parts.join('.')),null);
   parts[0]=foreign.grant.previewId.replaceAll('-','');parts[1]=own.host.split('.')[1];assert.equal(await resolveTarget(parts.join('.')),null);
   assert.equal(await resolveTarget('invalid.example.invalid'),null);
@@ -41,8 +44,8 @@ export function registerPreviewConsumerTests(admin:SupabaseClient,getUsers:()=>r
   const before=await snapshot();await revokeLivePreviewGrants({userId:other.id,projectId:own.session.projectId,sessionId:own.session.sessionId});assert.deepEqual(await snapshot(),before);
   assert.equal((await admin.from('project_runtime_sessions').update({state:{...own.session,ports:[]}}).eq('session_id',own.session.sessionId).eq('user_id',owner.id)).error,null);assert.equal(await resolveTarget(own.host),null);
   assert.equal((await admin.from('project_runtime_sessions').update({state:own.session}).eq('session_id',own.session.sessionId).eq('user_id',owner.id)).error,null);assert.ok(await resolveTarget(own.host));
-  outage=true;assert.equal(await resolveTarget(own.host),null);outage=false;
-  await revokeLivePreviewGrants({userId:owner.id,projectId:own.session.projectId,sessionId:own.session.sessionId});assert.equal(await resolveTarget(own.host),null);assert.equal(await getLatestLivePreviewGrant({userId:owner.id,projectId:own.session.projectId}),null);
+  outage=true;assert.equal(await resolveTarget(own.host),null);assert.equal(await revalidate(),false);outage=false;
+  await revokeLivePreviewGrants({userId:owner.id,projectId:own.session.projectId,sessionId:own.session.sessionId});assert.equal(await resolveTarget(own.host),null);assert.equal(await revalidate(),false);assert.equal(await getLatestLivePreviewGrant({userId:owner.id,projectId:own.session.projectId}),null);
   assert.ok(await resolveTarget(foreign.host));const after=await snapshot();assert.equal(after.user_id,before.user_id);assert.equal(after.project_id,before.project_id);assert.equal(after.session_id,before.session_id);assert.equal(after.run_id,before.run_id);assert.ok(after.revoked_at);
  });
 }

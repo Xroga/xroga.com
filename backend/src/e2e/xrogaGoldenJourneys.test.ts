@@ -26,18 +26,21 @@ const TOOL = 'SLACK_DELETE_MESSAGE';
 type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'incomplete' | 'malformed';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL) {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string}) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   process.env.SUPABASE_URL='http://127.0.0.1:54321';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-offline-service-role';delete process.env.SUPABASE_JWT_SECRET;
   t.after(()=>{for(const[key,value]of previous)value===undefined?delete process.env[key]:process.env[key]=value;});
   const paths: string[] = [];
+  const auditCorrelations:string[]=[];
   t.mock.method(globalThis,'fetch',async (input: string | URL | Request, init?: RequestInit) => {
     const url = new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
     if(url.origin==='http://127.0.0.1:54321'){
       if(url.pathname==='/rest/v1/user_integrations'&&(!init?.method||init.method==='GET'))return new Response('[]',{headers:{'Content-Type':'application/json'}});
       if(url.pathname==='/rest/v1/production_audit_log'&&init?.method==='POST'){
         const row=JSON.parse(String(init.body));assert.equal(row.user_id,OWNER);assert.equal(row.actor_id,OWNER);
+        auditCorrelations.push(row.correlation_id);
+        events?.onAudit?.();
         assert.equal(row.action,'egress_decision');assert.equal(row.outcome,'ALLOW');
         assert.match(row.metadata.payloadDigest,/^[a-f0-9]{64}$/);assert.equal(row.metadata.policyVersion,'xroga-egress-1');
         assert.doesNotMatch(JSON.stringify(row),/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|fixture-account-A|fixture-message/);
@@ -58,12 +61,12 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false,
         access_token:'SYNTHETIC_PROVIDER_RESULT_CREDENTIAL',credentials:{secret:'SYNTHETIC_NESTED_CREDENTIAL'},url:'https://example.invalid/fixture-result'},error:null});
     }
     if(path.includes('/tools/'))return response({slug,toolkit:{slug:'slack'},tags:[slug===TOOL?'destructiveHint':'readOnlyHint'],input_parameters:{type:'object'},scopes:['fixture.message.delete']});
-    if(path.endsWith('/search'))return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:slug,toolkit:'slack',description:'Synthetic fixture only',input_schema:{type:'object'}}}});
+    if(path.endsWith('/search')){events?.onSearch?.();return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:slug,toolkit:'slack',description:'Synthetic fixture only',input_schema:{type:'object'}}}});}
     if(path.endsWith('/toolkits'))return response({items:[{slug:'slack',name:'Slack',connected_account:connected?{id:'fixture-account-A',status:'ACTIVE'}:null}]});
-    if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},tags:['readOnlyHint']}});
+    if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${events?.sessionOwner?.()??OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},tags:['readOnlyHint']}});
     assert.fail('Unexpected adapter path: no call is forwarded');
   });
-  return paths;
+  return Object.assign(paths,{auditCorrelations});
 }
 
 function canonical(value: unknown): unknown {
@@ -87,6 +90,45 @@ async function executeFixture(plan = preparedPlan(), userId = OWNER) {
     executePreparedBusinessAction({userId,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit}));
 }
 const code = (expected:string)=>(error:unknown)=>Boolean(error&&typeof error==='object'&&(error as {code?:string}).code===expected);
+
+test('GJ action egress retains the original issued actor context rather than rebuilding one from a user ID',async t=>{
+  const paths=providerStub(t,'success',true),plan=preparedPlan(),context=createTenantContext({userId:OWNER,via:'remote_getuser'}),scope=businessActionAuthorityScope(plan);
+  const claim={id:'fixture-original-context',userId:OWNER,scopeDigest:preparedActionDigest(scope),expiresAt:scope.expiresAt,claimedAt:new Date().toISOString()};
+  await executeAuthorizedAction({context,scope,claim,revalidateBeforeEffect:async()=>claim},authorityPermit=>
+    executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit}));
+  assert.deepEqual(paths.auditCorrelations,[context.correlationId]);
+});
+
+test('GJ raw-user-ID connected read cannot dispatch without the original issued context',async t=>{
+  const slug='SLACK_FETCH_MESSAGE',paths=providerStub(t,'success',true,slug);
+  await assert.rejects(executeComposioReadTool(OWNER,{sessionId:SESSION,useCase:'Read the isolated fixture',toolSlug:slug,arguments:{message_id:'fixture-message'}}));
+  assert.equal(paths.length,0);
+});
+
+test('GJ unknown tool metadata cannot create a connected read capability',async t=>{
+  const slug='OPAQUE_PROVIDER_OPERATION',paths=providerStub(t,'success',true,slug);
+  await assert.rejects(executeComposioReadTool(OWNER,{tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),sessionId:SESSION,useCase:'Read the isolated fixture',toolSlug:slug,arguments:{}}),code('COMPOSIO_MUTATION_BLOCKED'));
+  assert.equal(paths.length,0);
+});
+
+test('GJ connected read refuses credential canaries before discovery or execution',async t=>{
+  const slug='SLACK_GET_MESSAGE',paths=providerStub(t,'success',true,slug);
+  await assert.rejects(executeComposioReadTool(OWNER,{tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),sessionId:SESSION,useCase:'Read the fixture',toolSlug:slug,arguments:{query:'SYNTHETIC_CREDENTIAL_MUST_NOT_LEAVE'}}));
+  assert.equal(paths.length,0);
+});
+
+test('GJ changed remote session ownership during egress receipt prevents the confirmed action',async t=>{
+  let revoked=false;const paths=providerStub(t,'success',true,TOOL,{onAudit:()=>{revoked=true;},sessionOwner:()=>revoked?OUTSIDER:OWNER});
+  await assert.rejects(executeFixture(),code('COMPOSIO_SESSION_FORBIDDEN'));
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
+});
+
+test('GJ cancellation during tool discovery prevents connected execution and fallback',async t=>{
+  const controller=new AbortController(),slug='SLACK_GET_MESSAGE',paths=providerStub(t,'success',true,slug,{onSearch:()=>controller.abort()});
+  const request={tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),signal:controller.signal,sessionId:SESSION,useCase:'Read the fixture',toolSlug:slug,arguments:{}};
+  await assert.rejects(executeComposioReadTool(OWNER,request),{name:'AbortError'});
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
+});
 
 test('GJ contracts use the real typed GoalContract boundary and conversational planning dispatch',()=>{
   const fixtures=JSON.parse(readFileSync(new URL('../../../tests/golden/fixtures/goals.json',import.meta.url),'utf8')) as Array<{id:string;goal:unknown}>;
@@ -143,7 +185,7 @@ test('GJ changed or disconnected account blocks the real action adapter before d
 
 test('GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result',async t=>{
   const slug='SLACK_GET_MESSAGE',paths=providerStub(t,'success',true,slug);
-  const result=await executeComposioReadTool(OWNER,{sessionId:SESSION,useCase:'Read the isolated fixture message',toolSlug:slug,arguments:{message_id:'fixture-message'}});
+  const result=await executeComposioReadTool(OWNER,{tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),sessionId:SESSION,useCase:'Read the isolated fixture message',toolSlug:slug,arguments:{message_id:'fixture-message'}});
   assert.equal(result.error,undefined);assert.match(JSON.stringify(result.data),/fixture-deletion-1/);
   assert.doesNotMatch(JSON.stringify(result),/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|SYNTHETIC_NESTED_CREDENTIAL/);
   assert.match(JSON.stringify(result.data),/https:\/\/example.invalid\/fixture-result/);

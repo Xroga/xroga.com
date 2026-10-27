@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import {
   CalendarDays,
   ChevronRight,
-  ExternalLink,
   File,
   Folder,
   LoaderCircle,
@@ -12,8 +11,8 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 
-import { safeArtifactUri } from '@/lib/universalOutput';
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
+import { ResponseSources } from './ResponseSources';
 
 type OrganizerType = 'tabs' | 'accordion' | 'file-tree' | 'calendar' | 'source-list';
 type OrganizerBlock = Extract<XrogaBlock, { type: OrganizerType }>;
@@ -96,12 +95,7 @@ function CalendarRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'c
 function SourceListRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'source-list' }> }) {
   return (
     <Surface title={block.title ?? 'Sources'} description={block.description} state={block.state}>
-      <ol className="divide-y divide-[var(--border)]">
-        {block.sources.map((source, index) => {
-          const href = safeArtifactUri(source.url);
-          return <li key={source.id} className="grid grid-cols-[28px_minmax(0,1fr)] gap-3 p-4"><span className="grid h-7 w-7 place-items-center rounded-full bg-black/5 text-xs font-semibold dark:bg-white/5">{index + 1}</span><div className="min-w-0">{href ? <a href={href} target="_blank" rel="noreferrer" className="inline-flex max-w-full items-center gap-1.5 text-sm font-medium text-[var(--accent)] hover:underline"><span className="truncate">{source.title}</span><ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /></a> : <p className="text-sm font-medium">{source.title}</p>}<p className="mt-0.5 text-[11px] text-[var(--muted)]">{source.domain ?? new URL(source.url).hostname}{source.publishedAt ? ` · ${source.publishedAt}` : ''}</p>{source.excerpt ? <p className="mt-2 text-xs leading-5 text-[var(--muted)]">{source.excerpt}</p> : null}</div></li>;
-        })}
-      </ol>
+      <div className="p-4"><ResponseSources sources={block.sources.map((source) => ({ title: source.title, url: source.url, snippet: source.excerpt ?? '', siteDomain: source.domain }))} /></div>
     </Surface>
   );
 }

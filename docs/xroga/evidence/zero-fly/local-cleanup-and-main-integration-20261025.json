@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-25T18:46:39.327521+00:00",
+  "scope": "LOCAL_DEVELOPMENT_CLEANUP_AND_NATIVE_MIGRATION_INTEGRATION_NOT_PRODUCTION_ACCEPTANCE",
+  "baseSha": "78e28fab94b77746d742e5cc33481804afb41cdc",
+  "mainIntegrated": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+  "legacyCaches": {
+    "targets": [
+      "xroga-phase3-main-integration/frontend/.next/cache/webpack",
+      "xroga-phase4-prep/frontend/.next/cache/webpack"
+    ],
+    "logicalBytesRemoved": 2396867825,
+    "beforeFreeBytes": 93444915200,
+    "afterFreeBytes": 95867985920,
+    "observedNetSpaceIncreaseBytes": 2423070720,
+    "gitStatesUnchanged": true,
+    "note": "Concurrent system activity can differ from logical deletion size. Earlier 57.93 GB cleanup is separate."
+  },
+  "tests": {
+    "nativeWindowsCleanup": {
+      "pass": 17,
+      "fail": 0
+    },
+    "dispatch": {
+      "pass": 6,
+      "fail": 0
+    },
+    "baselineNegativeFixtures": {
+      "pass": 13,
+      "fail": 0
+    },
+    "focusedMigrationIntegration": {
+      "pass": 42,
+      "fail": 0,
+      "skip": 0
+    },
+    "backendTypecheck": "PASS",
+    "frozenDependencyIndex": "PASS_1186_PACKAGES",
+    "missionPolicy": "PASS",
+    "realFailureCleanup": "EXIT_7_PRESERVED_REQUIRED_RECEIPT_TEMP_REMOVED",
+    "standardCommandDispatch": "PASS_REAL_WRAPPER_RESILIENCE_FIXTURE_COMMAND"
+  },
+  "dockerTests": "FIXTURES_ONLY_ENGINE_STOPPED_NO_DOCKER_RESOURCES_DELETED",
+  "newLiveNativeExecution": "PENDING_NEW_SINGLE_WINDOW_CONFIRMATION",
+  "immutableImage": {
+    "id": "aa228957-d4ac-47fd-941b-a0e7cafdfd33",
+    "source": "78e28fab94b77746d742e5cc33481804afb41cdc",
+    "status": "SUCCESS",
+    "finishTime": "2026-10-25T18:30:26.041717Z",
+    "digest": "sha256:4190b3474dcc2ff113a0defd87eae30acf88a4a408808a06266d58b568e637b5",
+    "repository": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-migration",
+    "deployed": false,
+    "verifiedBy": "Authenticated Cloud Shell gcloud builds describe readback"
+  },
+  "temporaryNetworkCleanup": "VERIFIED_SUBNET_AND_VPC_ABSENT",
+  "productionChanged": false,
+  "phase4": "NOT_STARTED",
+  "policySha256": {
+    "cleanup-policy.json": "f2cc4985a1d82dc57168c698a96ffc0f2b0ac16a1d6ca64d82a0df427e01a556",
+    "local_maintenance.py": "4d8973158c29781f912ed6ce4822e893eef0efe63d1eaefb61836dbce98483c9",
+    "run-task.mjs": "8f1d1bb9ea64f1d8c970da170c33a95a11fef8e24549cc137bf79297e6aa54a4",
+    "run-task.test.mjs": "846856b1c1d1eb156a72537417c2d9c0047189d979de1e24da4cb0c575d1c522",
+    "test_policy.py": "ae5117dfb532c0abaf1deb6d0902d0967d31fe2a4879fae9391d61fa53c48f41",
+    "win_job.py": "5e356d4d7f9b3e0fbea5491057f73bf25e969521073d4daf596631235c0919c2"
+  },
+  "ownedTemporaryDirectoriesRemaining": 0,
+  "freeBytesAtCheckpoint": 96215740416
+}

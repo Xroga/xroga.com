@@ -1,7 +1,7 @@
 'use client';
 
-import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
-import { Activity, AlertCircle, AudioLines, BarChart3, Braces, Calculator, CalendarDays, Check, CircleHelp, Clock3, Code2, ExternalLink, FileCheck2, FileText, FolderTree, Gauge, Globe2, Image, LayoutDashboard, ListChecks, LoaderCircle, MapPin, MessageSquareText, PlugZap, Search, SlidersHorizontal, Sparkles, Table2, TriangleAlert, Video, type LucideIcon } from 'lucide-react';
+import React, { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
+import { Activity, AlertCircle, AudioLines, BarChart3, Braces, Calculator, CalendarDays, Check, CircleHelp, Clock3, Code2, ExternalLink, FileCheck2, FileText, FolderTree, Gauge, Globe2, Image, LayoutDashboard, ListChecks, MapPin, MessageSquareText, PlugZap, Search, SlidersHorizontal, Sparkles, Table2, TriangleAlert, Video, type LucideIcon } from 'lucide-react';
 
 import { EngineeringArtifactView } from './EngineeringArtifactView';
 import { LegacyLandingOutputView } from './LegacyLandingOutputView';
@@ -12,6 +12,8 @@ import { parseXrogaBlock, type XrogaBlock, type XrogaOutputDocument } from '@/li
 import { applyDocumentEdit } from '@/lib/xrogaDocumentEdits';
 import { XrogaArtifactHeader } from './XrogaArtifactHeader';
 import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
+import type { CitationSource } from '@/lib/xrogaCitations';
+import { XrogaStatusBadge } from './XrogaStatusBadge';
 
 type BlockRenderer = ComponentType<{ block: XrogaBlock }> | LazyExoticComponent<ComponentType<{ block: XrogaBlock }>>;
 
@@ -29,7 +31,9 @@ export function getRenderer(type: string): BlockRenderer {
   return renderers.get(type) ?? UnknownBlockRenderer;
 }
 
-export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string) => void): ReactNode {
+export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string) => void, sources?: CitationSource[], afterIntro?: ReactNode): ReactNode {
+  if (block.type === 'narrative') return React.createElement(TextRenderer, { block, sources, afterIntro });
+  if (block.type === 'rich-results') return <RichResultsRenderer block={block} sourcePreviews={sources} />;
   if (block.type === 'document') return <RichBlockRenderer block={block} onDocumentSave={onDocumentSave} />;
   const Renderer = getRenderer(block.type);
   return <Renderer block={block} />;
@@ -37,6 +41,7 @@ export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string
 
 const RichBlockRenderer = lazy(() => import('./XrogaRichBlockView').then((module) => ({ default: module.XrogaRichBlockView })));
 const RichResultsRenderer = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
+const MarketRenderer = lazy(() => import('./XrogaMarketBlockView').then((module) => ({ default: module.XrogaMarketBlockView })));
 const DecisionMatrixRenderer = lazy(() => import('./XrogaDecisionMatrixView').then((module) => ({ default: module.XrogaDecisionMatrixView })));
 const CustomLucideIcon = lazy(() => import('./XrogaLucideIcon').then((module) => ({ default: module.XrogaLucideIcon })));
 
@@ -45,7 +50,7 @@ const typeIcons: Partial<Record<XrogaBlock['type'], LucideIcon>> = {
   plan: ListChecks, activity: Activity, evidence: FileCheck2, citation: ExternalLink, source: ExternalLink,
   approval: CircleHelp, receipt: Check, code: Code2, diff: Code2, terminal: Code2, file: FileText,
   'connection-request': PlugZap, website: Globe2, artifact: FileText,
-  metric: BarChart3, 'metric-group': BarChart3, progress: Activity, 'progress-group': Activity,
+  metric: BarChart3, 'metric-group': BarChart3, 'market-quote': BarChart3, conversion: Calculator, progress: Activity, 'progress-group': Activity,
   calculator: Calculator, calculation: Calculator, gauge: Gauge, comparison: BarChart3, 'key-value': ListChecks,
   checklist: ListChecks, steps: ListChecks, scorecard: Gauge, ranking: BarChart3,
   tabs: LayoutDashboard, accordion: ListChecks, 'file-tree': FolderTree, calendar: CalendarDays,
@@ -64,7 +69,7 @@ function ResponseBlockIcon({ block }: { block: XrogaBlock }) {
   </span>;
 }
 
-function TextRenderer({ block }: { block: XrogaBlock }) {
+function TextRenderer({ block, sources, afterIntro }: { block: XrogaBlock; sources?: CitationSource[]; afterIntro?: ReactNode }) {
   if (!['narrative', 'notice', 'status', 'error', 'empty-state'].includes(block.type)) return null;
   const tone = 'tone' in block ? block.tone : undefined;
   const Icon = block.type === 'error' || tone === 'danger' ? AlertCircle : tone === 'warning' ? TriangleAlert : tone === 'success' ? Check : null;
@@ -74,7 +79,7 @@ function TextRenderer({ block }: { block: XrogaBlock }) {
       <div>
         {block.title ? <h3 className="font-medium">{block.title}</h3> : null}
         {block.type === 'narrative' ? (
-          <div className="xv-response-text"><FormattedAiMarkdown content={block.text} /></div>
+          <div className="xv-response-text"><FormattedAiMarkdown content={block.text.replace(/[—–]/g, '-')} sources={sources} afterIntro={afterIntro} /></div>
         ) : (
           <p className="whitespace-pre-wrap leading-6">{'text' in block ? block.text : ''}</p>
         )}
@@ -90,8 +95,7 @@ function ListRenderer({ block }: { block: XrogaBlock }) {
       {block.title ? <h3 className="text-sm font-medium text-[var(--foreground)]">{block.title}</h3> : null}
       <ul className="space-y-1.5" aria-label={block.title ?? block.type}>
         {block.items.map((item) => {
-          const Icon = item.status === 'completed' ? Check : item.status === 'failed' ? AlertCircle : item.status === 'waiting' ? Clock3 : LoaderCircle;
-          return <li key={item.id} className="flex gap-2 text-sm"><Icon className={`mt-0.5 h-4 w-4 shrink-0 ${item.status === 'running' ? 'motion-safe:animate-spin' : ''}`} aria-hidden="true" /><span>{item.label}{item.detail ? <span className="ml-2 text-xs text-[var(--muted)]">{item.detail}</span> : null}</span></li>;
+          return <li key={item.id} className="flex items-start gap-2 rounded-xl bg-[var(--card)] p-3 text-sm shadow-sm"><XrogaStatusBadge status={item.status} /><span>{item.label}{item.detail ? <span className="ml-2 text-xs text-[var(--muted)]">{item.detail}</span> : null}</span></li>;
         })}
       </ul>
     </section>
@@ -167,15 +171,22 @@ registerRenderer('website', WebsiteRenderer);
 registerRenderer('artifact', ArtifactRenderer);
 registerRenderer('decision-matrix', DecisionMatrixRenderer);
 registerRenderer('rich-results', RichResultsRenderer);
+registerRenderer('market-quote', MarketRenderer);
+registerRenderer('conversion', MarketRenderer);
 for (const type of ['metric', 'metric-group', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
-export function XrogaOutputView({ output, onChange }: { output: XrogaOutputDocument; onChange?: (next: XrogaOutputDocument) => void }) {
+export function XrogaOutputView({ output, onChange, sources }: { output: XrogaOutputDocument; onChange?: (next: XrogaOutputDocument) => void; sources?: CitationSource[] }) {
+  const firstNarrative = output.blocks.find((candidate) => candidate.type === 'narrative');
+  const firstRich = output.blocks.find((candidate) => candidate.type === 'rich-results');
+  const embeddedRich = firstNarrative && firstRich ? parseXrogaBlock(firstRich) : null;
   return <section className="xv-ai-output-block space-y-4 py-3" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
+    if (embeddedRich && candidate.id === firstRich?.id) return null;
     const block = parseXrogaBlock(candidate);
     const saveDocument = onChange && block?.type === 'document' ? (content: string) => {
       const next = applyDocumentEdit(output, block.id, content);
       if (next) onChange(next);
     } : undefined;
-    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block && block.type !== 'rich-results' ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
+    const afterIntro = embeddedRich && candidate.id === firstNarrative?.id ? <Suspense fallback={null}><RichResultsRenderer block={embeddedRich} sourcePreviews={sources} /></Suspense> : undefined;
+    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block && block.type !== 'rich-results' && block.type !== 'narrative' ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument, sources, afterIntro)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
   })}</section>;
 }

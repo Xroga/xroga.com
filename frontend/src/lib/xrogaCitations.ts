@@ -2,6 +2,8 @@ export interface CitationSource {
   title: string;
   url: string;
   snippet: string;
+  thumbnailUrl?: string;
+  siteDomain?: string;
 }
 
 type MarkdownNode = {
@@ -14,7 +16,7 @@ type MarkdownNode = {
 export function safeSourceUrl(value: string): string | null {
   try {
     const url = new URL(value);
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
+    return (url.protocol === 'https:' || url.protocol === 'http:') && !url.username && !url.password ? url.href : null;
   } catch {
     return null;
   }

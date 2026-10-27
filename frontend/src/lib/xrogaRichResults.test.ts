@@ -44,14 +44,28 @@ test('image policy allows original local demo assets and fails closed for arbitr
 });
 
 test('web source adapter preserves identity without inventing price or availability', () => {
-  const block = webSourcesToRichResults([{ title: 'Provider page', url: 'https://example.com', snippet: 'A brief sourced excerpt.', source: 'Web search', thumbnailUrl: 'https://untrusted.test/img.jpg' }], 'msg');
+  const block = webSourcesToRichResults([{ title: 'Hotel provider page', url: 'https://example.com', snippet: 'A brief sourced excerpt.', source: 'Web search', thumbnailUrl: 'https://untrusted.test/img.jpg' }], 'msg', 'Find a hotel in Dubai');
   assert.equal(block?.type, 'rich-results');
   if (block?.type !== 'rich-results') return;
   assert.equal(block.items[0]?.status, 'search-result');
   assert.equal(block.items[0]?.source?.url, 'https://example.com/');
   assert.equal(block.items[0]?.price, undefined);
   assert.equal(block.items[0]?.images, undefined);
+  assert.equal(block.items[0]?.domain, 'accommodation');
+  assert.equal(webSourcesToRichResults([{ title: 'General page', url: 'https://example.com', snippet: '', source: '' }], 'msg', 'Tell me a joke'), null);
   assert.equal(webSourcesToRichResults([{ title: 'bad', url: 'javascript:alert(1)', snippet: '', source: '' }], 'msg'), null);
+});
+
+test('travel discovery excludes tangential destination pages from flight option cards', () => {
+  const block = webSourcesToRichResults([
+    { title: 'Lahore to Dubai flights', url: 'https://airline.example/flights/lahore-dubai', snippet: 'Browse routes.', source: 'Web' },
+    { title: 'Dubai city guide', url: 'https://guide.example/dubai', snippet: 'Things to do.', source: 'Web' },
+  ], 'flight-msg', 'Find flights from Lahore to Dubai');
+  assert.equal(block?.type, 'rich-results');
+  if (block?.type !== 'rich-results') return;
+  assert.equal(block.title, 'Lahore → Dubai · source options');
+  assert.equal(block.items.length, 1);
+  assert.equal(block.items[0].title, 'Lahore to Dubai flights');
 });
 
 test('mixed currencies and local time zones remain explicit data, not converted guesses', () => {

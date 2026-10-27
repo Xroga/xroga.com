@@ -1,0 +1,63 @@
+{
+  "scope": "REAL_DOCKER_NATIVE_CONTAINER_FLAGS_NOT_GOOGLE_OR_AUTHORITY_ACCEPTANCE",
+  "task": "9e0d46ca-4b66-4e78-822b-14493b8d8524",
+  "sourceLfSha256": "c7062d5351e837b527ce584bbbaa15084e06cc6c2ae48979f7ef3bd6998aa838",
+  "freeBeforeBytes": 33366544384,
+  "executions": [
+    {
+      "runtime": "python",
+      "command": [
+        "pip",
+        "install",
+        "--no-index",
+        "--disable-pip-version-check",
+        "-r",
+        "requirements.txt"
+      ],
+      "exitCode": 0,
+      "stdout": "Defaulting to user installation because normal site-packages is not writeable\nProcessing ./xroga_parity_fixture-0.0.1-py3-none-any.whl (from -r requirements.txt (line 1))\nInstalling collected packages: xroga-parity-fixture\nSuccessfully installed xroga-parity-fixture-0.0.1\n",
+      "stderr": ""
+    },
+    {
+      "runtime": "python",
+      "command": [
+        "python",
+        "-c",
+        "import xroga_parity_fixture; assert xroga_parity_fixture.VALUE == 42; print(\"PYTHON_DEPENDENCY_HANDOFF_PASS\")"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'xroga_parity_fixture'\n"
+    },
+    {
+      "runtime": "rust",
+      "command": [
+        "cargo",
+        "fetch",
+        "--offline"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "runtime": "rust",
+      "command": [
+        "cargo",
+        "test",
+        "--offline"
+      ],
+      "exitCode": 0,
+      "stdout": "\nrunning 1 test\ntest value ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
+      "stderr": "   Compiling xroga_parity_fixture v0.0.1 (/work)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.74s\n     Running unittests src/lib.rs (target/debug/deps/xroga_parity_fixture-28aca8111608e59b)\n   Doc-tests xroga_parity_fixture\n"
+    }
+  ],
+  "productionChanged": false,
+  "cloudResourcesCreated": false,
+  "status": "FAIL_REAL_DOCKER_RUNTIME_PARITY",
+  "error": "Python setup did not survive into the next offline container",
+  "containersRemoved": true,
+  "newImagesRemoved": true,
+  "temporaryWorkspaceRemoved": true,
+  "freeAfterBytes": 33366409216
+}
