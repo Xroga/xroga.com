@@ -1,0 +1,22 @@
+{
+  "observedRuntimeSource": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3",
+  "observedImageDigest": "sha256:6eb0f38749d62d5cc6e0d61a5de77d42bc8428a4b34580b6c4a8cff86e3f89d6",
+  "execution": "xroga-canonical-production-bv5nc",
+  "fixtureOnly": true,
+  "modelCalls": 0,
+  "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+  "operation": "operation-1793096122982-65ecfb97561fe-b1812b65-6adc1269",
+  "operationStartedUtc": "2026-10-27T10:15:34.799Z",
+  "operationCompletedUtc": "2026-10-27T10:17:22.639Z",
+  "fixtureStoppedUtc": "2026-10-27T10:16:54.558Z",
+  "demonstratedCause": "Cold Compute insert exceeded 120-poll budget before allocation receipt. Native insert completed after fixture had stopped. No provider reprovision retry was made.",
+  "nativeDiagnosticExecution": "xroga-canonical-production-9mnm9",
+  "nativeResolve": "PASS",
+  "sessionPersistence": "PASS",
+  "exactSyntheticVmAndDisk": "REMOVED_READBACK_NO_EXECUTION_INSTANCES",
+  "focusedTests": 31,
+  "focusedFailures": 0,
+  "typescriptBuild": "PASS",
+  "correction": "Bounded 180-second/360-poll creation wait, early native operation target receipt, operation-aware pending cleanup, immutable operation identity checked at runtime admission",
+  "acceptance": "CORRECTION_NOT_YET_DEPLOYED_OR_ACCEPTED"
+}
