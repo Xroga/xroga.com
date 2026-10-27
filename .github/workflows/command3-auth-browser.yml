@@ -209,6 +209,9 @@ jobs:
       - name: Verify admin, shared-answer and private-file API boundaries
         if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
         run: node --test frontend/e2e/phase4-admin-share.security.mjs
+      - name: Verify fixed public Auth provider preflight
+        if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
+        run: node --test frontend/e2e/phase4-auth-provider.security.mjs
       - name: Start isolated application
         id: start-application
         shell: bash

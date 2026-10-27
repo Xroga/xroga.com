@@ -3025,6 +3025,26 @@
           "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
         }
       ]
+    },
+    {
+      "id": "68df836263d1eff0010b",
+      "callSha256": "f8d5cdd15b875114d405b5a83c70a3af178717ea835e8746c7eb91964f64bef8",
+      "sourceFileSha256": "fc40e9ff3057a484626e2ebd6b284cb9ce37376f2dfea7be7c4effd11b8336ca",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "APPROVED_BUILD_REALM_FIXED_PUBLIC_AUTH_SETTINGS_READ_ONLY_WITH_PUBLIC_KEY_NO_REDIRECT",
+      "tenantAuthority": "NO_USER_OR_TENANT_DATA_NO_AUTHORITY_CREATED_BOOLEAN_PREFLIGHT_ONLY_ACTUAL_OAUTH_AUTHENTICATION_REMAINS_SEPARATE",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/auth-provider-20261028/trace.json",
+          "marker": "68df836263d1eff0010b",
+          "sha256": "23bf3d3ee861274be852b8dbf6664f6a54c4bde07e77e33614eb9ccfe9a3469e"
+        },
+        {
+          "path": "frontend/e2e/phase4-auth-provider.security.mjs",
+          "marker": "actual public Auth settings preflight refuses real redirects and oversized otherwise-valid settings",
+          "sha256": "e9ee4fa95582e33f941c9ecd3a0c1477aa44f4a9a1a3184991db84aaf2735c88"
+        }
+      ]
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "87908b3707e43aa9520e481940b91612a1fae8c37bf6102be2aa2be8c676b02c",
+  "sourceTreeDigest": "b082d0517613a027df48bd822aef633f351aaf81064fb16d2ed4f30c91e791b4",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -3888,14 +3888,25 @@
       "entryPoint": "requireGitHubProvider",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "a8fa05842d933a640eca6fae3f77ac1892a87fa716e49e992785def4e2297fbb",
+      "callSha256": "f8d5cdd15b875114d405b5a83c70a3af178717ea835e8746c7eb91964f64bef8",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "APPROVED_BUILD_REALM_FIXED_PUBLIC_AUTH_SETTINGS_READ_ONLY_WITH_PUBLIC_KEY_NO_REDIRECT",
+      "tenantAuthority": "NO_USER_OR_TENANT_DATA_NO_AUTHORITY_CREATED_BOOLEAN_PREFLIGHT_ONLY_ACTUAL_OAUTH_AUTHENTICATION_REMAINS_SEPARATE",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/auth-provider-20261028/trace.json",
+          "marker": "68df836263d1eff0010b",
+          "sha256": "23bf3d3ee861274be852b8dbf6664f6a54c4bde07e77e33614eb9ccfe9a3469e"
+        },
+        {
+          "path": "frontend/e2e/phase4-auth-provider.security.mjs",
+          "marker": "actual public Auth settings preflight refuses real redirects and oversized otherwise-valid settings",
+          "sha256": "e9ee4fa95582e33f941c9ecd3a0c1477aa44f4a9a1a3184991db84aaf2735c88"
+        }
+      ]
     },
     {
       "id": "e1ddea7115498d92341b",
@@ -4149,8 +4160,8 @@
   ],
   "counts": {
     "total": 135,
-    "reviewed": 111,
-    "pending": 24,
-    "unresolvedHighRiskBypasses": 15
+    "reviewed": 112,
+    "pending": 23,
+    "unresolvedHighRiskBypasses": 14
   }
 }

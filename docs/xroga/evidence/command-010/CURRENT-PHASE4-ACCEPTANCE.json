@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-27T19:01:54.114190+00:00",
+  "atUtc": "2026-10-27T19:10:36.044815+00:00",
   "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
   "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
   "formalAcceptedCriteria": 0,
@@ -93,9 +93,9 @@
   ],
   "strictAudit": {
     "total": 135,
-    "reviewed": 111,
-    "pending": 24,
-    "unresolvedHighRiskBypasses": 15
+    "reviewed": 112,
+    "pending": 23,
+    "unresolvedHighRiskBypasses": 14
   },
   "ci": "FINAL_CURRENT_SOURCE_REQUIRED_NOT_RUN_WHILE_CALLER_COVERAGE_INCOMPLETE",
   "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
@@ -108,7 +108,7 @@
   ],
   "publishingObligations": "Fixed provider transports have individual source-bound review. Higher exact tenant/project/credential/confirmation/data-egress and cancellation callers remain unpromoted.",
   "backendTypes": "PASS_1b7294f4",
-  "frontendTypes": "PASS_072ee6b6",
-  "currentCheckpoint": "docs/xroga/evidence/command-010/supabase-sdk-20261027/checkpoint.json",
+  "frontendTypes": "PASS_034d642b",
+  "currentCheckpoint": "docs/xroga/evidence/command-010/auth-provider-20261028/checkpoint.json",
   "xResearchAccountingAvailability": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED"
 }

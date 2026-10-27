@@ -794,6 +794,11 @@
     "docs/xroga/evidence/command-010/api-clients-20261027/softwareToolFixtureAfterTypingCorrection.log",
     "docs/xroga/evidence/command-010/api-clients-20261027/strictIncomplete.log",
     "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+    "docs/xroga/evidence/command-010/auth-provider-20261028/checkpoint.json",
+    "docs/xroga/evidence/command-010/auth-provider-20261028/green.log",
+    "docs/xroga/evidence/command-010/auth-provider-20261028/red.log",
+    "docs/xroga/evidence/command-010/auth-provider-20261028/strictIncomplete.log",
+    "docs/xroga/evidence/command-010/auth-provider-20261028/trace.json",
     "docs/xroga/evidence/command-010/browser-20261027/browserIntegrationGreen.log",
     "docs/xroga/evidence/command-010/browser-20261027/canonicalLedgerAndModelRegressionGreen.log",
     "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json",
@@ -1031,6 +1036,7 @@
     "frontend/e2e/composer-polish.spec.ts",
     "frontend/e2e/phase4-admin-share.security.mjs",
     "frontend/e2e/phase4-api-clients.security.mjs",
+    "frontend/e2e/phase4-auth-provider.security.mjs",
     "frontend/e2e/phase4-cookie-isolation.spec.ts",
     "frontend/e2e/phase4-image-client.browser.mjs",
     "frontend/e2e/proxy-origin-local.spec.ts",
@@ -1169,6 +1175,7 @@
     "frontend/src/lib/sidebarProjectTask.ts",
     "frontend/src/lib/supabase/authCookiePolicy.test.ts",
     "frontend/src/lib/supabase/authCookiePolicy.ts",
+    "frontend/src/lib/supabase/authProviders.ts",
     "frontend/src/lib/supabase/client.ts",
     "frontend/src/lib/supabase/middleware.ts",
     "frontend/src/lib/supabase/server.ts",
@@ -1316,7 +1323,7 @@
     },
     "egress": {
       "changed": true,
-      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.24unreviewed callers and15high-risk obligations remain."
+      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.23unreviewed callers and14high-risk obligations remain."
     },
     "cost": {
       "changed": true,
@@ -1355,7 +1362,7 @@
   "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "24remaining source traces including15high-risk candidates, not all are demonstrated vulnerabilities",
+    "23remaining source traces including14high-risk candidates, not all are demonstrated vulnerabilities",
     "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
     "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
     "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
@@ -1378,6 +1385,8 @@
     "docs/xroga/evidence/command-010/WHOP-READBACK-TRANSPORT-20261027.json",
     "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
     "docs/xroga/evidence/command-010/api-clients-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/auth-provider-20261028/checkpoint.json",
+    "docs/xroga/evidence/command-010/auth-provider-20261028/trace.json",
     "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/expo-identity-20261027/trace.json",
     "docs/xroga/evidence/command-010/github-routes-20261027/checkpoint.json",
@@ -1404,7 +1413,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Original strict caller audit incomplete:24pending and15high-risk candidates",
+      "Original strict caller audit incomplete:23pending and14high-risk candidates",
       "All12original criteria and exact-final-source authenticated/disposable/CI acceptance are not yet verified"
     ],
     "authenticatedE2e": "BLOCKED",
