@@ -1,0 +1,112 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH15-DRIVE-CSP-R2-UPLOAD-20261028",
+  "baseSha": "11fdf064dc22131f33d1f6f01f8c4c9fd4a72e4e",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Found during authenticated production Drive acceptance on 2026-10-28: the browser blocked the direct upload to the private R2 bucket because the website Content Security Policy connect-src did not list the bucket origin. Allow exactly the xroga-drive-prod bucket origin, only when NEXT_PUBLIC_XROGA_DRIVE=1. No backend, schema, credential or wildcard change.",
+  "changedFiles": [
+    "frontend/next.config.mjs",
+    "frontend/src/lib/driveCsp.test.ts",
+    "docs/xroga/missions/drive-csp-r2-upload-20261028.json",
+    "docs/xroga/blockers.md",
+    "docs/xroga/current-state-schema.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/feature-coverage.csv",
+    "docs/xroga/repository-candidate-register.md",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/requirements-ledger.md",
+    "docs/xroga/requirements-ledger.schema.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md"
+  ],
+  "decisions": {
+    "keep": [
+      "The signed-URL upload design: bytes never pass through the API",
+      "The bucket's own CORS rules (xroga.com origins only, GET PUT HEAD, ETag exposed)",
+      "Existing connect-src allowances"
+    ],
+    "extend": [
+      "connect-src gains one exact bucket origin, gated by the Drive switch"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change.",
+    "rollback": "Revert the change."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authentication change. Signed upload URLs are still issued by the authenticated backend for the caller's own tenant."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant boundary change. Object keys remain server-derived per tenant."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval boundary change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential handling change. The bucket origin is a public identifier, not a secret."
+    },
+    "egress": {
+      "changed": true,
+      "description": "The browser may now connect to one exact private-bucket origin when Drive is on. No wildcard, no public bucket, and the origin is absent when the Drive switch is off."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No cost change. R2 usage stays inside the existing per-tenant quota."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing path change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --experimental-strip-types --test frontend/src/lib/driveCsp.test.ts",
+      "scope": "Policy contains the exact bucket origin with Drive on; absent with Drive unset, empty or 0; never a wildcard; existing allowances unchanged. Three tests PASS.",
+      "negative": true,
+      "reference": "frontend/src/lib/driveCsp.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "One configuration value in the existing security header. No new service, route or runtime.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks. Vercel rebuilds production with NEXT_PUBLIC_XROGA_DRIVE=1 already set. Then repeat the authenticated Drive upload test.",
+  "rollback": "Revert the commit and redeploy, or unset NEXT_PUBLIC_XROGA_DRIVE in Vercel to hide the Drive screen and drop the origin from the policy.",
+  "knownGaps": [
+    "Authenticated upload, download, delete, quota and isolation results are recorded only after this reaches production"
+  ],
+  "placeholderClaimsRemaining": [
+    "Drive is not accepted until the authenticated live tests pass"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and founder authorization to merge",
+      "Authenticated live Drive acceptance after deploy"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "frontend/src/lib/driveCsp.test.ts"
+  ]
+}
