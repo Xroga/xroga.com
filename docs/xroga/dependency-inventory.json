@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ace514f71b7f4cbd2e13e1c0b2166a0797ab35de",
+  "source_sha": "05674453f3d5c085e75be0023b5312846b9ed305",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13836,7 +13836,7 @@
     },
     {
       "path": ".github/workflows/storage-phase1.yml",
-      "sha256": "26ab504ab6bb8ee4a4e633da9d0d30f8c5f55c6909b32a307284c164e1adb3bf"
+      "sha256": "31925890e85da124c0ebad6eb1936010fa4eaaa4a7d741f7f74678b9938ff8e8"
     },
     {
       "path": ".github/workflows/supabase-migrate.yml",
