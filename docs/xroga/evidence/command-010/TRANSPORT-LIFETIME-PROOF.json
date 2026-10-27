@@ -120,17 +120,15 @@
     }
   ],
   "counts": {
-    "total": 134,
-    "reviewed": 17,
-    "pending": 117,
-    "unresolvedHighRiskReviewCandidates": 62,
-    "newNarrowClosures": 2,
-    "newTransportCandidates": 1
+    "total": 135,
+    "reviewed": 113,
+    "pending": 22,
+    "unresolvedHighRiskReviewCandidates": 13
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
   "criteria": "All 12 original states unchanged in manifest.json, AC12 not verified",
-  "phase3": "B1_P3_BLOCKED",
+  "phase3": "B1_P3_VERIFIED",
   "phase4": "PREPARATORY_NOT_ACCEPTED",
   "registryOnly": "ONLINE_FAIL_CLOSED",
   "productionEffects": false,
@@ -140,7 +138,11 @@
   "currentSourceBindings": [
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57"
+      "sha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/middleware/runtimePreviewGateway.ts",
+        "sha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57"
+      }
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
@@ -154,7 +156,11 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706"
+      "sha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706"
+      }
     },
     {
       "path": "backend/src/services/integrations/githubSourceRead.ts",
@@ -182,12 +188,22 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "d340ef0e6377631353d4b4d226db041736b1e7b5397292952ef1a6e74ee15cb7",
+      "sha256": "6c8352ce73e679c5be0cf5a01d598ac099bd8ad7348af4241f323d6f7f00740b",
       "previousGenericSdkBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
         "scope": "HISTORICAL_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
-      }
+      },
+      "beforeCurrentMetadataReconciliation": {
+        "path": "scripts/security/source-lifetime-bindings.test.mjs",
+        "sha256": "d340ef0e6377631353d4b4d226db041736b1e7b5397292952ef1a6e74ee15cb7",
+        "previousGenericSdkBinding": {
+          "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
+          "scope": "HISTORICAL_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+        }
+      },
+      "beforeBrowserSDKCardinalityReconciliationSha256": "441861e7507aea76299bd43e73325792e4cbe16f3414bf6ae5183ad055ae78b9"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -203,7 +219,11 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
+      "sha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
+      }
     },
     {
       "path": "backend/src/ai/converter.ts",
@@ -211,30 +231,58 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
+      "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/openaiCompat.egress.test.ts",
+        "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
+      }
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      },
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/openaiCompat.ts",
+        "sha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+        "previousGenericSdkBinding": {
+          "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
+          "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+        }
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      },
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/pipeline.ts",
+        "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+        "previousGenericSdkBinding": {
+          "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+          "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+        }
       }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
       "previousGenericSdkBinding": {
         "sha256": "be8bff52c0a19cd2a19c8235902191d954ef6cc1af4f631a3bfc1d2508600fdd",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      },
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/providerBudget.ts",
+        "sha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "previousGenericSdkBinding": {
+          "sha256": "be8bff52c0a19cd2a19c8235902191d954ef6cc1af4f631a3bfc1d2508600fdd",
+          "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+        }
       }
     },
     {
@@ -255,19 +303,35 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897",
+      "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      },
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/tenantModelDispatch.test.ts",
+        "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897",
+        "previousGenericSdkBinding": {
+          "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
+          "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+        }
       }
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
+      "sha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/tenantModelDispatch.ts",
+        "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
+      }
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
+      "sha256": "dd067a0d631929f595b3141b8bae5bbd785aefd14c84f1b12fd7b224bf086128",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
+      }
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
@@ -295,7 +359,11 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
+      "sha256": "d16d82aeb587150da44dba0ec6638bbae38e05eb11dd8b3063820f005fd01ed9",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/security/tenantIsolation.local.integration.ts",
+        "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
+      }
     },
     {
       "path": "backend/src/services/integrations/businessAccounting.failure.test.ts",
@@ -303,11 +371,19 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
+      "sha256": "43de9010090f94d15bde89ca6d4a4e0fd9ab61b5337ad1f4ecc50c42fca4fac2",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
+      }
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
+      "sha256": "a9753cb3398b882089c9eb443f53a52100be6d55638dbec6e6289bf0a5ac785f",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/services/integrations/businessRead.ts",
+        "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
+      }
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.test.ts",
@@ -327,7 +403,11 @@
     },
     {
       "path": "backend/src/synthesis/productionAdapters.ts",
-      "sha256": "440de34413df3178118f0f2d4067bcd26dd01069b5338a25f9a89c1ae88271f2"
+      "sha256": "afa35675448e04fae06fdead5eaa3768237987da074604d91b16666134380c5b",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/synthesis/productionAdapters.ts",
+        "sha256": "440de34413df3178118f0f2d4067bcd26dd01069b5338a25f9a89c1ae88271f2"
+      }
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
@@ -335,7 +415,11 @@
     },
     {
       "path": "backend/src/ai/modelSdkAdmission.ts",
-      "sha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85"
+      "sha256": "20d496b0d58773d98578f070771ed051259b2c77cd3d081ef2304acf01fbcb60",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/modelSdkAdmission.ts",
+        "sha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85"
+      }
     },
     {
       "path": "backend/src/ai/genericSdkAdmission.test.ts",
@@ -347,7 +431,11 @@
     },
     {
       "path": "backend/src/security/genericSdk.local.integration.ts",
-      "sha256": "cb5c247ade126ef0a316b4be90647160b30e2158674b8b0a9e28acb2be145dff"
+      "sha256": "76948a8c6aa5bba81662f2007637014780f860e75e4ade943f1335383076ec62",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/security/genericSdk.local.integration.ts",
+        "sha256": "cb5c247ade126ef0a316b4be90647160b30e2158674b8b0a9e28acb2be145dff"
+      }
     },
     {
       "path": "backend/src/ai/builderAttempt.ts",
@@ -382,5 +470,119 @@
     "authenticatedSource": "8fd7e3d3cf6071b7818601d9828d07067b5c68dd",
     "ciBindingRepair": "Unit40095143421 passed3200backend/1155frontend/types/builds/lint on feature and actual PR merge, then original negative fixture rejected stale MODEL-DISPATCH-PROOF current hashes. Only proof metadata corrected, all historical records and exact assertions retained. Five focused proof testsPASS. No duplicate authenticated run for unchanged application source.",
     "productionEffects": false
+  },
+  "historicalPreparation": {
+    "proofReference": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+    "phase3": "B1_P3_BLOCKED",
+    "counts": {
+      "total": 134,
+      "reviewed": 17,
+      "pending": 117,
+      "unresolvedHighRiskReviewCandidates": 62,
+      "newNarrowClosures": 2,
+      "newTransportCandidates": 1
+    },
+    "localVerificationScope": "ORIGINAL_HISTORICAL_RECEIPTS_ONLY_NEVER_CURRENT_SOURCE_CI",
+    "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
+    "sha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0"
+  },
+  "currentSourceAcceptance": "NOT_VERIFIED",
+  "currentSourceContinuity": {
+    "scope": "CURRENT_SOURCE_METADATA_NOT_NEW_SECURITY_ACCEPTANCE",
+    "sourceAnchor": "183d93adfb06492d3f26161b0778a152b9f6edbf",
+    "changedBindings": [
+      {
+        "path": "backend/src/middleware/runtimePreviewGateway.ts",
+        "previousSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+        "currentSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f"
+      },
+      {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "previousSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+        "currentSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb"
+      },
+      {
+        "path": "scripts/security/source-lifetime-bindings.test.mjs",
+        "previousSha256": "d340ef0e6377631353d4b4d226db041736b1e7b5397292952ef1a6e74ee15cb7",
+        "currentSha256": "441861e7507aea76299bd43e73325792e4cbe16f3414bf6ae5183ad055ae78b9"
+      },
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "previousSha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d",
+        "currentSha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79"
+      },
+      {
+        "path": "backend/src/ai/openaiCompat.egress.test.ts",
+        "previousSha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a",
+        "currentSha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+      },
+      {
+        "path": "backend/src/ai/openaiCompat.ts",
+        "previousSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+        "currentSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
+      },
+      {
+        "path": "backend/src/ai/pipeline.ts",
+        "previousSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+        "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b"
+      },
+      {
+        "path": "backend/src/ai/providerBudget.ts",
+        "previousSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "currentSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086"
+      },
+      {
+        "path": "backend/src/ai/tenantModelDispatch.test.ts",
+        "previousSha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897",
+        "currentSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+      },
+      {
+        "path": "backend/src/ai/tenantModelDispatch.ts",
+        "previousSha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690",
+        "currentSha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304"
+      },
+      {
+        "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "previousSha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102",
+        "currentSha256": "dd067a0d631929f595b3141b8bae5bbd785aefd14c84f1b12fd7b224bf086128"
+      },
+      {
+        "path": "backend/src/security/tenantIsolation.local.integration.ts",
+        "previousSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
+        "currentSha256": "d16d82aeb587150da44dba0ec6638bbae38e05eb11dd8b3063820f005fd01ed9"
+      },
+      {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "previousSha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3",
+        "currentSha256": "43de9010090f94d15bde89ca6d4a4e0fd9ab61b5337ad1f4ecc50c42fca4fac2"
+      },
+      {
+        "path": "backend/src/services/integrations/businessRead.ts",
+        "previousSha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7",
+        "currentSha256": "a9753cb3398b882089c9eb443f53a52100be6d55638dbec6e6289bf0a5ac785f"
+      },
+      {
+        "path": "backend/src/synthesis/productionAdapters.ts",
+        "previousSha256": "440de34413df3178118f0f2d4067bcd26dd01069b5338a25f9a89c1ae88271f2",
+        "currentSha256": "afa35675448e04fae06fdead5eaa3768237987da074604d91b16666134380c5b"
+      },
+      {
+        "path": "backend/src/ai/modelSdkAdmission.ts",
+        "previousSha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85",
+        "currentSha256": "20d496b0d58773d98578f070771ed051259b2c77cd3d081ef2304acf01fbcb60"
+      },
+      {
+        "path": "backend/src/security/genericSdk.local.integration.ts",
+        "previousSha256": "cb5c247ade126ef0a316b4be90647160b30e2158674b8b0a9e28acb2be145dff",
+        "currentSha256": "76948a8c6aa5bba81662f2007637014780f860e75e4ade943f1335383076ec62"
+      }
+    ],
+    "localVerificationScope": "The3179test historical suite and starting-source CI above retain their original source. New focused groups have separate trace/receipt files. Full current exact-source CI and all original12criteria remain required.",
+    "currentCheckpoint": "docs/xroga/evidence/command-010/auth-provider-20261028/checkpoint.json",
+    "browserSdkContinuation": {
+      "id": "9ea21a6fc8b8700460c0",
+      "trace": "docs/xroga/evidence/command-010/BROWSER-SDK-LIFETIME-TRACE.json",
+      "scope": "FOURTH_INDIVIDUALLY_REVIEWED_SDK_CURRENT_MAP_ONLY_NOT_OLD_THREE_SDK_OR_HISTORICAL_SUITE_PROMOTION"
+    }
   }
 }

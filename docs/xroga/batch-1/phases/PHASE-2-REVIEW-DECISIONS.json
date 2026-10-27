@@ -227,7 +227,7 @@
       "enclosing": "fulfillPayment",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "fd7ae7cab6529f4fb459",
+      "currentCallerId": "dfe3f40f75bc61dc5266",
       "reason": "The prior profile-read factory and fulfillment factory now share one client after durable authority is required. Both original obligations remain represented, without security certification from consolidation."
     },
     {
@@ -237,7 +237,7 @@
       "enclosing": "fulfillPayment",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "fd7ae7cab6529f4fb459",
+      "currentCallerId": "dfe3f40f75bc61dc5266",
       "reason": "The existing fulfillment RPC uses the same client as owner readback and profile validation. The historical transaction factory obligation is retained at that shared factory."
     },
     {
@@ -247,7 +247,7 @@
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
-      "currentCallerId": "756de29153249d2fac2a",
+      "currentCallerId": "47490554a63116ae204d",
       "reason": "This remains the initial exact provider-membership lookup, now projecting and preserving the stored checkout parent and rejecting malformed identity receipts."
     },
     {
@@ -257,7 +257,7 @@
       "enclosing": "syncMembership",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "3bf2f7d4aadc2706ceb1",
+      "currentCallerId": "7488715f1171dede4f7e",
       "reason": "This is the original membership ownership lookup factory, not the later insert/update client. Explicit source-bound mapping preserves that distinction after method edits."
     },
     {
@@ -267,7 +267,7 @@
       "enclosing": "syncMembership",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "05c0b2493c01eed93637",
+      "currentCallerId": "7962d478dcc2f8bf0e4e",
       "reason": "This remains the post-admission insert/update client. First-owner checkout evidence is required before either write, and its historical obligation is not removed."
     },
     {
@@ -277,7 +277,7 @@
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
-      "currentCallerId": "87702decca37439d7217",
+      "currentCallerId": "faa3dacc7aacebf8aa27",
       "reason": "This remains insert-ignore on the canonical provider membership identity. The existing first-winner race obligation survives, with new readback admission before the write."
     },
     {
@@ -287,7 +287,7 @@
       "enclosing": "syncMembership",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "whop_memberships",
-      "currentCallerId": "8b10b8683a2118a013b9",
+      "currentCallerId": "c4bf0d005c2d16bbf122",
       "reason": "This remains the owner-and-provider-ID fenced update and exact persistence receipt, distinct from both lookup and insert-ignore operations."
     },
     {
@@ -859,7 +859,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "00d351afbe045a136c66",
-      "currentCallerId": "d406c0b568fd6ec5e544",
+      "currentCallerId": "aae055d92faa16ae4e2e",
       "enclosing": "activatePaidCycle",
       "kind": "RPC_CANDIDATE",
       "target": "activate_xroga_paid_cycle",
@@ -869,7 +869,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "254a91383e3a8af0310b",
-      "currentCallerId": "de6707af035c2d7fe760",
+      "currentCallerId": "54326930ab9ec884b6cd",
       "enclosing": "activatePaidCycle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -879,7 +879,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "590df28cdc2b297e03b6",
-      "currentCallerId": "5ffa627faeaa6803aab8",
+      "currentCallerId": "53446e75ca49c95522af",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
@@ -889,7 +889,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "39a1f4163240597da04d",
-      "currentCallerId": "7fb0d4feb0707259368b",
+      "currentCallerId": "4c4451bbec61aecb23d3",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -899,7 +899,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "613d8e71ddafb0d6bd0c",
-      "currentCallerId": "abe158166765391a38bb",
+      "currentCallerId": "9d05c85f5bfac4989a75",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
@@ -909,7 +909,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "a80e4804742dfd6bcc0a",
-      "currentCallerId": "cd6fb0dc4aecaa924a23",
+      "currentCallerId": "469b0a4a0957a0d982b1",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -919,7 +919,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "6285818c6e8220770b29",
-      "currentCallerId": "48010eb67a70f9160a4e",
+      "currentCallerId": "4a9c1469b879166fe52c",
       "enclosing": "setUsagePacing",
       "kind": "RPC_CANDIDATE",
       "target": "set_xroga_usage_pacing",
@@ -929,7 +929,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "090fe734dc5d1d3dc6e3",
-      "currentCallerId": "c79d0afb3ebeabc76c2d",
+      "currentCallerId": "0b3ff8ce7a456a8a2acf",
       "enclosing": "setUsagePacing",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -939,7 +939,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3f66673813dee0d85b85",
-      "currentCallerId": "f8840556255dc425215c",
+      "currentCallerId": "f6f4b355a8c80fc166f4",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
@@ -949,7 +949,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "746985044f7d3ee62aff",
-      "currentCallerId": "3c5c04328c11bf512dba",
+      "currentCallerId": "c2adb020f37811ce7849",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -959,7 +959,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e030677c7ecb6b0dd90e",
-      "currentCallerId": "88e420183bcb296b87a4",
+      "currentCallerId": "9cce2ff19e247ce9c5d5",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
@@ -969,7 +969,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e35278adbe80b78c8d41",
-      "currentCallerId": "df66c5e789c6e8f1dd46",
+      "currentCallerId": "670197ad89640f5a6242",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -979,7 +979,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "b5a82155e981259a207e",
-      "currentCallerId": "1523f7744eed6083f0b6",
+      "currentCallerId": "9d0558fe12707a8a2949",
       "enclosing": "settleProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
@@ -989,7 +989,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "564673e6f6b21c690fce",
-      "currentCallerId": "4c1b535638e8a0a197f8",
+      "currentCallerId": "65acb9b03435995fdeb0",
       "enclosing": "settleProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -999,7 +999,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "5ed8ef26b72e26561f26",
-      "currentCallerId": "88789f83425415184ffc",
+      "currentCallerId": "774dd446f08cb58fbc9b",
       "enclosing": "finishFailedProviderReservation",
       "kind": "RPC_CANDIDATE",
       "target": "release_xroga_provider_budget",
@@ -1009,7 +1009,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3fc72ec34d884b871909",
-      "currentCallerId": "5fc4041577ba475ddde3",
+      "currentCallerId": "706f26c27c2b32064580",
       "enclosing": "finishFailedProviderReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -1250,7 +1250,7 @@
     },
     {
       "packetId": "B1-P2-9557fb9d0f7a38f5",
-      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "sourceSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
       "executionStatus": "IN_PROGRESS",
       "finding": "NATIVE_REFRESH_DROPPED_KNOWN_PROVIDER_ACCOUNT_FIXED_PENDING_ACTUAL_DATABASE_PROOF",
       "originalCriteria": [
@@ -1308,6 +1308,12 @@
         "historicalSourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+      },
+      "currentPhase4SourceContinuation": {
+        "previousSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+        "review": "Finite official OAuth issuer transport bounds receipts and denies redirects without refresh/identity fallback. Existing exact PKCE/vault/revision persistence bindings retained. No publishing or new financial authority certified.",
+        "evidence": "docs/xroga/evidence/command-010/REMAINING-SEMANTIC-BINDINGS-20261028.json",
+        "newAcceptance": false
       }
     },
     {
@@ -1467,7 +1473,7 @@
     },
     {
       "packetId": "B1-P2-b8b2050b4efeeb5b",
-      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+      "sourceSha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_EXECUTION_RECOVERY_OWNER_AND_PRODUCER_PROOF_RECONCILED",
       "actorTrace": "Only production constructors occur inside runBuildPipeline after original issued actor and user match. Resume loads exact server owner/run, validates stored and embedded lineage and current database project before durable worker admission. New writes additionally require captured original attempt. No body owner can choose another checkpoint.",
@@ -1521,6 +1527,12 @@
           "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
           "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
         ]
+      },
+      "currentPhase4SourceContinuation": {
+        "previousSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+        "review": "Accepted Google SandboxAdmissionError and Phase4 terminal model/security denial prevent unauthorized retries. Existing task graph and persistence remain unchanged, no new authority. Focused scheduler proof retained, exact-source CI still required.",
+        "evidence": "docs/xroga/evidence/command-010/REMAINING-SEMANTIC-BINDINGS-20261028.json",
+        "newAcceptance": false
       }
     },
     {
@@ -1799,7 +1811,7 @@
     },
     {
       "packetId": "B1-P2-392b9b628a9b92be",
-      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
       "phase4BudgetAdmissionContinuation": {
         "baselineSource": "d68bbd7269395ff4193c372cbbe432acfc1f422a",
         "previousFileSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
@@ -1969,6 +1981,11 @@
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
         "scope": "EXACT_PERSISTENCE_EXPRESSION_POSITION_ONLY_NOT_NEW_ACCEPTANCE"
+      },
+      "currentAccountingSourceContinuation": {
+        "priorSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+        "proof": "docs/xroga/evidence/command-010/ACCOUNTING-SOURCE-CONTINUATION-20261028.json",
+        "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
       }
     },
     {
@@ -2032,7 +2049,7 @@
     },
     {
       "packetId": "B1-P2-a582cdd6898c81f0",
-      "sourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
+      "sourceSha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_FIRST_OWNER_BINDING_GAP_FIXED_VERIFIED_AT_7BE44030",
       "actualVerification": {
@@ -2050,12 +2067,12 @@
       "callerExtensions": [
         {
           "baselineCallerId": "e7b9dbdcf629027dc864",
-          "currentCallerId": "4e027991ba45aac9e16d",
+          "currentCallerId": "4a8d0b5bcd7d8c80f473",
           "reason": "New payment-receipt lookup reuses the original fulfillment authority obligation to retain canonical owner provenance before profile access and replay."
         },
         {
           "baselineCallerId": "e7b9dbdcf629027dc864",
-          "currentCallerId": "b52db4c851f3dea1748b",
+          "currentCallerId": "9bab30418efe8bae3267",
           "reason": "New exact membership lookup reuses the original fulfillment authority obligation for legacy renewal owner and checkout-parent validation. This is not an additional packet or certification."
         }
       ],
@@ -2103,6 +2120,11 @@
           "Verify actual configured checkout metadata read permission only before future provider activation, no live key or permission change in Phase2",
           "Keep Command008 settlement/action authority and provider ordering outside this narrow tenant-owner repair"
         ]
+      },
+      "planReadSourceContinuation": {
+        "priorSourceSha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
+        "proof": "docs/xroga/evidence/command-010/PLAN-READ-TRANSPORT-20261028.json",
+        "scope": "FIXED_PLAN_TRANSPORT_ONLY_EXISTING_PERSISTENCE_EXPRESSIONS_UNCHANGED_NO_NEW_PHASE2_CERTIFICATION"
       }
     },
     {
@@ -3405,5 +3427,6 @@
     "hostingHeaderTrace": "The failed actual request received the normal configured CSP. The old catch-all matches both proxy paths. Installed Next15.5.27 send-response copies a route header only when the outbound response does not already have that name, so a route-only sandbox cannot replace configured CSP. Exact proxy-specific rules now exclude those two paths from the catch-all, share the same immutable policy as the handlers and retain every other security header/auth/hosting rule. The fixture additionally requires unredirected proxy response and the real upstream marker.",
     "activeSvgPositiveControl": "A separate empty-cookie browser page proves the raw synthetic SVG executes its script. The same SVG through the actual image route must not execute. Real Auth CI is still pending."
   },
-  "phase3RetiredCallerRemappings": []
+  "phase3RetiredCallerRemappings": [],
+  "currentPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
 }

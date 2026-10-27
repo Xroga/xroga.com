@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+  "source_sha": "183d93adfb06492d3f26161b0778a152b9f6edbf",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2062,7 +2062,6 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/black-hole/webIntelligence.ts",
         "backend/src/ai/research.ts"
       ],
       "hostnames": [
@@ -2088,7 +2087,6 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/black-hole/webIntelligence.ts",
         "backend/src/ai/research.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -4422,7 +4420,6 @@
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/lib/api.ts"
       ],
       "hostnames": [
@@ -4473,7 +4470,6 @@
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/lib/api.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -8854,7 +8850,6 @@
     {
       "name": "FLY_MACHINE_ID",
       "consuming_sources": [
-        "backend/src/routes/browserRuns.ts",
         "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
       ],
@@ -8866,8 +8861,7 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
-        "REVIEWED_DYNAMIC_BINDING",
-        "STATIC_ENV_READER"
+        "REVIEWED_DYNAMIC_BINDING"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -9331,7 +9325,6 @@
     {
       "name": "GROK_SEARCH_MODEL",
       "consuming_sources": [
-        "backend/src/ai/black-hole/webIntelligence.ts",
         "backend/src/ai/research.ts"
       ],
       "environments": [
@@ -10212,7 +10205,6 @@
       "name": "NEXT_PUBLIC_API_URL",
       "consuming_sources": [
         "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
@@ -10456,7 +10448,6 @@
         "backend/src/services/publish/chromeWebStore.ts",
         "backend/src/synthesis/livePreview/signing.ts",
         "backend/src/synthesis/projectRuntime/secretManager.ts",
-        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
         "frontend/src/components/homepage-next/phase1/useOrchestration.ts",
         "frontend/src/components/homepage-next/s04/useScene.ts",
@@ -12291,7 +12282,6 @@
     {
       "name": "XAI_API_KEY",
       "consuming_sources": [
-        "backend/src/ai/black-hole/webIntelligence.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/research.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
@@ -14493,7 +14483,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "a9321b6cb7bb898837b5686c99109a5f580692c62f1537749fbb52a1a989cb9d"
+      "sha256": "80485bdce7a538581d903a747eecd604749f845113bab42dc24ee739b830e339"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -14653,7 +14643,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "bf0e4531767c122396c21493b3e597ac55489a45b9315d83573c102353eb9533"
+      "sha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -14733,7 +14723,7 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2"
+      "sha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc"
     },
     {
       "path": "backend/src/ai/fileSelector.ts",
@@ -14785,7 +14775,7 @@
     },
     {
       "path": "backend/src/ai/modelSdkAdmission.ts",
-      "sha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85"
+      "sha256": "20d496b0d58773d98578f070771ed051259b2c77cd3d081ef2304acf01fbcb60"
     },
     {
       "path": "backend/src/ai/models.ts",
@@ -14793,11 +14783,11 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1"
+      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "d5fc61960cb0b75bce2c548c1b46501bbc3d0e2638fb4ec970efa8e91e0cf137"
+      "sha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
@@ -14837,7 +14827,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a"
+      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -14925,7 +14915,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
-      "sha256": "85ea0f5f5d32a380db877044ba786fe9f146fc34d2117a2da4d0fcfae32f518e"
+      "sha256": "d280fb6932a566614e01ac731c0a0f9103542b7d7a83c1fe042d4f7906647879"
     },
     {
       "path": "backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts",
@@ -15017,7 +15007,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/writePolicy.ts",
-      "sha256": "b0ec1e361efaa7b3183ca6d1f93942f89a6b421e61bb26053012ae81a0a113c9"
+      "sha256": "24113cfc686e8b53ee493d80640da5c73b6fbb7d2644b9bd213fce3bea4508ab"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
@@ -15029,7 +15019,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "sha256": "315e5759a03ff8b4777ab8d9592e854c416a3632846c8eb97f8976aa69c2848d"
+      "sha256": "bd3635e6217411d6593aee234ecac3565e49b60fc3c56009b5590ca433b2e0a4"
     },
     {
       "path": "backend/src/ai/startupProgress.ts",
@@ -15053,7 +15043,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
+      "sha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304"
     },
     {
       "path": "backend/src/ai/universal/artifactWorkspace.ts",
@@ -15245,7 +15235,7 @@
     },
     {
       "path": "backend/src/config/supabase.ts",
-      "sha256": "9280f40cf8cd470eac6ae35ac92b84bcdd63992788a3315d60bdf565a5f18264"
+      "sha256": "3366dd3460e19bc66af8743005d0bf91a288c8173c3126dec1749bf5a44ecf0f"
     },
     {
       "path": "backend/src/config/universalAgentFlags.ts",
@@ -15409,7 +15399,7 @@
     },
     {
       "path": "backend/src/lib/netlify.ts",
-      "sha256": "f2e04a9e2cc21df2a57eb0419679d68bd29a0d5a7b78430a4bb1c093af8f42f5"
+      "sha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557"
     },
     {
       "path": "backend/src/lib/normalizeBuildSource.ts",
@@ -15442,6 +15432,10 @@
     {
       "path": "backend/src/lib/publicAiIdentity.ts",
       "sha256": "1803f8165828c6001a00a343cf1352eeb4f6b5554051c0b5f8250b75060837ad"
+    },
+    {
+      "path": "backend/src/lib/publishingProviderRequest.ts",
+      "sha256": "18fb58bea614192b6dc67661afbbf3cf8d14e8dc308e737059a8beb723b32c1d"
     },
     {
       "path": "backend/src/lib/r2.ts",
@@ -15509,7 +15503,7 @@
     },
     {
       "path": "backend/src/lib/vercel.ts",
-      "sha256": "a67b99419a81d9618c8298c3c1fe97d0d0db009e3a6baf09c78a2156d255f610"
+      "sha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826"
     },
     {
       "path": "backend/src/lib/vercelAuthError.ts",
@@ -15517,11 +15511,11 @@
     },
     {
       "path": "backend/src/lib/vercelDomains.ts",
-      "sha256": "29df8614186900aaa232d1fa924e4f288babbb1d44f2351168cd41b2730fac93"
+      "sha256": "827c50307484a48cd7ff5ce967902429baeb1e4541bc1705195ef36a40fee5ff"
     },
     {
       "path": "backend/src/lib/vercelEnv.ts",
-      "sha256": "b7ad8074fd9c03caead5995511518830eae19c7828956296a823ceb0947abaf9"
+      "sha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f"
     },
     {
       "path": "backend/src/lib/vercelStaticConfig.ts",
@@ -15753,7 +15747,7 @@
     },
     {
       "path": "backend/src/routes/browserRuns.ts",
-      "sha256": "0b123cffa6d286d7b01e1e686c372986473d21773b3f8cff4885eaf6254d4d3f"
+      "sha256": "ab9b49de1f975807b0f27aade3196fea04345f018d5355a559b7f8199e352fe0"
     },
     {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
@@ -15797,7 +15791,7 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091"
+      "sha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -15901,7 +15895,7 @@
     },
     {
       "path": "backend/src/routes/vercel.ts",
-      "sha256": "615bbf629daad489a4d762cabbebcff310330032b3289c63ab82f06b9194c1bf"
+      "sha256": "3baee447f7d35afc7f71fde623baf3f4527345e4d468708fd67c6f600c2f9069"
     },
     {
       "path": "backend/src/routes/voice.ts",
@@ -16097,7 +16091,7 @@
     },
     {
       "path": "backend/src/security/genericSdk.local.integration.ts",
-      "sha256": "cb5c247ade126ef0a316b4be90647160b30e2158674b8b0a9e28acb2be145dff"
+      "sha256": "76948a8c6aa5bba81662f2007637014780f860e75e4ade943f1335383076ec62"
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
@@ -16217,7 +16211,7 @@
     },
     {
       "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
-      "sha256": "6a80239bd1e05deb5992e911f7782aea111cdd4f3ea5246b997591a79d74c768"
+      "sha256": "f22010214e9064cf03834f3063bb43f592a95f8260fcfab9e5be4bdaf3241ebd"
     },
     {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -16281,7 +16275,7 @@
     },
     {
       "path": "backend/src/services/BillingService.ts",
-      "sha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2"
+      "sha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281"
     },
     {
       "path": "backend/src/services/billingBudget.local.integration.ts",
@@ -16333,7 +16327,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "525c952a66150e22b65261eee0391ebcee3987e9250a94d358c33f896dc6610d"
+      "sha256": "46ae27a7e2e80a4a0f8f7d574ff183527b860d84eee93f0dfd408a252f9b18f4"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -16393,7 +16387,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706"
+      "sha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb"
     },
     {
       "path": "backend/src/services/integrations/githubMutationPlan.ts",
@@ -16441,7 +16435,7 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463"
+      "sha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522"
     },
     {
       "path": "backend/src/services/integrations/supabaseProjectUrl.ts",
@@ -16457,7 +16451,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd"
+      "sha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182"
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
@@ -16501,7 +16495,7 @@
     },
     {
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "sha256": "f7ef96cb7765a3c043e6ddffa469fce3a0778f4d8658c6801c2b12ccfe6c0e0b"
+      "sha256": "5dd9bf3f4db350462eb197321f9c73c343e3ba4a33247157c47502ce6737b3e7"
     },
     {
       "path": "backend/src/services/referralService.ts",
@@ -16585,7 +16579,7 @@
     },
     {
       "path": "backend/src/services/whopCheckoutOwnership.ts",
-      "sha256": "8486898ec1017c24118b9dec0b103c7ad54e453f2df7aa59d47772e6a890a642"
+      "sha256": "599c4816881fba840f10cdce5a299cf62d5f495f9ea7ad75bfd67f7a22d60372"
     },
     {
       "path": "backend/src/storage/artifactSink.ts",
@@ -16661,7 +16655,7 @@
     },
     {
       "path": "backend/src/storage/r2ObjectStore.ts",
-      "sha256": "d283594a4569b5ddc8710c5d717b2291bd3ebbf79d9c3d2d73a61c3117e9f622"
+      "sha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
     },
     {
       "path": "backend/src/storage/repository.ts",
@@ -16673,7 +16667,7 @@
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "sha256": "ed8e543e8f26452266176c289cbedba742591da81f2e4ce22294aac08242c28e"
+      "sha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596"
     },
     {
       "path": "backend/src/storage/testing/approvals.ts",
@@ -17085,19 +17079,27 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "f932953aa5acb43d66eff567571b5518ddda212d25fed42c6100cf9fe5ccf7da"
+      "sha256": "56bdea730b89a1441a1d3f4ba5fde5335d633bbab966eb04c1a604fb91e71301"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
-      "sha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
+      "sha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3"
     },
     {
       "path": "backend/src/workers/browserJob.ts",
       "sha256": "a4ab560d58ca35954f5836797f253dc354ba3cfea1b3d4a727a16dd1d93f7ffb"
     },
     {
+      "path": "backend/src/workers/browserModelDispatch.ts",
+      "sha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d"
+    },
+    {
       "path": "backend/src/workers/browserModelGateway.ts",
-      "sha256": "d28b6c3a3d01c191566a78b72e2c2c5990cbc4bba17fdaf9a46fdeaf01fd3e60"
+      "sha256": "4d7b015753f908146dea895ad22e00c4e06e529cdd37f3fbe631ff2c95cd193c"
+    },
+    {
+      "path": "backend/src/workers/browserModelLifetime.ts",
+      "sha256": "1e7991d54bcaf1298344768970a0fe139d70de7d84b3c3f29f4177d57ed72408"
     },
     {
       "path": "backend/src/workers/browserPlan.ts",
@@ -17105,11 +17107,11 @@
     },
     {
       "path": "backend/src/workers/browserPlanner.ts",
-      "sha256": "d708dcef9048fd1e5332461b672ff7a20ef6647f80f91dcd614c65f5c6100446"
+      "sha256": "a1cd0f49d665b12321c33ceee22e995f7631285a4f8438b3599d70ff766945c3"
     },
     {
       "path": "backend/src/workers/browserTaskHandler.ts",
-      "sha256": "e691a6a06f6539f86215bcc9f5d78084cc794473d3399602251186442bf41e90"
+      "sha256": "a0b129ea24a4df4c1b10b9df910471d190b4ca7055e5593d398784c77bb1b04d"
     },
     {
       "path": "backend/src/workers/chromiumLaunch.ts",
@@ -17117,7 +17119,7 @@
     },
     {
       "path": "backend/src/workers/containerBrowserWorker.ts",
-      "sha256": "fbc9ea0804887cd66aa18ffdcac905d8b5f1fe1d2345761533b0e7665bca5742"
+      "sha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "path": "backend/src/workers/containerSpec.ts",
@@ -17185,7 +17187,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "sha256": "84f38bc0ab62fc7ffa328f779e7b5641419423cdbbc8a53855060ec1b9b504ce"
+      "sha256": "25e82c6c4867a397fc50f57ce2eb48510a8614126c55efc157435f0b34fbfb2d"
     },
     {
       "path": "frontend/src/app/(shell)/admin/page.tsx",
@@ -17713,7 +17715,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "8a6108961f076a5fc0b6250aed2c9ee28cf64687a6d9126f8d18bc630ac9ac27"
+      "sha256": "3dbc690246e5ccedfe88365fe55c8a35d278820b5441e02c40d7b908658df2f7"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -20049,7 +20051,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "1cdb6a8a3ac4550100f1eef141dc078b4aae75e1533cf7473204e418f5eb31bd"
+      "sha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -20141,7 +20143,7 @@
     },
     {
       "path": "frontend/src/lib/community.ts",
-      "sha256": "f20fabb745516ac23bcf6d4af3977971b9684ed94c4c51cc17a660d0a856b5e3"
+      "sha256": "174ec2da07c36fb8df9b667dab92472332e34b0d1b4fe4e05ae87ee25594e383"
     },
     {
       "path": "frontend/src/lib/companion.ts",
@@ -20293,7 +20295,7 @@
     },
     {
       "path": "frontend/src/lib/imageStudioUtils.ts",
-      "sha256": "5ec55cf935cfdea68e2eaf84e5f6242e1061a258dbd07a20c865e454a80a4093"
+      "sha256": "0b84a79c7fc9f30b9c35e18b8c3e2b556bde0152abb3c751f47205a8bbd6a38b"
     },
     {
       "path": "frontend/src/lib/incognito.ts",
@@ -20481,7 +20483,7 @@
     },
     {
       "path": "frontend/src/lib/projectDeliveryApi.ts",
-      "sha256": "65ab4365e881f8ca806df71bd0f10c73b28b51149ae25c4ca710b6fcbbd19c59"
+      "sha256": "11e169cd69f6a701e04da5044e692942030e8be8748db0dac6f39ff179a8fd4f"
     },
     {
       "path": "frontend/src/lib/projectResume.ts",
@@ -20489,7 +20491,7 @@
     },
     {
       "path": "frontend/src/lib/projectRuntimeApi.ts",
-      "sha256": "ba274bbf114dc2e74adbcbb3bd79efe23726e9ff7ac7d4e3099ec1f9ba045b05"
+      "sha256": "b73d28693c69548bf7446da8bf28eeadfa69fccc602dfbe6b9ceb26459e6e994"
     },
     {
       "path": "frontend/src/lib/projectWorkspaceStorage.ts",
@@ -20565,7 +20567,7 @@
     },
     {
       "path": "frontend/src/lib/runGuestLaneChat.ts",
-      "sha256": "8cd966d81f56a81c75754668ae3de72b64e409d3a1ac308c3327d0fbf01f7d68"
+      "sha256": "2b8b68d28264780988498d09461ec9a79e4ba8ff10cd4b960a4cbe096cc3b757"
     },
     {
       "path": "frontend/src/lib/runLightLaneChat.ts",
@@ -20685,7 +20687,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/authProviders.ts",
-      "sha256": "34d867af97d0419d907b38d5e7a04d71436de6910b3a85faf80ce7f4dbdc5d10"
+      "sha256": "fc40e9ff3057a484626e2ebd6b284cb9ce37376f2dfea7be7c4effd11b8336ca"
     },
     {
       "path": "frontend/src/lib/supabase/client.ts",
@@ -20817,7 +20819,7 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "70a9e4cfa50ca2113787a2e474668c6d505402c37a088296e4c00f0e4faba127"
+      "sha256": "a865bad0e0360ea4571a23094ae16c218e6083f25db4debaeec80863268f4c6b"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -21913,13 +21915,6 @@
   ],
   "source_endpoints": [
     {
-      "hostname": "api.x.ai",
-      "protocol": "https:",
-      "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 439,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "openrouter.ai",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
@@ -22287,35 +22282,35 @@
       "hostname": "api.netlify.com",
       "protocol": "https:",
       "path": "backend/src/lib/netlify.ts",
-      "line": 40,
+      "line": 43,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.netlify.com",
       "protocol": "https:",
       "path": "backend/src/lib/netlify.ts",
-      "line": 60,
+      "line": 64,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.netlify.com",
       "protocol": "https:",
       "path": "backend/src/lib/netlify.ts",
-      "line": 81,
+      "line": 85,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.netlify.com",
       "protocol": "https:",
       "path": "backend/src/lib/netlify.ts",
-      "line": 101,
+      "line": 105,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.netlify.com",
       "protocol": "https:",
       "path": "backend/src/lib/netlify.ts",
-      "line": 137,
+      "line": 141,
       "credentialsInUrl": false
     },
     {
@@ -22336,77 +22331,77 @@
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercel.ts",
-      "line": 38,
+      "line": 39,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercel.ts",
-      "line": 67,
+      "line": 68,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercel.ts",
-      "line": 132,
+      "line": 134,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercel.ts",
-      "line": 146,
+      "line": 148,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercel.ts",
-      "line": 202,
+      "line": 204,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelDomains.ts",
-      "line": 29,
+      "line": 30,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 53,
+      "line": 55,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 61,
+      "line": 63,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 82,
+      "line": 84,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 108,
+      "line": 110,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 122,
+      "line": 124,
       "credentialsInUrl": false
     },
     {
@@ -22595,70 +22590,91 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 22,
+      "line": 23,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 23,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "localhost",
-      "protocol": "http:",
-      "path": "backend/src/routes/github.ts",
       "line": 24,
       "credentialsInUrl": false
     },
     {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
       "line": 25,
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/routes/github.ts",
+      "line": 26,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 33,
+      "line": 34,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
-      "line": 48,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "api.github.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/github.ts",
-      "line": 71,
+      "line": 49,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 94,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "github.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/github.ts",
-      "line": 170,
+      "line": 100,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 192,
+      "line": 101,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/github.ts",
+      "line": 102,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/github.ts",
+      "line": 117,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/github.ts",
+      "line": 140,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/github.ts",
+      "line": 217,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/github.ts",
+      "line": 239,
       "credentialsInUrl": false
     },
     {
@@ -22693,35 +22709,35 @@
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 92,
+      "line": 95,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 105,
+      "line": 108,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 201,
+      "line": 206,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 202,
+      "line": 207,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/routes/vercel.ts",
-      "line": 223,
+      "line": 228,
       "credentialsInUrl": false
     },
     {
@@ -23666,42 +23682,42 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 280,
+      "line": 282,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 659,
+      "line": 661,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 711,
+      "line": 713,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 837,
+      "line": 839,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 870,
+      "line": 872,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1721,
+      "line": 1728,
       "credentialsInUrl": false
     },
     {
@@ -23817,101 +23833,157 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 27,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 28,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 30,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 33,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 34,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 68,
+      "line": 113,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 69,
+      "line": 114,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 70,
+      "line": 115,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 71,
+      "line": 116,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 108,
+      "line": 153,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 139,
+      "line": 184,
       "credentialsInUrl": false
     },
     {
       "hostname": "vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 217,
+      "line": 262,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 252,
+      "line": 297,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 520,
+      "line": 566,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 557,
+      "line": 603,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 558,
+      "line": 604,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 613,
+      "line": 661,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 632,
+      "line": 681,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 740,
+      "line": 790,
       "credentialsInUrl": false
     },
     {
@@ -24093,42 +24165,42 @@
       "hostname": "exp.host",
       "protocol": "https:",
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "line": 75,
+      "line": 76,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "line": 190,
+      "line": 197,
       "credentialsInUrl": false
     },
     {
       "hostname": "expo.dev",
       "protocol": "https:",
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "line": 258,
+      "line": 265,
       "credentialsInUrl": false
     },
     {
       "hostname": "play.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "line": 285,
+      "line": 292,
       "credentialsInUrl": false
     },
     {
       "hostname": "appstoreconnect.apple.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "line": 293,
+      "line": 300,
       "credentialsInUrl": false
     },
     {
       "hostname": "developer.apple.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "line": 301,
+      "line": 308,
       "credentialsInUrl": false
     },
     {
@@ -24345,7 +24417,7 @@
       "hostname": "coordinator",
       "protocol": "http:",
       "path": "backend/src/workers/browserCoordinator.ts",
-      "line": 82,
+      "line": 85,
       "credentialsInUrl": false
     },
     {
@@ -24654,20 +24726,6 @@
       "protocol": "https:",
       "path": "frontend/src/app/research/web3-hackathon-winning-patterns/page.tsx",
       "line": 3,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "localhost",
-      "protocol": "http:",
-      "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 22,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "api.xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/share/[token]/page.tsx",
-      "line": 22,
       "credentialsInUrl": false
     },
     {
@@ -27796,14 +27854,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 82,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 551,
+      "line": 78,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27971,29 +28022,22 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 157,
+      "line": 158,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 246,
+      "line": 247,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 364,
+      "line": 365,
       "scope": "INSTANCE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/executionRuntime.ts",
-      "line": 423,
-      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -28013,21 +28057,28 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 469,
-      "scope": "INSTANCE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/executionRuntime.ts",
-      "line": 617,
+      "line": 426,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
+      "line": 470,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
       "line": 618,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "line": 619,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28132,7 +28183,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 231,
+      "line": 238,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28615,21 +28666,21 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
-      "line": 285,
+      "line": 287,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
-      "line": 319,
+      "line": 321,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
-      "line": 408,
+      "line": 410,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28720,7 +28771,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "line": 479,
+      "line": 482,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29098,7 +29149,7 @@
     },
     {
       "path": "backend/src/lib/netlify.ts",
-      "line": 72,
+      "line": 76,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29182,21 +29233,21 @@
     },
     {
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 41,
+      "line": 43,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 89,
+      "line": 91,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/lib/vercelEnv.ts",
-      "line": 180,
+      "line": 182,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29959,7 +30010,7 @@
     },
     {
       "path": "backend/src/routes/browserRuns.ts",
-      "line": 57,
+      "line": 58,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30043,7 +30094,7 @@
     },
     {
       "path": "backend/src/routes/vercel.ts",
-      "line": 197,
+      "line": 202,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30358,7 +30409,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1869,
+      "line": 1874,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30421,28 +30472,28 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1441,
+      "line": 1448,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1475,
+      "line": 1482,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1481,
+      "line": 1488,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1555,
+      "line": 1562,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30589,21 +30640,28 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 31,
+      "line": 26,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 151,
+      "line": 76,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 165,
+      "line": 196,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 210,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30911,21 +30969,21 @@
     },
     {
       "path": "backend/src/storage/r2ObjectStore.ts",
-      "line": 82,
+      "line": 92,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/storage/r2ObjectStore.ts",
-      "line": 90,
+      "line": 100,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/storage/r2ObjectStore.ts",
-      "line": 164,
+      "line": 183,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30967,35 +31025,35 @@
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "line": 198,
+      "line": 222,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "line": 386,
+      "line": 411,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "line": 388,
+      "line": 413,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "line": 396,
+      "line": 421,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "line": 549,
+      "line": 575,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32017,21 +32075,21 @@
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
-      "line": 35,
+      "line": 38,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
-      "line": 71,
+      "line": 74,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
-      "line": 96,
+      "line": 99,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32059,14 +32117,14 @@
     },
     {
       "path": "backend/src/workers/browserModelGateway.ts",
-      "line": 49,
+      "line": 46,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/workers/browserModelGateway.ts",
-      "line": 85,
+      "line": 76,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32094,7 +32152,7 @@
     },
     {
       "path": "backend/src/workers/browserTaskHandler.ts",
-      "line": 190,
+      "line": 203,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32129,7 +32187,7 @@
     },
     {
       "path": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 51,
+      "line": 53,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

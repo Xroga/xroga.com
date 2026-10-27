@@ -201,6 +201,8 @@
     "backend/src/security/serviceRoleGuard.ts",
     "backend/src/security/softwareAgentSdk.local.integration.ts",
     "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/services/BillingService.planTransport.security.test.ts",
+    "backend/src/services/BillingService.ts",
     "backend/src/services/integrations/businessAccounting.failure.test.ts",
     "backend/src/services/integrations/businessAction.digest.test.ts",
     "backend/src/services/integrations/businessAction.ts",
@@ -744,11 +746,14 @@
     "docs/xroga/evidence/command-009/production-cutover-20261025/public-production-receipt.json",
     "docs/xroga/evidence/command-009/production-cutover-20261025/source-equivalence.json",
     "docs/xroga/evidence/command-009/production-cutover-20261025/strict-evaluator-result.json",
+    "docs/xroga/evidence/command-010/ACCOUNTING-SOURCE-CONTINUATION-20261028.json",
     "docs/xroga/evidence/command-010/BROWSER-PERSISTENCE-SOURCE-REBINDING.json",
     "docs/xroga/evidence/command-010/BROWSER-SDK-LIFETIME-TRACE.json",
     "docs/xroga/evidence/command-010/BUSINESS-MODEL-CONTINUATION.md",
     "docs/xroga/evidence/command-010/CI-REPAIR-49978.json",
     "docs/xroga/evidence/command-010/CURRENT-PHASE4-ACCEPTANCE.json",
+    "docs/xroga/evidence/command-010/CURRENT-PROOF-METADATA-CONTINUATION-20261028.json",
+    "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json",
     "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
     "docs/xroga/evidence/command-010/FALLBACK-DENIAL-CONTINUATION.md",
     "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md",
@@ -760,6 +765,8 @@
     "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
     "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
     "docs/xroga/evidence/command-010/PARALLEL-REDIRECT-PERSISTENCE-REBINDING.json",
+    "docs/xroga/evidence/command-010/PLAN-READ-PERSISTENCE-REBINDING-20261028.json",
+    "docs/xroga/evidence/command-010/PLAN-READ-TRANSPORT-20261028.json",
     "docs/xroga/evidence/command-010/PREVIEW-GOOGLE-CALLER-TRACE.json",
     "docs/xroga/evidence/command-010/PREVIEW-PROVIDER-CONTINUATION.md",
     "docs/xroga/evidence/command-010/PRIVATE-DEPENDENCY-CALLER-TRACE.json",
@@ -771,6 +778,7 @@
     "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
     "docs/xroga/evidence/command-010/REDIRECT-PERSISTENCE-SOURCE-REBINDING.json",
     "docs/xroga/evidence/command-010/REGISTRY-NETWORK-PROOF.json",
+    "docs/xroga/evidence/command-010/REMAINING-SEMANTIC-BINDINGS-20261028.json",
     "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json",
     "docs/xroga/evidence/command-010/SCOPED-SOURCE-REBINDING.json",
     "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md",
@@ -822,6 +830,9 @@
     "docs/xroga/evidence/command-010/github-routes-20261027/strictIncomplete.log",
     "docs/xroga/evidence/command-010/github-routes-20261027/tenantInventoryIntegrity.log",
     "docs/xroga/evidence/command-010/github-routes-20261027/trace.json",
+    "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
+    "docs/xroga/evidence/command-010/historical/SOURCE-LIFETIME-PROOF-87e33b94.json",
+    "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
     "docs/xroga/evidence/command-010/image-client-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/image-client-20261027/green.log",
     "docs/xroga/evidence/command-010/image-client-20261027/red.log",
@@ -866,6 +877,8 @@
     "docs/xroga/evidence/command-010/local-candidates-20261027/green.log",
     "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
     "docs/xroga/evidence/command-010/manifest.json",
+    "docs/xroga/evidence/command-010/plan-read-green-20261028.log",
+    "docs/xroga/evidence/command-010/plan-read-red-20261028.log",
     "docs/xroga/evidence/command-010/provider-frontend-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/provider-frontend-20261027/finalStrictIncomplete.log",
     "docs/xroga/evidence/command-010/provider-frontend-20261027/strictIncomplete.log",
@@ -907,6 +920,12 @@
     "docs/xroga/evidence/command-010/research-oauth-20261027/supabaseAuth.before-authorization-denial.ts.txt",
     "docs/xroga/evidence/command-010/research-oauth-20261027/supabaseTransport.before-authorization-denial.test.ts.txt",
     "docs/xroga/evidence/command-010/research-oauth-20261027/trace.json",
+    "docs/xroga/evidence/command-010/security-checkpoint-20261028/billing21.log",
+    "docs/xroga/evidence/command-010/security-checkpoint-20261028/checkpoint.json",
+    "docs/xroga/evidence/command-010/security-checkpoint-20261028/historicalRegister.log",
+    "docs/xroga/evidence/command-010/security-checkpoint-20261028/proofBindings6.log",
+    "docs/xroga/evidence/command-010/security-checkpoint-20261028/strictAuditIncomplete.log",
+    "docs/xroga/evidence/command-010/security-checkpoint-20261028/tenantInventory.log",
     "docs/xroga/evidence/command-010/software-tool-20261027/actualSdkEffectRed.log",
     "docs/xroga/evidence/command-010/software-tool-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/software-tool-20261027/green.log",
@@ -1299,9 +1318,17 @@
     "deprecate": []
   },
   "schemaImpact": {
-    "changed": false,
-    "migrations": [],
-    "rollout": "This checkpoint adds no SQL relative to the accepted Google main source. Before any required production SQL, verify current applied schema, encrypted restorable backup, isolated fresh/upgrade and RLS tests. Later batch migrations remain gated.",
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261022000000_storage_drive_foundation.sql",
+      "supabase/migrations/20261022135500_sidebar_owner_rls.sql",
+      "supabase/migrations/20261024000000_worker_task_leases.sql",
+      "supabase/migrations/20261024111128_browser_maintain_privilege.sql",
+      "supabase/migrations/20261024200940_connected_app_workflows.sql",
+      "supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql",
+      "supabase/migrations/20261026000000_google_canonical_deliveries.sql"
+    ],
+    "rollout": "The listed migrations are inherited differences from this mission's historical87e33base through the accepted Google integration. This security checkpoint adds and applies no SQL. The google_canonical_deliveries expansion already has preserved production acceptance. Other inherited batch migrations are not approved for activation by this mission. Any future SQL requires actual current-schema compatibility, encrypted restorable backup and isolated fresh/upgrade/RLS gates. Claude owns Batch1.5/2 activation.",
     "rollback": "No SQL applied by this work. Preserve existing encrypted data, revisions, tombstones and compatible Google recovery. Never restore a legacy-only custody writer."
   },
   "securityImpact": {
@@ -1323,7 +1350,7 @@
     },
     "egress": {
       "changed": true,
-      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.23unreviewed callers and14high-risk obligations remain."
+      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.22unreviewed callers and13high-risk obligations remain."
     },
     "cost": {
       "changed": true,
@@ -1362,7 +1389,7 @@
   "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "23remaining source traces including14high-risk candidates, not all are demonstrated vulnerabilities",
+    "22remaining source traces including13high-risk candidates, not all are demonstrated vulnerabilities",
     "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
     "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
     "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
@@ -1377,6 +1404,7 @@
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
     "docs/xroga/evidence/command-010/CURRENT-PHASE4-ACCEPTANCE.json",
     "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
+    "docs/xroga/evidence/command-010/PLAN-READ-TRANSPORT-20261028.json",
     "docs/xroga/evidence/command-010/PREVIEW-GOOGLE-CALLER-TRACE.json",
     "docs/xroga/evidence/command-010/PRIVATE-DEPENDENCY-CALLER-TRACE.json",
     "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
@@ -1400,6 +1428,7 @@
     "docs/xroga/evidence/command-010/redirect-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/research-oauth-20261027/authorization-denial-addendum.json",
     "docs/xroga/evidence/command-010/research-oauth-20261027/trace.json",
+    "docs/xroga/evidence/command-010/security-checkpoint-20261028/checkpoint.json",
     "docs/xroga/evidence/command-010/software-tool-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/storage-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/supabase-sdk-20261027/checkpoint.json",
@@ -1413,7 +1442,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Original strict caller audit incomplete:23pending and14high-risk candidates",
+      "Original strict caller audit incomplete:22pending and13high-risk candidates",
       "All12original criteria and exact-final-source authenticated/disposable/CI acceptance are not yet verified"
     ],
     "authenticatedE2e": "BLOCKED",

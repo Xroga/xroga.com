@@ -873,6 +873,7 @@ export class BillingService {
 
     let response:
       Response;
+    let plan: Record<string, unknown>;
 
 
     try {
@@ -880,6 +881,8 @@ export class BillingService {
         await fetch(
           `${WHOP_API_BASE}/plans/${encodeURIComponent(planId)}`,
           {
+            method: 'GET',
+            redirect: 'error',
             headers:
               whopHeaders(
                 apiKey,
@@ -891,6 +894,28 @@ export class BillingService {
               ),
           },
         );
+      if (!response.ok) {
+        await response.body?.cancel().catch(() => undefined);
+        throw new Error('plan_read_denied');
+      }
+      const reader = response.body?.getReader();
+      const chunks: Uint8Array[] = [];
+      let bytes = 0;
+      try {
+        if (reader) for (;;) {
+          const next = await reader.read();
+          if (next.done) break;
+          bytes += next.value.byteLength;
+          if (bytes > 65_536) throw new Error('plan_receipt_limit');
+          chunks.push(next.value);
+        }
+      } finally {
+        await reader?.cancel().catch(() => undefined);
+        reader?.releaseLock();
+      }
+      const parsed: unknown = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('plan_receipt_shape');
+      plan = parsed as Record<string, unknown>;
     } catch {
       throw new BillingServiceError(
         'provider_unavailable',
@@ -898,24 +923,6 @@ export class BillingService {
         502,
       );
     }
-
-
-    if (
-      !response.ok
-    ) {
-      throw new BillingServiceError(
-        'provider_unavailable',
-        'Whop plan verification failed',
-        502,
-      );
-    }
-
-
-    const plan =
-  (await response.json()) as Record<
-    string,
-    unknown
-  >;
 
 
     const ownerId =

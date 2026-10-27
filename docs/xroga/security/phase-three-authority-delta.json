@@ -81,67 +81,67 @@
     },
     {
       "previousCallerId": "046674e946dedc2dbd0a",
-      "currentCallerId": "d406c0b568fd6ec5e544"
+      "currentCallerId": "aae055d92faa16ae4e2e"
     },
     {
       "previousCallerId": "f7d8e33dac1c0de787f8",
-      "currentCallerId": "de6707af035c2d7fe760"
+      "currentCallerId": "54326930ab9ec884b6cd"
     },
     {
       "previousCallerId": "2384f6f1c188f4f6ce83",
-      "currentCallerId": "5ffa627faeaa6803aab8"
+      "currentCallerId": "53446e75ca49c95522af"
     },
     {
       "previousCallerId": "03557d58e528c5852636",
-      "currentCallerId": "7fb0d4feb0707259368b"
+      "currentCallerId": "4c4451bbec61aecb23d3"
     },
     {
       "previousCallerId": "e2e547f8796cd0aad243",
-      "currentCallerId": "abe158166765391a38bb"
+      "currentCallerId": "9d05c85f5bfac4989a75"
     },
     {
       "previousCallerId": "f602ab2d6bfebc170a02",
-      "currentCallerId": "cd6fb0dc4aecaa924a23"
+      "currentCallerId": "469b0a4a0957a0d982b1"
     },
     {
       "previousCallerId": "8a48ae3957449eee9587",
-      "currentCallerId": "48010eb67a70f9160a4e"
+      "currentCallerId": "4a9c1469b879166fe52c"
     },
     {
       "previousCallerId": "685bdab3b4b31bd28d43",
-      "currentCallerId": "c79d0afb3ebeabc76c2d"
+      "currentCallerId": "0b3ff8ce7a456a8a2acf"
     },
     {
       "previousCallerId": "9a847ab5769bb707c1f2",
-      "currentCallerId": "f8840556255dc425215c"
+      "currentCallerId": "f6f4b355a8c80fc166f4"
     },
     {
       "previousCallerId": "e489f9a48f400005cb2d",
-      "currentCallerId": "3c5c04328c11bf512dba"
+      "currentCallerId": "c2adb020f37811ce7849"
     },
     {
       "previousCallerId": "d9435c22813b64a1f1f5",
-      "currentCallerId": "88e420183bcb296b87a4"
+      "currentCallerId": "9cce2ff19e247ce9c5d5"
     },
     {
       "previousCallerId": "1d3ef9e110d2f000f590",
-      "currentCallerId": "df66c5e789c6e8f1dd46"
+      "currentCallerId": "670197ad89640f5a6242"
     },
     {
       "previousCallerId": "0b24ee0eecebdda0e6f3",
-      "currentCallerId": "1523f7744eed6083f0b6"
+      "currentCallerId": "9d0558fe12707a8a2949"
     },
     {
       "previousCallerId": "ace18dec175b4875e7f7",
-      "currentCallerId": "4c1b535638e8a0a197f8"
+      "currentCallerId": "65acb9b03435995fdeb0"
     },
     {
       "previousCallerId": "c07b5b1f63ae0e361ae7",
-      "currentCallerId": "88789f83425415184ffc"
+      "currentCallerId": "774dd446f08cb58fbc9b"
     },
     {
       "previousCallerId": "fba07b765dafacccf133",
-      "currentCallerId": "5fc4041577ba475ddde3"
+      "currentCallerId": "706f26c27c2b32064580"
     },
     {
       "previousCallerId": "cd8790e39c3283f05482",
@@ -681,47 +681,47 @@
     },
     {
       "previousCallerId": "7202e4ceaf1fab023f7d",
-      "currentCallerId": "f5a449e18aa070e708bf"
+      "currentCallerId": "4944361facec046a2f80"
     },
     {
       "previousCallerId": "914547501e0ad5d35cbb",
-      "currentCallerId": "2f4adaffabba4e9c17b8"
+      "currentCallerId": "440f430607c30871cdc7"
     },
     {
       "previousCallerId": "2ae451e4fa2142cb3d3b",
-      "currentCallerId": "6cd8c24a9e60be01c103"
+      "currentCallerId": "4022858d2bb37bc8fbed"
     },
     {
       "previousCallerId": "533babcf253a3df300ac",
-      "currentCallerId": "1f7990192c0a2ca3a76f"
+      "currentCallerId": "7bc02d7c4101a33d0666"
     },
     {
       "previousCallerId": "d32647f80bd545a451f4",
-      "currentCallerId": "4e906804cf01a3be86b8"
+      "currentCallerId": "ba97ba36d23ddc612610"
     },
     {
       "previousCallerId": "795e7e19975095f341c6",
-      "currentCallerId": "3c6dd575e54ba2b2717c"
+      "currentCallerId": "815833191bc3b91eddf0"
     },
     {
       "previousCallerId": "50cfec47a00c8f934d4c",
-      "currentCallerId": "05048acae9b1850cc04a"
+      "currentCallerId": "8645a877081274061679"
     },
     {
       "previousCallerId": "9536d36325c5502652c0",
-      "currentCallerId": "5c951f6e7fdbc9713651"
+      "currentCallerId": "8d8cca43f4e4530dd1e0"
     },
     {
       "previousCallerId": "ff1b1bd1a685d5e751ee",
-      "currentCallerId": "7865641cd30c1a0e72b5"
+      "currentCallerId": "0ff81b747f13643cf083"
     },
     {
       "previousCallerId": "ae203bf10a8747bfd6de",
-      "currentCallerId": "7a2acf8694991f2fecf6"
+      "currentCallerId": "a21e5c97646b2bef894a"
     },
     {
       "previousCallerId": "52bb46e68e4a103d4782",
-      "currentCallerId": "eba320f0c59bba39be70"
+      "currentCallerId": "011226346256904a9409"
     },
     {
       "previousCallerId": "8fc7cf5dd562db7dcd3a",
@@ -1184,5 +1184,6 @@
     }
   ],
   "completion": "ACTUAL_DISPOSABLE_AND_SOURCE_BOUND_REGRESSION_PENDING",
-  "productionEffects": false
+  "productionEffects": false,
+  "currentPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
 }

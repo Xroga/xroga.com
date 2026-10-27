@@ -1,0 +1,94 @@
+{
+  "atUtc": "2026-10-27T19:36:49.378902+00:00",
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "parent": "183d93adfb06492d3f26161b0778a152b9f6edbf",
+  "resolvedThisGroup": [
+    "a7a8d74128349a90e3e8"
+  ],
+  "strictAudit": {
+    "total": 135,
+    "reviewed": 113,
+    "pending": 22,
+    "unresolvedHighRiskBypasses": 13
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "billing21",
+      "jobId": "c8958db3-bf9a-4aeb-9565-feda480c8aba",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/security-checkpoint-20261028/billing21.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 253041
+      }
+    },
+    {
+      "name": "backendTypes",
+      "jobId": "64a3d081-061c-4ccd-9e5b-e88ff30a2f5a",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322052
+      }
+    },
+    {
+      "name": "proofBindings6",
+      "jobId": "7da9c2fa-3fec-412d-a54b-1bf3b80fb429",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/security-checkpoint-20261028/proofBindings6.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "historicalRegister",
+      "jobId": "b1076abe-4fc8-4898-ad61-e5ca9e1e8f7a",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/security-checkpoint-20261028/historicalRegister.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "tenantInventory",
+      "jobId": "7fbdb6ca-d681-4033-ba4a-c9797d3c1d60",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/security-checkpoint-20261028/tenantInventory.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "strictAuditIncomplete",
+      "jobId": "50a18087-902d-409c-bc3b-c3b043cb97cc",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/security-checkpoint-20261028/strictAuditIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "frontendTypes": "PASS_UNCHANGED_034d642b",
+  "backendTypes": "PASS_CURRENT_SOURCE",
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_OUTSIDE_ASSIGNMENT",
+  "next": "Close remaining22source traces including13high-risk, with original issued actor, current account/project ownership, provenance, canonical authority/egress and valid accounting. Native publishing and credential transfers cannot be promoted by fixed-host transport alone. No release while strict audit incomplete."
+}

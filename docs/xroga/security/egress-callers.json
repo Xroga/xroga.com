@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "b082d0517613a027df48bd822aef633f351aaf81064fb16d2ed4f30c91e791b4",
+  "sourceTreeDigest": "9f416f5cebc175439567860badb48ab8c9905bb56a6779e2f574ce93b51eee89",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2050,23 +2050,34 @@
     {
       "id": "a7a8d74128349a90e3e8",
       "file": "backend/src/services/BillingService.ts",
-      "line": 880,
+      "line": 881,
       "entryPoint": "verifyConfiguredPlan",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "79759a53ac2d506047f01560ac822c479d4c9e18db2b8e96a6977536357b7fbb",
+      "callSha256": "8efe1e372087f8e5a178bd708db951fc54d12e1fa7f15d919c0d4bb427e784f2",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_PLATFORM_PLAN_READ_NO_TENANT_CONTENT_OR_MUTATION",
+      "tenantAuthority": "NO_ACTION_OR_TENANT_GRANT_CREATED_APPROVED_PROVIDER_PLAN_CONTRACT_VALIDATED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PLAN-READ-TRANSPORT-20261028.json",
+          "marker": "a7a8d74128349a90e3e8",
+          "sha256": "53fafe3775f5cf2f7e4957e4eb5f8f882b957e23cabf0e7ec4be07f395c9f2a1"
+        },
+        {
+          "path": "backend/src/services/BillingService.planTransport.security.test.ts",
+          "marker": "fixed plan read refuses actual redirect",
+          "sha256": "321f9511e97b2de142344915df7b815e31ae8fb0be84bc1c18a24def27fc04b7"
+        }
+      ]
     },
     {
       "id": "fcad57247cfb79779f95",
       "file": "backend/src/services/BillingService.ts",
-      "line": 1021,
+      "line": 1028,
       "entryPoint": "createCheckout",
       "transport": "fetch",
       "callee": "fetch",
@@ -4160,8 +4171,8 @@
   ],
   "counts": {
     "total": 135,
-    "reviewed": 112,
-    "pending": 23,
-    "unresolvedHighRiskBypasses": 14
+    "reviewed": 113,
+    "pending": 22,
+    "unresolvedHighRiskBypasses": 13
   }
 }

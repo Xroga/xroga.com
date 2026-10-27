@@ -3045,6 +3045,26 @@
           "sha256": "e9ee4fa95582e33f941c9ecd3a0c1477aa44f4a9a1a3184991db84aaf2735c88"
         }
       ]
+    },
+    {
+      "id": "a7a8d74128349a90e3e8",
+      "callSha256": "8efe1e372087f8e5a178bd708db951fc54d12e1fa7f15d919c0d4bb427e784f2",
+      "sourceFileSha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_PLATFORM_PLAN_READ_NO_TENANT_CONTENT_OR_MUTATION",
+      "tenantAuthority": "NO_ACTION_OR_TENANT_GRANT_CREATED_APPROVED_PROVIDER_PLAN_CONTRACT_VALIDATED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PLAN-READ-TRANSPORT-20261028.json",
+          "marker": "a7a8d74128349a90e3e8",
+          "sha256": "53fafe3775f5cf2f7e4957e4eb5f8f882b957e23cabf0e7ec4be07f395c9f2a1"
+        },
+        {
+          "path": "backend/src/services/BillingService.planTransport.security.test.ts",
+          "marker": "fixed plan read refuses actual redirect",
+          "sha256": "321f9511e97b2de142344915df7b815e31ae8fb0be84bc1c18a24def27fc04b7"
+        }
+      ]
     }
   ]
 }

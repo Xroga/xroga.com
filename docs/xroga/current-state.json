@@ -1465,7 +1465,7 @@
       "callers": [
         "backend/src/ai/black-hole/researchRouter.test.ts:4",
         "backend/src/ai/black-hole/webIntelligence.test.ts:5",
-        "backend/src/ai/black-hole/webIntelligence.ts:35"
+        "backend/src/ai/black-hole/webIntelligence.ts:31"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1924,20 +1924,16 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "bf0e4531767c122396c21493b3e597ac55489a45b9315d83573c102353eb9533",
+      "sha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79",
       "symbols": [
         "ACTIONS",
         "WebAction",
         "WebDecision",
         "WebIntelligenceResult",
         "answer",
-        "apiKey",
         "applyRequestedSourcePolicy",
         "bundle",
-        "citation",
-        "citationCandidates",
-        "contentItems",
-        "data",
+        "context",
         "decideWebAction",
         "decision",
         "error",
@@ -1949,40 +1945,33 @@
         "knownUrls",
         "match",
         "messages",
-        "model",
         "normalized",
         "officialDomains",
         "parseDecision",
-        "parsed",
         "provider",
         "rawResults",
         "requiresResearch",
-        "response",
         "result",
         "runWebIntelligence",
-        "seen",
         "sourcePolicy",
         "sources",
-        "ticks",
         "toRawResults",
         "toUiSources",
-        "url",
         "value",
         "webDecisionFromGoalContract",
         "xOnly",
         "xResearch"
       ],
       "imports": [
-        "../../config/envSecrets.js",
         "../../lib/taskClassifier.js",
         "../../lib/truthfulExecution.js",
+        "../../security/tenantContext.js",
         "../openaiCompat.js",
         "../parallelWeb.js",
         "../providerRuntime.js",
         "../research.js",
         "../tenantModelDispatch.js",
         "../universal/goalContract.js",
-        "../webBudget.js",
         "./researchRouter.js"
       ],
       "runtimeImports": [
@@ -1991,10 +1980,9 @@
         "backend/src/ai/parallelWeb.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/tenantModelDispatch.ts",
-        "backend/src/ai/webBudget.ts",
-        "backend/src/config/envSecrets.ts",
         "backend/src/lib/taskClassifier.ts",
-        "backend/src/lib/truthfulExecution.ts"
+        "backend/src/lib/truthfulExecution.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -2002,13 +1990,12 @@
       "callers": [
         "backend/src/ai/black-hole/productionBridge.ts:29",
         "backend/src/ai/black-hole/webIntelligence.test.ts:4",
+        "backend/src/ai/black-hole/xResearchAdmission.security.test.ts:3",
         "backend/src/ai/pipeline.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [
-        "declared-host:api.x.ai"
-      ],
+      "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -2020,7 +2007,8 @@
         "backend/src/ai/black-hole/webIntelligence.ts#formatResearchAsEvidence"
       ],
       "testCoverage": [
-        "backend/src/ai/black-hole/webIntelligence.test.ts"
+        "backend/src/ai/black-hole/webIntelligence.test.ts",
+        "backend/src/ai/black-hole/xResearchAdmission.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -3410,7 +3398,7 @@
       "id": "surface:370916abf23ea75d609b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/executionRuntime.ts",
-      "sha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+      "sha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc",
       "symbols": [
         "CanonicalExecutionState",
         "CanonicalMutationService",
@@ -3507,12 +3495,14 @@
         "./intelligentRouter.js",
         "./models.js",
         "./patches.js",
+        "./providerRuntime.js",
         "./runStore.js",
         "crypto"
       ],
       "runtimeImports": [
         "backend/src/ai/models.ts",
         "backend/src/ai/patches.ts",
+        "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/lib/truthfulExecution.ts",
         "backend/src/sandbox/sandboxTypes.ts",
@@ -3534,7 +3524,7 @@
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/routes/browserRuns.test.ts:10",
-        "backend/src/routes/browserRuns.ts:14",
+        "backend/src/routes/browserRuns.ts:15",
         "backend/src/sandbox/google/executionBinding.test.ts:5",
         "backend/src/sandbox/google/executionBinding.ts:3",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
@@ -3564,7 +3554,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/executionRuntime.ts:178 (user_id)"
+        "backend/src/ai/executionRuntime.ts:179 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -4420,9 +4410,10 @@
       "id": "surface:0c54fc1d3e1e04d9f66f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/modelSdkAdmission.ts",
-      "sha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85",
+      "sha256": "20d496b0d58773d98578f070771ed051259b2c77cd3d081ef2304acf01fbcb60",
       "symbols": [
         "Admission",
+        "MODEL_REDIRECT_AFTER_DISPATCH",
         "ModelWireGuard",
         "SdkCompletion",
         "admission",
@@ -4444,7 +4435,8 @@
         "backend/src/ai/openaiCompat.ts:15",
         "backend/src/ai/providerBudget.ts:9",
         "backend/src/ai/tenantModelDispatch.ts:15",
-        "backend/src/routes/guestChat.ts:3"
+        "backend/src/routes/guestChat.ts:3",
+        "backend/src/workers/browserModelDispatch.ts:2"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4546,7 +4538,7 @@
         "backend/src/routes/phase1.ts:24",
         "backend/src/synthesis/coherentImplementation.ts:8",
         "backend/src/synthesis/universalEntrypoint.ts:98",
-        "backend/src/workers/browserModelGateway.ts:16"
+        "backend/src/workers/browserModelGateway.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4594,7 +4586,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -4621,6 +4613,7 @@
         "current",
         "def",
         "delta",
+        "deniedResponse",
         "endpoint",
         "ep",
         "err",
@@ -4700,6 +4693,7 @@
         "backend/src/ai/converter.ts:1",
         "backend/src/ai/genericSdkAdmission.test.ts:3",
         "backend/src/ai/modelCapabilityRegistry.ts:6",
+        "backend/src/ai/modelRedirectFallback.security.test.ts:7",
         "backend/src/ai/openaiCompat.egress.test.ts:5",
         "backend/src/ai/openaiCompat.test.ts:3",
         "backend/src/ai/operationsSdkAdmission.test.ts:5",
@@ -4718,8 +4712,7 @@
         "backend/src/services/integrations/businessRead.ts:1",
         "backend/src/synthesis/coherentImplementation.ts:1",
         "backend/src/synthesis/incrementalImplementation.ts:27",
-        "backend/src/workers/browserModelGateway.ts:17",
-        "backend/src/workers/browserPlanner.ts:12"
+        "backend/src/workers/browserModelDispatch.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4737,6 +4730,7 @@
       "testCoverage": [
         "backend/src/ai/black-hole/providerAdapter.test.ts",
         "backend/src/ai/genericSdkAdmission.test.ts",
+        "backend/src/ai/modelRedirectFallback.security.test.ts",
         "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/openaiCompat.test.ts",
         "backend/src/ai/operationsSdkAdmission.test.ts",
@@ -4758,7 +4752,7 @@
       "id": "surface:78d9ec4b29ef687ea76d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "d5fc61960cb0b75bce2c548c1b46501bbc3d0e2638fb4ec970efa8e91e0cf137",
+      "sha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17",
       "symbols": [
         "Operation",
         "amount",
@@ -5877,6 +5871,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:15",
+        "backend/src/ai/executionRuntime.test.ts:17",
         "backend/src/ai/parallelDispatch.ts:13",
         "backend/src/ai/postCompletionAccounting.persistence.test.ts:4",
         "backend/src/ai/postCompletionAccounting.test.ts:3",
@@ -5886,7 +5881,9 @@
         "backend/src/ai/tenantModelDispatch.ts:14",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:33",
         "backend/src/security/usageAccounting.local.integration.ts:6",
-        "backend/src/services/integrations/businessAccounting.failure.test.ts:6"
+        "backend/src/services/integrations/businessAccounting.failure.test.ts:6",
+        "backend/src/workers/browserModelDispatch.ts:5",
+        "backend/src/workers/browserTaskHandler.test.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5902,11 +5899,13 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/black-hole/gateway.test.ts",
+        "backend/src/ai/executionRuntime.test.ts",
         "backend/src/ai/postCompletionAccounting.persistence.test.ts",
         "backend/src/ai/postCompletionAccounting.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
-        "backend/src/services/integrations/businessAccounting.failure.test.ts"
+        "backend/src/services/integrations/businessAccounting.failure.test.ts",
+        "backend/src/workers/browserTaskHandler.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -6131,7 +6130,7 @@
       "id": "surface:faad5cf834fc5eb65afc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
       "symbols": [
         "AdmittedOperationsAction",
         "BudgetPurpose",
@@ -6260,8 +6259,8 @@
         "backend/src/security/confirmationMetadata.local.integration.ts:8",
         "backend/src/security/tenantIsolation.local.integration.ts:45",
         "backend/src/services/BillingService.ts:14",
-        "backend/src/workers/browserModelGateway.test.ts:3",
-        "backend/src/workers/browserModelGateway.ts:18",
+        "backend/src/workers/browserModelGateway.test.ts:4",
+        "backend/src/workers/browserModelGateway.ts:16",
         "backend/src/workers/browserPlanner.ts:11",
         "scripts/browser/run-workflows.mts:195"
       ],
@@ -6615,8 +6614,11 @@
         "backend/src/ai/benchmarkRunner.ts:37",
         "backend/src/ai/black-hole/gateway.ts:54",
         "backend/src/ai/black-hole/webIntelligence.ts:16",
+        "backend/src/ai/black-hole/xResearchAdmission.security.test.ts:5",
         "backend/src/ai/blackBoxExecution.test.ts:7",
+        "backend/src/ai/executionRuntime.ts:12",
         "backend/src/ai/modelCapabilityRegistry.ts:4",
+        "backend/src/ai/modelRedirectFallback.security.test.ts:8",
         "backend/src/ai/openaiCompat.ts:10",
         "backend/src/ai/parallelWeb.security.test.ts:5",
         "backend/src/ai/pipeline.ts:230",
@@ -6641,10 +6643,14 @@
         "backend/src/services/integrations/businessAccounting.failure.test.ts:7",
         "backend/src/services/integrations/businessAction.ts:19",
         "backend/src/services/integrations/businessRead.ts:10",
+        "backend/src/services/integrations/composioClient.security.test.ts:6",
+        "backend/src/services/integrations/githubDeploy.ts:66",
         "backend/src/services/systemErrorLog.ts:2",
         "backend/src/synthesis/coherentImplementation.ts:10",
         "backend/src/synthesis/incrementalImplementation.ts:29",
-        "backend/src/synthesis/productionAdapters.ts:27"
+        "backend/src/synthesis/productionAdapters.ts:27",
+        "backend/src/workers/browserModelLifetime.ts:1",
+        "backend/src/workers/browserTaskHandler.ts:33"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6657,7 +6663,9 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/black-hole/xResearchAdmission.security.test.ts",
         "backend/src/ai/blackBoxExecution.test.ts",
+        "backend/src/ai/modelRedirectFallback.security.test.ts",
         "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/ai/postCompletionAccounting.test.ts",
         "backend/src/ai/providerBudget.settlement.test.ts",
@@ -6668,7 +6676,8 @@
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/lib/resilience/retry.test.ts",
         "backend/src/security/platformHealth.local.integration.ts",
-        "backend/src/services/integrations/businessAccounting.failure.test.ts"
+        "backend/src/services/integrations/businessAccounting.failure.test.ts",
+        "backend/src/services/integrations/composioClient.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -8160,7 +8169,7 @@
       "id": "surface:658af88960119a719362",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
-      "sha256": "85ea0f5f5d32a380db877044ba786fe9f146fc34d2117a2da4d0fcfae32f518e",
+      "sha256": "d280fb6932a566614e01ac731c0a0f9103542b7d7a83c1fe042d4f7906647879",
       "symbols": [
         "ProductionSoftwareAgentOperations",
         "ProductionSoftwareAgentToolHost",
@@ -8198,7 +8207,8 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:26",
-        "backend/src/ai/softwareAgent/index.ts:15"
+        "backend/src/ai/softwareAgent/index.ts:15",
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -8210,7 +8220,9 @@
       "evidenceBoundary": [
         "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts#SoftwarePreviewEvidence"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -8613,6 +8625,7 @@
         "backend/src/ai/softwareAgent/index.ts:10",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts:6",
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts:6",
         "backend/src/sandbox/google/executionBinding.test.ts:6",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.local.integration.ts:10",
@@ -8632,6 +8645,7 @@
       "testCoverage": [
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts",
         "backend/src/sandbox/google/executionBinding.test.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/workerProjectAdmission.local.integration.ts",
@@ -8853,6 +8867,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:3",
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts:7",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:11",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:42"
       ],
@@ -8871,6 +8886,7 @@
         "backend/src/ai/softwareAgent/runEvents.ts#SoftwareRunEventType"
       ],
       "testCoverage": [
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts",
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts"
       ],
@@ -9033,7 +9049,8 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts:21",
-        "backend/src/ai/softwareAgent/index.ts:20"
+        "backend/src/ai/softwareAgent/index.ts:20",
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9051,7 +9068,9 @@
       "evidenceBoundary": [
         "backend/src/ai/softwareAgent/softwareAgentContractFactory.ts#VerificationAuthority"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -9547,7 +9566,7 @@
       "id": "surface:a8e75558f2320929a48b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/writePolicy.ts",
-      "sha256": "b0ec1e361efaa7b3183ca6d1f93942f89a6b421e61bb26053012ae81a0a113c9",
+      "sha256": "24113cfc686e8b53ee493d80640da5c73b6fbb7d2644b9bd213fce3bea4508ab",
       "symbols": [
         "WriteOperation",
         "WritePolicyDecision",
@@ -9570,6 +9589,7 @@
         "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts:7",
         "backend/src/ai/softwareAgent/index.ts:2",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:9",
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts:8",
         "backend/src/ai/softwareAgent/xrogaTools.ts:20"
       ],
       "reachable": true,
@@ -9580,7 +9600,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -9790,7 +9812,7 @@
       "id": "surface:d3b75cad39bce7ff38fa",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "sha256": "315e5759a03ff8b4777ab8d9592e854c416a3632846c8eb97f8976aa69c2848d",
+      "sha256": "bd3635e6217411d6593aee234ecac3565e49b60fc3c56009b5590ca433b2e0a4",
       "symbols": [
         "CreateXrogaSoftwareToolsInput",
         "MAX_PUBLIC_COMMAND_OUTPUT",
@@ -9858,7 +9880,8 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:35",
-        "backend/src/ai/softwareAgent/index.ts:12"
+        "backend/src/ai/softwareAgent/index.ts:12",
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9876,7 +9899,9 @@
         "backend/src/ai/softwareAgent/xrogaTools.ts#verification",
         "backend/src/ai/softwareAgent/xrogaTools.ts#verifyPreview"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -10175,7 +10200,7 @@
       "id": "surface:8655984f8d3c51472c8c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690",
+      "sha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304",
       "symbols": [
         "BoundModelDispatch",
         "CredentialRow",
@@ -10258,6 +10283,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:15",
         "backend/src/ai/converter.ts:2",
         "backend/src/ai/modelContext.security.test.ts:5",
+        "backend/src/ai/modelRedirectFallback.security.test.ts:6",
         "backend/src/ai/openaiCompat.egress.test.ts:8",
         "backend/src/ai/parallelDispatch.ts:11",
         "backend/src/ai/pipeline.ts:4",
@@ -10268,7 +10294,8 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
         "backend/src/security/genericSdk.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.ts:16",
-        "backend/src/services/integrations/businessRead.ts:7"
+        "backend/src/services/integrations/businessRead.ts:7",
+        "backend/src/workers/browserModelDispatch.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -10288,8 +10315,8 @@
       ],
       "tenantBoundary": [
         "backend/src/ai/tenantModelDispatch.ts:51 (user_id)",
-        "backend/src/ai/tenantModelDispatch.ts:87 (user_id)",
-        "backend/src/ai/tenantModelDispatch.ts:95 (user_id)"
+        "backend/src/ai/tenantModelDispatch.ts:88 (user_id)",
+        "backend/src/ai/tenantModelDispatch.ts:96 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/tenantModelDispatch.ts#preparedActionDigest"
@@ -10302,6 +10329,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/modelContext.security.test.ts",
+        "backend/src/ai/modelRedirectFallback.security.test.ts",
         "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/security/genericSdk.local.integration.ts",
@@ -11391,7 +11419,6 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:25",
         "backend/src/ai/parallelDispatch.ts:14",
         "backend/src/ai/parallelWeb.security.test.ts:6",
         "backend/src/ai/parallelWeb.ts:5",
@@ -12187,7 +12214,6 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/black-hole/webIntelligence.ts:1",
         "backend/src/ai/modelCapabilityRegistry.ts:1",
         "backend/src/ai/openaiCompat.ts:2",
         "backend/src/ai/parallelDispatch.ts:2",
@@ -12562,12 +12588,18 @@
       "id": "surface:d40bafd87f96f9e7477d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/config/supabase.ts",
-      "sha256": "9280f40cf8cd470eac6ae35ac92b84bcdd63992788a3315d60bdf565a5f18264",
+      "sha256": "3366dd3460e19bc66af8743005d0bf91a288c8173c3126dec1749bf5a44ecf0f",
       "symbols": [
+        "base",
         "createSupabaseClient",
+        "denied",
         "getSupabaseAdmin",
         "key",
+        "response",
+        "signal",
         "supabaseAdmin",
+        "supabaseFetchFor",
+        "target",
         "url"
       ],
       "imports": [
@@ -12591,6 +12623,7 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts:5",
         "backend/src/ai/webBudget.ts:1",
         "backend/src/community/service.ts:1",
+        "backend/src/config/supabaseClientTransport.security.test.ts:5",
         "backend/src/growth/growthService.ts:4",
         "backend/src/lib/resolveIdentity.ts:39",
         "backend/src/operations/operationsService.ts:4",
@@ -12630,7 +12663,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/config/supabaseClientTransport.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -14237,7 +14272,7 @@
       "id": "surface:c454d1038a809090f7f8",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/netlify.ts",
-      "sha256": "f2e04a9e2cc21df2a57eb0419679d68bd29a0d5a7b78430a4bb1c093af8f42f5",
+      "sha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557",
       "symbols": [
         "NetlifyDeploy",
         "NetlifyFile",
@@ -14273,15 +14308,20 @@
       ],
       "imports": [
         "../config/envSecrets.js",
+        "../security/authority/enforce.js",
+        "./publishingProviderRequest.js",
         "crypto"
       ],
       "runtimeImports": [
-        "backend/src/config/envSecrets.ts"
+        "backend/src/config/envSecrets.ts",
+        "backend/src/lib/publishingProviderRequest.ts",
+        "backend/src/security/authority/enforce.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/lib/publishingTransport.security.test.ts:6",
         "backend/src/services/integrations/githubDeploy.ts:9"
       ],
       "reachable": true,
@@ -14290,12 +14330,16 @@
         "crypto",
         "declared-host:api.netlify.com"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/lib/netlify.ts#AuthorityError"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/lib/publishingTransport.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -14321,7 +14365,7 @@
       ],
       "callers": [
         "backend/src/lib/landingPreview.ts:1",
-        "backend/src/routes/vercel.ts:20",
+        "backend/src/routes/vercel.ts:23",
         "backend/src/services/integrations/githubDeploy.ts:11",
         "backend/src/services/projectScaffold.ts:1"
       ],
@@ -14365,7 +14409,7 @@
       ],
       "callers": [
         "backend/src/lib/oauthState.test.ts:3",
-        "backend/src/routes/github.ts:6"
+        "backend/src/routes/github.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -14664,6 +14708,71 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/lib/publicAiIdentity.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c17040828856567da02e",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/lib/publishingProviderRequest.ts",
+      "sha256": "18fb58bea614192b6dc67661afbbf3cf8d14e8dc308e737059a8beb723b32c1d",
+      "symbols": [
+        "MAX_BODY",
+        "MAX_RESPONSE",
+        "allowed",
+        "assertActive",
+        "bytes",
+        "chunks",
+        "domain",
+        "error",
+        "method",
+        "next",
+        "policies",
+        "publishingProviderRequest",
+        "reader",
+        "response",
+        "segment",
+        "serialized",
+        "snapshot",
+        "snapshotPublishingSource",
+        "url"
+      ],
+      "imports": [
+        "../security/egress/dataClassification.js",
+        "../security/egress/egressPolicy.js",
+        "../security/egress/urlPolicy.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/urlPolicy.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/lib/netlify.ts:3",
+        "backend/src/lib/publishingTransport.security.test.ts:11",
+        "backend/src/lib/vercel.ts:2",
+        "backend/src/lib/vercelDomains.ts:1",
+        "backend/src/lib/vercelEnv.ts:1",
+        "backend/src/services/integrations/githubDeploy.ts:67"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/lib/publishingTransport.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -15514,7 +15623,7 @@
       "id": "surface:69eaacc87199d55ac728",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/vercel.ts",
-      "sha256": "a67b99419a81d9618c8298c3c1fe97d0d0db009e3a6baf09c78a2156d255f610",
+      "sha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826",
       "symbols": [
         "DeploySiteOptions",
         "VercelDeployment",
@@ -15546,15 +15655,18 @@
         "token"
       ],
       "imports": [
-        "../config/envSecrets.js"
+        "../config/envSecrets.js",
+        "./publishingProviderRequest.js"
       ],
       "runtimeImports": [
-        "backend/src/config/envSecrets.ts"
+        "backend/src/config/envSecrets.ts",
+        "backend/src/lib/publishingProviderRequest.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/lib/publishingTransport.security.test.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:2"
       ],
       "reachable": true,
@@ -15567,7 +15679,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/lib/publishingTransport.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -15629,7 +15743,7 @@
       "id": "surface:0c705520a7cfcc2ffd27",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/vercelDomains.ts",
-      "sha256": "29df8614186900aaa232d1fa924e4f288babbb1d44f2351168cd41b2730fac93",
+      "sha256": "827c50307484a48cd7ff5ce967902429baeb1e4541bc1705195ef36a40fee5ff",
       "symbols": [
         "VercelDomainConfig",
         "VercelDomainInfo",
@@ -15649,13 +15763,18 @@
         "verified",
         "verifyProjectDomain"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "./publishingProviderRequest.js"
+      ],
+      "runtimeImports": [
+        "backend/src/lib/publishingProviderRequest.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/vercel.ts:26"
+        "backend/src/lib/publishingTransport.security.test.ts:8",
+        "backend/src/routes/vercel.ts:29"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15668,7 +15787,9 @@
         "backend/src/lib/vercelDomains.ts#verified",
         "backend/src/lib/vercelDomains.ts#verifyProjectDomain"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/lib/publishingTransport.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -15680,7 +15801,7 @@
       "id": "surface:a4bd8c3261952fbd7b02",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/vercelEnv.ts",
-      "sha256": "b7ad8074fd9c03caead5995511518830eae19c7828956296a823ceb0947abaf9",
+      "sha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f",
       "symbols": [
         "VercelEnvItem",
         "VercelEnvSyncResult",
@@ -15714,12 +15835,19 @@
         "upserted",
         "validEnvReceipt"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "../security/egress/egressPolicy.js",
+        "./publishingProviderRequest.js"
+      ],
+      "runtimeImports": [
+        "backend/src/lib/publishingProviderRequest.ts",
+        "backend/src/security/egress/egressPolicy.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/lib/publishingTransport.security.test.ts:7",
         "backend/src/lib/vercelEnv.authority.test.ts:3",
         "backend/src/services/integrations/githubDeploy.ts:8"
       ],
@@ -15736,6 +15864,7 @@
         "backend/src/lib/vercelEnv.ts#validEnvReceipt"
       ],
       "testCoverage": [
+        "backend/src/lib/publishingTransport.security.test.ts",
         "backend/src/lib/vercelEnv.authority.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -18930,7 +19059,7 @@
       "id": "surface:87ed14587fe63cf46dd1",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "sha256": "0b123cffa6d286d7b01e1e686c372986473d21773b3f8cff4885eaf6254d4d3f",
+      "sha256": "ab9b49de1f975807b0f27aade3196fea04345f018d5355a559b7f8199e352fe0",
       "symbols": [
         "abort",
         "aiModel",
@@ -18972,6 +19101,7 @@
         "../workers/browserPlanner.js",
         "../workers/postgresLeaseStore.js",
         "express",
+        "node:crypto",
         "zod"
       ],
       "runtimeImports": [
@@ -18999,6 +19129,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "express",
+        "node:crypto",
         "zod"
       ],
       "authBoundary": [
@@ -19594,23 +19725,32 @@
       "id": "surface:e037639d29105e028e8a",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/github.ts",
-      "sha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+      "sha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
+        "GitHubIdentityTransportDenied",
+        "GitHubReadLease",
+        "allowed",
         "analysis",
+        "assertCurrent",
         "base",
+        "body",
         "branch",
         "branches",
         "buildGitHubAuthorizeUrl",
+        "bytes",
+        "chunks",
         "context",
         "css",
+        "data",
+        "denied",
         "deployUrl",
         "deployVerified",
         "e",
-        "err",
+        "error",
         "explicit",
         "files",
         "getGitHubOAuthCallbackUrl",
@@ -19618,12 +19758,16 @@
         "ghApi",
         "ghUser",
         "github",
+        "githubIdentityRequest",
         "html",
         "incremental",
+        "invalidated",
         "isAllowedCallbackUrl",
         "js",
         "lite",
         "metadata",
+        "method",
+        "next",
         "origin",
         "owner",
         "parsed",
@@ -19631,18 +19775,22 @@
         "productionFrontendBase",
         "prompt",
         "raw",
+        "read",
+        "reader",
         "redirectUri",
         "repo",
         "repoName",
         "repos",
         "requested",
         "res",
+        "response",
         "result",
         "rolled",
         "router",
         "saveErr",
         "saved",
         "schema",
+        "selected",
         "session",
         "slug",
         "state",
@@ -19661,6 +19809,7 @@
         "../config/supabase.js",
         "../lib/oauthState.js",
         "../middleware/auth.js",
+        "../security/serviceRoleGuard.js",
         "../security/tenantContext.js",
         "../services/integrations/githubAuth.js",
         "../services/integrations/githubDeploy.js",
@@ -19672,6 +19821,7 @@
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/lib/oauthState.ts",
+        "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAuth.ts",
         "backend/src/services/integrations/githubDeploy.ts",
@@ -19704,14 +19854,17 @@
       ],
       "authBoundary": [
         "backend/src/routes/github.ts#AuthRequest",
+        "backend/src/routes/github.ts#GitHubIdentityTransportDenied",
         "backend/src/routes/github.ts#buildGitHubAuthorizeUrl",
         "backend/src/routes/github.ts#createOAuthState",
         "backend/src/routes/github.ts#getGitHubOAuthCallbackUrl",
+        "backend/src/routes/github.ts#githubIdentityRequest",
         "backend/src/routes/github.ts#verifyOAuthState"
       ],
       "tenantBoundary": [
-        "backend/src/routes/github.ts:229 (user_id)",
-        "backend/src/routes/github.ts:239 (user_id)"
+        "backend/src/routes/github.ts:80 (user_id)",
+        "backend/src/routes/github.ts:277 (user_id)",
+        "backend/src/routes/github.ts:287 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/routes/github.ts#buildGitHubAuthorizeUrl"
@@ -21558,7 +21711,7 @@
       "id": "surface:fe368c4f6dde9b73b08c",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "sha256": "615bbf629daad489a4d762cabbebcff310330032b3289c63ab82f06b9194c1bf",
+      "sha256": "3baee447f7d35afc7f71fde623baf3f4527345e4d468708fd67c6f600c2f9069",
       "symbols": [
         "VercelProject",
         "added",
@@ -21571,6 +21724,7 @@
         "data",
         "deployment",
         "err",
+        "error",
         "fetchProjects",
         "legacy",
         "listed",
@@ -21609,6 +21763,7 @@
         "../lib/vercelDomains.js",
         "../middleware/auth.js",
         "../security/tenantContext.js",
+        "../security/tenantErrors.js",
         "../services/integrations/githubDeploy.js",
         "../services/integrations/vercelAuth.js",
         "../services/projectScaffold.js",
@@ -21619,6 +21774,7 @@
         "backend/src/lib/normalizeBuildSource.ts",
         "backend/src/lib/vercelDomains.ts",
         "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/projectScaffold.ts"
@@ -21641,7 +21797,9 @@
         "backend/src/routes/vercel.ts#buildVercelAuthorizeUrl",
         "backend/src/routes/vercel.ts#exchangeVercelOAuthCode",
         "backend/src/routes/vercel.ts#getVercelOAuthCallbackUrl",
+        "backend/src/routes/vercel.ts#isVercelAuthTransportDenied",
         "backend/src/routes/vercel.ts#parseVercelOAuthState",
+        "backend/src/routes/vercel.ts#vercelAuthRequest",
         "backend/src/routes/vercel.ts#vercelOAuthConfigured",
         "backend/src/routes/vercel.ts#verifyVercelTokenLive"
       ],
@@ -23143,11 +23301,13 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/executionRuntime.test.ts:16",
         "backend/src/ai/providerRuntime.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:13",
         "backend/src/ai/tenantModelDispatch.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:30",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
+        "backend/src/lib/netlify.ts:4",
         "backend/src/security/authority/enforce.test.ts:5",
         "backend/src/security/egress/egress.integration.test.ts:6",
         "backend/src/security/egress/egressPolicy.ts:2",
@@ -23185,6 +23345,7 @@
         "backend/src/security/authority/enforce.ts#verifyClaim"
       ],
       "testCoverage": [
+        "backend/src/ai/executionRuntime.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
@@ -23435,10 +23596,13 @@
       "callers": [
         "backend/src/ai/openaiCompat.ts:13",
         "backend/src/ai/parallelDispatch.ts:9",
+        "backend/src/lib/publishingProviderRequest.ts:3",
         "backend/src/security/egress/egressPolicy.ts:7",
         "backend/src/security/egress/fileEgress.ts:7",
         "backend/src/security/egress/heldCredentialFloor.test.ts:3",
-        "backend/src/services/integrations/composioClient.ts:12"
+        "backend/src/services/integrations/composioClient.ts:12",
+        "backend/src/workers/browserCoordinator.ts:25",
+        "backend/src/workers/browserModelDispatch.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23507,9 +23671,13 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/executionRuntime.test.ts:15",
         "backend/src/ai/parallelDispatch.ts:6",
         "backend/src/ai/providerRuntime.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:31",
+        "backend/src/lib/publishingProviderRequest.ts:2",
+        "backend/src/lib/publishingTransport.security.test.ts:10",
+        "backend/src/lib/vercelEnv.ts:2",
         "backend/src/security/egress/egress.integration.test.ts:9",
         "backend/src/security/egress/fileEgress.ts:6",
         "backend/src/security/egress/securityDecision.ts:5",
@@ -23534,7 +23702,9 @@
         "backend/src/security/egress/egressPolicy.ts#receipt"
       ],
       "testCoverage": [
+        "backend/src/ai/executionRuntime.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+        "backend/src/lib/publishingTransport.security.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/tests/securityReceipt.local.integration.ts"
       ],
@@ -23798,12 +23968,14 @@
         "backend/src/ai/openaiCompat.ts:14",
         "backend/src/ai/parallelDispatch.ts:8",
         "backend/src/lib/deployVerify.ts:1",
+        "backend/src/lib/publishingProviderRequest.ts:1",
         "backend/src/lib/shipVerify.ts:6",
         "backend/src/operations/providerAdapters.ts:1",
         "backend/src/security/egress/egress.integration.test.ts:11",
         "backend/src/security/egress/egressPolicy.ts:6",
         "backend/src/security/egress/fileEgress.ts:9",
-        "backend/src/security/egress/publicPost.test.ts:6"
+        "backend/src/security/egress/publicPost.test.ts:6",
+        "backend/src/services/integrations/vercelAuth.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24101,6 +24273,7 @@
         "backend/src/middleware/admin.ts:2",
         "backend/src/routes/admin.ts:2",
         "backend/src/routes/billingWebhook.ts:4",
+        "backend/src/routes/github.ts:6",
         "backend/src/routes/messageShares.ts:4",
         "backend/src/routes/notifications.ts:2",
         "backend/src/routes/operations.ts:4",
@@ -24181,6 +24354,8 @@
       "callers": [
         "backend/src/ai/architect.ts:7",
         "backend/src/ai/black-hole/webIntelligence.test.ts:7",
+        "backend/src/ai/black-hole/webIntelligence.ts:1",
+        "backend/src/ai/black-hole/xResearchAdmission.security.test.ts:4",
         "backend/src/ai/budgetOwnerBoundary.test.ts:4",
         "backend/src/ai/buildOutcomeMemory.test.ts:12",
         "backend/src/ai/buildOutcomeMemory.ts:2",
@@ -24218,10 +24393,11 @@
         "backend/src/middleware/auth.ts:4",
         "backend/src/routes/admin.test.ts:5",
         "backend/src/routes/browserRuns.test.ts:11",
-        "backend/src/routes/browserRuns.ts:16",
+        "backend/src/routes/browserRuns.ts:17",
         "backend/src/routes/drive.test.ts:2",
         "backend/src/routes/github.oauth.test.ts:6",
         "backend/src/routes/github.ts:5",
+        "backend/src/routes/githubTransport.security.test.ts:9",
         "backend/src/routes/integrations.ts:1",
         "backend/src/routes/messageShares.ts:5",
         "backend/src/routes/notifications.ts:3",
@@ -24243,6 +24419,7 @@
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
+        "backend/src/routes/vercelTransport.security.test.ts:10",
         "backend/src/security/authority/enforce.test.ts:3",
         "backend/src/security/authority/enforce.ts:1",
         "backend/src/security/budgetOwner.local.integration.ts:8",
@@ -24306,6 +24483,7 @@
         "backend/src/services/integrations/supabaseAuth.ts:8",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:5",
         "backend/src/services/integrations/supabaseProvision.ts:10",
+        "backend/src/services/integrations/supabaseTransport.security.test.ts:9",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:5",
@@ -24348,6 +24526,9 @@
         "backend/src/synthesis/universalPersistence.snapshot.test.ts:6",
         "backend/src/synthesis/universalPersistence.ts:23",
         "backend/src/workers/browserCapability.ts:14",
+        "backend/src/workers/browserModelDispatch.ts:6",
+        "backend/src/workers/browserModelFixture.test.ts:4",
+        "backend/src/workers/browserSdkBoundary.security.test.ts:7",
         "backend/src/workers/googleDeliveryStore.ts:3",
         "backend/src/workers/googleSwarmQueue.test.ts:7",
         "backend/src/workers/googleSwarmQueue.ts:2",
@@ -24370,6 +24551,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/black-hole/webIntelligence.test.ts",
+        "backend/src/ai/black-hole/xResearchAdmission.security.test.ts",
         "backend/src/ai/budgetOwnerBoundary.test.ts",
         "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/ai/modelContext.security.test.ts",
@@ -24393,6 +24575,7 @@
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/drive.test.ts",
         "backend/src/routes/github.oauth.test.ts",
+        "backend/src/routes/githubTransport.security.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
         "backend/src/routes/projects.collectionDetail.test.ts",
         "backend/src/routes/projects.creation.test.ts",
@@ -24401,6 +24584,7 @@
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
+        "backend/src/routes/vercelTransport.security.test.ts",
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -24444,6 +24628,7 @@
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+        "backend/src/services/integrations/supabaseTransport.security.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts",
@@ -24467,6 +24652,8 @@
         "backend/src/synthesis/projectRuntime/secretRead.test.ts",
         "backend/src/synthesis/universalPersistence.owner.test.ts",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts",
+        "backend/src/workers/browserModelFixture.test.ts",
+        "backend/src/workers/browserSdkBoundary.security.test.ts",
         "backend/src/workers/googleSwarmQueue.test.ts",
         "backend/tests/securityReceipt.local.integration.ts"
       ],
@@ -24497,11 +24684,13 @@
         "backend/src/ai/providerRuntime.ts:3",
         "backend/src/ai/runStore.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:29",
-        "backend/src/routes/browserRuns.ts:15",
+        "backend/src/routes/browserRuns.ts:16",
         "backend/src/routes/drive.ts:8",
         "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
         "backend/src/routes/terminalSessions.ts:18",
+        "backend/src/routes/vercel.ts:5",
+        "backend/src/routes/vercelTransport.security.test.ts:11",
         "backend/src/security/ownedRunPersistence.test.ts:6",
         "backend/src/security/ownedRunPersistence.ts:3",
         "backend/src/security/ownedTerminalPersistence.test.ts:6",
@@ -24533,6 +24722,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+        "backend/src/routes/vercelTransport.security.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
@@ -24580,7 +24770,7 @@
       "id": "surface:9b0c1b5d45c8637e2209",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/BillingService.ts",
-      "sha256": "8731470f767f1c58999c1763467ea1f18bfe1c85fe80d25e5a3d58eaa75324a2",
+      "sha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281",
       "symbols": [
         "APPROVED_ACCOUNT_ID",
         "APPROVED_PLAN_ID",
@@ -24603,12 +24793,14 @@
         "assertWhopPlanContract",
         "assertWhopPlanTerms",
         "body",
+        "bytes",
         "candidates",
         "checkout",
         "checkoutId",
         "checkoutIdempotencyKey",
         "checkoutNeedsReadback",
         "checkoutOwner",
+        "chunks",
         "companyId",
         "data",
         "date",
@@ -24630,9 +24822,11 @@
         "metadata",
         "mismatch",
         "nestedRecord",
+        "next",
         "owner",
         "ownerId",
         "parseDate",
+        "parsed",
         "payload",
         "paymentId",
         "persistedIdentifiers",
@@ -24642,6 +24836,7 @@
         "previous",
         "profile",
         "purchaseUrl",
+        "reader",
         "redirect",
         "redirectUrl",
         "requiredConfig",
@@ -24704,9 +24899,9 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/BillingService.ts:1151 (user_id)",
-        "backend/src/services/BillingService.ts:1219 (user_id)",
-        "backend/src/services/BillingService.ts:2041 (user_id)"
+        "backend/src/services/BillingService.ts:1158 (user_id)",
+        "backend/src/services/BillingService.ts:1226 (user_id)",
+        "backend/src/services/BillingService.ts:2048 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -25580,7 +25775,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "525c952a66150e22b65261eee0391ebcee3987e9250a94d358c33f896dc6610d",
+      "sha256": "46ae27a7e2e80a4a0f8f7d574ff183527b860d84eee93f0dfd408a252f9b18f4",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -26667,7 +26862,7 @@
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:59",
         "backend/src/routes/github.settings.test.ts:17",
-        "backend/src/routes/github.ts:8",
+        "backend/src/routes/github.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
@@ -26836,7 +27031,7 @@
       "id": "surface:c1b2ae43de1ceeb5e7f3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "sha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
       "symbols": [
         "AtomicPushOptions",
         "ConnectedRepositoryPushOptions",
@@ -27055,6 +27250,7 @@
         "xrogaBotIdentity"
       ],
       "imports": [
+        "../../ai/providerRuntime.js",
         "../../config/envSecrets.js",
         "../../config/modelRegistry.js",
         "../../config/supabase.js",
@@ -27062,6 +27258,7 @@
         "../../lib/landingPreview.js",
         "../../lib/netlify.js",
         "../../lib/normalizeBuildSource.js",
+        "../../lib/publishingProviderRequest.js",
         "../../lib/repoAnalysisCache.js",
         "../../lib/vercel.js",
         "../../lib/vercelEnv.js",
@@ -27080,6 +27277,7 @@
         "./vercelAuth.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/providerRuntime.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/modelRegistry.ts",
         "backend/src/config/supabase.ts",
@@ -27087,6 +27285,7 @@
         "backend/src/lib/landingPreview.ts",
         "backend/src/lib/netlify.ts",
         "backend/src/lib/normalizeBuildSource.ts",
+        "backend/src/lib/publishingProviderRequest.ts",
         "backend/src/lib/repoAnalysisCache.ts",
         "backend/src/lib/vercel.ts",
         "backend/src/lib/vercelEnv.ts",
@@ -27111,16 +27310,17 @@
         "backend/src/ai/pipeline.ts:106",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:1",
-        "backend/src/routes/github.ts:370",
-        "backend/src/routes/github.ts:417",
-        "backend/src/routes/github.ts:440",
-        "backend/src/routes/github.ts:473",
-        "backend/src/routes/github.ts:558",
-        "backend/src/routes/github.ts:626",
+        "backend/src/lib/publishingTransport.security.test.ts:9",
+        "backend/src/routes/github.ts:420",
+        "backend/src/routes/github.ts:467",
+        "backend/src/routes/github.ts:490",
+        "backend/src/routes/github.ts:523",
+        "backend/src/routes/github.ts:608",
+        "backend/src/routes/github.ts:676",
         "backend/src/routes/integrations.ts:37",
         "backend/src/routes/phase1.ts:44",
         "backend/src/routes/supabaseOAuth.ts:39",
-        "backend/src/routes/vercel.ts:22",
+        "backend/src/routes/vercel.ts:25",
         "backend/src/security/githubConsumer.local.integration.ts:9",
         "backend/src/services/integrations/githubAnalysis.test.ts:3",
         "backend/src/services/integrations/githubDeploy.credential.test.ts:4",
@@ -27152,7 +27352,7 @@
         "backend/src/services/integrations/githubDeploy.ts#xrogaBotIdentity"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/githubDeploy.ts:165 (user_id)"
+        "backend/src/services/integrations/githubDeploy.ts:167 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/githubDeploy.ts#BranchAuthorizationError",
@@ -27171,6 +27371,7 @@
         "backend/src/services/integrations/githubDeploy.ts#verifyLivePreviewUrl"
       ],
       "testCoverage": [
+        "backend/src/lib/publishingTransport.security.test.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubAnalysis.test.ts",
         "backend/src/services/integrations/githubDeploy.credential.test.ts",
@@ -27709,7 +27910,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/routes/github.ts:7",
+        "backend/src/routes/github.ts:8",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:44",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
@@ -27720,7 +27921,7 @@
         "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts:4",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
         "backend/src/services/integrations/supabaseAuth.ts:9",
-        "backend/src/services/integrations/vercelAuth.ts:10",
+        "backend/src/services/integrations/vercelAuth.ts:11",
         "backend/src/services/publish/chromeWebStore.ts:19"
       ],
       "reachable": true,
@@ -28005,22 +28206,26 @@
       "id": "surface:84d59728979a7f8187e6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseAuth.ts",
-      "sha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
+      "sha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522",
       "symbols": [
         "AUTHORIZE",
         "PKCE_PROVIDER",
         "PROVIDER",
+        "SupabaseAuthTransportDenied",
         "SupabaseOAuthTokens",
         "TOKEN",
         "allowed",
         "basicAuthHeader",
         "body",
         "buildSupabaseAuthorizeUrl",
+        "bytes",
+        "chunks",
         "clearSupabaseOAuth",
         "clientId",
         "clientSecret",
         "context",
         "data",
+        "error",
         "exchangeSupabaseOAuthCode",
         "exp",
         "expiresAt",
@@ -28033,6 +28238,7 @@
         "makeVerifier",
         "meta",
         "needsRefresh",
+        "next",
         "observed",
         "params",
         "parseOAuthState",
@@ -28040,6 +28246,7 @@
         "pkce",
         "pkceChallenge",
         "raw",
+        "reader",
         "redirectUri",
         "refreshSupabaseOAuthToken",
         "refreshed",
@@ -28047,6 +28254,8 @@
         "results",
         "state",
         "supabaseOAuthConfigured",
+        "supabaseTokenRequest",
+        "token",
         "u",
         "verifier"
       ],
@@ -28085,6 +28294,7 @@
       ],
       "authBoundary": [
         "backend/src/services/integrations/supabaseAuth.ts#AUTHORIZE",
+        "backend/src/services/integrations/supabaseAuth.ts#SupabaseAuthTransportDenied",
         "backend/src/services/integrations/supabaseAuth.ts#SupabaseOAuthTokens",
         "backend/src/services/integrations/supabaseAuth.ts#basicAuthHeader",
         "backend/src/services/integrations/supabaseAuth.ts#buildSupabaseAuthorizeUrl",
@@ -28502,6 +28712,7 @@
         "backend/src/ai/pipeline.ts:118",
         "backend/src/ai/pipeline.ts:3791",
         "backend/src/ai/tenantModelDispatch.ts:6",
+        "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:17",
         "backend/src/routes/integrations.ts:639",
         "backend/src/routes/publish.ts:13",
@@ -28564,6 +28775,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/config/supabaseTransport.security.test.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
@@ -28596,7 +28808,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "sha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -28608,6 +28820,7 @@
         "TOKEN_REFRESH_SKEW_MS",
         "VERCEL_OIDC_SCOPES",
         "VercelAuthKind",
+        "VercelAuthTransportDenied",
         "VercelRefreshLease",
         "activeLease",
         "allowed",
@@ -28615,8 +28828,10 @@
         "base",
         "body",
         "buildVercelAuthorizeUrl",
+        "bytes",
         "canDeploy",
         "capability",
+        "chunks",
         "claim",
         "clearVercelConnection",
         "clientId",
@@ -28630,6 +28845,7 @@
         "deleteVercelTokenFromStorage",
         "encodeVercelRefreshLease",
         "err",
+        "error",
         "exchangeVercelOAuthCode",
         "existing",
         "expiresAt",
@@ -28643,6 +28859,7 @@
         "infoRes",
         "isAllowedCallbackUrl",
         "isVercelAccessTokenExpiring",
+        "isVercelAuthTransportDenied",
         "isVercelConnected",
         "latest",
         "lease",
@@ -28650,6 +28867,8 @@
         "makeVerifier",
         "marker",
         "meta",
+        "method",
+        "next",
         "nonce",
         "observed",
         "observedLeaseMarker",
@@ -28667,6 +28886,7 @@
         "productionFrontendBase",
         "projects",
         "raw",
+        "reader",
         "redirectUri",
         "refreshError",
         "refreshToken",
@@ -28676,6 +28896,8 @@
         "refreshed",
         "res",
         "resolveVercelProjectForEnvSync",
+        "response",
+        "result",
         "row",
         "saveVercelConnection",
         "scope",
@@ -28686,6 +28908,8 @@
         "tokenRes",
         "u",
         "username",
+        "vercelAuthDestinations",
+        "vercelAuthRequest",
         "vercelCredentialCanDeploy",
         "vercelOAuthConfigured",
         "vercelOAuthScope",
@@ -28699,6 +28923,7 @@
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../security/egress/urlPolicy.js",
         "../../security/serviceRoleGuard.js",
         "../../security/tenantContext.js",
         "./oauthPkceStore.js",
@@ -28706,6 +28931,7 @@
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/egress/urlPolicy.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/oauthPkceStore.ts"
@@ -28718,7 +28944,8 @@
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:28",
         "backend/src/routes/supabaseOAuth.ts:35",
-        "backend/src/routes/vercel.ts:5",
+        "backend/src/routes/vercel.ts:6",
+        "backend/src/routes/vercelTransport.security.test.ts:9",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:10",
         "backend/src/security/tenantIsolation.local.integration.ts:43",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
@@ -28730,6 +28957,7 @@
         "backend/src/services/integrations/vercelAuth.revocation.test.ts:4",
         "backend/src/services/integrations/vercelAuth.scope.test.ts:3",
         "backend/src/services/integrations/vercelAuthCapabilities.test.ts:3",
+        "backend/src/services/integrations/vercelAuthTransport.security.test.ts:3",
         "backend/src/services/publish/userOwnedPublish.ts:7",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:11"
       ],
@@ -28747,24 +28975,28 @@
       ],
       "authBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#VercelAuthKind",
+        "backend/src/services/integrations/vercelAuth.ts#VercelAuthTransportDenied",
         "backend/src/services/integrations/vercelAuth.ts#authKind",
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl",
         "backend/src/services/integrations/vercelAuth.ts#exchangeVercelOAuthCode",
         "backend/src/services/integrations/vercelAuth.ts#getVercelOAuthCallbackUrl",
         "backend/src/services/integrations/vercelAuth.ts#identityOk",
+        "backend/src/services/integrations/vercelAuth.ts#isVercelAuthTransportDenied",
         "backend/src/services/integrations/vercelAuth.ts#parseVercelOAuthState",
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthToken",
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthTokenSingleFlight",
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthTokenWithLease",
         "backend/src/services/integrations/vercelAuth.ts#saveDirectOAuthConnection",
         "backend/src/services/integrations/vercelAuth.ts#saveOAuthConnection",
+        "backend/src/services/integrations/vercelAuth.ts#vercelAuthDestinations",
+        "backend/src/services/integrations/vercelAuth.ts#vercelAuthRequest",
         "backend/src/services/integrations/vercelAuth.ts#vercelOAuthConfigured",
         "backend/src/services/integrations/vercelAuth.ts#vercelOAuthScope",
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/vercelAuth.ts:423 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:449 (user_id)"
+        "backend/src/services/integrations/vercelAuth.ts:469 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:495 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl"
@@ -28776,6 +29008,7 @@
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "testCoverage": [
+        "backend/src/routes/vercelTransport.security.test.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
@@ -28785,7 +29018,8 @@
         "backend/src/services/integrations/vercelAuth.refresh.test.ts",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts",
         "backend/src/services/integrations/vercelAuth.scope.test.ts",
-        "backend/src/services/integrations/vercelAuthCapabilities.test.ts"
+        "backend/src/services/integrations/vercelAuthCapabilities.test.ts",
+        "backend/src/services/integrations/vercelAuthTransport.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -29122,9 +29356,9 @@
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
         "backend/src/ai/pipeline.ts:123",
-        "backend/src/routes/github.ts:559",
+        "backend/src/routes/github.ts:609",
         "backend/src/routes/swarm.ts:11",
-        "backend/src/routes/vercel.ts:21",
+        "backend/src/routes/vercel.ts:24",
         "backend/src/services/scaffolds/scaffolds.test.ts:9"
       ],
       "reachable": true,
@@ -29644,14 +29878,16 @@
       "id": "surface:0a385ceeaa3956dfb5fe",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/userOwnedPublish.ts",
-      "sha256": "f7ef96cb7765a3c043e6ddffa469fce3a0778f4d8658c6801c2b12ccfe6c0e0b",
+      "sha256": "5dd9bf3f4db350462eb197321f9c73c343e3ba4a33247157c47502ce6737b3e7",
       "symbols": [
         "PublishChannel",
         "PublishChecklistItem",
         "PublishStatus",
         "appleAscApiKey",
         "appleKey",
+        "bytes",
         "chromeChecklist",
+        "chunks",
         "cscKey",
         "cwsKey",
         "data",
@@ -29660,21 +29896,21 @@
         "electronAppleId",
         "electronApplePass",
         "electronAppleTeam",
-        "err",
         "expoKey",
         "expoTokenValid",
         "getPublishStatus",
         "googleKey",
         "managedVercelAvailable",
         "mobileChecklist",
+        "next",
         "notarizationSaved",
         "plain",
+        "reader",
         "res",
         "supabaseAnon",
         "supabaseReady",
         "supabaseService",
         "supabaseUrl",
-        "text",
         "trimmed",
         "username",
         "verified",
@@ -29698,6 +29934,7 @@
       ],
       "callers": [
         "backend/src/routes/publish.ts:4",
+        "backend/src/services/publish/expoIdentityTransport.security.test.ts:5",
         "backend/src/services/publish/userOwnedPublish.test.ts:3"
       ],
       "reachable": true,
@@ -29721,6 +29958,7 @@
         "backend/src/services/publish/userOwnedPublish.ts#verifyExpoToken"
       ],
       "testCoverage": [
+        "backend/src/services/publish/expoIdentityTransport.security.test.ts",
         "backend/src/services/publish/userOwnedPublish.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -30895,14 +31133,18 @@
       "id": "surface:c7ad32e7d2ffe4d4c19a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/whopCheckoutOwnership.ts",
-      "sha256": "8486898ec1017c24118b9dec0b103c7ad54e453f2df7aa59d47772e6a890a642",
+      "sha256": "599c4816881fba840f10cdce5a299cf62d5f495f9ea7ad75bfd67f7a22d60372",
       "symbols": [
         "CheckoutOwner",
         "CheckoutScope",
+        "bytes",
         "checkout",
+        "chunks",
         "metadata",
+        "next",
         "plan",
         "readWhopCheckoutOwner",
+        "reader",
         "record",
         "response",
         "unavailable",
@@ -30916,7 +31158,8 @@
       ],
       "callers": [
         "backend/src/services/BillingService.ts:17",
-        "backend/src/services/whopCheckoutOwnership.test.ts:3"
+        "backend/src/services/whopCheckoutOwnership.test.ts:3",
+        "backend/src/services/whopCheckoutTransport.security.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -30927,7 +31170,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/services/whopCheckoutOwnership.test.ts"
+        "backend/src/services/whopCheckoutOwnership.test.ts",
+        "backend/src/services/whopCheckoutTransport.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -32223,7 +32467,7 @@
       "id": "surface:c41a4e41b7fd8304ec4c",
       "subsystem": "file_storage",
       "sourcePath": "backend/src/storage/r2ObjectStore.ts",
-      "sha256": "d283594a4569b5ddc8710c5d717b2291bd3ebbf79d9c3d2d73a61c3117e9f622",
+      "sha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4",
       "symbols": [
         "R2Config",
         "R2ObjectStore",
@@ -32266,6 +32510,7 @@
       "callers": [
         "backend/src/storage/migration/cliContext.ts:5",
         "backend/src/storage/r2.provider.integration.test.ts:7",
+        "backend/src/storage/r2BucketBoundary.security.test.ts:4",
         "backend/src/storage/r2ObjectStore.test.ts:4",
         "backend/src/storage/r2ObjectStore.test.ts:55",
         "backend/src/storage/r2ObjectStore.wire.integration.test.ts:7",
@@ -32288,6 +32533,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/storage/r2.provider.integration.test.ts",
+        "backend/src/storage/r2BucketBoundary.security.test.ts",
         "backend/src/storage/r2ObjectStore.test.ts",
         "backend/src/storage/r2ObjectStore.wire.integration.test.ts"
       ],
@@ -32445,7 +32691,7 @@
       ],
       "callers": [
         "backend/src/index.ts:54",
-        "backend/src/routes/browserRuns.ts:17",
+        "backend/src/routes/browserRuns.ts:18",
         "backend/src/routes/drive.ts:4",
         "backend/src/runtime/readiness.ts:13",
         "backend/src/storage/config.matrix.test.ts:4",
@@ -32480,7 +32726,7 @@
       "id": "surface:72c0bb1df940cb5ec57b",
       "subsystem": "file_storage",
       "sourcePath": "backend/src/storage/storageService.ts",
-      "sha256": "ed8e543e8f26452266176c289cbedba742591da81f2e4ce22294aac08242c28e",
+      "sha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596",
       "symbols": [
         "InitiateUploadInput",
         "InitiateUploadResult",
@@ -32501,7 +32747,9 @@
         "chunk",
         "chunks",
         "concurrency",
+        "createdUpload",
         "cur",
+        "current",
         "cursor",
         "done",
         "e",
@@ -32859,6 +33107,7 @@
         "backend/src/routes/browserRuns.test.ts:12",
         "backend/src/routes/drive.test.ts:7",
         "backend/src/storage/artifactSink.test.ts:7",
+        "backend/src/storage/storageCapabilityRevocation.security.test.ts:3",
         "backend/src/storage/storageService.test.ts:8",
         "backend/src/workers/browserTaskHandler.test.ts:5",
         "backend/src/workers/resumeRecovery.test.ts:5",
@@ -32878,6 +33127,7 @@
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/drive.test.ts",
         "backend/src/storage/artifactSink.test.ts",
+        "backend/src/storage/storageCapabilityRevocation.security.test.ts",
         "backend/src/storage/storageService.test.ts",
         "backend/src/workers/browserTaskHandler.test.ts",
         "backend/src/workers/resumeRecovery.test.ts"
@@ -40436,9 +40686,9 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/browserRuns.ts:18",
+        "backend/src/routes/browserRuns.ts:19",
         "backend/src/workers/admission.test.ts:3",
-        "backend/src/workers/browserTaskHandler.test.ts:9",
+        "backend/src/workers/browserTaskHandler.test.ts:10",
         "scripts/browser/run-workflows.mts:22"
       ],
       "reachable": true,
@@ -40464,7 +40714,7 @@
       "id": "surface:ef2205cc157e5f9e82a2",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserCapability.ts",
-      "sha256": "f932953aa5acb43d66eff567571b5518ddda212d25fed42c6100cf9fe5ccf7da",
+      "sha256": "56bdea730b89a1441a1d3f4ba5fde5335d633bbab966eb04c1a604fb91e71301",
       "symbols": [
         "BROWSER_RUN_DEFAULTS",
         "BrowserCapabilityDeps",
@@ -40496,6 +40746,7 @@
         "../storage/types.js",
         "./admission.js",
         "./browserJob.js",
+        "./browserModelDispatch.js",
         "./browserPlan.js",
         "./browserTaskHandler.js",
         "./leaseStore.js",
@@ -40513,7 +40764,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/browserRuns.ts:20",
+        "backend/src/routes/browserRuns.ts:21",
         "scripts/browser/run-workflows.mts:23"
       ],
       "reachable": true,
@@ -40521,7 +40772,9 @@
       "externalProviderDependencies": [
         "node:crypto"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/workers/browserCapability.ts#BrowserModelAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -40540,7 +40793,7 @@
       "id": "surface:ff684d3fa5d05b2f891d",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserCoordinator.ts",
-      "sha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2",
+      "sha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
       "symbols": [
         "CoordinatorOptions",
         "MAX_BODY",
@@ -40549,18 +40802,22 @@
         "RemoteWorkerOptions",
         "SKEW_MS",
         "abort",
+        "active",
         "assertSecret",
         "body",
         "buf",
         "cancel",
         "chunks",
         "code",
+        "completed",
         "createCoordinatorServer",
         "dec",
         "deny",
         "digest",
         "e",
+        "error",
         "expected",
+        "gateway",
         "given",
         "id",
         "job",
@@ -40571,6 +40828,9 @@
         "llmReply",
         "m",
         "max",
+        "maxRecordBytes",
+        "maxStreamBytes",
+        "models",
         "n",
         "nl",
         "nonce",
@@ -40582,8 +40842,7 @@
         "readBody",
         "reader",
         "relay",
-        "remaining",
-        "reply",
+        "request",
         "res",
         "result",
         "running",
@@ -40592,14 +40851,18 @@
         "sig",
         "signRequest",
         "size",
-        "spent",
+        "streamBytes",
         "ts",
         "u",
+        "usage",
         "verifyRequest",
         "waiter"
       ],
       "imports": [
+        "../security/egress/dataClassification.js",
         "./browserJob.js",
+        "./browserModelDispatch.js",
+        "./browserModelLifetime.js",
         "./browserPlan.js",
         "./browserTaskHandler.js",
         "./containerBrowserWorker.js",
@@ -40608,7 +40871,9 @@
         "node:http"
       ],
       "runtimeImports": [
+        "backend/src/security/egress/dataClassification.ts",
         "backend/src/workers/browserJob.ts",
+        "backend/src/workers/browserModelLifetime.ts",
         "backend/src/workers/browserPlan.ts",
         "backend/src/workers/browserTaskHandler.ts",
         "backend/src/workers/containerBrowserWorker.ts"
@@ -40617,8 +40882,10 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/browserRuns.ts:19",
-        "backend/src/workers/browserCoordinator.test.ts:5",
+        "backend/src/routes/browserRuns.ts:20",
+        "backend/src/workers/browserCoordinator.test.ts:6",
+        "backend/src/workers/browserCoordinatorProtocol.security.test.ts:3",
+        "backend/src/workers/browserModelLifetime.security.test.ts:8",
         "scripts/browser/browser-coordinator.mts:12"
       ],
       "reachable": true,
@@ -40628,7 +40895,9 @@
         "node:crypto",
         "node:http"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/workers/browserCoordinator.ts#BrowserModelAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [
         "backend/src/workers/browserCoordinator.ts#digest"
@@ -40638,7 +40907,9 @@
         "backend/src/workers/browserCoordinator.ts#verifyRequest"
       ],
       "testCoverage": [
-        "backend/src/workers/browserCoordinator.test.ts"
+        "backend/src/workers/browserCoordinator.test.ts",
+        "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+        "backend/src/workers/browserModelLifetime.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -40689,16 +40960,21 @@
       ],
       "callers": [
         "backend/src/workers/browserCapability.ts:19",
-        "backend/src/workers/browserCoordinator.test.ts:4",
+        "backend/src/workers/browserCoordinator.test.ts:5",
         "backend/src/workers/browserCoordinator.ts:18",
+        "backend/src/workers/browserCoordinatorProtocol.security.test.ts:4",
         "backend/src/workers/browserJob.test.ts:3",
-        "backend/src/workers/browserModelGateway.test.ts:4",
+        "backend/src/workers/browserModelFixture.test.ts:5",
+        "backend/src/workers/browserModelGateway.test.ts:5",
+        "backend/src/workers/browserModelLifetime.security.test.ts:9",
         "backend/src/workers/browserPlan.test.ts:3",
         "backend/src/workers/browserPlan.ts:16",
-        "backend/src/workers/browserPlanner.test.ts:3",
+        "backend/src/workers/browserPlanner.test.ts:4",
+        "backend/src/workers/browserSdkBoundary.security.test.ts:5",
         "backend/src/workers/browserTaskHandler.ts:26",
         "backend/src/workers/chromiumLaunch.test.ts:3",
         "backend/src/workers/chromiumProxy.browser.test.ts:21",
+        "backend/src/workers/containerWorkerProtocol.security.test.ts:8",
         "backend/src/workers/egressProxy.test.ts:6",
         "backend/src/workers/proxySidecar.ts:20",
         "scripts/browser/run-browser-job.mts:15",
@@ -40717,15 +40993,99 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/workers/browserCoordinator.test.ts",
+        "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
         "backend/src/workers/browserJob.test.ts",
+        "backend/src/workers/browserModelFixture.test.ts",
         "backend/src/workers/browserModelGateway.test.ts",
+        "backend/src/workers/browserModelLifetime.security.test.ts",
         "backend/src/workers/browserPlan.test.ts",
         "backend/src/workers/browserPlanner.test.ts",
+        "backend/src/workers/browserSdkBoundary.security.test.ts",
         "backend/src/workers/browserTaskHandler.test.ts",
         "backend/src/workers/chromiumLaunch.test.ts",
         "backend/src/workers/chromiumProxy.browser.test.ts",
+        "backend/src/workers/containerWorkerProtocol.security.test.ts",
         "backend/src/workers/egressProxy.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f8ce898cb51d82222bcc",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "backend/src/workers/browserModelDispatch.ts",
+      "sha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+      "symbols": [
+        "BrowserModelAuthority",
+        "BrowserModelClient",
+        "admission",
+        "authority",
+        "beforeDispatch",
+        "body",
+        "checkCancellation",
+        "client",
+        "completion",
+        "context",
+        "current",
+        "dispatchBrowserModel",
+        "endpoint",
+        "inputTokens",
+        "job",
+        "outputTokens",
+        "providerRequestId",
+        "reasoningTokens",
+        "request",
+        "requireBrowserModelAuthority",
+        "result",
+        "scope",
+        "signal",
+        "usage",
+        "wire"
+      ],
+      "imports": [
+        "../ai/modelSdkAdmission.js",
+        "../ai/models.js",
+        "../ai/openaiCompat.js",
+        "../ai/postCompletionAccounting.js",
+        "../ai/tenantModelDispatch.js",
+        "../security/egress/dataClassification.js",
+        "../security/tenantContext.js",
+        "./browserJob.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/modelSdkAdmission.ts",
+        "backend/src/ai/openaiCompat.ts",
+        "backend/src/ai/postCompletionAccounting.ts",
+        "backend/src/ai/tenantModelDispatch.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/workers/browserModelGateway.ts:17",
+        "backend/src/workers/browserPlanner.ts:12"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/workers/browserModelDispatch.ts#BrowserModelAuthority",
+        "backend/src/workers/browserModelDispatch.ts#authority",
+        "backend/src/workers/browserModelDispatch.ts#requireBrowserModelAuthority"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/workers/browserModelDispatch.ts#withTenantModelReservation"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -40737,7 +41097,7 @@
       "id": "surface:00d23b51fc7ff9a5a54e",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserModelGateway.ts",
-      "sha256": "d28b6c3a3d01c191566a78b72e2c2c5990cbc4bba17fdaf9a46fdeaf01fd3e60",
+      "sha256": "4d7b015753f908146dea895ad22e00c4e06e529cdd37f3fbe631ff2c95cd193c",
       "symbols": [
         "Block",
         "BrowserModelError",
@@ -40747,20 +41107,16 @@
         "StagehandParams",
         "b",
         "blocks",
-        "c",
-        "client",
         "completion",
         "costMicros",
         "createBrowserModelGateway",
         "deterministicUuid",
-        "e",
         "estimatedInputTokens",
         "h",
         "input",
         "inputTokens",
         "jobKey",
         "m",
-        "makeClient",
         "maxOut",
         "messages",
         "msg",
@@ -40770,13 +41126,9 @@
         "p",
         "parts",
         "reasoningTokens",
-        "release",
         "requestText",
-        "reservation",
-        "reserve",
         "result",
         "seq",
-        "settle",
         "structured",
         "structuredContent",
         "structuredFormat",
@@ -40789,47 +41141,95 @@
       ],
       "imports": [
         "../ai/models.js",
-        "../ai/openaiCompat.js",
         "../ai/providerBudget.js",
         "./browserJob.js",
+        "./browserModelDispatch.js",
         "./containerBrowserWorker.js",
-        "node:crypto",
-        "openai"
+        "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/ai/models.ts",
-        "backend/src/ai/openaiCompat.ts",
-        "backend/src/ai/providerBudget.ts"
+        "backend/src/ai/providerBudget.ts",
+        "backend/src/workers/browserModelDispatch.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/browserRuns.ts:21",
-        "backend/src/workers/browserModelGateway.test.ts:5",
+        "backend/src/routes/browserRuns.ts:22",
+        "backend/src/workers/browserModelGateway.test.ts:6",
+        "backend/src/workers/browserSdkBoundary.security.test.ts:3",
         "scripts/browser/run-workflows.mts:189"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "node:crypto",
-        "openai"
+        "node:crypto"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/workers/browserModelGateway.ts#requireBrowserModelAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
         "backend/src/workers/browserModelGateway.ts#actualProviderCostMicroUsd",
         "backend/src/workers/browserModelGateway.ts#costMicros",
-        "backend/src/workers/browserModelGateway.ts#estimateProviderReservationMicroUsd",
-        "backend/src/workers/browserModelGateway.ts#finishFailedProviderReservation",
-        "backend/src/workers/browserModelGateway.ts#reservation",
-        "backend/src/workers/browserModelGateway.ts#reserveProviderBudget",
-        "backend/src/workers/browserModelGateway.ts#settleProviderBudget"
+        "backend/src/workers/browserModelGateway.ts#estimateProviderReservationMicroUsd"
       ],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/workers/browserModelGateway.test.ts"
+        "backend/src/workers/browserModelGateway.test.ts",
+        "backend/src/workers/browserSdkBoundary.security.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:915c5767e1476eaa8681",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "backend/src/workers/browserModelLifetime.ts",
+      "sha256": "1e7991d54bcaf1298344768970a0fe139d70de7d84b3c3f29f4177d57ed72408",
+      "symbols": [
+        "BrowserModelLifetime",
+        "code",
+        "error",
+        "providerFailure",
+        "remaining",
+        "result",
+        "status"
+      ],
+      "imports": [
+        "../ai/providerRuntime.js",
+        "./browserJob.js",
+        "./browserTaskHandler.js",
+        "./containerBrowserWorker.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/providerRuntime.ts",
+        "backend/src/workers/browserTaskHandler.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/workers/browserCoordinator.ts:23",
+        "backend/src/workers/browserModelLifetime.security.test.ts:10",
+        "backend/src/workers/containerBrowserWorker.ts:26"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/workers/browserModelLifetime.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -40912,7 +41312,7 @@
         "backend/src/workers/browserCapability.ts:20",
         "backend/src/workers/browserCoordinator.ts:19",
         "backend/src/workers/browserPlan.test.ts:4",
-        "backend/src/workers/browserPlanner.ts:15",
+        "backend/src/workers/browserPlanner.ts:14",
         "backend/src/workers/browserTaskHandler.ts:30",
         "scripts/browser/run-browser-job.mts:16"
       ],
@@ -40938,13 +41338,11 @@
       "id": "surface:08125f3fea978ebfcb90",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserPlanner.ts",
-      "sha256": "d708dcef9048fd1e5332461b672ff7a20ef6647f80f91dcd614c65f5c6100446",
+      "sha256": "a1cd0f49d665b12321c33ceee22e995f7631285a4f8438b3599d70ff766945c3",
       "symbols": [
         "BrowserPlannerError",
         "PLANNER_SYSTEM_PROMPT",
         "PlannerDeps",
-        "c",
-        "client",
         "completion",
         "costMicros",
         "e",
@@ -40955,54 +41353,49 @@
         "plan",
         "planBrowserTask",
         "raw",
-        "release",
-        "reservation",
-        "reserve",
-        "settle",
+        "reasoningTokens",
         "user"
       ],
       "imports": [
         "../ai/models.js",
-        "../ai/openaiCompat.js",
         "../ai/providerBudget.js",
         "./browserJob.js",
+        "./browserModelDispatch.js",
         "./browserPlan.js",
-        "node:crypto",
-        "openai"
+        "node:crypto"
       ],
       "runtimeImports": [
-        "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerBudget.ts",
+        "backend/src/workers/browserModelDispatch.ts",
         "backend/src/workers/browserPlan.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/browserRuns.ts:22",
-        "backend/src/workers/browserPlanner.test.ts:4",
+        "backend/src/routes/browserRuns.ts:23",
+        "backend/src/workers/browserPlanner.test.ts:5",
+        "backend/src/workers/browserSdkBoundary.security.test.ts:4",
         "scripts/browser/run-workflows.mts:221"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "node:crypto",
-        "openai"
+        "node:crypto"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/workers/browserPlanner.ts#requireBrowserModelAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
         "backend/src/workers/browserPlanner.ts#actualProviderCostMicroUsd",
-        "backend/src/workers/browserPlanner.ts#costMicros",
-        "backend/src/workers/browserPlanner.ts#finishFailedProviderReservation",
-        "backend/src/workers/browserPlanner.ts#reservation",
-        "backend/src/workers/browserPlanner.ts#reserveProviderBudget",
-        "backend/src/workers/browserPlanner.ts#settleProviderBudget"
+        "backend/src/workers/browserPlanner.ts#costMicros"
       ],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/workers/browserPlanner.test.ts"
+        "backend/src/workers/browserPlanner.test.ts",
+        "backend/src/workers/browserSdkBoundary.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -41015,7 +41408,7 @@
       "id": "surface:3c7a6b8d0307418893c6",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserTaskHandler.ts",
-      "sha256": "e691a6a06f6539f86215bcc9f5d78084cc794473d3399602251186442bf41e90",
+      "sha256": "a0b129ea24a4df4c1b10b9df910471d190b4ca7055e5593d398784c77bb1b04d",
       "symbols": [
         "ARTIFACT_NAME",
         "ARTIFACT_TYPES",
@@ -41074,18 +41467,22 @@
       ],
       "imports": [
         "../ai/executionRuntime.js",
+        "../ai/providerRuntime.js",
         "../runtime/safeLogging.js",
+        "../security/tenantContext.js",
         "../storage/keys.js",
         "../storage/migration/sources.js",
         "../storage/storageService.js",
         "../storage/types.js",
         "./admission.js",
         "./browserJob.js",
+        "./browserModelDispatch.js",
         "./browserPlan.js",
         "./leaseStore.js",
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/ai/providerRuntime.ts",
         "backend/src/runtime/safeLogging.ts",
         "backend/src/storage/keys.ts",
         "backend/src/storage/migration/sources.ts",
@@ -41099,8 +41496,9 @@
       ],
       "callers": [
         "backend/src/workers/browserCapability.ts:21",
-        "backend/src/workers/browserCoordinator.test.ts:7",
+        "backend/src/workers/browserCoordinator.test.ts:8",
         "backend/src/workers/browserCoordinator.ts:22",
+        "backend/src/workers/browserModelLifetime.ts:4",
         "backend/src/workers/browserTaskHandler.test.ts:8",
         "backend/src/workers/containerBrowserWorker.ts:25",
         "backend/src/workers/resumeRecovery.test.ts:7"
@@ -41110,7 +41508,9 @@
       "externalProviderDependencies": [
         "node:crypto"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/workers/browserTaskHandler.ts#BrowserModelAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [
         "backend/src/workers/browserTaskHandler.ts#digest"
@@ -41229,7 +41629,7 @@
       "id": "surface:bc7f74f73ac62002532d",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/containerBrowserWorker.ts",
-      "sha256": "fbc9ea0804887cd66aa18ffdcac905d8b5f1fe1d2345761533b0e7665bca5742",
+      "sha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
       "symbols": [
         "BrowserModelGateway",
         "ContainerBrowserWorker",
@@ -41240,13 +41640,17 @@
         "PROXY_PORT",
         "WORKER_ERRORS",
         "ai",
+        "assertActive",
         "browserName",
         "child",
         "cleanup",
         "code",
         "containers",
         "defaultDocker",
+        "deny",
         "dockerSync",
+        "end",
+        "error",
         "finish",
         "flags",
         "host",
@@ -41255,8 +41659,9 @@
         "ids",
         "l",
         "launch",
-        "llmAbort",
         "m",
+        "maxRecordBytes",
+        "models",
         "net",
         "networks",
         "onAbort",
@@ -41266,20 +41671,24 @@
         "proxy",
         "proxyName",
         "r",
-        "refuse",
-        "remaining",
+        "recordBytes",
         "rl",
+        "runDocker",
         "send",
         "settled",
+        "start",
         "stderr",
         "stdout",
         "tag",
         "timer",
         "usage",
-        "username"
+        "username",
+        "wireBytes"
       ],
       "imports": [
         "./browserJob.js",
+        "./browserModelDispatch.js",
+        "./browserModelLifetime.js",
         "./browserPlan.js",
         "./browserTaskHandler.js",
         "./chromiumLaunch.js",
@@ -41292,6 +41701,7 @@
         "node:readline"
       ],
       "runtimeImports": [
+        "backend/src/workers/browserModelLifetime.ts",
         "backend/src/workers/browserTaskHandler.ts",
         "backend/src/workers/chromiumLaunch.ts",
         "backend/src/workers/containerSpec.ts"
@@ -41301,6 +41711,8 @@
       ],
       "callers": [
         "backend/src/workers/browserCoordinator.ts:20",
+        "backend/src/workers/browserModelLifetime.security.test.ts:7",
+        "backend/src/workers/containerWorkerProtocol.security.test.ts:7",
         "scripts/browser/browser-coordinator.mts:13",
         "scripts/browser/run-browser-job.mts:17",
         "scripts/browser/run-workflows.mts:24"
@@ -41314,13 +41726,17 @@
         "node:path",
         "node:readline"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/workers/containerBrowserWorker.ts#BrowserModelAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/workers/browserCoordinator.test.ts"
+        "backend/src/workers/browserCoordinator.test.ts",
+        "backend/src/workers/browserModelLifetime.security.test.ts",
+        "backend/src/workers/containerWorkerProtocol.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -41958,7 +42374,7 @@
       ],
       "callers": [
         "backend/src/routes/browserRuns.test.ts:13",
-        "backend/src/workers/browserTaskHandler.test.ts:10",
+        "backend/src/workers/browserTaskHandler.test.ts:11",
         "backend/src/workers/browserTaskHandler.ts:29",
         "backend/src/workers/leaseStore.contract.ts:3",
         "backend/src/workers/leaseStore.test.ts:1",
@@ -42016,7 +42432,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/browserRuns.ts:23",
+        "backend/src/routes/browserRuns.ts:24",
         "backend/src/workers/postgresLeaseStore.integration.test.ts:10"
       ],
       "reachable": true,
@@ -42308,7 +42724,7 @@
       "id": "surface:5471abab40d8143293bc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "sha256": "84f38bc0ab62fc7ffa328f779e7b5641419423cdbbc8a53855060ec1b9b504ce",
+      "sha256": "25e82c6c4867a397fc50f57ce2eb48510a8614126c55efc157435f0b34fbfb2d",
       "symbols": [
         "AdminPageClient",
         "OperationsReadiness",
@@ -48173,25 +48589,28 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "8a6108961f076a5fc0b6250aed2c9ee28cf64687a6d9126f8d18bc630ac9ac27",
+      "sha256": "3dbc690246e5ccedfe88365fe55c8a35d278820b5441e02c40d7b908658df2f7",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
         "ShareResult",
         "accessToken",
-        "apiOrigin",
-        "configured",
+        "bytes",
+        "chunks",
         "dynamic",
         "generateMetadata",
         "loadShare",
         "next",
         "payload",
+        "reader",
         "response",
         "result",
+        "share",
         "supabase"
       ],
       "imports": [
         "@/components/terminal/SharedAnswerDownloads",
+        "@/lib/api",
         "@/lib/supabase/server",
         "next",
         "next/image",
@@ -48201,6 +48620,7 @@
       ],
       "runtimeImports": [
         "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
+        "frontend/src/lib/api.ts",
         "frontend/src/lib/supabase/server.ts"
       ],
       "entryPoints": [
@@ -48210,8 +48630,6 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "declared-host:api.xroga.com",
-        "declared-host:localhost",
         "next",
         "next/image",
         "next/link",
@@ -83089,7 +83507,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "1cdb6a8a3ac4550100f1eef141dc078b4aae75e1533cf7473204e418f5eb31bd",
+      "sha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -83132,6 +83550,7 @@
         "alreadyKnown",
         "api",
         "apiFetch",
+        "assertActive",
         "authCacheListenerStarted",
         "buffer",
         "cachedAccessToken",
@@ -83150,10 +83569,12 @@
         "decoder",
         "delayMs",
         "deliverSwarmComplete",
+        "denied",
         "err",
         "error",
         "event",
         "eventName",
+        "fetchApiResponse",
         "finalText",
         "getAccessToken",
         "githubOAuthCallbackUrl",
@@ -83194,6 +83615,7 @@
         "streamSwarmExecute",
         "supabase",
         "supabaseOAuthCallbackUrl",
+        "target",
         "text",
         "timer",
         "token",
@@ -83271,6 +83693,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -83290,6 +83713,7 @@
         "frontend/src/app/(shell)/dashboard/publish/cws/callback/page.tsx:5",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx:5",
         "frontend/src/app/auth/github/callback/page.tsx:5",
+        "frontend/src/app/share/[token]/page.tsx:8",
         "frontend/src/components/auth/SignupForm.tsx:39",
         "frontend/src/components/automations/Activity.tsx:9",
         "frontend/src/components/automations/BrowserRun.tsx:3",
@@ -84499,7 +84923,7 @@
       "id": "surface:7bf027a9b022ef424607",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/community.ts",
-      "sha256": "f20fabb745516ac23bcf6d4af3977971b9684ed94c4c51cc17a660d0a856b5e3",
+      "sha256": "174ec2da07c36fb8df9b667dab92472332e34b0d1b4fe4e05ae87ee25594e383",
       "symbols": [
         "COMMUNITY_ROLES",
         "CommunityApiError",
@@ -85423,6 +85847,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -86567,18 +86992,24 @@
       "id": "surface:d66b931389d2c6252325",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/imageStudioUtils.ts",
-      "sha256": "5ec55cf935cfdea68e2eaf84e5f6242e1061a258dbd07a20c865e454a80a4093",
+      "sha256": "0b84a79c7fc9f30b9c35e18b8c3e2b556bde0152abb3c751f47205a8bbd6a38b",
       "symbols": [
         "AspectRatio",
         "DEFAULT_TRANSFORM",
+        "ImageAdmissionError",
         "ImageTransform",
+        "MAX_IMAGE_BYTES",
         "a",
+        "admittedImageBlob",
         "ar",
         "aspectRatioToNumber",
         "base",
         "blob",
         "buildImageEditPrompt",
+        "bytes",
         "canvas",
+        "chunks",
+        "controller",
         "copyImageToClipboard",
         "ctx",
         "current",
@@ -86586,17 +87017,24 @@
         "drawH",
         "drawImageToPngBlob",
         "drawW",
+        "error",
         "h",
         "imageUrlToPngBlob",
         "img",
         "loadImage",
-        "objUrl",
+        "local",
+        "next",
+        "parsed",
         "pngBlob",
-        "proxyRes",
+        "reader",
+        "remote",
         "renderTransformedImage",
-        "res",
+        "response",
         "rot",
+        "source",
         "swap",
+        "timer",
+        "type",
         "w"
       ],
       "imports": [
@@ -86979,6 +87417,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -89114,7 +89553,7 @@
       "id": "surface:b9755ad3a90f9de70e5a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/projectDeliveryApi.ts",
-      "sha256": "65ab4365e881f8ca806df71bd0f10c73b28b51149ae25c4ca710b6fcbbd19c59",
+      "sha256": "11e169cd69f6a701e04da5044e692942030e8be8748db0dac6f39ff179a8fd4f",
       "symbols": [
         "DeliveryChannelStatus",
         "ProjectDeliveryEnvelope",
@@ -89251,7 +89690,7 @@
       "id": "surface:bc0ccfa0e482f78f7492",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/projectRuntimeApi.ts",
-      "sha256": "ba274bbf114dc2e74adbcbb3bd79efe23726e9ff7ac7d4e3099ec1f9ba045b05",
+      "sha256": "b73d28693c69548bf7446da8bf28eeadfa69fccc602dfbe6b9ceb26459e6e994",
       "symbols": [
         "accessToken",
         "body",
@@ -89731,6 +90170,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -90333,7 +90773,7 @@
       "id": "surface:6b5d434600943c4fedc6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/runGuestLaneChat.ts",
-      "sha256": "8cd966d81f56a81c75754668ae3de72b64e409d3a1ac308c3327d0fbf01f7d68",
+      "sha256": "2b8b68d28264780988498d09461ec9a79e4ba8ff10cd4b960a4cbe096cc3b757",
       "symbols": [
         "GuestLaneHistoryTurn",
         "GuestLaneResult",
@@ -92064,6 +92504,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -92314,12 +92755,17 @@
       "id": "surface:1e6c9ffc22fb992d60f6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/authProviders.ts",
-      "sha256": "34d867af97d0419d907b38d5e7a04d71436de6910b3a85faf80ce7f4dbdc5d10",
+      "sha256": "fc40e9ff3057a484626e2ebd6b284cb9ce37376f2dfea7be7c4effd11b8336ca",
       "symbols": [
+        "bytes",
         "config",
+        "decoder",
+        "next",
+        "reader",
         "requireGitHubProvider",
         "response",
-        "settings"
+        "settings",
+        "text"
       ],
       "imports": [
         "./config"
@@ -92428,6 +92874,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -92458,7 +92905,7 @@
         "frontend/src/hooks/useAvatarUpdate.ts:3",
         "frontend/src/lib/api.ts:3",
         "frontend/src/lib/feedbackStorage.ts:1",
-        "frontend/src/lib/projectDeliveryApi.ts:7",
+        "frontend/src/lib/projectDeliveryApi.ts:8",
         "frontend/src/lib/projectRuntimeApi.ts:3",
         "frontend/src/lib/runLightLaneChat.ts:1",
         "frontend/src/lib/sidebarOrganization.ts:2"
@@ -92918,6 +93365,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -93513,6 +93961,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx",
         "frontend/src/app/page.tsx",
         "frontend/src/app/pricing/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/app/showcase/[slug]/page.tsx",
         "frontend/src/app/showcase/[slug]/preview/page.tsx",
         "frontend/src/app/showcase/page.tsx",
@@ -94757,7 +95206,7 @@
       "id": "surface:0e1350a6a9f50317c14e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
-      "sha256": "70a9e4cfa50ca2113787a2e474668c6d505402c37a088296e4c00f0e4faba127",
+      "sha256": "a865bad0e0360ea4571a23094ae16c218e6083f25db4debaeec80863268f4c6b",
       "symbols": [
         "payload",
         "response",
@@ -105221,9 +105670,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cf8cf18ca9e02287441b",
+      "id": "registration:feff887d95349c9db85b",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "line": 58,
+      "line": 59,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -105233,9 +105682,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:66de5710f04a26d21137",
+      "id": "registration:866f30352b7e17ff80dc",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "line": 67,
+      "line": 68,
       "receiver": "router",
       "method": "post",
       "path": "/",
@@ -105245,9 +105694,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0b77a3fa688a9a02ea94",
+      "id": "registration:2f0419f75ce137426664",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "line": 86,
+      "line": 87,
       "receiver": "router",
       "method": "get",
       "path": "/:runId",
@@ -105257,9 +105706,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4b54cd0ba78776df45ba",
+      "id": "registration:ae384f17ba578923436b",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "line": 100,
+      "line": 101,
       "receiver": "router",
       "method": "delete",
       "path": "/:runId",
@@ -105843,9 +106292,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0e220ab12c6a1e2fb12c",
+      "id": "registration:ed6913a372b9518ee22b",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 97,
+      "line": 143,
       "receiver": "router",
       "method": "get",
       "path": "/oauth",
@@ -105855,9 +106304,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c0894f92af3f3c0ca69b",
+      "id": "registration:47f6ad1e3cf85cf5f04d",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 111,
+      "line": 157,
       "receiver": "router",
       "method": "get",
       "path": "/oauth-config",
@@ -105867,9 +106316,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6686fe63516c365bac33",
+      "id": "registration:ecbc7087c509b761f390",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 124,
+      "line": 170,
       "receiver": "router",
       "method": "get",
       "path": "/redirect",
@@ -105879,9 +106328,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e80c22a9108946839c4e",
+      "id": "registration:e8f7d3ae5c17abb0c0b5",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 137,
+      "line": 183,
       "receiver": "router",
       "method": "post",
       "path": "/connect",
@@ -105891,9 +106340,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:70b1702c0b92be9aa198",
+      "id": "registration:0cc3e3a1b0d43c1b59a1",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 220,
+      "line": 268,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -105903,9 +106352,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:67cea5fce2ea7e2a18af",
+      "id": "registration:1e2c8f68fe98db2c9749",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 269,
+      "line": 319,
       "receiver": "router",
       "method": "get",
       "path": "/repos",
@@ -105915,9 +106364,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c7b6be09bf9dffcbc15d",
+      "id": "registration:48afb8838a3c41478e7d",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 295,
+      "line": 345,
       "receiver": "router",
       "method": "get",
       "path": "/repos/:owner/:repo/branches",
@@ -105927,9 +106376,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2abd8f4154971e6a4bf3",
+      "id": "registration:dcf6442a1056cb220a32",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 323,
+      "line": 373,
       "receiver": "router",
       "method": "patch",
       "path": "/settings",
@@ -105939,9 +106388,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bfc6c2cf5bc6e7cc8ecd",
+      "id": "registration:e273ca8aa1621d59998e",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 347,
+      "line": 397,
       "receiver": "router",
       "method": "delete",
       "path": "/disconnect",
@@ -105951,9 +106400,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:be70f6fd0d819d5a5093",
+      "id": "registration:b896dbd8c8636132a3e4",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 357,
+      "line": 407,
       "receiver": "router",
       "method": "get",
       "path": "/analyze",
@@ -105963,9 +106412,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b136d1721b0ab1b2dd5c",
+      "id": "registration:ec23d90103af663768dd",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 400,
+      "line": 450,
       "receiver": "router",
       "method": "get",
       "path": "/repo-state",
@@ -105975,9 +106424,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1e3c4895f1840627f894",
+      "id": "registration:ba9d4593dcd409344978",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 432,
+      "line": 482,
       "receiver": "router",
       "method": "get",
       "path": "/build-files",
@@ -105987,9 +106436,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5a53c9ffa6de654a13a5",
+      "id": "registration:2a50e281498ed12e5e5a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 452,
+      "line": 502,
       "receiver": "router",
       "method": "post",
       "path": "/redeploy-preview",
@@ -105999,9 +106448,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6ab07648efc5d27118d0",
+      "id": "registration:6e84e70f9e304ffff751",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 527,
+      "line": 577,
       "receiver": "router",
       "method": "post",
       "path": "/push-build",
@@ -106011,9 +106460,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8d10ad2bca73dd602d91",
+      "id": "registration:585736eb8cee4dd494f8",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 613,
+      "line": 663,
       "receiver": "router",
       "method": "post",
       "path": "/rollback",
@@ -107826,9 +108275,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c4dc1c3a9827b9c0c91c",
+      "id": "registration:e2977af2e0e4ab00117b",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 35,
+      "line": 38,
       "receiver": "router",
       "method": "get",
       "path": "/oauth",
@@ -107838,9 +108287,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5e1baef13c178e57cde0",
+      "id": "registration:ae9c7d1ec0bad63d8d68",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 57,
+      "line": 60,
       "receiver": "router",
       "method": "post",
       "path": "/connect",
@@ -107850,9 +108299,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9a3e0ce6688b1e4919b7",
+      "id": "registration:a26d9c0b95f215a247a2",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 137,
+      "line": 141,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -107862,9 +108311,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:45da630c992dfb1cdf92",
+      "id": "registration:ea5409b3d56f0ea695d7",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 173,
+      "line": 177,
       "receiver": "router",
       "method": "delete",
       "path": "/disconnect",
@@ -107874,9 +108323,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:26ce249aac6fb8a74a72",
+      "id": "registration:0a499b5d8a02c91ec2dd",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 183,
+      "line": 187,
       "receiver": "router",
       "method": "get",
       "path": "/projects",
@@ -107886,9 +108335,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1ea6a49283f9f3f14e42",
+      "id": "registration:689b7df5c7b631e0fa41",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 253,
+      "line": 259,
       "receiver": "router",
       "method": "post",
       "path": "/deploy",
@@ -107898,9 +108347,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:da92bd9e5f1e9a40e0b0",
+      "id": "registration:d1bf63a1390ff60996c7",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 310,
+      "line": 316,
       "receiver": "router",
       "method": "get",
       "path": "/domains",
@@ -107910,9 +108359,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c449d290e7ff8793ec9d",
+      "id": "registration:e5bbe025d775f7ecbb43",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 330,
+      "line": 336,
       "receiver": "router",
       "method": "post",
       "path": "/domains",
@@ -107922,9 +108371,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b5ec8fd485ebfff3550e",
+      "id": "registration:00b807c5239749df996a",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 365,
+      "line": 371,
       "receiver": "router",
       "method": "post",
       "path": "/domains/verify",
@@ -107934,9 +108383,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:afe29035dd87005ba3e0",
+      "id": "registration:78db67b82a55a4291b02",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 395,
+      "line": 401,
       "receiver": "router",
       "method": "delete",
       "path": "/domains",
@@ -110419,10 +110868,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:f83c54c436caa573d7e0",
-      "registrationId": "registration:66de5710f04a26d21137",
+      "id": "route:5d67d69e16cb164da040",
+      "registrationId": "registration:866f30352b7e17ff80dc",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "line": 67,
+      "line": 68,
       "method": "POST",
       "path": "/api/browser/runs",
       "mountChain": [
@@ -110436,10 +110885,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:b0937dfdc169bc768a18",
-      "registrationId": "registration:0b77a3fa688a9a02ea94",
+      "id": "route:00de3ee8be39802d6939",
+      "registrationId": "registration:2f0419f75ce137426664",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "line": 86,
+      "line": 87,
       "method": "GET",
       "path": "/api/browser/runs/:runId",
       "mountChain": [
@@ -110453,10 +110902,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:260a9e41d340f1805163",
-      "registrationId": "registration:4b54cd0ba78776df45ba",
+      "id": "route:cd6d650b891ca23c0d0a",
+      "registrationId": "registration:ae384f17ba578923436b",
       "sourcePath": "backend/src/routes/browserRuns.ts",
-      "line": 100,
+      "line": 101,
       "method": "DELETE",
       "path": "/api/browser/runs/:runId",
       "mountChain": [
@@ -110540,10 +110989,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:b456c7a211821c680d56",
-      "registrationId": "registration:0e220ab12c6a1e2fb12c",
+      "id": "route:352a149680806dc273cd",
+      "registrationId": "registration:ed6913a372b9518ee22b",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 97,
+      "line": 143,
       "method": "GET",
       "path": "/api/github/oauth",
       "mountChain": [
@@ -110557,10 +111006,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5c31dbc220172dc5c4bb",
-      "registrationId": "registration:c0894f92af3f3c0ca69b",
+      "id": "route:8e63a02814c4acbdc1bb",
+      "registrationId": "registration:47f6ad1e3cf85cf5f04d",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 111,
+      "line": 157,
       "method": "GET",
       "path": "/api/github/oauth-config",
       "mountChain": [
@@ -110574,10 +111023,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:64effe960cce7fdd52fa",
-      "registrationId": "registration:6686fe63516c365bac33",
+      "id": "route:af5c86ff60ba7849f917",
+      "registrationId": "registration:ecbc7087c509b761f390",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 124,
+      "line": 170,
       "method": "GET",
       "path": "/api/github/redirect",
       "mountChain": [
@@ -110591,10 +111040,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:228b40f1dc9e2a2e77b8",
-      "registrationId": "registration:e80c22a9108946839c4e",
+      "id": "route:955c0babdc3eb8a7ea4a",
+      "registrationId": "registration:e8f7d3ae5c17abb0c0b5",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 137,
+      "line": 183,
       "method": "POST",
       "path": "/api/github/connect",
       "mountChain": [
@@ -110608,10 +111057,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9cc7216bcf30e07f94d9",
-      "registrationId": "registration:70b1702c0b92be9aa198",
+      "id": "route:64ac6465b2a5e6d6f08d",
+      "registrationId": "registration:0cc3e3a1b0d43c1b59a1",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 220,
+      "line": 268,
       "method": "GET",
       "path": "/api/github/status",
       "mountChain": [
@@ -110625,10 +111074,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8092c9b5a5536e300984",
-      "registrationId": "registration:67cea5fce2ea7e2a18af",
+      "id": "route:af9e7cd95f6633e91db4",
+      "registrationId": "registration:1e2c8f68fe98db2c9749",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 269,
+      "line": 319,
       "method": "GET",
       "path": "/api/github/repos",
       "mountChain": [
@@ -110642,10 +111091,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:57037b755ac328e53d01",
-      "registrationId": "registration:c7b6be09bf9dffcbc15d",
+      "id": "route:c5fea203cdda7892a51f",
+      "registrationId": "registration:48afb8838a3c41478e7d",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 295,
+      "line": 345,
       "method": "GET",
       "path": "/api/github/repos/:owner/:repo/branches",
       "mountChain": [
@@ -110659,10 +111108,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a8b27a6b4ef2f4c76cfe",
-      "registrationId": "registration:2abd8f4154971e6a4bf3",
+      "id": "route:eac949d4412684ee9f39",
+      "registrationId": "registration:dcf6442a1056cb220a32",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 323,
+      "line": 373,
       "method": "PATCH",
       "path": "/api/github/settings",
       "mountChain": [
@@ -110676,10 +111125,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6e1388ba3f1d16a8a0f4",
-      "registrationId": "registration:bfc6c2cf5bc6e7cc8ecd",
+      "id": "route:81ad69262862f8d1538d",
+      "registrationId": "registration:e273ca8aa1621d59998e",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 347,
+      "line": 397,
       "method": "DELETE",
       "path": "/api/github/disconnect",
       "mountChain": [
@@ -110693,10 +111142,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3e40254cf7dde5162caa",
-      "registrationId": "registration:be70f6fd0d819d5a5093",
+      "id": "route:7aa1c389cb435384424f",
+      "registrationId": "registration:b896dbd8c8636132a3e4",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 357,
+      "line": 407,
       "method": "GET",
       "path": "/api/github/analyze",
       "mountChain": [
@@ -110710,10 +111159,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4f03e81bab86dc2e99dc",
-      "registrationId": "registration:b136d1721b0ab1b2dd5c",
+      "id": "route:5d241e7cb36b923155d0",
+      "registrationId": "registration:ec23d90103af663768dd",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 400,
+      "line": 450,
       "method": "GET",
       "path": "/api/github/repo-state",
       "mountChain": [
@@ -110727,10 +111176,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:193a47ed7b990684beb0",
-      "registrationId": "registration:1e3c4895f1840627f894",
+      "id": "route:599c9b5cc80aa53bf504",
+      "registrationId": "registration:ba9d4593dcd409344978",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 432,
+      "line": 482,
       "method": "GET",
       "path": "/api/github/build-files",
       "mountChain": [
@@ -110744,10 +111193,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3d1890b26aaeea5cde59",
-      "registrationId": "registration:5a53c9ffa6de654a13a5",
+      "id": "route:70b727b8d4dbd7af4767",
+      "registrationId": "registration:2a50e281498ed12e5e5a",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 452,
+      "line": 502,
       "method": "POST",
       "path": "/api/github/redeploy-preview",
       "mountChain": [
@@ -110761,10 +111210,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:022baea472318e115883",
-      "registrationId": "registration:6ab07648efc5d27118d0",
+      "id": "route:f6d247ff46aee0b39a63",
+      "registrationId": "registration:6e84e70f9e304ffff751",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 527,
+      "line": 577,
       "method": "POST",
       "path": "/api/github/push-build",
       "mountChain": [
@@ -110778,10 +111227,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:593240c3bbd270e9031f",
-      "registrationId": "registration:8d10ad2bca73dd602d91",
+      "id": "route:a5345843d60699233633",
+      "registrationId": "registration:585736eb8cee4dd494f8",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 613,
+      "line": 663,
       "method": "POST",
       "path": "/api/github/rollback",
       "mountChain": [
@@ -110795,10 +111244,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ef29e3dee6aaf97c3c3e",
-      "registrationId": "registration:c4dc1c3a9827b9c0c91c",
+      "id": "route:6a400a968c0dac31f673",
+      "registrationId": "registration:e2977af2e0e4ab00117b",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 35,
+      "line": 38,
       "method": "GET",
       "path": "/api/vercel/oauth",
       "mountChain": [
@@ -110812,10 +111261,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b2880b695d45a8ac2bc5",
-      "registrationId": "registration:5e1baef13c178e57cde0",
+      "id": "route:074c72abe9ade00e6a40",
+      "registrationId": "registration:ae9c7d1ec0bad63d8d68",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 57,
+      "line": 60,
       "method": "POST",
       "path": "/api/vercel/connect",
       "mountChain": [
@@ -110829,10 +111278,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:080a7879d902147d9214",
-      "registrationId": "registration:9a3e0ce6688b1e4919b7",
+      "id": "route:8c25c790733933ce73ce",
+      "registrationId": "registration:a26d9c0b95f215a247a2",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 137,
+      "line": 141,
       "method": "GET",
       "path": "/api/vercel/status",
       "mountChain": [
@@ -110846,10 +111295,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d397d8ea61fc879f2e3c",
-      "registrationId": "registration:45da630c992dfb1cdf92",
+      "id": "route:70e730e57615e15e9f6a",
+      "registrationId": "registration:ea5409b3d56f0ea695d7",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 173,
+      "line": 177,
       "method": "DELETE",
       "path": "/api/vercel/disconnect",
       "mountChain": [
@@ -110863,10 +111312,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a54889e83a1d5a56b348",
-      "registrationId": "registration:26ce249aac6fb8a74a72",
+      "id": "route:10f2a2e295eaaed1aeba",
+      "registrationId": "registration:0a499b5d8a02c91ec2dd",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 183,
+      "line": 187,
       "method": "GET",
       "path": "/api/vercel/projects",
       "mountChain": [
@@ -110880,10 +111329,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:161ad6c0981f19d4b184",
-      "registrationId": "registration:1ea6a49283f9f3f14e42",
+      "id": "route:991d18f6616b3beb675c",
+      "registrationId": "registration:689b7df5c7b631e0fa41",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 253,
+      "line": 259,
       "method": "POST",
       "path": "/api/vercel/deploy",
       "mountChain": [
@@ -110897,10 +111346,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1140e3953392e6464c35",
-      "registrationId": "registration:da92bd9e5f1e9a40e0b0",
+      "id": "route:c3fbb74055d41ccd6c03",
+      "registrationId": "registration:d1bf63a1390ff60996c7",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 310,
+      "line": 316,
       "method": "GET",
       "path": "/api/vercel/domains",
       "mountChain": [
@@ -110914,10 +111363,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4c1c5005bca0565c2cce",
-      "registrationId": "registration:c449d290e7ff8793ec9d",
+      "id": "route:9dbb6d2bd87659181b81",
+      "registrationId": "registration:e5bbe025d775f7ecbb43",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 330,
+      "line": 336,
       "method": "POST",
       "path": "/api/vercel/domains",
       "mountChain": [
@@ -110931,10 +111380,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:396c480b303e68f0d771",
-      "registrationId": "registration:b5ec8fd485ebfff3550e",
+      "id": "route:af4145b27b64d74fe83a",
+      "registrationId": "registration:00b807c5239749df996a",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 365,
+      "line": 371,
       "method": "POST",
       "path": "/api/vercel/domains/verify",
       "mountChain": [
@@ -110948,10 +111397,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b1a7636300cd82dfd2dd",
-      "registrationId": "registration:afe29035dd87005ba3e0",
+      "id": "route:5e53a4e2a0d30a9f094a",
+      "registrationId": "registration:78db67b82a55a4291b02",
       "sourcePath": "backend/src/routes/vercel.ts",
-      "line": 395,
+      "line": 401,
       "method": "DELETE",
       "path": "/api/vercel/domains",
       "mountChain": [
@@ -112240,9 +112689,9 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:e76ef87319888225ee46",
+      "id": "schedule:4d2130b61454aca8aeab",
       "sourcePath": "backend/src/workers/browserTaskHandler.ts",
-      "line": 153,
+      "line": 157,
       "kind": "setInterval",
       "symbol": "run",
       "reachable": true,
@@ -113496,8 +113945,12 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "a9321b6cb7bb898837b5686c99109a5f580692c62f1537749fbb52a1a989cb9d",
+      "sha256": "80485bdce7a538581d903a747eecd604749f845113bab42dc24ee739b830e339",
       "sourceEntrypoints": [
+        "frontend/e2e/phase4-admin-share.security.mjs",
+        "frontend/e2e/phase4-api-clients.security.mjs",
+        "frontend/e2e/phase4-auth-provider.security.mjs",
+        "frontend/e2e/phase4-image-client.browser.mjs",
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/disposable-supabase.test.mjs",
@@ -114325,7 +114778,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:22f9ec9c23a2e962e08e",
+      "id": "finding:559948a09a0099a190f8",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
       "line": 104,
       "kind": "PLACEHOLDER",
@@ -117578,17 +118031,199 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:9220dd5ed0b2b77d2704",
+      "id": "frontend-call:c2d1e41fc83707ec4574",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 35,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:0f0f1e0f78643137b776",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 37,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:247f6e5cd9072972656f",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 42,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:1d4932a6f4f5edb7d001",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 42,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:cb506ed7538d98c4cf08",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 54,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:6acfdc7533f2dc091a2a",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 56,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:2f3019db40cc0be8ebde",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 64,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:896846e09ac791915fa7",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "line": 64,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:ccac7a9caecd93d4df71",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 39,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:485c40ffb6e333fc4fa8",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 41,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:23d0db83b91ef66c6f36",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 51,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:500190b7d28a9f84f9ec",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 51,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:657831a52e45e9dee8cc",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 64,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:5137dbc0f82b61e7faa2",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 66,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:05d4ff0aed0a69d15de6",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 79,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:4133bfe1371370228d59",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 79,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c39cecd8fabed3a53eb1",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 81,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:2363e3d9f3a884840639",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 81,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:9d1f9cbad25938797ada",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 88,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:6f411d9f8a17bfb0be9f",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 92,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:352dc8e0e645bc7bcf5c",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 98,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:f87f6822dbe9b9e9ea6d",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 100,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:62ee3fb7a6eb854d0384",
+      "sourcePath": "frontend/e2e/phase4-auth-provider.security.mjs",
+      "line": 17,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c2b01f5f603790e71afd",
+      "sourcePath": "frontend/e2e/phase4-auth-provider.security.mjs",
+      "line": 19,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:9e8e8b67823d57e225fd",
+      "sourcePath": "frontend/e2e/phase4-auth-provider.security.mjs",
+      "line": 22,
+      "callee": "api.closeAllConnections",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:d4803c47f0622f871f35",
+      "sourcePath": "frontend/e2e/phase4-auth-provider.security.mjs",
+      "line": 22,
+      "callee": "api.close",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:56871ea38ea905a33c2a",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
       "line": 45,
-      "callee": "fetch",
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:976721dbaa7c4ade22d7",
+      "id": "frontend-call:b9b1c402a3c126ea212d",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
       "line": 46,
-      "callee": "fetch",
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -117711,10 +118346,10 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:2a6dcf446ff46c252a70",
+      "id": "frontend-call:aa4d9ce973e5a63d140f",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "line": 42,
-      "callee": "fetch",
+      "line": 37,
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -119937,24 +120572,31 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:e674c38fe5421ebebd68",
+      "id": "frontend-call:37e4d8ab5f59eea4d551",
       "sourcePath": "frontend/src/lib/api.ts",
       "line": 427,
+      "callee": "fetchApiResponse",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:2a448e175265071fe0aa",
+      "sourcePath": "frontend/src/lib/api.ts",
+      "line": 730,
+      "callee": "fetchApiResponse",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:329786ea9c499b68735f",
+      "sourcePath": "frontend/src/lib/api.ts",
+      "line": 1425,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:647a05f45901a71d95f7",
+      "id": "frontend-call:aa84b821fb54cc5b4e33",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 729,
-      "callee": "fetch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:9038336e151147ac1ce5",
-      "sourcePath": "frontend/src/lib/api.ts",
-      "line": 1644,
-      "callee": "fetch",
+      "line": 1666,
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -119979,10 +120621,10 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:c59cbbecd521e04c578f",
+      "id": "frontend-call:3fdeceebdbda947aae72",
       "sourcePath": "frontend/src/lib/community.ts",
       "line": 56,
-      "callee": "fetch",
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -120021,38 +120663,24 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:32dbe3ff258ae0d099cd",
+      "id": "frontend-call:b5ca9f9b13ebeb7fc3e9",
       "sourcePath": "frontend/src/lib/imageStudioUtils.ts",
-      "line": 49,
+      "line": 66,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:13e195a1e3306039e520",
-      "sourcePath": "frontend/src/lib/imageStudioUtils.ts",
-      "line": 58,
-      "callee": "fetch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:beecc44d41cd5d70847e",
-      "sourcePath": "frontend/src/lib/imageStudioUtils.ts",
-      "line": 76,
-      "callee": "fetch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:e1f046a7c2d8aaccf2af",
+      "id": "frontend-call:f8134f5aeb267de082a3",
       "sourcePath": "frontend/src/lib/projectDeliveryApi.ts",
-      "line": 232,
-      "callee": "fetch",
+      "line": 233,
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:e6c620eae22fa35f2d44",
+      "id": "frontend-call:d575b7b6c20c4c7e60ec",
       "sourcePath": "frontend/src/lib/projectDeliveryApi.ts",
-      "line": 357,
-      "callee": "fetch",
+      "line": 358,
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -120070,10 +120698,10 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:b2d67148fc04ec65e9cb",
+      "id": "frontend-call:9b2383d1f7f830d9f43f",
       "sourcePath": "frontend/src/lib/projectRuntimeApi.ts",
-      "line": 54,
-      "callee": "fetch",
+      "line": 55,
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -120140,10 +120768,10 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:8f153fd597914bc543c7",
+      "id": "frontend-call:45740356d76c90ebc1fe",
       "sourcePath": "frontend/src/lib/runGuestLaneChat.ts",
       "line": 38,
-      "callee": "fetch",
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -120175,7 +120803,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:6ae511b9ae2cf0aa3fd5",
+      "id": "frontend-call:98d3c98a6e63402519ed",
       "sourcePath": "frontend/src/lib/supabase/authProviders.ts",
       "line": 5,
       "callee": "fetch",
@@ -120210,10 +120838,10 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:7deee37cd3b9b4b6e9d6",
+      "id": "frontend-call:ad5702a89eb87f488244",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
       "line": 7,
-      "callee": "fetch",
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -120443,6 +121071,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:874a5fcf5b9574cf00a9",
+      "sourcePath": "backend/src/ai/black-hole/xResearchAdmission.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:3bd07777dd997543a6df",
       "sourcePath": "backend/src/ai/blackBoxExecution.test.ts",
       "declaredTests": 7,
@@ -120620,7 +121255,7 @@
     {
       "id": "test-suite:39e3d217919ea5cb9787",
       "sourcePath": "backend/src/ai/executionRuntime.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -120718,6 +121353,13 @@
     {
       "id": "test-suite:a6ff04ca03863b7cf8f1",
       "sourcePath": "backend/src/ai/modelContext.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4e55abaee847933e0480",
+      "sourcePath": "backend/src/ai/modelRedirectFallback.security.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -121192,6 +121834,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:e17ab49e326f5ce928a4",
+      "sourcePath": "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:087e43283818f1a791c3",
       "sourcePath": "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts",
       "declaredTests": 2,
@@ -121419,6 +122068,20 @@
       "id": "test-suite:9a79d2acb578e11ae487",
       "sourcePath": "backend/src/config/platformEnvironment.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2189bd058b17a352aa28",
+      "sourcePath": "backend/src/config/supabaseClientTransport.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0635299b2aab796ed24e",
+      "sourcePath": "backend/src/config/supabaseTransport.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -121692,6 +122355,13 @@
       "id": "test-suite:d99ed833151b1f6d0361",
       "sourcePath": "backend/src/lib/publicAiIdentity.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c774b4f9d039717f1518",
+      "sourcePath": "backend/src/lib/publishingTransport.security.test.ts",
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -122050,7 +122720,14 @@
     {
       "id": "test-suite:f8e727c1f3b14a43a270",
       "sourcePath": "backend/src/routes/browserRuns.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:ea6e0841a7b0de1e0dfe",
+      "sourcePath": "backend/src/routes/browserRunsIdentity.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -122100,6 +122777,13 @@
       "id": "test-suite:a83f2974ac9cdfdce159",
       "sourcePath": "backend/src/routes/github.settings.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:37ab812ac231a0f77a8c",
+      "sourcePath": "backend/src/routes/githubTransport.security.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -122233,6 +122917,13 @@
       "id": "test-suite:31c2b59404cabca4c4b7",
       "sourcePath": "backend/src/routes/terminalSessions.payload.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:63bfd03308e86c94457d",
+      "sourcePath": "backend/src/routes/vercelTransport.security.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -122517,6 +123208,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:cf8a7aceeed9ffac56b9",
+      "sourcePath": "backend/src/security/egress/dormantConsequentialAdapters.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b6ee0ffbb82ac5d76211",
       "sourcePath": "backend/src/security/egress/egress.integration.test.ts",
       "declaredTests": 6,
@@ -122545,6 +123243,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:1d979326e6ce44669e0a",
+      "sourcePath": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:95c27fb9ddccda8396aa",
       "sourcePath": "backend/src/security/egress/publicPost.test.ts",
       "declaredTests": 4,
@@ -122554,6 +123259,13 @@
     {
       "id": "test-suite:8acdca7d792c392c037b",
       "sourcePath": "backend/src/security/egress/unreachableBrowserAdapters.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2a53868e190ac7f10bcf",
+      "sourcePath": "backend/src/security/egress/unusedProcessTree.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -122611,6 +123323,13 @@
       "id": "test-suite:bfcde492436944d3f799",
       "sourcePath": "backend/src/security/legacyBuildHistory.local.integration.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:5cd930dc75825eb5cd27",
+      "sourcePath": "backend/src/security/localEgressCandidates.security.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -123058,7 +123777,7 @@
     {
       "id": "test-suite:cf6f911e3487a9190775",
       "sourcePath": "backend/src/services/integrations/composioClient.security.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -123322,6 +124041,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:4ab867b4eb6118be88c5",
+      "sourcePath": "backend/src/services/integrations/supabaseTransport.security.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:daadaf70bc883c8e260b",
       "sourcePath": "backend/src/services/integrations/universalRepositoryHydration.test.ts",
       "declaredTests": 2,
@@ -123427,6 +124153,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:6d11f509a0a5555e09ef",
+      "sourcePath": "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:a22b58b60378b23b7f02",
       "sourcePath": "backend/src/services/integrations/vercelGitProject.test.ts",
       "declaredTests": 3,
@@ -123514,6 +124247,13 @@
       "id": "test-suite:68aa07a402e941448d58",
       "sourcePath": "backend/src/services/publish/electronSecrets.authority.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7b6ff2b3bdbe75a3d708",
+      "sourcePath": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -123609,6 +124349,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:bdb2fb2eb4b1ebf7bf36",
+      "sourcePath": "backend/src/services/whopCheckoutTransport.security.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:6183575ef7c8e5f6671e",
       "sourcePath": "backend/src/storage/artifactSink.test.ts",
       "declaredTests": 3,
@@ -123700,6 +124447,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8532e130f5fd1dfd9e6f",
+      "sourcePath": "backend/src/storage/r2BucketBoundary.security.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:77e7aa061c4aa9e84f9d",
       "sourcePath": "backend/src/storage/r2ObjectStore.test.ts",
       "declaredTests": 8,
@@ -123717,6 +124471,13 @@
       "id": "test-suite:0d80c91de85106ed31b9",
       "sourcePath": "backend/src/storage/schemaUpgrade.integration.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:95e67bc90a15eb48221d",
+      "sourcePath": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -124304,7 +125065,14 @@
     {
       "id": "test-suite:c438878f49512b824148",
       "sourcePath": "backend/src/workers/browserCoordinator.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:92d322268fb191798f96",
+      "sourcePath": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -124316,9 +125084,23 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8d2abca6d8532ff96f74",
+      "sourcePath": "backend/src/workers/browserModelFixture.test.ts",
+      "declaredTests": 0,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:cd874a61910a80c284af",
       "sourcePath": "backend/src/workers/browserModelGateway.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:fe794307d0a6d418101f",
+      "sourcePath": "backend/src/workers/browserModelLifetime.security.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -124337,9 +125119,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:4275d45a27471111bafb",
+      "sourcePath": "backend/src/workers/browserSdkBoundary.security.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e97e229f71d41cb2dc30",
       "sourcePath": "backend/src/workers/browserTaskHandler.test.ts",
-      "declaredTests": 37,
+      "declaredTests": 39,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -124364,6 +125153,13 @@
       "id": "test-suite:0ea82b6830d48edaefe5",
       "sourcePath": "backend/src/workers/containerSpec.test.ts",
       "declaredTests": 22,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:073d34bb65544a7375c2",
+      "sourcePath": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -124594,9 +125390,37 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:40c1ec89cfed7e1ae20f",
+      "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:390111a36ea9336226b7",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bda3e9a02dae6529b6ba",
+      "sourcePath": "frontend/e2e/phase4-auth-provider.security.mjs",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:7a08a538219f59d2ed1d",
       "sourcePath": "frontend/e2e/phase4-cookie-isolation.spec.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c66af3f880ca3f4e8194",
+      "sourcePath": "frontend/e2e/phase4-image-client.browser.mjs",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -126122,7 +126946,7 @@
     {
       "id": "test-suite:2af826e7fdbe8ac0fda2",
       "sourcePath": "scripts/security/source-lifetime-bindings.test.mjs",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -6,26 +6,41 @@
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
       "beforeSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
-      "currentSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+      "currentSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
       "matches": [
         {
           "beforeId": "b9d29af2f2ef47d2dbd8",
-          "afterId": "5f28d665d687ff7e0502",
+          "afterId": "be5069f3467fad24f1c5",
           "enclosing": "attachRuntimePreviewWebSocketGateway",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
           "callSha256": "f65e23f9000ea339366ea597789c04dae85885fb72400451daefb3845c968295"
         }
-      ]
+      ],
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/middleware/runtimePreviewGateway.ts",
+        "beforeSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+        "currentSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+        "matches": [
+          {
+            "beforeId": "b9d29af2f2ef47d2dbd8",
+            "afterId": "5f28d665d687ff7e0502",
+            "enclosing": "attachRuntimePreviewWebSocketGateway",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "<dynamic>",
+            "callSha256": "f65e23f9000ea339366ea597789c04dae85885fb72400451daefb3845c968295"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
       "beforeSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
-      "currentSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "currentSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
       "matches": [
         {
           "beforeId": "b4b2b91f3280a140691a",
-          "afterId": "55ac9b0f3f9ba972ca8c",
+          "afterId": "660909aa15c676228c90",
           "enclosing": "getIntegration",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -33,7 +48,7 @@
         },
         {
           "beforeId": "48c115e3fcc79a824240",
-          "afterId": "2360912af68a9536c836",
+          "afterId": "148d27d99764607b2339",
           "enclosing": "getIntegration",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "github_integrations",
@@ -41,7 +56,7 @@
         },
         {
           "beforeId": "a6b38f59fd65dcf93b63",
-          "afterId": "d1009c426dd9153743b7",
+          "afterId": "355f4dbeae8a416a7e42",
           "enclosing": "fetchRepoTextFile",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -49,13 +64,52 @@
         },
         {
           "beforeId": "ff18538f080dddb2c506",
-          "afterId": "ad1b1dafdbd324ceed15",
+          "afterId": "45aec3a8752cfb119062",
           "enclosing": "decodeRepositoryTextBlob",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
           "callSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
         }
-      ]
+      ],
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "beforeSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+        "currentSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+        "matches": [
+          {
+            "beforeId": "b4b2b91f3280a140691a",
+            "afterId": "55ac9b0f3f9ba972ca8c",
+            "enclosing": "getIntegration",
+            "kind": "PRIVILEGED_FACTORY",
+            "target": "getSupabaseAdmin",
+            "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+          },
+          {
+            "beforeId": "48c115e3fcc79a824240",
+            "afterId": "2360912af68a9536c836",
+            "enclosing": "getIntegration",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "github_integrations",
+            "callSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+          },
+          {
+            "beforeId": "a6b38f59fd65dcf93b63",
+            "afterId": "d1009c426dd9153743b7",
+            "enclosing": "fetchRepoTextFile",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "<dynamic>",
+            "callSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4"
+          },
+          {
+            "beforeId": "ff18538f080dddb2c506",
+            "afterId": "ad1b1dafdbd324ceed15",
+            "enclosing": "decodeRepositoryTextBlob",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "<dynamic>",
+            "callSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",

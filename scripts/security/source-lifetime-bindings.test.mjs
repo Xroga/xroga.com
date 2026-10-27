@@ -18,9 +18,24 @@ test('current transport proof binds every claimed source and keeps unresolved ca
     '31380a8d5b9454a98a98':'VERIFIED_GUARD',
     '9c345e07b723c086440e':'VERIFIED_GUARD',
     '4c899876b9e3850af11b':'VERIFIED_GUARD',
+    '9ea21a6fc8b8700460c0':'VERIFIED_GUARD',
   });
   assert.equal(proof.phase4,'PREPARATORY_NOT_ACCEPTED');
-  assert.equal(proof.phase3,'B1_P3_BLOCKED');assert.equal(proof.productionEffects,false);assert.equal(proof.spend,0);
+  assert.equal(proof.phase3,'B1_P3_VERIFIED');
+  assert.equal(proof.historicalPreparation.phase3,'B1_P3_BLOCKED');
+  assert.equal(proof.currentSourceAcceptance,'NOT_VERIFIED');
+  assert.equal(proof.productionEffects,false);assert.equal(proof.spend,0);
+});
+
+test('current metadata continuation preserves the exact historical proof files without promoting acceptance',()=>{
+  const read=p=>readFileSync(p,'utf8').replace(/\r\n/g,'\n'),hash=s=>createHash('sha256').update(s).digest('hex');
+  const proof=JSON.parse(read('docs/xroga/evidence/command-010/CURRENT-PROOF-METADATA-CONTINUATION-20261028.json'));
+  assert.equal(proof.phase4Accepted,false);assert.equal(proof.strictEgressAuditorChanged,false);assert.equal(proof.frozenCriteriaChanged,false);
+  for(const binding of proof.originalProofs){
+    assert.equal(hash(read(binding.archive)),binding.historicalSha256);
+    assert.equal(read(binding.archive),execFileSync('git',['show',`${proof.archiveRef}:${binding.path}`],{encoding:'utf8',maxBuffer:20*1024*1024}).replace(/\r\n/g,'\n'));
+    assert.equal(hash(read(binding.path)),binding.currentSha256);
+  }
 });
 
 test('source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries', () => {

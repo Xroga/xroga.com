@@ -9,26 +9,61 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
-      "genericSdkPreviousCurrentBinding": {"reference":"2dc69b2b3df123f30e7e6b493266b10b7e2acad8","sha256":"2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc","afterIds":["6c962371859b256ff96c","8db8b524179b45694274"],"scope":"HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"},
+      "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+      "genericSdkPreviousCurrentBinding": {
+        "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+        "afterIds": [
+          "6c962371859b256ff96c",
+          "8db8b524179b45694274"
+        ],
+        "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+      },
       "beforeIds": [
         "01d5efe9b761bc670212",
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "af88e0f5ab6048f75011",
-        "863e45f48048017eb977"
+        "b092008f2d41b3ddf1d9",
+        "40b6d116790751a2b569"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
         "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
       ],
-      "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+      "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/ai/pipeline.ts",
+        "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+        "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+        "genericSdkPreviousCurrentBinding": {
+          "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "afterIds": [
+            "6c962371859b256ff96c",
+            "8db8b524179b45694274"
+          ],
+          "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+        },
+        "beforeIds": [
+          "01d5efe9b761bc670212",
+          "944a58bb15dca85b3ddd"
+        ],
+        "afterIds": [
+          "af88e0f5ab6048f75011",
+          "863e45f48048017eb977"
+        ],
+        "unchangedNearestBlockSha256": [
+          "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+          "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+        ],
+        "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+      }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+      "currentSha256": "c39b7e3b3c17442c56c575628bbcf6fdcb56e11453a67190f449da09c5e2e3be",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -44,18 +79,51 @@
         "ebede146c851a085d2b8"
       ],
       "afterIds": [
-        "ebede146c851a085d2b8"
+        "29043e1b2d0f9c86568b"
       ],
       "unchangedNearestBlockSha256": [
         "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
       ],
-      "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof."
+      "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof.",
+      "beforeCurrentMetadataReconciliation": {
+        "path": "backend/src/routes/phase1.ts",
+        "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+        "currentSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+        "businessModelContinuationBinding": {
+          "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
+          "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
+          "unchangedToolUiLinkFunctionSha256": "fddbc236a5255bcff25c878a747c44abb719d201b9bbfece0ec3f9b1d1df58cb",
+          "scope": "UNCHANGED_LOCAL_BUFFER_CONVERSION_NOT_NEW_CALLER_CERTIFICATION"
+        },
+        "previousCurrentBinding": {
+          "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+          "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+          "scope": "HISTORICAL_PREPARATION_NOT_NEW_SOURCE_ACCEPTANCE"
+        },
+        "beforeIds": [
+          "ebede146c851a085d2b8"
+        ],
+        "afterIds": [
+          "ebede146c851a085d2b8"
+        ],
+        "unchangedNearestBlockSha256": [
+          "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
+        ],
+        "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof."
+      }
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
       "historicalSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
       "currentSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
-      "genericSdkPreviousCurrentBinding": {"reference":"2dc69b2b3df123f30e7e6b493266b10b7e2acad8","sha256":"91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2","afterIds":["cfba5e514ab70426438c"],"scope":"HISTORICAL_EXACT_CONSTRUCTOR_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"},
+      "genericSdkPreviousCurrentBinding": {
+        "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+        "afterIds": [
+          "cfba5e514ab70426438c"
+        ],
+        "scope": "HISTORICAL_EXACT_CONSTRUCTOR_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+      },
       "beforeIds": [
         "10b5e279dd241e2f40ec"
       ],
