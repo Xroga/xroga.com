@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 187,
-    "persistenceCandidates": 795,
+    "persistenceCandidates": 798,
     "ownerPredicateCandidates": 195,
-    "reviewRequired": 113,
+    "reviewRequired": 116,
     "reviewedCandidates": 682,
-    "unresolvedSafetyCandidates": 140,
+    "unresolvedSafetyCandidates": 143,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 113,
+    "REVIEW_REQUIRED": 116,
     "SCOPED_BOUNDARY": 451,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 164,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 106,
-    "unresolvedCandidateBoundaries": 689,
+    "unresolvedCandidateBoundaries": 692,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4296,6 +4296,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "a1874ed76cb34dfdc5eb"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "63e27e1f6b29fe5d4d0b"
       },
       {
@@ -4437,6 +4441,14 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "8f3c7995974f0b7357a6"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "895c29e4087fcd99bdbe"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6b6da5f598661dafa90b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4908,6 +4920,10 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "a1874ed76cb34dfdc5eb"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "63e27e1f6b29fe5d4d0b"
       },
       {
@@ -5005,6 +5021,14 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "6a5f707e725aad757a40"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "895c29e4087fcd99bdbe"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6b6da5f598661dafa90b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7273,10 +7297,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 795,
+    "currentCallers": 798,
     "structuredVerified": 106,
-    "structuredUnproven": 689,
-    "manualUnresolved": 140,
+    "structuredUnproven": 692,
+    "manualUnresolved": 143,
     "manualUnsupported": 549,
     "agreedVerified": 106,
     "proofAwaitingManualReconciliation": 0
@@ -22881,6 +22905,17 @@
       "sourceSha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
     },
     {
+      "id": "a1874ed76cb34dfdc5eb",
+      "path": "backend/src/workers/browserRunDispatch.ts",
+      "line": 88,
+      "enclosing": "dispatch",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "5debe366cc9ecf816456bbfd64b6e45189c0e7a6c532121c303b736be833aaa6"
+    },
+    {
       "id": "63e27e1f6b29fe5d4d0b",
       "path": "backend/src/workers/browserTaskHandler.ts",
       "line": 197,
@@ -24370,6 +24405,28 @@
           }
         ]
       }
+    },
+    {
+      "id": "895c29e4087fcd99bdbe",
+      "path": "frontend/src/lib/driveUpload.ts",
+      "line": 104,
+      "enclosing": "uploadFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e"
+    },
+    {
+      "id": "6b6da5f598661dafa90b",
+      "path": "frontend/src/lib/driveUpload.ts",
+      "line": 113,
+      "enclosing": "uploadFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e"
     },
     {
       "id": "a428381cd3d08363ea1c",

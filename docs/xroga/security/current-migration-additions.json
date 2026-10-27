@@ -193,6 +193,18 @@
       "tests": "scripts/infrastructure/test-google-delivery-postgres.py",
       "evidence": "Ten real isolated PostgreSQL17 assertions pass, including anon/authenticated denial, row-preserving reapply, owner denial, duplicate claims, launch ceiling, original cancellation and original terminal writer/result fencing. Full hosted staging and live Google caller proof remain required.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "browser_runs",
+      "migration": "20261026100000_browser_runs_durable.sql",
+      "migrationSha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b",
+      "authorizationMigration": "20261026100000_browser_runs_durable.sql",
+      "authorizationSha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b",
+      "boundary": "RLS enabled. No grant to anon, authenticated or PUBLIC; service_role only (the API). Durable browser run record: validated spec, canonical state and cancel flag. Every API read and write is owner scoped by user_id; the signed internal endpoints load a run by id and then act only as the owner it names.",
+      "tests": "backend/src/workers/browserRunStore.integration.test.ts",
+      "evidence": "Batch 1.5 audit migration (PR #861), not applied to production. The real-PostgreSQL integration test runs the migration and asserts RLS and the absence of public grants on a disposable database; the disposable full-history run verifies it installs. Not production schema parity or certification by inventory.",
+      "productionChanges": false
     }
   ]
 }

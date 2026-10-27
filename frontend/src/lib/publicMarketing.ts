@@ -12,6 +12,7 @@ export const PRIVATE_PREFIXES = [
   '/dashboard',
   '/admin',
   '/settings',
+  '/drive',
   '/auth',
   '/onboarding',
   '/share',
