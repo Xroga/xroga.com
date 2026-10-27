@@ -1,3 +1,6 @@
+> **SUPERSEDED as a target architecture (2026-10-27).** Google Cloud Run is now the canonical backend compute and execution platform: the Fly.io to Google Cloud migration is accepted and merged (#856, #864). Oracle Cloud is **not** used for hosting or execution, and Fly.io is retired. The Phase 2 and Phase 3 hosting rows below that name Oracle are historical; Phase 2 was delivered on Google (see phase-2/).
+> This file is kept unchanged below as the historical record of the 2026-10-22 decision. Current runtime facts: `docs/operations/google-production-migration.md`; Batch 1.5 Phase 2 (Google workers, scheduler, browser host): `docs/infra/batch-1.5/phase-2/`.
+
 # Phase 1 → Phase 2 handoff
 
 Phase 2 (INFRA-004/005/006) is **not started**. This lists the exact seams that exist now, so nothing needs to be redesigned.
