@@ -74,3 +74,17 @@ test('a planner decision cannot silently omit freshness', () => {
   });
   assert.equal(goalContractSchema.safeParse(normalized).success, false);
 });
+
+test('a project context without repository identity normalizes to null instead of failing validation', () => {
+  const builder = normalizeGoalContractCandidate({ ...base, projectContext: { projectRoot: '/' } });
+  assert.equal(goalContractSchema.parse(builder).projectContext, null);
+  const partial = normalizeGoalContractCandidate({ ...base, projectContext: { repo: 'owner/name' } });
+  assert.equal(goalContractSchema.parse(partial).projectContext, null);
+});
+
+test('a complete project context is preserved', () => {
+  const value = goalContractSchema.parse(
+    normalizeGoalContractCandidate({ ...base, projectContext: { repo: 'owner/name', branch: 'main' } }),
+  );
+  assert.deepEqual(value.projectContext, { repo: 'owner/name', branch: 'main', projectRoot: '/' });
+});

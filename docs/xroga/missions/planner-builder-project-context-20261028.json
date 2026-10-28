@@ -1,0 +1,101 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-PLANNER-BUILDER-PROJECT-CONTEXT-20261028",
+  "baseSha": "660b5960289cb26a555a734b2b745d158976ed14",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Live authenticated Batch 2 builds failed at the semantic planner. The new planner-failure log showed validation detail \"Required; Required\": the model returns a projectContext object for a Builder project, which has no repository, so repo and branch are missing. Normalize a project context without repo and branch to null instead of failing validation; a complete context is preserved.",
+  "changedFiles": [
+    "backend/src/ai/universal/goalContract.test.ts",
+    "backend/src/ai/universal/goalContract.ts",
+    "docs/xroga/missions/planner-builder-project-context-20261028.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Strict goal contract schema and failure codes are unchanged",
+      "Values are not invented: an unidentifiable project context becomes absent"
+    ],
+    "extend": [
+      "Planner output normalization treats a repository-less project context as null"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change.",
+    "rollback": "Revert the commit and redeploy the previous image."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress change; the line goes to the existing process log only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No change."
+    }
+  },
+  "tests": [
+    {
+      "command": "npx tsx --test src/ai/universal/goalContract.test.ts (in backend)",
+      "scope": "Repository-less project context normalizes to null; complete context preserved. 7 PASS.",
+      "negative": true,
+      "reference": "backend/src/ai/universal/goalContract.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adjusts planner output normalization only. No new orchestrator or control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks, build the release image, create a 0% revision, switch traffic with the Job, then repeat the authenticated build.",
+  "rollback": "Revert the commit and redeploy; restore the previous service revision and Job image and label.",
+  "knownGaps": [
+    "Later pipeline stages for a Builder run are unproven until the live build advances past planning"
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch 2 building is not accepted until a live authenticated build saves a revision"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and merge",
+      "Release image build and deploy",
+      "Live authenticated Batch 2 build evidence"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "backend/src/ai/universal/goalContract.test.ts"
+  ]
+}
