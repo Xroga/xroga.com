@@ -5,7 +5,7 @@
   "requirementIds": ["XR-FAMILY-composio-dynamic-tools", "XR-FAMILY-workflow-work-packs", "XR-ORIGINAL-F041"],
   "state": "CODE_COMPLETE",
   "risk": "high",
-  "scope": "Extend Xroga's existing Composio-backed connected-app workflow to six source-bound steps, including mixed app reads/actions and explicit public-web evidence, with bounded semantic segmentation, current-step app suggestions, visible progress, scheduled-rule reuse, truthful OAuth ACTIVE-state verification, and server-side guards against answering explicit connected-account reads from generic web results or misrouting those reads into software builds. This is not a claim that all Composio actions or signed-in live workflows have succeeded.",
+  "scope": "Extend Xroga's existing Composio-backed connected-app workflow to six source-bound steps, including mixed app reads/actions and explicit public-web evidence, with bounded semantic segmentation, current-step app suggestions, visible progress, scheduled-rule reuse, truthful OAuth ACTIVE-state verification, plugin-page task context, and server-side guards against answering explicit connected-account reads from generic web results or substituting a destination title for named source content. Isolated live staging has verified selected Sheets and Canva operations, not all Composio actions or production traffic.",
   "changedFiles": [
     "backend/.env.example",
     "backend/tsconfig.json",
@@ -14,6 +14,7 @@
     "backend/src/routes/integrations.ts",
     "backend/src/routes/phase1.ts",
     "backend/src/services/integrations/businessAutomations.ts",
+    "backend/src/services/integrations/businessAction.ts",
     "backend/src/services/integrations/businessWorkflow.test.ts",
     "backend/src/services/integrations/businessWorkflow.ts",
     "backend/src/services/integrations/businessWorkflowPlanner.ts",
@@ -25,6 +26,9 @@
     "backend/src/services/integrations/composioClient.ts",
     "frontend/src/app/(shell)/dashboard/integrations/connect/callback/page.tsx",
     "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+    "frontend/src/components/integrations/PluginDetail.tsx",
+    "frontend/src/lib/phase1Routing.ts",
+    "frontend/src/lib/phase1Routing.test.ts",
     "frontend/src/lib/pluginStep2.test.ts",
     "docs/xroga/blockers.md",
     "docs/xroga/current-state.json",
@@ -38,7 +42,7 @@
   ],
   "decisions": {
     "keep": ["Current Xroga semantic planner, Composio catalog/tool-search/skill guidance, business read/action selectors, tenant boundaries, confirmation receipts, Supabase workflow checkpoints, scheduler, and budget ledger"],
-    "extend": ["Bounded source-bound multi-step segmentation and existing workflow runner", "Exact-origin OAuth callback and ACTIVE connection verification", "Current-step recommendations and ordered progress display"],
+    "extend": ["Bounded source-bound multi-step segmentation and existing workflow runner, including exact named-source title transfer validation", "Exact-origin OAuth callback and ACTIVE connection verification", "Current-step recommendations, plugin task context, and ordered progress display"],
     "replace": [],
     "deprecate": ["The callback's optimistic 'connected' message before an ACTIVE account exists"]
   },
@@ -67,15 +71,17 @@
     {"command": "npm run build --workspace=backend", "scope": "Backend TypeScript build passed locally; host default Node 24 was used for this build, so pinned-Node CI remains required.", "negative": false, "reference": "backend/src/services/integrations/businessWorkflowPlanner.ts"},
     {"command": "npx tsc --noEmit --project frontend/tsconfig.json", "scope": "Frontend typecheck passed locally; host default Node 24 was used.", "negative": false, "reference": "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx"},
     {"command": "npm exec --yes --package=node@22.21.1 -- node scripts/xroga/inventory.mjs --check", "scope": "Generated repository inventory is consistent with the changed source.", "negative": false, "reference": "docs/xroga/current-state.json"},
-    {"command": "npm exec --yes --package=node@22.21.1 -- node scripts/xroga/check-runtime-config.mjs", "scope": "Runtime and environment inventory passed with existing recorded risks.", "negative": false, "reference": "docs/xroga/dependency-inventory.json"}
+    {"command": "npm exec --yes --package=node@22.21.1 -- node scripts/xroga/check-runtime-config.mjs", "scope": "Runtime and environment inventory passed with existing recorded risks.", "negative": false, "reference": "docs/xroga/dependency-inventory.json"},
+    {"command": "npx tsx --test src/services/integrations/businessWorkflow.test.ts src/services/integrations/businessWorkflowRuns.context.test.ts", "scope": "16 focused backend tests passed, including plugin-preface single-action routing, source-evidence retention and wrong-destination-title rejection.", "negative": true, "reference": "backend/src/services/integrations/businessWorkflowRuns.context.test.ts"},
+    {"command": "npx tsx --test frontend/src/lib/phase1Routing.test.ts", "scope": "3 focused frontend routing tests passed, including selected-plugin task context.", "negative": true, "reference": "frontend/src/lib/phase1Routing.test.ts"}
   ],
   "architecture": {"change": "extends_canonical", "reason": "The existing workflow table/runner, Composio client, authority gate, model router and scheduler remain the only execution path; no second orchestration framework or unrestricted proxy was added.", "rfc": null},
   "rollout": "Set an exact preview origin in XROGA_COMPOSIO_CALLBACK_ORIGINS, deploy only a candidate Cloud Run revision and Vercel preview, then verify signed-in simple chat, app connection ACTIVE state, read, approved write, mixed web/app workflow, resume and no-duplicate retry before any xroga.com cutover.",
   "rollback": "Keep the prior ready Cloud Run revision and Vercel deployment; restore those on failed signed-in checks. Pause/reconcile any new web-step workflows before rolling back the API.",
-  "knownGaps": ["The signed-in Vercel preview answered a simple chat correctly and displayed Gmail and Canva as ACTIVE, but it still called the older Cloud Run backend; no signed-in live cross-app read/write workflow has been verified from this branch", "The preview's Gmail unread-count answer was not accepted as app-read proof because the account identity and tool receipt were not independently verified", "Preview callback allowlist must be set on Cloud Run before preview OAuth is usable", "The local full backend suite remains red on unrelated GitHub/Supabase OAuth tests because production CredentialVault KMS is absent from this environment; those failures reproduced in isolation", "Tool coverage, app scopes and skill playbooks vary across Composio apps; no universal all-actions guarantee", "Provider Proxy Execute remains disabled pending a separate authority and endpoint review", "Production frontend cutover and Fly retirement are not part of this code change"],
-  "placeholderClaimsRemaining": ["Authenticated real-account Gmail/Canva and unfamiliar-app workflows, scheduled automation, and production traffic remain unverified"],
+  "knownGaps": ["An isolated signed-in staging account completed public-web research to a new Google Sheet, created and read a blank Canva design, and transferred that design's title to a new Sheet through a three-step Canva-to-Sheets workflow; these are specific verified capabilities, not proof of all apps or all actions", "The Canva design is a blank 1080 by 1080 design; visual logo artwork was not added by the Composio design-create action", "The preview's Gmail unread-count answer was not accepted as app-read proof because the account identity and tool receipt were not independently verified", "The local full backend suite remains red on unrelated GitHub/Supabase OAuth tests because production CredentialVault KMS is absent from this environment; those failures reproduced in isolation", "Tool coverage, app scopes and skill playbooks vary across Composio apps; no universal all-actions guarantee", "Provider Proxy Execute remains disabled pending a separate authority and endpoint review", "Production frontend cutover and Fly retirement are not part of this code change"],
+  "placeholderClaimsRemaining": ["Gmail send, unfamiliar-app workflows, scheduled automation, and production traffic remain unverified"],
   "evidenceRefs": ["backend/src/services/integrations/businessWorkflow.test.ts", "backend/src/services/integrations/composioCallback.test.ts", "frontend/src/lib/pluginStep2.test.ts", "docs/xroga/research/universal-connected-app-intelligence-20261026.md"],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
-  "release": {"state": "BLOCKED", "blockers": ["Authenticated preview E2E and real Composio app authority checks have not run", "Local full backend suite has unrelated KMS-dependent failures", "Production cutover and rollback window are not authorized by scoped code tests"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+  "release": {"state": "BLOCKED", "blockers": ["The source-bound privileged-caller security release criterion remains blocked", "Authenticated E2E coverage is partial: staged Canva and Sheets paths passed but all app and scheduled paths were not verified", "Local full backend suite has unrelated KMS-dependent failures", "Production cutover and rollback window are not authorized by scoped code tests"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
 }

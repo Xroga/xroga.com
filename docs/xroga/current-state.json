@@ -23019,7 +23019,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b8c0ac8ff79fb95d268c8cdd4407706ad62fb3789d93755955645962dcb1c4b8",
+      "sha256": "3c921fe9072bffd0608b7b6346c07eda92721911d6c7357ead35bc0fe6b12c75",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -23703,9 +23703,10 @@
       "id": "surface:ef19ddf9766afb796137",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflowPlanner.ts",
-      "sha256": "a47c5a52e66b874e283004378beeac7aadeb629e158232012c42b753a08762c5",
+      "sha256": "6490895ac8c1a28f86d58d7871e1ed6345987ed1aaf7be3811e632e00adc1693",
       "symbols": [
         "SEPARATED_TASK",
+        "TASK_VERB",
         "completion",
         "error",
         "explicit",
@@ -23714,6 +23715,7 @@
         "modelId",
         "planBusinessWorkflow",
         "proposed",
+        "separator",
         "steps",
         "structured"
       ],
@@ -23765,7 +23767,7 @@
       "id": "surface:0cc7e3112dcf7f702112",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "fd9a1660ada1ecdf48a407e5620590971699b0dac99031b2d8f4887f2333a0d4",
+      "sha256": "5eb4d37bbf115241d92787f2988e91a0d8db3bb35d200966b2fbe30641cdb302",
       "symbols": [
         "BusinessWorkflowProgress",
         "BusinessWorkflowRunView",
@@ -23773,10 +23775,12 @@
         "RunStatus",
         "StepOutcome",
         "advance",
+        "assertExactSourceTitleTransfer",
         "boundedWebWorkflowEvidence",
         "cancelBusinessWorkflowForConfirmation",
         "cancelBusinessWorkflowRun",
         "cancelled",
+        "collectStringFields",
         "confirmation",
         "createBusinessWorkflowRun",
         "created",
@@ -23787,7 +23791,9 @@
         "evidence",
         "getBusinessWorkflowRun",
         "loadRun",
+        "namedSources",
         "outcomes",
+        "parsed",
         "preparation",
         "previousEvidence",
         "referenceEvidence",
@@ -23798,6 +23804,8 @@
         "resumed",
         "row",
         "step",
+        "submitted",
+        "titles",
         "updateRun",
         "validRun",
         "value",
@@ -23841,9 +23849,9 @@
       "tenantBoundary": [
         "backend/src/services/integrations/businessWorkflowRuns.ts:103 (user_id)",
         "backend/src/services/integrations/businessWorkflowRuns.ts:115 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:256 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:281 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:322 (user_id)"
+        "backend/src/services/integrations/businessWorkflowRuns.ts:289 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:314 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:355 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessWorkflowRuns.ts#cancelBusinessActionConfirmation",
@@ -62960,7 +62968,7 @@
       "id": "surface:a947b2341f92bb70ef0b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "ad57d88aa22acba8b0bd746bc1f4ceeb5a0e0e64d0db1ec8dc57a829dc26dcdc",
+      "sha256": "1b853813ae44ac6e657369c27cbb87f431c5bd938e8a47cd7a4df9e11ae20284",
       "symbols": [
         "CapabilityGroup",
         "NativeSnapshot",
@@ -63036,6 +63044,7 @@
         "@/components/integrations/PluginPermissionControl",
         "@/lib/api",
         "@/lib/oauthPopupResult",
+        "@/lib/phase1Routing",
         "@/lib/pluginCatalog",
         "@/lib/xrogaConnect",
         "@/store/useAppStore",
@@ -63050,6 +63059,7 @@
         "frontend/src/components/integrations/PluginPermissionControl.tsx",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/oauthPopupResult.ts",
+        "frontend/src/lib/phase1Routing.ts",
         "frontend/src/lib/pluginCatalog.ts",
         "frontend/src/lib/xrogaConnect.ts",
         "frontend/src/store/useAppStore.ts"
@@ -81686,6 +81696,7 @@
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
@@ -82329,6 +82340,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
@@ -85043,6 +85055,7 @@
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
@@ -85888,6 +85901,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
@@ -86017,15 +86031,18 @@
       "id": "surface:50bc393f833d8aeec22c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/phase1Routing.ts",
-      "sha256": "20c8bef30b2903fb5e2b86de9891367f24ac60fa7bcd87896ad2901af2546b03",
+      "sha256": "7d498b520f5f07a28e22dabd2ecbb3c9a8b919a1fed280ac92e5a78b9317b8ee",
       "symbols": [
         "BROWSER_AUTOMATION",
         "ChatMessageLike",
         "EXPLICIT_CONNECTED_APP",
         "IMAGE_GEN_PROMPT",
+        "app",
         "looksLikeProductBuild",
         "shouldRouteToPhase1",
-        "t"
+        "t",
+        "task",
+        "workspacePromptForPluginTask"
       ],
       "imports": [
         "@/lib/api",
@@ -86042,12 +86059,14 @@
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/integrations/PluginDetail.tsx:53",
         "frontend/src/components/terminal/TerminalChatBar.tsx:31",
         "frontend/src/lib/phase1Routing.test.ts:3",
         "frontend/src/lib/workLanes.ts:12"
@@ -86847,6 +86866,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx",
         "frontend/src/app/(shell)/dashboard/projects/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
@@ -112081,17 +112101,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4b3512a9296cf30fc8ec",
-      "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 990,
-      "kind": "PLACEHOLDER",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:a54ccab7baed679f8a5c",
+      "id": "finding:7637f0841c1bd4510bf2",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
       "line": 991,
       "kind": "PLACEHOLDER",
@@ -112101,9 +112111,19 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:792af0c3c907733ccf4a",
+      "id": "finding:86a4a36c7ca968d961c3",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 1141,
+      "line": 992,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:f97d6b44380c3ad8bc53",
+      "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
+      "line": 1142,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -115329,79 +115349,79 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:c9eb24c93e81a8783d9b",
+      "id": "frontend-call:a7eab701eb457cb0f7d6",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 403,
+      "line": 404,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:9b7b2be937b975899524",
+      "id": "frontend-call:f1fff0f8f0c02fffa4b9",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 413,
+      "line": 414,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:50e6ba05fbbe8dbce3cc",
+      "id": "frontend-call:2e06c8cd91dce8126ac6",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 426,
+      "line": 427,
       "callee": "api.supabase.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:070c828e55764c3a353e",
+      "id": "frontend-call:6fa7758ee20313b7559f",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 515,
+      "line": 516,
       "callee": "fetchAllTools",
       "reachable": true
     },
     {
-      "id": "frontend-call:a80592e2e556ce94ce2a",
+      "id": "frontend-call:b761b6fde7a00bd7fa3e",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 517,
+      "line": 518,
       "callee": "fetchAllTriggers",
       "reachable": true
     },
     {
-      "id": "frontend-call:df505905a213b00eb10b",
+      "id": "frontend-call:ee50687ef5e22b5584f3",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 672,
+      "line": 673,
       "callee": "api.github.oauthUrl",
       "reachable": true
     },
     {
-      "id": "frontend-call:f71f30efe6a9e93a8229",
+      "id": "frontend-call:ce8039edf289dae4d500",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 679,
+      "line": 680,
       "callee": "api.vercel.oauthUrl",
       "reachable": true
     },
     {
-      "id": "frontend-call:314d28f25b9e76e38300",
+      "id": "frontend-call:2eee4d76e3a107a0674d",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 687,
+      "line": 688,
       "callee": "api.supabase.oauthUrl",
       "reachable": true
     },
     {
-      "id": "frontend-call:8fc31c58b9d3447c1cbb",
+      "id": "frontend-call:b64d3741de272a9468f5",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 771,
+      "line": 772,
       "callee": "api.github.disconnect",
       "reachable": true
     },
     {
-      "id": "frontend-call:dfb4356771faed396535",
+      "id": "frontend-call:ee66f3f0e43759b127af",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 772,
+      "line": 773,
       "callee": "api.vercel.disconnect",
       "reachable": true
     },
     {
-      "id": "frontend-call:f446fcb25bca5d1a5b60",
+      "id": "frontend-call:54236a15f9d854ce3467",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 773,
+      "line": 774,
       "callee": "api.supabase.disconnect",
       "reachable": true
     },
@@ -119675,7 +119695,7 @@
     {
       "id": "test-suite:257776d2099c7e1ba181",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -121752,7 +121772,7 @@
     {
       "id": "test-suite:83c9f08a7056ae177e5a",
       "sourcePath": "frontend/src/lib/phase1Routing.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
