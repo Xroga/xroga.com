@@ -12,10 +12,30 @@
       "run": 40769810168,
       "cause": "The new terminal provider denial mapper ran before TenantAccessError and converted the existing missing-identity HTTP401 into HTTP403 in Phase2 and Preview restart routes.",
       "correction": "Preserve the existing tenant error response first. Other canonical security denials remain terminal HTTP403. No test expectation or authorization rule was weakened.",
-      "focusedVerification": { "job": "328f9269-97de-43e9-949b-38a52b8b4e1d", "tests": 15, "pass": 15, "fail": 0, "skipped": 0 },
+      "focusedVerification": {
+        "job": "328f9269-97de-43e9-949b-38a52b8b4e1d",
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "skipped": 0
+      },
       "requiredVerification": "Final exact-source disposable PostgreSQL/Chromium Builder suite"
     }
   ],
   "additionalGate": "The unchanged strict egress audit now runs explicitly in tenant-security CI with --require-complete.",
-  "productionActivation": false
+  "productionActivation": false,
+  "additionalBaselineFailures": {
+    "source": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
+    "run": 40770896423,
+    "tests": 4928,
+    "pass": 4920,
+    "fail": 2,
+    "governedSkips": 6,
+    "causes": [
+      "Identity regression fixture still selected historical productionDeps instead of current productionBrowserRuntime. It now inspects the real WORKER_ID binding and proves distinct replicas plus stable per-process identity.",
+      "QA imported pure Chromium helpers from the disabled legacy navigation module. Identical helpers and structural types moved into one shared loader, preserving compatibility exports. Existing unreachable-adapter test is unchanged."
+    ],
+    "focusedJob": "4d8dc7cd-5eba-4e49-a00c-b2c0cd846d72",
+    "requiredVerification": "Final complete exact-source baseline"
+  }
 }

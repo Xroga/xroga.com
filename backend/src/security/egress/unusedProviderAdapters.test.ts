@@ -32,7 +32,7 @@ test('seventeen legacy provider calls in nine unused adapters have no current pr
       if(ts.isCallExpression(node)&&(node.expression.kind===ts.SyntaxKind.ImportKeyword||ts.isIdentifier(node.expression)&&node.expression.text==='require')){
         const arg=node.arguments[0];
         if(!arg||!ts.isStringLiteral(arg)&&!ts.isNoSubstitutionTemplateLiteral(arg)){
-          assert.equal(path,'backend/src/synthesis/playwrightDriver.ts','Unreviewed computed module loader can invalidate reachability: '+path);
+          assert.equal(path,'backend/src/synthesis/chromiumRuntime.ts','Unreviewed computed module loader can invalidate reachability: '+path);
           assert.equal(arg?.getText(source),'specifier as string');
           assert.match(text,/const CHROMIUM_MODULES = \['playwright', '@playwright\/test'\] as const/);
         }

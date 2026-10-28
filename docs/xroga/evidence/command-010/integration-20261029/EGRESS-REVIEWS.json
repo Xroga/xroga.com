@@ -60,7 +60,7 @@
       "entryPoint": "open",
       "transport": "fetch",
       "callSha256": "0b8a6a316a6de9b0f25c889c54626b707b6b794c06636165d34cd49afcd27497",
-      "sourceFileSha256": "beddcf18d51780c52aba44cadfe5ec0bbb1e264ba5ba211d7c911f37cf0420df",
+      "sourceFileSha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a",
       "disposition": "VERIFIED_GUARD",
       "trace": "The browser route fetch is downstream of same-origin route admission, with maxRedirects zero and bounded document bytes. Remote QA uses read-only mode, no service workers/downloads, blocks sockets and child workers, and enforces the production Chromium sandbox. It holds no provider credential. This certifies the adapter and fixtures, not an unbuilt live Google image.",
       "tests": [
@@ -77,7 +77,7 @@
       "entryPoint": "goto",
       "transport": "goto",
       "callSha256": "a448bf63ee9d2a97429656cd9bc23f9ee630c401f5af84fbdd9502a8d180c65e",
-      "sourceFileSha256": "beddcf18d51780c52aba44cadfe5ec0bbb1e264ba5ba211d7c911f37cf0420df",
+      "sourceFileSha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a",
       "disposition": "VERIFIED_GUARD",
       "trace": "QA page navigation is origin-bound with finite paths. HTTP routing covers initial request and every redirect, rejects non-origin targets and read-only mutations, and blocks sockets/child workers. Remote host is signed, allowlisted and independently bounded. No browser data or generated tool response can issue authority.",
       "tests": [
@@ -197,7 +197,7 @@
       "file": "backend/src/synthesis/playwrightDriver.ts",
       "verifiedReference": "92043b72c20e5a12636dee079d760a1e5708b48f",
       "oldFileSha256": "583bd198a2b0cfb9dd91e8f22c029984ba757e32deba689d396ef40c8a83e95a",
-      "currentFileSha256": "2767402afaa09f2e3f6a5610bd4c2621541357eb0c314cdcb4d3dce1f48e1cac",
+      "currentFileSha256": "73a7569c28a450be8f1ecb1d07bcfdbcdbaa531f11e49fe587175dfe3883e30d",
       "unchangedFunctionSha256": "cb0ad87ad43f2a55fce98c0d6140adef12445615e8bec0bd1bcc6df6315f1eb3"
     },
     {
@@ -215,5 +215,22 @@
   ],
   "productionAcceptance": false,
   "strictAuditorChanged": false,
-  "frozenCriteriaChanged": false
+  "frozenCriteriaChanged": false,
+  "sharedChromiumExtraction": {
+    "reference": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
+    "from": "backend/src/synthesis/playwrightDriver.ts",
+    "to": "backend/src/synthesis/chromiumRuntime.ts",
+    "functions": [
+      {
+        "name": "loadChromium",
+        "functionSha256": "2b6e784760700bd6d4877948a84ce1512a5c241ad599b08ca8a039d7320b5dcb"
+      },
+      {
+        "name": "discoverChromiumExecutable",
+        "functionSha256": "c0d1206eef6008b73e69d94e48acb68729cc262f7f3073c235b301c95366020e"
+      }
+    ],
+    "reason": "QA imports only the shared loader. The legacy navigation module has no new runtime importer. Original unreachable-adapter test is unchanged and passes. No navigation or sandbox fallback moved into the loader.",
+    "focusedJob": "4d8dc7cd-5eba-4e49-a00c-b2c0cd846d72"
+  }
 }

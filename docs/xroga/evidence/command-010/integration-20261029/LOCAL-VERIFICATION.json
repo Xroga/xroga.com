@@ -134,6 +134,42 @@
       },
       "log": "docs/xroga/evidence/command-010/integration-20261029/frontend-types-green.log",
       "sha256": "5348521e0f0ea9553ec98dd6f5737f48bacd92230789d8d982cdccc3335f99db"
+    },
+    {
+      "label": "replica-and-isolated-qa-green",
+      "job": "4d8dc7cd-5eba-4e49-a00c-b2c0cd846d72",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 2185917
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/replica-and-isolated-qa-green.log",
+      "sha256": "77e0b3a59b68020fda64add1c9c238c5cd2f8d25a549bf394091c8fa238f14a3"
+    },
+    {
+      "label": "shared-chromium-and-reachability-green",
+      "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 38553
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/shared-chromium-and-reachability-green.log",
+      "sha256": "3badba4ca92b85fe28ec62da04feb5ec2e8a5832eef76df7a4fb186ba74fe2f4"
+    },
+    {
+      "label": "shared-chromium-types-green",
+      "job": "8f860cdd-7ea6-4ef7-afe0-3551d3fbccc3",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322124
+      },
+      "log": null,
+      "sha256": null
     }
   ],
   "modelCalls": 0,

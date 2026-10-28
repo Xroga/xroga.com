@@ -1,4 +1,4 @@
-import { discoverChromiumExecutable, loadChromium } from '../../synthesis/playwrightDriver.js';
+import { discoverChromiumExecutable, loadChromium } from '../../synthesis/chromiumRuntime.js';
 import { containsCredentialSecretText } from '../../security/egress/dataClassification.js';
 import type { QaDriver, QaPage, QaViewport } from './types.js';
 

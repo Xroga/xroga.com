@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "ed18643aeb285bc508364952b72933cbdd272d00758b14ec6d3f57c0699f3360",
+  "sourceTreeDigest": "555ddbe45ece423dc03bcf7681fa9ce7296b1bcc7ccb9ec43ec4e778e8359e45",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -275,7 +275,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "18d087781cdd07fac737",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -302,7 +302,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "42b94382bd37c3f50c6c",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -329,7 +329,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "4680a42df5d217acf6e8",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -356,7 +356,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "f35703dda1fec9d30cc6",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -383,7 +383,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "1850a010eca54aa83087",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -410,7 +410,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "2bef60263a5e26b959d0",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -437,7 +437,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "54233be811bb959a4016",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -489,7 +489,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -497,6 +497,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "176750c88ee667a2d5f8",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -516,7 +521,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -524,6 +529,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "80fae4b604b9d9b5fa55",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -543,7 +553,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -551,6 +561,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "3e5ba31676d5e5da80fb",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -570,7 +585,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -578,6 +593,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "74b0e180358c36df8c42",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -597,7 +617,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -605,6 +625,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "5054ec0f719be61dc2ec",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -624,7 +649,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -632,6 +657,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "175fba77feea7132d8a5",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -651,7 +681,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -659,6 +689,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "2a5c726393fdb280bf65",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -732,7 +767,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -740,6 +775,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "58bda0b6092997792af2",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -759,7 +799,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -767,6 +807,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "a1701f06f690596fd2c0",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -813,7 +858,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -821,6 +866,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "b2ed8e79cb82506d4aca",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -840,7 +890,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -848,6 +898,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "049adafdb79c93d85166",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -867,7 +922,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -875,6 +930,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "f03cf7691ce072b34cea",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -894,7 +954,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -902,6 +962,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "a5e73984a9c33257f782",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -921,7 +986,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -929,6 +994,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "7e4752b5c0bc6bcc4090",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -1221,7 +1291,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1229,6 +1299,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "070d93e290588232cf16",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -1248,7 +1323,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1256,6 +1331,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "258abf65c43a04c704a9",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -1626,7 +1706,7 @@
       "disposition": "DISABLED_WITH_PROOF",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1634,6 +1714,11 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "263e1a0fbf52023499b0",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
       ]
     },
@@ -3532,7 +3617,7 @@
     {
       "id": "b43397505cfcf3799292",
       "file": "backend/src/synthesis/playwrightDriver.ts",
-      "line": 270,
+      "line": 207,
       "entryPoint": "runViewport",
       "transport": "goto",
       "callee": "page.goto",
@@ -3557,7 +3642,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "b43397505cfcf3799292",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -3722,7 +3807,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "f6a75877b1bf49789cea",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4207,7 +4292,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "7a469e291cb12e3566f6",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4409,7 +4494,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "c09bb8607fa4d00f23b7",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         },
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
@@ -4473,7 +4558,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "13608654d27d029cbf04",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4500,7 +4585,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "811d45a99740e2ecccba",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },

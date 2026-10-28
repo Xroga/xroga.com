@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bc225b8e9441f146a385b09f157f4fcd6180e07b",
+  "source_sha": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -10866,7 +10866,7 @@
     {
       "name": "PLAYWRIGHT_BROWSERS_PATH",
       "consuming_sources": [
-        "backend/src/synthesis/playwrightDriver.ts"
+        "backend/src/synthesis/chromiumRuntime.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10885,7 +10885,7 @@
     {
       "name": "PLAYWRIGHT_CHROMIUM_EXECUTABLE",
       "consuming_sources": [
-        "backend/src/synthesis/playwrightDriver.ts"
+        "backend/src/synthesis/chromiumRuntime.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -15932,7 +15932,7 @@
     },
     {
       "path": "backend/src/builder/qa/playwrightQaDriver.ts",
-      "sha256": "beddcf18d51780c52aba44cadfe5ec0bbb1e264ba5ba211d7c911f37cf0420df"
+      "sha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a"
     },
     {
       "path": "backend/src/builder/qa/qaHostMain.ts",
@@ -17723,6 +17723,10 @@
       "sha256": "b66d1f9933fad62fa4e028e20e9dd0021b665ed12d95d3f50d6b8a989f14c3c2"
     },
     {
+      "path": "backend/src/synthesis/chromiumRuntime.ts",
+      "sha256": "8b316747d730b977f6a7cd34527d02481b30f15b85e0d900f8711a4f18fcf4f6"
+    },
+    {
       "path": "backend/src/synthesis/coherentImplementation.ts",
       "sha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8"
     },
@@ -17844,7 +17848,7 @@
     },
     {
       "path": "backend/src/synthesis/playwrightDriver.ts",
-      "sha256": "2767402afaa09f2e3f6a5610bd4c2621541357eb0c314cdcb4d3dce1f48e1cac"
+      "sha256": "73a7569c28a450be8f1ecb1d07bcfdbcdbaa531f11e49fe587175dfe3883e30d"
     },
     {
       "path": "backend/src/synthesis/productBlueprints.ts",

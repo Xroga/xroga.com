@@ -1202,7 +1202,7 @@
     {
       "id": "b43397505cfcf3799292",
       "callSha256": "4c218501d2b27b1cdbfd823ef3bac74ee2ee234c40a2d0bc231ed405274c26c1",
-      "sourceFileSha256": "2767402afaa09f2e3f6a5610bd4c2621541357eb0c314cdcb4d3dce1f48e1cac",
+      "sourceFileSha256": "73a7569c28a450be8f1ecb1d07bcfdbcdbaa531f11e49fe587175dfe3883e30d",
       "disposition": "DISABLED_WITH_PROOF",
       "trust": "NO_CURRENT_PRODUCTION_RUNTIME_IMPORTER",
       "tenantAuthority": "CURRENT_GRAPH_ONLY_NEW_RUNTIME_IMPORT_INVALIDATES_REVIEW_NO_GOOGLE_BROWSER_WORKER_PROMOTION",
@@ -1220,7 +1220,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "b43397505cfcf3799292",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ],
       "historicalSourceBinding": {
@@ -1237,7 +1237,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1245,8 +1245,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "176750c88ee667a2d5f8",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "80fae4b604b9d9b5fa55",
@@ -1257,7 +1266,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1265,8 +1274,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "80fae4b604b9d9b5fa55",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "3e5ba31676d5e5da80fb",
@@ -1277,7 +1295,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1285,8 +1303,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "3e5ba31676d5e5da80fb",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "74b0e180358c36df8c42",
@@ -1297,7 +1324,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1305,8 +1332,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "74b0e180358c36df8c42",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "5054ec0f719be61dc2ec",
@@ -1317,7 +1353,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1325,8 +1361,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "5054ec0f719be61dc2ec",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "175fba77feea7132d8a5",
@@ -1337,7 +1382,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1345,8 +1390,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "175fba77feea7132d8a5",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "2a5c726393fdb280bf65",
@@ -1357,7 +1411,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1365,8 +1419,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "2a5c726393fdb280bf65",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "58bda0b6092997792af2",
@@ -1377,7 +1440,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1385,8 +1448,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "58bda0b6092997792af2",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "a1701f06f690596fd2c0",
@@ -1397,7 +1469,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1405,8 +1477,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "a1701f06f690596fd2c0",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "b2ed8e79cb82506d4aca",
@@ -1417,7 +1498,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1425,8 +1506,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "b2ed8e79cb82506d4aca",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "049adafdb79c93d85166",
@@ -1437,7 +1527,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1445,8 +1535,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "049adafdb79c93d85166",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "f03cf7691ce072b34cea",
@@ -1457,7 +1556,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1465,8 +1564,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "f03cf7691ce072b34cea",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "a5e73984a9c33257f782",
@@ -1477,7 +1585,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1485,8 +1593,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "a5e73984a9c33257f782",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "7e4752b5c0bc6bcc4090",
@@ -1497,7 +1614,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1505,8 +1622,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "7e4752b5c0bc6bcc4090",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "070d93e290588232cf16",
@@ -1517,7 +1643,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1525,8 +1651,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "070d93e290588232cf16",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "258abf65c43a04c704a9",
@@ -1537,7 +1672,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1545,8 +1680,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "258abf65c43a04c704a9",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "263e1a0fbf52023499b0",
@@ -1557,7 +1701,7 @@
       "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
       "evidence": [
         {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
           "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
           "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
         },
@@ -1565,8 +1709,17 @@
           "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
           "marker": "263e1a0fbf52023499b0",
           "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
+        },
+        {
+          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
         }
-      ]
+      ],
+      "sharedLoaderContinuation": {
+        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
+        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
+      }
     },
     {
       "id": "9ea21a6fc8b8700460c0",
@@ -2793,7 +2946,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "c09bb8607fa4d00f23b7",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         },
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
@@ -4046,7 +4199,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "18d087781cdd07fac737",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4066,7 +4219,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "42b94382bd37c3f50c6c",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4086,14 +4239,14 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "4680a42df5d217acf6e8",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
     {
       "id": "f35703dda1fec9d30cc6",
       "callSha256": "0b8a6a316a6de9b0f25c889c54626b707b6b794c06636165d34cd49afcd27497",
-      "sourceFileSha256": "beddcf18d51780c52aba44cadfe5ec0bbb1e264ba5ba211d7c911f37cf0420df",
+      "sourceFileSha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a",
       "disposition": "VERIFIED_GUARD",
       "trust": "INDIVIDUALLY_TRACED_CURRENT_MAIN_INTEGRATION_CALLER",
       "tenantAuthority": "The browser route fetch is downstream of same-origin route admission, with maxRedirects zero and bounded document bytes. Remote QA uses read-only mode, no service workers/downloads, blocks sockets and child workers, and enforces the production Chromium sandbox. It holds no provider credential. This certifies the adapter and fixtures, not an unbuilt live Google image.",
@@ -4106,14 +4259,14 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "f35703dda1fec9d30cc6",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
     {
       "id": "1850a010eca54aa83087",
       "callSha256": "a448bf63ee9d2a97429656cd9bc23f9ee630c401f5af84fbdd9502a8d180c65e",
-      "sourceFileSha256": "beddcf18d51780c52aba44cadfe5ec0bbb1e264ba5ba211d7c911f37cf0420df",
+      "sourceFileSha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a",
       "disposition": "VERIFIED_GUARD",
       "trust": "INDIVIDUALLY_TRACED_CURRENT_MAIN_INTEGRATION_CALLER",
       "tenantAuthority": "QA page navigation is origin-bound with finite paths. HTTP routing covers initial request and every redirect, rejects non-origin targets and read-only mutations, and blocks sockets/child workers. Remote host is signed, allowlisted and independently bounded. No browser data or generated tool response can issue authority.",
@@ -4126,7 +4279,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "1850a010eca54aa83087",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4146,7 +4299,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "2bef60263a5e26b959d0",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4166,7 +4319,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "54233be811bb959a4016",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4186,7 +4339,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "f6a75877b1bf49789cea",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4206,7 +4359,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "7a469e291cb12e3566f6",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4226,7 +4379,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "13608654d27d029cbf04",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     },
@@ -4246,7 +4399,7 @@
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "811d45a99740e2ecccba",
-          "sha256": "eef5639f35d9561ac620bb4e8dc4bc36ab93c57c40640e23db956ddba0d66a42"
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
         }
       ]
     }

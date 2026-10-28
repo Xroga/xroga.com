@@ -14277,7 +14277,7 @@
       "id": "surface:85a002b5fc3c8d5a687b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/qa/playwrightQaDriver.ts",
-      "sha256": "beddcf18d51780c52aba44cadfe5ec0bbb1e264ba5ba211d7c911f37cf0420df",
+      "sha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a",
       "symbols": [
         "NAVIGATION_TIMEOUT_MS",
         "PlaywrightQaOptions",
@@ -14319,12 +14319,12 @@
       ],
       "imports": [
         "../../security/egress/dataClassification.js",
-        "../../synthesis/playwrightDriver.js",
+        "../../synthesis/chromiumRuntime.js",
         "./types.js"
       ],
       "runtimeImports": [
         "backend/src/security/egress/dataClassification.ts",
-        "backend/src/synthesis/playwrightDriver.ts"
+        "backend/src/synthesis/chromiumRuntime.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -41865,6 +41865,60 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:616714baf247ff40e391",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/synthesis/chromiumRuntime.ts",
+      "sha256": "8b316747d730b977f6a7cd34527d02481b30f15b85e0d900f8711a4f18fcf4f6",
+      "symbols": [
+        "CHROMIUM_MODULES",
+        "ChromiumLauncher",
+        "PlaywrightBrowser",
+        "PlaywrightContext",
+        "PlaywrightPage",
+        "candidate",
+        "candidates",
+        "discoverChromiumExecutable",
+        "explicit",
+        "loadChromium",
+        "mod",
+        "path",
+        "relative",
+        "root",
+        "specifier"
+      ],
+      "imports": [
+        "node:fs",
+        "node:path"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/qa/playwrightQaDriver.ts:1",
+        "backend/src/synthesis/playwrightDriver.ts:98",
+        "backend/src/synthesis/playwrightDriver.ts:99"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:fs",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:993b88dc6689b6abbae9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/coherentImplementation.ts",
@@ -44078,11 +44132,9 @@
       "id": "surface:932b1d278c32a472396c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/playwrightDriver.ts",
-      "sha256": "2767402afaa09f2e3f6a5610bd4c2621541357eb0c314cdcb4d3dce1f48e1cac",
+      "sha256": "73a7569c28a450be8f1ecb1d07bcfdbcdbaa531f11e49fe587175dfe3883e30d",
       "symbols": [
         "BrowserUnavailableError",
-        "CHROMIUM_MODULES",
-        "ChromiumLauncher",
         "DESKTOP_VIEWPORT",
         "DomExpectation",
         "InteractionExpectation",
@@ -44091,31 +44143,24 @@
         "MAX_PAGE_ERRORS",
         "MAX_TEXT",
         "MOBILE_VIEWPORT",
-        "PlaywrightBrowser",
-        "PlaywrightContext",
-        "PlaywrightPage",
         "PlaywrightRunOptions",
         "ViewportSpec",
         "after",
         "availabilityCache",
         "browser",
         "browserAvailable",
-        "candidate",
-        "candidates",
         "chromium",
         "clip",
         "consoleMessages",
         "context",
         "count",
         "detail",
-        "discoverChromiumExecutable",
         "domChecks",
         "err",
         "error",
         "evidence",
         "executable",
         "expectation",
-        "explicit",
         "explicitExecutable",
         "html",
         "httpStatus",
@@ -44123,49 +44168,39 @@
         "interactions",
         "launchOptions",
         "level",
-        "loadChromium",
-        "mod",
         "msg",
         "networkFailures",
         "page",
         "pageErrors",
         "path",
-        "relative",
         "req",
         "res",
         "response",
-        "root",
         "runPlaywrightVerification",
         "runViewport",
         "satisfied",
         "screenshotPath",
         "spec",
-        "specifier",
         "type"
       ],
       "imports": [
         "./browserVerification.js",
-        "node:fs",
-        "node:path"
+        "./chromiumRuntime.js"
       ],
-      "runtimeImports": [],
-      "entryPoints": [
-        "backend/src/index.ts"
+      "runtimeImports": [
+        "backend/src/synthesis/chromiumRuntime.ts"
       ],
+      "entryPoints": [],
       "callers": [
         "backend/src/builder/golden.browser.integration.test.ts:7",
-        "backend/src/builder/qa/playwrightQaDriver.ts:1",
         "backend/src/builder/qa/qa.browser.integration.test.ts:7",
         "backend/src/builder/qa/repair.integration.test.ts:7",
         "backend/src/synthesis/inSandboxBrowser.integration.test.ts:32",
         "backend/src/synthesis/playwrightDriver.integration.test.ts:6"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [
-        "node:fs",
-        "node:path"
-      ],
+      "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -44183,11 +44218,11 @@
         "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
         "backend/src/synthesis/playwrightDriver.integration.test.ts"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
