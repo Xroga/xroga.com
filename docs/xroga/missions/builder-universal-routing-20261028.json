@@ -12,7 +12,16 @@
     "backend/src/ai/pipeline.ts",
     "backend/src/config/universalAgentFlags.test.ts",
     "backend/src/config/universalAgentFlags.ts",
-    "docs/xroga/missions/builder-universal-routing-20261028.json"
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/missions/builder-universal-routing-20261028.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md"
   ],
   "decisions": {
     "keep": [
