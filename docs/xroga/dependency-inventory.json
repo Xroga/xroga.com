@@ -15562,7 +15562,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "17462981dde40052b3639d88e77c44f0e4a6e910a5f5e8c843ea5e1de8d7532c"
+      "sha256": "74689dacbb68a16efce53a1f17ce31d02a5f5489aac52f89c84f170a1c986bbe"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -29580,21 +29580,21 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1509,
+      "line": 1517,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1607,
+      "line": 1615,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1900,
+      "line": 1908,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
