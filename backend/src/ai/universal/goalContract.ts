@@ -417,19 +417,18 @@ export function normalizeGoalContractCandidate(
           unknown
         >;
 
-    normalized.projectContext =
-      {
-        repo:
-          project.repo,
-
-        branch:
-          project.branch,
-
-        projectRoot:
-          project
-            .projectRoot ??
-          '/',
-      };
+    // A project context without a repository and branch cannot identify anything (a Builder
+    // project has no repository), so it is absent rather than invalid.
+    const hasIdentity =
+      typeof project.repo === 'string' && project.repo.trim() !== '' &&
+      typeof project.branch === 'string' && project.branch.trim() !== '';
+    normalized.projectContext = hasIdentity
+      ? {
+          repo: project.repo,
+          branch: project.branch,
+          projectRoot: project.projectRoot ?? '/',
+        }
+      : null;
   }
 
   if (

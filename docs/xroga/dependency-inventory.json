@@ -15522,7 +15522,7 @@
     },
     {
       "path": "backend/src/ai/universal/goalContract.ts",
-      "sha256": "a8e0cb0872f9029863c014ee476a85aa06910bd5d4a9b6a3f3354311a8348d53"
+      "sha256": "931ca2f1d876d2a99a7e3064391b19fe118661d5e8d607a83ac07830620769c5"
     },
     {
       "path": "backend/src/ai/universal/modelRequirements.ts",
