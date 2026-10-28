@@ -12,6 +12,7 @@
     "backend/src/ai/pipeline.ts",
     "backend/src/config/universalAgentFlags.test.ts",
     "backend/src/config/universalAgentFlags.ts",
+    "backend/src/synthesis/reliability/legacyRetirement.test.ts",
     "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
     "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
     "docs/xroga/current-state.json",
