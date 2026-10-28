@@ -1,4 +1,4 @@
-import { API_URL, ApiError } from '@/lib/api';
+import { API_URL, ApiError,fetchApiResponse } from '@/lib/api';
 import { streamTextReveal } from '@/lib/streamText';
 import {
   getGuestSessionId,
@@ -35,7 +35,7 @@ export async function runGuestLaneChat(opts: {
   signal: AbortSignal;
   onPartial: (partial: string) => void;
 }): Promise<GuestLaneResult> {
-  const response = await fetch(`${API_URL}/api/guest/chat`, {
+  const response = await fetchApiResponse(`${API_URL}/api/guest/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

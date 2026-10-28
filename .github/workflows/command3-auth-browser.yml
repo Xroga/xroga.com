@@ -12,6 +12,11 @@ on:
         type: choice
         options: ['off', bootstrap, custody]
         default: 'off'
+      browser_scope:
+        description: 'Diagnostic proxy-only mode is not the full acceptance suite'
+        type: choice
+        options: [all, proxy-origin-only]
+        default: all
   pull_request:
     branches: [main]
 
@@ -121,6 +126,7 @@ jobs:
       XROGA_RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       EXPECTED_RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       EXPECTED_WEB_RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      XB01_BROWSER_VERIFICATION_SCOPE: ${{ inputs.browser_scope || 'all' }}
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
@@ -137,6 +143,8 @@ jobs:
           npm ci --prefix frontend --workspaces=false
       - name: Test disposable environment admission
         run: node --test scripts/security/disposable-supabase.test.mjs
+      - name: Verify guarded proxy fixture with actual TLS and unchanged URL admission
+        run: node --test scripts/security/proxy-origin-fixture.test.mjs
       - name: Start disposable Supabase with per-run keys
         run: node scripts/security/disposable-supabase.mjs
       - name: Full migration history and sanitized upgrade compatibility
@@ -192,12 +200,24 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Verify image client proxy admission
+        if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
+        run: node --test frontend/e2e/phase4-image-client.browser.mjs
+      - name: Verify first-party API client destinations
+        if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
+        run: node --test frontend/e2e/phase4-api-clients.security.mjs
+      - name: Verify admin, shared-answer and private-file API boundaries
+        if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
+        run: node --test frontend/e2e/phase4-admin-share.security.mjs
+      - name: Verify fixed public Auth provider preflight
+        if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
+        run: node --test frontend/e2e/phase4-auth-provider.security.mjs
       - name: Start isolated application
         id: start-application
         shell: bash
         run: |
           PORT=4000 node backend/dist/index.js > backend.log 2>&1 & echo $! > backend.pid
-          npm run start --prefix frontend --workspaces=false -- --hostname 127.0.0.1 --port 3000 > frontend.log 2>&1 & echo $! > frontend.pid
+          XB01_PROXY_ORIGIN_PRELOAD=1 NODE_OPTIONS="--require=$GITHUB_WORKSPACE/scripts/security/proxy-origin-fixture.cjs" npm run start --prefix frontend --workspaces=false -- --hostname 127.0.0.1 --port 3000 > frontend.log 2>&1 & echo $! > frontend.pid
           for attempt in $(seq 1 40); do
             curl --silent --fail http://127.0.0.1:4000/ready >/dev/null && curl --silent --fail http://127.0.0.1:3000/auth/login >/dev/null && exit 0
             sleep 2
@@ -216,11 +236,16 @@ jobs:
         working-directory: frontend
         # Invoke the test package's own CLI so npm's nested workspace install
         # cannot select the transitive playwright binary from another copy.
-        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts e2e/proxy-origin-local.spec.ts
+        run: |
+          if [ "$XB01_BROWSER_VERIFICATION_SCOPE" = 'proxy-origin-only' ]; then
+            node ../node_modules/@playwright/test/cli.js test e2e/proxy-origin-local.spec.ts
+          else
+            node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts e2e/proxy-origin-local.spec.ts e2e/phase4-cookie-isolation.spec.ts
+          fi
       - name: Real tenant authorization and concurrency integration
         # Independent evidence still runs after a browser assertion fails, but
         # never against an app that failed readiness; failures remain fatal.
-        if: ${{ !cancelled() && steps.start-application.outcome == 'success' && steps.focused-library.outcome != 'failure' }}
+        if: ${{ !cancelled() && steps.start-application.outcome == 'success' && steps.focused-library.outcome != 'failure' && inputs.browser_scope != 'proxy-origin-only' }}
         working-directory: backend
         run: node --import tsx --test src/security/tenantIsolation.local.integration.ts
       - name: Collect bounded redacted local application logs

@@ -1,8 +1,9 @@
-import { Router } from 'express';
+import { Router, type Response as ExpressResponse } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
-import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
+import { requireTenantContext, requireResourceOwner, type TenantContext } from '../security/tenantContext.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import { createOAuthState, verifyOAuthState } from '../lib/oauthState.js';
 import { storePkceSession, consumePkceSession } from '../services/integrations/oauthPkceStore.js';
 import {
@@ -63,23 +64,79 @@ function isAllowedCallbackUrl(url: string): boolean {
   }
 }
 
-async function getUserGitHubToken(userId: string): Promise<string | null> {
-  return getGitHubToken(userId);
+class GitHubIdentityTransportDenied extends Error {
+  readonly code='CAPABILITY_AUTH_REQUIRED';
+  readonly retryable=false;
+  constructor(){super('GitHub account access was denied by security policy.');}
 }
 
-async function ghApi<T>(token: string, path: string): Promise<T> {
-  const res = await fetch(`https://api.github.com${path}`, {
+type GitHubReadLease={token:string;assertCurrent:()=>Promise<void>};
+async function getUserGitHubToken(req:AuthRequest):Promise<GitHubReadLease|null>{
+  const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId);
+  let invalidated=false;
+  const denied=()=>{invalidated=true;return new GitHubIdentityTransportDenied();};
+  const read=async()=>{
+    requireTenantContext(context);requireResourceOwner(context,req.userId);
+    const {data,error}=await getTenantSupabaseAdmin(context).from('user_integrations').select('user_id,provider,access_token,credential_revision,metadata')
+      .eq('user_id',context.userId).eq('provider','github').maybeSingle();
+    if(error)throw denied();
+    if(!data||!data.access_token||data.metadata?.revoked===true)return null;
+    if(data.user_id!==context.userId||data.provider!=='github'
+      ||typeof data.access_token!=='string'||!data.access_token.startsWith('vault:v3:')
+      ||typeof data.credential_revision!=='string'||!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(data.credential_revision))throw denied();
+    return JSON.stringify([data.access_token,data.credential_revision,data.metadata]);
+  };
+  const selected=await read();if(!selected)return null;
+  const token=await getGitHubToken(context.userId);
+  if(!token)return null;
+  const assertCurrent=async()=>{if(invalidated||await read()!==selected)throw denied();};
+  await assertCurrent();return{token,assertCurrent};
+}
+
+/** A refused stored credential must finish the HTTP request without attempting
+ * provider lookup or exposing the credential. Missing connections stay distinct. */
+async function gitHubTokenOrRespond(req:AuthRequest,res:ExpressResponse):Promise<GitHubReadLease|null|undefined>{
+  try{return await getUserGitHubToken(req);}
+  catch(error){
+    if(!(error instanceof GitHubIdentityTransportDenied))throw error;
+    res.status(503).json({connected:false,error:'GitHub account verification is unavailable.'});
+    return undefined;
+  }
+}
+
+/** Finite credential issuer/account reads only. No repository write, source
+ * export, deployment or approval authority is granted by this transport. */
+async function githubIdentityRequest(destination:string,init:RequestInit={}):Promise<Response>{
+  const method=init.method??'GET';
+  const allowed=method==='POST'&&destination==='https://github.com/login/oauth/access_token'
+    ||method==='GET'&&(destination==='https://api.github.com/user'
+      ||destination==='https://api.github.com/user/repos?per_page=100&sort=updated&affiliation=owner,collaborator'
+      ||/^https:\/\/api\.github\.com\/repos\/[A-Za-z0-9-]{1,39}\/[A-Za-z0-9_.-]{1,100}\/branches\?per_page=100$/.test(destination));
+  if(!allowed||new URL(destination).href!==destination||init.body&&(typeof init.body!=='string'||Buffer.byteLength(init.body)>65536))throw new GitHubIdentityTransportDenied();
+  const response=await fetch(destination,{...init,redirect:'manual',signal:AbortSignal.timeout(15000)});
+  if(response.redirected||response.status>=300&&response.status<400||response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new GitHubIdentityTransportDenied();}
+  if(!response.ok){await response.body?.cancel().catch(()=>undefined);return Response.json({error:'GitHub provider request failed'},{status:response.status});}
+  const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let bytes=0;
+  try{if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.length;if(bytes>2*1024*1024)throw new GitHubIdentityTransportDenied();chunks.push(next.value);}}
+  finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+  const body=Buffer.concat(chunks);try{JSON.parse(body.toString('utf8'));}catch{throw new GitHubIdentityTransportDenied();}
+  return new Response(body,{status:response.status,headers:{'Content-Type':'application/json'}});
+}
+
+async function ghApi<T>(lease:GitHubReadLease,path:string):Promise<T> {
+  await lease.assertCurrent();
+  const res = await githubIdentityRequest(`https://api.github.com${path}`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${lease.token}`,
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
     },
   });
+  await lease.assertCurrent();
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`GitHub API ${res.status}: ${err.slice(0, 200)}`);
+    throw new Error(`GitHub API request failed (${res.status}).`);
   }
-  return res.json() as Promise<T>;
+  const data=await res.json() as T;await lease.assertCurrent();return data;
 }
 
 async function buildGitHubAuthorizeUrl(context: TenantContext, redirectUri: string): Promise<string | null> {
@@ -161,13 +218,14 @@ router.post('/connect', async (req: AuthRequest, res) => {
 
   try {
   const context = requireTenantContext(req.tenantContext);
+  requireResourceOwner(context,req.userId);
   const session = await consumePkceSession(context, 'github_oauth_pkce', parsed.data.state);
   if (!session?.authorization_revision) {
     res.status(400).json({error:'Invalid or expired GitHub authorization state'});return;
   }
   const redirectUri = session.redirect_uri;
 
-  const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+  const tokenRes = await githubIdentityRequest('https://github.com/login/oauth/access_token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({
@@ -184,16 +242,17 @@ router.post('/connect', async (req: AuthRequest, res) => {
     error_description?: string;
   };
 
-  if (!tokenRes.ok || typeof tokenData.access_token !== 'string' || !tokenData.access_token.trim()) {
+  if (!tokenRes.ok || typeof tokenData.access_token !== 'string' || !tokenData.access_token||tokenData.access_token.length>16384||/[\x00-\x20\x7f]/.test(tokenData.access_token)) {
     res.status(400).json({ error: 'Failed to exchange GitHub authorization code. Authorize again.' });
     return;
   }
 
-  const userRes = await fetch('https://api.github.com/user', {
+  const userRes = await githubIdentityRequest('https://api.github.com/user', {
     headers: { Authorization: `Bearer ${tokenData.access_token}`, Accept: 'application/vnd.github+json' },
   });
   const ghUser = (await userRes.json()) as { login: string; id: number };
-  if (!userRes.ok || typeof ghUser.login !== 'string' || !ghUser.login.trim() || !Number.isSafeInteger(ghUser.id) || ghUser.id<=0) {
+  if (!userRes.ok || typeof ghUser.login !== 'string' || !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(ghUser.login)
+    ||ghUser.login.includes(tokenData.access_token)|| !Number.isSafeInteger(ghUser.id) || ghUser.id<=0) {
     res.status(502).json({error:'GitHub account verification failed. Authorize again.'});return;
   }
 
@@ -218,7 +277,8 @@ router.post('/connect', async (req: AuthRequest, res) => {
 });
 
 router.get('/status', async (req: AuthRequest, res) => {
-  const token = await getUserGitHubToken(req.userId!);
+  const token = await gitHubTokenOrRespond(req,res);
+  if(token===undefined)return;
   if (!token) {
     res.json({ connected: false });
     return;
@@ -252,11 +312,13 @@ router.get('/status', async (req: AuthRequest, res) => {
     try {
       const ghUser = await ghApi<{ login: string }>(token, '/user');
       username = ghUser.login;
-    } catch {
+    } catch(error) {
+      if(error instanceof GitHubIdentityTransportDenied){res.status(503).json({connected:false,error:'GitHub account verification is unavailable.'});return;}
       username = 'github-user';
     }
   }
 
+  try{await token.assertCurrent();}catch{res.status(503).json({connected:false,error:'GitHub account verification is unavailable.'});return;}
   res.json({
     connected: true,
     username,
@@ -267,7 +329,8 @@ router.get('/status', async (req: AuthRequest, res) => {
 
 /** List repositories the user can push to */
 router.get('/repos', async (req: AuthRequest, res) => {
-  const token = await getUserGitHubToken(req.userId!);
+  const token = await gitHubTokenOrRespond(req,res);
+  if(token===undefined)return;
   if (!token) {
     res.status(401).json({ error: 'GitHub not connected' });
     return;
@@ -293,7 +356,8 @@ router.get('/repos', async (req: AuthRequest, res) => {
 
 /** List branches for a repository */
 router.get('/repos/:owner/:repo/branches', async (req: AuthRequest, res) => {
-  const token = await getUserGitHubToken(req.userId!);
+  const token = await gitHubTokenOrRespond(req,res);
+  if(token===undefined)return;
   if (!token) {
     res.status(401).json({ error: 'GitHub not connected' });
     return;
@@ -368,7 +432,7 @@ router.get('/analyze', async (req: AuthRequest, res) => {
 
   try {
     const { analyzeGitHubRepo } = await import('../services/integrations/githubDeploy.js');
-    const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch, { lite });
+    const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch, { lite, tenantContext:req.tenantContext });
     if (lite) {
       res.json({
         repoName: analysis.repoName,
@@ -421,6 +485,7 @@ router.get('/repo-state', async (req: AuthRequest, res) => {
       req.userId!,
       repoName,
       branch,
+      req.tenantContext,
     );
     res.json(state);
   } catch (e) {
@@ -438,7 +503,7 @@ router.get('/build-files', async (req: AuthRequest, res) => {
 
   try {
     const { fetchBuildFilesFromGitHub } = await import('../services/integrations/githubDeploy.js');
-    const files = await fetchBuildFilesFromGitHub(req.userId!, repoName);
+    const files = await fetchBuildFilesFromGitHub(req.userId!, repoName, undefined, req.tenantContext);
     const html = files.find((f: { path: string; content: string }) => f.path === 'index.html')?.content ?? '';
     const css = files.find((f: { path: string; content: string }) => f.path === 'styles.css')?.content ?? '';
     const js = files.find((f: { path: string; content: string }) => f.path === 'script.js')?.content ?? '';
@@ -510,6 +575,7 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
       req.userId!,
       parsed.data.repoName,
       parsed.data.branch ?? 'main',
+      req.tenantContext,
     );
     res.json({
       deployUrl: result.deployUrl,
@@ -581,6 +647,7 @@ router.post('/push-build', async (req: AuthRequest, res) => {
     }
 
     const github = await pushBuildToGitHub(req.userId!, files, {
+      tenantContext:req.tenantContext,
       targetRepo: parsed.data.repoName,
       targetBranch: parsed.data.branch ?? 'main',
       slug: parsed.data.projectSlug,
@@ -592,6 +659,7 @@ router.post('/push-build', async (req: AuthRequest, res) => {
         : {}),
       ...(parsed.data.directWriteAuthorized === true ? { directWriteAuthorized: true } : {}),
     });
+    if(github.needsConfirmation){res.status(202).json({...github,pushed:false,githubRepoName:github.repoName,githubRepoUrl:github.htmlUrl});return;}
     res.json({
       githubRepoUrl: github.htmlUrl,
       githubRepoName: github.repoName,
@@ -629,7 +697,9 @@ router.post('/rollback', async (req: AuthRequest, res) => {
       parsed.data.repoName,
       parsed.data.commitSha,
       parsed.data.branch ?? 'main',
+      req.tenantContext,
     );
+    if(rolled.needsConfirmation){res.status(202).json(rolled);return;}
     let deployUrl = '';
     let deployVerified = false;
     try {
@@ -637,6 +707,7 @@ router.post('/rollback', async (req: AuthRequest, res) => {
         req.userId!,
         parsed.data.repoName,
         parsed.data.branch ?? 'main',
+        req.tenantContext,
       );
       const slug =
         parsed.data.repoName.split('/').pop()?.replace(/^xroga-/, '') ?? 'xroga-build';

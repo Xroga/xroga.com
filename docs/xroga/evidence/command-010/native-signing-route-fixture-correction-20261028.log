@@ -1,0 +1,435 @@
+TAP version 13
+# Subtest: actual signing routes require durable exact approval, owned source and current credentials for one sealed write
+    # Subtest: preparation rejects missing actor without credential reads
+    ok 1 - preparation rejects missing actor without credential reads
+      ---
+      duration_ms: 174.682
+      type: 'test'
+      ...
+    # Subtest: preparation rejects clone actor without credential reads
+    ok 2 - preparation rejects clone actor without credential reads
+      ---
+      duration_ms: 19.208
+      type: 'test'
+      ...
+    # Subtest: preparation rejects foreign actor without credential reads
+    ok 3 - preparation rejects foreign actor without credential reads
+      ---
+      duration_ms: 15.0919
+      type: 'test'
+      ...
+    # Subtest: ok
+    not ok 4 - ok
+      ---
+      duration_ms: 321.9647
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\electronSigning.security.test.ts:1:7631'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+        + actual - expected
+
+        + 'pending'
+        - 'executing'
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'executing'
+      actual: 'pending'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\electronSigning.security.test.ts:82:60)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\electronSigning.security.test.ts:70:326)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: concurrent
+    ok 5 - concurrent
+      ---
+      duration_ms: 164.9374
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 6 - cancelled
+      ---
+      duration_ms: 65.4367
+      type: 'test'
+      ...
+    # Subtest: foreign-project
+    ok 7 - foreign-project
+      ---
+      duration_ms: 71.6221
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 8 - changed-target
+      ---
+      duration_ms: 120.4969
+      type: 'test'
+      ...
+    # Subtest: wrong-operation
+    ok 9 - wrong-operation
+      ---
+      duration_ms: 72.1422
+      type: 'test'
+      ...
+    # Subtest: public-key-rotated
+    ok 10 - public-key-rotated
+      ---
+      duration_ms: 138.1272
+      type: 'test'
+      ...
+    # Subtest: revoke-before-confirm
+    ok 11 - revoke-before-confirm
+      ---
+      duration_ms: 69.7154
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 12 - audit-fail
+      ---
+      duration_ms: 120.4921
+      type: 'test'
+      ...
+    # Subtest: revoke-at-audit
+    ok 13 - revoke-at-audit
+      ---
+      duration_ms: 104.8347
+      type: 'test'
+      ...
+    # Subtest: revise-at-audit
+    ok 14 - revise-at-audit
+      ---
+      duration_ms: 111.9828
+      type: 'test'
+      ...
+    # Subtest: foreign-project-at-audit
+    ok 15 - foreign-project-at-audit
+      ---
+      duration_ms: 84.6702
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 16 - cancel-at-audit
+      ---
+      duration_ms: 91.9493
+      type: 'test'
+      ...
+    # Subtest: cancel-at-claim
+    ok 17 - cancel-at-claim
+      ---
+      duration_ms: 144.9503
+      type: 'test'
+      ...
+    # Subtest: provider403
+    ok 18 - provider403
+      ---
+      duration_ms: 84.6987
+      type: 'test'
+      ...
+    # Subtest: provider503
+    ok 19 - provider503
+      ---
+      duration_ms: 159.7019
+      type: 'test'
+      ...
+    # Subtest: redirect
+    ok 20 - redirect
+      ---
+      duration_ms: 152.365
+      type: 'test'
+      ...
+    # Subtest: revoke-after-write
+    ok 21 - revoke-after-write
+      ---
+      duration_ms: 118.331
+      type: 'test'
+      ...
+    1..21
+not ok 1 - actual signing routes require durable exact approval, owned source and current credentials for one sealed write
+  ---
+  duration_ms: 2527.4153
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\electronSigning.security.test.ts:1:594'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: Electron signing secret destinations are exact repositories before any credential access
+not ok 2 - Electron signing secret destinations are exact repositories before any credential access
+  ---
+  duration_ms: 18.2944
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\electronSecrets.authority.test.ts:1:206'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /encodeURIComponent\(opts.owner\).*encodeURIComponent\(opts.repo\)/. Input:
+
+    '/** Native signing material uses the existing exact business-action confirmation.\r\n' +
+      ' * Only a repository-key sealed box may cross the fixed GitHub boundary. */\r\n' +
+      "import {createHash,randomUUID} from 'node:crypto';\r\n" +
+      "import {isDeepStrictEqual} from 'node:util';\r\n" +
+      "import {getGitHubToken} from '../integrations/githubAuth.js';\r\n" +
+      "import {getUserProviderKey} from '../integrations/userProviderKeys.js';\r\n" +
+      "import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';\r\n" +
+      "import {getTenantSupabaseAdmin} from '../../security/serviceRoleGuard.js';\r\n" +
+      "import {AuthorityError,authorityContextForPermit,consumeAuthorityPermit} from '../../security/authority/enforce.js';\r\n" +
+      "import type {AuthorityPermit} from '../../security/authority/types.js';\r\n" +
+      "import {EgressDenied,enforceEgress} from '../../security/egress/egressPolicy.js';\r\n" +
+      "import {persistSecurityDecision} from '../../security/egress/securityDecision.js';\r\n" +
+      "import {actionPlanDigest,businessActionAuthorityScope,snapshotBusinessActionPlan,type BusinessActionPlan} from '../integrations/businessAction.js';\r\n" +
+      "import {createBusinessActionConfirmation,type SafeBusinessActionConfirmation} from '../integrations/businessActionConfirmations.js';\r\n" +
+      "const materialNames={CSC_LINK:'electron_csc_link',CSC_KEY_PASSWORD:'electron_csc_password',APPLE_ID:'electron_apple_id',APPLE_APP_SPECIFIC_PASSWORD:'electron_apple_password',APPLE_TEAM_ID:'electron_apple_team_id'} as const;\r\n" +
+      "const toolkit='xroga-native-signing',toolSlug='XROGA_SET_SIGNING_MATERIAL',useCase='Configure GitHub Actions signing material';\r\n" +
+      'const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;\r\n' +
+      "const denied=()=>new AuthorityError('SIGNING_MATERIAL_ADMISSION_DENIED');\r\n" +
+      "const digest=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');\r\n" +
+      'async function canonicalRow(context:TenantContext,provider:string){\r\n' +
+      " const {data,error}=await getTenantSupabaseAdmin(context).from('user_integrations').select('user_id,provider,access_token,credential_revision,metadata').eq('user_id',context.userId).eq('provider',provider).maybeSingle();\r\n" +
+      ' if(error)throw denied();\r\n' +
+      ' if(!data||data.metadata?.revoked===true||!data.access_token)return null;\r\n' +
+      " if(data.user_id!==context.userId||data.provider!==provider||typeof data.access_token!=='string')throw denied();\r\n" +
+      ' return digest([data.user_id,data.provider,data.access_token,data.credential_revision,data.metadata?.vault_revision]);\r\n' +
+      '}\r\n' +
+      'async function sourceMaterial(context:TenantContext,provider:string){\r\n' +
+      " const selected=await canonicalRow(context,'apikey_'+provider);if(!selected)return null;\r\n" +
+      ' const value=await getUserProviderKey(context.userId,provider);\r\n' +
+      " if(typeof value!=='string'||!value.trim()||Buffer.byteLength(value.trim())>16000||await canonicalRow(context,'apikey_'+provider)!==selected)throw denied();\r\n" +
+      ' return {value:value.trim(),binding:selected};\r\n' +
+      '}\r\n' +
+      'async function ownedProject(context:TenantContext,repository:string,expected?:string){\r\n' +
+      " const {data,error}=await getTenantSupabaseAdmin(context).from('projects').select('id,user_id,github_repo_name').eq('user_id',context.userId).ilike('github_repo_name',repository.replace(/[\\\\%_]/g,'\\\\$&')).maybeSingle();\r\n" +
+      " if(error||!data||data.user_id!==context.userId||typeof data.id!=='string'||!uuid.test(data.id)||typeof data.github_repo_name!=='string'||data.github_repo_name.toLowerCase()!==repository.toLowerCase()||expected!==undefined&&expected!==data.id)throw denied();\r\n" +
+      ' return data.id as string;\r\n' +
+      '}\r\n' +
+      'async function checkedGitHubReceipt(response:Response){\r\n' +
+      " if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}\r\n" +
+      " if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('SIGNING_PROVIDER_AUTHORIZATION_DENIED');}\r\n" +
+      " if(!response.ok){await response.body?.cancel().catch(()=>undefined);throw new Error('Signing configuration provider is unavailable.');}\r\n" +
+      ' const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let size=0;\r\n' +
+      " try{if(reader)for(;;){const next=await reader.read();if(next.done)break;size+=next.value.length;if(size>65536)throw new EgressDenied('INVALID_EGRESS_INPUT');chunks.push(next.value);}}\r\n" +
+      ' finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}\r\n' +
+      " return {status:response.status,json:()=>JSON.parse(Buffer.concat(chunks).toString('utf8')) as unknown};\r\n" +
+      '}\r\n' +
+      'interface SigningInput {userId:string;tenantContext?:TenantContext;repoFullName?:string;name?:string;plan?:BusinessActionPlan;authorityPermit?:AuthorityPermit;signal?:AbortSignal}\r\n' +
+      'async function putRepoSecret(opts:SigningInput):Promise<{plan:BusinessActionPlan}|{synced:string}>{\r\n' +
+      ' const plan=opts.plan?snapshotBusinessActionPlan(opts.plan):undefined;\r\n' +
+      ' const scope=plan?businessActionAuthorityScope(plan):undefined;\r\n' +
+      ' const binding=scope?{userId:opts.userId,provider:scope.provider,connectedAccountId:scope.connectedAccountId,operation:scope.operation,targetDigest:scope.targetDigest,planDigest:scope.planDigest}:undefined;\r\n' +
+      ' const context=binding?authorityContextForPermit(opts.authorityPermit,binding):requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);\r\n' +
+      ' const repoFullName=plan?.arguments.repository??opts.repoFullName,name=plan?.arguments.name??opts.name;\r\n' +
+      " if(typeof repoFullName!=='string'||typeof name!=='string'||!Object.hasOwn(materialNames,name))throw denied();\r\n" +
+      ' const parsed=parseElectronSecretRepository(repoFullName);if(!parsed||repoFullName!==`${parsed.owner}/${parsed.repo}`)throw denied();\r\n' +
+      ' const repository=`${parsed.owner}/${parsed.repo}`,provider=materialNames[name as keyof typeof materialNames],signal=opts.signal;\r\n' +
+      ' const projectId=await ownedProject(context,repository,scope?.projectId??undefined);\r\n' +
+      " const connection=await canonicalRow(context,'github'),token=await getGitHubToken(context.userId),material=await sourceMaterial(context,provider);\r\n" +
+      " if(!connection||!token||!material||await canonicalRow(context,'github')!==connection)throw denied();\r\n" +
+      ' const check=async()=>{signal?.throwIfAborted();requireResourceOwner(context,opts.userId);await ownedProject(context,repository,projectId);\r\n' +
+      "  if(await canonicalRow(context,'github')!==connection||await getGitHubToken(context.userId)!==token||await canonicalRow(context,'apikey_'+provider)!==material.binding)throw denied();signal?.throwIfAborted();};\r\n" +
+      ' await check();\r\n' +
+      " const imported=await import('libsodium-wrappers'),sodium=imported.default??imported;await sodium.ready;await check();\r\n" +
+      ' const keyRes=await checkedGitHubReceipt(await fetch(`https://api.github.com/repos/${encodeURIComponent(parsed.owner)}/${encodeURIComponent(parsed.repo)}/actions/secrets/public-key`,{\r\n' +
+      "  method:'GET',redirect:'manual',signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])]),headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},\r\n" +
+      ' }));\r\n' +
+      ' const keyData=keyRes.json() as {key?:unknown;key_id?:unknown};\r\n' +
+      " if(typeof keyData.key!=='string'||typeof keyData.key_id!=='string'||!/^[A-Za-z0-9_-]{1,128}$/.test(keyData.key_id))throw denied();\r\n" +
+      ' let binKey:Uint8Array;try{binKey=sodium.from_base64(keyData.key,sodium.base64_variants.ORIGINAL);}catch{throw denied();}\r\n' +
+      ' if(binKey.length!==sodium.crypto_box_PUBLICKEYBYTES||sodium.to_base64(binKey,sodium.base64_variants.ORIGINAL)!==keyData.key)throw denied();\r\n' +
+      ' await check();\r\n' +
+      ' const destination=`https://api.github.com/repos/${parsed.owner}/${parsed.repo}/actions/secrets/${name}`;\r\n' +
+      ' if(!plan){\r\n' +
+      '  const encrypted=sodium.to_base64(sodium.crypto_box_seal(Buffer.from(material.value),binKey),sodium.base64_variants.ORIGINAL),nonce=randomUUID(),issuedAt=new Date().toISOString();\r\n' +
+      "  const unsigned:Omit<BusinessActionPlan,'planDigest'>={version:'1.0',sessionId:`trs_native_signing_${nonce}`,toolkit,toolSlug,useCase,\r\n" +
+      '   arguments:{repository,name,destination,projectId,connection,source:material.binding,publicKey:keyData.key,body:{key_id:keyData.key_id,encrypted_value:encrypted}},\r\n' +
+      "   risk:'write',requiresConfirmation:true,forceConfirmation:true,summary:`Set ${name} in GitHub Actions for ${repository}. Only repository-key encrypted signing material will be sent.`,requiredScopes:['xroga:signing-material'],\r\n" +
+      "   authority:{version:'1',userId:context.userId,tenantId:context.tenantId,connectedAccountId:`github:${repository}`,actionClass:'CREDENTIAL_OR_PERMISSION_CHANGE',projectId,runId:null,issuedAt,expiresAt:new Date(Date.parse(issuedAt)+15*60000).toISOString(),nonce,maxSpendMicroUsd:null,currency:null}};\r\n" +
+      '  return {plan:{...unsigned,planDigest:actionPlanDigest(unsigned)}};\r\n' +
+      ' }\r\n' +
+      ' const body=plan.arguments.body as {key_id?:unknown;encrypted_value?:unknown}|null;\r\n' +
+      " if(!scope||!binding||plan.toolkit!==toolkit||plan.toolSlug!==toolSlug||plan.useCase!==useCase||plan.sessionId!==`trs_native_signing_${scope.nonce}`||!uuid.test(scope.nonce)||plan.risk!=='write'||plan.requiresConfirmation!==true||plan.forceConfirmation!==true\r\n" +
+      "  ||scope.actionClass!=='CREDENTIAL_OR_PERMISSION_CHANGE'||scope.connectedAccountId!==`github:${repository}`||scope.projectId!==projectId||scope.runId!==null||scope.maxSpendMicroUsd!==null||scope.currency!==null||Date.parse(scope.expiresAt)-Date.parse(scope.issuedAt)>15*60000\r\n" +
+      "  ||plan.summary!==`Set ${name} in GitHub Actions for ${repository}. Only repository-key encrypted signing material will be sent.`||!isDeepStrictEqual(plan.requiredScopes,['xroga:signing-material'])||!body||typeof body.encrypted_value!=='string'||body.key_id!==keyData.key_id\r\n" +
+      '  ||!isDeepStrictEqual(plan.arguments,{repository,name,destination,projectId,connection,source:material.binding,publicKey:keyData.key,body}))throw denied();\r\n' +
+      ' let encrypted:Uint8Array;try{encrypted=sodium.from_base64(body.encrypted_value,sodium.base64_variants.ORIGINAL);}catch{throw denied();}\r\n' +
+      ' if(encrypted.length!==Buffer.byteLength(material.value)+sodium.crypto_box_SEALBYTES||sodium.to_base64(encrypted,sodium.base64_variants'... 3720 more characters
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    /** Native signing material uses the existing exact business-action confirmation.
+     * Only a repository-key sealed box may cross the fixed GitHub boundary. */
+    import {createHash,randomUUID} from 'node:crypto';
+    import {isDeepStrictEqual} from 'node:util';
+    import {getGitHubToken} from '../integrations/githubAuth.js';
+    import {getUserProviderKey} from '../integrations/userProviderKeys.js';
+    import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
+    import {getTenantSupabaseAdmin} from '../../security/serviceRoleGuard.js';
+    import {AuthorityError,authorityContextForPermit,consumeAuthorityPermit} from '../../security/authority/enforce.js';
+    import type {AuthorityPermit} from '../../security/authority/types.js';
+    import {EgressDenied,enforceEgress} from '../../security/egress/egressPolicy.js';
+    import {persistSecurityDecision} from '../../security/egress/securityDecision.js';
+    import {actionPlanDigest,businessActionAuthorityScope,snapshotBusinessActionPlan,type BusinessActionPlan} from '../integrations/businessAction.js';
+    import {createBusinessActionConfirmation,type SafeBusinessActionConfirmation} from '../integrations/businessActionConfirmations.js';
+    const materialNames={CSC_LINK:'electron_csc_link',CSC_KEY_PASSWORD:'electron_csc_password',APPLE_ID:'electron_apple_id',APPLE_APP_SPECIFIC_PASSWORD:'electron_apple_password',APPLE_TEAM_ID:'electron_apple_team_id'} as const;
+    const toolkit='xroga-native-signing',toolSlug='XROGA_SET_SIGNING_MATERIAL',useCase='Configure GitHub Actions signing material';
+    const uuid=/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
+    const denied=()=>new AuthorityError('SIGNING_MATERIAL_ADMISSION_DENIED');
+    const digest=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
+    async function canonicalRow(context:TenantContext,provider:string){
+     const {data,error}=await getTenantSupabaseAdmin(context).from('user_integrations').select('user_id,provider,access_token,credential_revision,metadata').eq('user_id',context.userId).eq('provider',provider).maybeSingle();
+     if(error)throw denied();
+     if(!data||data.metadata?.revoked===true||!data.access_token)return null;
+     if(data.user_id!==context.userId||data.provider!==provider||typeof data.access_token!=='string')throw denied();
+     return digest([data.user_id,data.provider,data.access_token,data.credential_revision,data.metadata?.vault_revision]);
+    }
+    async function sourceMaterial(context:TenantContext,provider:string){
+     const selected=await canonicalRow(context,'apikey_'+provider);if(!selected)return null;
+     const value=await getUserProviderKey(context.userId,provider);
+     if(typeof value!=='string'||!value.trim()||Buffer.byteLength(value.trim())>16000||await canonicalRow(context,'apikey_'+provider)!==selected)throw denied();
+     return {value:value.trim(),binding:selected};
+    }
+    async function ownedProject(context:TenantContext,repository:string,expected?:string){
+     const {data,error}=await getTenantSupabaseAdmin(context).from('projects').select('id,user_id,github_repo_name').eq('user_id',context.userId).ilike('github_repo_name',repository.replace(/[\\%_]/g,'\\$&')).maybeSingle();
+     if(error||!data||data.user_id!==context.userId||typeof data.id!=='string'||!uuid.test(data.id)||typeof data.github_repo_name!=='string'||data.github_repo_name.toLowerCase()!==repository.toLowerCase()||expected!==undefined&&expected!==data.id)throw denied();
+     return data.id as string;
+    }
+    async function checkedGitHubReceipt(response:Response){
+     if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
+     if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('SIGNING_PROVIDER_AUTHORIZATION_DENIED');}
+     if(!response.ok){await response.body?.cancel().catch(()=>undefined);throw new Error('Signing configuration provider is unavailable.');}
+     const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let size=0;
+     try{if(reader)for(;;){const next=await reader.read();if(next.done)break;size+=next.value.length;if(size>65536)throw new EgressDenied('INVALID_EGRESS_INPUT');chunks.push(next.value);}}
+     finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+     return {status:response.status,json:()=>JSON.parse(Buffer.concat(chunks).toString('utf8')) as unknown};
+    }
+    interface SigningInput {userId:string;tenantContext?:TenantContext;repoFullName?:string;name?:string;plan?:BusinessActionPlan;authorityPermit?:AuthorityPermit;signal?:AbortSignal}
+    async function putRepoSecret(opts:SigningInput):Promise<{plan:BusinessActionPlan}|{synced:string}>{
+     const plan=opts.plan?snapshotBusinessActionPlan(opts.plan):undefined;
+     const scope=plan?businessActionAuthorityScope(plan):undefined;
+     const binding=scope?{userId:opts.userId,provider:scope.provider,connectedAccountId:scope.connectedAccountId,operation:scope.operation,targetDigest:scope.targetDigest,planDigest:scope.planDigest}:undefined;
+     const context=binding?authorityContextForPermit(opts.authorityPermit,binding):requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
+     const repoFullName=plan?.arguments.repository??opts.repoFullName,name=plan?.arguments.name??opts.name;
+     if(typeof repoFullName!=='string'||typeof name!=='string'||!Object.hasOwn(materialNames,name))throw denied();
+     const parsed=parseElectronSecretRepository(repoFullName);if(!parsed||repoFullName!==`${parsed.owner}/${parsed.repo}`)throw denied();
+     const repository=`${parsed.owner}/${parsed.repo}`,provider=materialNames[name as keyof typeof materialNames],signal=opts.signal;
+     const projectId=await ownedProject(context,repository,scope?.projectId??undefined);
+     const connection=await canonicalRow(context,'github'),token=await getGitHubToken(context.userId),material=await sourceMaterial(context,provider);
+     if(!connection||!token||!material||await canonicalRow(context,'github')!==connection)throw denied();
+     const check=async()=>{signal?.throwIfAborted();requireResourceOwner(context,opts.userId);await ownedProject(context,repository,projectId);
+      if(await canonicalRow(context,'github')!==connection||await getGitHubToken(context.userId)!==token||await canonicalRow(context,'apikey_'+provider)!==material.binding)throw denied();signal?.throwIfAborted();};
+     await check();
+     const imported=await import('libsodium-wrappers'),sodium=imported.default??imported;await sodium.ready;await check();
+     const keyRes=await checkedGitHubReceipt(await fetch(`https://api.github.com/repos/${encodeURIComponent(parsed.owner)}/${encodeURIComponent(parsed.repo)}/actions/secrets/public-key`,{
+      method:'GET',redirect:'manual',signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])]),headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},
+     }));
+     const keyData=keyRes.json() as {key?:unknown;key_id?:unknown};
+     if(typeof keyData.key!=='string'||typeof keyData.key_id!=='string'||!/^[A-Za-z0-9_-]{1,128}$/.test(keyData.key_id))throw denied();
+     let binKey:Uint8Array;try{binKey=sodium.from_base64(keyData.key,sodium.base64_variants.ORIGINAL);}catch{throw denied();}
+     if(binKey.length!==sodium.crypto_box_PUBLICKEYBYTES||sodium.to_base64(binKey,sodium.base64_variants.ORIGINAL)!==keyData.key)throw denied();
+     await check();
+     const destination=`https://api.github.com/repos/${parsed.owner}/${parsed.repo}/actions/secrets/${name}`;
+     if(!plan){
+      const encrypted=sodium.to_base64(sodium.crypto_box_seal(Buffer.from(material.value),binKey),sodium.base64_variants.ORIGINAL),nonce=randomUUID(),issuedAt=new Date().toISOString();
+      const unsigned:Omit<BusinessActionPlan,'planDigest'>={version:'1.0',sessionId:`trs_native_signing_${nonce}`,toolkit,toolSlug,useCase,
+       arguments:{repository,name,destination,projectId,connection,source:material.binding,publicKey:keyData.key,body:{key_id:keyData.key_id,encrypted_value:encrypted}},
+       risk:'write',requiresConfirmation:true,forceConfirmation:true,summary:`Set ${name} in GitHub Actions for ${repository}. Only repository-key encrypted signing material will be sent.`,requiredScopes:['xroga:signing-material'],
+       authority:{version:'1',userId:context.userId,tenantId:context.tenantId,connectedAccountId:`github:${repository}`,actionClass:'CREDENTIAL_OR_PERMISSION_CHANGE',projectId,runId:null,issuedAt,expiresAt:new Date(Date.parse(issuedAt)+15*60000).toISOString(),nonce,maxSpendMicroUsd:null,currency:null}};
+      return {plan:{...unsigned,planDigest:actionPlanDigest(unsigned)}};
+     }
+     const body=plan.arguments.body as {key_id?:unknown;encrypted_value?:unknown}|null;
+     if(!scope||!binding||plan.toolkit!==toolkit||plan.toolSlug!==toolSlug||plan.useCase!==useCase||plan.sessionId!==`trs_native_signing_${scope.nonce}`||!uuid.test(scope.nonce)||plan.risk!=='write'||plan.requiresConfirmation!==true||plan.forceConfirmation!==true
+      ||scope.actionClass!=='CREDENTIAL_OR_PERMISSION_CHANGE'||scope.connectedAccountId!==`github:${repository}`||scope.projectId!==projectId||scope.runId!==null||scope.maxSpendMicroUsd!==null||scope.currency!==null||Date.parse(scope.expiresAt)-Date.parse(scope.issuedAt)>15*60000
+      ||plan.summary!==`Set ${name} in GitHub Actions for ${repository}. Only repository-key encrypted signing material will be sent.`||!isDeepStrictEqual(plan.requiredScopes,['xroga:signing-material'])||!body||typeof body.encrypted_value!=='string'||body.key_id!==keyData.key_id
+      ||!isDeepStrictEqual(plan.arguments,{repository,name,destination,projectId,connection,source:material.binding,publicKey:keyData.key,body}))throw denied();
+     let encrypted:Uint8Array;try{encrypted=sodium.from_base64(body.encrypted_value,sodium.base64_variants.ORIGINAL);}catch{throw denied();}
+     if(encrypted.length!==Buffer.byteLength(material.value)+sodium.crypto_box_SEALBYTES||sodium.to_base64(encrypted,sodium.base64_variants.ORIGINAL)!==body.encrypted_value)throw denied();
+     // The exact ciphertext was server-prepared from the pinned owner's canonical
+     // source row and this repository's current public key. Plaintext is never part
+     // of the plan, model input, egress evidence, errors or HTTP upload body.
+     const payload={sessionId:plan.sessionId,useCase:plan.useCase,toolSlug:plan.toolSlug,arguments:plan.arguments};
+     await enforceEgress({context,actionClass:scope.actionClass,destination,recipient:repository,purpose:'github-actions-signing-material',payload,declaredClass:'USER_PRIVATE',toolTrust:'SERVER_REGISTERED',binding,authorityPermit:opts.authorityPermit},r=>persistSecurityDecision(context,r));
+     await consumeAuthorityPermit(opts.authorityPermit,binding);await check();
+     const put=await checkedGitHubReceipt(await fetch(destination,{method:'PUT',redirect:'manual',signal:AbortSignal.any([AbortSignal.timeout(25000),...(signal?[signal]:[])]),
+      headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json','Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'},body:JSON.stringify(body)}));
+     await check();if(!(put.status === 201 || put.status === 204))throw denied();return{synced:name};
+    }
+
+    export function parseElectronSecretRepository(fullName: string): { owner: string; repo: string } | null {
+      if (typeof fullName !== 'string' || fullName !== fullName.trim()) return null;
+      const parts = fullName.replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '').split('/');
+      if (parts.length !== 2) return null;
+      const owner = parts[0]!, repo = parts[1]!.replace(/\.git$/, '');
+      if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(owner)
+        || !/^[A-Za-z0-9_.-]{1,100}$/.test(repo) || repo === '.' || repo === '..') return null;
+      return { owner, repo };
+    }
+
+
+    /** Preparation never transfers signing material. Each exact write uses the same
+     * canonical durable approval as other consequential business actions. */
+    export async function syncElectronSigningSecretsToGitHub(opts:{userId:string;repoFullName:string;tenantContext?:TenantContext;signal?:AbortSignal}):Promise<{ok:boolean;synced:string[];message:string;needsConfirmation?:boolean;confirmations?:SafeBusinessActionConfirmation[]}>{
+     const parsed=parseElectronSecretRepository(opts.repoFullName);if(!parsed)return{ok:false,synced:[],message:'Invalid repo'};
+     const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
+     const repository=`${parsed.owner}/${parsed.repo}`,plans:BusinessActionPlan[]=[];
+     await ownedProject(context,repository);
+     for(const[name,provider]of Object.entries(materialNames)){
+      if(!await canonicalRow(context,'apikey_'+provider))continue;
+      const prepared=await putRepoSecret({userId:context.userId,tenantContext:context,repoFullName:repository,name,signal:opts.signal});
+      if(!('plan'in prepared))throw denied();plans.push(prepared.plan);
+     }
+     if(!plans.length)return{ok:true,synced:[],message:'No signing material is configured. No GitHub secret was changed.'};
+     const confirmations:SafeBusinessActionConfirmation[]=[];
+     for(const plan of plans)confirmations.push(await createBusinessActionConfirmation(context.userId,plan));
+     return{ok:false,synced:[],needsConfirmation:true,confirmations,message:'Review each signing-material transfer before changing GitHub Actions secrets.'};
+    }
+    export async function executeElectronSigningMaterial(userId:string,plan:BusinessActionPlan,authorityPermit?:AuthorityPermit){
+     const result=await putRepoSecret({userId,plan,authorityPermit});if(!('synced'in result))throw denied();return{ok:true,synced:[result.synced],message:'The approved repository signing material was updated.'};
+    }
+
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\electronSecrets.authority.test.ts:17:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: Electron secret writes seal to the exact repository and redact transport failures
+not ok 3 - Electron secret writes seal to the exact repository and redact transport failures
+  ---
+  duration_ms: 698.4202
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\electronSecrets.authority.test.ts:1:1498'
+  failureType: 'testCodeFailure'
+  error: 'Sign in again and retry.'
+  code: 'TENANT_AUTH_REQUIRED'
+  name: 'TenantAccessError'
+  stack: |-
+    requireTenantContext (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\security\tenantContext.ts:27:80)
+    syncElectronSigningSecretsToGitHub (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\electronSecrets.ts:114:16)
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\electronSecrets.authority.test.ts:51:27)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Electron signing transfer denies raw and fabricated actors before credential or provider access
+ok 4 - Electron signing transfer denies raw and fabricated actors before credential or provider access
+  ---
+  duration_ms: 6.361
+  type: 'test'
+  ...
+# Subtest: signing UI requires current exact native approval and never accepts a completed write as preparation
+ok 5 - signing UI requires current exact native approval and never accepts a completed write as preparation
+  ---
+  duration_ms: 8.574
+  type: 'test'
+  ...
+1..5
+# tests 26
+# suites 0
+# pass 22
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5746.5304

@@ -1,0 +1,221 @@
+{
+  "scope": "EXACT_REACHABLE_COMPOSIO_BOUNDARY_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "b450dd28d26964cfaefe85abbfb2cd9bdc8cf793",
+  "resolvedCandidate": "7b6e1f490ce974fc3971",
+  "sourceBindings": [
+    {
+      "path": "backend/src/routes/businessAutomations.ts",
+      "sha256": "13aff7d36510abf33943aecc6176cb6d70ed10a438b2e4c0c698414ffc7a7c7a"
+    },
+    {
+      "path": "backend/src/routes/integrations.ts",
+      "sha256": "e6aab8dfd7f534aeb38932151f6ef807eb71447e4bc2b538e6d01b0585905a21"
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "sha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8"
+    },
+    {
+      "path": "backend/src/routes/phase1BusinessPreflight.ts",
+      "sha256": "4ccfe63df5c66aba86d83c2816411c8c23a0179a452d7423557189c9ead64a7d",
+      "beforeFinalPreflightDenialGuard": {
+        "sha256": "3c7575cc189c581be5f16f26ec4b9820b82b12d00eff6edb0a9d79b2d3191606"
+      },
+      "continuationTest": "36367786-a9a1-461a-b445-9e82e90429cc"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "b742f5d59011e26e413eaeb2c858308e9490229b12ec5fd011a86d21b3a9ac3d"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAutomations.ts",
+      "sha256": "4be929bbebe757032e053312b5477c735fa7e68e06099c1157875aad770f43a0"
+    },
+    {
+      "path": "backend/src/services/integrations/businessRead.ts",
+      "sha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa"
+    },
+    {
+      "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
+      "sha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "sha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac"
+    },
+    {
+      "path": "backend/src/services/integrations/composioControl.ts",
+      "sha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74"
+    }
+  ],
+  "receipts": [
+    {
+      "label": "focused74",
+      "id": "04c3f247-728a-42c8-b501-b29ffe5925a2",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-focused74-20261028.log.gz",
+      "sha256": "94cc60afc256b75e6a0c331b3b8c3887dbcc916ec88ed1041c971e77f630d2c8",
+      "logSha256": "5797550e5c025662f3ac320a23b2ea743c8c874d8e559c7cbd2a875e12348904"
+    },
+    {
+      "label": "backendTypes",
+      "id": "54d0236f-8434-498b-bf65-83c032e7dd61",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-backendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "frontendTypes",
+      "id": "414f5c85-719d-4fe3-8f77-20995d3a2fdc",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-frontendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "frontendReviewRoute",
+      "id": "a8f1b5fe-cdd1-4b91-a358-11858cac73de",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-frontendReviewRoute-20261028.log.gz",
+      "sha256": "9136b46a43368d0349720ad184d7d9522bc86b7ded4123bcd44a8caaa7587c9f",
+      "logSha256": "cdcd991f5329a6012e05483d7a3c954a327022a37601e74746829fd5eb065ecb"
+    },
+    {
+      "label": "broad128UnchangedTests",
+      "id": "548e3373-9ca9-4f56-9b60-04f31d773577",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-broad128UnchangedTests-20261028.log.gz",
+      "sha256": "1ddc280d2f9025e867872f38613aa8fe352e59de6fd5acd80bf5501d15259225",
+      "logSha256": "3f6169d3910ab876347862ed2adbbb8ae760cf4bb213a0a080556edd55b1315e"
+    },
+    {
+      "label": "businessFixtureCorrections5",
+      "id": "5d7b399a-7478-4ea4-90fc-f1715c8189d3",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-businessFixtureCorrections5-20261028.log.gz",
+      "sha256": "ae885e9aaaff3ab428079f4f5b916a21f2d25beecfb841ec5ec9691e0b4b6eff",
+      "logSha256": "b850aca6d5b45ce4398c9b3feeb600334a7e629513ef274b8c1de9e1bf49f4fd"
+    },
+    {
+      "label": "actorRed",
+      "id": "ef935792-3372-4086-a0b6-e0562c0f7cd4",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-actorRed-20261028.log.gz",
+      "sha256": "82ea913b6817b4e7d42ba91b6c7d5c7ac4dc070ed46dfcd4f316ac99627c6a64",
+      "logSha256": "d76769f22cbe8798e88efb0e7965ac77917cc26ef584c348a6e61b59b46ee45a"
+    },
+    {
+      "label": "privateDiscoveryAndMcpRed",
+      "id": "7e352479-c1c7-40a4-902f-95890bff6a2c",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-privateDiscoveryAndMcpRed-20261028.log.gz",
+      "sha256": "a8c652790a2d4b2966f133b77b4641b358a9621262a76bc82b7673d511ebca0d",
+      "logSha256": "d7213405d4213d46fc8efd98a06f62ce30762cae80e0209ff10cff3d0486a314"
+    },
+    {
+      "label": "readConsentRed",
+      "id": "0211a59a-e7ab-4736-85d3-bc366ac7f9ae",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-readConsentRed-20261028.log.gz",
+      "sha256": "a57b0350ea0bdb6a6f81c512d80dffb222fe2067871a7852da4a4f6972939dba",
+      "logSha256": "6be7f83f51074deb9dc94561cbafdb8d11ed4f1b00f19c8a76af5aeaf757c55c"
+    },
+    {
+      "label": "catalogPrivacyRed",
+      "id": "60f64da5-1daf-4d18-b726-717e59c91311",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-catalogPrivacyRed-20261028.log.gz",
+      "sha256": "22ab2cf64b38a039379086e390854e097708a900f11043748aada7e631537210",
+      "logSha256": "f5eae5bb53be64e054cdf562ab40ea1e7e42250282ef4249b742165582b1474b"
+    },
+    {
+      "label": "resumedReadBoundRed",
+      "id": "4bb9b396-1376-4c34-a829-bf7d50174ed7",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-resumedReadBoundRed-20261028.log.gz",
+      "sha256": "2f4620806d7f333579150053ea51c13d8d1794795085c1fc8da5e7a44ec60cbf",
+      "logSha256": "4d05a5c4149e6b9263f74cada9375d4fda2bc4b9119ec4f5ebb389eab56b5033"
+    },
+    {
+      "label": "finalBackendTypes",
+      "id": "bcace346-df96-4ed1-bfa2-2fadb1d42efb",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-finalBackendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "frontendLint",
+      "id": "30d0ad4e-7f7d-4193-84cd-f9349e4c7496",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-frontendLint-20261028.log.gz",
+      "sha256": "1aa0fdac6f8b8c466e002d94deb31935a4d11f5658ab2a6fc668698af5ba5907",
+      "logSha256": "0e4a37d773fbc8dbf70ed8a2f83be457c97b27668f30c8c0dbdf0cdd01e54e4b"
+    },
+    {
+      "label": "preflightDenialRed",
+      "id": "f837acd3-2442-4331-aa9d-cbbf9193fbfd",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-preflightDenialRed-20261028.log.gz",
+      "sha256": "84d0e7d3c8a5d8792c6dd8d8f19bbfeefe20b4df2277ffdab5defb4731943532",
+      "logSha256": "ec1192fe417560d9940750aad2a27ee3196261033fd25762c2df0679745714fe"
+    },
+    {
+      "label": "preflightAndWorkflowFinal",
+      "id": "36367786-a9a1-461a-b445-9e82e90429cc",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-preflightAndWorkflowFinal-20261028.log.gz",
+      "sha256": "7b303143985a7a60e53368f31c8cc0e2f3f768b62f554ab3795dcf990de442dd",
+      "logSha256": "ad8f23639cd44baadff3775812eee5798002b939cda3cdbd8fcd5724841899cd"
+    },
+    {
+      "label": "sourceRegisterIntegrity10",
+      "id": "6780c35d-6d68-446f-a9e8-39e4ff85ddd8",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-sourceRegisterIntegrity10-20261028.log.gz",
+      "sha256": "f4dbf24edae3732a30aa905bddf8f45076a0f7242d5b1fa557da3f029d449d7c",
+      "logSha256": "ee7629be313b00ad864955418c0d17f76234a9a65a386b0adb6fadc2a75a4223"
+    }
+  ],
+  "remaps": [
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "beforeId": "fb2bffffc91cc072976a",
+      "afterId": "fb2bffffc91cc072976a",
+      "expressionSha256": "71810aae4ee0f65671120d7cc36a29e3dcc1dd34c482026e53cc7a042beee70e",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "IDENTICAL_NEAREST_BLOCK"
+    }
+  ],
+  "unchangedExistingEgressBlocks": [],
+  "defects": [
+    "Tenant session, discovery and configuration helpers accepted raw user IDs.",
+    "Discovery and catalog search could transmit private user text to Composio before egress admission.",
+    "Private reads could publish success without exact private-egress consent.",
+    "Custom MCP and trigger mutations lacked native exact producer-attested consent, current account/source/credential checks and verified receipts.",
+    "A resumed confirmed read could bypass the prior bounded-evidence rule.",
+    "Connection preflight swallowed a security denial before trying a public catalog fallback."
+  ],
+  "correction": "Original issued context and current platform credential epoch reach every private helper. Session ID, current config and owner are checked. Discovery uses only finite server vocabulary and public provider app identifiers. Catalog search is local over bounded public metadata. Exact private reads and configuration mutations use the existing businessAction confirmation, durable claim, managed-vault producer proof, egress policy and one-use permit. Custom tools remain untrusted and cannot run through registered-tool authority. Trigger selection pins the exact current owned active connected account. No denial retry or false pending completion is allowed. UI links reuse the existing UUID-only review route.",
+  "limitations": [
+    "Synthetic protocol and loopback tests are labelled, no live customer or paid provider operation was performed.",
+    "Custom MCP registration admits untrusted metadata only, not unrestricted execution.",
+    "No new authority issuer, scheduler, accounting ledger or production schema is introduced.",
+    "Existing confirmed action approval and canonical model reservation/settlement remain required. Private reads now require exact private-egress review.",
+    "This does not promote the remaining Supabase project-create caller, either GitHub helper, historical tenant acceptance, browser obligations or whole Phase4 acceptance."
+  ],
+  "officialReferences": [
+    "https://docs.composio.dev/reference/api-reference/tool-router/getToolRouterSessionBySessionId",
+    "https://docs.composio.dev/reference/api-reference/tool-router/getToolRouterSessionBySessionIdConfigHistory",
+    "https://docs.composio.dev/reference/api-reference/toolkits/postCustomToolkitsSync",
+    "https://docs.composio.dev/reference/api-reference/triggers/postTriggerInstancesBySlugUpsert",
+    "https://docs.composio.dev/reference/api-reference/auth-configs/postAuthConfigs"
+  ],
+  "strictRulesChanged": false,
+  "frozenCriteriaChanged": false,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spend": 0,
+  "preflightCorrection": "All metadata fallback calls retain the same original context. Security denials are terminal in both discovery and session availability handling. Ordinary unrecognized-catalog recovery remains supported."
+}

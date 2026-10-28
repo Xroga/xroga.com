@@ -1,0 +1,108 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "parent": "b7e213a5057c2915298cdcef88e9884dc504c2b5",
+  "resolvedCandidateIds": [
+    "fcbe4c75dea0e59bcb3a"
+  ],
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 125,
+    "pending": 11,
+    "unresolvedHighRiskBypasses": 8
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "remainingCandidates": [
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "file": "backend/src/ai/parallelDispatch.ts",
+      "entryPoint": "executeParallelRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "807c2948cdfa16e19b84",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "file": "backend/src/services/integrations/composioClient.ts",
+      "entryPoint": "composioRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "file": "backend/src/services/integrations/supabaseProvision.ts",
+      "entryPoint": "mgmtFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "d9708e60456bb2d7e538",
+      "file": "backend/src/services/publish/chromeWebStore.ts",
+      "entryPoint": "cwsFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "42cc7885da84d7295699",
+      "file": "backend/src/services/publish/easCredentials.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "602637659fcacb16c1ef",
+      "file": "backend/src/services/publish/easPublish.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "094a251245ce9b6ab659",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipChromeExtensionZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "07ca232e98dcc1720801",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipElectronPortableZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    }
+  ],
+  "focusedTests": {
+    "total": 56,
+    "pass": 56,
+    "fail": 0,
+    "skip": 0,
+    "job": "7e1edcdd-a34a-473d-ab69-6ce8dacb64e3"
+  },
+  "sourceEvidence": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+  "phase4Accepted": false,
+  "batch1": "NOT_CLOSED",
+  "productionEffects": false,
+  "spending": 0,
+  "previousCheckpointCi": "B7E213A5_ALL_SEVEN_WORKFLOWS_PASS",
+  "nextGroup": "Existing native GitHub artifact uploads and Chrome Web Store publishing, through original durable business-action approval and private artifact storage. No new orchestrator or store.",
+  "strictReceipt": {
+    "job": "6b210058-5354-48be-8ee9-253ab27a7993",
+    "exitCode": 1,
+    "log": "docs/xroga/evidence/command-010/logs/strict-incomplete-11pending-20261028.log",
+    "rawSha256": "ece057d72201e09e8473e1fec2ac6c6f4db7c391d7976df96cc0442ddb1ae5de"
+  },
+  "finalLocalGates": {
+    "job": "163f23b4-a102-4da8-a3a4-ef905fb4b949",
+    "tests": 10,
+    "pass": 10,
+    "result": "PASS_INTEGRITY_NOT_ACCEPTANCE"
+  }
+}

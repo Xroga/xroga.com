@@ -17,7 +17,7 @@ test('private and public shares are distinct experiences', () => {
 test('the private page forwards the current session for owner verification', () => {
   assert.match(PAGE, /supabase\.auth\.getSession\(\)/);
   assert.match(PAGE, /Authorization: `Bearer \$\{accessToken\}`/);
-  assert.match(PAGE, /response\.status === 403/);
+  assert.match(PAGE, /response\.status\s*===\s*403/);
   assert.match(PAGE, /Only the Xroga account that created it can open this page/);
 });
 

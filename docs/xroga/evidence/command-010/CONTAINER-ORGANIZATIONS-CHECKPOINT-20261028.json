@@ -1,0 +1,54 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "atUtc": "2026-10-27T21:26:16.853277+00:00",
+  "parent": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
+  "resolvedOriginalCandidates": [
+    "151aa103d929fb10c020",
+    "96fbfea42a399a233486"
+  ],
+  "newGuardedLifecycleHelper": "5e931ac391ece81659aa",
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 118,
+    "pending": 18,
+    "unresolvedHighRiskBypasses": 11
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "verification": {
+    "containerFocused": {
+      "pass": 45,
+      "fail": 0,
+      "skip": 0,
+      "realDockerChecks": 7,
+      "job": "49bd2ee8-c9ae-45b2-8ef0-4bef12d4c251"
+    },
+    "organizationRoutes": {
+      "pass": 14,
+      "fail": 0,
+      "skip": 0,
+      "job": "f3a694f6-a715-4e92-8c76-81fe9f3aabcf"
+    },
+    "backendTypes": {
+      "result": "PASS",
+      "job": "e747a570-60ca-4220-9d3e-e4871d847592"
+    }
+  },
+  "lastExactSourceCI": {
+    "source": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
+    "workflows": 7,
+    "conclusion": "PASS",
+    "featureBackendTests": 3945,
+    "featureFrontendTests": 1186,
+    "receipt": "docs/xroga/evidence/command-010/ci-a0ff83a3-20261028/verification.json",
+    "notCurrentUncommittedSource": true
+  },
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_OUTSIDE_ASSIGNMENT",
+  "next": "Close the remaining original connected-provider and native consequential callers with exact actor, owner, provenance, canonical approval and egress before dispatch. Do not promote whole shared callers from fixed-host read evidence."
+}

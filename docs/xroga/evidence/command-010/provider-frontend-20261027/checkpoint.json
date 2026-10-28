@@ -1,0 +1,294 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_SECURITY_CLOSURE_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T18:30:28.408935+00:00",
+  "parent": "951d72c60f447478e66b77f490b57bf050f90fcd",
+  "traces": [
+    "docs/xroga/evidence/command-010/research-oauth-20261027/trace.json",
+    "docs/xroga/evidence/command-010/expo-identity-20261027/trace.json",
+    "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+    "docs/xroga/evidence/command-010/research-oauth-20261027/authorization-denial-addendum.json",
+    "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
+    "docs/xroga/evidence/command-010/WHOP-READBACK-TRANSPORT-20261027.json"
+  ],
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 108,
+    "pending": 28,
+    "unresolvedHighRiskBypasses": 16
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "strictIncomplete",
+      "jobId": "a6f93178-bd15-42f3-a86c-b333b528f6fa",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/provider-frontend-20261027/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "backendTypes",
+      "jobId": "d5fa3cbc-473a-4fa6-aabf-2e0ae079b60e",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322156
+      }
+    },
+    {
+      "name": "frontendTypes",
+      "jobId": "072ee6b6-a20f-4dc0-97ed-fe76693e78cc",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322068
+      }
+    },
+    {
+      "name": "tenantInventoryIntegrity",
+      "jobId": "0bbe5aaa-a192-45f6-81b5-3c647cd45dc3",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/provider-frontend-20261027/tenantInventoryIntegrity.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "finalBackendTypes",
+      "jobId": "5f2cdd61-2c57-45af-8e5f-a320a48fa96a",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322052
+      }
+    },
+    {
+      "name": "finalExactStrictCommand",
+      "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
+      "jobId": "7484a374-2bf7-41ed-b888-9161db41eb9c",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/provider-frontend-20261027/finalStrictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "backendTypes": "PASS_CURRENT_BACKEND_SOURCE",
+  "frontendTypes": "PASS_CURRENT_FRONTEND_SOURCE",
+  "phase4": "NOT_VERIFIED",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "productionChanged": false,
+  "spending": 0,
+  "xResearch": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED",
+  "sourceCountExplanation": "Three admin/share calls consolidate into existing API guard. Two Supabase token calls consolidate into one. Unsafe X research dispatch is removed but remains an explicit unavailable feature with re-enable prerequisites. Fixed Expo identity and existing private-file proxy have individual scoped proofs. No higher consequential callers promoted.",
+  "remainingCallers": [
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "file": "backend/src/ai/parallelDispatch.ts",
+      "entryPoint": "executeParallelRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "62b34a66b572747e7265",
+      "file": "backend/src/routes/github.ts",
+      "entryPoint": "ghApi",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "8cfcdcc583571e83a617",
+      "file": "backend/src/routes/github.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "eb84fe6311c5e8af520e",
+      "file": "backend/src/routes/github.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "807c2948cdfa16e19b84",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "96fbfea42a399a233486",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "fcbe4c75dea0e59bcb3a",
+      "file": "backend/src/routes/voice.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "151aa103d929fb10c020",
+      "file": "backend/src/sandbox/sandboxProviders.ts",
+      "entryPoint": "runIsolated",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "a7a8d74128349a90e3e8",
+      "file": "backend/src/services/BillingService.ts",
+      "entryPoint": "verifyConfiguredPlan",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "fcad57247cfb79779f95",
+      "file": "backend/src/services/BillingService.ts",
+      "entryPoint": "createCheckout",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "file": "backend/src/services/integrations/composioClient.ts",
+      "entryPoint": "composioRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "07a46a7b451eaf4dc307",
+      "file": "backend/src/services/integrations/githubSourceRead.ts",
+      "entryPoint": "request",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "file": "backend/src/services/integrations/supabaseProvision.ts",
+      "entryPoint": "mgmtFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "c7711580844b520345cf",
+      "file": "backend/src/services/integrations/userProviderKeys.ts",
+      "entryPoint": "saveKeyToStorage",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "d9708e60456bb2d7e538",
+      "file": "backend/src/services/publish/chromeWebStore.ts",
+      "entryPoint": "cwsFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "42cc7885da84d7295699",
+      "file": "backend/src/services/publish/easCredentials.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "602637659fcacb16c1ef",
+      "file": "backend/src/services/publish/easPublish.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "cf71505267ebcf357a5c",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "entryPoint": "putRepoSecret",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7cd9f7585381cfe94c57",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "entryPoint": "putRepoSecret",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "094a251245ce9b6ab659",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipChromeExtensionZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "07ca232e98dcc1720801",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipElectronPortableZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "1d79a3dee4b57945a6d6",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "entryPoint": "dockerSync",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "fe9ce5d32d8c52cdd3c3",
+      "file": "frontend/src/components/showcase/products/AiSaas.tsx",
+      "entryPoint": "AiSaas",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "52851686fc818e0e4c5f",
+      "file": "frontend/src/components/showcase/products/AiSaas.tsx",
+      "entryPoint": "sendMessage",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "805931ff0dc022677403",
+      "file": "frontend/src/lib/showcase/auraGroq.ts",
+      "entryPoint": "requestGroqStream",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "68df836263d1eff0010b",
+      "file": "frontend/src/lib/supabase/authProviders.ts",
+      "entryPoint": "requireGitHubProvider",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    }
+  ],
+  "next": "Continue production-reachable GitHub source provenance and fixed provider transport callers, then remaining consequential action, storage mirror, browser reaper and public demo admission gaps. No later-batch release, model quality work, cloud provisioning or repeated completed CI.",
+  "previousRegisterCounts": [
+    {
+      "total": 136,
+      "reviewed": 105,
+      "pending": 31,
+      "unresolvedHighRiskBypasses": 18
+    },
+    {
+      "total": 136,
+      "reviewed": 107,
+      "pending": 29,
+      "unresolvedHighRiskBypasses": 16
+    }
+  ],
+  "verifiedSuiteExecutions": {
+    "researchOAuth": 19,
+    "expoIdentity": 4,
+    "frontendAdminSharePrivate": 5,
+    "backendSharePrivate": 3,
+    "dormantReachability": 1,
+    "whopOwnership": 3
+  }
+}

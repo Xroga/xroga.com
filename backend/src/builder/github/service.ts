@@ -1,3 +1,4 @@
+import {isBuilderSecurityDenial,type BuilderProviderAdmission} from '../providerAuthority.js';
 import { createHash } from 'node:crypto';
 
 import type { ProjectFile } from '../../ai/patches.js';
@@ -27,6 +28,7 @@ export const APPROVAL_TTL_MS = 15 * 60 * 1000;
 export const MAX_REPOSITORY_DESCRIPTION = 200;
 
 export interface GitHubDeps {
+  readonly admission?:BuilderProviderAdmission;
   readonly phase2: Phase2Store;
   readonly builder: BuilderService;
   readonly github: GitHubPort;
@@ -148,7 +150,8 @@ export class GitHubExportService {
     }
     const warnings: string[] = [];
     if (visibility === 'public') warnings.push('The repository will be PUBLIC: anyone on the internet can read this source.');
-    const plan: GitHubPlan = {
+    const connectionEpoch=this.deps.admission?{connection:await this.deps.admission.connectionFingerprint()}:{};
+    const plan: GitHubPlan = {...connectionEpoch,sourceDigest:createHash('sha256').update(JSON.stringify(files)).digest('hex'),
       provider: 'github', action: 'create_repository', viewer: { id: connection.viewer.id, login: connection.viewer.login }, owner,
       repository: { name: input.repositoryName, visibility, branch },
       revision: { id: revision.id, number: revision.revisionNumber, contentSha256: revision.contentSha256, fileCount: files.length },
@@ -167,7 +170,8 @@ export class GitHubExportService {
     const files = this.filesFor(project, revision);
     const connection = await this.connection(userId);
     if (!connection) throw new BuilderError('conflict', 'GitHub is not connected. Reconnect it to sync.');
-    const plan: GitHubPlan = {
+    const connectionEpoch=this.deps.admission?{connection:await this.deps.admission.connectionFingerprint()}:{};
+    const plan: GitHubPlan = {...connectionEpoch,sourceDigest:createHash('sha256').update(JSON.stringify(files)).digest('hex'),
       provider: 'github', action: 'push_revision', viewer: { id: connection.viewer.id, login: connection.viewer.login },
       owner: { login: binding.repository.owner, id: binding.repository.ownerId, type: connection.viewer.login.toLowerCase() === binding.repository.owner.toLowerCase() ? 'User' : 'Organization' },
       repository: { name: binding.repository.name, visibility: binding.repository.private ? 'private' : 'public', branch: binding.repository.branch, id: binding.repository.id },
@@ -247,6 +251,15 @@ export class GitHubExportService {
     const claimed = await this.deps.phase2.transitionOperation(userId, projectId, operationId, ['approved'], 'executing');
     if (!claimed) throw new BuilderError('conflict', 'This operation is already running or finished.');
 
+    try {
+    return await (this.deps.admission?this.deps.admission.withAuthority(claimed,()=>this.executeClaimed(userId,projectId,operationId,operation)):this.executeClaimed(userId,projectId,operationId,operation));
+    } catch(error) {
+      if(isBuilderSecurityDenial(error)){await this.deps.phase2.transitionOperation(userId,projectId,operationId,['executing'],'failed',{failure:'Security admission was denied. Review the current connection and prepare a new exact action.'});}
+      throw error;
+    }
+  }
+
+  private async executeClaimed(userId:string,projectId:string,operationId:string,operation:ExternalOperation):Promise<ExternalOperation>{
     const fail = async (status: 'failed' | 'ambiguous' | 'diverged', message: string, receipt?: Record<string, unknown>): Promise<never> => {
       await this.deps.phase2.transitionOperation(userId, projectId, operationId, ['executing'], status, { failure: message.slice(0, 500), ...(receipt ? { receipt } : {}) });
       throw new BuilderError(status === 'diverged' ? 'conflict' : 'storage_failed', message);
@@ -260,7 +273,7 @@ export class GitHubExportService {
       if (!connection) return await fail('failed', 'GitHub is no longer connected. Nothing was changed.');
       ({ token, viewer } = connection);
     } catch (error) {
-      if (error instanceof BuilderError) throw error;
+      if (error instanceof BuilderError||isBuilderSecurityDenial(error)) throw error;
       return fail('failed', 'GitHub could not be reached. Nothing was changed.');
     }
     // The connected account must still be the one that was approved.
@@ -328,7 +341,7 @@ export class GitHubExportService {
       if (!done) throw new BuilderError('storage_failed', 'The repository was updated but the receipt could not be recorded. Retry to reconcile.');
       return done;
     } catch (error) {
-      if (error instanceof BuilderError) throw error;
+      if (error instanceof BuilderError||isBuilderSecurityDenial(error)) throw error;
       if (error instanceof GitHubPortError) {
         return fail(error.ambiguous ? 'ambiguous' : 'failed', error.message);
       }

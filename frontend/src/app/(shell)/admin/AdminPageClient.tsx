@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { API_URL } from '@/lib/api';
+import { API_URL, fetchApiResponse } from '@/lib/api';
 
 interface SystemError {
   id: string;
@@ -42,8 +42,8 @@ export default function AdminPageClient() {
         ? { Authorization: `Bearer ${session.access_token}` }
         : {};
       const [res, readinessRes] = await Promise.all([
-        fetch(`${API_URL}/api/admin/errors?${params}`, { headers }),
-        fetch(`${API_URL}/api/operations/readiness`, { headers }),
+        fetchApiResponse(`${API_URL}/api/admin/errors?${params}`, { headers, signal:AbortSignal.timeout(25000) }),
+        fetchApiResponse(`${API_URL}/api/operations/readiness`, { headers, signal:AbortSignal.timeout(25000) }),
       ]);
       const data = (await res.json()) as { errors: SystemError[] };
       setErrors(res.ok && Array.isArray(data.errors) ? data.errors : []);

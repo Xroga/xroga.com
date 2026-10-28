@@ -1,0 +1,174 @@
+{
+  "scope": "MERGE_METADATA_PROVENANCE_NOT_SECURITY_ACCEPTANCE",
+  "phase4Parent": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+  "googleParent": "7a3f1167d6f8d56e954d0e7ead692a45ac2354ac",
+  "conflictHistory": {
+    "docs/xroga/security/caller-reviews.json": [
+      {
+        "phase4": "      \"sourceSha256\": \"fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0\",\n      \"callIds\": [\n        \"af88e0f5ab6048f75011\"\n",
+        "google": "      \"sourceSha256\": \"1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1\",\n      \"callIds\": [\n        \"9ab485ef74dd2e3e9650\"\n"
+      },
+      {
+        "phase4": "      \"previousGenericSdkSourceBinding\": {\n        \"sourceSha\": \"2dc69b2b3df123f30e7e6b493266b10b7e2acad8\",\n        \"sourceSha256\": \"2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc\",\n        \"callIds\": [\n          \"6c962371859b256ff96c\"\n        ],\n        \"scope\": \"UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION\"\n",
+        "google": "      \"beforeGoogleMigrationBinding\": {\n        \"sourceSha256\": \"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477\",\n        \"callIds\": [\n          \"01d5efe9b761bc670212\"\n        ],\n        \"reason\": \"Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification.\"\n"
+      },
+      {
+        "phase4": "      \"sourceSha256\": \"fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0\",\n      \"callIds\": [\n        \"863e45f48048017eb977\"\n",
+        "google": "      \"sourceSha256\": \"1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1\",\n      \"callIds\": [\n        \"d205ee73c1aaa2673d9c\"\n"
+      },
+      {
+        "phase4": "      \"previousGenericSdkSourceBinding\": {\n        \"sourceSha\": \"2dc69b2b3df123f30e7e6b493266b10b7e2acad8\",\n        \"sourceSha256\": \"2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc\",\n        \"callIds\": [\n          \"8db8b524179b45694274\"\n        ],\n        \"scope\": \"UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION\"\n",
+        "google": "      \"beforeGoogleMigrationBinding\": {\n        \"sourceSha256\": \"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477\",\n        \"callIds\": [\n          \"944a58bb15dca85b3ddd\"\n        ],\n        \"reason\": \"Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification.\"\n"
+      },
+      {
+        "phase4": "      \"sourceSha256\": \"2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57\",\n      \"callIds\": [\n        \"5f28d665d687ff7e0502\"\n",
+        "google": "      \"sourceSha256\": \"bb7a949de090035d6ea96ef6b82f623a524b4241bde302f09669123e71002404\",\n      \"callIds\": [\n        \"88f3ef8774a954206aca\"\n"
+      },
+      {
+        "phase4": "      \"sourceSha256\": \"c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f\",\n",
+        "google": "      \"sourceSha256\": \"7b06621b69ac97ba6f1b6fe56dec83a759dc0f941abfc8cf518c4a74daa7f08e\",\n"
+      }
+    ],
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json": [
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"6b51567c0ceee8eaffc184431c14dcba969845c0b7566744e1a50190b41ae55c\",\n",
+        "google": "          \"sourceSha256\": \"1d075c5c33135be8172ba77f104c110b8a4c6554661932fbeaa082093991bcd6\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57\",\n",
+        "google": "          \"sourceSha256\": \"bb7a949de090035d6ea96ef6b82f623a524b4241bde302f09669123e71002404\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"afa8e4905725a4b10e30e47baa836f02eb16f9c703f5e3c707ec258ed8b925cc\",\n",
+        "google": "          \"sourceSha256\": \"8a97f97f0cbf0455854526f3bd0c71ba33b55f6e51cafcbb3e0bdb7f752a8c80\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0\",\n",
+        "google": "          \"sourceSha256\": \"1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0\",\n",
+        "google": "          \"sourceSha256\": \"1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "          \"sourceSha256\": \"435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63\",\n",
+        "google": "          \"sourceSha256\": \"0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c\",\n"
+      },
+      {
+        "phase4": "            \"sha256\": \"fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0\",\n            \"historicalBinding\": {\n              \"reference\": \"2a797dc1b9a932350d4882bffc2fea5aa6f8282b\",\n              \"sha256\": \"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477\"\n            },\n            \"currentSourceDelta\": \"docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json\",\n            \"previousGenericSdkSha256\": \"2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc\"\n",
+        "google": "            \"sha256\": \"1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1\",\n            \"preGoogleMigrationSha256\": \"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477\"\n"
+      }
+    ],
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json": [
+      {
+        "phase4": "          \"sha256\": \"fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0\",\n          \"historicalBinding\": {\n            \"reference\": \"2a797dc1b9a932350d4882bffc2fea5aa6f8282b\",\n            \"sha256\": \"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477\"\n          },\n          \"currentSourceDelta\": \"docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json\",\n          \"previousGenericSdkSha256\": \"2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc\"\n",
+        "google": "          \"sha256\": \"1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1\",\n          \"preGoogleMigrationSha256\": \"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477\"\n"
+      }
+    ]
+  },
+  "generatedSeeds": [
+    {
+      "path": "docs/xroga/current-state.json",
+      "googleBlobBytesSha256": "53b8922f5ab9f9c47d93f6749a838e3fd14d657790c98dfae154c08178a18503",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/current-state.md",
+      "googleBlobBytesSha256": "7a44a64d35957e8f30baffd0f79584eb34432a948318071f6df67176bdb1eaed",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/dependency-inventory.json",
+      "googleBlobBytesSha256": "89e07386b20a50cccdcca5bad958670496005bf79d28fa18ef7f6cdc1a5f4da3",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/deployment-topology.md",
+      "googleBlobBytesSha256": "35d79d57300b2f2df204f1f3344b6613326ae1e3ca26535fb41992acf4dd09da",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/runtime-contract.md",
+      "googleBlobBytesSha256": "dc6182ee33ce07f808289a915775276462f62df6059399e9bd81cfeb9271ba5c",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/secret-inventory.md",
+      "googleBlobBytesSha256": "c9bf40f43d45a3475bb6f8c38e4956f3d00f9be59ca48eff2d94f2913de69c1b",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/security/privileged-callers.json",
+      "googleBlobBytesSha256": "9f5ced4e36227238d31c8667d74c198d2b8fad475cd3aa25f1cb467de974dfc2",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/security/rls-audit.md",
+      "googleBlobBytesSha256": "4991d9301b9530643715ffa04c9343170fb8c8298f816727415850f828c02810",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/security/credential-usage-audit.json",
+      "googleBlobBytesSha256": "14beb639d8b12d439b3b4a2c23f47f4a47b015f648c759ee903d9f77f8a8dbfc",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/research/source-manifest.json",
+      "googleBlobBytesSha256": "7e7671ec5cf81a75a03c75bd8bcb095372fa6d661df34244a55e442a114e244c",
+      "requiresRegeneration": true
+    },
+    {
+      "path": "docs/xroga/research/source-reconciliation.md",
+      "googleBlobBytesSha256": "022a87f280787a5745bdc3ad02391e233fe8b32af54c32e3840a0528035b77b9",
+      "requiresRegeneration": true
+    }
+  ]
+}

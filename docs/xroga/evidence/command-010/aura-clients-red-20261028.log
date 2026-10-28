@@ -1,0 +1,125 @@
+TAP version 13
+# Subtest: Aura manual-input frontend callers cannot forward redirects or accept unbounded receipts
+    # Subtest: health redirect is refused before following
+    not ok 1 - health redirect is refused before following
+      ---
+      duration_ms: 185.8391
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\src\\lib\\auraFirstParty.security.test.ts:2:5485'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+
+        1 !== 0
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:33:205)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:33:2)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: chat redirect never forwards the private manual conversation
+    not ok 2 - chat redirect never forwards the private manual conversation
+      ---
+      duration_ms: 125.9383
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\src\\lib\\auraFirstParty.security.test.ts:2:5780'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+
+        1 !== 0
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:34:222)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:34:2)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: oversized health receipt cannot advertise ready status
+    not ok 3 - oversized health receipt cannot advertise ready status
+      ---
+      duration_ms: 69.0027
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\src\\lib\\auraFirstParty.security.test.ts:2:6117'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+
+        null !== false
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: false
+      actual: ~
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:35:203)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:35:2)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: oversized chat stream is stopped and cannot become successful output
+    not ok 4 - oversized chat stream is stopped and cannot become successful output
+      ---
+      duration_ms: 67.9977
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\src\\lib\\auraFirstParty.security.test.ts:2:6371'
+      failureType: 'testCodeFailure'
+      error: |-
+        The expression evaluated to a falsy value:
+
+          assert.ok(view.error)
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: true
+      actual: ~
+      operator: '=='
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:36:174)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\src\lib\auraFirstParty.security.test.ts:36:2)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: ordinary first-party outage and later authorized manual request remain functional
+    ok 5 - ordinary first-party outage and later authorized manual request remain functional
+      ---
+      duration_ms: 77.1586
+      type: 'test'
+      ...
+    1..5
+not ok 1 - Aura manual-input frontend callers cannot forward redirects or accept unbounded receipts
+  ---
+  duration_ms: 545.4849
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\src\\lib\\auraFirstParty.security.test.ts:2:3853'
+  failureType: 'subtestsFailed'
+  error: '4 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 6
+# suites 0
+# pass 1
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1190.6211

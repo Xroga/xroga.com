@@ -1,7 +1,7 @@
 'use client';
 
 import { createClient } from '@/lib/supabase/client';
-import { API_URL } from '@/lib/api';
+import { API_URL, fetchApiResponse } from '@/lib/api';
 import { BuilderApiError, request } from '@/lib/builderApi';
 
 /** AI Product Builder Phase 2 client: browser QA and repair, history, source export and GitHub. */
@@ -116,7 +116,7 @@ async function download(path: string): Promise<{ blob: Blob; filename: string; s
   const { data } = await createClient().auth.getSession();
   const accessToken = data.session?.access_token;
   if (!accessToken) throw new BuilderApiError(401, 'UNAUTHORIZED', 'Sign in required.');
-  const response = await fetch(`${API_URL}/api/builder${path}`, { headers: { Authorization: `Bearer ${accessToken}` } });
+  const response = await fetchApiResponse(`${API_URL}/api/builder${path}`, { headers: { Authorization: `Bearer ${accessToken}` } });
   if (!response.ok) {
     const json = (await response.json().catch(() => ({}))) as { error?: string; code?: string };
     throw new BuilderApiError(response.status, json.code ?? 'BUILDER_FAILED', json.error ?? 'The download could not be completed.');

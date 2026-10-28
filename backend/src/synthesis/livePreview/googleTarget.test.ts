@@ -28,6 +28,15 @@ test('Google Preview uses only the authenticated physical address and declared p
   assert.equal(f.calls,1);assert.equal(f.identityChecks,1);
 });
 
+test('Google Preview denies declared non-Preview service ports before native identity or address lookup',async()=>{
+  for(const port of [22,80,443,3001,8080]){
+    const f=fixture();const grant={...f.grant,port};
+    const session={...f.session,ports:[{port,protocol:'http' as const,status:'listening' as const,processId:'synthetic'}]};
+    assert.equal(await googlePreviewTarget(grant,session,f.control,f.identity,f.clock),null,String(port));
+    assert.equal(f.calls,0);assert.equal(f.identityChecks,0);
+  }
+});
+
 test('foreign, expired, revoked and substituted sessions deny before control-plane lookup',async()=>{
   for(const mode of ['owner','project','provider','port','revoked','expired','handle','image']){
     const f=fixture();

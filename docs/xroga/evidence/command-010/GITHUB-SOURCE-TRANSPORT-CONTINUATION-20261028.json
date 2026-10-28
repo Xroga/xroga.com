@@ -1,0 +1,58 @@
+{
+  "scope": "PARTIAL_CORRECTION_CANDIDATE_REMAINS_PENDING",
+  "candidate": "07a46a7b451eaf4dc307",
+  "defects": [
+    "Encoded dot/separator path can escape selected repository after normalization",
+    "redirect:error hides security rejection as generic retryable failure",
+    "Pre-aborted signal can reach dispatch without explicit admission check"
+  ],
+  "correction": "Canonical and decoded repository path checks, fixed official issuer via central URL policy, manual redirect becomes terminal CAPABILITY_AUTH_REQUIRED and invalidates source lifetime, pre/post cancellation checks. Existing current credential/revision validation and16MiB response bound retained.",
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "846f0bbb-7a2d-4799-aaae-a5812572c59d",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/github-source-transport-red-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 195250
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "7ac318ba-960b-4c03-9296-a29cc85aaa20",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-source-transport-green-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 531679
+      }
+    }
+  ],
+  "verification": {
+    "tests": 6,
+    "failures": 0,
+    "skips": 0,
+    "scope": "Local actual caller/transport and current-credential fixtures only. Real redirect returns terminal denial without forwarding, authorized503then200andencodedbranch work, prior revocation/same-token rotation/disconnect tests retained."
+  },
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.ts",
+      "sha256": "e64ea74a9a1e0609089becad3fb059224d9ed6b1617185d26684eb2e47fa4ad0"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
+      "sha256": "3a8c390f1f62f15f55a707f086cb5cc6cd9e4017354246712e7f4e59f7cccb49"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.test.ts",
+      "sha256": "18ab64ce6563c99ec547ff683d251a80093a5f7d086417896fb4a0005d62eb8b"
+    }
+  ],
+  "remaining": "Raw userId reader contract and all production caller actor/project/provenance paths still need original issued context verification. No candidate closure or upstream promotion from this transport repair.",
+  "productionChanged": false,
+  "providerRequests": 0,
+  "spending": 0
+}

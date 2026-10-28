@@ -373,11 +373,10 @@ router.post(
           ),
 
           parsed.data,
+          req.tenantContext,
         );
 
-      return res.json(
-        delivery,
-      );
+      return res.status('needsConfirmation' in delivery?202:200).json(delivery);
     } catch (
       error
     ) {

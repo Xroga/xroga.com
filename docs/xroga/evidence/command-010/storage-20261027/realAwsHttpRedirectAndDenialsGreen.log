@@ -1,0 +1,149 @@
+TAP version 13
+# Subtest: every private R2 operation rejects a bucket outside its configured capability before SDK or presigner use
+    # Subtest: private operation 1
+    ok 1 - private operation 1
+      ---
+      duration_ms: 2.2518
+      type: 'test'
+      ...
+    # Subtest: private operation 2
+    ok 2 - private operation 2
+      ---
+      duration_ms: 0.2787
+      type: 'test'
+      ...
+    # Subtest: private operation 3
+    ok 3 - private operation 3
+      ---
+      duration_ms: 0.2159
+      type: 'test'
+      ...
+    # Subtest: private operation 4
+    ok 4 - private operation 4
+      ---
+      duration_ms: 0.2367
+      type: 'test'
+      ...
+    # Subtest: private operation 5
+    ok 5 - private operation 5
+      ---
+      duration_ms: 0.1777
+      type: 'test'
+      ...
+    # Subtest: private operation 6
+    ok 6 - private operation 6
+      ---
+      duration_ms: 0.2116
+      type: 'test'
+      ...
+    # Subtest: private operation 7
+    ok 7 - private operation 7
+      ---
+      duration_ms: 0.2258
+      type: 'test'
+      ...
+    # Subtest: private operation 8
+    ok 8 - private operation 8
+      ---
+      duration_ms: 0.2609
+      type: 'test'
+      ...
+    # Subtest: private operation 9
+    ok 9 - private operation 9
+      ---
+      duration_ms: 0.3553
+      type: 'test'
+      ...
+    # Subtest: private operation 10
+    ok 10 - private operation 10
+      ---
+      duration_ms: 0.4243
+      type: 'test'
+      ...
+    # Subtest: private operation 11
+    ok 11 - private operation 11
+      ---
+      duration_ms: 0.2284
+      type: 'test'
+      ...
+    # Subtest: private operation 12
+    ok 12 - private operation 12
+      ---
+      duration_ms: 0.2267
+      type: 'test'
+      ...
+    # Subtest: private operation 13
+    ok 13 - private operation 13
+      ---
+      duration_ms: 0.1638
+      type: 'test'
+      ...
+    # Subtest: private operation 14
+    ok 14 - private operation 14
+      ---
+      duration_ms: 0.1229
+      type: 'test'
+      ...
+    # Subtest: private operation 15
+    ok 15 - private operation 15
+      ---
+      duration_ms: 0.1846
+      type: 'test'
+      ...
+    1..15
+ok 1 - every private R2 operation rejects a bucket outside its configured capability before SDK or presigner use
+  ---
+  duration_ms: 14.8823
+  type: 'test'
+  ...
+# Subtest: R2 account configuration cannot turn the fixed provider origin into a URL-selected host
+ok 2 - R2 account configuration cannot turn the fixed provider origin into a URL-selected host
+  ---
+  duration_ms: 0.3226
+  type: 'test'
+  ...
+# Subtest: the real AWS HTTP transport refuses redirects without copying a signed private request
+ok 3 - the real AWS HTTP transport refuses redirects without copying a signed private request
+  ---
+  duration_ms: 89.4998
+  type: 'test'
+  ...
+# Subtest: single-upload capability is not returned after ownership changes while signing
+ok 4 - single-upload capability is not returned after ownership changes while signing
+  ---
+  duration_ms: 15.6812
+  type: 'test'
+  ...
+# Subtest: multipart capabilities are not returned after ownership changes while signing
+ok 5 - multipart capabilities are not returned after ownership changes while signing
+  ---
+  duration_ms: 4.3091
+  type: 'test'
+  ...
+# Subtest: revoked multipart creation aborts only its own temporary upload
+ok 6 - revoked multipart creation aborts only its own temporary upload
+  ---
+  duration_ms: 2.2861
+  type: 'test'
+  ...
+# Subtest: download capability is not returned after owner changes while signing
+ok 7 - download capability is not returned after owner changes while signing
+  ---
+  duration_ms: 5.8142
+  type: 'test'
+  ...
+# Subtest: download capability is not returned after deleted changes while signing
+ok 8 - download capability is not returned after deleted changes while signing
+  ---
+  duration_ms: 2.011
+  type: 'test'
+  ...
+1..8
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1008.7663

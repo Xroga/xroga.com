@@ -1,4 +1,6 @@
 import type { ProjectFile } from '../../ai/patches.js';
+import { isBuilderSecurityDenial, type BuilderProviderAdmission } from '../providerAuthority.js';
+import { builderSourceDigest } from './authority.js';
 import { assertNoPrivilegedEnv } from '../data/env.js';
 import { markerFor, OperationRunner, type OperationDeps } from '../operations.js';
 import { routesFromFiles } from '../readiness.js';
@@ -31,6 +33,7 @@ export interface HttpProbeResult {
 }
 
 export interface HostingDeps extends OperationDeps {
+  readonly admission?: BuilderProviderAdmission;
   readonly vercel: VercelPort;
   /** The connected user's Vercel token from the existing vault, or null when none or revoked. */
   readonly tokenFor: (userId: string) => Promise<string | null>;
@@ -168,7 +171,8 @@ export class HostingService {
     const environment = await this.deps.appEnvironment(userId, projectId);
     if (environment) assertNoPrivilegedEnv(environment);
     const githubCommitSha = await this.deps.githubCommitFor(userId, projectId, revision.id);
-    const plan: PreviewPlan = {
+    const connectionEpoch = this.deps.admission ? { connection: await this.deps.admission.connectionFingerprint() } : {};
+    const plan: PreviewPlan = { ...connectionEpoch, sourceDigest: builderSourceDigest(files), environmentDigest: builderSourceDigest(environment ?? {}), remoteProjectId: existing?.id ?? null,
       provider: 'vercel', action: 'deploy_preview', viewer: connection.viewer, scope, project: { name, mode }, revision: { id: revision.id, number: revision.revisionNumber, contentSha256: revision.contentSha256, fileCount: files.length },
       githubCommitSha, framework: frameworkOf(files), environmentNames: Object.keys(environment ?? {}).sort(),
       behaviour: [
@@ -218,12 +222,25 @@ export class HostingService {
   async executePreview(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
     const { operation, replay } = await this.ops.claim(userId, projectId, operationId, { provider: 'vercel', action: 'deploy_preview' });
     if (replay) return operation;
+    return this.admitted(operation, () => this.executePreviewClaimed(userId, projectId, operationId, operation));
+  }
+
+  private async admitted(operation: ExternalOperation, effect: () => Promise<ExternalOperation>) {
+    try { return await (this.deps.admission ? this.deps.admission.withAuthority(operation, effect) : effect()); }
+    catch (error) {
+      if (isBuilderSecurityDenial(error)) await this.deps.phase2.transitionOperation(operation.userId, operation.projectId, operation.id, ['executing'], 'failed', { failure: 'Security admission was denied. Review the current connection and prepare a new exact action.' });
+      throw error;
+    }
+  }
+
+  private async executePreviewClaimed(userId: string, projectId: string, operationId: string, operation: ExternalOperation): Promise<ExternalOperation> {
     const plan = operation.plan as PreviewPlan;
     const fail = (status: 'failed' | 'ambiguous', message: string, receipt?: Record<string, unknown>) => this.ops.fail(userId, projectId, operationId, status, message, receipt);
     let connection: { token: string; viewer: VercelViewer } | null;
     try {
       connection = await this.connection(userId);
-    } catch {
+    } catch (error) {
+      if(isBuilderSecurityDenial(error))throw error;
       return fail('failed', 'Vercel could not be reached. Nothing was changed.');
     }
     if (!connection) return fail('failed', 'Vercel is no longer connected. Nothing was changed.');
@@ -297,7 +314,7 @@ export class HostingService {
         environmentNames: plan.environmentNames, http: { status: probe.status, protectedBySso: probe.protectedBySso }, remote, verifiedAt: this.ops.now().toISOString(),
       });
     } catch (error) {
-      if (error instanceof BuilderError) throw error;
+      if (error instanceof BuilderError || isBuilderSecurityDenial(error)) throw error;
       if (error instanceof VercelPortError) return fail(error.ambiguous ? 'ambiguous' : 'failed', error.message, partial);
       return fail('failed', 'The Vercel preview stopped unexpectedly. Nothing further was changed.', partial);
     }
@@ -326,7 +343,10 @@ export class HostingService {
     const previewPlan = preview.plan as PreviewPlan;
     // The release must be made by the same Vercel account that built and tested the preview.
     if (connection.viewer.id !== previewPlan.viewer.id) throw new BuilderError('conflict', 'The connected Vercel account is not the one that built and tested this preview. Reconnect that account, or deploy a new preview.');
-    const plan: PromotionPlan = {
+    const connectionEpoch = this.deps.admission ? { connection: await this.deps.admission.connectionFingerprint() } : {};
+    const environment = await this.deps.appEnvironment(userId, projectId) ?? {};
+    assertNoPrivilegedEnv(environment);
+    const plan: PromotionPlan = { ...connectionEpoch, sourceDigest: builderSourceDigest(this.deps.filesFor(project, revision)), environmentDigest: builderSourceDigest(environment),
       provider: 'vercel', action: 'promote_production', viewer: connection.viewer, scope: previewPlan.scope, previewOperationId: preview.id, deploymentId: receipt.deployment.id, vercelProjectId: receipt.project.id,
       projectName: receipt.project.name, revision: { id: revision.id, number: revision.revisionNumber, contentSha256: revision.contentSha256 }, previewUrl: receipt.deployment.url,
       productionUrl: `https://${receipt.project.name}.vercel.app`, remoteTests: receipt.remote, confirmationPhrase: `publish ${receipt.project.name}`,
@@ -355,12 +375,17 @@ export class HostingService {
   async executePromotion(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
     const { operation, replay } = await this.ops.claim(userId, projectId, operationId, { provider: 'vercel', action: 'promote_production' });
     if (replay) return operation;
+    return this.admitted(operation, () => this.executePromotionClaimed(userId, projectId, operationId, operation));
+  }
+
+  private async executePromotionClaimed(userId: string, projectId: string, operationId: string, operation: ExternalOperation): Promise<ExternalOperation> {
     const plan = operation.plan as PromotionPlan;
     const fail = (status: 'failed' | 'ambiguous', message: string, receipt?: Record<string, unknown>) => this.ops.fail(userId, projectId, operationId, status, message, receipt);
     let connection: { token: string; viewer: VercelViewer } | null;
     try {
       connection = await this.connection(userId);
-    } catch {
+    } catch (error) {
+      if(isBuilderSecurityDenial(error))throw error;
       return fail('failed', 'Vercel could not be reached. Nothing was published.');
     }
     if (!connection) return fail('failed', 'Vercel is no longer connected. Nothing was published.');
@@ -401,7 +426,7 @@ export class HostingService {
         note: 'Verified with read-only requests. No form was submitted to the live site.',
       });
     } catch (error) {
-      if (error instanceof BuilderError) throw error;
+      if (error instanceof BuilderError || isBuilderSecurityDenial(error)) throw error;
       if (error instanceof VercelPortError) return fail(error.ambiguous ? 'ambiguous' : 'failed', error.message);
       return fail('failed', 'The promotion stopped unexpectedly. Check your Vercel project.');
     }

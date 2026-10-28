@@ -1,0 +1,140 @@
+TAP version 13
+# Subtest: billing leaves durable budget changes inside canonical transactions and propagates synchronization failure
+ok 1 - billing leaves durable budget changes inside canonical transactions and propagates synchronization failure
+  ---
+  duration_ms: 105.9127
+  type: 'test'
+  ...
+# Subtest: billing payment.succeeded cannot bind a server-issued checkout to the different user claimed by callback metadata
+ok 2 - billing payment.succeeded cannot bind a server-issued checkout to the different user claimed by callback metadata
+  ---
+  duration_ms: 74.0731
+  type: 'test'
+  ...
+# Subtest: billing membership.activated cannot bind a server-issued checkout to the different user claimed by callback metadata
+ok 3 - billing membership.activated cannot bind a server-issued checkout to the different user claimed by callback metadata
+  ---
+  duration_ms: 5.0653
+  type: 'test'
+  ...
+# Subtest: billing first claims, stored parents, replay and unavailable owner evidence stay fail closed
+ok 4 - billing first claims, stored parents, replay and unavailable owner evidence stay fail closed
+  ---
+  duration_ms: 14098.6212
+  type: 'test'
+  ...
+# Subtest: fixed plan read rejects oversized otherwise valid provider receipts
+ok 5 - fixed plan read rejects oversized otherwise valid provider receipts
+  ---
+  duration_ms: 13.8998
+  type: 'test'
+  ...
+# Subtest: fixed plan read refuses actual redirect and never forwards its issuer credential
+ok 6 - fixed plan read refuses actual redirect and never forwards its issuer credential
+  ---
+  duration_ms: 64.5284
+  type: 'test'
+  ...
+# Subtest: plan denial prevents checkout dispatch and failure does not poison later authorized read
+ok 7 - plan denial prevents checkout dispatch and failure does not poison later authorized read
+  ---
+  duration_ms: 3.6238
+  type: 'test'
+  ...
+# Subtest: bounded approved plan read preserves exact contract rejection and cache
+ok 8 - bounded approved plan read preserves exact contract rejection and cache
+  ---
+  duration_ms: 3.8053
+  type: 'test'
+  ...
+# {"level":"info","event":"whop_financial_state_synced","webhookId":"msg_refund.created","type":"refund.created","objectId":"refund.created_1"}
+# {"level":"info","event":"whop_financial_state_synced","webhookId":"msg_refund.updated","type":"refund.updated","objectId":"refund.updated_1"}
+# {"level":"info","event":"whop_financial_state_synced","webhookId":"msg_dispute.created","type":"dispute.created","objectId":"dispute.created_1"}
+# {"level":"info","event":"whop_financial_state_synced","webhookId":"msg_dispute.updated","type":"dispute.updated","objectId":"dispute.updated_1"}
+# Subtest: canonical public plans are Free and Xroga Pro without legacy action allowances
+ok 9 - canonical public plans are Free and Xroga Pro without legacy action allowances
+  ---
+  duration_ms: 2.1117
+  type: 'test'
+  ...
+# Subtest: Whop plan contract requires approved account, renewal $25, 30 days, USD, and no trial
+ok 10 - Whop plan contract requires approved account, renewal $25, 30 days, USD, and no trial
+  ---
+  duration_ms: 1.7668
+  type: 'test'
+  ...
+# Subtest: checkout uses the v1 API, pinned version, approved server values, metadata and idempotency
+ok 11 - checkout uses the v1 API, pinned version, approved server values, metadata and idempotency
+  ---
+  duration_ms: 40.213
+  type: 'test'
+  ...
+# Subtest: checkout verifies ownership from the checkout contract when plan retrieval omits company
+ok 12 - checkout verifies ownership from the checkout contract when plan retrieval omits company
+  ---
+  duration_ms: 3.5051
+  type: 'test'
+  ...
+# Subtest: checkout rejects a checkout response for another company
+ok 13 - checkout rejects a checkout response for another company
+  ---
+  duration_ms: 3.4412
+  type: 'test'
+  ...
+# Subtest: checkout configuration fails closed when Whop secrets are absent
+ok 14 - checkout configuration fails closed when Whop secrets are absent
+  ---
+  duration_ms: 0.8638
+  type: 'test'
+  ...
+# Subtest: checkout idempotency is stable inside a bounded window and changes afterward
+ok 15 - checkout idempotency is stable inside a bounded window and changes afterward
+  ---
+  duration_ms: 0.312
+  type: 'test'
+  ...
+# Subtest: Standard Webhooks signature verifies the exact raw body
+ok 16 - Standard Webhooks signature verifies the exact raw body
+  ---
+  duration_ms: 1.5558
+  type: 'test'
+  ...
+# Subtest: Standard Webhooks decodes a Whop whsec_ signing key before HMAC verification
+ok 17 - Standard Webhooks decodes a Whop whsec_ signing key before HMAC verification
+  ---
+  duration_ms: 0.7596
+  type: 'test'
+  ...
+# Subtest: webhook verification rejects missing, malformed and stale evidence
+ok 18 - webhook verification rejects missing, malformed and stale evidence
+  ---
+  duration_ms: 0.549
+  type: 'test'
+  ...
+# Subtest: refund and dispute events never fulfill entitlement
+ok 19 - refund and dispute events never fulfill entitlement
+  ---
+  duration_ms: 5.0069
+  type: 'test'
+  ...
+# Subtest: wrong Whop account is rejected before fulfillment
+ok 20 - wrong Whop account is rejected before fulfillment
+  ---
+  duration_ms: 2.2889
+  type: 'test'
+  ...
+# Subtest: membership callback denies a foreign owner and closes a concurrent insert collision
+ok 21 - membership callback denies a foreign owner and closes a concurrent insert collision
+  ---
+  duration_ms: 35.3318
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15464.4293

@@ -1,0 +1,526 @@
+{
+  "scope": "EXACT_EXISTING_PERSISTENCE_EXPRESSION_POSITION_CONTINUATION_NO_SECURITY_PROMOTION",
+  "changes": [
+    {
+      "previousId": "d406c0b568fd6ec5e544",
+      "currentId": "aae055d92faa16ae4e2e",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "activatePaidCycle",
+      "kind": "RPC_CANDIDATE",
+      "target": "activate_xroga_paid_cycle",
+      "unchangedExpressionSha256": "c0743930c360577871f41f79aab76d0db4db895e39f23dd2bd1fe9106daa1401"
+    },
+    {
+      "previousId": "de6707af035c2d7fe760",
+      "currentId": "54326930ab9ec884b6cd",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "activatePaidCycle",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "5ffa627faeaa6803aab8",
+      "currentId": "53446e75ca49c95522af",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "RPC_CANDIDATE",
+      "target": "ensure_xroga_free_cycle",
+      "unchangedExpressionSha256": "b491044ebe1b60bbb13107068fe51c114cd0443af45b058d1b176fe056a99469"
+    },
+    {
+      "previousId": "7fb0d4feb0707259368b",
+      "currentId": "4c4451bbec61aecb23d3",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "abe158166765391a38bb",
+      "currentId": "9d05c85f5bfac4989a75",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_billing_cycles",
+      "unchangedExpressionSha256": "6d6c902b6c84da24f40aa1650f802ee8882e82b5272fb5cc084814c63d835d05"
+    },
+    {
+      "previousId": "cd6fb0dc4aecaa924a23",
+      "currentId": "469b0a4a0957a0d982b1",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "48010eb67a70f9160a4e",
+      "currentId": "4a9c1469b879166fe52c",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "setUsagePacing",
+      "kind": "RPC_CANDIDATE",
+      "target": "set_xroga_usage_pacing",
+      "unchangedExpressionSha256": "a78a54ae4e2620785b9280daa6621dcc8669ac0bbc6900884d13a8c6b7839bf3"
+    },
+    {
+      "previousId": "c79d0afb3ebeabc76c2d",
+      "currentId": "0b3ff8ce7a456a8a2acf",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "setUsagePacing",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "f8840556255dc425215c",
+      "currentId": "f6f4b355a8c80fc166f4",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "reserve_xroga_provider_budget",
+      "unchangedExpressionSha256": "f81e043496acfac4dd24216c73e8742804dda243ee9ee2a0cc717fa98955317b"
+    },
+    {
+      "previousId": "3c5c04328c11bf512dba",
+      "currentId": "c2adb020f37811ce7849",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "88e420183bcb296b87a4",
+      "currentId": "9cce2ff19e247ce9c5d5",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "ensure_xroga_free_cycle",
+      "unchangedExpressionSha256": "b62a796405bf587af9c871e445471680e1c7397c6086b98aaf0b7e7cb09d444f"
+    },
+    {
+      "previousId": "df66c5e789c6e8f1dd46",
+      "currentId": "670197ad89640f5a6242",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "1523f7744eed6083f0b6",
+      "currentId": "9d0558fe12707a8a2949",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "settleProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "settle_xroga_provider_budget",
+      "unchangedExpressionSha256": "fd5b19821cdaf19811507e8703aecd2289a32af85ad242b366637d14f8889c7f"
+    },
+    {
+      "previousId": "4c1b535638e8a0a197f8",
+      "currentId": "65acb9b03435995fdeb0",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "settleProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "88789f83425415184ffc",
+      "currentId": "774dd446f08cb58fbc9b",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "finishFailedProviderReservation",
+      "kind": "RPC_CANDIDATE",
+      "target": "release_xroga_provider_budget",
+      "unchangedExpressionSha256": "1003047e1837473bb764c6d9d0791784c215952d7347bd930019ff717f7c8eef"
+    },
+    {
+      "previousId": "5fc4041577ba475ddde3",
+      "currentId": "706f26c27c2b32064580",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "finishFailedProviderReservation",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "f5a449e18aa070e708bf",
+      "currentId": "4944361facec046a2f80",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "encodeVercelRefreshLease",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "unchangedExpressionSha256": "bbef4dc370cba405c98f08419f55353043e28e2cccd88d306f6a8932f6198189"
+    },
+    {
+      "previousId": "2f4adaffabba4e9c17b8",
+      "currentId": "440f430607c30871cdc7",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "parseVercelRefreshLease",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "unchangedExpressionSha256": "882313924d2da09f0bbce1fe40f4b8c90f03c32bd25b888a8d07966e90111688"
+    },
+    {
+      "previousId": "6cd8c24a9e60be01c103",
+      "currentId": "4022858d2bb37bc8fbed",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "deleteVercelTokenFromStorage",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "1f7990192c0a2ca3a76f",
+      "currentId": "7bc02d7c4101a33d0666",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "deleteVercelTokenFromStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "unchangedExpressionSha256": "25bae07d9f52425f11a7769f2732c1571383eac137a0379f298023aff4ac3760"
+    },
+    {
+      "previousId": "4e906804cf01a3be86b8",
+      "currentId": "ba97ba36d23ddc612610",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "buildVercelAuthorizeUrl",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "unchangedExpressionSha256": "f5364b427cb9511bb72053c8f8943763fab7db99558a06b5eb949e3449721086"
+    },
+    {
+      "previousId": "3c6dd575e54ba2b2717c",
+      "currentId": "815833191bc3b91eddf0",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "parseVercelOAuthState",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "unchangedExpressionSha256": "f35a51e459c9843dafa157634fcb85d115d86a4d974d8aa25f3fbead22ca59ad"
+    },
+    {
+      "previousId": "05048acae9b1850cc04a",
+      "currentId": "8645a877081274061679",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "refreshVercelOAuthTokenWithLease",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "5c951f6e7fdbc9713651",
+      "currentId": "8d8cca43f4e4530dd1e0",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "refreshVercelOAuthTokenWithLease",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "unchangedExpressionSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+    },
+    {
+      "previousId": "7865641cd30c1a0e72b5",
+      "currentId": "0ff81b747f13643cf083",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "refreshVercelOAuthTokenWithLease",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "unchangedExpressionSha256": "09371b515df625b7c63bf6b86cd14fa6926d089b6420ba5bfea15d668b22ab63"
+    },
+    {
+      "previousId": "7a2acf8694991f2fecf6",
+      "currentId": "a21e5c97646b2bef894a",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "clearVercelConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+    },
+    {
+      "previousId": "eba320f0c59bba39be70",
+      "currentId": "011226346256904a9409",
+      "reference": "87e33b94",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "enclosing": "clearVercelConnection",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "unchangedExpressionSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3"
+    },
+    {
+      "previousId": "fd7ae7cab6529f4fb459",
+      "currentId": "dfe3f40f75bc61dc5266",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "fulfillPayment",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "fd7ae7cab6529f4fb459",
+      "currentId": "dfe3f40f75bc61dc5266",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "fulfillPayment",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "756de29153249d2fac2a",
+      "currentId": "47490554a63116ae204d",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "syncMembership",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_memberships",
+      "unchangedExpressionSha256": "9fd4cb5da0f666eb159036f0afde2853f64817e536803b4a194fbf7f2c4f974e"
+    },
+    {
+      "previousId": "3bf2f7d4aadc2706ceb1",
+      "currentId": "7488715f1171dede4f7e",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "syncMembership",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "05c0b2493c01eed93637",
+      "currentId": "7962d478dcc2f8bf0e4e",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "syncMembership",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "87702decca37439d7217",
+      "currentId": "faa3dacc7aacebf8aa27",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "syncMembership",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_memberships",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba"
+    },
+    {
+      "previousId": "8b10b8683a2118a013b9",
+      "currentId": "c4bf0d005c2d16bbf122",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "syncMembership",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_memberships",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba"
+    },
+    {
+      "previousId": "d406c0b568fd6ec5e544",
+      "currentId": "aae055d92faa16ae4e2e",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "activatePaidCycle",
+      "kind": "RPC_CANDIDATE",
+      "target": "activate_xroga_paid_cycle",
+      "unchangedExpressionSha256": "c0743930c360577871f41f79aab76d0db4db895e39f23dd2bd1fe9106daa1401"
+    },
+    {
+      "previousId": "de6707af035c2d7fe760",
+      "currentId": "54326930ab9ec884b6cd",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "activatePaidCycle",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "5ffa627faeaa6803aab8",
+      "currentId": "53446e75ca49c95522af",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "RPC_CANDIDATE",
+      "target": "ensure_xroga_free_cycle",
+      "unchangedExpressionSha256": "b491044ebe1b60bbb13107068fe51c114cd0443af45b058d1b176fe056a99469"
+    },
+    {
+      "previousId": "7fb0d4feb0707259368b",
+      "currentId": "4c4451bbec61aecb23d3",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "abe158166765391a38bb",
+      "currentId": "9d05c85f5bfac4989a75",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "xroga_billing_cycles",
+      "unchangedExpressionSha256": "6d6c902b6c84da24f40aa1650f802ee8882e82b5272fb5cc084814c63d835d05"
+    },
+    {
+      "previousId": "cd6fb0dc4aecaa924a23",
+      "currentId": "469b0a4a0957a0d982b1",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "getProviderEntitlementStatus",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "48010eb67a70f9160a4e",
+      "currentId": "4a9c1469b879166fe52c",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "setUsagePacing",
+      "kind": "RPC_CANDIDATE",
+      "target": "set_xroga_usage_pacing",
+      "unchangedExpressionSha256": "a78a54ae4e2620785b9280daa6621dcc8669ac0bbc6900884d13a8c6b7839bf3"
+    },
+    {
+      "previousId": "c79d0afb3ebeabc76c2d",
+      "currentId": "0b3ff8ce7a456a8a2acf",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "setUsagePacing",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "f8840556255dc425215c",
+      "currentId": "f6f4b355a8c80fc166f4",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "reserve_xroga_provider_budget",
+      "unchangedExpressionSha256": "f81e043496acfac4dd24216c73e8742804dda243ee9ee2a0cc717fa98955317b"
+    },
+    {
+      "previousId": "3c5c04328c11bf512dba",
+      "currentId": "c2adb020f37811ce7849",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "88e420183bcb296b87a4",
+      "currentId": "9cce2ff19e247ce9c5d5",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "ensure_xroga_free_cycle",
+      "unchangedExpressionSha256": "b62a796405bf587af9c871e445471680e1c7397c6086b98aaf0b7e7cb09d444f"
+    },
+    {
+      "previousId": "df66c5e789c6e8f1dd46",
+      "currentId": "670197ad89640f5a6242",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "reserveProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "1523f7744eed6083f0b6",
+      "currentId": "9d0558fe12707a8a2949",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "settleProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "settle_xroga_provider_budget",
+      "unchangedExpressionSha256": "fd5b19821cdaf19811507e8703aecd2289a32af85ad242b366637d14f8889c7f"
+    },
+    {
+      "previousId": "4c1b535638e8a0a197f8",
+      "currentId": "65acb9b03435995fdeb0",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "settleProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "88789f83425415184ffc",
+      "currentId": "774dd446f08cb58fbc9b",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "finishFailedProviderReservation",
+      "kind": "RPC_CANDIDATE",
+      "target": "release_xroga_provider_budget",
+      "unchangedExpressionSha256": "1003047e1837473bb764c6d9d0791784c215952d7347bd930019ff717f7c8eef"
+    },
+    {
+      "previousId": "5fc4041577ba475ddde3",
+      "currentId": "706f26c27c2b32064580",
+      "reference": "87e33b94",
+      "path": "backend/src/ai/providerBudget.ts",
+      "enclosing": "finishFailedProviderReservation",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "previousId": "4e027991ba45aac9e16d",
+      "currentId": "4a8d0b5bcd7d8c80f473",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "fulfillPayment",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_payment_fulfillments",
+      "unchangedExpressionSha256": "d5117739ab23e77c1d08c2ca97f304da345c54e41330c0bb15d81b62f60a2550"
+    },
+    {
+      "previousId": "b52db4c851f3dea1748b",
+      "currentId": "9bab30418efe8bae3267",
+      "reference": "87e33b94",
+      "path": "backend/src/services/BillingService.ts",
+      "enclosing": "fulfillPayment",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "whop_memberships",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba"
+    }
+  ],
+  "originalWorklistChanged": false
+}

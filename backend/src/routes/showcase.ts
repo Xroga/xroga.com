@@ -63,6 +63,7 @@ router.post('/export', async (req: AuthRequest, res) => {
 
   try {
     const result = await exportTemplateToRepo({
+      tenantContext:req.tenantContext,
       userId: req.userId!,
       templateId: body.templateId,
       repoFullName: body.repoFullName,
@@ -72,7 +73,7 @@ router.post('/export', async (req: AuthRequest, res) => {
       targetDirectory: body.targetDirectory,
       baseBranch: body.baseBranch,
     });
-    res.json(result);
+    res.status(result.needsConfirmation?202:200).json(result);
   } catch (error) {
     if (error instanceof ExportError) {
       res.status(error.status).json({ error: error.message, code: error.code });

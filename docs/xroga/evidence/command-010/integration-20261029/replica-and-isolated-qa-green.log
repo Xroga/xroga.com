@@ -1,0 +1,188 @@
+TAP version 13
+# Subtest: real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets
+ok 1 - real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets
+  ---
+  duration_ms: 2306.5105
+  type: 'test'
+  ...
+# Subtest: isolated QA host entry point
+    # Subtest: refuses to start without a signing secret of at least 32 bytes
+    ok 1 - refuses to start without a signing secret of at least 32 bytes
+      ---
+      duration_ms: 7.3012
+      type: 'test'
+      ...
+    # Subtest: tests only configured preview hosts, serves health, and answers 503 (not run) when its browser slots are full
+    ok 2 - tests only configured preview hosts, serves health, and answers 503 (not run) when its browser slots are full
+      ---
+      duration_ms: 1071.591
+      type: 'test'
+      ...
+    1..2
+ok 2 - isolated QA host entry point
+  ---
+  duration_ms: 1082.0001
+  type: 'suite'
+  ...
+# Subtest: isolated QA delivery cannot redirect the signed private plan
+ok 3 - isolated QA delivery cannot redirect the signed private plan
+  ---
+  duration_ms: 5.005
+  type: 'test'
+  ...
+# Subtest: isolated QA answers are bounded before JSON parsing
+ok 4 - isolated QA answers are bounded before JSON parsing
+  ---
+  duration_ms: 30.0911
+  type: 'test'
+  ...
+# Subtest: isolated QA cannot record success after cancellation
+ok 5 - isolated QA cannot record success after cancellation
+  ---
+  duration_ms: 2.6655
+  type: 'test'
+  ...
+# Subtest: sealing what the isolated host reports
+    # Subtest: takes titles, categories, viewports and the required flag from the plan, never from the host
+    ok 1 - takes titles, categories, viewports and the required flag from the plan, never from the host
+      ---
+      duration_ms: 4.1773
+      type: 'test'
+      ...
+    # Subtest: a check the host did not report is pending, so a partial answer can never be PASSED
+    ok 2 - a check the host did not report is pending, so a partial answer can never be PASSED
+      ---
+      duration_ms: 6.6337
+      type: 'test'
+      ...
+    # Subtest: refuses an impossible result: "passed" without having executed is pending
+    ok 3 - refuses an impossible result: "passed" without having executed is pending
+      ---
+      duration_ms: 0.5178
+      type: 'test'
+      ...
+    # Subtest: ignores a result for a check nobody asked for and for a check outside the requested subset
+    ok 4 - ignores a result for a check nobody asked for and for a check outside the requested subset
+      ---
+      duration_ms: 1.6317
+      type: 'test'
+      ...
+    # Subtest: computes regressions itself, and keeps failure evidence bounded
+    ok 5 - computes regressions itself, and keeps failure evidence bounded
+      ---
+      duration_ms: 0.5697
+      type: 'test'
+      ...
+    # Subtest: a hostile or empty body yields a not-run report and never throws
+    ok 6 - a hostile or empty body yields a not-run report and never throws
+      ---
+      duration_ms: 0.6068
+      type: 'test'
+      ...
+    # Subtest: names the isolated host as the driver and the API's own base host
+    ok 7 - names the isolated host as the driver and the API's own base host
+      ---
+      duration_ms: 0.4543
+      type: 'test'
+      ...
+    1..7
+ok 6 - sealing what the isolated host reports
+  ---
+  duration_ms: 15.7335
+  type: 'suite'
+  ...
+# Subtest: configuration
+    # Subtest: is off without settings, refuses a half-configured host, and requires https off loopback
+    ok 1 - is off without settings, refuses a half-configured host, and requires https off loopback
+      ---
+      duration_ms: 0.661
+      type: 'test'
+      ...
+    # Subtest: allows only https preview hosts on the configured suffixes, never addresses or credentials
+    ok 2 - allows only https preview hosts on the configured suffixes, never addresses or credentials
+      ---
+      duration_ms: 0.3978
+      type: 'test'
+      ...
+    1..2
+ok 7 - configuration
+  ---
+  duration_ms: 1.1859
+  type: 'suite'
+  ...
+# Subtest: the isolated host over real HTTP, driven through QaService
+    # Subtest: runs the plan on the host, records PASSED against the revision, and never opens a browser in the API process
+    ok 1 - runs the plan on the host, records PASSED against the revision, and never opens a browser in the API process
+      ---
+      duration_ms: 95.5673
+      type: 'test'
+      ...
+    # Subtest: a host that claims everything passed without executing anything verifies nothing
+    ok 2 - a host that claims everything passed without executing anything verifies nothing
+      ---
+      duration_ms: 23.1009
+      type: 'test'
+      ...
+    # Subtest: a host that overstates the overall status cannot hide a failed required check
+    ok 3 - a host that overstates the overall status cannot hide a failed required check
+      ---
+      duration_ms: 10.4275
+      type: 'test'
+      ...
+    # Subtest: an unreachable host is "not run", with the reason, and never a pass or a server error
+    ok 4 - an unreachable host is "not run", with the reason, and never a pass or a server error
+      ---
+      duration_ms: 3.5644
+      type: 'test'
+      ...
+    # Subtest: refuses unsigned, wrongly signed, stale and replayed requests, and never executes them
+    ok 5 - refuses unsigned, wrongly signed, stale and replayed requests, and never executes them
+      ---
+      duration_ms: 50.7761
+      type: 'test'
+      ...
+    # Subtest: refuses an address it is not configured to test, and a malformed plan, after authentication
+    ok 6 - refuses an address it is not configured to test, and a malformed plan, after authentication
+      ---
+      duration_ms: 31.534
+      type: 'test'
+      ...
+    # Subtest: turns a host that is refused (wrong secret on the client) into "not run"
+    ok 7 - turns a host that is refused (wrong secret on the client) into "not run"
+      ---
+      duration_ms: 10.5764
+      type: 'test'
+      ...
+    # Subtest: a real derived plan crosses the wire intact
+    ok 8 - a real derived plan crosses the wire intact
+      ---
+      duration_ms: 10.9011
+      type: 'test'
+      ...
+    1..8
+ok 8 - the isolated host over real HTTP, driven through QaService
+  ---
+  duration_ms: 240.5096
+  type: 'suite'
+  ...
+# Subtest: separate API instances with the same Cloud Run revision and PID cannot share browser lease ownership
+ok 9 - separate API instances with the same Cloud Run revision and PID cannot share browser lease ownership
+  ---
+  duration_ms: 84.2739
+  type: 'test'
+  ...
+# Subtest: unused hosted Browserbase adapters and API-host Playwright driver have no current production runtime importer
+ok 10 - unused hosted Browserbase adapters and API-host Playwright driver have no current production runtime importer
+  ---
+  duration_ms: 2924.4123
+  type: 'test'
+  ...
+1..10
+# tests 25
+# suites 4
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4983.8852

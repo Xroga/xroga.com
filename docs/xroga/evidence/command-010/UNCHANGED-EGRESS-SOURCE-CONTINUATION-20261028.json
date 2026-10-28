@@ -1,0 +1,21 @@
+{
+  "scope": "TWO_BYTE_IDENTICAL_COMPLETE_FUNCTIONS_NO_NEW_ACCEPTANCE_PROMOTION",
+  "changes": [
+    {
+      "id": "35923d1b52d197c378e1",
+      "path": "backend/src/routes/github.ts",
+      "entryPoint": "githubIdentityRequest",
+      "previousSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "currentSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "unchangedCompleteFunctionSha256": "63a6bb019bcecad7b84d261dad0f2db071749d4043c2540a56aa25ea736880a4"
+    },
+    {
+      "id": "f0eab43244d6d3c88de8",
+      "path": "backend/src/sandbox/sandboxProviders.ts",
+      "entryPoint": "canRun",
+      "previousSha256": "a6741cdee7fbc16220cdb2073d98e87e5cac971ad204ebab5fba8be895ee0f49",
+      "currentSha256": "248e7e65e0c6122171a33976b5d6d355d4937d0882064cf616eca33690b07b8a",
+      "unchangedCompleteFunctionSha256": "e50c14b834e98a74ebcbd647e0371ebb8bffb0bf977ee2f14dde52fefdf12ac0"
+    }
+  ]
+}

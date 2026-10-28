@@ -1,0 +1,183 @@
+TAP version 13
+# Subtest: actual voice route requires original actor and budget, and cannot retry provider authorization denial
+    # Subtest: raw user identity and missing durable reservation send no audio
+    ok 1 - raw user identity and missing durable reservation send no audio
+      ---
+      duration_ms: 63.4448
+      type: 'test'
+      ...
+    # Subtest: provider 401 is terminal instead of a model fallback trigger
+    ok 2 - provider 401 is terminal instead of a model fallback trigger
+      ---
+      duration_ms: 20.4382
+      type: 'test'
+      ...
+    # Subtest: 403 cannot publish or trigger model fallback
+    ok 3 - 403 cannot publish or trigger model fallback
+      ---
+      duration_ms: 12.6339
+      type: 'test'
+      ...
+    # Subtest: 400 cannot publish or trigger model fallback
+    ok 4 - 400 cannot publish or trigger model fallback
+      ---
+      duration_ms: 7.877
+      type: 'test'
+      ...
+    # Subtest: 307 cannot publish or trigger model fallback
+    ok 5 - 307 cannot publish or trigger model fallback
+      ---
+      duration_ms: 6.8268
+      type: 'test'
+      ...
+    # Subtest: rotateAfterDispatch cannot publish or trigger model fallback
+    ok 6 - rotateAfterDispatch cannot publish or trigger model fallback
+      ---
+      duration_ms: 10.3035
+      type: 'test'
+      ...
+    # Subtest: missingUsage cannot publish or trigger model fallback
+    ok 7 - missingUsage cannot publish or trigger model fallback
+      ---
+      duration_ms: 15.0765
+      type: 'test'
+      ...
+    # Subtest: invalidUsage cannot publish or trigger model fallback
+    ok 8 - invalidUsage cannot publish or trigger model fallback
+      ---
+      duration_ms: 13.3742
+      type: 'test'
+      ...
+    # Subtest: missingRequestId cannot publish or trigger model fallback
+    ok 9 - missingRequestId cannot publish or trigger model fallback
+      ---
+      duration_ms: 7.8159
+      type: 'test'
+      ...
+    # Subtest: secretTranscript cannot publish or trigger model fallback
+    ok 10 - secretTranscript cannot publish or trigger model fallback
+      ---
+      duration_ms: 12.5541
+      type: 'test'
+      ...
+    # Subtest: settlementFailure cannot publish or trigger model fallback
+    ok 11 - settlementFailure cannot publish or trigger model fallback
+      ---
+      duration_ms: 9.8069
+      type: 'test'
+      ...
+    # Subtest: badSettlement cannot publish or trigger model fallback
+    ok 12 - badSettlement cannot publish or trigger model fallback
+      ---
+      duration_ms: 7.1635
+      type: 'test'
+      ...
+    # Subtest: usageFailure cannot publish or trigger model fallback
+    ok 13 - usageFailure cannot publish or trigger model fallback
+      ---
+      duration_ms: 5.5449
+      type: 'test'
+      ...
+    # Subtest: completedAuditFailure cannot publish or trigger model fallback
+    ok 14 - completedAuditFailure cannot publish or trigger model fallback
+      ---
+      duration_ms: 5.8384
+      type: 'test'
+      ...
+    # Subtest: oversized cannot publish or trigger model fallback
+    ok 15 - oversized cannot publish or trigger model fallback
+      ---
+      duration_ms: 4.4227
+      type: 'test'
+      ...
+    # Subtest: malformed cannot publish or trigger model fallback
+    ok 16 - malformed cannot publish or trigger model fallback
+      ---
+      duration_ms: 4.1751
+      type: 'test'
+      ...
+    # Subtest: original authorized request settles both canonical ledgers before response
+    ok 17 - original authorized request settles both canonical ledgers before response
+      ---
+      duration_ms: 9.1234
+      type: 'test'
+      ...
+    # Subtest: outageFirst uses a fresh reservation for each existing model
+    ok 18 - outageFirst uses a fresh reservation for each existing model
+      ---
+      duration_ms: 6.255
+      type: 'test'
+      ...
+    # Subtest: whisperRecovery uses a fresh reservation for each existing model
+    ok 19 - whisperRecovery uses a fresh reservation for each existing model
+      ---
+      duration_ms: 13.5967
+      type: 'test'
+      ...
+    # Subtest: audit denial and forged PCM duration or hidden metadata prevent all dispatch
+    ok 20 - audit denial and forged PCM duration or hidden metadata prevent all dispatch
+      ---
+      duration_ms: 30.285
+      type: 'test'
+      ...
+    # Subtest: cloned and foreign issued actor, failed reservation and rotated credential have no dispatch
+    ok 21 - cloned and foreign issued actor, failed reservation and rotated credential have no dispatch
+      ---
+      duration_ms: 18.795
+      type: 'test'
+      ...
+    # Subtest: cancelAtReservation stops publication and all later model attempts
+    not ok 22 - cancelAtReservation stops publication and all later model attempts
+      ---
+      duration_ms: 14.6466
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\voice.security.test.ts:1:10226'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly equal:
+
+        1 !== 0
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\voice.security.test.ts:135:51)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\voice.security.test.ts:132:67)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: cancelAtSettlement stops publication and all later model attempts
+    ok 23 - cancelAtSettlement stops publication and all later model attempts
+      ---
+      duration_ms: 8.7579
+      type: 'test'
+      ...
+    # Subtest: provider language metadata cannot expose held credentials
+    ok 24 - provider language metadata cannot expose held credentials
+      ---
+      duration_ms: 10.3579
+      type: 'test'
+      ...
+    1..24
+not ok 1 - actual voice route requires original actor and budget, and cannot retry provider authorization denial
+  ---
+  duration_ms: 338.0138
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\voice.security.test.ts:1:861'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 25
+# suites 0
+# pass 23
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1370.5828

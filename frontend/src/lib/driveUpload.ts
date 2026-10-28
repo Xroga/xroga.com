@@ -14,7 +14,7 @@ import type { DriveApi, DriveObject, SignedPart } from '@/lib/driveApi';
 export type UploadFailureCode = 'PUT_FAILED' | 'ETAG_UNREADABLE' | 'ABORTED' | 'EMPTY_PART_LIST';
 
 export class UploadError extends Error {
-  constructor(readonly code: UploadFailureCode, message: string) {
+  constructor(readonly code: UploadFailureCode, message: string, readonly retryable = true) {
     super(message);
     this.name = 'UploadError';
   }
@@ -53,6 +53,17 @@ const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, 
 export async function uploadFile(file: File, deps: UploaderDeps, options: UploadOptions = {}): Promise<DriveObject> {
   const send = deps.fetch ?? fetch;
   const total = file.size;
+  const target = (raw: string) => {
+    let url: URL;
+    try { url = new URL(raw); } catch { throw new UploadError('PUT_FAILED', 'The storage destination is invalid.', false); }
+    if (url.protocol !== 'https:' || url.username || url.password || url.hash || url.port) throw new UploadError('PUT_FAILED', 'The storage destination is invalid.', false);
+    return url.href;
+  };
+  const accept = (response: Response) => {
+    if (response.type === 'opaqueredirect' || response.redirected || response.status >= 300 && response.status < 400 || response.status === 401 || response.status === 403) {
+      throw new UploadError('PUT_FAILED', 'The storage operation was denied. Start a new authorized upload.', false);
+    }
+  };
   const aborted = () => { if (options.signal?.aborted) throw new UploadError('ABORTED', 'The upload was cancelled.'); };
   aborted();
 
@@ -63,10 +74,11 @@ export async function uploadFile(file: File, deps: UploaderDeps, options: Upload
   });
 
   if (initiated.mode === 'single') {
-    const response = await send(initiated.upload.url, { method: initiated.upload.method, headers: initiated.upload.headers, body: file, signal: options.signal }).catch((error) => {
+    const response = await send(target(initiated.upload.url), { redirect: 'manual', credentials: 'omit', referrerPolicy: 'no-referrer', method: initiated.upload.method, headers: initiated.upload.headers, body: file, signal: options.signal }).catch((error) => {
       if (options.signal?.aborted) throw new UploadError('ABORTED', 'The upload was cancelled.');
       throw error;
     });
+    accept(response);
     if (!response.ok) throw new UploadError('PUT_FAILED', 'The file could not be sent to storage. Try again.');
     options.onProgress?.({ sentBytes: total, totalBytes: total });
     return deps.api.completeUpload(initiated.objectId);
@@ -84,7 +96,8 @@ export async function uploadFile(file: File, deps: UploaderDeps, options: Upload
     for (let attempt = 1; ; attempt++) {
       aborted();
       try {
-        const response = await send(part.url, { method: part.method, headers: part.headers, body, signal: options.signal });
+        const response = await send(target(part.url), { redirect: 'manual', credentials: 'omit', referrerPolicy: 'no-referrer', method: part.method, headers: part.headers, body, signal: options.signal });
+        accept(response);
         if (!response.ok) throw new UploadError('PUT_FAILED', 'A part of the file could not be sent to storage.');
         const etag = response.headers.get('etag');
         if (!etag) throw new UploadError('ETAG_UNREADABLE', 'Storage did not return a part receipt. Its CORS settings must expose the ETag header.');
@@ -95,7 +108,7 @@ export async function uploadFile(file: File, deps: UploaderDeps, options: Upload
       } catch (error) {
         if (options.signal?.aborted) throw new UploadError('ABORTED', 'The upload was cancelled.');
         // a missing receipt is a configuration problem a retry cannot fix
-        if ((error instanceof UploadError && error.code === 'ETAG_UNREADABLE') || attempt >= attempts) throw error;
+        if ((error instanceof UploadError && (!error.retryable || error.code === 'ETAG_UNREADABLE')) || attempt >= attempts) throw error;
         await sleep(250 * 2 ** (attempt - 1));
       }
     }

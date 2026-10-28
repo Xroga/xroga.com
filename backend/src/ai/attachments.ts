@@ -4,6 +4,7 @@
 
 import { createRequire } from 'module';
 import type { ModelId } from './models.js';
+import { boundedPublicGet, publicHttpsUrl } from '../security/egress/urlPolicy.js';
 
 // Import implementation directly — package root runs demo code on load in ESM
 const require = createRequire(import.meta.url);
@@ -103,10 +104,8 @@ async function fetchAsBuffer(url: string): Promise<Buffer> {
     return Buffer.from(decodeURIComponent(data), 'utf8');
   }
   assertSafeAttachmentUrl(url);
-  const res = await fetch(url, { redirect: 'follow', signal: AbortSignal.timeout(20_000) });
-  if (!res.ok) throw new Error(`Fetch attachment failed: ${res.status}`);
-  const ab = await res.arrayBuffer();
-  return Buffer.from(ab);
+  publicHttpsUrl(url);
+  return (await boundedPublicGet(url,{maxBytes:16*1024*1024,timeoutMs:20_000,maxRedirects:3})).bytes;
 }
 
 async function extractPdfText(buf: Buffer): Promise<string> {

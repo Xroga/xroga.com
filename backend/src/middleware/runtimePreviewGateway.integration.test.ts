@@ -9,9 +9,9 @@ import {createRuntimePreviewGateway,attachRuntimePreviewWebSocketGateway,type Pr
 const host='11111111111141118111111111111111.abcdef0123456789abcdef01.preview.xroga.com';
 async function listen(server:Server){server.listen(0,'127.0.0.1');await once(server,'listening');return (server.address() as {port:number}).port;}
 function read(port:number,path='/'){
-  return new Promise<{status:number;body:string;location?:string}>((resolve,reject)=>{
+  return new Promise<{status:number;body:string;location?:string;headers:import('node:http').IncomingHttpHeaders}>((resolve,reject)=>{
     const req=request({hostname:'127.0.0.1',port,path,headers:{host}},res=>{
-      let body='';res.on('data',chunk=>body+=chunk);res.on('end',()=>resolve({status:res.statusCode!,body,location:res.headers.location}));
+      let body='';res.on('data',chunk=>body+=chunk);res.on('end',()=>resolve({status:res.statusCode!,body,location:res.headers.location,headers:res.headers}));
     });req.on('error',reject);req.end();
   });
 }
@@ -19,6 +19,7 @@ async function close(server:Server){server.closeAllConnections();await new Promi
 async function fixture(){
   let upstreamHits=0,allowed=true,expiry=Date.now()+60000,authorityReads=0,throws=false;
   const upstream=createServer((req,res)=>{upstreamHits++;if(req.url==='/redirect'){res.writeHead(302,{location:`http://127.0.0.1:${upstreamPort}/asset?q=1`});res.end();}
+    else if(req.url==='/cookies'){res.setHeader('set-cookie',['preview-session=synthetic; Domain=.xroga.com; Path=/; HttpOnly; Secure; SameSite=Lax','owned=synthetic; Path=/; Secure']);res.setHeader('clear-site-data','"cookies"');res.end('cookie fixture');}
     else {res.end(JSON.stringify({path:req.url,host:req.headers['x-forwarded-host'],proto:req.headers['x-forwarded-proto']}));}});
   const sockets=new WebSocketServer({server:upstream});sockets.on('connection',socket=>{upstreamHits++;socket.on('message',(data,binary)=>socket.send(data,{binary}));});
   const upstreamPort=await listen(upstream);
@@ -52,6 +53,14 @@ test('real WebSocket messages and authorized reconnect work, then expiry closes 
     const rejected=new WebSocket(`ws://127.0.0.1:${f.port}/hmr`,{headers:{host}});f.clients.push(rejected);
     rejected.on('error',()=>{});const response=await once(rejected,'unexpected-response');assert.equal(response[1].statusCode,410);rejected.terminate();
     assert.equal(f.hits,2);assert.ok(f.reads>=3);
+  }finally{await f.cleanup();}
+});
+
+test('untrusted Preview response cannot set parent-domain cookies or clear the main application cookies',async()=>{
+  const f=await fixture();try{
+    const result=await read(f.port,'/cookies');assert.equal(result.status,200);
+    assert.deepEqual(result.headers['set-cookie'],['preview-session=synthetic; Path=/; HttpOnly; Secure; SameSite=Lax','owned=synthetic; Path=/; Secure']);
+    assert.equal(result.headers['clear-site-data'],undefined);
   }finally{await f.cleanup();}
 });
 

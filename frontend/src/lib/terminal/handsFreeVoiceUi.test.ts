@@ -89,7 +89,7 @@ test('authoritative final transcription is multilingual auto-detect and preserve
   const backend = source('../../../../backend/src/routes/voice.ts');
 
   assert.match(voice, /new MediaRecorder/);
-  assert.match(voice, /transcribeVoiceAudio\(audio\)/);
+  assert.match(voice, /transcribeVoiceAudio\(audio, transcription\.signal\)/);
   assert.match(api, /\/api\/voice\/transcribe/);
   assert.match(api, /getAccessToken/);
   assert.match(backend, /gpt-4o-mini-transcribe/);
@@ -111,11 +111,12 @@ test('voice send uses the exact same canonical form submit path as typed chat', 
   assert.match(chatbar, /ensureRepoWorkspace/);
 });
 
-test('final server failure preserves browser captions and the current typed draft', () => {
+test('ordinary server availability failure preserves browser captions and the current typed draft', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
   assert.match(voice, /let finalVoice = browserVoice/);
-  assert.match(voice, /catch \{[\s\S]*Preserve the browser text already visible/);
+  assert.match(voice, /catch \(error\)[\s\S]*isTerminalVoiceFailure\(error\)/);
+  assert.match(voice, /Only an explicit ordinary provider outage retains visible browser text/);
   assert.match(voice, /const fullText = mergeText\(composerTextRef\.current, finalVoice\)/);
   assert.match(voice, /onVoiceDraft\(fullText\)/);
 });

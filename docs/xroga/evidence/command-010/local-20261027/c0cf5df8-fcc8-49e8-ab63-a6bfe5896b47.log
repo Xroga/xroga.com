@@ -1,0 +1,53 @@
+TAP version 13
+# Subtest: upload lifecycle
+    # Subtest: project revocation during quota admission creates no upload capability and releases its reservation
+    not ok 1 - project revocation during quota admission creates no upload capability and releases its reservation
+      ---
+      duration_ms: 10.0335
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\storageService.test.ts:1:4864'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      stack: |-
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\storageService.test.ts:85:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async Promise.all (index 0)
+        async Suite.run (node:internal/test_runner/test:1442:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: project revocation during provider verification prevents READY and committed usage
+    not ok 2 - project revocation during provider verification prevents READY and committed usage
+      ---
+      duration_ms: 3.1792
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\storageService.test.ts:1:5443'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      stack: |-
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\storageService.test.ts:94:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    1..2
+not ok 1 - upload lifecycle
+  ---
+  duration_ms: 15.4379
+  type: 'suite'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\storageService.test.ts:1:4831'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 2
+# suites 1
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 354.1215

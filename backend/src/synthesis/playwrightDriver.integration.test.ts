@@ -27,7 +27,9 @@ test('the driver imports Playwright through a computed specifier, never a litera
   // Playwright. `tsc` resolves *literal* import specifiers at compile time, so a literal here
   // turns an optional runtime dependency into a hard production build failure — which is exactly
   // how this broke once. A computed specifier is resolved only by Node, only when called.
-  const source = readFileSync(new URL('./playwrightDriver.ts', import.meta.url), 'utf8');
+  const legacy = readFileSync(new URL('./playwrightDriver.ts', import.meta.url), 'utf8');
+  assert.match(legacy, /import \{loadChromium, discoverChromiumExecutable, type PlaywrightBrowser\} from '\.\/chromiumRuntime\.js'/);
+  const source = readFileSync(new URL('./chromiumRuntime.ts', import.meta.url), 'utf8');
   assert.equal(
     /import\s*\(\s*['"`](?:playwright|@playwright\/test)['"`]\s*\)/.test(source),
     false,

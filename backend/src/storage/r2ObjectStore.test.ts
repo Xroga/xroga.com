@@ -25,18 +25,18 @@ describe('R2ObjectStore presigned requests (SDK-generated, offline)', () => {
     assert.ok(!s.url.includes('example-secret-do-not-use'));
   });
   it('without a declared SHA-256 the checksum header is not required', async () => {
-    const s = await store.presignPut({ bucket: 'b', key: 'k', contentType: 'text/plain', size: 1, ttlSeconds: 60 });
+    const s = await store.presignPut({ bucket: 'xroga-drive-test', key: 'k', contentType: 'text/plain', size: 1, ttlSeconds: 60 });
     assert.ok(!(q(s.url).get('X-Amz-SignedHeaders') ?? '').includes('x-amz-checksum-sha256'));
   });
   it('presigned GET carries a forced content type/disposition and a no-store cache header, and a short expiry', async () => {
-    const s = await store.presignGet({ bucket: 'b', key: 'k', ttlSeconds: 60, contentType: 'application/octet-stream', contentDisposition: 'attachment; filename="a.html"' });
+    const s = await store.presignGet({ bucket: 'xroga-drive-test', key: 'k', ttlSeconds: 60, contentType: 'application/octet-stream', contentDisposition: 'attachment; filename="a.html"' });
     assert.equal(q(s.url).get('response-content-type'), 'application/octet-stream');
     assert.match(q(s.url).get('response-content-disposition') ?? '', /^attachment/);
     assert.equal(q(s.url).get('response-cache-control'), 'private, no-store');
     assert.equal(q(s.url).get('X-Amz-Expires'), '60');
   });
   it('multipart part URLs sign the content length', async () => {
-    const s = await store.presignPart('b', 'k', 'upload-1', 3, 900, 5 * 1024 * 1024);
+    const s = await store.presignPart('xroga-drive-test', 'k', 'upload-1', 3, 900, 5 * 1024 * 1024);
     assert.ok((q(s.url).get('X-Amz-SignedHeaders') ?? '').includes('content-length'));
     assert.equal(q(s.url).get('partNumber'), '3');
     assert.equal(q(s.url).get('uploadId'), 'upload-1');

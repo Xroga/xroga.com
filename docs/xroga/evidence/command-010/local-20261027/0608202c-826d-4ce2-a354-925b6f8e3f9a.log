@@ -1,0 +1,25 @@
+TAP version 13
+# Subtest: GJ unknown tool metadata cannot create a connected read capability
+not ok 1 - GJ unknown tool metadata cannot create a connected read capability
+  ---
+  duration_ms: 11.6421
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\e2e\\xrogaGoldenJourneys.test.ts:1:8095'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\e2e\xrogaGoldenJourneys.test.ts:109:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1170.4171

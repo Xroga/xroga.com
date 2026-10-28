@@ -1,0 +1,297 @@
+{
+  "version": "1.0",
+  "missionId": "batch-1-phase-4-preparation",
+  "baseSha": "b0cd0ec31be56a8945ae41998563475237ed52fb",
+  "requirementIds": [
+    "XB01-C010"
+  ],
+  "state": "BLOCKED",
+  "risk": "high",
+  "scope": "Founder-authorized isolated nonproduction Command010 preparatory engineering only, not Phase4 admission or Batch1 release Current founder build-first directive supersedes the earlier handoff-only scope. Controlled integration starts at b0cd0ec31be56a8945ae41998563475237ed52fb, with verified Phase4 source 92043b72c20e5a12636dee079d760a1e5708b48f. Historical mission and previous base fb95f76bafc1b544b6655d435cddede260d9cd99 remain preserved at docs/xroga/evidence/command-010/integration-20261029/batch-1-phase-4-preparation-AT-92043b72.json. This projection authorizes Batch1 compatibility work only, no later-batch activation and no production release.",
+  "changedFiles": [
+    "scripts/ci/run-baseline.mjs",
+    "scripts/xroga/phase-two.mjs",
+    "scripts/xroga/phase-two-proof-bindings.mjs",
+    "scripts/xroga/phase-two-proof-bindings.test.mjs",
+    "docs/xroga/security/phase-four-proof-bindings.json",
+    "docs/xroga/evidence/command-010/CI-REPAIR-49978.json",
+    ".github/workflows/xroga-tenant-security.yml",
+    "backend/src/ai/attachments.ts",
+    "backend/src/ai/openaiCompat.egress.test.ts",
+    "backend/src/ai/openaiCompat.ts",
+    "backend/src/ai/providerPolicy.ts",
+    "backend/src/ai/providerRuntime.ts",
+    "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
+    "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+    "backend/src/sandbox/sandboxTypes.ts",
+    "backend/src/sandbox/sandboxRuntime.ts",
+    "backend/src/sandbox/sandboxProviders.ts",
+    "backend/src/sandbox/sandboxProviders.test.ts",
+    "backend/src/sandbox/sandboxIsolation.test.ts",
+    "backend/src/sandbox/registryNetwork.test.ts",
+    "backend/src/sandbox/remoteSandbox.ts",
+    "backend/src/sandbox/flyMachineSandbox.ts",
+    "backend/src/sandbox/flyMachineSandbox.test.ts",
+    "backend/src/synthesis/productionAdapters.ts",
+    "backend/src/synthesis/productionAdapters.test.ts",
+    "backend/src/synthesis/projectRuntime/manager.ts",
+    "backend/src/synthesis/projectRuntime/flyProvider.ts",
+    "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+    "backend/tests/sandboxNetwork.local.integration.ts",
+    "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+    "backend/src/lib/deployVerify.ts",
+    "backend/src/lib/shipVerify.ts",
+    "backend/src/operations/providerAdapters.test.ts",
+    "backend/src/operations/providerAdapters.ts",
+    "backend/src/organicIntelligence/content/engine.test.ts",
+    "backend/src/security/boundedPublicGet.ts",
+    "backend/src/security/egress/dataClassification.ts",
+    "backend/src/security/egress/egress.integration.test.ts",
+    "backend/src/security/egress/egressPolicy.ts",
+    "backend/src/security/egress/fileEgress.test.ts",
+    "backend/src/security/egress/fileEgress.ts",
+    "backend/src/security/egress/internalDependency.test.ts",
+    "backend/src/security/egress/publicPost.test.ts",
+    "backend/src/security/egress/securityDecision.ts",
+    "backend/tests/securityReceipt.local.integration.ts",
+    "backend/src/security/egress/toolTrust.ts",
+    "backend/src/security/egress/types.ts",
+    "backend/src/security/egress/untrustedInput.ts",
+    "backend/src/security/egress/urlPolicy.ts",
+    "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/managedVercelDeployment.test.ts",
+    "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
+    "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json",
+    "docs/xroga/evidence/command-010/REGISTRY-NETWORK-PROOF.json",
+    "docs/xroga/evidence/command-010/PR_DESCRIPTION.md",
+    "docs/xroga/evidence/command-010/manifest.json",
+    "docs/xroga/evidence/command-010/summary.md",
+    "docs/xroga/feature-coverage.csv",
+    "docs/xroga/missions/batch-1-phase-4-preparation.json",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/requirements-ledger.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/credential-usage-audit.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/egress-policy.md",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "docs/xroga/security/untrusted-input-model.md",
+    "frontend/src/app/api/browser-view/route.ts",
+    "frontend/src/app/api/image-fetch/route.ts",
+    "frontend/src/lib/server/publicEgress.ts",
+    "frontend/src/lib/untrustedProxyRoutes.test.ts",
+    "scripts/ci/prepare-pr-integration.test.mjs",
+    "scripts/security/audit-egress-callers.mjs",
+    "scripts/security/audit-egress-callers.test.mjs",
+    "backend/src/ai/architect.ts",
+    "backend/src/ai/converter.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/tenantModelDispatch.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/routes/guestChat.ts",
+    "backend/src/routes/guestChat.egress.test.ts",
+    "backend/src/routes/phase1.ts",
+    "backend/src/sandbox/sandboxProbeBoundary.test.ts",
+    "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
+    "backend/src/synthesis/universalEntrypoint.ts",
+    "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "backend/src/ai/repoSummarize.ts",
+    "backend/src/ai/repoSummarize.security.test.ts",
+    "backend/src/ai/modelContext.security.test.ts",
+    "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+    "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+    "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json",
+    "backend/src/middleware/runtimePreviewGateway.ts",
+    "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+    "backend/src/services/integrations/githubDeploy.ts",
+    "backend/src/services/integrations/githubSourceRead.ts",
+    "backend/src/services/integrations/githubSourceRead.test.ts",
+    "backend/src/services/integrations/userProviderKeys.ts",
+    "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
+    "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+    "scripts/security/source-lifetime-bindings.test.mjs",
+    "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+    "backend/src/security/softwareAgentSdk.local.integration.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md",
+    "backend/src/ai/benchmarkExecutor.ts",
+    "backend/src/ai/benchmarkRunner.ts",
+    "backend/src/ai/black-hole/webIntelligence.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/ai/qa.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "backend/src/operations/benchmarkAdapter.ts",
+    "backend/src/operations/operationsProviderBudget.local.integration.ts",
+    "backend/src/services/integrations/businessAccounting.failure.test.ts",
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessRead.ts",
+    "backend/src/synthesis/coherentImplementation.test.ts",
+    "backend/src/synthesis/coherentImplementation.ts",
+    "backend/src/synthesis/incrementalImplementation.ts",
+    "backend/src/ai/modelSdkAdmission.ts",
+    "backend/src/ai/genericSdkAdmission.test.ts",
+    "backend/src/ai/operationsSdkAdmission.test.ts",
+    "backend/src/security/genericSdk.local.integration.ts",
+    "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md",
+    "backend/src/ai/builderAttempt.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Original 12 Command010 criteria, Phase3 evaluator and accepted Phase2/3 evidence",
+      "Canonical authority, budget, CredentialVault and audit store"
+    ],
+    "extend": [
+      "Existing boundedPublicGet transport with pinned one-attempt upload",
+      "Actual Composio dispatch and selected public GET callers"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database migration or deployment",
+    "rollback": "Revert preparatory commits before any release. Existing audit schema remains unchanged."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Existing signed preview-grant identity unchanged, active HTTP/WebSocket lifetimes now revalidate ownership/revocation. GitHub reads reuse canonical credential authority across dispatch and body waits."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Owned-file lookup and immediate parent/owner recheck in new shared adapter"
+    },
+    "approval": {
+      "changed": true,
+      "description": "Existing exact permit asserted before egress and consumed after receipt"
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Deterministic secret denial, raw adapter credentials excluded from policy DTO; preview header separation and current-revision private mirror admission with fixed safe diagnostics"
+    },
+    "egress": {
+      "changed": true,
+      "description": "Pinned URL/DNS/redirect/body controls and exact consequential policy boundary"
+    },
+    "cost": {
+      "changed": false,
+      "description": "No infrastructure or paid provider use"
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing or subscription changes"
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/security/egress/*.test.ts backend/src/security/boundedPublicGet.test.ts backend/src/operations/providerAdapters.test.ts backend/src/e2e/xrogaGoldenJourneys.test.ts scripts/security/audit-egress-callers.test.mjs",
+      "scope": "Expected strict failure while120 caller traces remain unresolved",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/manifest.json"
+    },
+    {
+      "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
+      "scope": "Expected strict failure while120 caller traces remain unresolved",
+      "negative": true,
+      "reference": "docs/xroga/security/egress-callers.json"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_EGRESS_TEST_DATABASE_URL=<dedicated-loopback> node --import tsx --test backend/tests/securityReceipt.local.integration.ts",
+      "scope": "3 actual PostgreSQL receipt/ownership tests, controlled PostgREST bridge, no live provider or full Supabase parity",
+      "negative": true,
+      "reference": "backend/tests/securityReceipt.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/openaiCompat.egress.test.ts",
+      "scope": "Actual SDK call-site completion/stream tests with dispatch intercepted before network",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/tenantModelDispatch.test.ts backend/src/routes/guestChat.egress.test.ts backend/src/sandbox/sandboxProbeBoundary.test.ts backend/src/ai/executionRuntime.attempt.test.ts",
+      "scope": "6 actual-call-site/HTTP/child/attempt tests passed, controlled provider/database protocols, not live database/provider proof",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/repoSummarize.security.test.ts backend/src/ai/modelContext.security.test.ts backend/src/ai/tenantModelDispatch.test.ts backend/src/middleware/runtimePreviewGateway.security.test.ts backend/src/services/integrations/credentialUploadBoundary.test.ts backend/src/routes/guestChat.egress.test.ts backend/src/operations/benchmarkAdapter.test.ts backend/src/ai/benchmarkExecutor.test.ts",
+      "scope": "40 focused tests pass, controlled provider/database protocols, real SDK serialization and guest HTTP; no live-provider or complete transport certification",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
+    },
+    {
+      "command": "NODE_ENV=test node --import tsx --test backend/src/services/integrations/githubSourceRead.test.ts backend/src/services/integrations/credentialUploadLifecycle.test.ts backend/src/services/integrations/legacyGitHubUploadReachability.test.ts backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+      "scope": "Real local HTTP/WebSocket plus controlled database/provider protocol tests, not live Fly, RLS or provider acceptance",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts backend/src/ai/tenantModelDispatch.test.ts backend/src/ai/providerRuntime.test.ts backend/src/ai/postCompletionAccounting.test.ts",
+      "scope": "19 focused cases PASS, no skips. New disposable SoftwareAgent reservation/receipt/ownership-transfer assertion requires exact-source full run. Historical evidence unchanged.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md"
+    },
+    {
+      "command": "Canonical safeTestEnvironment Node22.21.1 focused generic SDK and reachable caller suite",
+      "scope": "Final combined191 focused cases PASS0skip/fail. Exact8fd full authenticated40095139649 PASS browser6/DB211 including real genericSDK case122. Unit application3200/backend1155/frontend passed before stale proof-binding gate failure, metadata-only correction retains historical assertions. New-source automatic CI still required.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Reuse existing transport, tenant context, one-use authority, private-file ownership and immutable audit table. No competing control plane.",
+    "rfc": null
+  },
+  "rollout": "Review-only stacked draft PR. Phase3 admission, complete Command010 proof and separate release authorization required.",
+  "rollback": "Revert this isolated review branch before release, no schema or live credential rollback needed.",
+  "knownGaps": [
+    "117 unclosed AST caller candidates, including62 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
+    "Remaining consequential adapters and upload caller migration",
+    "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
+    "PR844 remains separate from current-main integration and production rollout. No current-main merge or deployment is authorized by this checkpoint.",
+    "Phase 3 actual managed-KMS runtime custody and applicable cutover"
+  ],
+  "placeholderClaimsRemaining": [
+    "No all-caller security certification",
+    "Real PostgreSQL receipt proof is available. Live Supabase/PostgREST provider and full migration-history parity remain unverified",
+    "No Phase3 or Phase4 acceptance"
+  ],
+  "evidenceRefs": [
+    "docs/xroga/evidence/command-010/summary.md",
+    "docs/xroga/evidence/command-010/manifest.json",
+    "docs/xroga/security/egress-policy.md",
+    "docs/xroga/security/untrusted-input-model.md",
+    "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md",
+    "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json",
+    "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md",
+    "docs/xroga/evidence/command-010/integration-20261029/batch-1-phase-4-preparation-AT-92043b72.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Final exact-source CI and reviewed integration merge remain required. Production activation is held for the coordinated release."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

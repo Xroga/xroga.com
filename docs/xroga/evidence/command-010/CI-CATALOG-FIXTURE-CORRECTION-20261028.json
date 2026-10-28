@@ -1,0 +1,47 @@
+{
+  "scope": "ONLY_EXISTING_CATALOG_DEPRECATION_FIXTURE_NO_RUNTIME_OR_SECURITY_POLICY_CHANGE",
+  "failedSource": "9654b1365bd3ba4749eabef9666342d83e61444c",
+  "failedRun": 40740161004,
+  "cause": "The old classification fixture requested search gmail but expected all three unfiltered toolkits. The reviewed privacy boundary now filters search locally. Only the matching gmail row was correctly returned. Both required baselines found the identical assertion failure.",
+  "correction": "Preserve the complete original three-toolkit deprecation assertions with an unfiltered fixture call. Separately verify the filtered Gmail result and a nonmatching private query, and require that no search/query/private text is forwarded to the provider. No runtime code, original acceptance text, auditor or security assertion was weakened.",
+  "receipts": [
+    {
+      "source": "9654b1365bd3ba4749eabef9666342d83e61444c",
+      "label": "feature",
+      "path": "docs/xroga/evidence/command-010/logs/ci-9654-feature-catalog-failure.log.gz",
+      "sha256": "c917c83b47346a0b2bcfd4a170f6435e466c0fd4b48fd87cf7616e5c79a3a577",
+      "counts": {
+        "tests": 4550,
+        "passed": 4543,
+        "failed": 1,
+        "skipped": 6
+      }
+    },
+    {
+      "source": "c54a201ebbf2d85b96153239fe1125ceffe5e6b3",
+      "label": "integrated",
+      "path": "docs/xroga/evidence/command-010/logs/ci-9654-integrated-catalog-failure.log.gz",
+      "sha256": "c7ccaa1fdb6690bc3acb689f56aa6e7751591390cffb4a2fa2ea62df545e8225",
+      "counts": {
+        "tests": 4550,
+        "passed": 4543,
+        "failed": 1,
+        "skipped": 6
+      }
+    },
+    {
+      "label": "focusedCorrection",
+      "job": "828b28e1-08ab-497e-8927-d7b0259d55cf",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/ci-catalog-fixture-correction-focused.log.gz",
+      "sha256": "fda763ca6301c022cef0c14edfe2f7beeac85f92a048cadef94226fc538ebe40"
+    }
+  ],
+  "sourceBinding": {
+    "path": "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts",
+    "sha256": "ddd6b59f05387e941482007f9376b003dca70c69cb99a1b04cd39b99cc3f74ec"
+  },
+  "finalExactCi": "REQUIRED_AFTER_TEST_CORRECTION",
+  "phase4Accepted": false,
+  "productionChanged": false
+}

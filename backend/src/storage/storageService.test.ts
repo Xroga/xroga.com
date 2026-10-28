@@ -77,6 +77,47 @@ describe('state machine', () => {
 });
 
 describe('upload lifecycle', () => {
+  it('project revocation during quota admission creates no upload capability and releases its reservation', async () => {
+    const h = harness({ quota: async () => { h.repo.projects.set(h.aliceProject, h.bob.userId); return null; } });
+    let calls = 0;
+    const sign = h.store.presignPut.bind(h.store);
+    h.store.presignPut = async (...args) => { calls++; return sign(...args); };
+    await rejects(h.svc.initiateUpload(h.alice, { projectId: h.aliceProject, filename: 'a.txt', contentType: 'text/plain', size: 3 }), 'NOT_FOUND');
+    assert.equal(calls, 0);
+    assert.equal((await h.repo.getUsage(h.alice.tenantId)).reservedBytes, 0);
+  });
+  it('project revocation during provider verification prevents READY and committed usage', async () => {
+    const h = harness();
+    const { init } = await browserUpload(h, h.alice, Buffer.from('owned'), { projectId: h.aliceProject });
+    const open = h.store.openRead.bind(h.store);
+    h.store.openRead = async (...args) => { h.repo.projects.set(h.aliceProject, h.bob.userId); return open(...args); };
+    await rejects(h.svc.completeUpload(h.alice, init.objectId), 'NOT_FOUND');
+    assert.equal((await h.repo.getUsage(h.alice.tenantId)).committedBytes, 0);
+    assert.notEqual((await h.repo.getObject(init.objectId))?.state, 'READY');
+  });
+  it('project revocation denies multipart signing before another upload capability is issued', async () => {
+    const h = harness({ policy: { singlePutMaxBytes: 1 } });
+    const init = await h.svc.initiateUpload(h.alice, { projectId: h.aliceProject, filename: 'a.txt', contentType: 'text/plain', size: 3 });
+    assert.equal(init.mode, 'multipart');
+    h.repo.projects.set(h.aliceProject, h.bob.userId);
+    let calls = 0;
+    const sign = h.store.presignPart.bind(h.store);
+    h.store.presignPart = async (...args) => { calls++; return sign(...args); };
+    await rejects(h.svc.signUploadParts(h.alice, init.objectId, [1]), 'NOT_FOUND');
+    assert.equal(calls, 0);
+  });
+  it('project revocation denies completion before provider access or quota settlement', async () => {
+    const h = harness();
+    const { init } = await browserUpload(h, h.alice, Buffer.from('owned'), { projectId: h.aliceProject });
+    h.repo.projects.set(h.aliceProject, h.bob.userId);
+    let calls = 0;
+    const head = h.store.head.bind(h.store);
+    h.store.head = async (...args) => { calls++; return head(...args); };
+    await rejects(h.svc.completeUpload(h.alice, init.objectId), 'NOT_FOUND');
+    assert.equal(calls, 0);
+    assert.equal((await h.repo.getUsage(h.alice.tenantId)).committedBytes, 0);
+    assert.equal((await h.repo.getObject(init.objectId))?.state, 'UPLOADING');
+  });
   it('uploads, verifies SHA-256, reaches READY, and the stored bytes are retrievable', async () => {
     const h = harness();
     const body = Buffer.from('hello xroga drive');

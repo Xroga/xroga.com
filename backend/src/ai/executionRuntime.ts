@@ -9,6 +9,7 @@ import {SandboxAdmissionError} from '../sandbox/sandboxTypes.js';
 import { requireAdmittedRunAttempt, type AdmittedRunAttempt } from './runStore.js';
 import type { IntelligentRoutePlan } from './intelligentRouter.js';
 import { MODELS } from './models.js';
+import {isTerminalModelFailure} from './providerRuntime.js';
 
 export type ExecutionTaskStatus =
   | 'pending'
@@ -554,7 +555,7 @@ export class ExecutionScheduler {
         ? failure.safeReasons.join('; ').slice(0, 500)
         : redactSecrets(error instanceof Error ? error.message : String(error)).slice(0, 500);
       const mutation = isMutationOperation(task);
-      if (!mutation && task.attempts < task.retryPolicy.maximumAttempts) {
+      if (!mutation && !isTerminalModelFailure(error) && (error as {retryable?:unknown})?.retryable!==false && task.attempts < task.retryPolicy.maximumAttempts) {
         task.status = 'waiting_for_provider';
         await this.persist(state);
         const delay = Math.min(task.retryPolicy.maximumBackoffMs, task.retryPolicy.initialBackoffMs * 2 ** (task.attempts - 1));

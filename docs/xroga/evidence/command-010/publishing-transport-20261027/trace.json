@@ -1,0 +1,483 @@
+{
+  "scope": "INDIVIDUAL_FIXED_PROVIDER_TRANSPORT_REVIEW_NOT_PUBLISHING_APPROVAL_OR_CUSTOMER_SECRET_EXPORT_AUTHORITY",
+  "parent": "39ef4cc17cd45de617447fab4a61b0524a8c53c0",
+  "reviewedCandidates": [
+    {
+      "id": "591d7b98b10cd9a63e53",
+      "file": "backend/src/lib/vercel.ts",
+      "line": 38,
+      "entryPoint": "ensureManagedVercelProjectPublic",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "5eaf273c8db6fba84a196d1c8b2715e817778052b257ce74d28cf0d3f65721ef",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "e79a9f948bce169ec83a",
+      "file": "backend/src/lib/vercel.ts",
+      "line": 68,
+      "entryPoint": "resolveTeamId",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "ee6683279ab1924a4912532ce9d79975cdeb8320236c871e1a805488ea264832",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "7c3e6bcb3300ea4ab6a6",
+      "file": "backend/src/lib/vercel.ts",
+      "line": 134,
+      "entryPoint": "deployStaticSiteWithToken",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "8c3ad09d7dc86f37fa3a0277dc2ab3734e09dc65613b0fae8f8166786f634578",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "ad134883eaba8c4c7be1",
+      "file": "backend/src/lib/vercel.ts",
+      "line": 148,
+      "entryPoint": "deployStaticSiteWithToken",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "a6cd0fdb9cbcb9197d771816e0d27516875c24bf1db7813a6ed9698630f8526b",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "a6f65c7f0c198a6ab9aa",
+      "file": "backend/src/lib/vercel.ts",
+      "line": 204,
+      "entryPoint": "pollDeploymentReady",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "e31353b1abc0ef0d27f1a049a43e9150ed06ead3f109420199395999f6c064ff",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "4fcaba4cec2a4aedc966",
+      "file": "backend/src/lib/netlify.ts",
+      "line": 43,
+      "entryPoint": "deployToNetlify",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "c8dd9f06839f461383354106b67d736346dbff23d183abab1f216249de1be03d",
+      "destination": "https://api.netlify.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "33548b252c1dbad869cc",
+      "file": "backend/src/lib/netlify.ts",
+      "line": 64,
+      "entryPoint": "deployToNetlify",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b60b3701b25ed6ea27c7dff4d36ac0a5ff3af228677e774af7ddf622c06f0454",
+      "destination": "https://api.netlify.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "82eff89a4fd63eebbe78",
+      "file": "backend/src/lib/netlify.ts",
+      "line": 85,
+      "entryPoint": "deployToNetlify",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b1cae3eb17eeaaab1e0af636d6dd78cd152dfce269b355f045a98b51033fd8ad",
+      "destination": "https://api.netlify.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "0d8500d82282dd3f4a53",
+      "file": "backend/src/lib/netlify.ts",
+      "line": 105,
+      "entryPoint": "deployToNetlify",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "76eae79b3809cba71f1d9d091aeac96dd270b86c3c6a08952e7e2655309addca",
+      "destination": "https://api.netlify.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "3aff4bdd4c202b77c1ba",
+      "file": "backend/src/lib/netlify.ts",
+      "line": 141,
+      "entryPoint": "pollNetlifyDeploy",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "30e89528a7dc3b7478ed1309021a7bb7b84a43f252bfbf517190e2dff4109be2",
+      "destination": "https://api.netlify.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "079f0855d96c9a73d7df",
+      "file": "backend/src/lib/vercelEnv.ts",
+      "line": 54,
+      "entryPoint": "ensureProject",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "beabf63d425fdd7c529ad92943621ed6fe216dbacc1ade2b5f4c58c021de5c60",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "fef60d164163d324a7db",
+      "file": "backend/src/lib/vercelEnv.ts",
+      "line": 63,
+      "entryPoint": "ensureProject",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "d131e1ebe84ce1b8733a625e73941fe36a6fe65a7483cd4f9bc3c11ef479b18d",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "2a84b7de8d20c21b5df3",
+      "file": "backend/src/lib/vercelEnv.ts",
+      "line": 83,
+      "entryPoint": "listEnv",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b80c5d4b1d53fb1c51264e4cea903fc3d4c27e085b84c076eaff65b966865b2d",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "fed574c91a57418df745",
+      "file": "backend/src/lib/vercelEnv.ts",
+      "line": 109,
+      "entryPoint": "upsertEnvVar",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "fd99591d5ebafa7601a8285264c4eec3caa0faca6c2248dba0383ce3b4c408be",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "8f1dd7f3b8ac27f83181",
+      "file": "backend/src/lib/vercelEnv.ts",
+      "line": 123,
+      "entryPoint": "upsertEnvVar",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "d98b4b98c2af3896cd3036d0996b283f8e91b5c33c2b2f2cc2150327f49b3f71",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "dede8f3022025df5f24c",
+      "file": "backend/src/lib/vercelDomains.ts",
+      "line": 30,
+      "entryPoint": "vercelJson",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "db3c3a929062bafff8cec098baa2ba702e45ef60584281d0f529d0ad350af8de",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "865f5d1bdd0d2a7e2abf",
+      "file": "backend/src/lib/publishingProviderRequest.ts",
+      "line": 56,
+      "entryPoint": "publishingProviderRequest",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "52fce854d05cf81e3a2153a39a353c0c25263c025bf2dcafc70f882e1a867e64",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "originalGitProjectCalls": [
+    {
+      "id": "75cf57fdf79541363007",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "line": 836,
+      "entryPoint": "ensureVercelGitProject",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "3e815997c470b14ba2fc33320e637fe49dcc09bae52c396a9605e42d06a0e3b4",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "b7dadd6888e72320edc7",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "line": 870,
+      "entryPoint": "ensureVercelGitProject",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "549ecbb62dd927d5dccce78d48e1a6870f8734cdcf47a65e7c05fd581ef79221",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "sourcePathsRemainIndividuallyInventoried": "All16existing fetch expressions remain AST candidates. Their fetch import now invokes the shared guard. The two Git project calls explicitly invoke the same reviewed guard and are recorded as source consolidation, not independent upstream acceptance.",
+  "actualPaths": [
+    "Vercel managed/project deployment and polling in lib/vercel.ts",
+    "Netlify site creation/exact-name recovery, source hash map and required-file upload plus deployment polling",
+    "Vercel project/env lookup, project creation and encrypted env upserts",
+    "Vercel domain list/create/status/verify/delete",
+    "githubDeploy ensureVercelGitProject project lookup/create. Separate GitHub read/write and whole publishing target/approval callers remain pending"
+  ],
+  "defects": [
+    "Real Node HTTP redirected each of the four publishing transports, plus Git-project transport",
+    "Terminal publishing egress denials were swallowed by platform retry/recovery catches",
+    "Netlify site-create failure could choose sites[0] even when it belonged to another name",
+    "Netlify403 still triggered site lookup",
+    "Held platform credentials in source files reached a provider request",
+    "Already-cancelled guarded publishing request still invoked fetch"
+  ],
+  "corrections": [
+    "Existing central publicHttpsUrl plus finite two-host method/path/query policy, no custom port/userinfo/arbitrary origin, manual redirects are terminal EgressDenied",
+    "30second request deadline,32MiB request and16MiB actual response ceilings, bounded cancelled streams, static provider failure bodies",
+    "Known held-credential floor and immutable bounded source snapshot before any publishing request. This is not complete DLP or authority",
+    "Netlify selects only exact requested slug and stops on401/403. Positive normal create and exact-name collision recovery retain the original snapshot after caller mutation",
+    "Canonical terminal-failure classifier propagates through existing managed/user/static/explicit publishing and env-sync catches. No model/router/confirmation system changed"
+  ],
+  "positiveNegativeVerification": {
+    "greenLog": "docs/xroga/evidence/command-010/publishing-transport-20261027/green.log",
+    "providerOrModelSpending": 0,
+    "realHttpRedirectFixtures": "Local synthetic server/sink only",
+    "limitations": "No live external publishing or customer credential use"
+  },
+  "receipts": [
+    {
+      "name": "redirectRed",
+      "jobId": "8b5eaa70-b26c-4e92-bb03-646acd6a108b",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/redirectRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 40359
+      }
+    },
+    {
+      "name": "fallbackRed",
+      "jobId": "677550ce-dc9b-4ccd-b78b-2608e23d9e06",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/fallbackRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 456411
+      }
+    },
+    {
+      "name": "wrongSiteRed",
+      "jobId": "99054e46-079e-405a-a392-953c7d0217e8",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/wrongSiteRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 522088
+      }
+    },
+    {
+      "name": "netlifyAuthRed",
+      "jobId": "6e9e2292-752f-4c3e-ae57-31ec53efe4c0",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/netlifyAuthRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 522940
+      }
+    },
+    {
+      "name": "heldSourceCredentialRed",
+      "jobId": "2c1828e2-e5cc-495e-87c9-bee33f6bac74",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/heldSourceCredentialRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 524835
+      }
+    },
+    {
+      "name": "gitProjectRedirectRed",
+      "jobId": "aa2ceb0f-9b86-473f-9ab0-5d4e400297c2",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/gitProjectRedirectRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 532432
+      }
+    },
+    {
+      "name": "cancellationRed",
+      "jobId": "a27163a7-c16f-4020-b7fe-34d24eb8fdd3",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/cancellationRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 533323
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "b5fef505-53be-42eb-b565-600d96dbb212",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/publishing-transport-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 568744
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/lib/vercel.ts",
+      "sha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826"
+    },
+    {
+      "path": "backend/src/lib/netlify.ts",
+      "sha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557"
+    },
+    {
+      "path": "backend/src/lib/vercelEnv.ts",
+      "sha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f"
+    },
+    {
+      "path": "backend/src/lib/vercelDomains.ts",
+      "sha256": "827c50307484a48cd7ff5ce967902429baeb1e4541bc1705195ef36a40fee5ff"
+    },
+    {
+      "path": "backend/src/lib/publishingProviderRequest.ts",
+      "sha256": "18fb58bea614192b6dc67661afbbf3cf8d14e8dc308e737059a8beb723b32c1d"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "sha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb"
+    },
+    {
+      "path": "backend/src/lib/publishingTransport.security.test.ts",
+      "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+    },
+    {
+      "path": "backend/src/lib/vercelEnv.authority.test.ts",
+      "sha256": "a1d6930780583b28ffb03427bd2a4ae9afb11a2fcce1a9883f1073a9eedda4e4"
+    },
+    {
+      "path": "backend/src/services/integrations/managedVercelDeployment.test.ts",
+      "sha256": "473f4c2f592208725866d024357855a65f109b9945ea3a5f5b5a0ce5f17edea0"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelGitProject.test.ts",
+      "sha256": "2a68155e9d4176cfa19b204c04bab929b16d29b549698e8a988a7cc8b3ed5896"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.test.ts",
+      "sha256": "fdd9d9f3202ac05177eafe213a82371f5fb46967a0c75841f9d9743c0440f241"
+    }
+  ],
+  "remaining": [
+    "Publishing callers still need original issued context, exact current tenant/project/account ownership, credential revision/revocation and canonical approval/data-egress proof individually",
+    "Credential env transfer is an intentional separate path, not authorized by this fixed provider transport review",
+    "Higher callers do not yet all propagate cancellation. The transport honors signals when supplied, without claiming upstream cancellation coverage",
+    "No whole-phase acceptance or Batch1.5/2 activation; original strict audit,12criterion matrix, exact-source CI and compatible release remain mandatory"
+  ]
+}

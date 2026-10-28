@@ -1,0 +1,38 @@
+{
+  "scope": "ONE_UNCHANGED_BUFFER_ONLY_RECORD_NO_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
+      "currentSourceSha256": "82ab56fef7542703cabf958a32f5e0d986a94757f4eb19148319687938047e58",
+      "semanticReview": "Two raw token requests are consolidated into one fixed bounded token transport. Existing PKCE/revision persistence statements and all three Buffer.from expressions remain exact. Original NOT_PERSISTENCE outcome retained. No SQL/provision/vault or authority grant certified.",
+      "mapping": [
+        {
+          "previousId": "006a26709183308572df",
+          "currentId": "006a26709183308572df",
+          "enclosing": "basicAuthHeader",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "2bd084aac91d8af907d3178949d9bf2917c81a442c602c487ca00ead511aa9ec"
+        },
+        {
+          "previousId": "57d09be4488bfd059654",
+          "currentId": "57d09be4488bfd059654",
+          "enclosing": "buildSupabaseAuthorizeUrl",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "f5364b427cb9511bb72053c8f8943763fab7db99558a06b5eb949e3449721086"
+        },
+        {
+          "previousId": "d8dd91081d38b5474a4f",
+          "currentId": "360f29f00ffd2b48f433",
+          "enclosing": "parseOAuthState",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "f35a51e459c9843dafa157634fcb85d115d86a4d974d8aa25f3fbead22ca59ad"
+        }
+      ]
+    }
+  ]
+}

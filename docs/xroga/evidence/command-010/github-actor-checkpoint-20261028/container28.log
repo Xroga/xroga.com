@@ -1,0 +1,206 @@
+TAP version 13
+# Subtest: container image cannot become Docker command-line flags
+ok 1 - container image cannot become Docker command-line flags
+  ---
+  duration_ms: 3.0675
+  type: 'test'
+  ...
+# Subtest: container runtime refuses unsupported network modes instead of unrestricted bridge
+ok 2 - container runtime refuses unsupported network modes instead of unrestricted bridge
+  ---
+  duration_ms: 0.6109
+  type: 'test'
+  ...
+# Subtest: container build environment refuses raw and relabelled held server credentials
+ok 3 - container build environment refuses raw and relabelled held server credentials
+  ---
+  duration_ms: 2.737
+  type: 'test'
+  ...
+# Subtest: bad image and pre-cancellation deny before runtime probe
+ok 4 - bad image and pre-cancellation deny before runtime probe
+  ---
+  duration_ms: 1.5563
+  type: 'test'
+  ...
+# Subtest: registry-only cannot reach selection, container spawn, remote worker or Fly allocation
+ok 5 - registry-only cannot reach selection, container spawn, remote worker or Fly allocation
+  ---
+  duration_ms: 6.2621
+  type: 'test'
+  ...
+# Subtest: persistent runtime registry-only commands and processes refuse before state, secret or provider access
+ok 6 - persistent runtime registry-only commands and processes refuse before state, secret or provider access
+  ---
+  duration_ms: 4.7743
+  type: 'test'
+  ...
+# Subtest: actual sandbox probe child receives only fixed version argument and a scrubbed environment
+ok 7 - actual sandbox probe child receives only fixed version argument and a scrubbed environment
+  ---
+  duration_ms: 89.1511
+  type: 'test'
+  ...
+# Subtest: selecting a provider
+    # Subtest: picks the first provider that is actually available
+    ok 1 - picks the first provider that is actually available
+      ---
+      duration_ms: 3.0725
+      type: 'test'
+      ...
+    # Subtest: stops probing once one succeeds
+    ok 2 - stops probing once one succeeds
+      ---
+      duration_ms: 0.5997
+      type: 'test'
+      ...
+    # Subtest: records every provider it tried when none works
+    ok 3 - records every provider it tried when none works
+      ---
+      duration_ms: 4.8537
+      type: 'test'
+      ...
+    # Subtest: treats a provider that throws while probing as unavailable, not fatal
+    ok 4 - treats a provider that throws while probing as unavailable, not fatal
+      ---
+      duration_ms: 1.0891
+      type: 'test'
+      ...
+    # Subtest: refuses when no providers are registered at all
+    ok 5 - refuses when no providers are registered at all
+      ---
+      duration_ms: 1.1177
+      type: 'test'
+      ...
+    # Subtest: puts a newly registered provider ahead of the built-in ones
+    ok 6 - puts a newly registered provider ahead of the built-in ones
+      ---
+      duration_ms: 0.8333
+      type: 'test'
+      ...
+    1..6
+ok 8 - selecting a provider
+  ---
+  duration_ms: 17.3904
+  type: 'suite'
+  ...
+# Subtest: refusing rather than falling back
+    # Subtest: throws instead of executing when nothing can isolate
+    ok 1 - throws instead of executing when nothing can isolate
+      ---
+      duration_ms: 2.6898
+      type: 'test'
+      ...
+    # Subtest: never runs the command when every provider is unavailable
+    ok 2 - never runs the command when every provider is unavailable
+      ---
+      duration_ms: 1.1782
+      type: 'test'
+      ...
+    # Subtest: reports a policy-disabled sandbox as policy, not as a missing runtime
+    ok 3 - reports a policy-disabled sandbox as policy, not as a missing runtime
+      ---
+      duration_ms: 1.1279
+      type: 'test'
+      ...
+    # Subtest: surfaces the refusal through probeSandbox too
+    ok 4 - surfaces the refusal through probeSandbox too
+      ---
+      duration_ms: 0.7878
+      type: 'test'
+      ...
+    1..4
+ok 9 - refusing rather than falling back
+  ---
+  duration_ms: 6.8478
+  type: 'suite'
+  ...
+# Subtest: the isolation flags are the isolation
+    # Subtest: denies the network by default
+    ok 1 - denies the network by default
+      ---
+      duration_ms: 2.8552
+      type: 'test'
+      ...
+    # Subtest: refuses registry-only instead of granting unrestricted bridge networking
+    ok 2 - refuses registry-only instead of granting unrestricted bridge networking
+      ---
+      duration_ms: 0.5727
+      type: 'test'
+      ...
+    # Subtest: runs unprivileged with no capabilities and no privilege escalation
+    ok 3 - runs unprivileged with no capabilities and no privilege escalation
+      ---
+      duration_ms: 0.9346
+      type: 'test'
+      ...
+    # Subtest: gives a disposable writable workspace on a read-only root
+    ok 4 - gives a disposable writable workspace on a read-only root
+      ---
+      duration_ms: 0.8989
+      type: 'test'
+      ...
+    # Subtest: caps memory, processes, and swap rather than running unbounded
+    ok 5 - caps memory, processes, and swap rather than running unbounded
+      ---
+      duration_ms: 0.8738
+      type: 'test'
+      ...
+    # Subtest: passes exactly the environment it was given and nothing more
+    ok 6 - passes exactly the environment it was given and nothing more
+      ---
+      duration_ms: 1.0892
+      type: 'test'
+      ...
+    # Subtest: does not forward a host secret even if one is sitting in process.env
+    ok 7 - does not forward a host secret even if one is sitting in process.env
+      ---
+      duration_ms: 1.0104
+      type: 'test'
+      ...
+    # Subtest: puts the image before the command so the command cannot inject flags
+    ok 8 - puts the image before the command so the command cannot inject flags
+      ---
+      duration_ms: 1.0729
+      type: 'test'
+      ...
+    1..8
+ok 10 - the isolation flags are the isolation
+  ---
+  duration_ms: 10.0536
+  type: 'suite'
+  ...
+# Subtest: provider neutrality
+    # Subtest: drives a non-Docker runtime through the same interface
+    ok 1 - drives a non-Docker runtime through the same interface
+      ---
+      duration_ms: 0.9433
+      type: 'test'
+      ...
+    # Subtest: names podman as a built-in alternative to docker
+    ok 2 - names podman as a built-in alternative to docker
+      ---
+      duration_ms: 0.4195
+      type: 'test'
+      ...
+    # Subtest: builds identical isolation flags whichever container binary is used
+    ok 3 - builds identical isolation flags whichever container binary is used
+      ---
+      duration_ms: 1.2866
+      type: 'test'
+      ...
+    1..3
+ok 11 - provider neutrality
+  ---
+  duration_ms: 2.9641
+  type: 'suite'
+  ...
+1..11
+# tests 28
+# suites 4
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2612.2874

@@ -1,0 +1,198 @@
+{
+  "scope": "PHASE4_ONLY_REDIRECT_AND_TERMINAL_EXECUTION_CHECKPOINT_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T16:19:23.497596+00:00",
+  "parent": "8b96d8210c450823657438562eab59f02265e7ec",
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
+    },
+    {
+      "path": "backend/src/ai/modelSdkAdmission.ts",
+      "sha256": "20d496b0d58773d98578f070771ed051259b2c77cd3d081ef2304acf01fbcb60"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "sha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "sha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17"
+    },
+    {
+      "path": "backend/src/routes/browserRuns.ts",
+      "sha256": "ab9b49de1f975807b0f27aade3196fea04345f018d5355a559b7f8199e352fe0"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "sha256": "46ae27a7e2e80a4a0f8f7d574ff183527b860d84eee93f0dfd408a252f9b18f4"
+    },
+    {
+      "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+      "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.test.ts",
+      "sha256": "47a0fec7ae0edafe9ac7c8eabb2dc501ca45816aa43b63c3177a2b7de2f598a4"
+    },
+    {
+      "path": "backend/src/ai/parallelWeb.security.test.ts",
+      "sha256": "b3f6c014c0cfd3bd89a8fa55d381e4a3e0fc788f5588bf5c05a8613463d1db07"
+    },
+    {
+      "path": "backend/src/routes/browserRunsIdentity.security.test.ts",
+      "sha256": "3deaa7b14f478c30ec706aa3a5dc3f1e0b30459afca75d70007c3ee4c143d04d"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+      "sha256": "a553fa0c587ea0805f99ac2516e0a86b1651d50a95facd289a2d4345d2986c68"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.security.test.ts",
+      "sha256": "5963a224809816e2df4d0618424d2ba1fdc139f84ffa47882be363622ff57e83"
+    },
+    {
+      "path": "backend/src/services/integrations/businessModelEgress.test.ts",
+      "sha256": "f37e430a94058e1f428b021936d37b1d36a10b28c09bbb0317c4da87c4865b20"
+    }
+  ],
+  "receipts": [
+    {
+      "name": "parallelRedirectRed",
+      "jobId": "c689ffec-03f7-4121-b102-b6483862bb2f",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/parallelRedirectRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 624322
+      }
+    },
+    {
+      "name": "parallelGreen",
+      "jobId": "4fdbe36d-e6bc-4841-afe5-3028300c494e",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/parallelGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 720604
+      }
+    },
+    {
+      "name": "composioRealHttpRed",
+      "jobId": "43d7b779-504c-4243-a564-b97cdce0b04b",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/composioRealHttpRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 237421
+      }
+    },
+    {
+      "name": "composioBusinessAuthorityGoldenGreen",
+      "jobId": "cd6bc323-80ed-49b4-aac0-c9454f7cf17d",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/composioBusinessAuthorityGoldenGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 969031
+      }
+    },
+    {
+      "name": "schedulerTerminalRetryRed",
+      "jobId": "2fcd023b-283a-402c-92f5-012248914203",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/schedulerTerminalRetryRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 518523
+      }
+    },
+    {
+      "name": "schedulerAndProviderGreen",
+      "jobId": "10ba0a75-fc53-44bd-8cad-733bc91d5488",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/schedulerAndProviderGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1176047
+      }
+    },
+    {
+      "name": "backendTypecheckBeforeReplicaNonce",
+      "jobId": "3ea351fd-e8d5-432a-9966-3e0f54589199",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1321980
+      }
+    },
+    {
+      "name": "browserReplicaCollisionRed",
+      "jobId": "2553bdab-3775-4328-823e-b503f4d17a84",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/browserReplicaCollisionRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 2456
+      }
+    },
+    {
+      "name": "browserReplicaAndLeaseGreen",
+      "jobId": "4ecf58c5-8c36-48be-a78a-693eb91afa0a",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/browserReplicaAndLeaseGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1075704
+      }
+    },
+    {
+      "name": "strictIncomplete",
+      "jobId": "9bb84320-c1a5-4cdd-b8a5-9bbae270648c",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/redirect-20261027/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "strictAudit": {
+    "total": 156,
+    "reviewed": 65,
+    "pending": 91,
+    "unresolvedHighRiskBypasses": 52
+  },
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "productionChanged": false,
+  "spending": 0,
+  "backendTypes": "PASS before one-line process-unique browser worker identity update, final current source check remains required",
+  "replicaIdentityNote": "Worker IDs now differ across replicas with identical revisions/PIDs. Existing SQL token fencing already rejects a live duplicate acquisition and remains unchanged. No reproduced duplicate production execution or SQL flaw is claimed.",
+  "remaining": [
+    "91caller traces including52high-risk",
+    "Unchanged full disposable/Auth/exact-source CI and original12criterion acceptance",
+    "Reviewed Phase4 merge, compatible native Google release and verified handoff after all gates pass"
+  ],
+  "next": "Frontend image proxy-denial fallback and transformed-image network bypass, then remaining reachable production callers"
+}

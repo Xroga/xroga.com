@@ -1,0 +1,434 @@
+TAP version 13
+# Subtest: real checkout route uses canonical owner claim, egress, one dispatch and durable completion
+    # Subtest: prepare denies missing actor before any credential or provider read
+    ok 1 - prepare denies missing actor before any credential or provider read
+      ---
+      duration_ms: 133.3889
+      type: 'test'
+      ...
+    # Subtest: prepare denies clone actor before any credential or provider read
+    ok 2 - prepare denies clone actor before any credential or provider read
+      ---
+      duration_ms: 18.2651
+      type: 'test'
+      ...
+    # Subtest: prepare denies foreign actor before any credential or provider read
+    ok 3 - prepare denies foreign actor before any credential or provider read
+      ---
+      duration_ms: 10.3452
+      type: 'test'
+      ...
+    # Subtest: ok
+    ok 4 - ok
+      ---
+      duration_ms: 197.9467
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 5 - cancelled
+      ---
+      duration_ms: 57.3473
+      type: 'test'
+      ...
+    # Subtest: foreign-confirmation
+    ok 6 - foreign-confirmation
+      ---
+      duration_ms: 25.8197
+      type: 'test'
+      ...
+    # Subtest: wrong-operation
+    ok 7 - wrong-operation
+      ---
+      duration_ms: 30.0296
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 8 - changed-target
+      ---
+      duration_ms: 44.4958
+      type: 'test'
+      ...
+    # Subtest: changed-summary
+    ok 9 - changed-summary
+      ---
+      duration_ms: 43.5178
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 10 - audit-fail
+      ---
+      duration_ms: 46.0588
+      type: 'test'
+      ...
+    # Subtest: audit-substituted-owner
+    ok 11 - audit-substituted-owner
+      ---
+      duration_ms: 60.3149
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 12 - cancel-at-audit
+      ---
+      duration_ms: 57.0244
+      type: 'test'
+      ...
+    # Subtest: expire-at-audit
+    ok 13 - expire-at-audit
+      ---
+      duration_ms: 44.4755
+      type: 'test'
+      ...
+    # Subtest: rotate-at-audit
+    ok 14 - rotate-at-audit
+      ---
+      duration_ms: 35.2843
+      type: 'test'
+      ...
+    # Subtest: provider403
+    ok 15 - provider403
+      ---
+      duration_ms: 40.5988
+      type: 'test'
+      ...
+# {"level":"error","event":"whop_checkout_failed","status":503,"userId":"8e315cd6-23a2-4a1e-97cb-df4b6e365fac"}
+    # Subtest: provider503
+    ok 16 - provider503
+      ---
+      duration_ms: 40.159
+      type: 'test'
+      ...
+    # Subtest: redirect
+    ok 17 - redirect
+      ---
+      duration_ms: 42.5761
+      type: 'test'
+      ...
+    # Subtest: oversized
+    ok 18 - oversized
+      ---
+      duration_ms: 49.3007
+      type: 'test'
+      ...
+    # Subtest: nonce-substitution
+    ok 19 - nonce-substitution
+      ---
+      duration_ms: 59.0182
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 20 - concurrent
+      ---
+      duration_ms: 67.8984
+      type: 'test'
+      ...
+    1..20
+ok 1 - real checkout route uses canonical owner claim, egress, one dispatch and durable completion
+  ---
+  duration_ms: 1154.6726
+  type: 'test'
+  ...
+# Subtest: actual signing routes require durable exact approval, owned source and current credentials for one sealed write
+    # Subtest: preparation rejects missing actor without credential reads
+    ok 1 - preparation rejects missing actor without credential reads
+      ---
+      duration_ms: 193.6578
+      type: 'test'
+      ...
+    # Subtest: preparation rejects clone actor without credential reads
+    ok 2 - preparation rejects clone actor without credential reads
+      ---
+      duration_ms: 19.0489
+      type: 'test'
+      ...
+    # Subtest: preparation rejects foreign actor without credential reads
+    ok 3 - preparation rejects foreign actor without credential reads
+      ---
+      duration_ms: 16.5219
+      type: 'test'
+      ...
+    # Subtest: ok
+    ok 4 - ok
+      ---
+      duration_ms: 360.3066
+      type: 'test'
+      ...
+    # Subtest: postgres-timestamps
+    ok 5 - postgres-timestamps
+      ---
+      duration_ms: 192.7619
+      type: 'test'
+      ...
+    # Subtest: jsonb-key-order
+    ok 6 - jsonb-key-order
+      ---
+      duration_ms: 159.7111
+      type: 'test'
+      ...
+    # Subtest: provider-restart
+    ok 7 - provider-restart
+      ---
+      duration_ms: 196.4336
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 8 - concurrent
+      ---
+      duration_ms: 151.1923
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 9 - cancelled
+      ---
+      duration_ms: 68.4331
+      type: 'test'
+      ...
+    # Subtest: foreign-project
+    ok 10 - foreign-project
+      ---
+      duration_ms: 72.6312
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 11 - changed-target
+      ---
+      duration_ms: 53.4526
+      type: 'test'
+      ...
+    # Subtest: wrong-operation
+    ok 12 - wrong-operation
+      ---
+      duration_ms: 58.6178
+      type: 'test'
+      ...
+    # Subtest: ciphertext-substitution
+    ok 13 - ciphertext-substitution
+      ---
+      duration_ms: 91.0956
+      type: 'test'
+      ...
+    # Subtest: proof-substitution
+    ok 14 - proof-substitution
+      ---
+      duration_ms: 85.2365
+      type: 'test'
+      ...
+    # Subtest: extra-body
+    ok 15 - extra-body
+      ---
+      duration_ms: 81.415
+      type: 'test'
+      ...
+    # Subtest: public-key-rotated
+    ok 16 - public-key-rotated
+      ---
+      duration_ms: 82.7363
+      type: 'test'
+      ...
+    # Subtest: revoke-before-confirm
+    ok 17 - revoke-before-confirm
+      ---
+      duration_ms: 51.5572
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 18 - audit-fail
+      ---
+      duration_ms: 97.2162
+      type: 'test'
+      ...
+    # Subtest: revoke-at-audit
+    ok 19 - revoke-at-audit
+      ---
+      duration_ms: 96.9474
+      type: 'test'
+      ...
+    # Subtest: revise-at-audit
+    ok 20 - revise-at-audit
+      ---
+      duration_ms: 92.4803
+      type: 'test'
+      ...
+    # Subtest: source-metadata-at-audit
+    ok 21 - source-metadata-at-audit
+      ---
+      duration_ms: 117.6381
+      type: 'test'
+      ...
+    # Subtest: connection-metadata-at-audit
+    ok 22 - connection-metadata-at-audit
+      ---
+      duration_ms: 83.8318
+      type: 'test'
+      ...
+    # Subtest: foreign-project-at-audit
+    ok 23 - foreign-project-at-audit
+      ---
+      duration_ms: 95.4216
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 24 - cancel-at-audit
+      ---
+      duration_ms: 68.0097
+      type: 'test'
+      ...
+    # Subtest: cancel-at-claim
+    ok 25 - cancel-at-claim
+      ---
+      duration_ms: 94.2324
+      type: 'test'
+      ...
+    # Subtest: cancel-after-claim
+    ok 26 - cancel-after-claim
+      ---
+      duration_ms: 84.8076
+      type: 'test'
+      ...
+    # Subtest: expire-after-claim
+    ok 27 - expire-after-claim
+      ---
+      duration_ms: 89.5145
+      type: 'test'
+      ...
+    # Subtest: provider200
+    ok 28 - provider200
+      ---
+      duration_ms: 105.2745
+      type: 'test'
+      ...
+    # Subtest: provider403
+    ok 29 - provider403
+      ---
+      duration_ms: 76.5542
+      type: 'test'
+      ...
+    # Subtest: provider503
+    ok 30 - provider503
+      ---
+      duration_ms: 124.4511
+      type: 'test'
+      ...
+    # Subtest: ok-after503
+    ok 31 - ok-after503
+      ---
+      duration_ms: 92.0221
+      type: 'test'
+      ...
+    # Subtest: redirect
+    ok 32 - redirect
+      ---
+      duration_ms: 136.6656
+      type: 'test'
+      ...
+    # Subtest: revoke-after-write
+    ok 33 - revoke-after-write
+      ---
+      duration_ms: 113.0768
+      type: 'test'
+      ...
+    1..33
+ok 2 - actual signing routes require durable exact approval, owned source and current credentials for one sealed write
+  ---
+  duration_ms: 3730.2989
+  type: 'test'
+  ...
+# Subtest: permit context access returns only the original issued actor within its exact unused lifetime
+ok 3 - permit context access returns only the original issued actor within its exact unused lifetime
+  ---
+  duration_ms: 47.0886
+  type: 'test'
+  ...
+# Subtest: canonical executor dispatches only an exact issued actor and durable adapter claim, once
+ok 4 - canonical executor dispatches only an exact issued actor and durable adapter claim, once
+  ---
+  duration_ms: 11.0132
+  type: 'test'
+  ...
+# Subtest: boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+ok 5 - boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+  ---
+  duration_ms: 6.6192
+  type: 'test'
+  ...
+# Subtest: expiry, revocation and substituted durable receipt after a wait fail before effect
+ok 6 - expiry, revocation and substituted durable receipt after a wait fail before effect
+  ---
+  duration_ms: 5.6571
+  type: 'test'
+  ...
+# Subtest: all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+ok 7 - all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+  ---
+  duration_ms: 10.7834
+  type: 'test'
+  ...
+# Subtest: confirmation claims bind owner, reviewed digest and expiry and admit one concurrent claimant
+ok 8 - confirmation claims bind owner, reviewed digest and expiry and admit one concurrent claimant
+  ---
+  duration_ms: 389.0732
+  type: 'test'
+  ...
+# Subtest: Electron signing secret destinations are exact repositories before any credential access
+ok 9 - Electron signing secret destinations are exact repositories before any credential access
+  ---
+  duration_ms: 20.2067
+  type: 'test'
+  ...
+# Subtest: Electron signing material requires an owned project before repository-key or secret dispatch
+ok 10 - Electron signing material requires an owned project before repository-key or secret dispatch
+  ---
+  duration_ms: 39.1293
+  type: 'test'
+  ...
+# Subtest: Electron signing transfer denies raw and fabricated actors before credential or provider access
+ok 11 - Electron signing transfer denies raw and fabricated actors before credential or provider access
+  ---
+  duration_ms: 15.5581
+  type: 'test'
+  ...
+# Subtest: signing UI requires current exact native approval and never accepts a completed write as preparation
+ok 12 - signing UI requires current exact native approval and never accepts a completed write as preparation
+  ---
+  duration_ms: 8.2673
+  type: 'test'
+  ...
+# Subtest: actual signing UI prepares, explicitly confirms or cancels the exact durable approval
+    # Subtest: preparation does not execute or claim a completed transfer
+    ok 1 - preparation does not execute or claim a completed transfer
+      ---
+      duration_ms: 467.6555
+      type: 'test'
+      ...
+    # Subtest: cancel uses canonical cancellation without a provider confirmation
+    ok 2 - cancel uses canonical cancellation without a provider confirmation
+      ---
+      duration_ms: 471.9085
+      type: 'test'
+      ...
+    # Subtest: only an explicit click confirms once and removes the consumed prompt
+    ok 3 - only an explicit click confirms once and removes the consumed prompt
+      ---
+      duration_ms: 211.8157
+      type: 'test'
+      ...
+    # Subtest: substituted operation metadata never creates an approval action
+    ok 4 - substituted operation metadata never creates an approval action
+      ---
+      duration_ms: 265.3202
+      type: 'test'
+      ...
+    1..4
+ok 13 - actual signing UI prepares, explicitly confirms or cancels the exact durable approval
+  ---
+  duration_ms: 1432.124
+  type: 'test'
+  ...
+1..13
+# tests 70
+# suites 0
+# pass 70
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11290.3848

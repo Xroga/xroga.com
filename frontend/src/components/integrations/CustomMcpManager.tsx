@@ -21,6 +21,7 @@ import {
 } from '@/lib/oauthPopupResult';
 import {
   xrogaConnect,
+  connectReviewUrl,
   type XrogaConnectCatalogToolkit,
   type XrogaConnectToolkit,
   type XrogaCustomMcpAuthMode,
@@ -44,6 +45,7 @@ export function CustomMcpCreateForm({
   const [headerPrefix, setHeaderPrefix] = useState('Bearer ');
   const [discoveryUrl, setDiscoveryUrl] = useState('');
   const [busy, setBusy] = useState(false);
+  const [review,setReview]=useState<string|null>(null);
 
   async function create() {
     const cleanName = name.trim();
@@ -54,7 +56,7 @@ export function CustomMcpCreateForm({
       return;
     }
 
-    if (!/^https:\/\//i.test(cleanUrl) && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(cleanUrl)) {
+    if (!/^https:\/\//i.test(cleanUrl)) {
       toast.error('Use a public HTTPS MCP server URL');
       return;
     }
@@ -93,6 +95,7 @@ export function CustomMcpCreateForm({
           : {}),
       });
 
+      if('needsConfirmation' in result){authPopup?.close();setReview(connectReviewUrl(result));return;}
       onCreated?.(result.slug);
 
       if (authMode === 'none') {
@@ -133,6 +136,7 @@ export function CustomMcpCreateForm({
 
   return (
     <div className="space-y-4">
+      {review?<Link href={review} className="underline">Review exact MCP registration. Nothing has been created yet.</Link>:null}
       {onBack ? (
         <button
           type="button"
@@ -150,7 +154,7 @@ export function CustomMcpCreateForm({
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">Custom MCP server</h3>
         </div>
         <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-          Register a remote MCP server as an Xroga Plugin. Its synced tools become searchable and usable through the same Plugin runtime.
+          Register remote MCP metadata after review. Its tools remain untrusted and require restricted execution before they can run.
         </p>
       </div>
 
@@ -250,6 +254,7 @@ export function CustomMcpManager() {
   const [busy, setBusy] = useState<string | null>(null);
   const [removeConfirm, setRemoveConfirm] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [review,setReview]=useState<string|null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -347,6 +352,7 @@ export function CustomMcpManager() {
         toolkit.slug,
         connection?.connectedAccountId,
       );
+      if('needsConfirmation' in result){setReview(connectReviewUrl(result));return;}
       toast.success(
         result.syncedCount !== undefined
           ? `Synced ${result.syncedCount} MCP tools`
@@ -363,7 +369,9 @@ export function CustomMcpManager() {
   async function remove(toolkit: XrogaConnectCatalogToolkit) {
     setBusy(`remove:${toolkit.slug}`);
     try {
-      await xrogaConnect.customMcp.remove(toolkit.slug);
+      const result=await xrogaConnect.customMcp.remove(toolkit.slug);
+      if('needsConfirmation' in result){setReview(connectReviewUrl(result));setRemoveConfirm(null);return;}
+      if(!result.deleted||result.slug!==toolkit.slug)throw new Error('Removal was not verified.');
       toast.success('Custom MCP removed');
       setRemoveConfirm(null);
       await load();
@@ -400,6 +408,7 @@ export function CustomMcpManager() {
         </button>
       </div>
 
+      {review?<Link href={review} className="block p-4 underline">Review exact MCP change. It has not been applied.</Link>:null}
       {showCreate ? (
         <div className="border-t border-[var(--border-subtle)] p-4">
           <div className="mx-auto max-w-xl">

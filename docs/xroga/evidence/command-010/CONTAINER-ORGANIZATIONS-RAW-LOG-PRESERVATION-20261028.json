@@ -1,0 +1,47 @@
+{
+  "scope": "LOSSLESS_RAW_LOG_ARCHIVES_AND_WHITESPACE_ONLY_DISPLAY_COPIES",
+  "files": [
+    {
+      "display": "docs/xroga/evidence/command-010/container-lifecycle-admissionRed-20261028.log",
+      "originalGzip": "docs/xroga/evidence/command-010/container-lifecycle-admissionRed-20261028.log.original.gz",
+      "originalSha256": "05a8fb4751eb3d9a4e1968c2dcfc045597b54b5b7c8e70d7d839fd02fd6162b4",
+      "displaySha256": "c5dacc532e6c9ff0696ce896a3713253c5bc197792217049fe731c0cac819c74",
+      "scope": "Original bytes retained. Display only removes line-end whitespace. Original CI hashes remain original observation hashes."
+    },
+    {
+      "display": "docs/xroga/evidence/command-010/container-lifecycle-daemonCancellationRed-20261028.log",
+      "originalGzip": "docs/xroga/evidence/command-010/container-lifecycle-daemonCancellationRed-20261028.log.original.gz",
+      "originalSha256": "de2c9b407e722bf1b3c56a93c60f859c5eec15b38adeb92117ee20e5128fb0f8",
+      "displaySha256": "46347a05caeb6e83465290f886f7acd7e0df74bbd1c22a89a83abd633e701edc",
+      "scope": "Original bytes retained. Display only removes line-end whitespace. Original CI hashes remain original observation hashes."
+    },
+    {
+      "display": "docs/xroga/evidence/command-010/container-lifecycle-productionGuardRed-20261028.log",
+      "originalGzip": "docs/xroga/evidence/command-010/container-lifecycle-productionGuardRed-20261028.log.original.gz",
+      "originalSha256": "d82797625430d4118d7fc7e22096c7318f8937853688567c14ce240fd4055a2c",
+      "displaySha256": "07e3936788f92731fb51bfe1c15e69eed366196952e926ab6e4bcad2c6d4b0df",
+      "scope": "Original bytes retained. Display only removes line-end whitespace. Original CI hashes remain original observation hashes."
+    },
+    {
+      "display": "docs/xroga/evidence/command-010/supabase-organizations-red-20261028.log",
+      "originalGzip": "docs/xroga/evidence/command-010/supabase-organizations-red-20261028.log.original.gz",
+      "originalSha256": "7f30f16b7f81d9c2c849342eb1490319cb2ededb70511440ea310ffd9517f49d",
+      "displaySha256": "bdc55170a69db46cb446d584e51245750e6203af11a00ff80715bcca486ac039",
+      "scope": "Original bytes retained. Display only removes line-end whitespace. Original CI hashes remain original observation hashes."
+    },
+    {
+      "display": "docs/xroga/evidence/command-010/ci-a0ff83a3-20261028/unit-feature.log",
+      "originalGzip": "docs/xroga/evidence/command-010/ci-a0ff83a3-20261028/unit-feature.log.original.gz",
+      "originalSha256": "1c5921a0b809f8105b769cb74b92d210b11522caf766d7f9b170b7545b29d43a",
+      "displaySha256": "ad5114dd59452a5de0d9e8341436eb022431bd877e64cc62855e21ceb1303c59",
+      "scope": "Original bytes retained. Display only removes line-end whitespace. Original CI hashes remain original observation hashes."
+    },
+    {
+      "display": "docs/xroga/evidence/command-010/ci-a0ff83a3-20261028/unit-integrated.log",
+      "originalGzip": "docs/xroga/evidence/command-010/ci-a0ff83a3-20261028/unit-integrated.log.original.gz",
+      "originalSha256": "2adffddb48b348e1359beebb2ad425dec26bb7b479df823f2b09f73a6fe6917a",
+      "displaySha256": "85a138415a7cd79544d5f6c49658ea1d16bcfdf7e82ff897212079cdf2c989ca",
+      "scope": "Original bytes retained. Display only removes line-end whitespace. Original CI hashes remain original observation hashes."
+    }
+  ]
+}

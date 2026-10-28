@@ -1,0 +1,25 @@
+TAP version 13
+# Subtest: X research cannot publish unreserved, unaccounted provider output or dispatch on a raw user ID
+not ok 1 - X research cannot publish unreserved, unaccounted provider output or dispatch on a raw user ID
+  ---
+  duration_ms: 17.6895
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\ai\\black-hole\\xResearchAdmission.security.test.ts:1:244'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\ai\black-hole\xResearchAdmission.security.test.ts:16:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3760.0551

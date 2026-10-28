@@ -12,6 +12,8 @@ import {
 } from './gateway.js';
 import type { ModelId } from '../models.js';
 import type { RuntimeModelCapability } from '../modelCapabilityRegistry.js';
+import { PostCompletionAccountingError } from '../postCompletionAccounting.js';
+import { RuntimeFailure } from '../universal/runtimeFailure.js';
 
 /**
  * The same synthetic registry the router tests use, for the same reason: the real one reads
@@ -210,6 +212,39 @@ test('an exhausted chain fails rather than widening authority', async () => {
   );
   assert.ok(attempted.length > 0);
   assert.equal(attempted.some((id) => id.startsWith('grok')), false, 'failover reached a research model');
+});
+
+test('local security, reservation and accounting denials never walk the gateway fallback chain', async () => {
+  const denials = [
+    ...['MODEL_DISPATCH_BINDING_DENIED', 'MODEL_CREDENTIAL_EGRESS_DENIED',
+      'MODEL_PAYLOAD_INVALID', 'MODEL_DESTINATION_DENIED', 'PROVIDER_RESERVATION_DENIED',
+      'RUN_STATE_CONFLICT', 'PAID_PROVIDER_CAPACITY_UNAVAILABLE'].map(code =>
+      Object.assign(new Error('Synthetic local admission denial'), { code, retryable: false })),
+    new RuntimeFailure('SAFETY_BLOCKED', 'Synthetic safety denial'),
+    new RuntimeFailure('CAPABILITY_AUTH_REQUIRED', 'Synthetic authority denial'),
+    new RuntimeFailure('PROJECT_CONTEXT_MISMATCH', 'Synthetic context denial'),
+    new RuntimeFailure('CAPABILITY_TEMPORARILY_UNAVAILABLE', 'Synthetic capacity denial'),
+    new PostCompletionAccountingError(),
+  ];
+  for (const denial of denials) {
+    const calls: ModelId[] = [];
+    const traces: BlackHoleTrace[] = [];
+    const complete: ProviderComplete = async ({ modelId }) => {
+      calls.push(modelId);
+      if (calls.length === 1) throw denial;
+      return {
+        text: 'must not recover from local denial', finishReason: 'stop', modelId,
+        apiModel: modelId, provider: 'test', inputTokens: 1, outputTokens: 1, totalTokens: 2,
+      };
+    };
+    await assert.rejects(
+      generateWith(deps(complete), baseRequest({ onTrace: trace => traces.push(trace) })),
+      error => error === denial,
+      denial.code,
+    );
+    assert.equal(calls.length, 1, `fallback attempted after ${denial.code}`);
+    assert.deepEqual(traces, [], 'a denied request must not report successful completion');
+  }
 });
 
 test('a cancelled request stops immediately rather than walking the chain', async () => {

@@ -1,0 +1,165 @@
+{
+  "scope": "SCOPED_READ_ONLY_GITHUB_SOURCE_BOUNDARY_NOT_GITHUB_WRITES_PUBLISHING_OR_ALL_UPSTREAM_CALLERS",
+  "candidate": {
+    "id": "07a46a7b451eaf4dc307",
+    "file": "backend/src/services/integrations/githubSourceRead.ts",
+    "line": 61,
+    "entryPoint": "request",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "6a8c3588e7c4f884944eb8eb5186e353cfb34f356723d8efb96bf62214bb0c57",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "Missing original actor was accepted by the raw userId reader contract",
+    "Encoded dot segments escaped repository path",
+    "Redirect security failures were converted into generic retryable errors",
+    "Pre-cancelled calls reached dispatch",
+    "Held server and selected credentials could be smuggled into a resource path"
+  ],
+  "correction": "Require original issued owner context before credential reads in all four source helpers and the reader. Carry the same object from authenticated routes, owned pipeline scope and verified SoftwareAgent factory. No new context issuer or raw-ID fallback. Preserve current canonical credential/revision/metadata lifetime checks before dispatch and after body reads. Validate canonical/decoded repository path against fixed official issuer and central URL policy. Bound path8KiB and body16MiB,30s timeout, manual redirect terminal denial, selected/held credential floor, cancellation and invalidation checks. Preserve typed denials through repository analysis/hydration catches.",
+  "trace": [
+    {
+      "caller": "authenticated GitHub repository state/build-files/redeploy/rollback source read",
+      "context": "Existing authMiddleware-issued req.tenantContext matched to req.userId before getIntegration; read-only portion only."
+    },
+    {
+      "caller": "phase1 repository chat",
+      "context": "Original req.tenantContext through analysis and source hydration. Terminal read denial cannot become partial evidence."
+    },
+    {
+      "caller": "canonical pipeline hydration and remote-state inspection",
+      "context": "Original TenantModelScope.context or already required tenantContext. hydratePriorFiles retains requireModelProjectBinding before selected repository access."
+    },
+    {
+      "caller": "SoftwareAgent repository load",
+      "context": "softwareAgentImplementationAdapter already requires original input context and matching user. Same object carried through existing binding factory and adapter, never reconstructed from userId."
+    }
+  ],
+  "authority": "No provider mutation or consequential authority is created. Sole external dispatch is GET to api.github.com for selected repository resources with the canonical owner credential. No source file content or arbitrary user message is sent by this read helper. Imported content remains untrusted reference input at its independently guarded consumers.",
+  "accounting": "No model dispatch, paid tool call, usage reservation or settlement is performed by this read-only source helper. Downstream model/accounting and publishing callers remain independent.",
+  "verification": {
+    "readTests": 8,
+    "integrationTests": 17,
+    "failures": 0,
+    "skips": 0,
+    "negative": "All four real read helpers deny absent/cloned/foreign contexts before vault/API access. Encoded escape, credential paths, redirect, pre-cancellation, wrong repository binding, revocation, same-token rotation and disconnect deny without partial snapshots or fallback.",
+    "positive": "Exact owner source reads, full hydration and file subsets, encoded branch names, ordinary503then200recovery and existing SoftwareAgent/model-context compatibility pass.",
+    "softwareAgentCaller": "Actual existing factory and repository adapter retain the exact issued context object, load canonical owner source, and reject absent/cloned/foreign contexts before credential or provider access. All write/model/sandbox ports throw if called by this read-only fixture."
+  },
+  "receipts": [
+    {
+      "name": "actorRed",
+      "jobId": "08b42113-8a13-4a40-8a06-f966f6011574",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/github-source-actor-actorRed-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 198367
+      }
+    },
+    {
+      "name": "credentialRed",
+      "jobId": "a26be435-2020-4e9f-b1fb-1ef15db7cbfc",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/github-source-actor-credentialRed-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 199865
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "f9fb762a-8b0c-41c7-b3c0-d46c2976f0b5",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-source-actor-green-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 537493
+      }
+    },
+    {
+      "name": "integratedGreen",
+      "jobId": "27e4480e-f961-47e0-bbd7-d9d7a38034e6",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-source-actor-integratedGreen-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 3160987
+      }
+    },
+    {
+      "name": "softwareAgentCallerGreen",
+      "jobId": "d8d9013c-713f-4b31-91ee-cbecf5199076",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-source-actor-softwareAgentGreen-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 547593
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.ts",
+      "sha256": "6bead719a5d950b805272ee2f6469daf082fab2c7691517f2a7d7a2fce40a946"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
+      "sha256": "ae063174023054ee6ea85204eb73919b6d01da172881538c41f5787f67750672"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.test.ts",
+      "sha256": "a63538fbdd93b57d92cf1050f8669dad9ee96139b54c66271985a98e3a2e1156"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "sha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1"
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "sha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4"
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "sha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9"
+    },
+    {
+      "path": "backend/src/ai/softwareAgent/createXrogaSoftwareAgentBindings.ts",
+      "sha256": "5554bf08ada81c507171de4050cc26f99f8a39f142e4fe3ed3f6bbd658d3cfeb"
+    },
+    {
+      "path": "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts",
+      "sha256": "2513ec0be0cbe2896e815762ced3cddd337abfb6cda715750bfe5cbcf2151d4c"
+    },
+    {
+      "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
+      "sha256": "86676b5242737f9accc1412b6990e47b7c74c6f893e80bb5b15801ec0a2b1d8f"
+    }
+  ],
+  "limitations": [
+    "No GitHub write, deployment, repository rollback or connected consequential action promotion. Their own canonical approval/egress obligations remain pending.",
+    "Focused local fixture execution is not a live Google release or final exact-source CI acceptance.",
+    "No whole SoftwareAgent/phase1 upstream provenance acceptance inferred from this read-boundary correction."
+  ],
+  "productionChanged": false,
+  "liveProviderRequests": 0,
+  "spending": 0,
+  "currentSourceReceipt": "softwareAgentCallerGreen",
+  "earlierReceipts": "Earlier local negatives and intermediate greens retain their execution scope. Latest source bindings correspond to the final softwareAgentCallerGreen fixture, not a claim that older receipts certify later source."
+}

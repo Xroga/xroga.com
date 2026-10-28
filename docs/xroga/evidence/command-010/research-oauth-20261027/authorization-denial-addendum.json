@@ -1,0 +1,54 @@
+{
+  "scope": "TERMINAL_SUPABASE_REFRESH_AUTHORIZATION_DENIAL_NOT_NEW_AUTHORITY",
+  "priorTrace": "docs/xroga/evidence/command-010/research-oauth-20261027/trace.json",
+  "preservedPriorSources": [
+    {
+      "path": "docs/xroga/evidence/command-010/research-oauth-20261027/supabaseAuth.before-authorization-denial.ts.txt",
+      "sha256": "82ab56fef7542703cabf958a32f5e0d986a94757f4eb19148319687938047e58"
+    },
+    {
+      "path": "docs/xroga/evidence/command-010/research-oauth-20261027/supabaseTransport.before-authorization-denial.test.ts.txt",
+      "sha256": "f38f87ee4a568f3bb02f4db88ae59c76d65280fba7920444d4557b5ceb13005c"
+    }
+  ],
+  "defect": "401/403 refresh denial became null and could trigger a separate-credential fallback. Reproduced before correction.",
+  "correction": "401/403 now throws the existing terminal transport-denial class and survives getSupabaseOAuthAccessToken.503 remains ordinary provider unavailability. No PKCE or revision-write rule changed.",
+  "receipts": [
+    {
+      "name": "authorizationDenialRed",
+      "jobId": "dc119449-c4dc-42de-a893-5558fc3a6e3a",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/research-oauth-20261027/authorizationDenialRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 14730
+      }
+    },
+    {
+      "name": "finalIntegratedGreen",
+      "jobId": "33f20e4c-3000-4386-8a59-46d7bc85cccf",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/research-oauth-20261027/finalIntegratedGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1091172
+      }
+    }
+  ],
+  "passed": 19,
+  "skipped": 0,
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "sha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseTransport.security.test.ts",
+      "sha256": "a03bd5c9f64a8fe7216b51bdfb921ac2a9791e9323521a59df6aa02fc3657969"
+    }
+  ],
+  "productionChanged": false,
+  "spending": 0
+}

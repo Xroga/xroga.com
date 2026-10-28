@@ -1,0 +1,77 @@
+TAP version 13
+# Subtest: cancellation during final container cleanup cannot return successful completion
+ok 1 - cancellation during final container cleanup cannot return successful completion
+  ---
+  duration_ms: 8.6293
+  type: 'test'
+  ...
+# Subtest: cancellation while create completes cleans exact CID without starting it
+ok 2 - cancellation while create completes cleans exact CID without starting it
+  ---
+  duration_ms: 2.8493
+  type: 'test'
+  ...
+# Subtest: unverified cleanup is a terminal pending admission failure
+ok 3 - unverified cleanup is a terminal pending admission failure
+  ---
+  duration_ms: 2.6183
+  type: 'test'
+  ...
+# Subtest: authorized ordinary program failure preserves its exit status and exact cleanup
+ok 4 - authorized ordinary program failure preserves its exit status and exact cleanup
+  ---
+  duration_ms: 5.0725
+  type: 'test'
+  ...
+# Subtest: managed task containers carry the exact local cleanup ownership labels
+ok 5 - managed task containers carry the exact local cleanup ownership labels
+  ---
+  duration_ms: 3.1275
+  type: 'test'
+  ...
+# Subtest: Aura manual-input frontend callers cannot forward redirects or accept unbounded receipts
+    # Subtest: health redirect is refused before following
+    ok 1 - health redirect is refused before following
+      ---
+      duration_ms: 206.5546
+      type: 'test'
+      ...
+    # Subtest: chat redirect never forwards the private manual conversation
+    ok 2 - chat redirect never forwards the private manual conversation
+      ---
+      duration_ms: 125.2112
+      type: 'test'
+      ...
+    # Subtest: oversized health receipt cannot advertise ready status
+    ok 3 - oversized health receipt cannot advertise ready status
+      ---
+      duration_ms: 76.0425
+      type: 'test'
+      ...
+    # Subtest: oversized chat stream is stopped and cannot become successful output
+    ok 4 - oversized chat stream is stopped and cannot become successful output
+      ---
+      duration_ms: 61.724
+      type: 'test'
+      ...
+    # Subtest: ordinary first-party outage and later authorized manual request remain functional
+    ok 5 - ordinary first-party outage and later authorized manual request remain functional
+      ---
+      duration_ms: 88.8764
+      type: 'test'
+      ...
+    1..5
+ok 6 - Aura manual-input frontend callers cannot forward redirects or accept unbounded receipts
+  ---
+  duration_ms: 585.3772
+  type: 'test'
+  ...
+1..6
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1469.6114

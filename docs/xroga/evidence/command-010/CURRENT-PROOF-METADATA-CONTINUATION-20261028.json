@@ -1,0 +1,177 @@
+{
+  "scope": "EXACT_EXISTING_EXPRESSIONS_AND_BLOCKS_PLUS_EXPLICIT_HISTORICAL_RECEIPTS_NOT_ACCEPTANCE",
+  "archiveRef": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+  "originalProofs": [
+    {
+      "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+      "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
+      "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
+      "currentSha256": "8dae4b2e5d13206a53e898f63f50a5606ed720288305b0e8ec250e59631c8bfa",
+      "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
+      "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
+      "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
+      "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+      "beforeCwsApprovalSha256": "4afa12abca45ce2e4569e2416d445010090146526591a2adac4c34252e48b525",
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+      "beforeExpoReadinessSha256": "15b13f87dbcbb605d7efd69dab37a89e966e1bea79c904f1333a8d5d269d077e",
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+      "beforeExpoWorkflowSha256": "b4a287fd6e96f3f53300da469e30d39fa3a6501e1ff233d509ca5a707356f110",
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+      "beforeCurrentMainIntegrationSha256": "15178493c4f89cdd9b1b1fc4b8c214d554974ed1ecd97ddef08ad544ca9e0331",
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+    },
+    {
+      "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
+      "archive": "docs/xroga/evidence/command-010/historical/SOURCE-LIFETIME-PROOF-87e33b94.json",
+      "historicalSha256": "e34b675dfe7fc24eba51e8c5e06a02ac15495f126c0a58c432207f0592bc0b48",
+      "currentSha256": "33634a689a7fbc5bce2a9965c6db6e6e91231ef4c0cedfce5ab245da7f2f525c"
+    },
+    {
+      "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+      "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
+      "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
+      "currentSha256": "edfbc914afac4123a09e47f09284a21314474a9ad5a0c8c0ad614d52976462ef",
+      "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
+      "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+      "beforeCwsApprovalSha256": "ca3969dcc33e1c8d40133d088ec652598cdc1b983b97349349184e9017bea73b",
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+      "beforeExpoReadinessSha256": "067e118c6aac5bfbba1b593f5dfcb30f6e05c653d4c63c72499e97444d364cb0",
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+      "beforeExpoWorkflowSha256": "b8c6e311e1fab56e00dd25127af1d4575c8a55a31f8b363975203ad96012fe64",
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+      "beforeCurrentMainIntegrationSha256": "617065c06447a93a5cc974c03fbdfd32f139a0605045cc78c2c3e7449b80ee4f",
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+    }
+  ],
+  "exactPersistenceRemaps": [
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "originalId": "b9d29af2f2ef47d2dbd8",
+      "previousCurrentId": "5f28d665d687ff7e0502",
+      "currentId": "be5069f3467fad24f1c5",
+      "unchangedExpressionSha256": "f65e23f9000ea339366ea597789c04dae85885fb72400451daefb3845c968295"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "originalId": "b4b2b91f3280a140691a",
+      "previousCurrentId": "55ac9b0f3f9ba972ca8c",
+      "currentId": "660909aa15c676228c90",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "originalId": "48c115e3fcc79a824240",
+      "previousCurrentId": "2360912af68a9536c836",
+      "currentId": "148d27d99764607b2339",
+      "unchangedExpressionSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "originalId": "a6b38f59fd65dcf93b63",
+      "previousCurrentId": "d1009c426dd9153743b7",
+      "currentId": "355f4dbeae8a416a7e42",
+      "unchangedExpressionSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "originalId": "ff18538f080dddb2c506",
+      "previousCurrentId": "ad1b1dafdbd324ceed15",
+      "currentId": "45aec3a8752cfb119062",
+      "unchangedExpressionSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
+    }
+  ],
+  "currentBindingChanges": [
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "previousSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+      "currentSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "previousSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "currentSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb"
+    },
+    {
+      "path": "scripts/security/source-lifetime-bindings.test.mjs",
+      "previousSha256": "d340ef0e6377631353d4b4d226db041736b1e7b5397292952ef1a6e74ee15cb7",
+      "currentSha256": "441861e7507aea76299bd43e73325792e4cbe16f3414bf6ae5183ad055ae78b9"
+    },
+    {
+      "path": "backend/src/ai/black-hole/webIntelligence.ts",
+      "previousSha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d",
+      "currentSha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.egress.test.ts",
+      "previousSha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a",
+      "currentSha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "previousSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "currentSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "previousSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "previousSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.test.ts",
+      "previousSha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897",
+      "currentSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "previousSha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690",
+      "currentSha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "previousSha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102",
+      "currentSha256": "dd067a0d631929f595b3141b8bae5bbd785aefd14c84f1b12fd7b224bf086128"
+    },
+    {
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "previousSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
+      "currentSha256": "d16d82aeb587150da44dba0ec6638bbae38e05eb11dd8b3063820f005fd01ed9"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "previousSha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3",
+      "currentSha256": "43de9010090f94d15bde89ca6d4a4e0fd9ab61b5337ad1f4ecc50c42fca4fac2"
+    },
+    {
+      "path": "backend/src/services/integrations/businessRead.ts",
+      "previousSha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7",
+      "currentSha256": "a9753cb3398b882089c9eb443f53a52100be6d55638dbec6e6289bf0a5ac785f"
+    },
+    {
+      "path": "backend/src/synthesis/productionAdapters.ts",
+      "previousSha256": "440de34413df3178118f0f2d4067bcd26dd01069b5338a25f9a89c1ae88271f2",
+      "currentSha256": "afa35675448e04fae06fdead5eaa3768237987da074604d91b16666134380c5b"
+    },
+    {
+      "path": "backend/src/ai/modelSdkAdmission.ts",
+      "previousSha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85",
+      "currentSha256": "20d496b0d58773d98578f070771ed051259b2c77cd3d081ef2304acf01fbcb60"
+    },
+    {
+      "path": "backend/src/security/genericSdk.local.integration.ts",
+      "previousSha256": "cb5c247ade126ef0a316b4be90647160b30e2158674b8b0a9e28acb2be145dff",
+      "currentSha256": "76948a8c6aa5bba81662f2007637014780f860e75e4ade943f1335383076ec62"
+    }
+  ],
+  "phase3StatusCorrection": "Founder-accepted B1_P3_VERIFIED is preserved. Original B1_P3_BLOCKED label remains in exact archived preparation proof. No Phase3 evaluator, CI or KMS experiment repeated.",
+  "testChange": "One obsolete Phase3 label assertion is corrected and historical/non-acceptance assertions are added. Exact expression/block/constructor equality checks and original frozen worklists remain unchanged. Current map now includes the independently verified browser SDK caller and still requires an exact complete map, rejecting any other SDK caller. A new test validates all original archives against their preserved Git source and asserts no acceptance promotion.",
+  "frozenCriteriaChanged": false,
+  "strictEgressAuditorChanged": false,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spending": 0
+}

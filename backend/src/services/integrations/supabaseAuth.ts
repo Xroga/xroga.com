@@ -110,6 +110,37 @@ export interface SupabaseOAuthTokens {
   token_type?: string;
 }
 
+class SupabaseAuthTransportDenied extends Error {
+  readonly code='SUPABASE_TRANSPORT_DENIED';
+  readonly retryable=false;
+  constructor(readonly status=403){super(`Supabase authentication request was denied by security policy (${status}).`);}
+}
+
+/** Only the configured issuer's token operation. This grants no SQL, project
+ * creation, credential export or other consequential-action authority. */
+async function supabaseTokenRequest(body:URLSearchParams):Promise<SupabaseOAuthTokens>{
+  if(Buffer.byteLength(String(body))>65536)throw new SupabaseAuthTransportDenied();
+  const res=await fetch(TOKEN,{
+    method:'POST',redirect:'manual',
+    headers:{'Content-Type':'application/x-www-form-urlencoded',Accept:'application/json',Authorization:basicAuthHeader()},
+    body,signal:AbortSignal.timeout(15000),
+  });
+  if(res.redirected||res.status>=300&&res.status<400){await res.body?.cancel().catch(()=>undefined);throw new SupabaseAuthTransportDenied();}
+  if(!res.ok){await res.body?.cancel().catch(()=>undefined);if(res.status===401||res.status===403)throw new SupabaseAuthTransportDenied(res.status);throw new Error(`Supabase token request failed (${res.status}).`);}
+  const reader=res.body?.getReader(),chunks:Uint8Array[]=[];let bytes=0;
+  try{
+    if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.length;if(bytes>65536)throw new SupabaseAuthTransportDenied();chunks.push(next.value);}
+  }finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+  let json:SupabaseOAuthTokens;
+  try{json=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new SupabaseAuthTransportDenied();}
+  const token=(value:unknown)=>typeof value==='string'&&value.length>0&&value.length<=16384&&!/[\x00-\x20\x7f]/.test(value);
+  if(!json||typeof json!=='object'||Array.isArray(json)||!token(json.access_token)
+    ||json.refresh_token!==undefined&&!token(json.refresh_token)
+    ||json.expires_in!==undefined&&(!Number.isSafeInteger(json.expires_in)||json.expires_in<=0||json.expires_in>366*86400)
+    ||json.token_type!==undefined&&(typeof json.token_type!=='string'||json.token_type.toLowerCase()!=='bearer'))throw new SupabaseAuthTransportDenied();
+  return{access_token:json.access_token,refresh_token:json.refresh_token,expires_in:json.expires_in,token_type:json.token_type};
+}
+
 export async function exchangeSupabaseOAuthCode(opts: {
   tenantContext: TenantContext;
   code: string;
@@ -136,27 +167,7 @@ export async function exchangeSupabaseOAuthCode(opts: {
     code_verifier: pkce.verifier,
   });
 
-  const res = await fetch(TOKEN, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
-      Authorization: basicAuthHeader(),
-    },
-    body,
-  });
-
-  const json = (await res.json().catch(() => ({}))) as SupabaseOAuthTokens & {
-    error?: string;
-    error_description?: string;
-    message?: string;
-  };
-
-  if (!res.ok || !json.access_token) {
-    throw new Error(
-      json.error_description || json.error || json.message || `OAuth token exchange failed (${res.status})`,
-    );
-  }
+  const json = await supabaseTokenRequest(body);
 
   const expiresAt = json.expires_in
     ? new Date(Date.now() + json.expires_in * 1000).toISOString()
@@ -190,7 +201,8 @@ export async function getSupabaseOAuthAccessToken(userId: string): Promise<strin
   try {
     const refreshed = await refreshSupabaseOAuthToken(userId, data.refresh_token);
     return refreshed.access_token;
-  } catch {
+  } catch(error) {
+    if(error instanceof SupabaseAuthTransportDenied)throw error;
     console.warn('[supabaseAuth] refresh failed');
     return null;
   }
@@ -211,24 +223,7 @@ export async function refreshSupabaseOAuthToken(
     refresh_token: refreshToken,
   });
 
-  const res = await fetch(TOKEN, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
-      Authorization: basicAuthHeader(),
-    },
-    body,
-  });
-
-  const json = (await res.json().catch(() => ({}))) as SupabaseOAuthTokens & {
-    error?: string;
-    error_description?: string;
-  };
-
-  if (!res.ok || !json.access_token) {
-    throw new Error('Failed to refresh Supabase token');
-  }
+  const json = await supabaseTokenRequest(body);
 
   const expiresAt = json.expires_in
     ? new Date(Date.now() + json.expires_in * 1000).toISOString()

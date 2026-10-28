@@ -1,0 +1,146 @@
+{
+  "scope": "SIX_EXACT_LOW_LEVEL_DEPENDENCIES_ONLY_NOT_UPSTREAM_CALLER_OR_PHASE4_ACCEPTANCE",
+  "callers": [
+    {
+      "id": "4c398e61442e0e188cef",
+      "file": "backend/src/lib/r2.ts",
+      "entryPoint": "uploadToR2",
+      "callSha256": "db5384f529bb0766788c29a148bc2738b17e5af62ab65ece40630fbaf433996f",
+      "sourceFileSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce"
+    },
+    {
+      "id": "46ef206b2d43bf7d4d7a",
+      "file": "backend/src/lib/r2.ts",
+      "entryPoint": "downloadFromR2",
+      "callSha256": "d83191f5a661f9e4b277ecfbcd4f4f2f5f4f31f99a5ae891583d3a2f9bdbfea7",
+      "sourceFileSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce"
+    },
+    {
+      "id": "be024131e70fac48283e",
+      "file": "backend/src/lib/r2.ts",
+      "entryPoint": "removeNewR2Object",
+      "callSha256": "038d2e6c6e1608b6725f45a3f05f63f9143dbce5c981c3b2f5b8733e48682a0c",
+      "sourceFileSha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce"
+    },
+    {
+      "id": "b7515cbdbc7be27b60a8",
+      "file": "backend/src/sandbox/google/gceSshTransport.ts",
+      "entryPoint": "nativeSshCommand",
+      "callSha256": "8887d9e174a694593f12908415d34fae6f7b792596ac33034e236ad0d09731b3",
+      "sourceFileSha256": "dceba5dfb4905ceedf0aca62c163e4bcaa104a4ae37d89a0cadb7be62df671a9"
+    },
+    {
+      "id": "c332b8bc426cca8b9d28",
+      "file": "backend/src/storage/testing/tlsFixture.ts",
+      "entryPoint": "opensslAvailable",
+      "callSha256": "d57469c105a0f1a07476c1b246845faff23514d44c8f5ab02fd1eaf3796179f3",
+      "sourceFileSha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
+    },
+    {
+      "id": "909db275f450794ebea4",
+      "file": "backend/src/storage/testing/tlsFixture.ts",
+      "entryPoint": "run",
+      "callSha256": "8e76898e5dc1947e57716a50a3acb94ab5becfb42d5c65581e34a0e95ea7ce9a",
+      "sourceFileSha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
+    }
+  ],
+  "privateR2": {
+    "scope": "FIRST_PARTY_PRIVATE_STORAGE_NOT_ARBITRARY_EXTERNAL_UPLOAD",
+    "actor": "storeProjectFile requires issued TenantContext and current project ownership. Download router requires issued context, ownedFile checks persisted parent owner, and delivery rechecks current ownership/revision after object I/O. Raw adapter IDs are internal arguments, not an authentication mechanism.",
+    "destination": "Account and dedicated private bucket are validated server configuration. Metadata uses GET-only api.cloudflare.com, redirect:error, deadline and confirmed disabled public/custom domains. SDK endpoint is exactly the configured R2 account, with bounded owner-prefixed keys and no request-selected URL or bucket.",
+    "credentials": "Only fixed R2 destination receives its scoped object key. Metadata token goes only to fixed Cloudflare API. No URL or logs include credentials. Synthetic tests use no real provider credentials.",
+    "data": "Upload snapshots original buffer before ownership waits, bounds bytes and requires exact durable database receipt. Downloads verify owner prefix, exact configured bucket, size and SHA256. Foreign owner and cloned contexts deny before SDK calls. Private user persistence does not itself authorize any third-party export.",
+    "authorityAndAccounting": "Existing user-owned private storage and durable project file receipt are retained. A separate external file export must use executeOwnedFileEgress with original authority, current ownership, receipt admission and canary scan. No third-party upload, paid model dispatch or extra action authority is certified here.",
+    "revocation": "Download denies changed owner/revision after provider I/O and zeros retained result on denial. Private R2 write uncertainty retains objects for reconciliation, never deletes possibly committed customer data. The unused removeNewR2Object has no production importer."
+  },
+  "nativeSsh": {
+    "scope": "FIXED_NATIVE_GOOGLE_CONTROL_TRANSPORT_ONLY_NOT_ARBITRARY_PROCESS_CALLERS",
+    "actor": "Google sandbox and runtime factory preserve issued execution admission and saved runtime ownership. GceSshTransport resolves exact owner/project/runtime handle, current image/instance/expiry before and after OS Login and calls admission immediately before SSH.",
+    "destination": "Authenticated Compute private IP and pinned host key only. Fixed ssh/ssh-keygen binaries and fixed remote Python control path, no shell, no agent forwarding, no developer SSH configuration. Operation bytes travel through stdin with owner/project binding.",
+    "credentials": "Five-minute ephemeral OS Login key for dedicated service identity. Scrubbed child environment, strict host verification, bounded output and allowlisted errors. Finally revokes exact public key and removes owned local key directory. Revocation failure is not success or a retry.",
+    "accounting": "Transport grants no scheduler, model, reservation or tenant authority. Original bound execution lifecycle remains above it. No automatic promotion of other subprocess callers.",
+    "evidenceReuse": "All five listed native files are byte-identical after CRLF normalization to the accepted Google production source. Preserve original live migration acceptance and prior tests without repeating paid infrastructure checks."
+  },
+  "disabled": {
+    "scope": "CURRENT_SOURCE_REACHABILITY_ONLY",
+    "reason": "Both OpenSSL calls are in disposable TLS test fixtures. The retired R2 deletion helper has no production caller. New imports fail the explicit reachability regression. Reflection/generated code and future importers are not certified."
+  },
+  "tests": {
+    "privateFilesGreen": "11a07b4f-d50a-4a8d-bda3-f94a9f669f67",
+    "privateFileOwnerRaceRed": "aeadf6e3-e96e-49c6-b28a-e506073f5a58",
+    "reachabilityGreen": "7205b904-168f-4758-b9ff-2ca31ac71690",
+    "storageOwnerDenialRed": "83249c11-ddff-4b57-ac6f-5a6866a12b4d",
+    "storageAsyncRevocationRed": "c0cf5df8-fcc8-49e8-ab63-a6bfe5896b47",
+    "storageLifecycleGreen": "535e2c40-654e-4a76-91d7-462722f5ffbb",
+    "freshLiveProviderTestClaimed": false
+  },
+  "unchangedAcceptedNativeFiles": [
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.ts",
+      "sha256": "dceba5dfb4905ceedf0aca62c163e4bcaa104a4ae37d89a0cadb7be62df671a9",
+      "acceptedSource": "b11841ead316913cb46316fa7c16e76c6519b392"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.test.ts",
+      "sha256": "742ef4ed091d767980512bcf5d51f176ec5d29327849103949f709dc4715585a",
+      "acceptedSource": "b11841ead316913cb46316fa7c16e76c6519b392"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "sha256": "c5f14d10ea481b849ac90329e567818bcd25a6572fc2bd9d6f378f16a88bca2a",
+      "acceptedSource": "b11841ead316913cb46316fa7c16e76c6519b392"
+    },
+    {
+      "path": "backend/src/sandbox/google/googleSandbox.ts",
+      "sha256": "d5b72b4e7d5bb17a189a623d24f2523a3dda238a914b7597e6f6f287aefbc821",
+      "acceptedSource": "b11841ead316913cb46316fa7c16e76c6519b392"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleFactory.ts",
+      "sha256": "6d033c0e330807ef6b5959e27134f6a5b898410c8658dac5889e7dfe914da729",
+      "acceptedSource": "b11841ead316913cb46316fa7c16e76c6519b392"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "backend/src/services/storage/projectFiles.receipt.test.ts",
+      "marker": "project file requires exact durable receipt and snapshots Buffer before ownership awaits",
+      "sha256": "3f786db3561574a21b3b487ce4562714055f61a8c9c9b75fd5aac8dae3a56630"
+    },
+    {
+      "path": "backend/src/services/storage/fileDeliveryPolicy.test.ts",
+      "marker": "private bucket metadata rejects public/unknown state using GET-only fixed endpoints",
+      "sha256": "b38c8a3a771db20828b3ab3f943c9348bf7a8fb1f2039c0ba360757f07a90e22"
+    },
+    {
+      "path": "backend/src/services/storage/privateFileDelivery.revocation.test.ts",
+      "marker": "actual private R2 delivery rechecks ownership and file revision after the asynchronous object read",
+      "sha256": "7b300eb5c671763363886aeeddfdb66cb2aa1a3de2afa4946576a25955217777"
+    },
+    {
+      "path": "backend/src/security/egress/fileEgress.test.ts",
+      "marker": "owner changes during receipt wait, altered recipient and secret file canaries produce zero uploads",
+      "sha256": "57cd5c48604400c9a94d8d6b29a891ab6566d4141a831365582420873f6d657b"
+    },
+    {
+      "path": "backend/src/security/egress/disposableDependenciesReachability.test.ts",
+      "marker": "TLS test subprocesses and retired R2 deletion have no current production source callers",
+      "sha256": "5262b290ec8ffbd9ed75a18c32961896ef61e1e92ef6a50e5ad5fb965f94b39d"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.test.ts",
+      "marker": "physical ownership revoked during OS Login admission prevents the SSH dispatch",
+      "sha256": "742ef4ed091d767980512bcf5d51f176ec5d29327849103949f709dc4715585a"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.test.ts",
+      "marker": "canonical authority revoked during OS Login admission prevents dispatch and revokes the key",
+      "sha256": "742ef4ed091d767980512bcf5d51f176ec5d29327849103949f709dc4715585a"
+    },
+    {
+      "path": "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json",
+      "marker": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "sha256": "0ca32521bc413e84127bebe1199645bd89be8d8d1a28a0bcd86c0284654767b6"
+    }
+  ]
+}
