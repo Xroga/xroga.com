@@ -6,7 +6,7 @@ import { deleteUserProviderKey, getUserProviderKey, prepareUserProviderKeyWrite,
 import { oneClickConnectSupabase, prepareSupabaseConnectionWrite } from './supabaseProvision.js';
 import { readFileSync } from 'node:fs';
 import { createTenantContext } from '../../security/tenantContext.js';
-import { ensureExpoProjectLinked } from '../publish/easPublish.js';
+import { ensureExpoProjectLinked, linkOwnedExpoProject } from '../publish/easPublish.js';
 
 test('BYOK save carries its admitted revision, rejects a concurrent revoke and permits a fresh reconnect',async()=>{
   let revision=randomUUID(),revoked=true,mode='race';
@@ -149,10 +149,13 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
       return new Response(JSON.stringify({data:{me:{accounts:[{id:'account',name:'fixture',apps:[{id:'fixture-project-id',name:'fixture'}]}]}}}),{status:200});
     };
     try {
-      const result=await ensureExpoProjectLinked({userId:user});
-      assert.equal(result.projectId,null);
-      assert.equal(result.error,'ENSURE_FAILED');
+      await assert.rejects(ensureExpoProjectLinked({userId:user}),{code:'TENANT_AUTH_REQUIRED'});
+      assert.equal(expoCalls,0,'A raw user ID cannot authorize provider discovery');
+      const projectSaves=calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).length;
+      await assert.rejects(linkOwnedExpoProject({userId:user,tenantContext:context,projectId:'fixture-project-id'}),{code:'EXPO_ACCOUNT_ADMISSION_DENIED'});
       assert.equal(expoCalls,1);
+      assert.equal(calls.filter(call=>call.path.endsWith('/save_provider_key_if_current')).length,projectSaves,
+        'A revoked provider source must stop the link before credential persistence');
       assert.equal(revoked,true,'Expo lookup completion cannot restore a revoked project link');
     } finally {globalThis.fetch=originalFetch;}
     mode='unavailable';
