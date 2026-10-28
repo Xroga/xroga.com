@@ -3505,6 +3505,26 @@
           "sha256": "0cf30d52719560b66043306c53bd5f5be0bd825e82000289fabae0dddb1f1f71"
         }
       ]
+    },
+    {
+      "id": "fcbe4c75dea0e59bcb3a",
+      "callSha256": "1d718a41f05b9aafe273c87f127bda6a86d9501a1107c865bfb1c2cf729e268d",
+      "sourceFileSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_OPENAI_TRANSCRIPTION_ORIGINAL_ACTOR_MANUAL_PCM_AND_EXACT_DURABLE_ACCOUNTING_NO_PRIVATE_LOOKUP",
+      "tenantAuthority": "AUTH_MIDDLEWARE_ORIGINAL_CONTEXT_EXACT_OWNER_BUDGET_AUDIT_AND_ORIGINAL_CLIENT_SESSION_ONLY_NO_RAW_ID_FALLBACK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+          "marker": "EXACT_AUTHENTICATED_MANUAL_VOICE_CALLER_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "619360783790d90d2c4bf5f37faca1c03d16235ce63229959d8f30f754b0ad81"
+        },
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget",
+          "sha256": "677f058c8ff884dc8cbefd7ac7b869072d1ef08a1876045388703688ca0075df"
+        }
+      ]
     }
   ]
 }

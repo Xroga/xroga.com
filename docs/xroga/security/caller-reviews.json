@@ -4677,22 +4677,6 @@
       "phase4SourceReviewProof": "docs/xroga/evidence/command-010/SCOPED-SOURCE-REBINDING.json"
     },
     {
-      "path": "backend/src/routes/voice.ts",
-      "sourceSha256": "da9b3a927a71f2ff448a95855ffd270a11f42f9392d96de012468a765ae23c22",
-      "callIds": [
-        "ae7e9656a12e6ead3f39"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in <module>. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/routes/voice.ts",
-          "marker": "      const models = Array.from(\n        new Set(\n          ["
-        }
-      ]
-    },
-    {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
       "sourceSha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e",
       "callIds": [
@@ -5810,9 +5794,9 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sourceSha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad",
+      "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
       "callIds": [
-        "8f3c7995974f0b7357a6"
+        "19d3d07d6723c7afb8b6"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
@@ -5822,7 +5806,14 @@
           "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
           "marker": "{Array.from({ length: bars }, (_, index) => {"
         }
-      ]
+      ],
+      "beforeVoiceSecurityCorrection": {
+        "sourceSha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad",
+        "callIds": [
+          "8f3c7995974f0b7357a6"
+        ]
+      },
+      "unchangedFunctionSha256": "bcaf1eb379e7bdaaaf780bef2cd4b979f53defaf835730db0744a1e011bde5de"
     },
     {
       "path": "frontend/src/components/ui/Dialog.tsx",
@@ -21075,6 +21066,117 @@
           "5a77e4a895c7514219d6",
           "f9eb0d55e38bbca28a9a",
           "1f137c4bbcee9b7334de"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/ai/voiceBudget.ts",
+      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "callIds": [
+        "c409db19505bbca8b298"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
+      "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
+      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget"
+        },
+        {
+          "path": "backend/src/ai/voiceBudget.ts",
+          "marker": "export async function beginVoiceRequest"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/voiceBudget.ts",
+      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "callIds": [
+        "a81f276b5c7cea8999c9",
+        "594ea07f9af5118c4266",
+        "12ad44841e8b80ce48f1",
+        "d5b54d745f6c26ee0c56",
+        "fe2129cb990345403b26",
+        "0b3f1d6b2ab5818b8c56"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
+      "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
+      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget"
+        },
+        {
+          "path": "backend/src/ai/voiceBudget.ts",
+          "marker": "export async function beginVoiceRequest"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/voice.ts",
+      "sourceSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
+      "callIds": [
+        "e6afd0a34a779ea6aa43"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
+      "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
+      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget"
+        },
+        {
+          "path": "backend/src/routes/voice.ts",
+          "marker": "router.post('/transcribe'"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/voicePcm.ts",
+      "sourceSha256": "afa17f8408cdc3197e46530e6f64239e34c3093c82c6dccbc53c1e83e2034fa0",
+      "callIds": [
+        "19bac69e5470fee649fa"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
+      "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
+      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget"
+        },
+        {
+          "path": "frontend/src/lib/voicePcm.ts",
+          "marker": "export async function normalizeVoiceAudio"
+        }
+      ]
+    }
+  ],
+  "retiredSourceReviews": [
+    {
+      "reason": "The exact old Array.from model-list conversion was removed by the source-bound voice correction. Its complete original review is retained, never remapped to an unrelated new call.",
+      "parent": "b7e213a5057c2915298cdcef88e9884dc504c2b5",
+      "review": {
+        "path": "backend/src/routes/voice.ts",
+        "sourceSha256": "da9b3a927a71f2ff448a95855ffd270a11f42f9392d96de012468a765ae23c22",
+        "callIds": [
+          "ae7e9656a12e6ead3f39"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in <module>. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/voice.ts",
+            "marker": "      const models = Array.from(\n        new Set(\n          ["
+          }
         ]
       }
     }

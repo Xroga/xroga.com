@@ -121,8 +121,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 124,
-    "pending": 12,
+    "reviewed": 125,
+    "pending": 11,
     "unresolvedHighRiskReviewCandidates": 8
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
@@ -565,5 +565,6 @@
     "localVerificationScope": "The3179test historical suite and starting-source CI above retain their original source. New focused groups have separate trace/receipt files. Full current exact-source CI and all original12criteria remain required.",
     "currentCheckpoint": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/checkpoint.json"
   },
-  "auraPublicGuestContinuation": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json"
+  "auraPublicGuestContinuation": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json",
+  "voiceManualCallerContinuation": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json"
 }

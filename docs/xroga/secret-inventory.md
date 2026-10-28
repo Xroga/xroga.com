@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `c154f6c06ca4148dd1b62920124618d5946bb371`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `b7e213a5057c2915298cdcef88e9884dc504c2b5`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -128,7 +128,7 @@ Values are forbidden. Source SHA: `c154f6c06ca4148dd1b62920124618d5946bb371`. Na
 | NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1 |
 | NEXT_PUBLIC_XROGA_BROWSER_RUNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-example-com, endpoint-your-website-com |
 | NODE_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
-| OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-openai-com |
+| OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-openai-com |
 | OPENROUTER_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | PARALLEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-parallel-ai, endpoint-api-x-ai |

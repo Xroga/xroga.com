@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c154f6c06ca4148dd1b62920124618d5946bb371",
+  "source_sha": "b7e213a5057c2915298cdcef88e9884dc504c2b5",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1756,7 +1756,6 @@
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
-        "OPENAI_API_KEY",
         "OPENAI_TRANSCRIBE_MODEL"
       ],
       "inbound_callers": [
@@ -7525,6 +7524,7 @@
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "backend/src/ai/voiceBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/universalAgentFlags.ts",
         "backend/src/growth/growthService.ts",
@@ -7628,6 +7628,7 @@
         "MOONSHOT_API_KEY",
         "MORPH_API_KEY",
         "NEON_DATABASE_URL",
+        "OPENAI_API_KEY",
         "OPENROUTER_API_KEY",
         "PATH",
         "PIAPI_API_KEY",
@@ -7731,6 +7732,7 @@
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "backend/src/ai/voiceBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/universalAgentFlags.ts",
         "backend/src/growth/growthService.ts",
@@ -10536,10 +10538,10 @@
     {
       "name": "OPENAI_API_KEY",
       "consuming_sources": [
+        "backend/src/ai/voiceBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/lib/capabilityRegistry.ts",
-        "backend/src/lib/platformReady.ts",
-        "backend/src/routes/voice.ts"
+        "backend/src/lib/platformReady.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10554,7 +10556,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-openai-com"
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -11568,6 +11570,7 @@
         "backend/src/ai/runStore.ts",
         "backend/src/ai/runTrace.ts",
         "backend/src/ai/sessionMemory.ts",
+        "backend/src/ai/voiceBudget.ts",
         "backend/src/ai/webBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/supabase.ts",
@@ -15312,6 +15315,14 @@
       "sha256": "5464af325a9bd1863a83c7218a275519dcb4247724a4b5147b5f800bad9258fe"
     },
     {
+      "path": "backend/src/ai/voiceBudget.ts",
+      "sha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012"
+    },
+    {
+      "path": "backend/src/ai/voicePcm.ts",
+      "sha256": "38839262fba22f1638db03a88905be43c4e24d936aa4246d352fe4e903cee79b"
+    },
+    {
       "path": "backend/src/ai/webBudget.ts",
       "sha256": "0970dd0edfcf52dfd97e0ce6b7397d8be00777491d2dcffb29a0baf864738d2d"
     },
@@ -16097,7 +16108,7 @@
     },
     {
       "path": "backend/src/routes/voice.ts",
-      "sha256": "da9b3a927a71f2ff448a95855ffd270a11f42f9392d96de012468a765ae23c22"
+      "sha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -20025,7 +20036,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad"
+      "sha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a"
     },
     {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
@@ -21033,7 +21044,15 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "a865bad0e0360ea4571a23094ae16c218e6083f25db4debaeec80863268f4c6b"
+      "sha256": "a8dca12f52c75799b62ea0249742b102d7f8eb3557d6f14d19a1c0c359c85fcd"
+    },
+    {
+      "path": "frontend/src/lib/voicePcm.ts",
+      "sha256": "afa17f8408cdc3197e46530e6f64239e34c3093c82c6dccbc53c1e83e2034fa0"
+    },
+    {
+      "path": "frontend/src/lib/voiceRequestPolicy.ts",
+      "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -22958,7 +22977,7 @@
       "hostname": "api.openai.com",
       "protocol": "https:",
       "path": "backend/src/routes/voice.ts",
-      "line": 72,
+      "line": 55,
       "credentialsInUrl": false
     },
     {
@@ -30357,7 +30376,7 @@
     },
     {
       "path": "backend/src/routes/voice.ts",
-      "line": 45,
+      "line": 38,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33185,28 +33204,28 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 48,
+      "line": 49,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 61,
+      "line": 62,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 74,
+      "line": 75,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 87,
+      "line": 88,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1,0 +1,210 @@
+{
+  "scope": "EXACT_AUTHENTICATED_MANUAL_VOICE_CALLER_NOT_PHASE4_ACCEPTANCE",
+  "parent": "b7e213a5057c2915298cdcef88e9884dc504c2b5",
+  "resolvedCandidateIds": [
+    "fcbe4c75dea0e59bcb3a"
+  ],
+  "path": "Existing microphone gesture -> MediaRecorder -> bounded browser PCM normalization -> original-session-pinned first-party API transport -> index.ts authMiddleware -> original TenantContext -> exact canonical reservation and audit -> fixed OpenAI transcription POST -> verified usage settlement, usage ledger and completion audit -> current-session transcript publication.",
+  "authority": "Manual microphone input only. No project/file/tenant lookup is inferred from request JSON, no private storage or connected credential is read, no URL is fetched from audio or model output, and no raw user-ID/fabricated-context fallback exists. The authenticated actor owns its exact manual recording and canonical budget. This does not authorize uploading other tenant data.",
+  "defectsFixed": [
+    "A plain user ID could reach platform-funded transcription without original actor or durable budget.",
+    "Provider401 retried another transcription model and raw provider error text reached logs.",
+    "Compressed byte size did not bound duration-billed Whisper exposure.",
+    "Missing usage/accounting, redirects, unknown model configuration, response size, disconnect and key rotation lacked terminal publication guards.",
+    "The actual voice UI could automatically send its browser-caption fallback after security/accounting denial.",
+    "Local decoding or response waits could cross a logout/account switch and publish a previous session transcript."
+  ],
+  "controls": [
+    "Existing canonical reserve_xroga_provider_budget, settle_xroga_provider_budget and record_ai_usage_atomic, with original actor and exact receipts. No new ledger, entitlement, schema, key or identity.",
+    "Canonical fixed uncompressed 22050Hz mono16-bit PCM, exact44-byte RIFF/WAVE header and frame-count bound. Existing120-second UI limit retained, server allows5seconds timer grace. No user duration metadata, decoder or subprocess on the server.",
+    "Existing three transcription models and multilingual fixed prompt retained. Unknown configured models fail closed. Every availability fallback needs a distinct full verified reservation.",
+    "15-second local normalization, 45-second backend and 60-second client lifetimes, manual fixed-origin redirect denial, 64KiB provider and128KiB client response limits, original audio digest and key snapshot.",
+    "After any provider bytes or uncertain completion the full hold stays reserved for reconciliation. A failed failure-record write is terminal.",
+    "Both canonical settlement and atomic usage receipt plus immutable owner-bound audit must succeed before a transcript. Audio/transcript/credentials/provider errors are excluded from audit metadata.",
+    "Disconnect races check synchronous request/response closure immediately before dispatch, not only the later close event.",
+    "Client token pinned across decoding, first-party response and publication. Capture cancellation/unmount aborts transcription.",
+    "UI fallback is allowed only for explicit ordinary VOICE_PROVIDER_UNAVAILABLE. Security/accounting/session/cancellation/unknown failures stop automatic sending and preserve the separate existing composer. Existing consequential-action review is unchanged."
+  ],
+  "protocolSources": [
+    "https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create",
+    "https://developers.openai.com/api/docs/models/gpt-4o-mini-transcribe",
+    "https://developers.openai.com/api/docs/models/gpt-4o-transcribe",
+    "https://developers.openai.com/api/docs/models/whisper-1"
+  ],
+  "pricing": {
+    "version": "voice-2026-10-28-v1",
+    "tokenModels": {
+      "maximumInput": 16000,
+      "maximumOutput": 2000,
+      "miniInputUsdPerMillion": 1.25,
+      "miniOutputUsdPerMillion": 5,
+      "standardInputUsdPerMillion": 2.5,
+      "standardOutputUsdPerMillion": 10,
+      "reservationTolerance": 1.1
+    },
+    "whisper": {
+      "usdPerMinute": 0.006,
+      "maximumSeconds": 125
+    },
+    "note": "Pinned existing compatibility-model rates and documented model bounds. No model migration/tuning or live provider spending. Duration usage and token details are validated separately, never conflated with file bytes."
+  },
+  "evidence": {
+    "beforeFix": {
+      "job": "2239e5ab-93d8-43e6-b1f9-d850ba33bb3d",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/voice-before-fix-20261028.log",
+      "sha256": "2eee4043b7a2d6ff044dc618cc8812cc61936e747c4e5821db9ee312d06e7895",
+      "rawSha256": "2eee4043b7a2d6ff044dc618cc8812cc61936e747c4e5821db9ee312d06e7895",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 17134
+      }
+    },
+    "disconnectRaceRed": {
+      "job": "46f016ec-ab3e-4ad3-9079-272b255d94bf",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/voice-disconnect-race-before-fix-20261028.log",
+      "sha256": "d056f731fad92bc7a5efda4797203250a111e364c505c14c47cb558d89bd5cdd",
+      "rawSha256": "3a6c81020cd148a95e1deb1b3a2bdba790c1333aefce549db577ea8e315e804e",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 166699
+      }
+    },
+    "actualUiRed": {
+      "job": "40b10f61-163c-4cd6-9b75-dca61d60d613",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/voice-ui-denial-before-fix-20261028.log",
+      "sha256": "4a0ba88d7e8e51d04dd3d11845bbaa4fdb6c86e5f645f5c37d2a8355fc7c8e1b",
+      "rawSha256": "97cb7b31f596a50006b95c4e8539f12d8a0e50cf63ed2175b829e1e2b387e848",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 13461
+      }
+    },
+    "focused": {
+      "job": "7e1edcdd-a34a-473d-ab69-6ce8dacb64e3",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/voice-final-56tests-20261028.log",
+      "sha256": "3102d2b4b6281d9f10b3bc796ea6c169b591b4d39aa2842b2cef76e807713758",
+      "rawSha256": "3102d2b4b6281d9f10b3bc796ea6c169b591b4d39aa2842b2cef76e807713758",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 222593
+      }
+    },
+    "backendTypes": {
+      "job": "a3d04ddc-46a6-446b-aa06-c7f0d641748f",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/voice-backendTypes-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322012
+      }
+    },
+    "frontendTypes": {
+      "job": "4b13f376-84d5-427c-bfaf-68ef62379751",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/voice-frontendTypes-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1321956
+      }
+    },
+    "lint": {
+      "job": "72e8b845-0113-4b79-8a79-427c6be7b592",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/voice-lint-20261028.log",
+      "sha256": "a0e63e9ee2cd7052847d0457110184b5d83b448e7c894d2a9bbba6e6720f3b55",
+      "rawSha256": "65393dcd4438f40f67eab8542ffdb7f127d92044e3ee1f8312f9330f7c626fe0",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  },
+  "tests": {
+    "total": 56,
+    "pass": 56,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Actual Express HTTP, actual Supabase client wire contracts against controlled loopback fixtures, actual transpiled voice API/finish handler, actual isolated Chromium recording normalization, and existing multilingual/voice review tests. Synthetic audio/credentials only. No live OpenAI or production account test claimed."
+  },
+  "unitAssertionChange": "Two pre-existing source-text checks were updated to retain the same transcription call with its new cancellation signal and to distinguish ordinary availability fallback from the demonstrated unsafe blanket fallback. The actual old handler reproduction fails, and the real fixed handler is tested for denials and ordinary recovery. No frozen acceptance rule or test skip changed.",
+  "limitations": [
+    "No production mutation, deployment, SQL or actual paid provider call. Exact-source CI and coordinated frontend/backend release remain required.",
+    "The new backend intentionally rejects opaque compressed containers. The updated frontend normalizes existing microphone recordings before sending. Release preflight must deploy this compatible client/server pair.",
+    "Earlier accepted Google/KMS/recovery evidence is preserved, not rerun or promoted into Phase4 acceptance. Other native publishing/provisioning/Composio/Parallel callers remain unreviewed."
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/voiceBudget.ts",
+      "sha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012"
+    },
+    {
+      "path": "backend/src/ai/voicePcm.ts",
+      "sha256": "38839262fba22f1638db03a88905be43c4e24d936aa4246d352fe4e903cee79b"
+    },
+    {
+      "path": "backend/src/routes/voice.ts",
+      "sha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921"
+    },
+    {
+      "path": "backend/src/routes/voice.security.test.ts",
+      "sha256": "677f058c8ff884dc8cbefd7ac7b869072d1ef08a1876045388703688ca0075df"
+    },
+    {
+      "path": "frontend/src/lib/voiceApi.ts",
+      "sha256": "a8dca12f52c75799b62ea0249742b102d7f8eb3557d6f14d19a1c0c359c85fcd"
+    },
+    {
+      "path": "frontend/src/lib/voicePcm.ts",
+      "sha256": "afa17f8408cdc3197e46530e6f64239e34c3093c82c6dccbc53c1e83e2034fa0"
+    },
+    {
+      "path": "frontend/src/lib/voicePcm.test.ts",
+      "sha256": "165e34a70ca25d68a8b50cbd97ca947f9ed4a140b7c0375d21b9a5aec9ea374b"
+    },
+    {
+      "path": "frontend/src/lib/voiceRequestPolicy.ts",
+      "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
+    },
+    {
+      "path": "frontend/src/lib/voiceApi.security.test.ts",
+      "sha256": "38cd9af9d0ea8b867921706838d48085c5c9f0c7d970dccaad361b27fd7fc4b3"
+    },
+    {
+      "path": "frontend/src/lib/voiceSecurityUi.test.ts",
+      "sha256": "ae0d926497da77d6daab028c8f224132dc6587a6c1e26dae928a9c0979dee6b1"
+    },
+    {
+      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+      "sha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a"
+    },
+    {
+      "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "sha256": "424eb3f408cc2a84ae4b277c255178345a45b7cffb1c56f2ed283e803abe978c"
+    }
+  ],
+  "phase4Accepted": false,
+  "productionEffects": false,
+  "spending": 0
+}

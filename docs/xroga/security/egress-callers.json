@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "6d79b5d4b13c9b518cd44660c6b4ef4b628eb559ac468ecbcec0084c96842541",
+  "sourceTreeDigest": "96713a5803eb7de502a5ecbbcd1d3871c15396ff3b99d8d33ecd5960c202a2c9",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -1852,18 +1852,29 @@
     {
       "id": "fcbe4c75dea0e59bcb3a",
       "file": "backend/src/routes/voice.ts",
-      "line": 72,
+      "line": 55,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "13c1e97481935d8452ea4350e14e4d6090a408a0ce7240afee1ad474a254f952",
+      "callSha256": "1d718a41f05b9aafe273c87f127bda6a86d9501a1107c865bfb1c2cf729e268d",
       "destination": "https://api.openai.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_OPENAI_TRANSCRIPTION_ORIGINAL_ACTOR_MANUAL_PCM_AND_EXACT_DURABLE_ACCOUNTING_NO_PRIVATE_LOOKUP",
+      "tenantAuthority": "AUTH_MIDDLEWARE_ORIGINAL_CONTEXT_EXACT_OWNER_BUDGET_AUDIT_AND_ORIGINAL_CLIENT_SESSION_ONLY_NO_RAW_ID_FALLBACK",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+          "marker": "EXACT_AUTHENTICATED_MANUAL_VOICE_CALLER_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "619360783790d90d2c4bf5f37faca1c03d16235ce63229959d8f30f754b0ad81"
+        },
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget",
+          "sha256": "677f058c8ff884dc8cbefd7ac7b869072d1ef08a1876045388703688ca0075df"
+        }
+      ]
     },
     {
       "id": "b7515cbdbc7be27b60a8",
@@ -4324,8 +4335,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 124,
-    "pending": 12,
+    "reviewed": 125,
+    "pending": 11,
     "unresolvedHighRiskBypasses": 8
   }
 }

@@ -1,21 +1,46 @@
 import { API_URL, ApiError, getAccessToken,fetchApiResponse } from '@/lib/api';
+import {normalizeVoiceAudio} from './voicePcm';
+import {voiceClientAwait} from './voiceRequestPolicy';
 
-export async function transcribeVoiceAudio(audio: Blob): Promise<string> {
-  const token = await getAccessToken();
+export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSignal): Promise<string> {
+  const signal = AbortSignal.any([AbortSignal.timeout(60000), ...(cancellation ? [cancellation] : [])]);
+  signal.throwIfAborted();
+  const token = await voiceClientAwait(getAccessToken(), signal);
   if (!token) throw new ApiError('Please sign in to use voice input.', 401);
+  const recording = await voiceClientAwait(normalizeVoiceAudio(audio), signal);
+  const current = async () => {
+    signal.throwIfAborted();
+    if (await voiceClientAwait(getAccessToken(), signal) !== token) throw new ApiError('Your voice session changed. Record again in the current account.', 401, {code: 'VOICE_SESSION_CHANGED'});
+    signal.throwIfAborted();
+  };
+  await current();
 
-  const response = await fetchApiResponse(`${API_URL}/api/voice/transcribe`, {
+  const response = await voiceClientAwait(fetchApiResponse(`${API_URL}/api/voice/transcribe`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': audio.type || 'audio/webm',
+      'Content-Type': 'audio/wav',
     },
-    body: audio,
-  });
-
-  const payload = (await response.json().catch(() => null)) as
+    body: recording,
+    signal,
+  }), signal);
+  try {await current();} catch (error) {void response.body?.cancel().catch(() => {}); throw error;}
+  const reader = response.body?.getReader();
+  const chunks: Uint8Array[] = []; let size = 0;
+  try {
+    if (!reader) throw new Error('Missing voice response.');
+    for (;;) {
+      const part = await voiceClientAwait(reader.read(), signal);
+      if (part.done) break;
+      size += part.value.byteLength; if (size > 128000) throw new Error('Voice response too large.'); chunks.push(part.value);
+    }
+  } finally {void reader?.cancel().catch(() => {}); reader?.releaseLock();}
+  const bytes = new Uint8Array(size); let offset = 0;
+  for (const chunk of chunks) {bytes.set(chunk, offset); offset += chunk.byteLength;}
+  const payload = JSON.parse(new TextDecoder('utf-8', {fatal: true}).decode(bytes)) as
     | { text?: unknown; error?: unknown; code?: unknown }
     | null;
+  await current();
 
   if (!response.ok) {
     throw new ApiError(
@@ -30,6 +55,6 @@ export async function transcribeVoiceAudio(audio: Blob): Promise<string> {
   }
 
   const text = typeof payload?.text === 'string' ? payload.text.trim() : '';
-  if (!text) throw new ApiError('No speech was detected.', 422);
+  if (!text || text.length > 16000) throw new ApiError('No verified speech was received.', 422, {code: 'VOICE_TRANSCRIPTION_DENIED'});
   return text;
 }
