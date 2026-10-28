@@ -129181,6 +129181,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:7f475d9c1e32dcede428",
+      "sourcePath": "backend/src/workers/builderDurableWiring.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:33a2a5298bb47cffe025",
       "sourcePath": "backend/src/workers/chromiumLaunch.test.ts",
       "declaredTests": 17,
