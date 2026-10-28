@@ -15274,7 +15274,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "20c99b7e906791e2c93922adf9cdaf3ab7d8162bed38f4acce83bf15d8cf1d0c"
+      "sha256": "43e38dc4f3d4e6880646e5dfd25e6a91fd83e2013ac12eb22abda7b5e160f8a1"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -15874,7 +15874,7 @@
     },
     {
       "path": "backend/src/config/universalAgentFlags.ts",
-      "sha256": "f5e7f8c467ff648375a7b72a1a47ead202a6cda46ae74b5ceff2b12c4563a8f5"
+      "sha256": "7102933605110578461949b84b832c614ec0b370e0d3058e5462fec1f6d0bf8d"
     },
     {
       "path": "backend/src/db/ensureDashboardSchema.ts",

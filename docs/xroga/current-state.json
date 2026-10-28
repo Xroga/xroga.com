@@ -5009,7 +5009,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "20c99b7e906791e2c93922adf9cdaf3ab7d8162bed38f4acce83bf15d8cf1d0c",
+      "sha256": "43e38dc4f3d4e6880646e5dfd25e6a91fd83e2013ac12eb22abda7b5e160f8a1",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -15473,7 +15473,7 @@
       "id": "surface:5c36a20905788fea44cc",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/config/universalAgentFlags.ts",
-      "sha256": "f5e7f8c467ff648375a7b72a1a47ead202a6cda46ae74b5ceff2b12c4563a8f5",
+      "sha256": "7102933605110578461949b84b832c614ec0b370e0d3058e5462fec1f6d0bf8d",
       "symbols": [
         "DEFAULTS",
         "RoutingDecision",
@@ -126392,7 +126392,7 @@
     {
       "id": "test-suite:395f6cf2e01ac0739fd0",
       "sourcePath": "backend/src/config/universalAgentFlags.test.ts",
-      "declaredTests": 19,
+      "declaredTests": 20,
       "skipLocations": [],
       "focusLocations": []
     },
