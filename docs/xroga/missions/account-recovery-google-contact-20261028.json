@@ -1,0 +1,84 @@
+{
+  "version": "1.0",
+  "missionId": "ACCOUNT-RECOVERY-GOOGLE-CONTACT-20261028",
+  "baseSha": "b496482af907b9182059261ecfdc9242e6b7ec20",
+  "requirementIds": ["XR-FAMILY-security", "XR-FAMILY-recovery", "XR-FAMILY-tenant-isolation"],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Extend existing Supabase Auth with email password recovery, Google OAuth UI, and a mandatory unverified contact phone for email, Google and GitHub signups.",
+  "changedFiles": [
+    "backend/src/routes/profile.ts",
+    "backend/src/routes/profile.contactPhone.test.ts",
+    "backend/src/security/frontendScope.local.integration.ts",
+    "backend/src/types/index.ts",
+    "frontend/src/app/(shell)/layout.tsx",
+    "frontend/src/app/(workspace)/layout.tsx",
+    "frontend/src/app/auth/callback/route.ts",
+    "frontend/src/app/auth/contact/page.tsx",
+    "frontend/src/app/auth/forgot-password/page.tsx",
+    "frontend/src/app/auth/reset-password/page.tsx",
+    "frontend/src/app/onboarding/page.tsx",
+    "frontend/src/app/privacy/page.tsx",
+    "frontend/src/components/auth/AuthFlowFrame.tsx",
+    "frontend/src/components/auth/AuthGoogleIcon.tsx",
+    "frontend/src/components/auth/AuthModern.tsx",
+    "frontend/src/components/auth/AuthShell.module.css",
+    "frontend/src/components/auth/LoginForm.tsx",
+    "frontend/src/components/auth/SignupForm.tsx",
+    "frontend/src/components/settings/GeneralSettingsPanel.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/contactPhone.test.ts",
+    "frontend/src/lib/contactPhone.ts",
+    "frontend/src/lib/supabase/oauthReturn.test.ts",
+    "frontend/src/lib/supabase/oauthReturn.ts",
+    "frontend/src/lib/supabase/authErrors.ts",
+    "frontend/src/lib/supabase/authProviders.ts",
+    "frontend/src/lib/supabase/middleware.ts",
+    "supabase/migrations/20261028000100_contact_phone.sql",
+    "docs/xroga/missions/account-recovery-google-contact-20261028.json"
+  ],
+  "decisions": {
+    "keep": ["Supabase Auth, existing GitHub OAuth, server-side profile setup gates, backend profile ownership"],
+    "extend": ["Add Google provider button using existing callback", "Add password reset request and update forms", "Add private contact phone capture and self-service update"],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": ["supabase/migrations/20261028000100_contact_phone.sql"],
+    "rollout": "Apply additive migration before deploying frontend/backend. Existing accounts with no phone are routed to one-time contact setup. No NOT NULL backfill or phone-login capability is introduced.",
+    "rollback": "Revert frontend/backend gating first. Retain the additive contact_phone column and functions until a separate reviewed cleanup; do not drop collected numbers on rollback."
+  },
+  "securityImpact": {
+    "auth": {"changed": true, "description": "Password recovery uses Supabase emailed recovery links; Google OAuth uses existing callback; phone does not authenticate."},
+    "tenant": {"changed": true, "description": "Contact RPC reads/writes only auth.uid(); profile API remains owner-bound. Contact column has no public select/update grant."},
+    "approval": {"changed": false, "description": "No external app approval flow changes."},
+    "credentials": {"changed": true, "description": "Google provider needs an enabled Supabase OAuth configuration; no client secret is committed or read."},
+    "egress": {"changed": true, "description": "Recovery requests use the existing Supabase Auth endpoint and transactional email provider."},
+    "cost": {"changed": true, "description": "Recovery emails may consume the existing Supabase email quota; no new purchased service is enabled."},
+    "billing": {"changed": false, "description": "No billing or payment behavior changes."}
+  },
+  "tests": [
+    {"command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/contactPhone.test.ts frontend/src/components/auth/authSignupLayout.test.ts frontend/src/lib/authFlowTiming.test.ts", "scope": "Contact number normalization and existing auth presentation/timing tests", "negative": true, "reference": "frontend/src/lib/contactPhone.test.ts"},
+    {"command": "npx tsc --noEmit -p frontend/tsconfig.json", "scope": "Frontend type-check", "negative": false, "reference": "frontend/src/components/auth/LoginForm.tsx"},
+    {"command": "npx tsc --noEmit -p backend/tsconfig.json", "scope": "Backend type-check", "negative": false, "reference": "backend/src/routes/profile.ts"}
+    ,{"command": "npx tsx --test backend/src/routes/profile.contactPhone.test.ts", "scope": "Backend rejects malformed contact numbers", "negative": true, "reference": "backend/src/routes/profile.contactPhone.test.ts"}
+    ,{"command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/supabase/oauthReturn.test.ts", "scope": "OAuth callback rejects external and malformed return targets", "negative": true, "reference": "frontend/src/lib/supabase/oauthReturn.test.ts"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Reuses Supabase Auth, private profile SQL, and current Next layouts; no new identity provider or scheduler.", "rfc": null},
+  "rollout": "Review PR and gates; test reset email and Google OAuth against isolated authenticated staging; verify redirect allowlist, Supabase SMTP, and production Google provider; apply migration before app deploy; then staged and production-safe smoke checks.",
+  "rollback": "Revert the app revision and keep the additive column; disable Google provider if it was enabled; retain the prior auth flow and avoid deleting user data.",
+  "knownGaps": ["Google provider currently disabled in production Supabase", "Production Supabase uses the rate-limited built-in email sender rather than production SMTP", "Reset email delivery and Google callback require provider-backed staging proof", "Production Supabase migration and deployment not yet performed"],
+  "placeholderClaimsRemaining": ["This code is not a live verified authentication journey until signed-in staging and email/OAuth callbacks pass"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": ["Authenticated isolated staging auth journeys", "Google provider and OAuth client verification", "Production-grade SMTP and received reset-link test", "CI/review and production migration/deployment"],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": ["frontend/src/lib/contactPhone.test.ts", "supabase/migrations/20261028000100_contact_phone.sql", "backend/src/security/frontendScope.local.integration.ts"]
+}

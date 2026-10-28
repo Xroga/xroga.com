@@ -8,7 +8,7 @@ export function safeAuthError(error: unknown, fallback: string): string {
     return 'New account registration is temporarily unavailable.';
   }
   if (message.includes('provider') && (message.includes('disabled') || message.includes('not enabled'))) {
-    return 'GitHub sign-in is not configured yet.';
+    return 'This sign-in provider is not configured yet.';
   }
   if (message.includes('invalid login credentials')) {
     return 'Email or password is incorrect.';

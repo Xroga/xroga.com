@@ -18,6 +18,8 @@ import {
 } from 'next/navigation';
 
 import { GitHubIcon } from './AuthGitHubIcon';
+import { GoogleIcon } from './AuthGoogleIcon';
+import Link from 'next/link';
 
 import { createClient } from '@/lib/supabase/client';
 
@@ -26,7 +28,8 @@ import {
   withAuthTimeout,
 } from '@/lib/supabase/authErrors';
 
-import { requireGitHubProvider } from '@/lib/supabase/authProviders';
+import { requireOAuthProvider } from '@/lib/supabase/authProviders';
+import { rememberOAuthNextPath, safeAuthNextPath } from '@/lib/supabase/oauthReturn';
 
 import {
   AuthDivider,
@@ -50,11 +53,7 @@ export function LoginForm() {
       'next'
     );
 
-  const nextPath =
-    requestedNext?.startsWith('/') &&
-    !requestedNext.startsWith('//')
-      ? requestedNext
-      : '/workspace';
+  const nextPath = safeAuthNextPath(requestedNext, '/workspace');
 
   const [
     email,
@@ -144,7 +143,7 @@ export function LoginForm() {
     }
   }
 
-  async function handleGitHub() {
+  async function handleOAuth(provider: 'github' | 'google') {
     setError(null);
 
     setOauthLoading(
@@ -152,7 +151,8 @@ export function LoginForm() {
     );
 
     try {
-      await requireGitHubProvider();
+      await requireOAuthProvider(provider);
+      rememberOAuthNextPath(nextPath);
 
       const supabase =
         createClient();
@@ -165,15 +165,12 @@ export function LoginForm() {
         await withAuthTimeout(
           supabase.auth.signInWithOAuth(
             {
-              provider:
-                'github',
+              provider,
 
               options: {
                 redirectTo:
                   `${window.location.origin}` +
-                  `/auth/callback?next=${encodeURIComponent(
-                    nextPath
-                  )}`,
+                  '/auth/callback',
 
                 skipBrowserRedirect:
                   true,
@@ -207,7 +204,7 @@ export function LoginForm() {
       setError(
         safeAuthError(
           err,
-          'GitHub sign-in is currently unavailable.'
+          `${provider === 'google' ? 'Google' : 'GitHub'} sign-in is currently unavailable.`
         )
       );
     }
@@ -220,9 +217,17 @@ export function LoginForm() {
       subtitle="Continue creating, building and shipping from your workspace."
     >
       <AuthSocialButton
-        onClick={
-          handleGitHub
-        }
+        onClick={() => void handleOAuth('google')}
+        disabled={oauthLoading || loading}
+        provider="google"
+        className="mb-3"
+      >
+        <GoogleIcon className="h-[18px] w-[18px] shrink-0" />
+        {oauthLoading ? 'Connecting…' : 'Continue with Google'}
+      </AuthSocialButton>
+
+      <AuthSocialButton
+        onClick={() => void handleOAuth('github')}
         disabled={
           oauthLoading ||
           loading
@@ -281,6 +286,12 @@ export function LoginForm() {
             required
             autoComplete="email"
           />
+        </div>
+
+        <div className="text-right">
+          <Link className="text-xs font-semibold text-[#006aff] hover:underline" href="/auth/forgot-password">
+            Forgot password?
+          </Link>
         </div>
 
         <div>

@@ -106,7 +106,7 @@ export async function updateSession(request: NextRequest) {
     });
   }
 
-  if (user && isAuthPage) {
+  if (user && isAuthPage && pathname !== '/auth/contact' && pathname !== '/auth/reset-password' && pathname !== '/auth/callback') {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);

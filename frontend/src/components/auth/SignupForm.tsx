@@ -7,6 +7,7 @@ import {
   EyeOff,
   LockKeyhole,
   Mail,
+  Phone,
   UserRound,
 } from 'lucide-react';
 
@@ -24,6 +25,8 @@ import {
 } from 'next/navigation';
 
 import { GitHubIcon } from './AuthGitHubIcon';
+import { GoogleIcon } from './AuthGoogleIcon';
+import { normalizeContactPhone } from '@/lib/contactPhone';
 
 import { createClient } from '@/lib/supabase/client';
 
@@ -32,7 +35,8 @@ import {
   withAuthTimeout,
 } from '@/lib/supabase/authErrors';
 
-import { requireGitHubProvider } from '@/lib/supabase/authProviders';
+import { requireOAuthProvider } from '@/lib/supabase/authProviders';
+import { rememberOAuthNextPath, safeAuthNextPath } from '@/lib/supabase/oauthReturn';
 
 import { XROGA_PROFILE_AVATARS } from '@/lib/profileAvatars';
 
@@ -108,11 +112,7 @@ export function SignupForm() {
    * bounced them here — still wins, and onboarding is not lost by honouring it: the
    * shell sends an unfinished account back to `/onboarding` on its next load.
    */
-  const nextPath =
-    requestedNext?.startsWith('/') &&
-    !requestedNext.startsWith('//')
-      ? requestedNext
-      : '/onboarding';
+  const nextPath = safeAuthNextPath(requestedNext, '/onboarding');
 
   const globalTheme =
     useThemeStore(
@@ -136,6 +136,8 @@ export function SignupForm() {
     password,
     setPassword,
   ] = useState('');
+
+  const [phone, setPhone] = useState('');
 
   const [
     showPassword,
@@ -203,7 +205,7 @@ export function SignupForm() {
     refFromUrl,
   ]);
 
-  async function handleGitHub() {
+  async function handleOAuth(provider: 'github' | 'google') {
     setError('');
 
     setOauthLoading(
@@ -211,7 +213,8 @@ export function SignupForm() {
     );
 
     try {
-      await requireGitHubProvider();
+      await requireOAuthProvider(provider);
+      rememberOAuthNextPath(nextPath);
 
       const supabase =
         createClient();
@@ -224,15 +227,12 @@ export function SignupForm() {
         await withAuthTimeout(
           supabase.auth.signInWithOAuth(
             {
-              provider:
-                'github',
+              provider,
 
               options: {
                 redirectTo:
                   `${window.location.origin}` +
-                  `/auth/callback?next=${encodeURIComponent(
-                    nextPath
-                  )}`,
+                  '/auth/callback',
 
                 skipBrowserRedirect:
                   true,
@@ -266,7 +266,7 @@ export function SignupForm() {
       setError(
         safeAuthError(
           err,
-          'GitHub sign-in is currently unavailable.'
+          `${provider === 'google' ? 'Google' : 'GitHub'} sign-in is currently unavailable.`
         )
       );
     }
@@ -310,6 +310,12 @@ export function SignupForm() {
       return;
     }
 
+    const contactPhone = normalizeContactPhone(phone);
+    if (!contactPhone) {
+      setError('Enter a contact number with country code, for example +1 412 555 0123.');
+      return;
+    }
+
     setLoading(
       true
     );
@@ -340,6 +346,7 @@ export function SignupForm() {
 
                 preferred_theme:
                   theme,
+                contact_phone: contactPhone,
               },
 
               emailRedirectTo:
@@ -515,9 +522,17 @@ export function SignupForm() {
       >
 
       <AuthSocialButton
-        onClick={
-          handleGitHub
-        }
+        onClick={() => void handleOAuth('google')}
+        disabled={oauthLoading || loading}
+        provider="google"
+        className={`${styles.githubButton} mb-3`}
+      >
+        <GoogleIcon className="h-[18px] w-[18px] shrink-0" />
+        {oauthLoading ? 'Connecting…' : 'Continue with Google'}
+      </AuthSocialButton>
+
+      <AuthSocialButton
+        onClick={() => void handleOAuth('github')}
         disabled={
           oauthLoading ||
           loading
@@ -627,6 +642,23 @@ export function SignupForm() {
               placeholder="you@example.com"
             />
           </div>
+        </div>
+
+        <div>
+          <AuthModernLabel htmlFor="signup-phone">Contact phone number</AuthModernLabel>
+          <AuthModernInput
+            id="signup-phone"
+            type="tel"
+            icon={<Phone className="h-4 w-4" />}
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            required
+            autoComplete="tel"
+            placeholder="+1 412 555 0123"
+          />
+          <p className="mt-1.5 text-[11px] text-[var(--auth-muted)]">
+            Required for account contact. No SMS verification; this number is not used to sign in.
+          </p>
         </div>
 
         <div>
