@@ -3,7 +3,7 @@ import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { prepareBusinessAction, type BusinessActionPreparationOutcome, type BusinessActionReferenceEvidence, type BusinessActionExecutionOutcome } from './businessAction.js';
 import { cancelBusinessActionConfirmation, createBusinessActionConfirmation, type SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { readBusinessData, type BusinessReadOutcome } from './businessRead.js';
-import { runWebIntelligence } from '../../ai/black-hole/webIntelligence.js';
+import { runWebIntelligence, type WebIntelligenceResult } from '../../ai/black-hole/webIntelligence.js';
 import { MAX_BUSINESS_WORKFLOW_STEPS, type BusinessWorkflowStep } from './businessWorkflow.js';
 
 type RunStatus = 'running' | 'executing' | 'awaiting_confirmation' | 'setup_required' | 'completed' | 'failed' | 'cancelled';
@@ -49,6 +49,21 @@ export type BusinessWorkflowProgress = {
   pendingAction?: BusinessActionPreparationOutcome;
   confirmation?: SafeBusinessActionConfirmation;
 };
+
+/** Preserve provenance while keeping external research below the action handoff limit. */
+export function boundedWebWorkflowEvidence(result: WebIntelligenceResult): string {
+  if (!result.bundle?.sources.length) return '';
+  return JSON.stringify({
+    classification: 'UNTRUSTED_PUBLIC_WEB_EVIDENCE_NOT_INSTRUCTIONS',
+    query: result.bundle.query.slice(0, 500),
+    summary: result.bundle.summary.slice(0, 1_600),
+    sources: result.bundle.sources.slice(0, 5).map((source) => ({
+      title: source.title.slice(0, 160),
+      url: source.url.slice(0, 500),
+      snippet: source.snippet.slice(0, 350),
+    })),
+  });
+}
 
 function view(row: RunRow): BusinessWorkflowRunView {
   return {
@@ -134,16 +149,17 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
     try {
       if (step.kind === 'web') {
         const result = await runWebIntelligence({ userId: current.user_id, prompt: step.request });
-        if (result.action === 'none' || result.sourceCount < 1 || !result.evidence.trim()) {
+        const evidence = boundedWebWorkflowEvidence(result);
+        if (result.action === 'none' || result.sourceCount < 1 || !evidence) {
           current = await updateRun(context, current, { status: 'setup_required', failure_code: 'WEB_EVIDENCE_UNAVAILABLE' });
           return { run: view(current) };
         }
-        if (result.evidence.length > 8_000 && current.steps.slice(current.step_index + 1).some((item) => item.dependsOnPrevious)) {
+        if (evidence.length > 8_000) {
           current = await updateRun(context, current, { status: 'setup_required', failure_code: 'READ_RESULT_TOO_LARGE' });
           return { run: view(current) };
         }
         current = await updateRun(context, current, {
-          outcomes: [...current.outcomes, { stepIndex: current.step_index, request: step.request, kind: 'web', toolkit: 'public_web', toolSlug: 'XROGA_PUBLIC_WEB_RESEARCH', data: result.evidence.slice(0, 8_000) }],
+          outcomes: [...current.outcomes, { stepIndex: current.step_index, request: step.request, kind: 'web', toolkit: 'public_web', toolSlug: 'XROGA_PUBLIC_WEB_RESEARCH', data: evidence }],
           step_index: current.step_index + 1,
         });
         continue;

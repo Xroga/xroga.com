@@ -23765,7 +23765,7 @@
       "id": "surface:0cc7e3112dcf7f702112",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe",
+      "sha256": "b15ea3012ae609cff0056251094a72a7d6c6d744cf42b275b26d9e855afb02a7",
       "symbols": [
         "BusinessWorkflowProgress",
         "BusinessWorkflowRunView",
@@ -23773,6 +23773,7 @@
         "RunStatus",
         "StepOutcome",
         "advance",
+        "boundedWebWorkflowEvidence",
         "cancelBusinessWorkflowForConfirmation",
         "cancelBusinessWorkflowRun",
         "cancelled",
@@ -23782,6 +23783,7 @@
         "earlier",
         "error",
         "eventEvidence",
+        "evidence",
         "getBusinessWorkflowRun",
         "loadRun",
         "outcomes",
@@ -23835,11 +23837,11 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/integrations/businessWorkflowRuns.ts:88 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:100 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:229 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:254 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:295 (user_id)"
+        "backend/src/services/integrations/businessWorkflowRuns.ts:103 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:115 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:245 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:270 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:311 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessWorkflowRuns.ts#cancelBusinessActionConfirmation",
@@ -23850,7 +23852,9 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [
+        "backend/src/services/integrations/businessWorkflowRuns.ts#boundedWebWorkflowEvidence",
         "backend/src/services/integrations/businessWorkflowRuns.ts#eventEvidence",
+        "backend/src/services/integrations/businessWorkflowRuns.ts#evidence",
         "backend/src/services/integrations/businessWorkflowRuns.ts#previousEvidence",
         "backend/src/services/integrations/businessWorkflowRuns.ts#referenceEvidence"
       ],
@@ -119669,7 +119673,7 @@
     {
       "id": "test-suite:257776d2099c7e1ba181",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
