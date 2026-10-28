@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-universal-connected-apps",
-    "sha": "76aa9491c1c6e8e92df61c768c2585b50d4b63b9",
-    "sourceTimestampUtc": "2026-10-26T23:17:27+05:00",
-    "auditStartedUtc": "2026-10-26T18:46:04.434Z",
+    "sha": "8ca7fb6e842aca56da709509e3e9ae11e92a72f9",
+    "sourceTimestampUtc": "2026-10-28T14:52:50+05:00",
+    "auditStartedUtc": "2026-10-28T09:58:44.424Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -86009,7 +86009,7 @@
       "id": "surface:50bc393f833d8aeec22c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/phase1Routing.ts",
-      "sha256": "06e96abfcdbf24962742466a680e7def60dc729d081f68609f4792630c875468",
+      "sha256": "20c8bef30b2903fb5e2b86de9891367f24ac60fa7bcd87896ad2901af2546b03",
       "symbols": [
         "BROWSER_AUTOMATION",
         "ChatMessageLike",
