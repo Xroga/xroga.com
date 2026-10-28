@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { isBuilderSecurityDenial } from '../builder/providerAuthority.js';
 
 import { Router, type Response } from 'express';
 
@@ -21,6 +22,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const OPERATION_KEY = /^[A-Za-z0-9_.:-]{8,128}$/;
 
 function fail(res: Response, error: unknown) {
+  if (isBuilderSecurityDenial(error)) return res.status(403).json({ error: 'This action requires current authorization for its exact account and source.', code: 'BUILDER_PROVIDER_ADMISSION_DENIED' });
   if (error instanceof TenantAccessError) return res.status(error.status).json({ error: error.message, code: error.code });
   if (error instanceof BuilderError) return res.status(STATUS[error.code]).json({ error: error.message, code: error.code.toUpperCase() });
   return res.status(500).json({ error: 'The request could not be completed.', code: 'BUILDER_FAILED' });

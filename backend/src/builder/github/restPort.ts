@@ -1,3 +1,6 @@
+import {isBuilderSecurityDenial} from '../providerAuthority.js';
+import {AuthorityError} from '../../security/authority/enforce.js';
+import {EgressDenied} from '../../security/egress/egressPolicy.js';
 import { createHash } from 'node:crypto';
 
 import type { ProjectFile } from '../../ai/patches.js';
@@ -38,7 +41,8 @@ export function createRestGitHubPort(transport: GitHubTransport = ghFetch): GitH
   const call = async (token: string, path: string, init: RequestInit | undefined, action: string, ambiguous = false): Promise<Response> => {
     try {
       return await transport(token, path, init);
-    } catch {
+    } catch (error) {
+      if(isBuilderSecurityDenial(error))throw error;
       throw new GitHubPortError('unavailable', 'GitHub could not be reached.', ambiguous);
     }
   };

@@ -1,18 +1,10 @@
-import { isIP } from 'node:net';
+import { boundedPublicGet, publicHttpsUrl, type PublicGetTransport } from '../security/egress/urlPolicy.js';
 import type { ProviderAdapter, ProviderResult } from './types.js';
 
 function safeHttpsUrl(raw: unknown): URL | null {
   if (typeof raw !== 'string') return null;
   try {
-    const url = new URL(raw);
-    if (url.protocol !== 'https:' || url.username || url.password) return null;
-    const host = url.hostname.toLowerCase();
-    if (host === 'localhost' || host.endsWith('.local') || host === '0.0.0.0') return null;
-    if (isIP(host)) {
-      if (/^(10\.|127\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(host)) return null;
-      if (host === '::1' || host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80')) return null;
-    }
-    return url;
+    return publicHttpsUrl(raw);
   } catch {
     return null;
   }
@@ -20,12 +12,12 @@ function safeHttpsUrl(raw: unknown): URL | null {
 
 function normalizeProviderError(error: unknown): ProviderResult {
   const message = error instanceof Error ? error.message : 'provider request failed';
-  if (/abort|timeout/i.test(message)) return { status: 'provider_unavailable', safeSummary: 'Provider request timed out', errorCategory: 'timeout' };
+  if (/abort|timeout|deadline/i.test(message)) return { status: 'provider_unavailable', safeSummary: 'Provider request timed out', errorCategory: 'timeout' };
   if (/rate.?limit|429/i.test(message)) return { status: 'provider_unavailable', safeSummary: 'Provider rate limit reached', errorCategory: 'rate_limited' };
   return { status: 'provider_unavailable', safeSummary: 'Provider request was unavailable', errorCategory: 'provider_unavailable' };
 }
 
-export const httpVerificationAdapter: ProviderAdapter = {
+export function createHttpVerificationAdapter(io?: PublicGetTransport): ProviderAdapter { return {
   id: 'http_verification',
   supportedCapabilities: ['refresh_health', 'verify_domain', 'run_synthetic_check'],
   authenticationRequirements: [],
@@ -44,39 +36,37 @@ export const httpVerificationAdapter: ProviderAdapter = {
     const url = safeHttpsUrl(input.url);
     if (!url) return { status: 'blocked', safeSummary: 'Verification URL is invalid or unsafe', errorCategory: 'unsafe_target' };
     for (let attempt = 1; attempt <= this.retryPolicy.maxAttempts; attempt += 1) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 10_000);
       try {
-        const response = await fetch(url, { method: 'GET', redirect: 'manual', signal: controller.signal, headers: { Accept: 'application/json,text/plain,text/html;q=0.5' } });
-        const retryable = response.status === 429 || response.status >= 500;
+        const response = await boundedPublicGet(url.href,{maxBytes:32_000,timeoutMs:10_000,maxRedirects:3,allowHttpErrors:true},io);
+        const retryable = response.statusCode === 429 || response.statusCode >= 500;
         if (retryable && attempt < this.retryPolicy.maxAttempts) {
-          const retryAfter = Number(response.headers.get('retry-after'));
+          const retryAfter = response.retryAfterSeconds ?? NaN;
           const delay = Number.isFinite(retryAfter) ? Math.min(retryAfter * 1000, 1_000) : 100 + Math.floor(Math.random() * 100);
           await new Promise((resolve) => setTimeout(resolve, delay));
           continue;
         }
-        const body = (await response.text()).slice(0, 32_000);
+        const body = response.bytes.toString('utf8');
         const expectedMarker = typeof input.expectedMarker === 'string' ? input.expectedMarker.slice(0, 200) : null;
         const markerMatches = expectedMarker ? body.includes(expectedMarker) : true;
-        const verified = response.ok && markerMatches;
+        const ok=response.statusCode>=200&&response.statusCode<300;
+        const verified = ok && markerMatches;
         return {
-          status: verified ? 'verified' : response.status === 429 || response.status >= 500 ? 'provider_unavailable' : 'failed',
-          safeSummary: verified ? `HTTPS verification returned ${response.status} and matched the expected application` : `HTTPS verification returned ${response.status}${markerMatches ? '' : ' but served a different application'}`,
+          status: verified ? 'verified' : response.statusCode === 429 || response.statusCode >= 500 ? 'provider_unavailable' : 'failed',
+          safeSummary: verified ? `HTTPS verification returned ${response.statusCode} and matched the expected application` : `HTTPS verification returned ${response.statusCode}${markerMatches ? '' : ' but served a different application'}`,
           providerReference: `${url.origin}${url.pathname}`,
-          observedState: { httpStatus: response.status, applicationMatched: markerMatches, attempts: attempt },
-          errorCategory: response.status === 429 ? 'rate_limited' : response.status >= 500 ? 'provider_unavailable' : response.ok && !markerMatches ? 'serving_wrong_application' : response.ok ? undefined : 'http_failure',
+          observedState: { httpStatus: response.statusCode, applicationMatched: markerMatches, attempts: attempt },
+          errorCategory: response.statusCode === 429 ? 'rate_limited' : response.statusCode >= 500 ? 'provider_unavailable' : ok && !markerMatches ? 'serving_wrong_application' : ok ? undefined : 'http_failure',
         };
       } catch (error) {
         const normalized = normalizeProviderError(error);
         if (attempt === this.retryPolicy.maxAttempts) return normalized;
         await new Promise((resolve) => setTimeout(resolve, 100 + Math.floor(Math.random() * 100)));
-      } finally {
-        clearTimeout(timer);
       }
     }
     return { status: 'provider_unavailable', safeSummary: 'Provider request was unavailable', errorCategory: 'provider_unavailable' };
   },
-};
+}; }
+export const httpVerificationAdapter=createHttpVerificationAdapter();
 
 export function createInternalAdapter(
   executor: (capability: string, input: Record<string, unknown>) => Promise<ProviderResult>,

@@ -1,16 +1,15 @@
+import {createBuilderProviderBoundary} from './providerTransports.js';
+import { createBuilderVercelBoundary } from './hosting/authority.js';
+import { boundedPublicGet, type PublicGetTransport } from '../security/boundedPublicGet.js';
 import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
 import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
-import { getGitHubToken } from '../services/integrations/githubAuth.js';
-import { ghFetch } from '../services/integrations/githubDeploy.js';
 import { startOrRefreshLivePreview } from '../synthesis/livePreview/coordinator.js';
 import { SupabaseProjectRuntimeStore } from '../synthesis/projectRuntime/index.js';
 import { createSoftwareProject } from '../synthesis/softwareProject.js';
 import { ExportService } from './export/service.js';
 import { GitHubExportService } from './github/service.js';
 import { createRestGitHubPort } from './github/restPort.js';
-import { getSupabaseOAuthAccessToken } from '../services/integrations/supabaseAuth.js';
-import { getVercelToken } from '../services/integrations/vercelAuth.js';
 import { createRestSupabasePort } from './data/restPort.js';
 import { SupabaseDataService } from './data/service.js';
 import { HostingService, type HttpProbeResult, type RemoteVerification } from './hosting/service.js';
@@ -130,15 +129,15 @@ export interface Phase2Services {
 }
 
 /** Real HTTP check of a deployed URL. Never follows credentials anywhere; reads at most a few KB. */
-export async function httpProbe(url: string): Promise<HttpProbeResult> {
+export async function httpProbe(url: string, io?: PublicGetTransport): Promise<HttpProbeResult> {
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== 'https:') return { status: null, bytes: 0, protectedBySso: false, errorMarker: 'Only https deployments are probed.' };
-    const response = await fetch(parsed, { redirect: 'follow', signal: AbortSignal.timeout(20_000), headers: { 'User-Agent': 'xroga-delivery-check' } });
-    const text = (await response.text().catch(() => '')).slice(0, 4000);
-    const protectedBySso = response.status === 401 && /vercel[^]{0,400}(authentication|sso|sign)/i.test(text);
+    const response = await boundedPublicGet(parsed.href, { maxBytes: 64 * 1024, timeoutMs: 20_000, maxRedirects: 3, allowHttpErrors: true }, io);
+    const text = response.bytes.toString('utf8').slice(0, 4000);
+    const protectedBySso = response.statusCode === 401 && /vercel[^]{0,400}(authentication|sso|sign)/i.test(text);
     const marker = ['Application error', 'Internal Server Error', 'Unhandled Runtime Error', 'Failed to compile'].find((candidate) => text.includes(candidate)) ?? null;
-    return { status: response.status, bytes: text.length, protectedBySso, errorMarker: marker };
+    return { status: response.statusCode, bytes: response.bytes.length, protectedBySso, errorMarker: marker };
   } catch {
     return { status: null, bytes: 0, protectedBySso: false, errorMarker: null };
   }
@@ -171,10 +170,16 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
       return { started: true, ready: verdict.strictReady === true, reason: verdict.reason, revisionNumber: revision.revisionNumber };
     },
   };
-  const github = new GitHubExportService({ phase2, builder, github: createRestGitHubPort(ghFetch), tokenFor: (userId) => getGitHubToken(userId) });
-  const data = new SupabaseDataService({ phase2, builder, supabase: createRestSupabasePort(), tokenFor: (userId) => getSupabaseOAuthAccessToken(userId) });
+  const boundary=createBuilderProviderBoundary(context,{phase2,builder,githubFiles:async operation=>{const project=await builder.requireProject(context.userId,operation.projectId),revision=await builder.revisionFiles(context.userId,operation.projectId,operation.revisionId);if(!revision)throw new BuilderError('not_found','Revision not found.');return github.filesFor(project,revision);}});
+  const github = new GitHubExportService({ phase2, builder, github: createRestGitHubPort(boundary.github), tokenFor:boundary.githubTokenFor,admission:boundary.githubAdmission });
+  const data = new SupabaseDataService({ phase2, builder, supabase: createRestSupabasePort(boundary.supabase), tokenFor:boundary.supabaseTokenFor,admission:boundary.supabaseAdmission });
+  const vercelBoundary = createBuilderVercelBoundary(context, { phase2, builder, filesFor: async operation => {
+    const project = await builder.requireProject(context.userId, operation.projectId), revision = await builder.revisionFiles(context.userId, operation.projectId, operation.revisionId);
+    if (!revision) throw new BuilderError('not_found', 'Revision not found.');
+    return github.filesFor(project, revision);
+  }, appEnvironment: projectId => data.appEnvironment(context.userId, projectId) });
   const hosting = new HostingService({
-    phase2, builder, vercel: createRestVercelPort(), tokenFor: (userId) => getVercelToken(userId),
+    phase2, builder, vercel: createRestVercelPort(vercelBoundary.transport), tokenFor: vercelBoundary.tokenFor, admission: vercelBoundary.admission,
     appEnvironment: (userId, projectId) => data.appEnvironment(userId, projectId),
     databaseStatus: (userId, projectId) => data.databaseStatus(userId, projectId),
     filesFor: (project, revision) => github.filesFor(project, revision),

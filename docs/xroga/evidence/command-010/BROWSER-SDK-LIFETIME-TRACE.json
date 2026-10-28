@@ -1,0 +1,117 @@
+{
+  "scope": "SCOPED_BROWSER_SDK_DISPATCH_AND_ACCOUNTING_NOT_UPSTREAM_CONTENT_PROVENANCE_OR_FULL_PHASE4_ACCEPTANCE",
+  "priorCandidates": [
+    "cf24704f389b4639ee46",
+    "060336977c8f4c9643af"
+  ],
+  "replacementCandidate": "9ea21a6fc8b8700460c0",
+  "sourceBindings": [
+    {
+      "path": "backend/src/routes/browserRuns.ts",
+      "sha256": "fe08a2aeb7507e63803d0cd2fffc651dcf829603ca0c8fc8ca13a9f3e4269ec2"
+    },
+    {
+      "path": "backend/src/workers/browserCapability.ts",
+      "sha256": "ce8bc8651d84f4df7b5870de16f84cfe36ec695b4454a07e415e458803e86a2e"
+    },
+    {
+      "path": "backend/src/workers/browserTaskHandler.ts",
+      "sha256": "c804186441a42d1e36f109cac7cdb70dc9e836e83593f954c89aaf97963f3fad"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "sha256": "1deca4f50b56665a436e6f469862d88dc2060349ad0bf999bcb22cb2e92d61ff"
+    },
+    {
+      "path": "backend/src/workers/browserModelGateway.ts",
+      "sha256": "4d7b015753f908146dea895ad22e00c4e06e529cdd37f3fbe631ff2c95cd193c"
+    },
+    {
+      "path": "backend/src/workers/browserPlanner.ts",
+      "sha256": "a1cd0f49d665b12321c33ceee22e995f7631285a4f8438b3599d70ff766945c3"
+    },
+    {
+      "path": "backend/src/workers/browserModelDispatch.ts",
+      "sha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d"
+    },
+    {
+      "path": "backend/src/workers/browserModelLifetime.ts",
+      "sha256": "1e7991d54bcaf1298344768970a0fe139d70de7d84b3c3f29f4177d57ed72408"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "sha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "sha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "sha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "sha256": "f0e3b232c2f87f3c0cdb35e3982f557da4fb8a8d86ea2a98ea44e62274929aa6"
+    },
+    {
+      "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
+      "sha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+    },
+    {
+      "path": "backend/src/workers/browserModelLifetime.security.test.ts",
+      "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
+    },
+    {
+      "path": "backend/src/workers/browserModelGateway.test.ts",
+      "sha256": "01138a3ab097223bb20357f928245fa6c013042289b87c904c85845695d1c862"
+    },
+    {
+      "path": "backend/src/workers/browserPlanner.test.ts",
+      "sha256": "718b7603273050c587c84c655f48fa86d7c78f921c578c7c81f1acc8d6b9706b"
+    },
+    {
+      "path": "backend/src/routes/browserRuns.test.ts",
+      "sha256": "71779248c19958c3af995dd4466f1deba08c5796bf60f193ed71aa026f8346a5"
+    },
+    {
+      "path": "backend/src/workers/browserTaskHandler.test.ts",
+      "sha256": "a955aa0c81dada1cad43c9362a309411703157a7c1d728cb8789202dfd50d84c"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinator.test.ts",
+      "sha256": "c539dd746fcea6c80718ac2efae6c88cd1f2dfd0b3a6ee15ca4e1c4123569a06"
+    }
+  ],
+  "actualPath": [
+    "Authenticated browserRuns route original req.tenantContext",
+    "runBrowserTask original context and project ownership",
+    "Canonical scheduler browserTaskHandler current owner plus fenced lease guard",
+    "RemoteBrowserWorker retains original modelAuthority only in API closure, never serializes it",
+    "Planner and gateway share dispatchBrowserModel",
+    "Canonical withTenantModelReservation project/account revision, durable provider reservation",
+    "Canonical controlled SDK transport fixed model endpoint, redirect error, no SDK retry, per-wire owner/lease/cancel checks",
+    "Canonical provider settlement plus atomic usage receipt before response publication",
+    "Post-settlement current project, lease and cancellation checks"
+  ],
+  "reproducedBeforeFix": {
+    "rawIds": "74ffd939-8bc9-402d-babb-f6e4cfc5ca31",
+    "overlapAndUnsettledResult": "18e48f59-d153-4bba-8278-e294e8ddea1e",
+    "ownershipDuringSettlement": "aef3cb94-0740-4009-982a-0d9914467b00",
+    "schedulerRetriesSecurityDenial": "afac1166-48ed-41ec-ac00-4792e766dcf4",
+    "untrustedErrorText": "51629c42-4df6-4977-ac0c-e4b4e1736353",
+    "coordinatorRedirect": "c0247b82-af1e-4374-a99f-8ec3ded54d3b",
+    "rawPlannerIdsPreservedGoogleCheckpoint": "23e7eda8-91f9-49d6-b2da-9303624d089a"
+  },
+  "focusedVerifiedJob": "987c31bc-9d35-48b9-91f1-c446a60aaad5",
+  "priorCanonicalAndLedgerRegressionJob": "55758166-b80b-482d-b658-d71ac243fbf4",
+  "backendTypecheck": "b6beaef0-6e29-41fb-960c-6d9afd2f7897",
+  "limits": [
+    "Controlled protocol tests use synthetic model/database responses, no real provider spending or cloud acceptance inferred",
+    "No canonical authority permit is fabricated from job fields",
+    "No upstream SoftwareAgent/research/Composio/tool content provenance or other callers promoted",
+    "No consequential-action confirmation relaxed",
+    "Full disposable SQL, exact-source CI, whole Phase4 acceptance and Google release remain required",
+    "Coordinator and container process/network callers remain separate pending trace obligations"
+  ]
+}

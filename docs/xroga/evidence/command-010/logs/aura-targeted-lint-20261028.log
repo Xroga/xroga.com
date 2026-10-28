@@ -1,0 +1,14 @@
+`next lint` is deprecated and will be removed in Next.js 16.
+For new projects, use create-next-app to choose your preferred linter.
+For existing projects, migrate to the ESLint CLI:
+npx @next/codemod@canary next-lint-to-eslint-cli .
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles:
+   * C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\frontend\package-lock.json
+
+Pages directory cannot be found at C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\pages or C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\src\pages. If using a custom path, please configure with the `no-html-link-for-pages` rule in your eslint config file.
+✔ No ESLint warnings or errors

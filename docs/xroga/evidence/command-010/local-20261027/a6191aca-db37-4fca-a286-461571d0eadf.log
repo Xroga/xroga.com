@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: real HTTP proxy retains paths and public origin and rewrites only the worker redirect
+ok 1 - real HTTP proxy retains paths and public origin and rewrites only the worker redirect
+  ---
+  duration_ms: 64.1528
+  type: 'test'
+  ...
+# Subtest: real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect
+ok 2 - real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect
+  ---
+  duration_ms: 223.7717
+  type: 'test'
+  ...
+# Subtest: untrusted Preview response cannot set parent-domain cookies or clear the main application cookies
+ok 3 - untrusted Preview response cannot set parent-domain cookies or clear the main application cookies
+  ---
+  duration_ms: 8.504
+  type: 'test'
+  ...
+# Subtest: expired admission and authority failure do not make any upstream connection or expose private errors
+ok 4 - expired admission and authority failure do not make any upstream connection or expose private errors
+  ---
+  duration_ms: 7.1091
+  type: 'test'
+  ...
+# Subtest: real local HTTP and WebSocket preview transports enforce scoped targets, header separation and lifetime revocation
+ok 5 - real local HTTP and WebSocket preview transports enforce scoped targets, header separation and lifetime revocation
+  ---
+  duration_ms: 2222.3882
+  type: 'test'
+  ...
+# Subtest: Google Preview uses only the authenticated physical address and declared port
+ok 6 - Google Preview uses only the authenticated physical address and declared port
+  ---
+  duration_ms: 9.419
+  type: 'test'
+  ...
+# Subtest: Google Preview denies declared non-Preview service ports before native identity or address lookup
+ok 7 - Google Preview denies declared non-Preview service ports before native identity or address lookup
+  ---
+  duration_ms: 1.5625
+  type: 'test'
+  ...
+# Subtest: foreign, expired, revoked and substituted sessions deny before control-plane lookup
+ok 8 - foreign, expired, revoked and substituted sessions deny before control-plane lookup
+  ---
+  duration_ms: 1.9646
+  type: 'test'
+  ...
+# Subtest: metadata/public address, physical denial, identity denial and expiry during admission cannot route
+ok 9 - metadata/public address, physical denial, identity denial and expiry during admission cannot route
+  ---
+  duration_ms: 1.7055
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4551.3066

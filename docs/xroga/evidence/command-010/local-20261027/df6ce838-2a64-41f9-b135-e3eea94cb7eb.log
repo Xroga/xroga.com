@@ -1,0 +1,289 @@
+TAP version 13
+# Subtest: each Parallel provider entry denies raw user ID authorization before network dispatch
+    # Subtest: search
+    ok 1 - search
+      ---
+      duration_ms: 3.8992
+      type: 'test'
+      ...
+    # Subtest: extract
+    ok 2 - extract
+      ---
+      duration_ms: 1.469
+      type: 'test'
+      ...
+    # Subtest: responses
+    ok 3 - responses
+      ---
+      duration_ms: 0.6224
+      type: 'test'
+      ...
+    1..3
+ok 1 - each Parallel provider entry denies raw user ID authorization before network dispatch
+  ---
+  duration_ms: 8.5547
+  type: 'test'
+  ...
+# Subtest: actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement
+ok 2 - actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement
+  ---
+  duration_ms: 176.4126
+  type: 'test'
+  ...
+# Subtest: GJ action egress retains the original issued actor context rather than rebuilding one from a user ID
+ok 3 - GJ action egress retains the original issued actor context rather than rebuilding one from a user ID
+  ---
+  duration_ms: 47.4103
+  type: 'test'
+  ...
+# Subtest: GJ raw-user-ID connected read cannot dispatch without the original issued context
+ok 4 - GJ raw-user-ID connected read cannot dispatch without the original issued context
+  ---
+  duration_ms: 0.5246
+  type: 'test'
+  ...
+# Subtest: GJ unknown tool metadata cannot create a connected read capability
+ok 5 - GJ unknown tool metadata cannot create a connected read capability
+  ---
+  duration_ms: 0.6387
+  type: 'test'
+  ...
+# Subtest: GJ connected read refuses credential canaries before discovery or execution
+ok 6 - GJ connected read refuses credential canaries before discovery or execution
+  ---
+  duration_ms: 0.5803
+  type: 'test'
+  ...
+# Subtest: GJ changed remote session ownership during egress receipt prevents the confirmed action
+ok 7 - GJ changed remote session ownership during egress receipt prevents the confirmed action
+  ---
+  duration_ms: 5.312
+  type: 'test'
+  ...
+# Subtest: GJ cancellation during tool discovery prevents connected execution and fallback
+ok 8 - GJ cancellation during tool discovery prevents connected execution and fallback
+  ---
+  duration_ms: 1.452
+  type: 'test'
+  ...
+# Subtest: GJ contracts use the real typed GoalContract boundary and conversational planning dispatch
+ok 9 - GJ contracts use the real typed GoalContract boundary and conversational planning dispatch
+  ---
+  duration_ms: 3.1864
+  type: 'test'
+  ...
+# Subtest: GJ business preparation finds only the relevant disconnected provider and never executes
+ok 10 - GJ business preparation finds only the relevant disconnected provider and never executes
+  ---
+  duration_ms: 1.8886
+  type: 'test'
+  ...
+# Subtest: GJ unsupported action remains unavailable instead of a fabricated success
+ok 11 - GJ unsupported action remains unavailable instead of a fabricated success
+  ---
+  duration_ms: 0.6575
+  type: 'test'
+  ...
+# Subtest: GJ business write rejects absent user authority and changed prepared arguments
+ok 12 - GJ business write rejects absent user authority and changed prepared arguments
+  ---
+  duration_ms: 0.7669
+  type: 'test'
+  ...
+# Subtest: GJ exact prepared destructive action requires confirmation before the actual adapter executes
+ok 13 - GJ exact prepared destructive action requires confirmation before the actual adapter executes
+  ---
+  duration_ms: 9.1759
+  type: 'test'
+  ...
+# Subtest: GJ second tenant cannot execute through the owner session; read lane rejects mutations
+ok 14 - GJ second tenant cannot execute through the owner session; read lane rejects mutations
+  ---
+  duration_ms: 2.3717
+  type: 'test'
+  ...
+# Subtest: GJ changed or disconnected account blocks the real action adapter before dispatch
+ok 15 - GJ changed or disconnected account blocks the real action adapter before dispatch
+  ---
+  duration_ms: 2.5124
+  type: 'test'
+  ...
+# Subtest: GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result
+ok 16 - GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result
+  ---
+  duration_ms: 1.2367
+  type: 'test'
+  ...
+# Subtest: GJ a forged permit fails before provider metadata or execution
+ok 17 - GJ a forged permit fails before provider metadata or execution
+  ---
+  duration_ms: 0.7178
+  type: 'test'
+  ...
+# Subtest: GJ anonymous identity and unconfirmed direct provider action are rejected
+ok 18 - GJ anonymous identity and unconfirmed direct provider action are rejected
+  ---
+  duration_ms: 0.2805
+  type: 'test'
+  ...
+# Subtest: GJ provider failure is sanitized and cannot become a success receipt
+ok 19 - GJ provider failure is sanitized and cannot become a success receipt
+  ---
+  duration_ms: 7.8013
+  type: 'test'
+  ...
+# Subtest: GJ provider timeout is classified; uncertain writes are not blindly replayed
+ok 20 - GJ provider timeout is classified; uncertain writes are not blindly replayed
+  ---
+  duration_ms: 4.7741
+  type: 'test'
+  ...
+# Subtest: GJ input_required provider response cannot be recorded as completion or automatically resubmitted
+ok 21 - GJ input_required provider response cannot be recorded as completion or automatically resubmitted
+  ---
+  duration_ms: 6.7431
+  type: 'test'
+  ...
+# Subtest: GJ incomplete provider response cannot be recorded as completion or automatically resubmitted
+ok 22 - GJ incomplete provider response cannot be recorded as completion or automatically resubmitted
+  ---
+  duration_ms: 3.5762
+  type: 'test'
+  ...
+# Subtest: GJ malformed provider response cannot be recorded as completion or automatically resubmitted
+ok 23 - GJ malformed provider response cannot be recorded as completion or automatically resubmitted
+  ---
+  duration_ms: 3.2115
+  type: 'test'
+  ...
+# Subtest: GJ false-success and runtime diagnostic leakage are refused by existing output helpers
+ok 24 - GJ false-success and runtime diagnostic leakage are refused by existing output helpers
+  ---
+  duration_ms: 0.362
+  type: 'test'
+  ...
+# Subtest: GJ browser refresh detaches transport once without cancelling execution
+ok 25 - GJ browser refresh detaches transport once without cancelling execution
+  ---
+  duration_ms: 0.1646
+  type: 'test'
+  ...
+# Subtest: GJ actual HTTP auth denial and SSE serialization use loopback only
+ok 26 - GJ actual HTTP auth denial and SSE serialization use loopback only
+  ---
+  duration_ms: 31.2997
+  type: 'test'
+  ...
+# (node:1892) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: vertical slice denies synthetic credential, malicious document and redirect destination before any effect, receipt redacted
+ok 27 - vertical slice denies synthetic credential, malicious document and redirect destination before any effect, receipt redacted
+  ---
+  duration_ms: 13.303
+  type: 'test'
+  ...
+# Subtest: legitimate exact provider action keeps canonical authority, account and durable revalidation
+ok 28 - legitimate exact provider action keeps canonical authority, account and durable revalidation
+  ---
+  duration_ms: 14.2147
+  type: 'test'
+  ...
+# Subtest: all untrusted provenances and malicious MCP metadata cannot mint authority
+ok 29 - all untrusted provenances and malicious MCP metadata cannot mint authority
+  ---
+  duration_ms: 20.9315
+  type: 'test'
+  ...
+# Subtest: foreign file ownership, provider account switching, recipient/payload mutation and credential fields deny
+ok 30 - foreign file ownership, provider account switching, recipient/payload mutation and credential fields deny
+  ---
+  duration_ms: 7.8204
+  type: 'test'
+  ...
+# Subtest: receipt failure or timeout never reaches an effect, and revocation after receipt is still enforced
+ok 31 - receipt failure or timeout never reaches an effect, and revocation after receipt is still enforced
+  ---
+  duration_ms: 8.9053
+  type: 'test'
+  ...
+# Subtest: public research succeeds but redirect-to-private and rebinding never open a private connection
+ok 32 - public research succeeds but redirect-to-private and rebinding never open a private connection
+  ---
+  duration_ms: 14.2295
+  type: 'test'
+  ...
+# Subtest: actual owned-file adapter permits exact same-owner bytes and refuses foreign ownership before upload
+ok 33 - actual owned-file adapter permits exact same-owner bytes and refuses foreign ownership before upload
+  ---
+  duration_ms: 38.107
+  type: 'test'
+  ...
+# Subtest: owner changes during receipt wait, altered recipient and secret file canaries produce zero uploads
+ok 34 - owner changes during receipt wait, altered recipient and secret file canaries produce zero uploads
+  ---
+  duration_ms: 5.9867
+  type: 'test'
+  ...
+# Subtest: uninspected binary documents cannot bypass the text credential boundary
+ok 35 - uninspected binary documents cannot bypass the text credential boundary
+  ---
+  duration_ms: 1.267
+  type: 'test'
+  ...
+# Subtest: ownership revocation during durable authority revalidation prevents dispatch
+ok 36 - ownership revocation during durable authority revalidation prevents dispatch
+  ---
+  duration_ms: 4.6665
+  type: 'test'
+  ...
+# Subtest: opaque held credentials cannot escape through innocent text labels or simple encodings
+ok 37 - opaque held credentials cannot escape through innocent text labels or simple encodings
+  ---
+  duration_ms: 8.9242
+  type: 'test'
+  ...
+# Subtest: public environment values and model configuration do not become private credentials
+ok 38 - public environment values and model configuration do not become private credentials
+  ---
+  duration_ms: 1.6108
+  type: 'test'
+  ...
+# Subtest: dependent business evidence requires explicit review before discovery or model dispatch
+ok 39 - dependent business evidence requires explicit review before discovery or model dispatch
+  ---
+  duration_ms: 3.2732
+  type: 'test'
+  ...
+# Subtest: explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+ok 40 - explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+  ---
+  duration_ms: 48.656
+  type: 'test'
+  ...
+# Subtest: actual business selectors preserve invalid reservation denial before trying another model
+ok 41 - actual business selectors preserve invalid reservation denial before trying another model
+  ---
+  duration_ms: 5.9894
+  type: 'test'
+  ...
+# Subtest: actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+ok 42 - actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+  ---
+  duration_ms: 48.054
+  type: 'test'
+  ...
+# Subtest: business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+ok 43 - business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+  ---
+  duration_ms: 917.0894
+  type: 'test'
+  ...
+1..43
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2769.5275

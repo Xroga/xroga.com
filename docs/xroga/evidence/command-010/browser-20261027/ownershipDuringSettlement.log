@@ -1,0 +1,134 @@
+TAP version 13
+# Subtest: only the three canonical production budget issuers can register generic SDK admissions
+ok 1 - only the three canonical production budget issuers can register generic SDK admissions
+  ---
+  duration_ms: 2784.8252
+  type: 'test'
+  ...
+# Subtest: actual SDK 31380a8d5b9454a98a98 refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+ok 2 - actual SDK 31380a8d5b9454a98a98 refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+  ---
+  duration_ms: 2.9767
+  type: 'test'
+  ...
+# Subtest: actual SDK 9c345e07b723c086440e refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+ok 3 - actual SDK 9c345e07b723c086440e refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+  ---
+  duration_ms: 0.8889
+  type: 'test'
+  ...
+# Subtest: browser model gateway (Stagehand ClientLLM through the canonical ledger and route)
+    # Subtest: reserves, calls the canonical route, settles the measured usage, and returns Stagehand structured output
+    ok 1 - reserves, calls the canonical route, settles the measured usage, and returns Stagehand structured output
+      ---
+      duration_ms: 107.9478
+      type: 'test'
+      ...
+    # Subtest: uses a deterministic idempotency key per job attempt and call number; a new attempt is a new spend
+    ok 2 - uses a deterministic idempotency key per job attempt and call number; a new attempt is a new spend
+      ---
+      duration_ms: 100.0601
+      type: 'test'
+      ...
+    # Subtest: caps the answer to what the remaining allowance covers, and refuses before reserving when nothing fits
+    ok 3 - caps the answer to what the remaining allowance covers, and refuses before reserving when nothing fits
+      ---
+      duration_ms: 35.2647
+      type: 'test'
+      ...
+    # Subtest: releases the reservation when the provider fails or does not report usage, and never answers unmeasured
+    ok 4 - releases the reservation when the provider fails or does not report usage, and never answers unmeasured
+      ---
+      duration_ms: 38.2672
+      type: 'test'
+      ...
+    # Subtest: uses JSON mode plus the schema in the prompt for providers without strict json_schema (GLM, Kimi)
+    ok 5 - uses JSON mode plus the schema in the prompt for providers without strict json_schema (GLM, Kimi)
+      ---
+      duration_ms: 55.7223
+      type: 'test'
+      ...
+    # Subtest: maps tools, tool calls and tool results both ways (Stagehand act)
+    ok 6 - maps tools, tool calls and tool results both ways (Stagehand act)
+      ---
+      duration_ms: 55.1392
+      type: 'test'
+      ...
+    1..6
+ok 4 - browser model gateway (Stagehand ClientLLM through the canonical ledger and route)
+  ---
+  duration_ms: 395.8038
+  type: 'suite'
+  ...
+# Subtest: browser planner (untrusted model output, canonical ledger)
+    # Subtest: returns a validated plan, settles measured usage, and sends only the user-given scope
+    ok 1 - returns a validated plan, settles measured usage, and sends only the user-given scope
+      ---
+      duration_ms: 111.7303
+      type: 'test'
+      ...
+    # Subtest: a model cannot widen scope, grant itself a write, add AI steps, or skip verification
+    ok 2 - a model cannot widen scope, grant itself a write, add AI steps, or skip verification
+      ---
+      duration_ms: 135.2292
+      type: 'test'
+      ...
+    # Subtest: releases the reservation when the provider fails or reports no usage
+    ok 3 - releases the reservation when the provider fails or reports no usage
+      ---
+      duration_ms: 47.4489
+      type: 'test'
+      ...
+    1..3
+ok 5 - browser planner (untrusted model output, canonical ledger)
+  ---
+  duration_ms: 297.4478
+  type: 'suite'
+  ...
+# Subtest: both actual browser SDK boundaries deny raw job IDs before reserving or constructing a provider client
+ok 6 - both actual browser SDK boundaries deny raw job IDs before reserving or constructing a provider client
+  ---
+  duration_ms: 14.5304
+  type: 'test'
+  ...
+# Subtest: gateway: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+not ok 7 - gateway: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+  ---
+  duration_ms: 186.469
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\browserSdkBoundary.security.test.ts:1:1875'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\browserSdkBoundary.security.test.ts:47:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: planner: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+not ok 8 - planner: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+  ---
+  duration_ms: 94.9886
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\browserSdkBoundary.security.test.ts:1:1875'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\browserSdkBoundary.security.test.ts:47:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..8
+# tests 15
+# suites 2
+# pass 13
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6798.4683

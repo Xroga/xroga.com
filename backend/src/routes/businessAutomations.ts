@@ -1,3 +1,4 @@
+import {requireTenantContext} from '../security/tenantContext.js';
 import { Router, type Response } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { canUserAccessComposioToolkit, listComposioTriggerTypes } from '../services/integrations/composioClient.js';
@@ -35,7 +36,7 @@ router.get('/business-automations/triggers', async (req: AuthRequest, res: Respo
     return res.status(400).json({ error: 'Invalid app identifier.' });
   }
   try {
-    const page = await listComposioTriggerTypes(toolkit, { limit: 100 });
+    const page = await listComposioTriggerTypes(toolkit, { limit: 100 },requireTenantContext(req.tenantContext));
     return res.json({ triggers: page.items, nextCursor: page.nextCursor ?? null });
   } catch (error) {
     return res.status(503).json({ error: error instanceof Error ? error.message : 'App events could not be loaded.' });
@@ -59,7 +60,8 @@ router.post('/business-automations', async (req: AuthRequest, res: Response) => 
     return res.status(400).json({ error: 'Invalid interval or trigger configuration.' });
   }
   try {
-    const automation = await createBusinessAutomationRule(req.userId, { name: body.name, request: body.request, schedule: typedSchedule });
+    const automation = await createBusinessAutomationRule(req.userId, { name: body.name, request: body.request, schedule: typedSchedule },requireTenantContext(req.tenantContext));
+    if('needsConfirmation' in automation)return res.status(202).json(automation);
     return res.status(201).json({ automation });
   } catch (error) {
     return res.status(422).json({ error: error instanceof Error ? error.message : 'Automation could not be created.' });

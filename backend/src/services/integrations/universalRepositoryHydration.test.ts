@@ -8,7 +8,7 @@ const github = readFileSync(new URL('./githubDeploy.ts', import.meta.url), 'utf8
 
 test('universal execution hydrates the repository tree rather than a web filename allow-list', () => {
   const hydration = pipeline.slice(pipeline.indexOf('async function hydratePriorFiles'), pipeline.indexOf('async function callBuilderStream'));
-  assert.match(hydration, /fetchRepositoryTextFilesFromGitHub\(userId, repo, branch\)/);
+  assert.match(hydration, /fetchRepositoryTextFilesFromGitHub\(userId, repo, branch, scope\.context\)/);
   assert.doesNotMatch(hydration, /UPDATE_HYDRATE_PATHS|fetchBuildFilesFromGitHub/);
   const genericReader = github.slice(github.indexOf('export async function fetchRepositoryTextFilesFromGitHub'), github.indexOf('export async function fetchGitHubFilesByPaths'));
   assert.doesNotMatch(genericReader, /UPDATE_HYDRATE_PATHS|package\.json|index\.html|\.tsx/);

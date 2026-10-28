@@ -1,4 +1,4 @@
-import { API_URL, getAccessToken } from '@/lib/api';
+import { API_URL, getAccessToken,fetchApiResponse } from '@/lib/api';
 
 export const COMMUNITY_ROLES = ['member', 'moderator', 'admin', 'owner'] as const;
 export type CommunityRole = (typeof COMMUNITY_ROLES)[number];
@@ -53,7 +53,7 @@ export class CommunityApiError extends Error {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const token = await getAccessToken().catch(() => null);
-  const response = await fetch(`${API_URL}/api/community${path}`, {
+  const response = await fetchApiResponse(`${API_URL}/api/community${path}`, {
     ...init,
     cache: init?.method ? 'no-store' : 'no-store',
     headers: {

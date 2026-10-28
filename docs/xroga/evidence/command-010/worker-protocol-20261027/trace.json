@@ -1,0 +1,369 @@
+{
+  "scope": "SCOPED_CONFIGURED_BROWSER_IPC_AND_TASK_OWNED_DOCKER_DISPATCH_NOT_WHOLE_BROWSER_CAPABILITY_ACCEPTANCE",
+  "parent": "ac41699cd0e4976af476ea46135c555989156a01",
+  "reviewedCandidates": [
+    {
+      "id": "029dd2519ec9f725ab50",
+      "file": "backend/src/workers/browserCoordinator.ts",
+      "line": 109,
+      "entryPoint": "createCoordinatorServer",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "53ad4f44fec25d2cd18b30ca1f1f780d7d470e2badcc67ec0373325fe6c346bc",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "ca7da3b05f176d7343a1",
+      "file": "backend/src/workers/browserCoordinator.ts",
+      "line": 115,
+      "entryPoint": "createCoordinatorServer",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "578dde1b1ba179793df564db7c0d684323474feedcae590d393f59074e400228",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "54a477bc6105cf4a0615",
+      "file": "backend/src/workers/browserCoordinator.ts",
+      "line": 117,
+      "entryPoint": "createCoordinatorServer",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "8784120aef6382e1029e61bef7e64257f4e84ba75f679270609786b9f6511075",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "0549e3d62328bdeee9fc",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 57,
+      "entryPoint": "defaultDocker",
+      "transport": "subprocess-or-dynamic-execution",
+      "callee": "spawn",
+      "callSha256": "02064d417f0641113bfe242ebdc2ae913a05713168e6e87fb701277ada9814db",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "610040b13d22a92ecb61",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 79,
+      "entryPoint": "<module-or-callback>",
+      "transport": "subprocess-or-dynamic-execution",
+      "callee": "spawn",
+      "callSha256": "e9f4619c4f7b8214dd087181ac71dd79ea90498f7f2ebef5bbc6bb2dc1c3cb37",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "3d480934beb958cf18f6",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 158,
+      "entryPoint": "onAbort",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "bdfc6e51f6f660ca09a60b53a3b8604bc44bf27744aeca9d839b122cd7efa63d",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "11b26537e94dfd007bdc",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 188,
+      "entryPoint": "converse",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "2ed6c5b20fe01f68e539bd64470d7e665ff4ae51ebbc2916603bd48904336103",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "944a5617b246ddcc7a6f",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 189,
+      "entryPoint": "converse",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "61e970f8253d57008c32694d6570162c131a320f20199f01bdabe7477fcd3462",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "33adb167ae3aa360df14",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 200,
+      "entryPoint": "converse",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "79e974dbb58b924c0d7656b7e647ce3fdf9f3ae74a368405f613f7c27dddaf35",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "f48e5f4e537c7e879b0a",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 209,
+      "entryPoint": "converse",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "4bbb240c0032088909f164b92692692f46e6e3120fb3983fd67df489f12ad73b",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "remainingOrphanReaperCandidate": [
+    {
+      "id": "1d79a3dee4b57945a6d6",
+      "file": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 66,
+      "entryPoint": "dockerSync",
+      "transport": "subprocess-or-dynamic-execution",
+      "callee": "spawnSync",
+      "callSha256": "a09e82c573a156680f303b47d4756a0d4ad421fb056a4befdf60055b0fe3041b",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "reachableProductionPath": [
+    "Authenticated /api/browser/runs requires the original issued TenantContext, fixes user and tenant, checks owned project through canonical Drive",
+    "runBrowserTask constructs canonical scheduler state, canonical handler checks ownership again after asynchronous fenced lease acquisition, before RemoteBrowserWorker dispatch",
+    "Only operator-configured coordinator origin and secret are accepted. No user payload can choose another origin. Signed follow-up paths require a validated UUID. HMAC covers method/path/time/nonce/body and host re-parses job and plan",
+    "Host executes ContainerBrowserWorker. Only known docker argv commands run without a shell. User plan goes over stdin, no issued context or provider credentials are serialized. Browser container has non-root/read-only/seccomp/internal network and existing proxy DNS policy",
+    "Model request IPC has original API-side context, owner/fenced-lease revalidation, canonical egress/reservation/settlement, single-flight/replay-denial and terminal accounting guards from preserved browser SDK checkpoint",
+    "Untrusted results return through handler URL/counter/artifact/secret checks before canonical Drive writes. Completion requires current lease and postconditions"
+  ],
+  "reproducedDefects": [
+    "Invalid coordinator job IDs accepted",
+    "Unbounded worker records and malformed JSON accepted/skipped before a later success",
+    "Redirect/protocol/auth refusal treated as retryable",
+    "Held credentials could be embedded in a browser plan before signed dispatch",
+    "Public API accepted syntactically valid fabricated writeGrant IDs",
+    "Ownership revoked during lease acquisition still allowed deterministic dispatch",
+    "Cancelled container jobs could still create the proxy container"
+  ],
+  "corrections": [
+    "Bound record and total stream bytes, reject malformed records and retain terminal denial through scheduler",
+    "Finite signed paths, configured origin without userinfo/path/query/fragment, manual redirect rejection, bounded cancellation DELETE",
+    "Existing held-credential floor before signed request, no credential lookup or new storage",
+    "Public browser API rejects supplied/planner write grants because it has no canonical approval adapter. Existing business/Operations confirmation and permit execution remain unchanged",
+    "Owner and fenced-lease recheck after lease wait, cancellation check before each resource creation/command and browser spawn, finally cleans only task names"
+  ],
+  "testEvidence": {
+    "integratedBeforeLastScopedCancellationCorrection": {
+      "passed": 137,
+      "skipped": 0
+    },
+    "finalScopedProtocolAndContainer": {
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/finalProtocolAndContainerGreen.log"
+    }
+  },
+  "receipts": [
+    {
+      "name": "protocolRed",
+      "jobId": "dec56e9d-7097-4aa7-93e3-aa2eb9bb89c6",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/protocolRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 278386
+      }
+    },
+    {
+      "name": "grantAndCredentialRed",
+      "jobId": "9e927d72-1388-4e29-b4fa-bbf587a45192",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/grantAndCredentialRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1038484
+      }
+    },
+    {
+      "name": "authRefusalRed",
+      "jobId": "52073a9f-fd9a-447d-b899-5f6176b3ba8b",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/authRefusalRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 284468
+      }
+    },
+    {
+      "name": "postLeaseOwnerRed",
+      "jobId": "59d41f53-6d54-4d3e-b954-b6e5ed918d1f",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/postLeaseOwnerRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 677096
+      }
+    },
+    {
+      "name": "containerRecordRed",
+      "jobId": "84628e2c-8c44-4896-bb30-512fd9cebf10",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/containerRecordRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 259698
+      }
+    },
+    {
+      "name": "containerCancellationRed",
+      "jobId": "2caa24e0-62f7-455a-b8c6-7d48560bad74",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/containerCancellationRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 263361
+      }
+    },
+    {
+      "name": "integratedBeforeCancellationFixGreen",
+      "jobId": "b2cb5d98-5c63-46e5-9ce1-996b47b7aa3f",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/integratedBeforeCancellationFixGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1221200
+      }
+    },
+    {
+      "name": "finalProtocolAndContainerGreen",
+      "jobId": "29128e3c-939a-4c10-b512-4c9bcf5c15c5",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/worker-protocol-20261027/finalProtocolAndContainerGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 310172
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "sha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3"
+    },
+    {
+      "path": "backend/src/workers/containerBrowserWorker.ts",
+      "sha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+    },
+    {
+      "path": "backend/src/workers/browserCapability.ts",
+      "sha256": "56bdea730b89a1441a1d3f4ba5fde5335d633bbab966eb04c1a604fb91e71301"
+    },
+    {
+      "path": "backend/src/workers/browserTaskHandler.ts",
+      "sha256": "a0b129ea24a4df4c1b10b9df910471d190b4ca7055e5593d398784c77bb1b04d"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+      "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+    },
+    {
+      "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+      "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+    },
+    {
+      "path": "backend/src/routes/browserRuns.test.ts",
+      "sha256": "3fe13bb13480b7b30b2c21ad5dae23e976355d0bd13d988a1bf6934d63e00e57"
+    },
+    {
+      "path": "backend/src/workers/browserTaskHandler.test.ts",
+      "sha256": "e0b6f4338144dc59d25ebbd1078cc0598c747b61d6bc3f8e84f16d0033a2cbba"
+    },
+    {
+      "path": "backend/src/workers/browserModelLifetime.ts",
+      "sha256": "1e7991d54bcaf1298344768970a0fe139d70de7d84b3c3f29f4177d57ed72408"
+    },
+    {
+      "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
+      "sha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+    },
+    {
+      "path": "backend/src/workers/containerSpec.ts",
+      "sha256": "6294949263fa3bc7b3081bea5a901bf654698ad0f30828d1ce551f6559555bba"
+    },
+    {
+      "path": "backend/src/workers/egressProxy.ts",
+      "sha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
+    },
+    {
+      "path": "backend/src/routes/browserRuns.ts",
+      "sha256": "ab9b49de1f975807b0f27aade3196fea04345f018d5355a559b7f8199e352fe0"
+    }
+  ],
+  "limitations": [
+    "No Docker or cloud resources created. Real local HTTP/IPC and real source adapters with controlled Docker command port, not new deployed-container acceptance",
+    "Orphan reaper spawnSync remains pending because its single-host-owner assumption requires separate proof",
+    "Configured local probe image tags remain permitted by existing container spec. This does not certify a production image rollout",
+    "Public browser consequential action is fail-closed until a real existing canonical approval adapter is wired. Unmarked page side effects and full browser action/provenance admission remain an explicit acceptance obligation, not promoted by IPC review",
+    "No new ledger, authority issuer, scheduler, production deployment, Batch1.5/2 activation or model request",
+    "Original12criteria, remaining strict candidates and exact-source integrated release gates remain incomplete"
+  ]
+}

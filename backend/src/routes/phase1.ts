@@ -1,3 +1,4 @@
+import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { requireTenantContext } from '../security/tenantContext.js';
 import {
   Buffer,
@@ -512,6 +513,7 @@ router.post(
         await planSemanticRequest(
           {
             userId,
+            tenantContext: requireTenantContext(req.tenantContext),
 
             message,
 
@@ -898,6 +900,7 @@ router.post(
             await prepareBusinessAction(
               {
                 userId,
+                tenantContext:requireTenantContext(req.tenantContext),
 
                 useCase:
                   message
@@ -1231,6 +1234,7 @@ router.post(
             await readBusinessData(
               {
                 userId,
+                tenantContext:requireTenantContext(req.tenantContext),
 
                 useCase:
                   message
@@ -1245,6 +1249,7 @@ router.post(
           );
         }
 
+        if(businessResult.status==='confirmation_required')return res.json({response:`Review this exact private connected-app read before its parameters are sent: [Review read](${businessResult.reviewUrl}). No application data has been retrieved.`,intent:'business_read_confirmation_required',usage:usageToTokenUsage(await getUsage(userId)),webSources:[],engine:'xroga'});
         if (
           businessResult
             .status ===
@@ -1412,11 +1417,13 @@ router.post(
               context.branch,
 
               {
+                tenantContext:req.tenantContext,
                 strictBranch:
                   true,
               },
             );
         } catch (error) {
+          if(isTerminalModelFailure(error))throw error;
           const disconnected =
             error instanceof
               Error &&
@@ -1460,11 +1467,13 @@ router.post(
                 context.repo,
 
                 context.branch,
+                req.tenantContext,
               ),
 
               message,
             );
         } catch (error) {
+          if(isTerminalModelFailure(error))throw error;
           console.warn(
             '[phase1/chat] bounded repository source snapshot unavailable',
 
@@ -1546,6 +1555,7 @@ router.post(
         await runChatPipeline(
           {
             userId,
+            tenantContext:requireTenantContext(req.tenantContext),
 
             prompt:
               promptForChat,
@@ -1759,10 +1769,10 @@ router.post(
         mode ===
         'action'
           ? await createActionComposioSession(
-              userId,
+              userId,requireTenantContext(req.tenantContext)
             )
           : await createReadOnlyComposioSession(
-              userId,
+              userId,requireTenantContext(req.tenantContext)
             );
 
       const link =
@@ -1778,7 +1788,7 @@ router.post(
               composioCallbackUrl(),
 
             mode,
-          },
+          },requireTenantContext(req.tenantContext)
         );
 
       return res.json(

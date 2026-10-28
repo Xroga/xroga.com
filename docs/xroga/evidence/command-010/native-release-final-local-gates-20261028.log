@@ -1,0 +1,111 @@
+{"result":"PASS_AUDIT_INTEGRITY_NOT_TENANT_SECURITY_ACCEPTANCE","counts":{"observedTables":118,"rlsEnabled":118,"privilegedFactorySites":194,"persistenceCandidates":819,"ownerPredicateCandidates":205,"reviewRequired":127,"reviewedCandidates":692,"unresolvedSafetyCandidates":160,"certifiedScopedPrivilegedCallers":0,"registeredNarrowGlobalExceptions":19},"releaseGate":"BLOCKED_CRITERION_EVIDENCE"}
+{"scope":"AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION","total":136,"reviewed":121,"pending":15,"unresolvedHighRiskBypasses":8}
+{"stage":"scripts/xroga/phase-two.mjs","state":"START"}
+{"result":"GENERATED_NOT_ACCEPTANCE","packets":73,"historicalRecords":371,"certifiedByGeneration":0}
+{"stage":"scripts/xroga/runtime-inventory.mjs","state":"START"}
+{"result":"GENERATED_PENDING_VALIDATION","dependencies":189,"envNames":296,"unresolvedBindings":0,"fallbackCandidates":830}
+{"stage":"scripts/xroga/check-runtime-config.mjs","state":"START"}
+{"result":"PASS_CONFIG_INVENTORY_WITH_RECORDED_RISKS","dependencies":189,"environmentNames":296,"dynamicBindings":26,"highRisks":9,"secretValuesRead":false,"productionDeployed":false}
+{"stage":"scripts/xroga/inventory.mjs","state":"START"}
+{"result":"GENERATED_NOT_YET_VERIFIED","sourceSha":"87e33b94b3d85deaac12d4bcc691363f4876fa64","counts":{"surfaces":1623,"routeRegistrations":295,"routes":245,"reachableRoutes":234,"queues":4,"migrations":148,"workflows":20,"testSuites":900,"declaredTests":6059,"classifiedMarkers":384,"reachableMarkers":324,"absentRequiredPaths":5,"duplicateIds":0}}
+{"stage":"scripts/xroga/reconcile-requirements.mjs","state":"START"}
+{"result":"GENERATED","requirements":445,"sources":2048,"availableRows":527,"families":43,"candidates":23,"historicalFeatureRows":"119/119","historicalMissions":"72/72","historicalCoverageComplete":true,"implementationComplete":false}
+{"stage":"scripts/xroga/mission-check.mjs","state":"START"}
+{"result":"PASS_MISSION_POLICY_NOT_RELEASE_AUTHORIZATION","results":[{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P1","state":"VERIFIED_SCOPE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P2","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"batch-1-phase-4-google-integration","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"batch-1-phase-4-preparation","state":"BLOCKED","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"CLOUD-RUN-AUTOMATION-SCHEDULER-20261025","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-C006","state":"VERIFIED_SCOPE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-C007","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"COMPOSIO-CATALOG-DEPRECATION-20261025","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"LIVE-AI-ACCOUNTING-COMPOSIO-REPAIR-20261025","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-ACCEPTED-MAIN-INTEGRATION-20261025","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-DEPLOYED-PROMPT-PRESERVATION-20261024","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-MAIN-RECONCILIATION-20261023","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-PRODUCTION-CUSTODY-PATH-20261024","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XROGA-ZERO-FLY-20261025","state":"IN_PROGRESS","release":"BLOCKED"}],"goldenStates":{"PASS":0,"FAIL":0,"BLOCKED_KNOWN_GAP":12,"NOT_APPLICABLE":0},"allBatchCommandsVerified":false}
+{"stage":"--test","state":"START"}
+TAP version 13
+# Subtest: AST audit sees executable transports, aliases, browser, MCP and process sinks, not generated strings
+ok 1 - AST audit sees executable transports, aliases, browser, MCP and process sinks, not generated strings
+  ---
+  duration_ms: 31.9547
+  type: 'test'
+  ...
+# Subtest: a constant origin or central import never silently certifies caller ownership
+ok 2 - a constant origin or central import never silently certifies caller ownership
+  ---
+  duration_ms: 1.8807
+  type: 'test'
+  ...
+# Subtest: aliased process execution and pinned uploads remain obligations, response sends and regex exec are excluded
+ok 3 - aliased process execution and pinned uploads remain obligations, response sends and regex exec are excluded
+  ---
+  duration_ms: 4.743
+  type: 'test'
+  ...
+# Subtest: current transport proof binds every claimed source and keeps unresolved caller obligations visible
+ok 4 - current transport proof binds every claimed source and keeps unresolved caller obligations visible
+  ---
+  duration_ms: 22.2055
+  type: 'test'
+  ...
+# Subtest: current metadata continuation preserves the exact historical proof files without promoting acceptance
+ok 5 - current metadata continuation preserves the exact historical proof files without promoting acceptance
+  ---
+  duration_ms: 286.8851
+  type: 'test'
+  ...
+# Subtest: source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+ok 6 - source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+  ---
+  duration_ms: 1468.4433
+  type: 'test'
+  ...
+# Subtest: Phase2 retains all73 packets and371 historical identities without certifying reviews or later scope
+ok 7 - Phase2 retains all73 packets and371 historical identities without certifying reviews or later scope
+  ---
+  duration_ms: 754.8321
+  type: 'test'
+  ...
+# Subtest: Phase2 semantic progress rejects changed source, unknown or duplicate packets and self-certified status
+ok 8 - Phase2 semantic progress rejects changed source, unknown or duplicate packets and self-certified status
+  ---
+  duration_ms: 5478.9734
+  type: 'test'
+  ...
+# Subtest: shifted duplicate caller remapping requires a unique byte-identical method rather than matching syntax labels alone
+ok 9 - shifted duplicate caller remapping requires a unique byte-identical method rather than matching syntax labels alone
+  ---
+  duration_ms: 5.2961
+  type: 'test'
+  ...
+# Subtest: both baseline jobs reject stale Phase2 evidence hashes before browser installation and the unchanged full suites
+ok 10 - both baseline jobs reject stale Phase2 evidence hashes before browser installation and the unchanged full suites
+  ---
+  duration_ms: 1.0809
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7473.9782
+{"scope":"AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION","total":136,"reviewed":121,"pending":15,"unresolvedHighRiskBypasses":8}
+file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/scripts/security/audit-egress-callers.mjs:120
+
+  if(args.includes('--require-complete')&&result.counts.pending)throw Error('Command010 incomplete: pending source traces and high-risk bypasses remain');
+
+                                                                      ^
+
+
+
+Error: Command010 incomplete: pending source traces and high-risk bypasses remain
+
+    at main (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/scripts/security/audit-egress-callers.mjs:120:71)
+
+    at file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/scripts/security/audit-egress-callers.mjs:123:79
+
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+
+
+Node.js v22.21.1
+
+{"strictAuditExitCode":1,"acceptance":"NOT_VERIFIED_WHILE_STRICT_AUDIT_INCOMPLETE"}

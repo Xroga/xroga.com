@@ -1,0 +1,193 @@
+TAP version 13
+# Subtest: orphan cleanup never force-removes another live job and checks stopped ownership
+ok 1 - orphan cleanup never force-removes another live job and checks stopped ownership
+  ---
+  duration_ms: 4.2778
+  type: 'test'
+  ...
+# Subtest: restart/attach race cannot be counted as a successful orphan deletion
+ok 2 - restart/attach race cannot be counted as a successful orphan deletion
+  ---
+  duration_ms: 0.8679
+  type: 'test'
+  ...
+# Subtest: untrusted identifiers, missing labels and malformed inspection cannot become cleanup commands
+ok 3 - untrusted identifiers, missing labels and malformed inspection cannot become cleanup commands
+  ---
+  duration_ms: 0.7281
+  type: 'test'
+  ...
+# Subtest: the committed browser worker container spec
+    # Subtest: passes its own checker, including the existence of its seccomp profile
+    ok 1 - passes its own checker, including the existence of its seccomp profile
+      ---
+      duration_ms: 9.7115
+      type: 'test'
+      ...
+    # Subtest: the committed Dockerfile passes the static review (digest pinned, numeric non-root USER, no sandbox-disabling flag)
+    ok 2 - the committed Dockerfile passes the static review (digest pinned, numeric non-root USER, no sandbox-disabling flag)
+      ---
+      duration_ms: 5.034
+      type: 'test'
+      ...
+    # Subtest: the seccomp profile is the Docker default plus exactly clone, clone3, unshare, setns and chroot
+    ok 3 - the seccomp profile is the Docker default plus exactly clone, clone3, unshare, setns and chroot
+      ---
+      duration_ms: 24.9787
+      type: 'test'
+      ...
+    # Subtest: turns into the expected docker run flags: no privileged, no capability, read only, seccomp, limits, tmpfs only
+    ok 4 - turns into the expected docker run flags: no privileged, no capability, read only, seccomp, limits, tmpfs only
+      ---
+      duration_ms: 1.916
+      type: 'test'
+      ...
+    1..4
+ok 4 - the committed browser worker container spec
+  ---
+  duration_ms: 44.3279
+  type: 'suite'
+  ...
+# Subtest: the container checker refuses every weakening
+    # Subtest: privilege: privileged mode, root, added or undropped capabilities, writable root, escalation
+    ok 1 - privilege: privileged mode, root, added or undropped capabilities, writable root, escalation
+      ---
+      duration_ms: 9.9291
+      type: 'test'
+      ...
+    # Subtest: seccomp: absent, unconfined, or pointing at a file that does not exist
+    ok 2 - seccomp: absent, unconfined, or pointing at a file that does not exist
+      ---
+      duration_ms: 5.6123
+      type: 'test'
+      ...
+    # Subtest: namespaces and network: host namespaces, host network, published ports, host mappings
+    ok 3 - namespaces and network: host namespaces, host network, published ports, host mappings
+      ---
+      duration_ms: 21.8796
+      type: 'test'
+      ...
+    # Subtest: mounts: only bounded, nosuid, nodev, noexec tmpfs; never a bind, a socket or a sensitive path
+    ok 4 - mounts: only bounded, nosuid, nodev, noexec tmpfs; never a bind, a socket or a sensitive path
+      ---
+      duration_ms: 16.2468
+      type: 'test'
+      ...
+    # Subtest: resources: every limit is required and bounded; swap equals memory
+    ok 5 - resources: every limit is required and bounded; swap equals memory
+      ---
+      duration_ms: 7.3395
+      type: 'test'
+      ...
+    # Subtest: secrets: no secret-looking environment variable
+    ok 6 - secrets: no secret-looking environment variable
+      ---
+      duration_ms: 4.8134
+      type: 'test'
+      ...
+    # Subtest: image: pinned by digest, or the locally built probe tag only
+    ok 7 - image: pinned by digest, or the locally built probe tag only
+      ---
+      duration_ms: 3.132
+      type: 'test'
+      ...
+    # Subtest: egress: the deployment must declare network-level denial of every private, loopback, link-local and metadata range
+    ok 8 - egress: the deployment must declare network-level denial of every private, loopback, link-local and metadata range
+      ---
+      duration_ms: 9.4966
+      type: 'test'
+      ...
+    # Subtest: reports every violation together
+    ok 9 - reports every violation together
+      ---
+      duration_ms: 1.0111
+      type: 'test'
+      ...
+    1..9
+ok 5 - the container checker refuses every weakening
+  ---
+  duration_ms: 81.2361
+  type: 'suite'
+  ...
+# Subtest: the Dockerfile review refuses
+    # Subtest: accepts a minimal safe file
+    ok 1 - accepts a minimal safe file
+      ---
+      duration_ms: 0.6804
+      type: 'test'
+      ...
+    # Subtest: an unpinned or partially pinned base
+    ok 2 - an unpinned or partially pinned base
+      ---
+      duration_ms: 0.5469
+      type: 'test'
+      ...
+    # Subtest: root or a non-numeric or missing USER
+    ok 3 - root or a non-numeric or missing USER
+      ---
+      duration_ms: 0.59
+      type: 'test'
+      ...
+    # Subtest: sandbox-disabling flags anywhere
+    ok 4 - sandbox-disabling flags anywhere
+      ---
+      duration_ms: 0.4142
+      type: 'test'
+      ...
+    # Subtest: remote scripts, secrets, exposed ports and world-writable trees
+    ok 5 - remote scripts, secrets, exposed ports and world-writable trees
+      ---
+      duration_ms: 0.5785
+      type: 'test'
+      ...
+    # Subtest: comments do not count as instructions
+    ok 6 - comments do not count as instructions
+      ---
+      duration_ms: 1.0848
+      type: 'test'
+      ...
+    1..6
+ok 6 - the Dockerfile review refuses
+  ---
+  duration_ms: 4.4053
+  type: 'suite'
+  ...
+# Subtest: container worker output is bounded before accepting an untrusted result
+ok 7 - container worker output is bounded before accepting an untrusted result
+  ---
+  duration_ms: 19.8177
+  type: 'test'
+  ...
+# Subtest: malformed container records cannot be skipped to accept a later result
+ok 8 - malformed container records cannot be skipped to accept a later result
+  ---
+  duration_ms: 1.53
+  type: 'test'
+  ...
+# Subtest: cancellation before cannot start browser or proxy containers
+ok 9 - cancellation before cannot start browser or proxy containers
+  ---
+  duration_ms: 1.314
+  type: 'test'
+  ...
+# Subtest: cancellation during-network cannot start browser or proxy containers
+ok 10 - cancellation during-network cannot start browser or proxy containers
+  ---
+  duration_ms: 1.3803
+  type: 'test'
+  ...
+# Subtest: actual container adapter keeps commands shell-free, passes no tenant authority, and cleans only its own resources
+ok 11 - actual container adapter keeps commands shell-free, passes no tenant authority, and cleans only its own resources
+  ---
+  duration_ms: 6.3463
+  type: 'test'
+  ...
+1..11
+# tests 27
+# suites 3
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1050.2846

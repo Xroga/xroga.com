@@ -1,0 +1,41 @@
+TAP version 13
+# Subtest: Expo credential identity probe cannot follow a real redirected endpoint
+ok 1 - Expo credential identity probe cannot follow a real redirected endpoint
+  ---
+  duration_ms: 35.067
+  type: 'test'
+  ...
+# Subtest: Expo identity probes bound inputs and actual receipts while valid account identities still work
+ok 2 - Expo identity probes bound inputs and actual receipts while valid account identities still work
+  ---
+  duration_ms: 5.876
+  type: 'test'
+  ...
+# Subtest: Expo identity failures cannot return echoed credentials and empty receipts cannot authorize a connection
+ok 3 - Expo identity failures cannot return echoed credentials and empty receipts cannot authorize a connection
+  ---
+  duration_ms: 0.6866
+  type: 'test'
+  ...
+# Subtest: userOwnedPublish
+    # Subtest: rejects short expo tokens without calling network
+    ok 1 - rejects short expo tokens without calling network
+      ---
+      duration_ms: 0.8149
+      type: 'test'
+      ...
+    1..1
+ok 4 - userOwnedPublish
+  ---
+  duration_ms: 1.6036
+  type: 'suite'
+  ...
+1..4
+# tests 4
+# suites 1
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 822.8633

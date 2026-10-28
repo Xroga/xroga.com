@@ -1,0 +1,162 @@
+{
+  "scope": "SEVENTEEN_EXACT_UNREACHABLE_LEGACY_CALLS_NOT_PROVIDER_OR_PRODUCT_ACCEPTANCE",
+  "modules": [
+    {
+      "path": "backend/src/lib/apify.ts",
+      "sourceFileSha256": "8f0a64e27a5c0b1b44013eddbd32c2cf751375cbc4028a5d51afb60cb56228bb",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "176750c88ee667a2d5f8",
+          "entryPoint": "apifyScrapeJobs",
+          "callSha256": "7eec539ba13c89570a668480625d502160e755b056b2462beed382e2788324cd"
+        },
+        {
+          "id": "80fae4b604b9d9b5fa55",
+          "entryPoint": "apifyScrapeJobs",
+          "callSha256": "b54466c44dc42b68128cb48f695a84d621d77ef17d7d010677e291bcd2c0025d"
+        },
+        {
+          "id": "3e5ba31676d5e5da80fb",
+          "entryPoint": "pollApifyRun",
+          "callSha256": "c8ba90e2b4f15ec134c77ef880323737aec79000d3fc51b759cca78de4a56108"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/audioProviders.ts",
+      "sourceFileSha256": "599386bea90c1f3f27c32e7fafc79f44b406f5132f1c87dd48b2b7dccad43cd8",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "74b0e180358c36df8c42",
+          "entryPoint": "generateElevenLabsVoiceover",
+          "callSha256": "6523dd9b0e4d7b5b7b8b7fae8a41a85dea00132d39faf9885dc77d8b2e48f1cf"
+        },
+        {
+          "id": "5054ec0f719be61dc2ec",
+          "entryPoint": "generateCartesiaVoiceover",
+          "callSha256": "b4a0c4de0e0cf81a0e3d228f291e7435d5a68809a49952f84e3e739b1aa8d7e3"
+        },
+        {
+          "id": "175fba77feea7132d8a5",
+          "entryPoint": "generateFishAudioTts",
+          "callSha256": "e459c69400c0e29e984f1d4365886d38167496886b723924747a4a89aac9de64"
+        },
+        {
+          "id": "2a5c726393fdb280bf65",
+          "entryPoint": "generateSunoScore",
+          "callSha256": "e8b732fd4bf7ef3d19c28201e24f5c254fb30d8b6a4cbac46ef4062dc02ad3f5"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/comfyui.ts",
+      "sourceFileSha256": "6f7431d2670b95cf27c720aed78f89bacbc77dc44dae9ac062d3141f8be7129a",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "58bda0b6092997792af2",
+          "entryPoint": "generateComfyUIImage",
+          "callSha256": "691b803461ca636c0ef85d0de4383c15f2edfcc20375b667d39a14bb67bbbc89"
+        },
+        {
+          "id": "a1701f06f690596fd2c0",
+          "entryPoint": "generateComfyUIImage",
+          "callSha256": "25d6c40c380fc32cabcbf332d2610a2d29d7c575fd921c53e336e175daa160ca"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/gemini.ts",
+      "sourceFileSha256": "56b14770f7ea59661e110c6c02bab5cce47cd18b6c09864c7c2b9ca3d77640cf",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "049adafdb79c93d85166",
+          "entryPoint": "geminiGenerate",
+          "callSha256": "383ea650440cf0afcf9de3f2311e0d6d747e64c20fc00ee3929d335ceaa706c0"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/hailuo.ts",
+      "sourceFileSha256": "2e8130ad379d3e2e8521ff8171f68d8b00c896aae628229cb889614528a24969",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "f03cf7691ce072b34cea",
+          "entryPoint": "generateHailuoImage",
+          "callSha256": "4afae8678553c0f5fff9d4cf0f047015782aa6f2b40d36f63baeab24d1bdbef2"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/luma.ts",
+      "sourceFileSha256": "4d7f8f59f67eb67182d794daa2aeef81679eb15f3d860b65920229953aa1f2c0",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "a5e73984a9c33257f782",
+          "entryPoint": "pollGeneration",
+          "callSha256": "70d470aaa2fcceb36fea9459af1bf6bbf9e4046eed9e2d46046e533b0261a22f"
+        },
+        {
+          "id": "7e4752b5c0bc6bcc4090",
+          "entryPoint": "generateLumaImage",
+          "callSha256": "4dc803ca3dd27c8f8799067f705910ab2422462d6dcc152c90477124bdcb0709"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/runway.ts",
+      "sourceFileSha256": "ea4b0c7f742875765ff9d6af4693fb2ee240228a36e2f6f708efc144c863d463",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "070d93e290588232cf16",
+          "entryPoint": "pollTask",
+          "callSha256": "f1a415d35491bd9cf32371fff11e1fe09f61abac53f960121fa03f72608b628e"
+        },
+        {
+          "id": "258abf65c43a04c704a9",
+          "entryPoint": "generateRunwayImage",
+          "callSha256": "1bf76ba55e24eca209df5fa35bbba85509d35bd0db385f13ef9a8ce3833e381c"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/youtubeSearch.ts",
+      "sourceFileSha256": "8c0a400e7c2660b62693234c458edc2218b9e36587dd6214f5cfb4775cbe07e4",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "263e1a0fbf52023499b0",
+          "entryPoint": "searchYoutubeVideos",
+          "callSha256": "34b6c3fa52d0096ae114ed71cdd831a405ecd88dae13ab41f67bb919f9d5f052"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/lib/exa.ts",
+      "sourceFileSha256": "70d5561b17726973d7ea77d31e6bb68eb6dfc8e70647be65f11de19d675b9ca8",
+      "acceptedSourceIdentical": "b11841ead316913cb46316fa7c16e76c6519b392",
+      "callers": [
+        {
+          "id": "b2ed8e79cb82506d4aca",
+          "entryPoint": "exaSearch",
+          "callSha256": "899814a66ee07324f501c1d9497bbb0d7e8dbb590814efbfab52c8ef2d5537a3"
+        }
+      ]
+    }
+  ],
+  "sourceTrace": "None of these nine modules has a production import, export, module URL reference or exported-function caller in the current tracked/untracked production source. Intra-module helper calls do not create an application entry. The regression checks each explicit module and export separately, rejects new computed import/require loaders, and permits only the already-unused Playwright driver finite package-name loader. Generated in-sandbox browser imports are Playwright package loading within the sandbox, not API-host access to these adapters.",
+  "limitations": "Current-source graph only. Dynamic generated user code, future routes, externally added importers and actual alternative provider adapters remain independent obligations. No declared model or optional media feature is reported as live or verified. A future production import invalidates this review and requires issued context, authority, egress, reservation and accounting before activation.",
+  "testJob": "6a32d4f0-f8f5-468b-b5f3-349461b7cca9",
+  "externalProviderCalls": 0,
+  "evidence": {
+    "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
+    "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
+    "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "scope": "SCOPED_FIXED_PROVIDER_TRANSPORT_AND_TERMINAL_REDIRECT_ACCOUNTING_NOT_UPSTREAM_PROVENANCE_OR_PHASE4_ACCEPTANCE",
+  "base": "8b96d8210c450823657438562eab59f02265e7ec",
+  "modelSdkCandidates": [
+    "038ced12b0f74e8d5e0f",
+    "31380a8d5b9454a98a98",
+    "9c345e07b723c086440e"
+  ],
+  "unchangedSoftwareAgentCandidate": "4c899876b9e3850af11b",
+  "unchangedBrowserSdkCandidate": "9ea21a6fc8b8700460c0",
+  "modelDefect": "Real Node HTTP 307 under redirect:error was wrapped by OpenAI as a connection error. Observed2initial wires and1fallback provider. Manual response inspection plus SDK nonretryable400 error protocol now preserves MODEL_DESTINATION_DENIED. Observed1initial wire,0forwarded requests,0fallback. Already dispatched bytes retain canonical reconciliation hold using an SDK-preserved local error type.",
+  "modelRed": "7f6bb54f-9a63-48f8-b278-0ecb0a19d014",
+  "holdRed": "e8663a3b-de28-430e-9eb8-f262c7314c0d",
+  "modelGreen": "f91488bd-45ef-470b-b2ca-6afd26d60946",
+  "vercelOriginalCandidates": [
+    {
+      "id": "b77b116764a1ac673686",
+      "entryPoint": "exchangeVercelOAuthCode",
+      "callSha256": "42345af9f7422621b08a7e006d33b251c2324e020c9a9697fa0a0ad8f500ded6"
+    },
+    {
+      "id": "11ed0a20cc0b90f42ccf",
+      "entryPoint": "refreshVercelOAuthToken",
+      "callSha256": "42345af9f7422621b08a7e006d33b251c2324e020c9a9697fa0a0ad8f500ded6"
+    },
+    {
+      "id": "7916cadb1c3f78be9d4d",
+      "entryPoint": "probeVercelApiCapabilities",
+      "callSha256": "bc1e7361617bc387dd39122cc8d16470b6470438c75cd425f92a822f64909fe6"
+    },
+    {
+      "id": "852b30dae0b41bb55c6c",
+      "entryPoint": "probeVercelApiCapabilities",
+      "callSha256": "80559dc9c7be11bccbcfb0bc96b25a3cb807e01fc71ceddf4db2a11375bc579b"
+    },
+    {
+      "id": "430d045edc63ccb7aad9",
+      "entryPoint": "verifyVercelTokenLive",
+      "callSha256": "9d17211995e5228f8856c474d06b7f295ceaf1c76914c64648cf8e112b56bff8"
+    },
+    {
+      "id": "428611b47ef88816fea8",
+      "entryPoint": "verifyVercelTokenLive",
+      "callSha256": "51ed1c289ddca98b08265355601c1a6d9d84c827ff0ca16b4f447fa8b88de64c"
+    },
+    {
+      "id": "567c0d364c059cb94cea",
+      "entryPoint": "resolveVercelProjectForEnvSync",
+      "callSha256": "27173354d102c5e5ace8f93df36634ba1b520f94fb322305bbc3588521181ccd"
+    }
+  ],
+  "vercelReplacement": {
+    "id": "c92d966d391d0a57a8ae",
+    "file": "backend/src/services/integrations/vercelAuth.ts",
+    "line": 44,
+    "entryPoint": "vercelAuthRequest",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "5d65e8a8c1da9286e8909c63faf3aa821d42dc41e43b30aa02db50ddfe776a7c",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null,
+    "sourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e"
+  },
+  "vercelPolicy": "Finite official api.vercel.com OAuth/account-read URLs and exact methods. Existing original-context PKCE consume, vault/current credential revisions and refresh lease remain unchanged. No redirects,15second deadline,64KiB outgoing auth-form ceiling,2MiB actual JSON response ceiling, terminal security-denial propagation and safe failure bodies. Ordinary401/403 capability and outage behavior preserved. No deploy, arbitrary upload, model, provider action or new authority grant.",
+  "vercelRed": "00366158-13ed-45e4-8d6a-e274020e38f7",
+  "vercelRealHttpRed": "8c8f32ec-5547-4e36-8df8-bc59b6c4700e",
+  "vercelGreen": "b467fc75-ec2d-479c-9ca8-ded652bc9cd9",
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086"
+    },
+    {
+      "path": "backend/src/ai/modelSdkAdmission.ts",
+      "sha256": "20d496b0d58773d98578f070771ed051259b2c77cd3d081ef2304acf01fbcb60"
+    },
+    {
+      "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+      "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+      "sha256": "a553fa0c587ea0805f99ac2516e0a86b1651d50a95facd289a2d4345d2986c68"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.egress.test.ts",
+      "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.test.ts",
+      "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
+      "sha256": "a29877ea29ae79433154f06a134f3259dc0cd4f2038db133d9653950f7981cdf"
+    },
+    {
+      "path": "backend/src/workers/browserModelFixture.test.ts",
+      "sha256": "69996f954dc59844c06e2555ce4b528a26e90a0836ea47854789d5125c599e4d"
+    }
+  ],
+  "limitations": [
+    "Controlled synthetic credentials, local real HTTP and real SDK parsing. No live provider usage or production operation",
+    "No model choice, prompts, orchestration, authority issuer or ledger replaced",
+    "No upstream SoftwareAgent, research, publishing, external-upload or other callers promoted",
+    "All original incomplete caller, disposable/Auth, exact-source CI and Phase4 release gates remain required",
+    "Existing historical evidence remains source-bound to its original source. Only explicit current records are rebound here"
+  ]
+}

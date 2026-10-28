@@ -1,0 +1,55 @@
+{
+  "scope": "TWO_UNCHANGED_CANONICAL_STORE_RECORDS_NO_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "f0e3b232c2f87f3c0cdb35e3982f557da4fb8a8d86ea2a98ea44e62274929aa6",
+      "currentSourceSha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc",
+      "semanticReview": "The canonical scheduler now reuses existing isTerminalModelFailure in addition to retryable:false. SDK destination, canonical egress, authority and post-completion accounting denials without an explicit retryable field cannot cause a second dispatch. Original task-store persistence expressions and identity predicates are unchanged. Focused negative test reproduced3attempts before correction, now1; ordinary503 recovery still makes2attempts and completes. Existing scoped persistence outcomes only, no new acceptance promotion.",
+      "mapping": [
+        {
+          "previousId": "b0890e13b2718629037e",
+          "currentId": "365d257e7c9ced98d020",
+          "enclosing": "load",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "execution_runs",
+          "unchangedExpressionSha256": "db55893dba9e7efcfb747e9edb83bc84e7e9933d240b805152aedc6a13a088bf"
+        },
+        {
+          "previousId": "1b90517b37251b8ee7c7",
+          "currentId": "15fb96b2c6d5bb1d6137",
+          "enclosing": "load",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "f0e3b232c2f87f3c0cdb35e3982f557da4fb8a8d86ea2a98ea44e62274929aa6",
+      "currentSourceSha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc",
+      "semanticReview": "The canonical scheduler now reuses existing isTerminalModelFailure in addition to retryable:false. SDK destination, canonical egress, authority and post-completion accounting denials without an explicit retryable field cannot cause a second dispatch. Original task-store persistence expressions and identity predicates are unchanged. Focused negative test reproduced3attempts before correction, now1; ordinary503 recovery still makes2attempts and completes. Existing scoped persistence outcomes only, no new acceptance promotion.",
+      "mapping": [
+        {
+          "previousId": "1bb8bd89204f01a7253f",
+          "currentId": "77ee4b03e88e71051497",
+          "enclosing": "saveSnapshot",
+          "kind": "RPC_CANDIDATE",
+          "target": "persist_execution_checkpoint_attempt",
+          "unchangedExpressionSha256": "475e2a3d0044e5b8d2f7d2df637bb48e85de880bf48ae2415ad3670e936c8251"
+        },
+        {
+          "previousId": "024ec43cb6e858b32b18",
+          "currentId": "66ca87d4e8a7aeaf1dc6",
+          "enclosing": "saveSnapshot",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        }
+      ]
+    }
+  ]
+}

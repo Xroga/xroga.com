@@ -1,0 +1,903 @@
+TAP version 13
+# Subtest: Builder GitHub preserves terminal actor denial instead of provider-unavailable recovery
+ok 1 - Builder GitHub preserves terminal actor denial instead of provider-unavailable recovery
+  ---
+  duration_ms: 7.4025
+  type: 'test'
+  ...
+# Subtest: Builder Supabase refuses raw-token transport before any external request
+ok 2 - Builder Supabase refuses raw-token transport before any external request
+  ---
+  duration_ms: 1.2272
+  type: 'test'
+  ...
+# Subtest: newly integrated Builder Vercel transport cannot publish with only a raw token
+ok 3 - newly integrated Builder Vercel transport cannot publish with only a raw token
+  ---
+  duration_ms: 1.3126
+  type: 'test'
+  ...
+# Subtest: production Builder wiring retains exact approved GitHub publication, readback, replay and organization targets
+ok 4 - production Builder wiring retains exact approved GitHub publication, readback, replay and organization targets
+  ---
+  duration_ms: 2483.0496
+  type: 'test'
+  ...
+# Subtest: production Builder Supabase selection and exact reviewed migration retain RLS and public-only configuration
+ok 5 - production Builder Supabase selection and exact reviewed migration retain RLS and public-only configuration
+  ---
+  duration_ms: 378.9377
+  type: 'test'
+  ...
+# Subtest: credential epoch replacement after approval fails before any GitHub write even with the same token
+ok 6 - credential epoch replacement after approval fails before any GitHub write even with the same token
+  ---
+  duration_ms: 73.5799
+  type: 'test'
+  ...
+# Subtest: durable cancellation, foreign ownership and a failed security receipt cannot reach provider writes
+ok 7 - durable cancellation, foreign ownership and a failed security receipt cannot reach provider writes
+  ---
+  duration_ms: 586.8468
+  type: 'test'
+  ...
+# Subtest: revocation during publication prevents all subsequent mutations and automatic retry
+ok 8 - revocation during publication prevents all subsequent mutations and automatic retry
+  ---
+  duration_ms: 469.2299
+  type: 'test'
+  ...
+# Subtest: redirect and provider authorization denial are terminal while an ordinary read outage can recover
+ok 9 - redirect and provider authorization denial are terminal while an ordinary read outage can recover
+  ---
+  duration_ms: 86.191
+  type: 'test'
+  ...
+# Subtest: new Builder hosting caller preserves separate preview and typed production approval under canonical egress
+ok 10 - new Builder hosting caller preserves separate preview and typed production approval under canonical egress
+  ---
+  duration_ms: 561.6779
+  type: 'test'
+  ...
+# Subtest: new Builder hosting transport denies changed credentials, substituted body and unapproved publication
+ok 11 - new Builder hosting transport denies changed credentials, substituted body and unapproved publication
+  ---
+  duration_ms: 29.3064
+  type: 'test'
+  ...
+# Subtest: real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets
+ok 12 - real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets
+  ---
+  duration_ms: 5974.5973
+  type: 'test'
+  ...
+# Subtest: isolated QA delivery cannot redirect the signed private plan
+ok 13 - isolated QA delivery cannot redirect the signed private plan
+  ---
+  duration_ms: 7.0789
+  type: 'test'
+  ...
+# Subtest: isolated QA answers are bounded before JSON parsing
+ok 14 - isolated QA answers are bounded before JSON parsing
+  ---
+  duration_ms: 50.9728
+  type: 'test'
+  ...
+# Subtest: isolated QA cannot record success after cancellation
+ok 15 - isolated QA cannot record success after cancellation
+  ---
+  duration_ms: 1.6655
+  type: 'test'
+  ...
+# Subtest: sealing what the isolated host reports
+    # Subtest: takes titles, categories, viewports and the required flag from the plan, never from the host
+    ok 1 - takes titles, categories, viewports and the required flag from the plan, never from the host
+      ---
+      duration_ms: 2.6582
+      type: 'test'
+      ...
+    # Subtest: a check the host did not report is pending, so a partial answer can never be PASSED
+    ok 2 - a check the host did not report is pending, so a partial answer can never be PASSED
+      ---
+      duration_ms: 42.7817
+      type: 'test'
+      ...
+    # Subtest: refuses an impossible result: "passed" without having executed is pending
+    ok 3 - refuses an impossible result: "passed" without having executed is pending
+      ---
+      duration_ms: 0.9036
+      type: 'test'
+      ...
+    # Subtest: ignores a result for a check nobody asked for and for a check outside the requested subset
+    ok 4 - ignores a result for a check nobody asked for and for a check outside the requested subset
+      ---
+      duration_ms: 2.4546
+      type: 'test'
+      ...
+    # Subtest: computes regressions itself, and keeps failure evidence bounded
+    ok 5 - computes regressions itself, and keeps failure evidence bounded
+      ---
+      duration_ms: 1.1891
+      type: 'test'
+      ...
+    # Subtest: a hostile or empty body yields a not-run report and never throws
+    ok 6 - a hostile or empty body yields a not-run report and never throws
+      ---
+      duration_ms: 1.3697
+      type: 'test'
+      ...
+    # Subtest: names the isolated host as the driver and the API's own base host
+    ok 7 - names the isolated host as the driver and the API's own base host
+      ---
+      duration_ms: 0.938
+      type: 'test'
+      ...
+    1..7
+ok 16 - sealing what the isolated host reports
+  ---
+  duration_ms: 53.9713
+  type: 'suite'
+  ...
+# Subtest: configuration
+    # Subtest: is off without settings, refuses a half-configured host, and requires https off loopback
+    ok 1 - is off without settings, refuses a half-configured host, and requires https off loopback
+      ---
+      duration_ms: 1.6231
+      type: 'test'
+      ...
+    # Subtest: allows only https preview hosts on the configured suffixes, never addresses or credentials
+    ok 2 - allows only https preview hosts on the configured suffixes, never addresses or credentials
+      ---
+      duration_ms: 0.9011
+      type: 'test'
+      ...
+    1..2
+ok 17 - configuration
+  ---
+  duration_ms: 2.897
+  type: 'suite'
+  ...
+# Subtest: the isolated host over real HTTP, driven through QaService
+    # Subtest: runs the plan on the host, records PASSED against the revision, and never opens a browser in the API process
+    ok 1 - runs the plan on the host, records PASSED against the revision, and never opens a browser in the API process
+      ---
+      duration_ms: 159.7555
+      type: 'test'
+      ...
+    # Subtest: a host that claims everything passed without executing anything verifies nothing
+    ok 2 - a host that claims everything passed without executing anything verifies nothing
+      ---
+      duration_ms: 43.7279
+      type: 'test'
+      ...
+    # Subtest: a host that overstates the overall status cannot hide a failed required check
+    ok 3 - a host that overstates the overall status cannot hide a failed required check
+      ---
+      duration_ms: 22.1457
+      type: 'test'
+      ...
+    # Subtest: an unreachable host is "not run", with the reason, and never a pass or a server error
+    ok 4 - an unreachable host is "not run", with the reason, and never a pass or a server error
+      ---
+      duration_ms: 8.9659
+      type: 'test'
+      ...
+    # Subtest: refuses unsigned, wrongly signed, stale and replayed requests, and never executes them
+    ok 5 - refuses unsigned, wrongly signed, stale and replayed requests, and never executes them
+      ---
+      duration_ms: 44.1954
+      type: 'test'
+      ...
+    # Subtest: refuses an address it is not configured to test, and a malformed plan, after authentication
+    ok 6 - refuses an address it is not configured to test, and a malformed plan, after authentication
+      ---
+      duration_ms: 64.568
+      type: 'test'
+      ...
+    # Subtest: turns a host that is refused (wrong secret on the client) into "not run"
+    ok 7 - turns a host that is refused (wrong secret on the client) into "not run"
+      ---
+      duration_ms: 14.7052
+      type: 'test'
+      ...
+    # Subtest: a real derived plan crosses the wire intact
+    ok 8 - a real derived plan crosses the wire intact
+      ---
+      duration_ms: 14.6562
+      type: 'test'
+      ...
+    1..8
+ok 18 - the isolated host over real HTTP, driven through QaService
+  ---
+  duration_ms: 381.9994
+  type: 'suite'
+  ...
+# Subtest: exact GitHub publication: push
+ok 19 - exact GitHub publication: push
+  ---
+  duration_ms: 633.9169
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: feature
+ok 20 - exact GitHub publication: feature
+  ---
+  duration_ms: 422.4025
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: template
+ok 21 - exact GitHub publication: template
+  ---
+  duration_ms: 914.6423
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: restore
+ok 22 - exact GitHub publication: restore
+  ---
+  duration_ms: 161.4522
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: create
+ok 23 - exact GitHub publication: create
+  ---
+  duration_ms: 265.0386
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: empty
+ok 24 - exact GitHub publication: empty
+  ---
+  duration_ms: 223.7282
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: cancel-at-audit
+ok 25 - exact GitHub publication: cancel-at-audit
+  ---
+  duration_ms: 117.5215
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: cancel-after-claim
+ok 26 - exact GitHub publication: cancel-after-claim
+  ---
+  duration_ms: 141.8564
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: audit-fail
+ok 27 - exact GitHub publication: audit-fail
+  ---
+  duration_ms: 118.9015
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: changed-connection
+ok 28 - exact GitHub publication: changed-connection
+  ---
+  duration_ms: 63.9358
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: changed-head
+ok 29 - exact GitHub publication: changed-head
+  ---
+  duration_ms: 86.2505
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: 403
+ok 30 - exact GitHub publication: 403
+  ---
+  duration_ms: 124.1522
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: 503
+ok 31 - exact GitHub publication: 503
+  ---
+  duration_ms: 404.9678
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: bad-blob
+ok 32 - exact GitHub publication: bad-blob
+  ---
+  duration_ms: 162.5941
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: bad-ref
+ok 33 - exact GitHub publication: bad-ref
+  ---
+  duration_ms: 217.8097
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: cancel-after-blob
+ok 34 - exact GitHub publication: cancel-after-blob
+  ---
+  duration_ms: 211.2674
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: secret-source
+ok 35 - exact GitHub publication: secret-source
+  ---
+  duration_ms: 50.6812
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: foreign-project
+ok 36 - exact GitHub publication: foreign-project
+  ---
+  duration_ms: 132.3729
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: changed-plan
+ok 37 - exact GitHub publication: changed-plan
+  ---
+  duration_ms: 97.1455
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: changed-visibility
+ok 38 - exact GitHub publication: changed-visibility
+  ---
+  duration_ms: 159.2483
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: template-branch-exists
+ok 39 - exact GitHub publication: template-branch-exists
+  ---
+  duration_ms: 73.4048
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: template-truncated
+ok 40 - exact GitHub publication: template-truncated
+  ---
+  duration_ms: 70.0912
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: template-secret
+ok 41 - exact GitHub publication: template-secret
+  ---
+  duration_ms: 73.5487
+  type: 'test'
+  ...
+# Subtest: exact GitHub publication: replay
+ok 42 - exact GitHub publication: replay
+  ---
+  duration_ms: 261.1616
+  type: 'test'
+  ...
+# Subtest: shared GitHub transport cannot dispatch a raw-token write without original actor and native authority
+ok 43 - shared GitHub transport cannot dispatch a raw-token write without original actor and native authority
+  ---
+  duration_ms: 2.7834
+  type: 'test'
+  ...
+# Subtest: GitHub reads bind original actor, repository and current credential, with terminal denials and bounded output
+ok 44 - GitHub reads bind original actor, repository and current credential, with terminal denials and bounded output
+  ---
+  duration_ms: 207.8451
+  type: 'test'
+  ...
+# Subtest: desktop release prepares exact immutable-source consent before creating a tag or dispatching Actions
+ok 45 - desktop release prepares exact immutable-source consent before creating a tag or dispatching Actions
+  ---
+  duration_ms: 205.6222
+  type: 'test'
+  ...
+# Subtest: pipeline exposes independent release review without starting it or borrowing pending publication authority
+ok 46 - pipeline exposes independent release review without starting it or borrowing pending publication authority
+  ---
+  duration_ms: 472.7336
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: success
+ok 47 - desktop exact workflow admission: success
+  ---
+  duration_ms: 266.0153
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: restart
+ok 48 - desktop exact workflow admission: restart
+  ---
+  duration_ms: 172.8589
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: source-network
+ok 49 - desktop exact workflow admission: source-network
+  ---
+  duration_ms: 36.6023
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: source-json
+ok 50 - desktop exact workflow admission: source-json
+  ---
+  duration_ms: 59.4922
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: cancel-at-audit
+ok 51 - desktop exact workflow admission: cancel-at-audit
+  ---
+  duration_ms: 95.541
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: cancel-after-claim
+ok 52 - desktop exact workflow admission: cancel-after-claim
+  ---
+  duration_ms: 147.313
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: audit-fail
+ok 53 - desktop exact workflow admission: audit-fail
+  ---
+  duration_ms: 116.8856
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: connection-changed
+ok 54 - desktop exact workflow admission: connection-changed
+  ---
+  duration_ms: 136.916
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: project-owner-changed
+ok 55 - desktop exact workflow admission: project-owner-changed
+  ---
+  duration_ms: 66.1851
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: workflow-changed
+ok 56 - desktop exact workflow admission: workflow-changed
+  ---
+  duration_ms: 104
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: changed-plan
+ok 57 - desktop exact workflow admission: changed-plan
+  ---
+  duration_ms: 34.1692
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: existing-tag-at-audit
+ok 58 - desktop exact workflow admission: existing-tag-at-audit
+  ---
+  duration_ms: 99.9621
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: provider403
+ok 59 - desktop exact workflow admission: provider403
+  ---
+  duration_ms: 82.8031
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: provider503
+ok 60 - desktop exact workflow admission: provider503
+  ---
+  duration_ms: 239.7636
+  type: 'test'
+  ...
+# Subtest: desktop exact workflow admission: bad-tag-receipt
+ok 61 - desktop exact workflow admission: bad-tag-receipt
+  ---
+  duration_ms: 193.5136
+  type: 'test'
+  ...
+# Subtest: desktop release polling requires the exact tag, current owner and immutable commit, never latest
+ok 62 - desktop release polling requires the exact tag, current owner and immutable commit, never latest
+  ---
+  duration_ms: 171.6718
+  type: 'test'
+  ...
+# Subtest: native artifact preparation cannot publish or delete before exact durable approval
+    # Subtest: chrome
+    ok 1 - chrome
+      ---
+      duration_ms: 163.0273
+      type: 'test'
+      ...
+    # Subtest: electron
+    ok 2 - electron
+      ---
+      duration_ms: 44.6387
+      type: 'test'
+      ...
+    # Subtest: chrome ok
+    ok 3 - chrome ok
+      ---
+      duration_ms: 143.4516
+      type: 'test'
+      ...
+    # Subtest: chrome new-release
+    ok 4 - chrome new-release
+      ---
+      duration_ms: 157.1706
+      type: 'test'
+      ...
+    # Subtest: chrome replace-asset
+    ok 5 - chrome replace-asset
+      ---
+      duration_ms: 171.6596
+      type: 'test'
+      ...
+    # Subtest: chrome restart
+    ok 6 - chrome restart
+      ---
+      duration_ms: 120.9356
+      type: 'test'
+      ...
+    # Subtest: chrome jsonb-order
+    ok 7 - chrome jsonb-order
+      ---
+      duration_ms: 101.056
+      type: 'test'
+      ...
+    # Subtest: chrome concurrent
+    ok 8 - chrome concurrent
+      ---
+      duration_ms: 72.0713
+      type: 'test'
+      ...
+    # Subtest: chrome cancelled
+    ok 9 - chrome cancelled
+      ---
+      duration_ms: 16.9441
+      type: 'test'
+      ...
+    # Subtest: chrome foreign-project
+    ok 10 - chrome foreign-project
+      ---
+      duration_ms: 51.9502
+      type: 'test'
+      ...
+    # Subtest: chrome file-changed
+    ok 11 - chrome file-changed
+      ---
+      duration_ms: 47.7003
+      type: 'test'
+      ...
+    # Subtest: chrome file-at-audit
+    ok 12 - chrome file-at-audit
+      ---
+      duration_ms: 61.604
+      type: 'test'
+      ...
+    # Subtest: chrome audit-fail
+    ok 13 - chrome audit-fail
+      ---
+      duration_ms: 53.8687
+      type: 'test'
+      ...
+    # Subtest: chrome cancel-at-audit
+    ok 14 - chrome cancel-at-audit
+      ---
+      duration_ms: 46.1585
+      type: 'test'
+      ...
+    # Subtest: chrome cancel-at-claim
+    ok 15 - chrome cancel-at-claim
+      ---
+      duration_ms: 59.2376
+      type: 'test'
+      ...
+    # Subtest: chrome cancel-after-claim
+    ok 16 - chrome cancel-after-claim
+      ---
+      duration_ms: 66.8023
+      type: 'test'
+      ...
+    # Subtest: chrome expire-after-claim
+    ok 17 - chrome expire-after-claim
+      ---
+      duration_ms: 71.0555
+      type: 'test'
+      ...
+    # Subtest: chrome connection-at-audit
+    ok 18 - chrome connection-at-audit
+      ---
+      duration_ms: 57.9605
+      type: 'test'
+      ...
+    # Subtest: chrome connection-before-confirm
+    ok 19 - chrome connection-before-confirm
+      ---
+      duration_ms: 37.3183
+      type: 'test'
+      ...
+    # Subtest: chrome release-replaced
+    ok 20 - chrome release-replaced
+      ---
+      duration_ms: 51.377
+      type: 'test'
+      ...
+    # Subtest: chrome asset-replaced
+    ok 21 - chrome asset-replaced
+      ---
+      duration_ms: 49.8436
+      type: 'test'
+      ...
+    # Subtest: chrome changed-source
+    ok 22 - chrome changed-source
+      ---
+      duration_ms: 51.0504
+      type: 'test'
+      ...
+    # Subtest: chrome changed-target
+    ok 23 - chrome changed-target
+      ---
+      duration_ms: 38.8965
+      type: 'test'
+      ...
+    # Subtest: chrome changed-expiry
+    ok 24 - chrome changed-expiry
+      ---
+      duration_ms: 59.2679
+      type: 'test'
+      ...
+    # Subtest: chrome changed-proof
+    ok 25 - chrome changed-proof
+      ---
+      duration_ms: 49.5253
+      type: 'test'
+      ...
+    # Subtest: chrome provider403
+    ok 26 - chrome provider403
+      ---
+      duration_ms: 88.8684
+      type: 'test'
+      ...
+    # Subtest: chrome provider503
+    ok 27 - chrome provider503
+      ---
+      duration_ms: 86.1312
+      type: 'test'
+      ...
+    # Subtest: chrome redirect
+    ok 28 - chrome redirect
+      ---
+      duration_ms: 57.0383
+      type: 'test'
+      ...
+    # Subtest: chrome wrong-receipt
+    ok 29 - chrome wrong-receipt
+      ---
+      duration_ms: 100.7019
+      type: 'test'
+      ...
+    # Subtest: chrome ok-after-outage
+    ok 30 - chrome ok-after-outage
+      ---
+      duration_ms: 91.6594
+      type: 'test'
+      ...
+    # Subtest: electron ok
+    ok 31 - electron ok
+      ---
+      duration_ms: 115.9754
+      type: 'test'
+      ...
+    # Subtest: electron new-release
+    ok 32 - electron new-release
+      ---
+      duration_ms: 99.0555
+      type: 'test'
+      ...
+    # Subtest: electron replace-asset
+    ok 33 - electron replace-asset
+      ---
+      duration_ms: 212.0642
+      type: 'test'
+      ...
+    # Subtest: electron restart
+    ok 34 - electron restart
+      ---
+      duration_ms: 160.2665
+      type: 'test'
+      ...
+    # Subtest: electron jsonb-order
+    ok 35 - electron jsonb-order
+      ---
+      duration_ms: 78.2561
+      type: 'test'
+      ...
+    # Subtest: electron concurrent
+    ok 36 - electron concurrent
+      ---
+      duration_ms: 148.6972
+      type: 'test'
+      ...
+    # Subtest: electron cancelled
+    ok 37 - electron cancelled
+      ---
+      duration_ms: 52.6324
+      type: 'test'
+      ...
+    # Subtest: electron foreign-project
+    ok 38 - electron foreign-project
+      ---
+      duration_ms: 40.7867
+      type: 'test'
+      ...
+    # Subtest: electron file-changed
+    ok 39 - electron file-changed
+      ---
+      duration_ms: 35.0517
+      type: 'test'
+      ...
+    # Subtest: electron file-at-audit
+    ok 40 - electron file-at-audit
+      ---
+      duration_ms: 81.5987
+      type: 'test'
+      ...
+    # Subtest: electron audit-fail
+    ok 41 - electron audit-fail
+      ---
+      duration_ms: 71.1974
+      type: 'test'
+      ...
+    # Subtest: electron cancel-at-audit
+    ok 42 - electron cancel-at-audit
+      ---
+      duration_ms: 80.4192
+      type: 'test'
+      ...
+    # Subtest: electron cancel-at-claim
+    ok 43 - electron cancel-at-claim
+      ---
+      duration_ms: 78.1333
+      type: 'test'
+      ...
+    # Subtest: electron cancel-after-claim
+    ok 44 - electron cancel-after-claim
+      ---
+      duration_ms: 49.5931
+      type: 'test'
+      ...
+    # Subtest: electron expire-after-claim
+    ok 45 - electron expire-after-claim
+      ---
+      duration_ms: 56.2643
+      type: 'test'
+      ...
+    # Subtest: electron connection-at-audit
+    ok 46 - electron connection-at-audit
+      ---
+      duration_ms: 50.6821
+      type: 'test'
+      ...
+    # Subtest: electron connection-before-confirm
+    ok 47 - electron connection-before-confirm
+      ---
+      duration_ms: 45.4008
+      type: 'test'
+      ...
+    # Subtest: electron release-replaced
+    ok 48 - electron release-replaced
+      ---
+      duration_ms: 62.3135
+      type: 'test'
+      ...
+    # Subtest: electron asset-replaced
+    ok 49 - electron asset-replaced
+      ---
+      duration_ms: 52.6553
+      type: 'test'
+      ...
+    # Subtest: electron changed-source
+    ok 50 - electron changed-source
+      ---
+      duration_ms: 29.0794
+      type: 'test'
+      ...
+    # Subtest: electron changed-target
+    ok 51 - electron changed-target
+      ---
+      duration_ms: 32.2791
+      type: 'test'
+      ...
+    # Subtest: electron changed-expiry
+    ok 52 - electron changed-expiry
+      ---
+      duration_ms: 44.9809
+      type: 'test'
+      ...
+    # Subtest: electron changed-proof
+    ok 53 - electron changed-proof
+      ---
+      duration_ms: 34.73
+      type: 'test'
+      ...
+    # Subtest: electron provider403
+    ok 54 - electron provider403
+      ---
+      duration_ms: 32.4704
+      type: 'test'
+      ...
+    # Subtest: electron provider503
+    ok 55 - electron provider503
+      ---
+      duration_ms: 66.2302
+      type: 'test'
+      ...
+    # Subtest: electron redirect
+    ok 56 - electron redirect
+      ---
+      duration_ms: 42.9711
+      type: 'test'
+      ...
+    # Subtest: electron wrong-receipt
+    ok 57 - electron wrong-receipt
+      ---
+      duration_ms: 36.5882
+      type: 'test'
+      ...
+    # Subtest: electron ok-after-outage
+    ok 58 - electron ok-after-outage
+      ---
+      duration_ms: 34.7083
+      type: 'test'
+      ...
+    1..58
+ok 63 - native artifact preparation cannot publish or delete before exact durable approval
+  ---
+  duration_ms: 4214.1884
+  type: 'test'
+  ...
+# Subtest: native source inspection rejects extraction aliases and credential files before compression
+ok 64 - native source inspection rejects extraction aliases and credential files before compression
+  ---
+  duration_ms: 2.8993
+  type: 'test'
+  ...
+# Subtest: explicit browser plans cannot carry credential canaries to the worker outside the model gateway
+ok 65 - explicit browser plans cannot carry credential canaries to the worker outside the model gateway
+  ---
+  duration_ms: 49.8421
+  type: 'test'
+  ...
+# Subtest: legacy durable browser input denial is persisted terminally and never retried by another instance
+ok 66 - legacy durable browser input denial is persisted terminally and never retried by another instance
+  ---
+  duration_ms: 10.873
+  type: 'test'
+  ...
+# Subtest: browser run dispatch
+    # Subtest: Cloud Tasks: enqueues an authenticated HTTP task naming the run, signed as the execute service account
+    ok 1 - Cloud Tasks: enqueues an authenticated HTTP task naming the run, signed as the execute service account
+      ---
+      duration_ms: 122.3026
+      type: 'test'
+      ...
+    # Subtest: Cloud Tasks: an already-enqueued run is a success, a refusal is an error the caller can see
+    ok 2 - Cloud Tasks: an already-enqueued run is a success, a refusal is an error the caller can see
+      ---
+      duration_ms: 3.4403
+      type: 'test'
+      ...
+    # Subtest: Cloud Tasks: refuses a malformed queue, a non-https target and a missing identity before any call
+    ok 3 - Cloud Tasks: refuses a malformed queue, a non-https target and a missing identity before any call
+      ---
+      duration_ms: 0.9899
+      type: 'test'
+      ...
+    # Subtest: in-process: starts the run without waiting for it and reports a failure to the handler instead of throwing
+    ok 4 - in-process: starts the run without waiting for it and reports a failure to the handler instead of throwing
+      ---
+      duration_ms: 11.3576
+      type: 'test'
+      ...
+    # Subtest: the environment picks in-process by default and refuses a half-configured cloud setting instead of silently falling back
+    ok 5 - the environment picks in-process by default and refuses a half-configured cloud setting instead of silently falling back
+      ---
+      duration_ms: 0.7575
+      type: 'test'
+      ...
+    1..5
+ok 67 - browser run dispatch
+  ---
+  duration_ms: 144.0688
+  type: 'suite'
+  ...
+# Subtest: Cloud Tasks never follows a redirect carrying the runtime service token
+ok 68 - Cloud Tasks never follows a redirect carrying the runtime service token
+  ---
+  duration_ms: 1.3199
+  type: 'test'
+  ...
+1..68
+# tests 144
+# suites 4
+# pass 144
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12512.3368

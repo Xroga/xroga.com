@@ -1,0 +1,108 @@
+TAP version 13
+# Subtest: real publishing transports cannot follow a provider redirect with project or credential payloads
+    # Subtest: Vercel deploy
+    ok 1 - Vercel deploy
+      ---
+      duration_ms: 27.3591
+      type: 'test'
+      ...
+    # Subtest: Netlify deploy
+    ok 2 - Netlify deploy
+      ---
+      duration_ms: 5.6626
+      type: 'test'
+      ...
+    # Subtest: Vercel env sync
+    ok 3 - Vercel env sync
+      ---
+      duration_ms: 2.7091
+      type: 'test'
+      ...
+    # Subtest: Vercel domains
+    ok 4 - Vercel domains
+      ---
+      duration_ms: 2.5829
+      type: 'test'
+      ...
+    # Subtest: Vercel Git project
+    ok 5 - Vercel Git project
+      ---
+      duration_ms: 2.5847
+      type: 'test'
+      ...
+    1..5
+ok 1 - real publishing transports cannot follow a provider redirect with project or credential payloads
+  ---
+  duration_ms: 52.5555
+  type: 'test'
+  ...
+# Subtest: Netlify lookup cannot substitute an unrelated site after creation fails
+ok 2 - Netlify lookup cannot substitute an unrelated site after creation fails
+  ---
+  duration_ms: 8.2099
+  type: 'test'
+  ...
+# Subtest: Netlify authorization denial stops before lookup or deployment retry
+ok 3 - Netlify authorization denial stops before lookup or deployment retry
+  ---
+  duration_ms: 1.4965
+  type: 'test'
+  ...
+# Subtest: known held credentials in source files stop publishing before provider dispatch
+ok 4 - known held credentials in source files stop publishing before provider dispatch
+  ---
+  duration_ms: 1.3879
+  type: 'test'
+  ...
+# Subtest: authorized Netlify create and exact-name recovery preserve the original source snapshot
+ok 5 - authorized Netlify create and exact-name recovery preserve the original source snapshot
+  ---
+  duration_ms: 6.9693
+  type: 'test'
+  ...
+# Subtest: publishing transport rejects destination, path, method and size violations before dispatch
+ok 6 - publishing transport rejects destination, path, method and size violations before dispatch
+  ---
+  duration_ms: 18.9313
+  type: 'test'
+  ...
+# Subtest: publishing transport bounds response bytes and never exposes provider failure bodies
+ok 7 - publishing transport bounds response bytes and never exposes provider failure bodies
+  ---
+  duration_ms: 2.102
+  type: 'test'
+  ...
+# Subtest: a cancelled publishing transport cannot dispatch or publish a late response
+not ok 8 - a cancelled publishing transport cannot dispatch or publish a late response
+  ---
+  duration_ms: 1.6755
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\lib\\publishingTransport.security.test.ts:1:7580'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection (AbortError).'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    name: 'AbortError'
+  operator: 'rejects'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\lib\publishingTransport.security.test.ts:82:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: publishing security denials cannot become another provider or platform retry
+ok 9 - publishing security denials cannot become another provider or platform retry
+  ---
+  duration_ms: 4.0988
+  type: 'test'
+  ...
+1..9
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 802.7771

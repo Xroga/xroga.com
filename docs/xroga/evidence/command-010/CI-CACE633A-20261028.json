@@ -1,0 +1,56 @@
+{
+  "source": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+  "result": "SEVEN_WORKFLOWS_PASS",
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40680868232,
+      "name": "Xroga golden acceptance harness",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40680868232"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40680868089,
+      "name": "Unit tests",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40680868089"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40680868108,
+      "name": "Command 4 authority distribution",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40680868108"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40680867908,
+      "name": "Agent V2 dependency lock",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40680867908"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40680868047,
+      "name": "Xroga mission operating policy",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40680868047"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40680867977,
+      "name": "Growth technical publishing",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40680867977"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40680868013,
+      "name": "Xroga tenant security fixtures",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40680868013"
+    }
+  ],
+  "scope": "Preceding pushed checkpoint, not the new Supabase native adapter or final Phase4 acceptance"
+}

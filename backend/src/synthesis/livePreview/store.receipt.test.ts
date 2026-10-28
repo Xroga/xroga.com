@@ -6,6 +6,9 @@ import type { ProjectRuntimeSession } from '../projectRuntime/types.js';
 import { createLivePreviewGrant, getLatestLivePreviewGrant, getLivePreviewGrant } from './store.js';
 
 test('preview grant input and returned capability stay bound across a held session lookup',async t=>{
+  const providerKeys=['XROGA_SANDBOX_FLY_APP','XROGA_SANDBOX_FLY_TOKEN','FLY_APP_NAME'],providerEnv=providerKeys.map(key=>process.env[key]);
+  Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'fixture-app',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
+  t.after(()=>providerKeys.forEach((key,index)=>{if(providerEnv[index]===undefined)delete process.env[key];else process.env[key]=providerEnv[index];}));
   const owner=randomUUID(),project='fixture-project',sessionId=randomUUID(),run='fixture-run',now=new Date().toISOString();
   const oldUrl=process.env.SUPABASE_URL,oldKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
   process.env.SUPABASE_URL='http://127.0.0.1:49239';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-preview-fixture-only';
@@ -13,7 +16,7 @@ test('preview grant input and returned capability stay bound across a held sessi
     if(oldUrl===undefined)delete process.env.SUPABASE_URL;else process.env.SUPABASE_URL=oldUrl;
     if(oldKey===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=oldKey;
   });
-  const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId,userId:owner,projectId:project,providerId:'fixture',runtimeClass:'interactive',status:'running',
+  const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId,userId:owner,projectId:project,providerId:'fly-project-runtime',runtimeClass:'interactive',status:'running',
     image:null,workspaceRevision:1,knownFiles:[],processes:[],createdAt:now,updatedAt:now,
     ports:[{port:3000,protocol:'http',processId:'fixture',status:'declared'}],providerState:{machineId:'abc123',app:'fixture-app'},expiresAt:null};
   let enter!:()=>void,release!:()=>void;

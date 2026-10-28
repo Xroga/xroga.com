@@ -1,6 +1,8 @@
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { isComposioConfigured, upsertComposioTriggerForUser } from './composioClient.js';
+import { isComposioConfigured, upsertComposioTriggerForUser,resolveComposioTriggerTarget,composioControlSource } from './composioClient.js';
+import {prepareComposioControl,requireComposioControl,type ComposioControlAdmission,type ComposioControlPending} from './composioControl.js';
 import { splitExplicitBusinessWorkflow, type BusinessWorkflowStep } from './businessWorkflow.js';
 import { createBusinessWorkflowRun } from './businessWorkflowRuns.js';
 
@@ -46,20 +48,26 @@ export async function createBusinessAutomationRule(userId: string, input: {
   name: string;
   request: string;
   schedule: { kind: 'interval'; intervalSeconds: number } | { kind: 'trigger'; toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown> };
-}): Promise<BusinessAutomationRule> {
+},tenantContext?:TenantContext,admission?:ComposioControlAdmission): Promise<BusinessAutomationRule|ComposioControlPending> {
+  const actor=requireTenantContext(tenantContext);requireResourceOwner(actor,userId);input=structuredClone(input);
   const name = input.name.trim();
   const request = input.request.trim();
   if (name.length < 3 || name.length > 120 || request.length < 8 || request.length > 1_500) throw new Error('Provide a short name and an explicit workflow request.');
   if (!isComposioConfigured()) throw new Error('Composio must be configured before creating an app automation.');
   const steps = explicitSteps(request);
   let triggerId: string | null = null;
+  let checkApproval:(()=>Promise<void>)|undefined;
   let intervalSeconds: number | null = null;
   if (input.schedule.kind === 'interval') {
     intervalSeconds = input.schedule.intervalSeconds;
     if (!Number.isInteger(intervalSeconds) || intervalSeconds < 3_600 || intervalSeconds > 2_592_000) throw new Error('The interval must be between one hour and 30 days.');
   } else {
     if (!process.env.COMPOSIO_WEBHOOK_SECRET?.trim()) throw new Error('A signed Composio webhook must be configured before event automations can be created.');
-    triggerId = await upsertComposioTriggerForUser(userId, input.schedule);
+    const target=await resolveComposioTriggerTarget(actor,input.schedule),parameters={resource:`${target.toolkit}:${target.triggerSlug}:${target.connectedAccountId}`,connection:composioControlSource(actor),account:target.connectedAccountId,input};
+    if(!admission)return prepareComposioControl(actor,'CREATE_AUTOMATION_TRIGGER',parameters,`Register only ${target.triggerSlug} for ${target.toolkit} account ${target.connectedAccountId} and save this exact automation as a paused draft. Provider events use the existing signed project webhook. No workflow is enabled.`);
+    const approval=requireComposioControl(admission,actor,'CREATE_AUTOMATION_TRIGGER',parameters);checkApproval=approval.check;
+    triggerId = await upsertComposioTriggerForUser(userId, {toolkit:input.schedule.toolkit,triggerSlug:input.schedule.triggerSlug,triggerConfig:input.schedule.triggerConfig},actor,{admission,parameters,expectedAccount:target.connectedAccountId});
+    await checkApproval();
   }
   const { data, error } = await getSupabaseAdmin()
     .from('business_automation_rules')
@@ -76,7 +84,8 @@ export async function createBusinessAutomationRule(userId: string, input: {
     })
     .select('*')
     .single();
-  if (error || !validRule(data)) throw new Error('Automation could not be saved. It was not enabled.');
+  if (error || !validRule(data)||data.user_id!==userId||data.enabled!==false) throw new Error('Automation could not be saved. It was not enabled.');
+  await checkApproval?.();
   return data;
 }
 

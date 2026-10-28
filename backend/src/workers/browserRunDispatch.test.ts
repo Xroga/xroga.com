@@ -56,3 +56,9 @@ describe('browser run dispatch', () => {
     assert.equal(dispatcherFromEnv(full, async () => undefined, () => undefined).mode, 'cloud-tasks');
   });
 });
+
+it('Cloud Tasks never follows a redirect carrying the runtime service token',async()=>{
+ let redirect:RequestInit['redirect'];
+ const d=new CloudTasksDispatcher({project:'p',location:'us-central1',queue:'q',targetUrl:'https://api.example/internal/browser/execute',serviceAccountEmail:'s@p.iam.gserviceaccount.com',audience:'https://api.example/internal/browser/execute'},{accessToken:async()=>'synthetic-runtime-credential',fetch:async(_url,init)=>{redirect=init?.redirect;return Response.redirect('https://attacker.example',307);}});
+ await assert.rejects(d.dispatch(RUN));assert.equal(redirect,'manual');
+});

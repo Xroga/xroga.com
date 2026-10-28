@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: Builder GitHub preserves terminal actor denial instead of provider-unavailable recovery
+not ok 1 - Builder GitHub preserves terminal actor denial instead of provider-unavailable recovery
+  ---
+  duration_ms: 121.6432
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-23\\g\\work\\xroga-batch1-integration\\backend\\src\\builder\\providerBoundary.security.test.ts:1:239'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    GitHubPortError: GitHub could not be reached.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-23\g\work\xroga-batch1-integration\backend\src\builder\providerBoundary.security.test.ts:8:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: Builder Supabase refuses raw-token transport before any external request
+not ok 2 - Builder Supabase refuses raw-token transport before any external request
+  ---
+  duration_ms: 169.5703
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-23\\g\\work\\xroga-batch1-integration\\backend\\src\\builder\\providerBoundary.security.test.ts:1:459'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-23\g\work\xroga-batch1-integration\backend\src\builder\providerBoundary.security.test.ts:13:6)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 69099.154

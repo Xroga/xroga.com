@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createTenantContext } from '../tenantContext.js';
 import { preparedActionDigest } from './digest.js';
-import { executeAuthorizedAction, assertAuthorityPermit, consumeAuthorityPermit } from './enforce.js';
+import { executeAuthorizedAction, assertAuthorityPermit, consumeAuthorityPermit,authorityContextForPermit } from './enforce.js';
 import { ACTION_CLASSES, type AuthorityDispatchBinding, type PreparedAuthorityScope } from './types.js';
 import { ACTION_POLICIES, businessActionClass } from './risk.js';
 const OWNER = '11111111-1111-4111-8111-111111111111';
@@ -14,6 +14,20 @@ function fixture() {
   const binding: AuthorityDispatchBinding = { userId: OWNER, provider: scope.provider, connectedAccountId: scope.connectedAccountId, operation: scope.operation, targetDigest: scope.targetDigest, planDigest: scope.planDigest };
   return { scope, claim, binding, context: actor(), revalidateBeforeEffect: async () => claim };
 }
+
+test('permit context access returns only the original issued actor within its exact unused lifetime',async()=>{
+  const f=fixture();let escaped:unknown;
+  await executeAuthorizedAction(f,async permit=>{
+    escaped=permit;
+    assert.equal(authorityContextForPermit(permit,f.binding),f.context);
+    assert.equal(authorityContextForPermit(permit,f.binding).correlationId,f.context.correlationId);
+    assert.throws(()=>authorityContextForPermit({...permit},f.binding),{code:'AUTHORITY_ALREADY_USED_OR_MISSING'});
+    assert.throws(()=>authorityContextForPermit(permit,{...f.binding,userId:FOREIGN}),{code:'AUTHORITY_SCOPE_MISMATCH'});
+    await consumeAuthorityPermit(permit,f.binding);
+    assert.throws(()=>authorityContextForPermit(permit,f.binding),{code:'AUTHORITY_ALREADY_USED_OR_MISSING'});
+  });
+  assert.throws(()=>authorityContextForPermit(escaped,f.binding),{code:'AUTHORITY_ALREADY_USED_OR_MISSING'});
+});
 
 test('canonical executor dispatches only an exact issued actor and durable adapter claim, once', async () => {
   const f = fixture(); let checks = 0, effects = 0; let escaped: unknown;

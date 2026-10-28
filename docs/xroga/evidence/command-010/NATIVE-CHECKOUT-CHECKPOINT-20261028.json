@@ -1,0 +1,97 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "atUtc": "2026-10-27T21:45:18.362Z",
+  "parent": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
+  "resolvedSincePreviousPushedCheckpoint": [
+    "151aa103d929fb10c020",
+    "96fbfea42a399a233486",
+    "fcad57247cfb79779f95"
+  ],
+  "newGuardedLifecycleHelper": "5e931ac391ece81659aa",
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 119,
+    "pending": 17,
+    "unresolvedHighRiskBypasses": 10
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "verification": {
+    "containerFocused45": "PASS_INCLUDING7REAL_DOCKER_CHECKS",
+    "organizationRoutes14": "PASS",
+    "checkoutFocused51": "PASS",
+    "checkoutCanonicalIntegration26": "PASS",
+    "backendTypes": "PASS",
+    "frontendTypes": "PASS",
+    "receipts": [
+      "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
+      "docs/xroga/evidence/command-010/SUPABASE-ORGANIZATION-READ-BOUNDARY-20261028.json",
+      "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json"
+    ],
+    "containerCurrentSource": "45 current batch checks pass plus the single failed observation passes bounded unchanged-source recheck;46 distinct checks covered. No full-green single run claimed. Exact CI pending."
+  },
+  "lastExactSourceCI": {
+    "source": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
+    "workflows": 7,
+    "conclusion": "PASS",
+    "receipt": "docs/xroga/evidence/command-010/ci-a0ff83a3-20261028/verification.json",
+    "laterSourceNotCovered": true
+  },
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_OUTSIDE_ASSIGNMENT",
+  "next": "Close remaining original17callers including10high-risk, prioritizing native GitHub/Expo/Supabase publishing and Composio individual reachable callers. Preserve original actor, exact account/target, current provenance, canonical approval, egress and accounting. Final exact-source CI and all12criteria remain mandatory.",
+  "containerOwnershipLabels": {
+    "scope": "EXISTING_LOCAL_CLEANUP_POLICY_COMPLIANCE_NO_NEW_RUNTIME_AUTHORITY",
+    "correction": "Attach the existing exact owner marker, validated task job UUID and disposable=true labels. Request data cannot choose cleanup ownership. No image, network, volume or remote cleanup is added.",
+    "verification": "The current46check batch passed45 checks, including the label assertion and five real outcome subcases. Running-cancellation observation failed its5s Docker ps precondition. The single failed case was rerun once alone on unchanged source and passed real running cancellation, exact labels and zero remaining owned resources. No all-green single46check batch is claimed.",
+    "observations": [
+      {
+        "name": "labelRed",
+        "id": "e86b9ee1-b551-4959-aa86-4eca1f9c2a83",
+        "status": "failed",
+        "exitCode": 1,
+        "dockerExpected": false,
+        "log": "docs/xroga/evidence/command-010/container-ownership-labelRed-20261028.log",
+        "rawArchive": "docs/xroga/evidence/command-010/container-ownership-labelRed-20261028.log.original.gz",
+        "originalSha256": "03ce427ca2d547954235ab5961329f8983c37e63a5f6040a6cf2efe9937ad84e",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 568239
+        }
+      },
+      {
+        "name": "labelBatch",
+        "id": "ca2e98f6-87af-4401-b724-99350883824b",
+        "status": "failed",
+        "exitCode": 1,
+        "dockerExpected": true,
+        "log": "docs/xroga/evidence/command-010/container-ownership-labelBatch-20261028.log",
+        "rawArchive": "docs/xroga/evidence/command-010/container-ownership-labelBatch-20261028.log.original.gz",
+        "originalSha256": "75d0c2a20529fbecba5caff278be13ee3acde7280d3297f2429eac6328e98b84",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 694866
+        }
+      },
+      {
+        "name": "runningCancellationRecheck",
+        "id": "71def0df-9e29-43b7-98c9-daab7327869b",
+        "status": "passed",
+        "exitCode": 0,
+        "dockerExpected": true,
+        "log": "docs/xroga/evidence/command-010/container-ownership-runningCancellationRecheck-20261028.log",
+        "originalSha256": "9f31b3f53dc82ef506bed06dfc0eb1b31a4ca6a1841d2996d1cc60d04fab5b08",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 572124
+        }
+      }
+    ],
+    "finalResources": "Both synthetic runs verify exact own container removal. Cached protected image retained. No task image, network or volume created or deleted."
+  }
+}

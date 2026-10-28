@@ -25,6 +25,27 @@ const check = (over: Partial<QaCheck> & { id: string }): QaCheck => ({ title: ov
 const plan = (...checks: QaCheck[]): QaPlan => ({ version: 1, checks, notChecked: [] });
 const pass = (id: string) => ({ id, status: 'passed', executed: true, durationMs: 5 });
 
+it('isolated QA delivery cannot redirect the signed private plan', async () => {
+  let redirect: RequestInit['redirect'];
+  const client = new RemoteQaClient({ hostUrl: 'https://qa.example', secret: SECRET, fetch: async (_url, init) => {
+    redirect = init?.redirect;
+    return Response.redirect('https://attacker.example', 307);
+  } });
+  await assert.rejects(client.run({ baseUrl: PREVIEW, plan: plan(check({ id: 'a' })), environment: { database: false } }));
+  assert.equal(redirect, 'manual');
+});
+
+it('isolated QA answers are bounded before JSON parsing', async () => {
+  const client = new RemoteQaClient({ hostUrl: 'https://qa.example', secret: SECRET, fetch: async () => new Response(' '.repeat(17 * 1024 * 1024) + JSON.stringify({ checks: [pass('a')] })) });
+  await assert.rejects(client.run({ baseUrl: PREVIEW, plan: plan(check({ id: 'a' })), environment: { database: false } }));
+});
+
+it('isolated QA cannot record success after cancellation', async () => {
+  const abort = new AbortController();
+  const client = new RemoteQaClient({ hostUrl: 'https://qa.example', secret: SECRET, fetch: async () => { abort.abort(); return Response.json({ checks: [pass('a')] }); } });
+  await assert.rejects(client.run({ baseUrl: PREVIEW, plan: plan(check({ id: 'a' })), environment: { database: false }, signal: abort.signal }));
+});
+
 describe('sealing what the isolated host reports', () => {
   const base = { baseUrl: PREVIEW };
 

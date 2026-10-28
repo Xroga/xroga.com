@@ -7,21 +7,41 @@ import { root } from '../ci/toolchain.mjs';
 import { join } from 'node:path';
 
 test('canonical API build preserves compiled output and requires the pinned Git compatibility gate',()=>{
-  const docker=readFileSync(join(root,'Dockerfile.api'),'utf8'),fly=readFileSync(join(root,'fly.api.toml'),'utf8');
+  const docker=readFileSync(join(root,'Dockerfile.api'),'utf8');
   const backend=JSON.parse(readFileSync(join(root,'backend/package.json'),'utf8'));
-  assert.doesNotThrow(()=>validateApiBuildContract(docker,fly,backend));
+  assert.doesNotThrow(()=>validateApiBuildContract(docker,backend));
   for(const build of ['tsc','node scripts/cline-git-compat.mjs --check || tsc','echo done']){
-    assert.throws(()=>validateApiBuildContract(docker,fly,{...backend,scripts:{...backend.scripts,build}}),/Unsupported/);
+    assert.throws(()=>validateApiBuildContract(docker,{...backend,scripts:{...backend.scripts,build}}),/Unsupported/);
   }
-  assert.throws(()=>validateApiBuildContract(docker,fly,{...backend,scripts:{...backend.scripts,postinstall:'echo done'}}),/Unsupported/);
-  assert.throws(()=>validateApiBuildContract(docker.replace('RUN node scripts/cline-git-compat.mjs --apply',''),fly,backend),/Unsupported/);
-  assert.throws(()=>validateApiBuildContract(docker.replace('RUN node scripts/security-dependency-patches.mjs --apply',''),fly,backend),/Unsupported/);
-  assert.throws(()=>validateApiBuildContract(docker,fly,{...backend,scripts:{...backend.scripts,build:'node scripts/cline-git-compat.mjs --check && tsc'}}),/Unsupported/);
-  assert.throws(()=>validateApiBuildContract(docker.replace('test -f dist/index.js','true'),fly,backend),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker,{...backend,scripts:{...backend.scripts,postinstall:'echo done'}}),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker.replace('RUN node scripts/cline-git-compat.mjs --apply',''),backend),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker.replace('RUN node scripts/security-dependency-patches.mjs --apply',''),backend),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker,{...backend,scripts:{...backend.scripts,build:'node scripts/cline-git-compat.mjs --check && tsc'}}),/Unsupported/);
+  assert.throws(()=>validateApiBuildContract(docker.replace('test -f dist/index.js','true'),backend),/Unsupported/);
 });
 
 const baseline = buildRuntimeInventory();
 const fixture = () => structuredClone(baseline);
+
+test('accepted Google migration metadata is canonical and no active service depends on Fly',()=>{
+  const api=baseline.dependencies.find(row=>row.dependency_id==='api');
+  assert.equal(api.hostnames[0],'api.xroga.com');assert.match(api.provider,/Google Cloud Run/);
+  assert.ok(baseline.dependencies.some(row=>row.dependency_id==='google-execution'&&row.state==='ACTIVE'));
+  assert.ok(baseline.dependencies.some(row=>row.dependency_id==='google-delivery'&&row.state==='ACTIVE'));
+  assert.ok(baseline.dependencies.filter(row=>row.state==='ACTIVE').every(row=>!row.hostnames.some(host=>/fly\.dev|machines\.dev/.test(host))&&!/Fly\.io|Fly Machines/.test(row.provider)));
+});
+
+test('old Fly liveness cannot admit Fly as the current canonical production API',()=>{
+  const old=fixture(),api=old.dependencies.find(row=>row.dependency_id==='api');
+  api.provider='Fly.io';api.hostnames=['xroga-api.fly.dev'];api.evidence_ids=['API-HEALTH-20261013'];
+  assert.throws(()=>validateRuntimeInventory(old),/canonical|Fly/);
+});
+
+test('an active Fly worker cannot be admitted by reusing dated successful evidence',()=>{
+  const value=fixture(),worker=value.dependencies.find(row=>row.dependency_id==='google-execution');
+  worker.provider='Fly Machines';worker.hostnames=['api.machines.dev'];
+  assert.throws(()=>validateRuntimeInventory(value),/Active Fly runtime/);
+});
 
 test('Google dynamic controls have exact reviewed bindings and new expressions remain blocked',()=>{
   const image=baseline.dynamic_bindings.find(row=>row.path==='backend/src/synthesis/projectRuntime/googleFactory.ts');

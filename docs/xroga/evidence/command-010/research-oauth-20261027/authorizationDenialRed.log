@@ -1,0 +1,29 @@
+TAP version 13
+# [supabaseAuth] refresh failed
+# Subtest: Supabase refresh authorization denial stays terminal while ordinary provider unavailability retains recovery semantics
+not ok 1 - Supabase refresh authorization denial stays terminal while ordinary provider unavailability retains recovery semantics
+  ---
+  duration_ms: 179.2461
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\integrations\\supabaseTransport.security.test.ts:1:5619'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'SUPABASE_TRANSPORT_DENIED'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\integrations\supabaseTransport.security.test.ts:70:31)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1181.5663

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "subsequentSourceContinuation": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+  "scope": "PREPARATORY_REPOSITORY_CONTEXT_AND_MEMO_CALL_SITE_NOT_COMPLETE_EGRESS_ACCEPTANCE",
+  "startingSource": "9379a2f105bb59b787f164836de563655657bc6d",
+  "authenticatedStartingCi": {
+    "run": 39954786890,
+    "branchSource": "9379a2f105bb59b787f164836de563655657bc6d",
+    "integratedSource": "bef80900004e13ca3c2043f2edb1eddcaf004e40",
+    "parents": ["fb95f76bafc1b544b6655d435cddede260d9cd99", "9379a2f105bb59b787f164836de563655657bc6d"],
+    "conclusions": {"unit": "success", "integrated-candidate": "success"},
+    "baselineRepetitions": 4,
+    "stagesPerRepetition": 21,
+    "sourceTreeMutated": false,
+    "reuse": "These downloaded authentic receipts certify the starting source, never the new changes. No duplicate workflow was launched."
+  },
+  "canonicalMemo": {
+    "path": "backend/src/ai/repoSummarize.ts",
+    "productionCaller": "backend/src/ai/pipeline.ts",
+    "scope": "Required existing TenantModelScope, with matching actual caller and scope owner before the optional memo catch. Existing canonical reservation, price version and settlement preserved, purpose complexity, maximum output 700 tokens.",
+    "account": "Existing platform Zhipu account, unchanged. Zhipu BYOK is not in the canonical admitted credential-provider list. The test does not invent such an account or claim its custody is verified. Unselected revoked/rotated user rows cannot retarget the platform request. Supported OpenRouter BYOK rotation/revocation remains covered at the actual shared call sites.",
+    "securityFailure": "Model policy and stale issued-attempt denials propagate instead of being converted into an optional null memo. Ordinary provider/accounting availability failure can still skip the optional memo. Raw provider error bodies no longer reach the memo log.",
+    "test": "backend/src/ai/repoSummarize.security.test.ts",
+    "tested": ["permitted owner and exact usage settlement", "complexity purpose and 700-token ceiling", "foreign actor/scope/account/project", "repository changed before call or during reservation", "stale worker generation", "changed real SDK wire body rejected before provider fetch", "caller input/account mutation during reservation cannot replace captured payload", "wrong reservation receipt", "safe optional provider failure"]
+  },
+  "upstreamProjectData": {
+    "paths": ["backend/src/ai/pipeline.ts", "backend/src/ai/projectMemory.ts", "backend/src/ai/sessionMemory.ts", "backend/src/services/integrations/githubDeploy.ts"],
+    "demonstratedGap": "Legacy local memory and session history use per-user _local/_workspace namespaces. Those namespaces contain no database project identity and cannot establish that old cached context belongs to the selected project.",
+    "correction": "Use the existing stores with an admitted-project/repository namespace. No new table, cache, identity issuer or accounting system. Check current projects.id/user_id/github_repo_name before server history or hydration, and carry that expected repository through the existing model scope and actual SoftwareAgent/build calls for final dispatch revalidation. Preserve owner/repository/branch validation and defensive clones in the existing receivers.",
+    "legacyRecovery": "Never guess a project's identity from legacy local cache. Keep ambiguous legacy data intact. An update/resume requesting unavailable old context fails with an actionable reload message. An explicit new build can start without inheriting legacy files. Explicit client-provided local input remains untrusted user data. GitHub-backed projects can reload their selected authorized remote source when the new namespace misses.",
+    "githubProof": "Actual hydration uses canonical GitHub credential consumption and the provider's repository/ref/tree response before reusing an owner/project namespace with matching head and paths. Foreign selected repository fails before credential/provider dispatch. GitHub denial cannot fall through to cached or browser source.",
+    "test": "backend/src/ai/modelContext.security.test.ts",
+    "limitations": ["Controlled Supabase/GitHub protocol fixtures, not live RLS or GitHub verification", "Client-supplied text is untrusted input, not independently certified ownership", "Logical non-database workspaces retain the original owner-scoped contract", "No complete in-flight GitHub credential revocation or all generic model callers certification"]
+  },
+  "uploadReview": {
+    "callerIds": ["46ad38b463b0beb61ba5", "e2ad9aec1c5cd1e3ab27", "c7711580844b520345cf"],
+    "test": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+    "provedScope": "Actual exported legacy GitHub mirror writer and actual Storage SDK: original issued context, owner-prefixed paths, public/unknown/unavailable bucket refusal, exact retry path, closed production migration window and safe logging. Existing private-bucket admission is reused.",
+    "remaining": "Legacy writer has no found production importer, but exported/future reachability is not erased. This test does not certify encrypted writer payloads, every user-provider mirror producer, a bucket privacy change during upload, live Storage policies, or arbitrary uploads. Keep all three records open.",
+    "disposition": "PENDING_SOURCE_TRACE"
+  },
+  "previewReview": {
+    "callerIds": ["a0ba7209a0695a62227d", "7b7f1f842cfadda3dff0"],
+    "path": "backend/src/middleware/runtimePreviewGateway.ts",
+    "test": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+    "provedScope": "Actual shared resolver used by HTTP and both WebSocket branches, real SDK serialization against controlled DB protocols. Signed grant, persisted owner/project/session, lifetime, declared HTTP port and validated internal target. Forged subject/parent/session, revoked/expired/malformed grants and unsafe targets fail before a target connection.",
+    "remaining": "No actual HTTP/WebSocket target traffic is claimed. Payload/header classification and forwarding, stream lifetime/revocation and exact tenant runtime selection remain transport obligations. HTTP currently copies non-hop-by-hop incoming headers, so platform/app credential separation still needs actual caller/transport proof. Do not certify both sockets from the resolver test.",
+    "disposition": "PENDING_SOURCE_TRACE"
+  },
+  "counts": {"total":133,"reviewed":12,"pending":121,"highRiskReviewCandidates":67,"newCompleteCallerClosures":0},
+  "threeSdkFinalDispositions": "PENDING_SOURCE_TRACE",
+  "criteriaChanged": false,
+  "acceptedPhaseTwoEvidenceChanged": false,
+  "registryOnly": "FAIL_CLOSED_NO_ONLINE_RESTRICTED_INFRASTRUCTURE_CLAIM",
+  "phase3": "B1_P3_BLOCKED",
+  "phase4": "PREPARATORY_NOT_ACCEPTED",
+  "productionEffects": false,
+  "spend": 0
+}

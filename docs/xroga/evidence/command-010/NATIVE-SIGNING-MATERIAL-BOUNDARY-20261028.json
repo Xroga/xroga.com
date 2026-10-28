@@ -1,0 +1,455 @@
+{
+  "scope": "TWO_EXACT_ELECTRON_SIGNING_FETCH_CALLERS_ONLY_NOT_ACTIONS_RELEASE_PUBLISHING_OR_EAS_CREDENTIAL_TRANSFER",
+  "parent": "3b94979a0411db4137678d23332900d496e889a9",
+  "candidates": [
+    {
+      "id": "cf71505267ebcf357a5c",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "line": 86,
+      "entryPoint": "putRepoSecret",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b23fec131d71df2db720a448574f221bd20758ab72e4bdd6fdff6c6c7d2bff91",
+      "destination": "https://api.github.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "7cd9f7585381cfe94c57",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "line": 118,
+      "entryPoint": "putRepoSecret",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "30e52cbcfab737b2211d88366d687b1401d89f41f968c22e9f51d380ecca6800",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "resolvedCandidateIds": [
+    "cf71505267ebcf357a5c",
+    "7cd9f7585381cfe94c57"
+  ],
+  "trace": "index authenticated /api/publish mount -> sync-electron-secrets with original issued request actor -> exact owned projects repository -> canonical current github and finite apikey_electron_* source rows -> bounded manual official repository public-key GET -> libsodium sealed box -> existing managed Vault producer attestation with original actor, repository, nonce and canonical parameter digest -> existing durable BusinessAction confirmation -> explicit actual DesktopSigningSetup approval click -> exact native-operation confirmation route -> original WeakMap authority permit and current durable claim -> authenticated producer proof plus current project/source/connection/key -> egressPolicy USER_PRIVATE ciphertext wrapper and protected decision -> one canonical consume -> current durable approval plus source/connection/project/expiry recheck -> exact fixed GitHub PUT ->201/204 acknowledgement -> post-read checks -> original durable finish receipt.",
+  "defects": [
+    "Raw user ID could authorize signing credential reads and exports",
+    "No exact consequential-action confirmation before secret mutation",
+    "No original actor, owned repository or current source/connection lifetime through the write",
+    "Redirect and unbounded provider response exposure"
+  ],
+  "correction": "Use the existing canonical authority, egress and credential vault. One exact repository-key encrypted material write per existing durable approval. No plaintext in model, client DTO, errors, audit or provider body. A vault-authenticated producer proof prevents substituting arbitrary ciphertext even if an attacker recomputes a plain plan digest. Canonical digest remains stable through JSONB key reorder. No new orchestration, key, table, SQL, IAM, provider account or production resource.",
+  "sourceProvenance": "Finite CSC/Apple name-to-provider mapping is server-owned. Canonical owner row must exist and remain unchanged around the existing authenticated vault consumer. No storage-mirror absence fallback authorizes a transfer. Preparation reads only the exact owner repository public key. Only opaque sealed-box bytes reach the confirmed PUT. A GitHub source-read credential check is not used as write authority.",
+  "authority": "forceConfirmation is always true, CREDENTIAL_OR_PERMISSION_CHANGE, exact original owner/tenant, connected github repository, project, operation, destination, source/connection epoch and nonce. No boolean, raw user ID, serialized grant ID or fabricated context grants a write. Existing permission and claim SQL unchanged. Recheck current executing durable grant and expiry after consumption waits before PUT and result publication.",
+  "recovery": "Producer proof is persisted in the same existing durable plan and uses the existing vault with owner/repository/nonce/parameter AAD. Synthetic provider reinitialization with the same test KEK passes. Existing managed KMS implementation and accepted Google migration evidence are unchanged, not rerun. A coordinated API/frontend release and security-compatible recovery image are required before activation. No deployment performed.",
+  "functionality": "Preparation returns202 with display-only approvals and zero changed GitHub secrets. Actual UI requires a separate click for each exact material or uses canonical Cancel. Pipeline carries the original actor/signal and stops Actions dispatch while signing approval is pending. Unsigned operation when no material exists remains supported. No Actions, release-upload, store-publishing or upstream caller promotion is inferred.",
+  "receipts": [
+    {
+      "name": "raw-actor-red",
+      "id": "62f7f0cb-e205-4dac-8234-c17569f37510",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-signing-raw-actor-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-raw-actor-red-20261028.log.original.gz",
+      "originalSha256": "794549859e0226b58ccf8c9c79e0c911cf7368c5cb60a7f1138385bce629f46b",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 170978
+      }
+    },
+    {
+      "name": "route-fixture-correction",
+      "id": "9423aedf-7e86-4c4b-aa17-da4357c10101",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-signing-route-fixture-correction-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-route-fixture-correction-20261028.log.original.gz",
+      "originalSha256": "9557ac21d0b91a94f0f60b99fafbf389bb96366925a0baefb02806b3826cfc26",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1212225
+      }
+    },
+    {
+      "name": "invalid-plan-pre-dispatch-red",
+      "id": "4bb088b0-5816-4716-bdac-8178a8912aa8",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-signing-invalid-plan-pre-dispatch-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-invalid-plan-pre-dispatch-red-20261028.log.original.gz",
+      "originalSha256": "178c034fd60d78689f83c22d41565ff4011eb9879ae69b99eae01a80a899610e",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1201000
+      }
+    },
+    {
+      "name": "jsonb-order-red",
+      "id": "a834c8d9-be11-4bc4-ae8f-adfa4fc1daa1",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-signing-jsonb-order-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-jsonb-order-red-20261028.log.original.gz",
+      "originalSha256": "6605a990c45e17e06809f18b24bc6a423fe1061e59f9d480f2097840eed4bd0f",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1203751
+      }
+    },
+    {
+      "name": "late-grant-revocation-red",
+      "id": "06abf399-9dba-40a1-b47a-4b182726e64a",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-signing-late-grant-revocation-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-late-grant-revocation-red-20261028.log.original.gz",
+      "originalSha256": "c0b01f4c4801bb7d294d0fb47d446c9a180e538f5e02f9383a4afd73c2819f2f",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1202596
+      }
+    },
+    {
+      "name": "preceding-focused-green",
+      "id": "7fc5ff13-177f-4e07-a038-ed19c7df615d",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-signing-preceding-focused-green-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-preceding-focused-green-20261028.log.original.gz",
+      "originalSha256": "ca3e89b2b999d04a2b9e22881b0406d8a44a7308a4d41a32eac91ba2b39d51e4",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1319535
+      }
+    },
+    {
+      "name": "final-focused-green",
+      "id": "aa835052-2882-4fdd-a619-282e400006d5",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-signing-final-focused-green-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-final-focused-green-20261028.log.original.gz",
+      "originalSha256": "89369f5552d303119bc2da370dad6e8307fc1553df2c150497dfa5159200d0b4",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1319591
+      }
+    },
+    {
+      "name": "postgres-timestamp-red",
+      "id": "42025d3c-4742-49dc-8428-4eb07936c5d9",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-signing-postgres-timestamp-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-postgres-timestamp-red-20261028.log.original.gz",
+      "originalSha256": "84c9bf46c5d956e8f1a1968526f72f931be45d82396b9e731d34c565ff5b3b93",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1204196
+      }
+    },
+    {
+      "name": "full-metadata-red",
+      "id": "31f2006b-7890-4631-92cc-6bb49ee0ba01",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-signing-full-metadata-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-full-metadata-red-20261028.log.original.gz",
+      "originalSha256": "c778f25232cc174b81a8d24180a9129524d25ac4711dd73bd17be39cd44dff47",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1204710
+      }
+    },
+    {
+      "name": "timestamp-green",
+      "id": "c655021c-ad2e-4d61-9177-734c40ea375f",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-signing-timestamp-green-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-timestamp-green-20261028.log.original.gz",
+      "originalSha256": "fef91cd81166aef4c9b32edeb43ae25653c5f5ad50dddcfc07e03791b6c4801f",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1319974
+      }
+    },
+    {
+      "name": "final-lifetime-green",
+      "id": "0f21b75e-30c7-4e51-bcc4-b023c4cf3a87",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-signing-final-lifetime-green-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-signing-final-lifetime-green-20261028.log.original.gz",
+      "originalSha256": "38468ddb55368057ca0ba28f07ba638a9276c919743b1493bdecf4fc0af49d69",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1320427
+      }
+    }
+  ],
+  "verification": {
+    "tests": 70,
+    "pass": 70,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Actual Express routes, actual Supabase client and sodium crypto with synthetic HTTP/KEK fixtures; actual transpiled component handlers with controlled React/API. No live account, deployed UI, real Google KMS invocation or customer credential transfer claimed.",
+    "positive": [
+      "owned exact sealed transfer and durable finish",
+      "actual ciphertext decrypts only to fixture repository key",
+      "canonical claim concurrency one winner",
+      "JSONB key order survives",
+      "same KEK producer restart survives",
+      "ordinary provider503 is truthful and subsequent separately prepared approval works",
+      "Whop and shared authority regressions retained",
+      "PostgREST timestamptz Z/+00:00 equivalence preserves original deadline"
+    ],
+    "negative": [
+      "raw/cloned/foreign actor",
+      "foreign repository",
+      "wrong operation/target",
+      "ciphertext and producer-proof substitution",
+      "extra body fields",
+      "changed public key",
+      "source revocation or same-value revision replacement",
+      "audit failure",
+      "cancel/expiry including after claim",
+      "provider200/403/503 and redirects",
+      "replay after denied/consumed/uncertain result",
+      "UI never auto-confirms or falsely reports preparation as a completed sync",
+      "source and connection metadata replacement without a revision change"
+    ]
+  },
+  "limitations": [
+    "Raw actor reproduction against parent3b94979a is committed-source evidence. Intermediate red receipts are local diagnostic executions, not independent exact-source CI.",
+    "The first unconfigured-store unit harness satisfied rejection for the wrong reason. It was corrected before the actual raw-actor red receipt.",
+    "The initial route fixture wrongly asserted a mutated detached row snapshot. Corrected without changing production behavior.",
+    "The prior direct raw-ID success test is replaced by original-owner denial plus stronger actual canonical route sealed-box execution. Historical evidence remains preserved.",
+    "16KiB source-material admission limit preserves the existing bounded plan. No truncation or plaintext fallback.",
+    "Both callers remain subject to whole-source CI, original frozen acceptance and release gates."
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "sha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678"
+    },
+    {
+      "path": "backend/src/routes/electronSigning.security.test.ts",
+      "sha256": "cf9c63c5defd08c4ca0cfe5b1ecd48a1cb9c6fbecbad31a1974c60590c4ccafb"
+    },
+    {
+      "path": "backend/src/services/publish/electronSigningAdmission.security.test.ts",
+      "sha256": "afd0dde840363e8f85d8d6642b68f6a18a3047a859a12a2143a62e4d23594e46"
+    },
+    {
+      "path": "backend/src/services/publish/electronSecrets.authority.test.ts",
+      "sha256": "2044a7285ebcefb18934150bd1c40d567811a1065c3bf8b7360034f785fadeef"
+    },
+    {
+      "path": "frontend/src/lib/signingAdmission.test.ts",
+      "sha256": "5d18258d295345193e32bd3a4ce37bc2f2d313688f1aedb9b4854e3bf297655e"
+    },
+    {
+      "path": "frontend/src/lib/signingUi.security.test.ts",
+      "sha256": "31c4621e769d3ed2e0002b4814651eed01e64c66bfcf551da216a2fd877f31b9"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480"
+    },
+    {
+      "path": "backend/src/routes/publish.ts",
+      "sha256": "4b541f17d718b440edc259461075fcb7c233315a595896862650081f9bf8552c"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
+    },
+    {
+      "path": "backend/src/index.ts",
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
+    },
+    {
+      "path": "backend/src/middleware/auth.ts",
+      "sha256": "8bb257cd67ad643d9ccc59eae5e767e0e03bbda1ca16ee37fcd304d63d04aca8"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+    },
+    {
+      "path": "backend/src/security/authority/enforce.ts",
+      "sha256": "2657da5c407ef70bf01ad7ac49c8f4b6c7e56a2a87d1de1a5eea27bde9eec0ff"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
+    },
+    {
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "sha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "sha256": "3d846cec4c28052cb36f273516ed9173ca9796ead6c2c313b36a4b47ec05271f"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVault.ts",
+      "sha256": "f8483326c09ee45518f8486c0d73b7a4d37d59f33fd9ba6f80c5c2480654d062"
+    },
+    {
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "sha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50"
+    },
+    {
+      "path": "frontend/src/components/publish/DesktopPublishPanel.tsx",
+      "sha256": "e2d3d0c7279efff8bbbba1de95e436982b39e389d86efd660b605b36760596f2"
+    },
+    {
+      "path": "frontend/src/lib/signingAdmission.ts",
+      "sha256": "b9a1eabd38f486a5f2a0be1757fbfea7b91b9ce07cd03ef12032644158b858da"
+    }
+  ],
+  "productionChanged": false,
+  "spending": 0,
+  "liveProviderRequests": 0,
+  "typeAndLintChecks": [
+    {
+      "name": "frontendTypes",
+      "job": "60a9bcca-53e0-4b8e-b422-521b409a8c53",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322092
+      }
+    },
+    {
+      "name": "frontendLint",
+      "job": "a6267e92-5080-4dca-aeaa-b96f21ca3048",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "backendTypes",
+      "job": "50235608-7721-46ea-add9-cc70df5aa883",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322052
+      }
+    }
+  ],
+  "beforeTimestampAndMetadataSourceBindings": [
+    {
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "sha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678"
+    },
+    {
+      "path": "backend/src/routes/electronSigning.security.test.ts",
+      "sha256": "cf9c63c5defd08c4ca0cfe5b1ecd48a1cb9c6fbecbad31a1974c60590c4ccafb"
+    },
+    {
+      "path": "backend/src/services/publish/electronSigningAdmission.security.test.ts",
+      "sha256": "afd0dde840363e8f85d8d6642b68f6a18a3047a859a12a2143a62e4d23594e46"
+    },
+    {
+      "path": "backend/src/services/publish/electronSecrets.authority.test.ts",
+      "sha256": "2044a7285ebcefb18934150bd1c40d567811a1065c3bf8b7360034f785fadeef"
+    },
+    {
+      "path": "frontend/src/lib/signingAdmission.test.ts",
+      "sha256": "5d18258d295345193e32bd3a4ce37bc2f2d313688f1aedb9b4854e3bf297655e"
+    },
+    {
+      "path": "frontend/src/lib/signingUi.security.test.ts",
+      "sha256": "31c4621e769d3ed2e0002b4814651eed01e64c66bfcf551da216a2fd877f31b9"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480"
+    },
+    {
+      "path": "backend/src/routes/publish.ts",
+      "sha256": "4b541f17d718b440edc259461075fcb7c233315a595896862650081f9bf8552c"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
+    },
+    {
+      "path": "backend/src/index.ts",
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
+    },
+    {
+      "path": "backend/src/middleware/auth.ts",
+      "sha256": "8bb257cd67ad643d9ccc59eae5e767e0e03bbda1ca16ee37fcd304d63d04aca8"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+    },
+    {
+      "path": "backend/src/security/authority/enforce.ts",
+      "sha256": "2657da5c407ef70bf01ad7ac49c8f4b6c7e56a2a87d1de1a5eea27bde9eec0ff"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
+    },
+    {
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "sha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "sha256": "3d846cec4c28052cb36f273516ed9173ca9796ead6c2c313b36a4b47ec05271f"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVault.ts",
+      "sha256": "f8483326c09ee45518f8486c0d73b7a4d37d59f33fd9ba6f80c5c2480654d062"
+    },
+    {
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "sha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50"
+    },
+    {
+      "path": "frontend/src/components/publish/DesktopPublishPanel.tsx",
+      "sha256": "e2d3d0c7279efff8bbbba1de95e436982b39e389d86efd660b605b36760596f2"
+    },
+    {
+      "path": "frontend/src/lib/signingAdmission.ts",
+      "sha256": "b9a1eabd38f486a5f2a0be1757fbfea7b91b9ce07cd03ef12032644158b858da"
+    }
+  ],
+  "timestampAndMetadataCorrection": {
+    "cause": "PostgREST can serialize the same timestamptz instant with+00:00 while the plan retains Z. Compare parsed instants and retain the original expiry. Also bind the entire canonical credential metadata object, not only its vault_revision, around audit and consumption waits.",
+    "preCorrectionSource": {
+      "archive": "docs/xroga/evidence/command-010/native-signing-before-timestamp-20261028.source.txt.original.gz",
+      "originalSha256": "8a751633e1a5876f700664d06383130305036498453c0602600cf8c63afd7d2a",
+      "normalizedSha256": "ec3b0afbb0de46bd8d1082f87ac42600dfe7da671549e180db2cdcb479c1cd48"
+    },
+    "semantics": "No expiry extension, grant broadening, metadata downgrade or new fallback. JSONB object-key ordering remains canonical. Source and connection metadata changes now invalidate admission before PUT."
+  }
+}

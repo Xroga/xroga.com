@@ -1,0 +1,72 @@
+TAP version 13
+# [github/connect] save failed: GitHub connection changed during authorization. Authorize again.
+# Subtest: GitHub routes persist and consume owner-bound state, reject replay and refuse late callback saves
+ok 1 - GitHub routes persist and consume owner-bound state, reject replay and refuse late callback saves
+  ---
+  duration_ms: 697.5851
+  type: 'test'
+  ...
+# Subtest: GitHub settings require exact active owner receipt and never rewrite a token mirror
+ok 2 - GitHub settings require exact active owner receipt and never rewrite a token mirror
+  ---
+  duration_ms: 693.2246
+  type: 'test'
+  ...
+# Subtest: actual GitHub OAuth token, identity and account-read routes reject real redirects before save or successful listing
+    # Subtest: token
+    ok 1 - token
+      ---
+      duration_ms: 274.2874
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 2 - identity
+      ---
+      duration_ms: 100.6825
+      type: 'test'
+      ...
+    # Subtest: repos
+    ok 3 - repos
+      ---
+      duration_ms: 70.0996
+      type: 'test'
+      ...
+    # Subtest: branches
+    ok 4 - branches
+      ---
+      duration_ms: 51.6473
+      type: 'test'
+      ...
+    1..4
+ok 3 - actual GitHub OAuth token, identity and account-read routes reject real redirects before save or successful listing
+  ---
+  duration_ms: 526.7102
+  type: 'test'
+  ...
+# Subtest: GitHub account read rejects cloned actor before credential lookup
+ok 4 - GitHub account read rejects cloned actor before credential lookup
+  ---
+  duration_ms: 32.9919
+  type: 'test'
+  ...
+# Subtest: GitHub account reads refuse in-flight rotation, revocation, unsafe repo paths and oversized receipts
+ok 5 - GitHub account reads refuse in-flight rotation, revocation, unsafe repo paths and oversized receipts
+  ---
+  duration_ms: 191.7621
+  type: 'test'
+  ...
+# Subtest: authorized GitHub account reads and OAuth exchange keep their real contracts
+ok 6 - authorized GitHub account reads and OAuth exchange keep their real contracts
+  ---
+  duration_ms: 155.7649
+  type: 'test'
+  ...
+1..6
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2396.981

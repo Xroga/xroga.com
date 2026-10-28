@@ -1,0 +1,13 @@
+{"scope":"AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION","total":136,"reviewed":128,"pending":8,"unresolvedHighRiskBypasses":5}
+file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/scripts/security/audit-egress-callers.mjs:120
+  if(args.includes('--require-complete')&&result.counts.pending)throw Error('Command010 incomplete: pending source traces and high-risk bypasses remain');
+                                                                      ^
+
+Error: Command010 incomplete: pending source traces and high-risk bypasses remain
+    at main (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/scripts/security/audit-egress-callers.mjs:120:71)
+    at file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/scripts/security/audit-egress-callers.mjs:123:79
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.21.1
