@@ -19,7 +19,8 @@
     "docs/xroga/current-state.md",
     "docs/xroga/research/source-manifest.json",
     "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
-    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json"
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/dependency-inventory.json"
   ],
   "decisions": {
     "keep": [
