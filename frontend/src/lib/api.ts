@@ -4284,7 +4284,7 @@ export const api = {
         ),
 
     syncPlayCredentials:
-      () =>
+      (body?: {projectId?: string; applicationIdentifier?: string}) =>
         apiFetch<{
           ok:
             boolean;
@@ -4300,7 +4300,7 @@ export const api = {
 
             body:
               JSON.stringify(
-                {},
+                body || {},
               ),
           },
         ),
@@ -4308,6 +4308,7 @@ export const api = {
     syncAppleCredentials:
       (
         body?: {
+          projectId?: string;
           bundleIdentifier?:
             string;
         },

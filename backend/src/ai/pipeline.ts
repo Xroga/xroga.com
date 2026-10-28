@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import {AuthorityError} from '../security/authority/enforce.js';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
 import {withTenantModelReservation,requireModelProjectBinding,modelContextNamespace,type TenantModelScope,type BoundModelDispatch} from './tenantModelDispatch.js';
@@ -4462,6 +4463,8 @@ publicationReason:
       if (google) {
         const synced = await syncGooglePlayCredentialsToExpo({
           userId: opts.userId,
+          tenantContext,
+          signal:opts.signal,
           applicationIdentifier: pkgId,
           projectName,
         });
@@ -4469,14 +4472,17 @@ publicationReason:
           agent: 'deploy',
           status: synced.ok ? 'eas_creds' : 'eas_creds_skip',
           message: synced.message,
-          swarmStatusLabel: synced.ok ? 'Play creds synced' : 'Play creds',
+          swarmStatusLabel: synced.ok ? 'Expo Play configuration verified' : 'Play configuration required',
           swarmActivity: synced.message.slice(0, 80),
           swarmTodos: todos('push'),
         });
+        if(!synced.ok)throw new AuthorityError('EXPO_STORE_CONFIGURATION_REQUIRED');
       }
       if (appleAsc) {
         const syncedApple = await syncAppleAscApiKeyToExpo({
           userId: opts.userId,
+          tenantContext,
+          signal:opts.signal,
           bundleIdentifier: pkgId,
           projectName,
         });
@@ -4484,15 +4490,16 @@ publicationReason:
           agent: 'deploy',
           status: syncedApple.ok ? 'eas_apple_creds' : 'eas_apple_creds_skip',
           message: syncedApple.message,
-          swarmStatusLabel: syncedApple.ok ? 'Apple ASC synced' : 'Apple ASC',
+          swarmStatusLabel: syncedApple.ok ? 'Expo Apple configuration verified' : 'Apple configuration required',
           swarmActivity: syncedApple.message.slice(0, 80),
           swarmTodos: todos('push'),
         });
+        if(!syncedApple.ok)throw new AuthorityError('EXPO_STORE_CONFIGURATION_REQUIRED');
       }
 
       const wantAndroidSubmit = Boolean(google);
       const wantIosSubmit = Boolean(appleAsc);
-      const priorBuilds = await listEasBuilds({ userId: opts.userId, limit: 10 }).catch(() => []);
+      const priorBuilds = await listEasBuilds({ userId: opts.userId,tenantContext,signal:opts.signal, limit: 10 });
       const ignoreBuildIds = priorBuilds.map((b) => b.id);
       const startedAfterMs = Date.now() - 15_000;
 
@@ -4530,6 +4537,8 @@ publicationReason:
           const waited = await waitForEasBuildArtifact({
             userId: opts.userId,
             projectId: eas.projectId,
+            tenantContext,
+            signal:opts.signal,
             platform: 'android',
             timeoutMs: 8 * 60 * 1000,
             ignoreBuildIds,
@@ -4604,6 +4613,8 @@ publicationReason:
             const waitedIos = await waitForEasBuildArtifact({
               userId: opts.userId,
               projectId: easIos.projectId,
+              tenantContext,
+              signal:opts.signal,
               platform: 'ios',
               timeoutMs: 6 * 60 * 1000,
               ignoreBuildIds,

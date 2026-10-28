@@ -121,9 +121,9 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 128,
-    "pending": 8,
-    "unresolvedHighRiskReviewCandidates": 5
+    "reviewed": 129,
+    "pending": 7,
+    "unresolvedHighRiskReviewCandidates": 4
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -280,7 +280,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+      "sha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -407,7 +407,139 @@
         },
         "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
       },
-      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+      "beforeExpoReadiness": {
+        "path": "backend/src/ai/pipeline.ts",
+        "sha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+        "previousGenericSdkBinding": {
+          "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+          "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+        },
+        "beforeCurrentMetadataReconciliation": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+          "previousGenericSdkBinding": {
+            "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+            "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+          }
+        },
+        "beforeGithubActorContinuation": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "previousGenericSdkBinding": {
+            "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+            "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+          },
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "previousGenericSdkBinding": {
+              "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+              "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+            }
+          }
+        },
+        "beforeNativePublication": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+          "previousGenericSdkBinding": {
+            "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+            "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+          },
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "previousGenericSdkBinding": {
+              "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+              "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+            }
+          },
+          "beforeGithubActorContinuation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "previousGenericSdkBinding": {
+              "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+              "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+            },
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "previousGenericSdkBinding": {
+                "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+                "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+              }
+            }
+          }
+        },
+        "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+        "beforeCwsApproval": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+          "previousGenericSdkBinding": {
+            "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+            "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+          },
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "previousGenericSdkBinding": {
+              "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+              "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+            }
+          },
+          "beforeGithubActorContinuation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "previousGenericSdkBinding": {
+              "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+              "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+            },
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "previousGenericSdkBinding": {
+                "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+                "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+              }
+            }
+          },
+          "beforeNativePublication": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+            "previousGenericSdkBinding": {
+              "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+              "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+            },
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "previousGenericSdkBinding": {
+                "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+                "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+              }
+            },
+            "beforeGithubActorContinuation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+              "previousGenericSdkBinding": {
+                "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+                "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+              },
+              "beforeCurrentMetadataReconciliation": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                "previousGenericSdkBinding": {
+                  "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+                  "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+                }
+              }
+            }
+          },
+          "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+        },
+        "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+      },
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -700,5 +832,6 @@
   "auraPublicGuestContinuation": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json",
   "voiceManualCallerContinuation": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
   "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
-  "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+  "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+  "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
 }

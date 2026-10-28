@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+  "source_sha": "a8c663defebf0a73a9895fffc5a6641b195042c9",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -884,7 +884,8 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/lib/googleServiceToken.ts",
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/expoCredentialMaterial.ts"
       ],
       "hostnames": [
         "accounts.google.com"
@@ -909,7 +910,8 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/lib/googleServiceToken.ts",
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/expoCredentialMaterial.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -1353,7 +1355,8 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/services/publish/easCredentials.ts",
-        "backend/src/services/publish/easPublish.ts"
+        "backend/src/services/publish/easPublish.ts",
+        "backend/src/services/publish/expoStoreReadiness.ts"
       ],
       "hostnames": [
         "api.expo.dev"
@@ -1375,7 +1378,8 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/services/publish/easCredentials.ts",
-        "backend/src/services/publish/easPublish.ts"
+        "backend/src/services/publish/easPublish.ts",
+        "backend/src/services/publish/expoStoreReadiness.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -3675,6 +3679,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/services/publish/easCredentials.ts",
+        "backend/src/services/publish/expoStoreReadiness.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
       ],
@@ -3698,6 +3703,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/services/publish/easCredentials.ts",
+        "backend/src/services/publish/expoStoreReadiness.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
       ],
@@ -4814,7 +4820,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/expoCredentialMaterial.ts"
       ],
       "hostnames": [
         "oauth2.googleapis.com"
@@ -4838,7 +4845,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/expoCredentialMaterial.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6285,7 +6293,8 @@
         "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/expoCredentialMaterial.ts"
       ],
       "hostnames": [
         "www.googleapis.com"
@@ -6318,7 +6327,8 @@
         "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/expoCredentialMaterial.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -15012,7 +15022,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b"
+      "sha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16064,7 +16074,7 @@
     },
     {
       "path": "backend/src/routes/publish.ts",
-      "sha256": "febe6da7bed4465f534f03fcf1a2fb2cc42f4ff872aaad11958b5be58627e704"
+      "sha256": "c432413be66981b65436cc7d1d1158a47beb4a5ddcd3e8b4fb23a32825c3d61a"
     },
     {
       "path": "backend/src/routes/referrals.ts",
@@ -16708,7 +16718,7 @@
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "sha256": "7193f619dc2a493430f3c08848a585899f9c3ffed2636759abc8c0418d65b56e"
+      "sha256": "e03f37f68b1dad629639fbc0f98b93bc0dfe32371bd073ba3c82e81e606581b9"
     },
     {
       "path": "backend/src/services/publish/easPublish.ts",
@@ -16717,6 +16727,18 @@
     {
       "path": "backend/src/services/publish/electronSecrets.ts",
       "sha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678"
+    },
+    {
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "sha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910"
+    },
+    {
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "sha256": "a7391bac9f098dd30e984762a9ea4c7d7d5379114c663ec219f6be99695cd69a"
+    },
+    {
+      "path": "backend/src/services/publish/expoStoreReadiness.ts",
+      "sha256": "f7dc2d1500527b629be96864f9a87a7cf04973e6dab3417f09b9d58512ad361e"
     },
     {
       "path": "backend/src/services/publish/nativeArtifact.ts",
@@ -19564,7 +19586,7 @@
     },
     {
       "path": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "sha256": "f2b65d65881d5670e23eec229a505c6622723da802f95f246783c14576264df5"
+      "sha256": "6afb29185d4ed60d2242f4aba5148c9ea181cc1d40c1fc4c0a3edb729b2dad68"
     },
     {
       "path": "frontend/src/components/publish/PublishPrimitives.tsx",
@@ -20288,7 +20310,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
+      "sha256": "dfd6cb0926e5c496d7c0561a9cb5ddeeb1b8ca92542a21cf12d3e14183dd0c85"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22213,7 +22235,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4011,
+      "line": 4012,
       "credentialsInUrl": false
     },
     {
@@ -24404,14 +24426,14 @@
       "hostname": "api.expo.dev",
       "protocol": "https:",
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 11,
+      "line": 9,
       "credentialsInUrl": false
     },
     {
       "hostname": "expo.dev",
       "protocol": "https:",
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 602,
+      "line": 82,
       "credentialsInUrl": false
     },
     {
@@ -24440,6 +24462,62 @@
       "protocol": "https:",
       "path": "backend/src/services/publish/electronSecrets.ts",
       "line": 94,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 25,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 25,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "oauth2.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 26,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 26,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 27,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.expo.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoStoreReadiness.ts",
+      "line": 16,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "expo.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoStoreReadiness.ts",
+      "line": 24,
       "credentialsInUrl": false
     },
     {
@@ -28716,56 +28794,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 532,
+      "line": 533,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 562,
+      "line": 563,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1112,
+      "line": 1113,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1482,
+      "line": 1483,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2225,
+      "line": 2226,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3781,
+      "line": 3782,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3961,
+      "line": 3962,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4915,
+      "line": 4926,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31061,28 +31139,63 @@
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 68,
+      "line": 84,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 604,
+      "line": 120,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 633,
+      "line": 123,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 636,
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "line": 9,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "line": 36,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "line": 87,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 19,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/expoCredentialMaterial.ts",
+      "line": 40,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/expoStoreReadiness.ts",
+      "line": 36,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

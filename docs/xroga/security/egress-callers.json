@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "2d058b38c61f329dc031d4a0e3e44287d01beffb09ee71040dce14436d3a0bee",
+  "sourceTreeDigest": "1bcbf9d9fc9f2a005a3327aed68707a34274bfb04a414465a53474a4db08f5ca",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2431,18 +2431,29 @@
     {
       "id": "42cc7885da84d7295699",
       "file": "backend/src/services/publish/easCredentials.ts",
-      "line": 27,
+      "line": 22,
       "entryPoint": "expoFetch",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "9ab83b021b34a947514db0dd7ddc4427a1230e98aacc80265e3228ac56c50169",
+      "callSha256": "5ebb9f43b28f7211bf45930ecba615b1298c4f347a87cf62d4bee79b7add3054",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_FIXED_EXPO_READS_ORIGINAL_ACTOR_EXACT_OWNED_PROJECT_AND_CHILD_NO_RAW_KEY_EGRESS",
+      "tenantAuthority": "ORIGINAL_CONTEXT_OWNER_FULL_CANONICAL_SOURCE_EPOCH_EXACT_PROVIDER_ACCOUNT_PROJECT_AND_CHILD",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+          "marker": "EXACT_EXPO_STORE_READINESS_AND_BUILD_READS_NOT_WORKFLOW_AUTHORIZATION_OR_PHASE4_ACCEPTANCE",
+          "sha256": "751e235ba0038349d93aae9817a269d12929e882154869d234cc457555243856"
+        },
+        {
+          "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
+          "marker": "actual Expo store verification preserves configured operation and denies raw secret export",
+          "sha256": "d09ec8eaa08c004a64013cf2c0dfb2cc2516b5f58db900d1a95d6f608e007f52"
+        }
+      ]
     },
     {
       "id": "602637659fcacb16c1ef",
@@ -3962,6 +3973,11 @@
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
           "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-API-CLIENT-CONTINUATION-20261028.json",
+          "marker": "UNCHANGED_FIRST_PARTY_API_TRANSPORT_AND_AUTH_FUNCTIONS_ONLY_NOT_EXPO_WORKFLOW_ACCEPTANCE",
+          "sha256": "5f03c9501cb27d1c95aa08e44652d072e8d59a0a26027bdecee6a3dbd62eda6d"
         }
       ]
     },
@@ -4368,8 +4384,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 128,
-    "pending": 8,
-    "unresolvedHighRiskBypasses": 5
+    "reviewed": 129,
+    "pending": 7,
+    "unresolvedHighRiskBypasses": 4
   }
 }

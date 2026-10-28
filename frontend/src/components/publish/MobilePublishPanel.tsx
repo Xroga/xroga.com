@@ -240,9 +240,9 @@ export function MobilePublishPanel({
     try {
       const result =
         platform === 'android'
-          ? await api.publish.syncPlayCredentials()
-          : await api.publish.syncAppleCredentials();
-      toast.success(result.message || 'Store credential synced to Expo');
+          ? await api.publish.syncPlayCredentials({projectId:easProjectId.trim()||undefined})
+          : await api.publish.syncAppleCredentials({projectId:easProjectId.trim()||undefined});
+      toast.success(result.message || 'Expo store configuration verified');
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -581,7 +581,7 @@ export function MobilePublishPanel({
               />
             </div>
             <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
-              Save your service-account JSON, sync it to Expo, then submit through the supported EAS workflow. The first Play listing may still require Play Console setup.
+              Configure your service-account key directly in Expo, then verify the selected project here. Xroga won&apos;t upload saved private keys. The first Play listing may still require Play Console setup.
             </p>
             <textarea
               rows={4}
@@ -601,11 +601,11 @@ export function MobilePublishPanel({
               </button>
               <button
                 type="button"
-                disabled={busy !== null || !status?.googlePlaySaved}
+                disabled={busy !== null || !expoValid || !projectLinked}
                 onClick={() => void syncStore('android')}
                 className="min-h-9 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)] disabled:opacity-50"
               >
-                {busy === 'sync-play' ? 'Syncing…' : 'Sync to Expo'}
+                {busy === 'sync-play' ? 'Verifying…' : 'Verify Expo configuration'}
               </button>
               <a
                 href="https://play.google.com/console"
@@ -663,7 +663,7 @@ export function MobilePublishPanel({
               />
             </div>
             <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
-              App Store Connect API is the preferred submission credential. Xroga stores it in the existing encrypted credential vault.
+              Configure your App Store Connect key directly in Expo, then verify the selected project here. Existing saved credentials stay in Xroga&apos;s encrypted vault and won&apos;t be uploaded.
             </p>
             <div className="mt-3 grid gap-2">
               <input
@@ -697,11 +697,11 @@ export function MobilePublishPanel({
               </button>
               <button
                 type="button"
-                disabled={busy !== null || !status?.appleAscApiSaved}
+                disabled={busy !== null || !expoValid || !projectLinked}
                 onClick={() => void syncStore('ios')}
                 className="min-h-9 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)] disabled:opacity-50"
               >
-                {busy === 'sync-apple' ? 'Syncing…' : 'Sync to Expo'}
+                {busy === 'sync-apple' ? 'Verifying…' : 'Verify Expo configuration'}
               </button>
               <a
                 href="https://appstoreconnect.apple.com/access/integrations/api"

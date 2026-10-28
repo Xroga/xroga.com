@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "8c3662b6f5fc0fed09ef0d4aeca2a6e63e2c5e885fe46d42cfb791c8860adc16",
+  "reviewRegistrySha256": "c17eb7e512c89aa5dba00730a150344ab839b5221ddc85c4bef96e4d0006f628",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 203,
-    "persistenceCandidates": 843,
-    "ownerPredicateCandidates": 221,
+    "privilegedFactorySites": 204,
+    "persistenceCandidates": 845,
+    "ownerPredicateCandidates": 223,
     "reviewRequired": 126,
-    "reviewedCandidates": 717,
+    "reviewedCandidates": 719,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 475,
+    "SCOPED_BOUNDARY": 477,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 169,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 84,
-    "unresolvedCandidateBoundaries": 759,
+    "unresolvedCandidateBoundaries": 761,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3444,11 +3444,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6fee86fe362464d0d82d"
+        "id": "704187e956115d9aa476"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f4c377ee778b1f6f674c"
+        "id": "29355a8ed40d9768bdd2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4864,6 +4864,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "830d44b7069ecb028334"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "13a489a31a9849b826e4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "c7add4881847e39bf451"
       },
       {
@@ -6092,11 +6100,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6fee86fe362464d0d82d"
+        "id": "704187e956115d9aa476"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f4c377ee778b1f6f674c"
+        "id": "29355a8ed40d9768bdd2"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8004,6 +8012,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "830d44b7069ecb028334"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "13a489a31a9849b826e4"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "c7add4881847e39bf451"
       },
       {
@@ -8417,11 +8433,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 843,
+    "currentCallers": 845,
     "structuredVerified": 84,
-    "structuredUnproven": 759,
+    "structuredUnproven": 761,
     "manualUnresolved": 159,
-    "manualUnsupported": 600,
+    "manualUnsupported": 602,
     "agreedVerified": 84,
     "proofAwaitingManualReconciliation": 0
   },
@@ -9018,15 +9034,15 @@
       }
     },
     {
-      "id": "6fee86fe362464d0d82d",
+      "id": "704187e956115d9aa476",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3783,
+      "line": 3784,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9039,15 +9055,15 @@
       }
     },
     {
-      "id": "f4c377ee778b1f6f674c",
+      "id": "29355a8ed40d9768bdd2",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3963,
+      "line": 3964,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -22306,6 +22322,56 @@
           {
             "path": "backend/src/services/publish/electronSecrets.ts",
             "marker": "sodium.crypto_box_seal(Buffer.from(material.value),binKey)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "830d44b7069ecb028334",
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "line": 27,
+      "enclosing": "rowFingerprint",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+      "semanticReview": {
+        "authority": "Original issued actor required before tenant client. Exact owner and finite canonical provider row constrain full connection fingerprint reads. No raw user ID authorization or fabricated-context fallback. Current revision, ciphertext and all metadata remain pinned before/after waits.",
+        "reason": "Read-only Expo metadata helper only. No remote mutation or workflow authority is granted. Remaining shared callers and original Phase4 acceptance stay open.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoAccess.ts",
+            "marker": "async function rowFingerprint"
+          },
+          {
+            "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
+            "marker": "actual Expo store verification preserves configured operation and denies raw secret export"
+          }
+        ]
+      }
+    },
+    {
+      "id": "13a489a31a9849b826e4",
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "line": 27,
+      "enclosing": "rowFingerprint",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+      "semanticReview": {
+        "authority": "Original issued actor required before tenant client. Exact owner and finite canonical provider row constrain full connection fingerprint reads. No raw user ID authorization or fabricated-context fallback. Current revision, ciphertext and all metadata remain pinned before/after waits.",
+        "reason": "Read-only Expo metadata helper only. No remote mutation or workflow authority is granted. Remaining shared callers and original Phase4 acceptance stay open.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoAccess.ts",
+            "marker": "async function rowFingerprint"
+          },
+          {
+            "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
+            "marker": "actual Expo store verification preserves configured operation and denies raw secret export"
           }
         ]
       }

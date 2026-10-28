@@ -178,8 +178,8 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
         syncAppleAscApiKeyToExpo,
       } = await import('../services/publish/easCredentials.js');
       const sync = parsed.data.platform === 'android'
-        ? await syncGooglePlayCredentialsToExpo({ userId: req.userId!, projectId: parsed.data.projectId })
-        : await syncAppleAscApiKeyToExpo({ userId: req.userId!, projectId: parsed.data.projectId });
+        ? await syncGooglePlayCredentialsToExpo({ userId: req.userId!,tenantContext:req.tenantContext, projectId: parsed.data.projectId })
+        : await syncAppleAscApiKeyToExpo({ userId: req.userId!,tenantContext:req.tenantContext, projectId: parsed.data.projectId });
       if (!sync.ok) { res.status(400).json({ok:false,error:sync.error,message:sync.message});return; }
     }
     const result = await triggerEasPublish({
@@ -319,22 +319,25 @@ router.get('/cws-status', async (req: AuthRequest, res) => {
   }
 });
 
-/** Sync Google Play JSON from vault → Expo/EAS credentials. */
+/** Verify the store key configured directly in the owned Expo project. */
 router.post('/sync-play-credentials', async (req: AuthRequest, res) => {
+  const parsed=z.object({projectId:z.string().min(1).max(128).optional(),applicationIdentifier:z.string().min(3).max(255).optional()}).strict().safeParse(req.body??{});
+  if(!parsed.success){res.status(400).json({ok:false,error:parsed.error.flatten()});return;}
   try {
     const { syncGooglePlayCredentialsToExpo } = await import(
       '../services/publish/easCredentials.js'
     );
-    const result = await syncGooglePlayCredentialsToExpo({ userId: req.userId! });
+    const result = await syncGooglePlayCredentialsToExpo({ userId: req.userId!,tenantContext:req.tenantContext,...parsed.data });
     res.status(result.ok ? 200 : 400).json(result);
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });
   }
 });
 
-/** Sync Apple ASC API key JSON from vault → Expo/EAS credentials. */
+/** Verify the Apple key configured directly in the owned Expo project. */
 router.post('/sync-apple-credentials', async (req: AuthRequest, res) => {
   const schema = z.object({
+    projectId: z.string().min(1).max(128).optional(),
     bundleIdentifier: z.string().min(3).max(128).optional(),
   });
   const parsed = schema.safeParse(req.body ?? {});
@@ -349,6 +352,8 @@ router.post('/sync-apple-credentials', async (req: AuthRequest, res) => {
     const result = await syncAppleAscApiKeyToExpo({
       userId: req.userId!,
       bundleIdentifier: parsed.data.bundleIdentifier,
+      projectId: parsed.data.projectId,
+      tenantContext:req.tenantContext,
     });
     res.status(result.ok ? 200 : 400).json(result);
   } catch (err) {
@@ -396,7 +401,7 @@ router.post('/sync-electron-secrets/:id/confirm',async(req:AuthRequest,res)=>{
 router.get('/eas-builds', async (req: AuthRequest, res) => {
   try {
     const { listEasBuilds } = await import('../services/publish/easCredentials.js');
-    const builds = await listEasBuilds({ userId: req.userId!, limit: 10 });
+    const builds = await listEasBuilds({ userId: req.userId!,tenantContext:req.tenantContext, limit: 10 });
     res.json({ ok: true, builds });
   } catch (err) {
     res.status(400).json({ ok: false, builds: [], error: (err as Error).message });

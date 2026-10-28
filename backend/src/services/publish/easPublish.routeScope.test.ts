@@ -3,9 +3,11 @@ import {test} from 'node:test';
 import express from 'express';
 import publishRouter from '../../routes/publish.js';
 import type {AuthRequest} from '../../middleware/auth.js';
+import {createTenantContext} from '../../security/tenantContext.js';
 
 test('EAS publish HTTP route preserves explicit project and blocks submit after required sync failure',async t=>{
-  const app=express();app.use(express.json());app.use((req,_res,next)=>{(req as AuthRequest).userId='11111111-1111-4111-8111-111111111111';next();});app.use(publishRouter);
+  const context=createTenantContext({userId:'11111111-1111-4111-8111-111111111111',via:'remote_getuser'});
+  const app=express();app.use(express.json());app.use((req,_res,next)=>{(req as AuthRequest).userId=context.userId;(req as AuthRequest).tenantContext=context;next();});app.use(publishRouter);
   const server=app.listen(0,'127.0.0.1');await new Promise<void>(resolve=>server.once('listening',resolve));
   t.after(()=>new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve())));
   const address=server.address();assert.ok(address&&typeof address!=='string');
@@ -16,6 +18,7 @@ test('EAS publish HTTP route preserves explicit project and blocks submit after 
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input));
     if(url.origin==='https://route-eas-fixture.invalid'){
+      if(url.pathname.endsWith('/production_audit_log')){const row=JSON.parse(String(init?.body));assert.equal(row.user_id,context.userId);assert.equal(row.outcome,'DENY');assert.doesNotMatch(String(init?.body),/BEGIN PRIVATE KEY|expo-fixture/);return Response.json(row);}
       if(url.pathname.endsWith('/github_integrations') || url.searchParams.get('provider') === 'eq.github')return Response.json({access_token:'github-fixture'});
       const provider=url.searchParams.get('provider')?.slice(3)??'';providers.push(provider);
       const value=provider==='apikey_expo'?'expo-fixture':provider==='apikey_google_play'?JSON.stringify({private_key:'private'}):JSON.stringify({keyId:'key',issuerId:'issuer',keyP8:'BEGIN PRIVATE KEY private'});

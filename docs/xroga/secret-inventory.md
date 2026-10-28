@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `b346b38a95fbb7d91594b6b14b5e017dd53c2037`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `a8c663defebf0a73a9895fffc5a6641b195042c9`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |

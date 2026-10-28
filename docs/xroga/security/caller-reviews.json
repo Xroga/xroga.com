@@ -4025,9 +4025,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
       "callIds": [
-        "6fee86fe362464d0d82d"
+        "704187e956115d9aa476"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4732,13 +4732,725 @@
         },
         "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
       },
-      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+      "beforeExpoReadiness": {
+        "path": "backend/src/ai/pipeline.ts",
+        "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+        "callIds": [
+          "6fee86fe362464d0d82d"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+          }
+        ],
+        "historicalBeforeRoutingContextArgument": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+          "callIds": [
+            "f816225ee7eecbfbd7ae"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+            }
+          ]
+        },
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "callIds": [
+            "6c962371859b256ff96c"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        },
+        "googleIntegrationOriginalReview": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+          "callIds": [
+            "af88e0f5ab6048f75011"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "f816225ee7eecbfbd7ae"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "6c962371859b256ff96c"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          }
+        },
+        "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+        "actorContinuationPriorSourceReview": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "callIds": [
+            "b092008f2d41b3ddf1d9"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "f816225ee7eecbfbd7ae"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "6c962371859b256ff96c"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          },
+          "googleIntegrationOriginalReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "callIds": [
+              "af88e0f5ab6048f75011"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "f816225ee7eecbfbd7ae"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "6c962371859b256ff96c"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            }
+          },
+          "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+        },
+        "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+        "beforeNativeReleaseContinuation": {
+          "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+          "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+          "callIds": [
+            "acfbdb182d9e682cce3f"
+          ]
+        },
+        "beforeNativeSigningContinuation": {
+          "parent": "3b94979a0411db4137678d23332900d496e889a9",
+          "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+          "callIds": [
+            "acfbdb182d9e682cce3f"
+          ]
+        },
+        "beforeNativePublication": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+          "callIds": [
+            "acfbdb182d9e682cce3f"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "f816225ee7eecbfbd7ae"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "6c962371859b256ff96c"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          },
+          "googleIntegrationOriginalReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "callIds": [
+              "af88e0f5ab6048f75011"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "f816225ee7eecbfbd7ae"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "6c962371859b256ff96c"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            }
+          },
+          "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+          "actorContinuationPriorSourceReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "callIds": [
+              "b092008f2d41b3ddf1d9"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "f816225ee7eecbfbd7ae"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "6c962371859b256ff96c"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            },
+            "googleIntegrationOriginalReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "callIds": [
+                "af88e0f5ab6048f75011"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "f816225ee7eecbfbd7ae"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "6c962371859b256ff96c"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              }
+            },
+            "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+          },
+          "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+          "beforeNativeReleaseContinuation": {
+            "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+            "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+            "callIds": [
+              "acfbdb182d9e682cce3f"
+            ]
+          },
+          "beforeNativeSigningContinuation": {
+            "parent": "3b94979a0411db4137678d23332900d496e889a9",
+            "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+            "callIds": [
+              "acfbdb182d9e682cce3f"
+            ]
+          }
+        },
+        "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+        "beforeCwsApproval": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+          "callIds": [
+            "acfbdb182d9e682cce3f"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "f816225ee7eecbfbd7ae"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "6c962371859b256ff96c"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          },
+          "googleIntegrationOriginalReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "callIds": [
+              "af88e0f5ab6048f75011"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "f816225ee7eecbfbd7ae"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "6c962371859b256ff96c"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            }
+          },
+          "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+          "actorContinuationPriorSourceReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "callIds": [
+              "b092008f2d41b3ddf1d9"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "f816225ee7eecbfbd7ae"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "6c962371859b256ff96c"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            },
+            "googleIntegrationOriginalReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "callIds": [
+                "af88e0f5ab6048f75011"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "f816225ee7eecbfbd7ae"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "6c962371859b256ff96c"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              }
+            },
+            "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+          },
+          "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+          "beforeNativeReleaseContinuation": {
+            "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+            "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+            "callIds": [
+              "acfbdb182d9e682cce3f"
+            ]
+          },
+          "beforeNativeSigningContinuation": {
+            "parent": "3b94979a0411db4137678d23332900d496e889a9",
+            "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+            "callIds": [
+              "acfbdb182d9e682cce3f"
+            ]
+          },
+          "beforeNativePublication": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+            "callIds": [
+              "acfbdb182d9e682cce3f"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "f816225ee7eecbfbd7ae"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "6c962371859b256ff96c"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            },
+            "googleIntegrationOriginalReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "callIds": [
+                "af88e0f5ab6048f75011"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "f816225ee7eecbfbd7ae"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "6c962371859b256ff96c"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              }
+            },
+            "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+            "actorContinuationPriorSourceReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+              "callIds": [
+                "b092008f2d41b3ddf1d9"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "f816225ee7eecbfbd7ae"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "6c962371859b256ff96c"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              },
+              "googleIntegrationOriginalReview": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                "callIds": [
+                  "af88e0f5ab6048f75011"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                  }
+                ],
+                "historicalBeforeRoutingContextArgument": {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                  "callIds": [
+                    "f816225ee7eecbfbd7ae"
+                  ],
+                  "disposition": "NOT_PERSISTENCE",
+                  "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                  "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                  "evidence": [
+                    {
+                      "path": "backend/src/ai/pipeline.ts",
+                      "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
+                    }
+                  ]
+                },
+                "previousGenericSdkSourceBinding": {
+                  "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                  "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                  "callIds": [
+                    "6c962371859b256ff96c"
+                  ],
+                  "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+                }
+              },
+              "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+            },
+            "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+            "beforeNativeReleaseContinuation": {
+              "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+              "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+              "callIds": [
+                "acfbdb182d9e682cce3f"
+              ]
+            },
+            "beforeNativeSigningContinuation": {
+              "parent": "3b94979a0411db4137678d23332900d496e889a9",
+              "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+              "callIds": [
+                "acfbdb182d9e682cce3f"
+              ]
+            }
+          },
+          "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+        },
+        "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+      },
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
       "callIds": [
-        "f4c377ee778b1f6f674c"
+        "29355a8ed40d9768bdd2"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -5443,7 +6155,719 @@
         },
         "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
       },
-      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+      "beforeExpoReadiness": {
+        "path": "backend/src/ai/pipeline.ts",
+        "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+        "callIds": [
+          "f4c377ee778b1f6f674c"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+          }
+        ],
+        "historicalBeforeRoutingContextArgument": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+          "callIds": [
+            "4b3b93bfa4bbc1f26e10"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+            }
+          ]
+        },
+        "previousGenericSdkSourceBinding": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "callIds": [
+            "8db8b524179b45694274"
+          ],
+          "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+        },
+        "googleIntegrationOriginalReview": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+          "callIds": [
+            "863e45f48048017eb977"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "4b3b93bfa4bbc1f26e10"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "8db8b524179b45694274"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          }
+        },
+        "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+        "actorContinuationPriorSourceReview": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "callIds": [
+            "40b6d116790751a2b569"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "4b3b93bfa4bbc1f26e10"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "8db8b524179b45694274"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          },
+          "googleIntegrationOriginalReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "callIds": [
+              "863e45f48048017eb977"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "4b3b93bfa4bbc1f26e10"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "8db8b524179b45694274"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            }
+          },
+          "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+        },
+        "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+        "beforeNativeReleaseContinuation": {
+          "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+          "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+          "callIds": [
+            "8c2f244d2269c3ff06ae"
+          ]
+        },
+        "beforeNativeSigningContinuation": {
+          "parent": "3b94979a0411db4137678d23332900d496e889a9",
+          "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+          "callIds": [
+            "8c2f244d2269c3ff06ae"
+          ]
+        },
+        "beforeNativePublication": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+          "callIds": [
+            "8c2f244d2269c3ff06ae"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "4b3b93bfa4bbc1f26e10"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "8db8b524179b45694274"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          },
+          "googleIntegrationOriginalReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "callIds": [
+              "863e45f48048017eb977"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "4b3b93bfa4bbc1f26e10"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "8db8b524179b45694274"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            }
+          },
+          "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+          "actorContinuationPriorSourceReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "callIds": [
+              "40b6d116790751a2b569"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "4b3b93bfa4bbc1f26e10"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "8db8b524179b45694274"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            },
+            "googleIntegrationOriginalReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "callIds": [
+                "863e45f48048017eb977"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "4b3b93bfa4bbc1f26e10"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "8db8b524179b45694274"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              }
+            },
+            "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+          },
+          "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+          "beforeNativeReleaseContinuation": {
+            "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+            "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+            "callIds": [
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativeSigningContinuation": {
+            "parent": "3b94979a0411db4137678d23332900d496e889a9",
+            "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+            "callIds": [
+              "8c2f244d2269c3ff06ae"
+            ]
+          }
+        },
+        "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+        "beforeCwsApproval": {
+          "path": "backend/src/ai/pipeline.ts",
+          "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+          "callIds": [
+            "8c2f244d2269c3ff06ae"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+          "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/pipeline.ts",
+              "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+            }
+          ],
+          "historicalBeforeRoutingContextArgument": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+            "callIds": [
+              "4b3b93bfa4bbc1f26e10"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ]
+          },
+          "previousGenericSdkSourceBinding": {
+            "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "callIds": [
+              "8db8b524179b45694274"
+            ],
+            "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+          },
+          "googleIntegrationOriginalReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "callIds": [
+              "863e45f48048017eb977"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "4b3b93bfa4bbc1f26e10"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "8db8b524179b45694274"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            }
+          },
+          "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+          "actorContinuationPriorSourceReview": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "callIds": [
+              "40b6d116790751a2b569"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "4b3b93bfa4bbc1f26e10"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "8db8b524179b45694274"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            },
+            "googleIntegrationOriginalReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "callIds": [
+                "863e45f48048017eb977"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "4b3b93bfa4bbc1f26e10"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "8db8b524179b45694274"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              }
+            },
+            "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+          },
+          "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+          "beforeNativeReleaseContinuation": {
+            "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+            "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+            "callIds": [
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativeSigningContinuation": {
+            "parent": "3b94979a0411db4137678d23332900d496e889a9",
+            "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+            "callIds": [
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativePublication": {
+            "path": "backend/src/ai/pipeline.ts",
+            "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+            "callIds": [
+              "8c2f244d2269c3ff06ae"
+            ],
+            "disposition": "NOT_PERSISTENCE",
+            "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+            "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+            "evidence": [
+              {
+                "path": "backend/src/ai/pipeline.ts",
+                "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+              }
+            ],
+            "historicalBeforeRoutingContextArgument": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+              "callIds": [
+                "4b3b93bfa4bbc1f26e10"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ]
+            },
+            "previousGenericSdkSourceBinding": {
+              "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "callIds": [
+                "8db8b524179b45694274"
+              ],
+              "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+            },
+            "googleIntegrationOriginalReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "callIds": [
+                "863e45f48048017eb977"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "4b3b93bfa4bbc1f26e10"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "8db8b524179b45694274"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              }
+            },
+            "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
+            "actorContinuationPriorSourceReview": {
+              "path": "backend/src/ai/pipeline.ts",
+              "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+              "callIds": [
+                "40b6d116790751a2b569"
+              ],
+              "disposition": "NOT_PERSISTENCE",
+              "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+              "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+              "evidence": [
+                {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                }
+              ],
+              "historicalBeforeRoutingContextArgument": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                "callIds": [
+                  "4b3b93bfa4bbc1f26e10"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                  }
+                ]
+              },
+              "previousGenericSdkSourceBinding": {
+                "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "callIds": [
+                  "8db8b524179b45694274"
+                ],
+                "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+              },
+              "googleIntegrationOriginalReview": {
+                "path": "backend/src/ai/pipeline.ts",
+                "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                "callIds": [
+                  "863e45f48048017eb977"
+                ],
+                "disposition": "NOT_PERSISTENCE",
+                "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                "evidence": [
+                  {
+                    "path": "backend/src/ai/pipeline.ts",
+                    "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                  }
+                ],
+                "historicalBeforeRoutingContextArgument": {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+                  "callIds": [
+                    "4b3b93bfa4bbc1f26e10"
+                  ],
+                  "disposition": "NOT_PERSISTENCE",
+                  "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+                  "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+                  "evidence": [
+                    {
+                      "path": "backend/src/ai/pipeline.ts",
+                      "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
+                    }
+                  ]
+                },
+                "previousGenericSdkSourceBinding": {
+                  "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                  "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                  "callIds": [
+                    "8db8b524179b45694274"
+                  ],
+                  "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+                }
+              },
+              "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
+            },
+            "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+            "beforeNativeReleaseContinuation": {
+              "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+              "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+              "callIds": [
+                "8c2f244d2269c3ff06ae"
+              ]
+            },
+            "beforeNativeSigningContinuation": {
+              "parent": "3b94979a0411db4137678d23332900d496e889a9",
+              "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+              "callIds": [
+                "8c2f244d2269c3ff06ae"
+              ]
+            }
+          },
+          "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+        },
+        "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+      },
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -22319,6 +23743,28 @@
         {
           "path": "backend/src/services/publish/cwsAdmission.ts",
           "marker": "export async function admitCwsPublication"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "sourceSha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+      "callIds": [
+        "830d44b7069ecb028334",
+        "13a489a31a9849b826e4"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Original issued actor required before tenant client. Exact owner and finite canonical provider row constrain full connection fingerprint reads. No raw user ID authorization or fabricated-context fallback. Current revision, ciphertext and all metadata remain pinned before/after waits.",
+      "reason": "Read-only Expo metadata helper only. No remote mutation or workflow authority is granted. Remaining shared callers and original Phase4 acceptance stay open.",
+      "documentationTrace": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/services/publish/expoAccess.ts",
+          "marker": "async function rowFingerprint"
+        },
+        {
+          "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
+          "marker": "actual Expo store verification preserves configured operation and denies raw secret export"
         }
       ]
     }
