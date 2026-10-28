@@ -1592,7 +1592,7 @@ if(opts.deliveryClaim){
   //
   // `routeProject` is pure and reads the same flags `tryUniversalBuild` reads, so calling
   // it here reports the real decision rather than a second guess at it.
-  const universalDecision = routeProject(canonicalProjectId);
+  const universalDecision = routeProject(canonicalProjectId, undefined, { builderBound: Boolean(opts.builder) });
   emit({
     agent: 'router',
     status: 'universal_routing',
