@@ -39,6 +39,7 @@ export type DevWorkspaceTab =
   | 'terminal'
   | 'preview'
   | 'deploy'
+  | 'project'
   | 'existing';
 
 export interface FileTrailItem {

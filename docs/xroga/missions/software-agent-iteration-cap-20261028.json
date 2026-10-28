@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-SOFTWARE-AGENT-ITERATION-CAP-20261028",
+  "baseSha": "cbbdbb0d8a21ab5a77e80c68ee6e54de93aeaec3",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Live authenticated Batch 2 build passed planning, then the SoftwareAgent made 40 model calls in about 3 minutes (about $0.68) without finishing. The Cline SDK Agent has no iteration limit unless maxIterations is set. Set a finite ceiling of 60 on both Agent constructions and log each tool step (step number, tool name, argument key names only) to see which call repeats.",
+  "changedFiles": [
+    "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts",
+    "backend/src/ai/softwareAgent/agentIterationCap.test.ts",
+    "docs/xroga/missions/software-agent-iteration-cap-20261028.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Completion gate, checkpointing and provider budget reservation are unchanged"
+    ],
+    "extend": [
+      "The software agent loop now has a finite iteration ceiling and per-step diagnostics"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change.",
+    "rollback": "Revert the commit and redeploy the previous image."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress change; the line goes to the existing process log only."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Reduces risk: bounds model calls per software-agent run. No new spend path."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No change."
+    }
+  },
+  "tests": [
+    {
+      "command": "npx tsx --test src/ai/softwareAgent/*.test.ts (in backend)",
+      "scope": "Every Agent construction has a finite maxIterations; the step log carries only step, tool name and argument key names. 49 PASS.",
+      "negative": true,
+      "reference": "backend/src/ai/softwareAgent/agentIterationCap.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adds a limit and a log line to the existing SoftwareAgent executor. No new orchestrator or control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks, build the release image, create a 0% revision, switch traffic with the Job, then repeat the authenticated build.",
+  "rollback": "Revert the commit and redeploy; restore the previous service revision and Job image and label.",
+  "knownGaps": [
+    "The root cause of the repeated step is not fixed; the cap bounds cost and the log shows the repeating tool"
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch 2 building is not accepted until a live authenticated build saves a revision"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and merge",
+      "Release image build and deploy",
+      "Live authenticated Batch 2 build evidence"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "backend/src/ai/softwareAgent/agentIterationCap.test.ts"
+  ]
+}

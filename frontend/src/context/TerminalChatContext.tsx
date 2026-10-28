@@ -17,6 +17,7 @@ import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
+import { resolveBuilderProject, syncBuilderConversation } from '@/lib/builderChat';
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
@@ -788,6 +789,10 @@ const stopRequestedRunIdRef =
     const workspace = useProjectWorkspaceStore.getState();
     workspace.setActiveTaskSession(id, workspace.activeProjectContextKey || undefined);
   }, []);
+  // The builder project belongs to the chat it was started in: switching or reopening a chat shows that chat's own project.
+  useEffect(() => {
+    void syncBuilderConversation(liveSessionId);
+  }, [liveSessionId]);
   const activeProjectContextKey = useProjectWorkspaceStore((state) => state.activeProjectContextKey);
   useEffect(() => {
     if (!activeProjectContextKey || messages.length > 0) return;
@@ -2982,9 +2987,18 @@ if (
             ),
           );
         };
+        const builderProjectId = await resolveBuilderProject({
+          prompt: displayPrompt,
+          isNewProduct: freshProductIntent || (!isBuildUpdate && isWebsiteBuildPrompt(displayPrompt)),
+          hasRepositoryTarget: Boolean(stickyTargetRepo?.includes('/')),
+          messageKey: userMessageId,
+          conversationId: sessionIdRef.current,
+        });
         await streamSwarmExecute(apiPrompt, {
   runId:
     resumeRunId,
+
+  builderProjectId,
 
   projectId:
     projectIdForRequest(

@@ -36,6 +36,8 @@ import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import businessAutomationsRouter from './routes/businessAutomations.js';
 import businessAutomationWebhookRouter from './routes/businessAutomationWebhook.js';
 import businessAutomationSchedulerRouter from './routes/businessAutomationScheduler.js';
+import storageReconcileRouter from './routes/storageReconcileScheduler.js';
+import browserRunInternalRouter from './routes/browserRunInternal.js';
 import { startBusinessAutomationScheduler } from './services/integrations/businessAutomations.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
@@ -52,6 +54,7 @@ import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import driveRouter from './routes/drive.js';
 import browserRunsRouter from './routes/browserRuns.js';
+import builderRouter from './routes/builder.js';
 import { resolveStorageConfig } from './storage/runtime.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
@@ -142,6 +145,8 @@ app.use(cors(corsOptions));
 app.use('/api/billing/webhook', billingWebhookRouter);
 app.use('/api/integrations/composio/webhook', businessAutomationWebhookRouter);
 app.use('/internal/business-automations', businessAutomationSchedulerRouter);
+app.use('/internal/storage', storageReconcileRouter);
+app.use('/internal/browser', express.json({ limit: '4kb' }), browserRunInternalRouter);
 
 // Guest preview is deliberately much smaller than authenticated upload/build
 // requests. Parse it first with a strict body ceiling so an anonymous caller never
@@ -251,6 +256,7 @@ app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
 app.use('/api/drive', authMiddleware, driveRouter);
 app.use('/api/browser/runs', authMiddleware, browserRunsRouter);
+app.use('/api/builder', authMiddleware, builderRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);

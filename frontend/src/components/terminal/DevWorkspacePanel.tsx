@@ -42,6 +42,9 @@ import { RuntimePreviewControls } from './RuntimePreviewControls';
 import {
   ProjectDeliveryPanel,
 } from './ProjectDeliveryPanel';
+import { BuilderProjectPanel } from './BuilderProjectPanel';
+import { BUILDER_ENABLED, builderApi } from '@/lib/builderApi';
+import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
   { id: 'code', label: 'Code', Icon: Code2 },
@@ -52,6 +55,7 @@ const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree 
   // an existing repository or ZIP, edited by Xroga in isolation; absent until Batch 3 is authorised for release
   ...(EXISTING_SOURCE_ENABLED ? [{ id: 'existing' as const, label: 'Existing project', Icon: GitPullRequest }] : []),
 ];
+const PROJECT_TAB: { id: DevWorkspaceTab; label: string; Icon: typeof FolderTree } = { id: 'project', label: 'Project', Icon: Eye };
 
 function buildTree(files: ProjectFileEntry[]): Record<string, ProjectFileEntry[]> {
   const root: Record<string, ProjectFileEntry[]> = { '': [] };
@@ -262,6 +266,18 @@ export function DevWorkspacePanel({
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const activeTab = useProjectWorkspaceStore((s) => s.activeTab);
   const setActiveTab = useProjectWorkspaceStore((s) => s.setActiveTab);
+  const builderProjectId = useBuilderProjectStore((s) => s.projectId);
+  const setBuilderProjectId = useBuilderProjectStore((s) => s.setProjectId);
+  const boundConversation = useBuilderProjectStore((s) => s.conversationId);
+  // With no chat bound yet (another device, cleared storage, another tab) the most recent project is restored from the server.
+  // Once a chat is bound, its project is the one the chat is building: a new chat has none, and must not inherit another chat's.
+  useEffect(() => {
+    if (!BUILDER_ENABLED || builderProjectId || boundConversation) return;
+    let live = true;
+    builderApi.list().then(({ projects }) => { if (live && projects.length > 0) setBuilderProjectId(projects[0].id); }).catch(() => undefined);
+    return () => { live = false; };
+  }, [builderProjectId, boundConversation, setBuilderProjectId]);
+  const tabs = BUILDER_ENABLED && builderProjectId ? [PROJECT_TAB, ...TABS] : TABS;
   const projectFiles = useProjectWorkspaceStore((s) => s.projectFiles);
   const openFilePath = useProjectWorkspaceStore((s) => s.openFilePath);
   const openFilePaths = useProjectWorkspaceStore((s) => s.openFilePaths);
@@ -344,7 +360,7 @@ export function DevWorkspacePanel({
     >
       <header className="xv-ws-tabs">
         <nav className="xv-ws-tabs__scroller" aria-label="Project edit views">
-          {TABS.map(({ id, label, Icon }) => (
+          {tabs.map(({ id, label, Icon }) => (
             <button
               key={id}
               type="button"
@@ -378,6 +394,9 @@ export function DevWorkspacePanel({
       </header>
 
       <div className="flex-1 min-h-0 overflow-hidden">
+        {activeTab === 'project' && builderProjectId ? (
+          <BuilderProjectPanel projectId={builderProjectId} onOpenPreview={() => setActiveTab('preview')} />
+        ) : null}
         {activeTab === 'files' ? (
           <div className="h-full flex flex-col">
             <div className="flex items-center gap-2 px-2 py-1.5 border-b border-[var(--card-border)]/40">

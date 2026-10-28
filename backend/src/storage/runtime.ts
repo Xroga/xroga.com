@@ -31,6 +31,18 @@ export interface ResolvedStorageConfig {
 }
 
 /** Pure: validates the combination of switches and credentials without touching the network. */
+/**
+ * Per-owner Drive quota in bytes. Unset means "tracked, not enforced" (a deliberate default: the number is a product decision, and no
+ * configuration activates an entitlement). A value that is SET but not a non-negative whole number is a configuration error: it
+ * must never be read as "no limit", which is what a lenient parse would silently do to a typo like "10GB".
+ */
+export function resolveStorageQuota(env: NodeJS.ProcessEnv = process.env): { quota: number | null; problem: string | null } {
+  const raw = env.STORAGE_QUOTA_BYTES?.trim();
+  if (!raw) return { quota: null, problem: null };
+  if (/^\d{1,15}$/.test(raw)) return { quota: Number(raw), problem: null };
+  return { quota: null, problem: 'STORAGE_QUOTA_BYTES must be a non-negative whole number of bytes (for example 5368709120)' };
+}
+
 export function resolveStorageConfig(env: NodeJS.ProcessEnv = process.env): ResolvedStorageConfig {
   const problems: string[] = [];
   const rawMode = env.STORAGE_WRITE_MODE?.trim().toLowerCase();
@@ -48,6 +60,8 @@ export function resolveStorageConfig(env: NodeJS.ProcessEnv = process.env): Reso
     else if (new Set(parts).size !== parts.length) problems.push('STORAGE_READ_ORDER lists a source twice');
     else readOrder = parts as StorageReadSource[];
   }
+  const quota = resolveStorageQuota(env);
+  if (quota.problem) problems.push(quota.problem);
   const needsDrive = writeMode !== 'legacy' || rawOrder === 'r2';
   if (needsDrive) {
     if (!(env.XROGA_DRIVE_R2_ACCESS_KEY_ID && env.XROGA_DRIVE_R2_SECRET_ACCESS_KEY && env.XROGA_DRIVE_R2_BUCKET && (env.XROGA_DRIVE_R2_ACCOUNT_ID ?? env.CLOUDFLARE_R2_ACCOUNT_ID ?? env.CLOUDFLARE_ACCOUNT_ID))) {
@@ -97,15 +111,18 @@ export function getStorageService(): StorageService | null {
     const cfg = r2ConfigFromEnv();
     if (!cfg || !resolveDatabaseUrls().length) { service = null; return service; }
     pool = createPool();
-    const quotaEnv = process.env.STORAGE_QUOTA_BYTES;
-    const quota = quotaEnv && /^\d+$/.test(quotaEnv) ? Number(quotaEnv) : null;
+    const { quota, problem } = resolveStorageQuota();
+    // A misspelt limit must not become "unlimited": Drive stays unavailable until it is corrected.
+    if (problem) throw new Error(problem);
     service = new StorageService({
       repo: new PostgresStorageRepository(pool), store: new R2ObjectStore(cfg), bucket: cfg.bucket,
       policy: defaultPolicyConfig(), quota: async () => quota,
     });
   } catch (err) {
     console.warn('[storage] Xroga Drive not available:', (err as Error).message);
-    service = null;
+    // Not cached: a transient failure (a secret not mounted yet, a briefly unreachable database) must not disable Drive until restart.
+    service = undefined;
+    return null;
   }
   return service;
 }

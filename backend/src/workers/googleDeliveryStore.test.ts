@@ -3,6 +3,7 @@ import test from 'node:test';
 import type {SupabaseClient} from '@supabase/supabase-js';
 import {GoogleDeliveryStore,requireCanonicalDeliveryClaim} from './googleDeliveryStore.js';
 import {GoogleDispatchError,type GoogleDispatchConfiguration} from './googleDispatch.js';
+import {createTenantContext} from '../security/tenantContext.js';
 const project='project-c40d4821-e647-4fa2-92d';
 const c:GoogleDispatchConfiguration={project,region:'us-east4',queue:'xroga-canonical-queue',job:'xroga-canonical-worker',
   dispatcherUrl:'https://xroga-dispatcher-fixture.us-east4.run.app/internal/canonical-dispatch',
@@ -51,4 +52,24 @@ test('only a database-proven never-admitted retry can start without a nonexisten
   assert.equal(requireCanonicalDeliveryClaim(neverStarted).input.clientMeta?.resumeRun,false);
   fresh=false;const previouslyStarted=await store.claim(delivery,worker);assert.ok(previouslyStarted);
   assert.equal(requireCanonicalDeliveryClaim(previouslyStarted).input.clientMeta?.resumeRun,true);
+});
+
+const builderProject='55555555-5555-4555-8555-555555555555';
+test('a Builder project id travels through the claim only when it is a valid id, and is never taken from the browser body',async()=>{
+  let builderId:unknown=builderProject;
+  const service=()=>({rpc:async(_name:string,args:any)=>({error:null,data:{deliveryId:delivery,runId:run,userId:owner,sourceSha:c.sourceSha,
+    workerId:worker,generation:args.p_generation,freshStart:true,input:{prompt:'synthetic',builderProjectId:builderId}}})} as unknown as SupabaseClient);
+  const store=new GoogleDeliveryStore(c,env,async()=>{},service);
+  const claim=await store.claim(delivery,worker);assert.ok(claim);
+  assert.equal(requireCanonicalDeliveryClaim(claim).input.builderProjectId,builderProject);
+  for(const bad of ['not-a-uuid',42,{id:builderProject},'']){builderId=bad;await assert.rejects(store.claim(delivery,worker),denied);}
+  builderId=undefined;const plain=await store.claim(delivery,worker);assert.ok(plain);
+  assert.equal(requireCanonicalDeliveryClaim(plain).input.builderProjectId,undefined);
+});
+test('enqueue refuses a malformed Builder project id before any database call',async()=>{
+  const store=new GoogleDeliveryStore(c,env,async()=>{},()=>{throw new Error('NO_DATABASE_CALL_EXPECTED');});
+  const context=createTenantContext({userId:owner,via:'persisted_owner'});
+  for(const bad of ['../etc','not-a-uuid','',' ']){
+    await assert.rejects(store.enqueue(context,run,{prompt:'synthetic',builderProjectId:bad}),denied);
+  }
 });

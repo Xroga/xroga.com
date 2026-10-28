@@ -142,6 +142,9 @@ export interface StreamSwarmOptions {
 
   projectId?: string;
 
+  /** AI Product Builder project this request builds into. The server re-verifies ownership. */
+  builderProjectId?: string;
+
   signal?: AbortSignal;
 
   compact?: boolean;
@@ -765,6 +768,15 @@ export async function streamSwarmExecute(
                 ? {
                     projectId:
                       options.projectId,
+                  }
+                : {}
+            ),
+
+            ...(
+              options.builderProjectId
+                ? {
+                    builderProjectId:
+                      options.builderProjectId,
                   }
                 : {}
             ),

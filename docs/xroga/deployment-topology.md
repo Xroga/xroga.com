@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `0acd737cefa6018334536f3590dd9c0c4d7080d9`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `e9a288ebf4168a81180a447e815b18805103683a`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -95,6 +95,7 @@ Source SHA: `0acd737cefa6018334536f3590dd9c0c4d7080d9`; source/config hashes are
 | endpoint-ethglobal-com | Source-defined endpoint ethglobal.com | CONFIGURED_BUT_UNVERIFIED | ethglobal.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-example-com | Source-defined endpoint example.com | CONFIGURED_BUT_UNVERIFIED | example.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-example-invalid | Source-defined endpoint example.invalid | CONFIGURED_BUT_UNVERIFIED | example.invalid | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-example-test | Source-defined endpoint example.test | CONFIGURED_BUT_UNVERIFIED | example.test | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fixture | Source-defined endpoint fixture | CONFIGURED_BUT_UNVERIFIED | fixture | NOT_INDEPENDENTLY_VERIFIED |
@@ -223,7 +224,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-931 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+983 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 
