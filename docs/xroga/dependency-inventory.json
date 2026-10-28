@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+  "source_sha": "1f0761daa88420e5ef00d98e99135cd542915188",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16680,7 +16680,7 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014"
+      "sha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
@@ -31036,6 +31036,13 @@
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 37,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "line": 261,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

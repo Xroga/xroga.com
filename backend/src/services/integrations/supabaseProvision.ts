@@ -193,47 +193,80 @@ export interface MgmtProject {
   region?: string;
 }
 
+export class SupabaseManagementDenied extends Error {
+  readonly code = 'SUPABASE_MANAGEMENT_DENIED';
+  readonly retryable = false;
+  constructor() { super('Supabase management request was denied by security policy.'); }
+}
+const validProjectRef = (value: unknown): value is string => typeof value === 'string' && /^[a-z0-9]{1,63}$/.test(value);
+const managementDenied = () => new SupabaseManagementDenied();
+const terminalSupabaseDenial = (error: unknown) => error instanceof SupabaseManagementDenied
+  || error instanceof Error && ['AbortError', 'TimeoutError'].includes(error.name)
+  || !!error && typeof error === 'object' && 'code' in error && ['SUPABASE_TRANSPORT_DENIED','TENANT_AUTH_REQUIRED','CREDENTIAL_WRITE_CONFLICT'].includes(String(error.code));
+
+/** Fixed management operations only. A bounded authenticated transport does not
+ * grant project ownership, schema authority or consent to create resources. */
 async function mgmtFetch<T>(
   path: string,
   accessToken: string,
-  init?: RequestInit,
+  init: RequestInit = {},
 ): Promise<T> {
-  const res = await fetch(`${MGMT}${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-      ...(init?.headers || {}),
-    },
-  });
-  const text = await res.text();
-  let body: unknown = null;
+  const method = init.method ?? 'GET';
+  if (typeof accessToken !== 'string' || !accessToken || accessToken.length > 16384 || /[\x00-\x20\x7f]/.test(accessToken)
+    || !(method === 'GET' && (path === '/projects' || /^\/projects\/[a-z0-9]{1,63}\/api-keys\?reveal=true$/.test(path))
+      || method === 'POST' && /^\/projects\/[a-z0-9]{1,63}\/database\/query$/.test(path))) throw managementDenied();
+  if (method === 'POST') {
+    if (typeof init.body !== 'string' || Buffer.byteLength(init.body) > 512 * 1024) throw managementDenied();
+    let body: unknown; try { body = JSON.parse(init.body); } catch { throw managementDenied(); }
+    if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).join() !== 'query'
+      || typeof (body as {query?:unknown}).query !== 'string' || !(body as {query:string}).query.trim()) throw managementDenied();
+  } else if (init.body != null) throw managementDenied();
+  const signal = AbortSignal.any([AbortSignal.timeout(20000), ...(init.signal ? [init.signal] : [])]);
+  signal.throwIfAborted();
+  let res: Response;
   try {
-    body = text ? JSON.parse(text) : null;
-  } catch {
-    body = { message: text };
+    res = await fetch(`${MGMT}${path}`, {
+      method, body: init.body, redirect: 'manual', signal,
+      headers: { Authorization: `Bearer ${accessToken}`, Accept: 'application/json', 'Content-Type': 'application/json' },
+    });
+  } catch { signal.throwIfAborted(); if (method === 'POST') throw managementDenied();
+    throw new Error('Supabase management service is unavailable. No automatic retry was made.'); }
+  if (res.redirected || res.status >= 300 && res.status < 400 || res.status === 401 || res.status === 403 || res.status === 429) {
+    await res.body?.cancel().catch(() => undefined); throw managementDenied();
   }
-  if (!res.ok) {
-    throw new Error('Supabase could not complete this request. Check your connection permissions and retry.');
-  }
+  if (!res.ok) { await res.body?.cancel().catch(() => undefined); throw new Error('Supabase could not complete this request. Check your connection permissions and retry.'); }
+  const reader = res.body?.getReader(), chunks: Uint8Array[] = []; let bytes = 0;
+  try {
+    if (reader) for (;;) { const next = await reader.read(); if (next.done) break;
+      signal.throwIfAborted(); bytes += next.value.length; if (bytes > 2 * 1024 * 1024) throw managementDenied(); chunks.push(next.value);
+    }
+  } catch (error) { signal.throwIfAborted(); if (error instanceof SupabaseManagementDenied || method === 'POST') throw managementDenied();
+    throw new Error('Supabase management response is unavailable. No automatic retry was made.');
+  } finally { await reader?.cancel().catch(() => undefined); reader?.releaseLock(); }
+  signal.throwIfAborted();
+  let body: unknown; try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { throw managementDenied(); }
+  if (!Array.isArray(body)) throw managementDenied();
   return body as T;
 }
 
 export async function listSupabaseProjects(accessToken: string): Promise<MgmtProject[]> {
   const data = await mgmtFetch<Array<Record<string, unknown>>>('/projects', accessToken);
-  return (data || []).map((p) => ({
-    id: String(p.id || p.ref || ''),
-    ref: String(p.id || p.ref || ''),
-    name: String(p.name || p.id || 'project'),
-    organization_id: p.organization_id ? String(p.organization_id) : undefined,
-    region: p.region ? String(p.region) : undefined,
-  }));
+  if (data.length > 1000 || data.some(p => !p || typeof p !== 'object' || Array.isArray(p)
+    || p.id !== undefined && (typeof p.id !== 'string' || !p.id || p.id.length > 128)
+    || !validProjectRef(p.ref ?? p.id) || typeof p.name !== 'string' || !p.name || p.name.length > 256
+    || p.organization_id !== undefined && (typeof p.organization_id !== 'string' || p.organization_id.length > 128)
+    || p.region !== undefined && (typeof p.region !== 'string' || !/^[a-z0-9-]{1,64}$/.test(p.region)))) throw managementDenied();
+  const projects = data.map(p => ({ id: String(p.id ?? p.ref), ref: String(p.ref ?? p.id), name: String(p.name),
+    organization_id: p.organization_id as string | undefined, region: p.region as string | undefined }));
+  if (new Set(projects.map(p => p.ref)).size !== projects.length) throw managementDenied();
+  return projects;
 }
 
 export async function fetchProjectApiKeys(
   accessToken: string,
   projectRef: string,
 ): Promise<{ url: string; anonKey: string; serviceRoleKey: string }> {
+  if (!validProjectRef(projectRef)) throw managementDenied();
   // Current Management API requires reveal=true for secret values
   const keys = await mgmtFetch<
     Array<{
@@ -244,6 +277,10 @@ export async function fetchProjectApiKeys(
     }>
   >(`/projects/${encodeURIComponent(projectRef)}/api-keys?reveal=true`, accessToken);
 
+  if (keys.length > 100 || keys.some(key => !key || typeof key !== 'object' || Array.isArray(key)
+    || key.api_key !== undefined && (typeof key.api_key !== 'string' || !key.api_key || key.api_key.length > 48000 || /[\x00-\x20\x7f]/.test(key.api_key))
+    || key.name !== undefined && (typeof key.name !== 'string' || key.name.length > 128)
+    || key.type !== undefined && (typeof key.type !== 'string' || key.type.length > 128))) throw managementDenied();
   const pick = (...preds: Array<(k: (typeof keys)[number]) => boolean>) => {
     for (const pred of preds) {
       const hit = keys.find(pred)?.api_key?.trim();
@@ -254,11 +291,11 @@ export async function fetchProjectApiKeys(
 
   const anon = pick(
     (k) => k.name === 'anon' || k.type === 'legacyAnonKey' || k.type === 'anon',
-    (k) => k.type === 'publishable' || /publishable|anon/i.test(String(k.name)),
+    (k) => k.type === 'publishable',
   );
   const service = pick(
     (k) => k.name === 'service_role' || k.type === 'legacyServiceRoleKey' || k.type === 'service_role',
-    (k) => k.type === 'secret' || /service|secret/i.test(String(k.name)),
+    (k) => k.type === 'secret',
   );
 
   if (!anon || !service) {
@@ -278,6 +315,7 @@ export async function runSqlViaManagementApi(
   projectRef: string,
   query: string,
 ): Promise<void> {
+  if (!validProjectRef(projectRef)) throw managementDenied();
   await mgmtFetch(`/projects/${encodeURIComponent(projectRef)}/database/query`, accessToken, {
     method: 'POST',
     body: JSON.stringify({ query }),
@@ -418,7 +456,8 @@ export async function provisionUserSupabase(opts: {
       await runSqlViaManagementApi(opts.accessToken.trim(), ref, sql);
       schemaApplied = true;
       method = 'management_api';
-    } catch {
+    } catch (error) {
+      if (terminalSupabaseDenial(error)) throw error;
       lastError = 'Schema setup was not confirmed. Check your connection permissions and retry.';
     }
   }
@@ -536,13 +575,11 @@ export async function getUserSupabaseAdmin(userId: string): Promise<SupabaseClie
 
 /** Prefer OAuth Management token, then pasted PAT. */
 export async function getUserSupabaseManagementToken(userId: string): Promise<string | null> {
-  try {
-    const { getSupabaseOAuthAccessToken } = await import('./supabaseAuth.js');
-    const oauth = await getSupabaseOAuthAccessToken(userId);
-    if (oauth) return oauth;
-  } catch {
-    /* oauth module optional at boot */
-  }
+  const { getSupabaseOAuthAccessToken } = await import('./supabaseAuth.js');
+  // The OAuth adapter returns null for ordinary refresh unavailability. A thrown
+  // authority/transport failure must never select a different credential.
+  const oauth = await getSupabaseOAuthAccessToken(userId);
+  if (oauth) return oauth;
   return getUserProviderKey(userId, 'supabase_pat');
 }
 

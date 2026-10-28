@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "02557ae5547b8059d31297c703775b74e43b3c0a42fc4244205a2292700da5ce",
+  "sourceTreeDigest": "6cdecdde7e676d50eac5d1ba6dd6700e616dd38e2fe6ec399152c9ddcdceaf52",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2314,11 +2314,11 @@
     {
       "id": "15dcdf4bce3cfa3abf94",
       "file": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 201,
+      "line": 228,
       "entryPoint": "mgmtFetch",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "a71135ee8dc58b90f171481dbe5f794970a41f7d4035d99d787635dff38f9282",
+      "callSha256": "b60d749399a812790e2912eb7114ce69cc870ba6896493826c502b3538ceb2cd",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",

@@ -9202,12 +9202,12 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014",
+      "sourceSha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
       "callIds": [
-        "a59eb5df1a268fbe2b96"
+        "76db5ae741f58e8ad98b"
       ],
       "disposition": "SCOPED_BOUNDARY",
-      "authority": "No production consumer of this dormant readiness export exists. Its own callable contract now requires the original issued TenantContext before credential/database access and derives its only owner from that context. A primitive user string or cloned/forged context cannot select any account. It then resolves the current exact owner canonical bundle and queries only xroga_user_id for that owner. All other module functions are byte-identical after this bounded guard/import change. No new route, issuer or caller is invented.",
+      "authority": "Only the original dormant userSupabaseMemoryReady query remains reviewed. Its original issued TenantContext, owner predicate, canonical account and complete nearest function body are byte-identical to the pushed parent. Management transport, SQL, project creation, direct password execution, storage setup and upstream production callers remain independent unresolved Phase4 obligations.",
       "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. One original readiness query, not whole provisioning/custody certification. Actual canonical owner credentials with issued contexts select each correct synthetic account and exact owner predicate. Cloned contexts and primitive identities reject before any query, missing account returns false, and revoked/outage authority reaches no provider. Dormancy is recorded, never used as an exemption. No enabled production caller was removed. External schema/provider success and009 migration/custody remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
       "evidence": [
         {
@@ -9316,7 +9316,18 @@
         "originalReviewReason": "No active production consumer was found. Dormancy alone is not a security certificate. The existing canonical issued-context guard now makes this export callable only with original server authority, and cloned/plain/string inputs reject before I/O. Its actual canonical-DB two-owner account query, revocation/outage and forged-context witness is prepared. This remains an original007 gap until complete exact-source real CI succeeds. Existing provisioning, provider-success, custody and migration scope is preserved in historicalReadinessReview.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
-      }
+      },
+      "beforeSupabaseManagementTransport": {
+        "ref": "1f0761daa88420e5ef00d98e99135cd542915188",
+        "path": "docs/xroga/security/caller-reviews.json",
+        "registrySha256": "54bf8ed6e7e447a8fc8bf2847fc68a4ad7662b82598180322233b7035cc3a0af",
+        "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014",
+        "callIds": [
+          "a59eb5df1a268fbe2b96"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseManagementContinuation": "docs/xroga/evidence/command-010/SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json"
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",
