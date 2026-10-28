@@ -918,18 +918,18 @@
       "id": "B1-P2-4a588dd074761414",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "sourceSha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
+      "sourceSha256": "8a66d4ea67b191f4c9ffa4d7e04ddea13b01e3808fff297034af03e0fd5c58f6",
       "baselineCallerIds": [
         "10b5e279dd241e2f40ec"
       ],
       "currentCallerIds": [
-        "d3320fe4985648eb0de7"
+        "3bde04a1d7cdf7d1828f"
       ],
       "mapping": [
         {
           "baselineCallerId": "10b5e279dd241e2f40ec",
           "currentCallerIds": [
-            "d3320fe4985648eb0de7"
+            "3bde04a1d7cdf7d1828f"
           ],
           "change": "RETAINED"
         }
@@ -939,7 +939,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-4a588dd074761414",
-        "sourceSha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
+        "sourceSha256": "8a66d4ea67b191f4c9ffa4d7e04ddea13b01e3808fff297034af03e0fd5c58f6",
         "executionStatus": "IN_PROGRESS",
         "finding": "EXISTING_ISSUED_PIPELINE_TO_REQUEST_SCOPED_STORE_CONSTRUCTION_PROOF_PREPARED",
         "originalCriteria": [
@@ -982,7 +982,7 @@
         {
           "path": "backend/src/synthesis/universalEntrypoint.ts",
           "marker": "createTenantContext({userId:input.userId",
-          "sourceSha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
+          "sourceSha256": "8a66d4ea67b191f4c9ffa4d7e04ddea13b01e3808fff297034af03e0fd5c58f6",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

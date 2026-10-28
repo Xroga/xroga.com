@@ -454,6 +454,7 @@ export async function tryUniversalBuild(
       input.projectId ??
         null,
       input.flags,
+      { builderBound: input.builderBound === true },
     );
 
   if (
@@ -1068,6 +1069,9 @@ const measuredEvidence =
 
       flags:
         input.flags,
+
+      builderBound:
+        input.builderBound === true,
 
       store:
         input.store ??

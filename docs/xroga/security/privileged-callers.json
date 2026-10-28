@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "6c407db85a7c032bf7e31e2de01ccd56dc906e9238d04d3ab5403dc75c8b21da",
+  "reviewRegistrySha256": "2bf8b8b9aab3ff750554e962e565fe8407a952d4d3ea79da75a7726516c44dce",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -4436,7 +4436,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d3320fe4985648eb0de7"
+        "id": "3bde04a1d7cdf7d1828f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7476,7 +7476,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d3320fe4985648eb0de7"
+        "id": "3bde04a1d7cdf7d1828f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -23784,15 +23784,15 @@
       }
     },
     {
-      "id": "d3320fe4985648eb0de7",
+      "id": "3bde04a1d7cdf7d1828f",
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 1075,
+      "line": 1079,
       "enclosing": "tryUniversalBuild",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
+      "sourceSha256": "8a66d4ea67b191f4c9ffa4d7e04ddea13b01e3808fff297034af03e0fd5c58f6",
       "semanticReview": {
         "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
         "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
