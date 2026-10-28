@@ -97,7 +97,7 @@ function jobSetup(options: { runAgent?: AgentRunner } = {}) {
   gh.addAccount('tok-alice', '501', 'alice'); gh.addAccount('tok-bob', '502', 'bob');
   const repo = gh.addRepo({ fullName: 'acme/math', ownerId: '501', files: PROJECT, access: { '501': { pull: true, push: true } } });
   const tokens = new Map<string, string | null>([[ALICE, 'tok-alice'], [BOB, 'tok-bob']]);
-  const source = new ExistingSourceService({ store: new InMemorySourceBindingStore(), tokenFor: async (u) => tokens.get(u) ?? null, portFor: (t) => gh.port(t), treeCache: new Map() } as never);
+  const source = new ExistingSourceService({ store: new InMemorySourceBindingStore(), tokenFor: async (u: string) => tokens.get(u) ?? null, portFor: (t: string) => gh.port(t), treeCache: new Map() } as never);
   const intel = new ExistingSourceIntelligence({ source, store: new InMemoryCodeIndexStore(), coordinator: new IndexCoordinator() });
   const store = new InMemoryChangeStore();
   const fixAgent: AgentRunner = async (input: AgentSoftwareExecutorInput) => {
@@ -173,7 +173,7 @@ describe('browser verification of a visual change', () => {
     const gh = new FakeGitHub();
     gh.addAccount('tok-alice', '501', 'alice');
     const repo = gh.addRepo({ fullName: 'acme/page', ownerId: '501', files: PAGE, access: { '501': { pull: true, push: true } } });
-    const source = new ExistingSourceService({ store: new InMemorySourceBindingStore(), tokenFor: async () => 'tok-alice', portFor: (t) => gh.port(t), treeCache: new Map() } as never);
+    const source = new ExistingSourceService({ store: new InMemorySourceBindingStore(), tokenFor: async () => 'tok-alice', portFor: (t: string) => gh.port(t), treeCache: new Map() } as never);
     const intel = new ExistingSourceIntelligence({ source, store: new InMemoryCodeIndexStore(), coordinator: new IndexCoordinator() });
     const changes = new ChangeService({ source, intel, store: new InMemoryChangeStore(), execution: new LocalProcessPort(), runAgent, modelRouteFor: async () => ({}) as never, previewVerifierFor, maxAttempts });
     const binding = (await source.link(ALICE, { repositoryId: repo })).binding;
