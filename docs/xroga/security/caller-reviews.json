@@ -4025,7 +4025,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+      "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
       "callIds": [
         "acfbdb182d9e682cce3f"
       ],
@@ -4191,11 +4191,18 @@
         "callIds": [
           "acfbdb182d9e682cce3f"
         ]
+      },
+      "beforeNativeSigningContinuation": {
+        "parent": "3b94979a0411db4137678d23332900d496e889a9",
+        "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+        "callIds": [
+          "acfbdb182d9e682cce3f"
+        ]
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+      "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
       "callIds": [
         "8c2f244d2269c3ff06ae"
       ],
@@ -4358,6 +4365,13 @@
       "beforeNativeReleaseContinuation": {
         "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
         "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+        "callIds": [
+          "8c2f244d2269c3ff06ae"
+        ]
+      },
+      "beforeNativeSigningContinuation": {
+        "parent": "3b94979a0411db4137678d23332900d496e889a9",
+        "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
         "callIds": [
           "8c2f244d2269c3ff06ae"
         ]
@@ -4863,19 +4877,42 @@
     },
     {
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "sourceSha256": "d7b7461ee10e925f81cf666e210ef2afd15ff6845d857ee6bc3116108ce52924",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
       "callIds": [
-        "7228332f4cdde91a1b83"
+        "5088f5dcf23da4c9022e"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in putRepoSecret. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "authority": "Inspected built-in Buffer.from(material.value) only. Its input is now the already verified canonical owner signing value, not a database table or object bucket.",
+      "reason": "The operand changed as part of the fully reviewed native signing broker. Only this memory conversion remains NOT_PERSISTENCE. Exact source, provider and confirmation obligations are independently proved by the native signing evidence. No new arbitrary .from candidate is ignored.",
       "evidence": [
         {
           "path": "backend/src/services/publish/electronSecrets.ts",
-          "marker": "    const messageBytes = Buffer.from(opts.value);\n    const encryptedBytes = sodium.crypto_box_seal(messageBytes, binKey);\n    const encrypted = sodium.to_base64(encryptedBytes, sodium.base64_variants.ORIGINAL);"
+          "marker": "sodium.crypto_box_seal(Buffer.from(material.value),binKey)"
         }
-      ]
+      ],
+      "beforeNativeSigningConversion": {
+        "path": "backend/src/services/publish/electronSecrets.ts",
+        "sourceSha256": "d7b7461ee10e925f81cf666e210ef2afd15ff6845d857ee6bc3116108ce52924",
+        "callIds": [
+          "7228332f4cdde91a1b83"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in putRepoSecret. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "    const messageBytes = Buffer.from(opts.value);\n    const encryptedBytes = sodium.crypto_box_seal(messageBytes, binKey);\n    const encrypted = sodium.to_base64(encryptedBytes, sodium.base64_variants.ORIGINAL);"
+          }
+        ]
+      },
+      "documentationTrace": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+      "beforeTimestampAndMetadataBinding": {
+        "sourceSha256": "ec3b0afbb0de46bd8d1082f87ac42600dfe7da671549e180db2cdcb479c1cd48",
+        "callIds": [
+          "e048e19ac0f9a3fc8246"
+        ]
+      }
     },
     {
       "path": "backend/src/services/referralService.ts",
@@ -21003,6 +21040,43 @@
         "documentationTrace": "docs/xroga/evidence/command-010/github-routes-20261027/current-credential-read.json"
       },
       "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json"
+    },
+    {
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "callIds": [
+        "df81e330b32d3d3874d6",
+        "2d4e062a005bf46582a2",
+        "3e5f7da67262942daf7e",
+        "c0d5e995c1cbb83054ef",
+        "a043a350ad845d7094db",
+        "5d6913b2d62382945666"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Original issued actor and exact owner, finite canonical signing/GitHub credential rows, exact owned repository project and exact consumed durable confirmation. Every service-role read has explicit user_id equality. Confirmation additionally matches original permit grant ID, digest, executing status and expiry. No SQL mutation or global exception.",
+      "reason": "Actual route positive/negative fixtures execute the real SDK filters and canonical claim/authorize/finish flow. Scoped read-source and grant-lifetime boundary only. No Phase2/3/4 blanket acceptance, no release Actions authority.",
+      "evidence": [
+        {
+          "path": "backend/src/services/publish/electronSecrets.ts",
+          "marker": "getTenantSupabaseAdmin(context).from('business_action_confirmations')"
+        },
+        {
+          "path": "backend/src/routes/electronSigning.security.test.ts",
+          "marker": "actual signing routes require durable exact approval"
+        }
+      ],
+      "documentationTrace": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+      "beforeTimestampAndMetadataBinding": {
+        "sourceSha256": "ec3b0afbb0de46bd8d1082f87ac42600dfe7da671549e180db2cdcb479c1cd48",
+        "callIds": [
+          "df81e330b32d3d3874d6",
+          "2d4e062a005bf46582a2",
+          "1c6d434284744905540c",
+          "5a77e4a895c7514219d6",
+          "f9eb0d55e38bbca28a9a",
+          "1f137c4bbcee9b7334de"
+        ]
+      }
     }
   ]
 }

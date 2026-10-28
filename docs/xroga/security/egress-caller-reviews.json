@@ -2685,7 +2685,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e",
+      "sourceFileSha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -2708,7 +2708,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         }
       ],
       "nativeCheckoutPriorReview": {
@@ -3083,7 +3083,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         }
       ],
       "nativeCheckoutPriorReview": {
@@ -3222,7 +3222,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         }
       ],
       "nativeCheckoutPriorReview": {
@@ -3397,7 +3397,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         },
         {
           "path": "backend/src/routes/billingCheckout.security.test.ts",
@@ -3443,6 +3443,46 @@
           "path": "frontend/src/lib/auraFirstParty.security.test.ts",
           "marker": "chat redirect never forwards the private manual conversation",
           "sha256": "2bd3f103c7c5f6e3ebcf2651ce2870dfcabecbc955ac08c0e40f10d25a87136a"
+        }
+      ]
+    },
+    {
+      "id": "cf71505267ebcf357a5c",
+      "callSha256": "b23fec131d71df2db720a448574f221bd20758ab72e4bdd6fdff6c6c7d2bff91",
+      "sourceFileSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_OFFICIAL_REPOSITORY_KEY_READ_AND_EXACT_CANONICALLY_APPROVED_SEALED_MATERIAL_WRITE",
+      "tenantAuthority": "ORIGINAL_ACTOR_OWNED_PROJECT_CURRENT_CANONICAL_SOURCE_AND_CONNECTION_VAULT_AUTHENTICATED_PRODUCER_EXACT_DURABLE_CONFIRMATION_ONE_USE_RECHECK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+          "marker": "cf71505267ebcf357a5c",
+          "sha256": "aa04a0c8bf823ff71b1f923043366d823d04a5a632be69caf3a25f8e1f02d3db"
+        },
+        {
+          "path": "backend/src/routes/electronSigning.security.test.ts",
+          "marker": "actual signing routes require durable exact approval",
+          "sha256": "cf9c63c5defd08c4ca0cfe5b1ecd48a1cb9c6fbecbad31a1974c60590c4ccafb"
+        }
+      ]
+    },
+    {
+      "id": "7cd9f7585381cfe94c57",
+      "callSha256": "30e52cbcfab737b2211d88366d687b1401d89f41f968c22e9f51d380ecca6800",
+      "sourceFileSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_OFFICIAL_REPOSITORY_KEY_READ_AND_EXACT_CANONICALLY_APPROVED_SEALED_MATERIAL_WRITE",
+      "tenantAuthority": "ORIGINAL_ACTOR_OWNED_PROJECT_CURRENT_CANONICAL_SOURCE_AND_CONNECTION_VAULT_AUTHENTICATED_PRODUCER_EXACT_DURABLE_CONFIRMATION_ONE_USE_RECHECK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+          "marker": "7cd9f7585381cfe94c57",
+          "sha256": "aa04a0c8bf823ff71b1f923043366d823d04a5a632be69caf3a25f8e1f02d3db"
+        },
+        {
+          "path": "backend/src/routes/electronSigning.security.test.ts",
+          "marker": "actual signing routes require durable exact approval",
+          "sha256": "cf9c63c5defd08c4ca0cfe5b1ecd48a1cb9c6fbecbad31a1974c60590c4ccafb"
         }
       ]
     }

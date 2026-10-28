@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+      "currentSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -116,6 +116,14 @@
       "beforeNativeReleaseContinuation": {
         "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
         "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+        "afterIds": [
+          "acfbdb182d9e682cce3f",
+          "8c2f244d2269c3ff06ae"
+        ]
+      },
+      "beforeNativeSigningContinuation": {
+        "parent": "3b94979a0411db4137678d23332900d496e889a9",
+        "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
         "afterIds": [
           "acfbdb182d9e682cce3f",
           "8c2f244d2269c3ff06ae"

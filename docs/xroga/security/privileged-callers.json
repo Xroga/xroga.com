@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "f2e96a1e5258d2d5b7226e84fb39ef38cea12ffc4853821b142d2decefdcc088",
+  "reviewRegistrySha256": "b5f40f016ac3b49aeb0573811fb2155318323c4e7af9571895e21c160fd15249",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 194,
-    "persistenceCandidates": 819,
-    "ownerPredicateCandidates": 205,
+    "privilegedFactorySites": 197,
+    "persistenceCandidates": 825,
+    "ownerPredicateCandidates": 211,
     "reviewRequired": 127,
-    "reviewedCandidates": 692,
+    "reviewedCandidates": 698,
     "unresolvedSafetyCandidates": 160,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 127,
-    "SCOPED_BOUNDARY": 453,
+    "SCOPED_BOUNDARY": 459,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 166,
     "REVIEWED_GAP": 33
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 87,
-    "unresolvedCandidateBoundaries": 732,
+    "verifiedCandidateBoundaries": 86,
+    "unresolvedCandidateBoundaries": 739,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -1161,6 +1161,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-ef318e8bf2e5db98"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-52503cb2ef435822"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-52503cb2ef435822"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-52503cb2ef435822"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -4752,6 +4764,34 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "df81e330b32d3d3874d6"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2d4e062a005bf46582a2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3e5f7da67262942daf7e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "c0d5e995c1cbb83054ef"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "a043a350ad845d7094db"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5d6913b2d62382945666"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5088f5dcf23da4c9022e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "8b8eb392635ee87676c5"
       },
       {
@@ -7788,6 +7828,34 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "df81e330b32d3d3874d6"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2d4e062a005bf46582a2"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3e5f7da67262942daf7e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c0d5e995c1cbb83054ef"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a043a350ad845d7094db"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5d6913b2d62382945666"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5088f5dcf23da4c9022e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "5d597ec498081269f488"
       },
       {
@@ -8165,12 +8233,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 819,
-    "structuredVerified": 87,
-    "structuredUnproven": 732,
+    "currentCallers": 825,
+    "structuredVerified": 86,
+    "structuredUnproven": 739,
     "manualUnresolved": 160,
-    "manualUnsupported": 572,
-    "agreedVerified": 87,
+    "manualUnsupported": 579,
+    "agreedVerified": 86,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -8774,7 +8842,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+      "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8795,7 +8863,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+      "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -21630,22 +21698,172 @@
       }
     },
     {
-      "id": "7228332f4cdde91a1b83",
+      "id": "df81e330b32d3d3874d6",
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "line": 47,
+      "line": 25,
+      "enclosing": "canonicalRow",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "semanticReview": {
+        "authority": "Original issued actor and exact owner, finite canonical signing/GitHub credential rows, exact owned repository project and exact consumed durable confirmation. Every service-role read has explicit user_id equality. Confirmation additionally matches original permit grant ID, digest, executing status and expiry. No SQL mutation or global exception.",
+        "reason": "Actual route positive/negative fixtures execute the real SDK filters and canonical claim/authorize/finish flow. Scoped read-source and grant-lifetime boundary only. No Phase2/3/4 blanket acceptance, no release Actions authority.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "getTenantSupabaseAdmin(context).from('business_action_confirmations')"
+          },
+          {
+            "path": "backend/src/routes/electronSigning.security.test.ts",
+            "marker": "actual signing routes require durable exact approval"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2d4e062a005bf46582a2",
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "line": 25,
+      "enclosing": "canonicalRow",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "semanticReview": {
+        "authority": "Original issued actor and exact owner, finite canonical signing/GitHub credential rows, exact owned repository project and exact consumed durable confirmation. Every service-role read has explicit user_id equality. Confirmation additionally matches original permit grant ID, digest, executing status and expiry. No SQL mutation or global exception.",
+        "reason": "Actual route positive/negative fixtures execute the real SDK filters and canonical claim/authorize/finish flow. Scoped read-source and grant-lifetime boundary only. No Phase2/3/4 blanket acceptance, no release Actions authority.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "getTenantSupabaseAdmin(context).from('business_action_confirmations')"
+          },
+          {
+            "path": "backend/src/routes/electronSigning.security.test.ts",
+            "marker": "actual signing routes require durable exact approval"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3e5f7da67262942daf7e",
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "line": 38,
+      "enclosing": "ownedProject",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "semanticReview": {
+        "authority": "Original issued actor and exact owner, finite canonical signing/GitHub credential rows, exact owned repository project and exact consumed durable confirmation. Every service-role read has explicit user_id equality. Confirmation additionally matches original permit grant ID, digest, executing status and expiry. No SQL mutation or global exception.",
+        "reason": "Actual route positive/negative fixtures execute the real SDK filters and canonical claim/authorize/finish flow. Scoped read-source and grant-lifetime boundary only. No Phase2/3/4 blanket acceptance, no release Actions authority.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "getTenantSupabaseAdmin(context).from('business_action_confirmations')"
+          },
+          {
+            "path": "backend/src/routes/electronSigning.security.test.ts",
+            "marker": "actual signing routes require durable exact approval"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c0d5e995c1cbb83054ef",
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "line": 38,
+      "enclosing": "ownedProject",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "semanticReview": {
+        "authority": "Original issued actor and exact owner, finite canonical signing/GitHub credential rows, exact owned repository project and exact consumed durable confirmation. Every service-role read has explicit user_id equality. Confirmation additionally matches original permit grant ID, digest, executing status and expiry. No SQL mutation or global exception.",
+        "reason": "Actual route positive/negative fixtures execute the real SDK filters and canonical claim/authorize/finish flow. Scoped read-source and grant-lifetime boundary only. No Phase2/3/4 blanket acceptance, no release Actions authority.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "getTenantSupabaseAdmin(context).from('business_action_confirmations')"
+          },
+          {
+            "path": "backend/src/routes/electronSigning.security.test.ts",
+            "marker": "actual signing routes require durable exact approval"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a043a350ad845d7094db",
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "line": 68,
+      "enclosing": "putRepoSecret",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "semanticReview": {
+        "authority": "Original issued actor and exact owner, finite canonical signing/GitHub credential rows, exact owned repository project and exact consumed durable confirmation. Every service-role read has explicit user_id equality. Confirmation additionally matches original permit grant ID, digest, executing status and expiry. No SQL mutation or global exception.",
+        "reason": "Actual route positive/negative fixtures execute the real SDK filters and canonical claim/authorize/finish flow. Scoped read-source and grant-lifetime boundary only. No Phase2/3/4 blanket acceptance, no release Actions authority.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "getTenantSupabaseAdmin(context).from('business_action_confirmations')"
+          },
+          {
+            "path": "backend/src/routes/electronSigning.security.test.ts",
+            "marker": "actual signing routes require durable exact approval"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5d6913b2d62382945666",
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "line": 68,
+      "enclosing": "putRepoSecret",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
+      "semanticReview": {
+        "authority": "Original issued actor and exact owner, finite canonical signing/GitHub credential rows, exact owned repository project and exact consumed durable confirmation. Every service-role read has explicit user_id equality. Confirmation additionally matches original permit grant ID, digest, executing status and expiry. No SQL mutation or global exception.",
+        "reason": "Actual route positive/negative fixtures execute the real SDK filters and canonical claim/authorize/finish flow. Scoped read-source and grant-lifetime boundary only. No Phase2/3/4 blanket acceptance, no release Actions authority.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/electronSecrets.ts",
+            "marker": "getTenantSupabaseAdmin(context).from('business_action_confirmations')"
+          },
+          {
+            "path": "backend/src/routes/electronSigning.security.test.ts",
+            "marker": "actual signing routes require durable exact approval"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5088f5dcf23da4c9022e",
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "line": 96,
       "enclosing": "putRepoSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d7b7461ee10e925f81cf666e210ef2afd15ff6845d857ee6bc3116108ce52924",
+      "sourceSha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in putRepoSecret. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "Inspected built-in Buffer.from(material.value) only. Its input is now the already verified canonical owner signing value, not a database table or object bucket.",
+        "reason": "The operand changed as part of the fully reviewed native signing broker. Only this memory conversion remains NOT_PERSISTENCE. Exact source, provider and confirmation obligations are independently proved by the native signing evidence. No new arbitrary .from candidate is ignored.",
         "evidence": [
           {
             "path": "backend/src/services/publish/electronSecrets.ts",
-            "marker": "    const messageBytes = Buffer.from(opts.value);\n    const encryptedBytes = sodium.crypto_box_seal(messageBytes, binKey);\n    const encrypted = sodium.to_base64(encryptedBytes, sodium.base64_variants.ORIGINAL);"
+            "marker": "sodium.crypto_box_seal(Buffer.from(material.value),binKey)"
           }
         ]
       }

@@ -4347,6 +4347,8 @@ export const api = {
 
           synced?:
             string[];
+          needsConfirmation?:boolean;
+          confirmations?:Array<{id:string;summary:string;status:string;toolkit:string;toolSlug?:string;expiresAt:string}>;
         }>(
           '/api/publish/sync-electron-secrets',
 
@@ -4360,6 +4362,8 @@ export const api = {
               }),
           },
         ),
+
+    confirmElectronSecret:(id:string)=>apiFetch<{ok:boolean;synced:string[];message:string}>(`/api/publish/sync-electron-secrets/${encodeURIComponent(id)}/confirm`,{method:'POST'}),
 
     easBuilds:
       () =>

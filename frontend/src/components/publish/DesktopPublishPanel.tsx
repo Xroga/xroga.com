@@ -9,7 +9,8 @@ import {
   PublishRequirement,
   PublishStatusBadge,
 } from '@/components/publish/PublishPrimitives';
-import { api } from '@/lib/api';
+import { api,apiFetch } from '@/lib/api';
+import {requireSigningConfirmation,requireSigningConfirmations,type SigningConfirmation} from '@/lib/signingAdmission';
 import type {
   PublishProject,
   PublishStatus,
@@ -33,6 +34,7 @@ function DesktopSigningSetup({
   const [applePassword, setApplePassword] = useState('');
   const [teamId, setTeamId] = useState('');
   const [manualRepo, setManualRepo] = useState('');
+  const [confirmations,setConfirmations]=useState<SigningConfirmation[]>([]);
 
   const repoName = useMemo(
     () => project?.githubRepoName?.trim() || manualRepo.trim(),
@@ -79,7 +81,9 @@ function DesktopSigningSetup({
     setBusy('sync');
     try {
       const result = await api.publish.syncElectronSecrets(repoName);
-      toast.success(result.message || 'Signing credentials synced to GitHub Actions');
+      if(result.needsConfirmation)setConfirmations(requireSigningConfirmations(result.confirmations));
+      else if(result.ok&&result.synced?.length===0)toast(result.message||'No signing material is configured.');
+      else throw new Error('No signing-material approval was prepared.');
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -87,8 +91,28 @@ function DesktopSigningSetup({
     }
   }
 
+  async function finishSigning(selected:SigningConfirmation,approved:boolean){
+    if(busy!==null)return;
+    setBusy(selected.id);setConfirmations(rows=>rows.filter(row=>row.id!==selected.id));
+    try{
+      requireSigningConfirmation(selected);
+      if(!approved){await apiFetch(`/api/phase1/business-actions/confirmations/${encodeURIComponent(selected.id)}/cancel`,{method:'POST'});return;}
+      const result=await api.publish.confirmElectronSecret(selected.id);
+      if(!result.ok||result.synced.length!==1)throw new Error('Signing update was not verified. Check its approval status.');
+      toast.success(result.message);onSaved();
+    }catch(error){toast.error(error instanceof Error?error.message:'Signing approval could not complete. Check its status.');}
+    finally{setBusy(null);}
+  }
+
   return (
     <div className="space-y-5">
+      {confirmations.length>0&&<div role="group" aria-label="Approve signing material" className="space-y-3">
+        {confirmations.map(confirmation=><div key={confirmation.id} className="rounded-token-md border border-[var(--border-subtle)] p-3">
+          <p className="text-xs text-[var(--text-primary)]">{confirmation.summary}</p>
+          <button type="button" disabled={busy!==null} onClick={()=>void finishSigning(confirmation,true)} className="mr-3 mt-2 text-xs font-semibold">Approve this transfer</button>
+          <button type="button" disabled={busy!==null} onClick={()=>void finishSigning(confirmation,false)} className="mt-2 text-xs">Cancel</button>
+        </div>)}
+      </div>}
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
           <p className="text-xs font-semibold text-[var(--text-primary)]">Code signing</p>
@@ -224,7 +248,7 @@ function DesktopSigningSetup({
             )}
             <button
               type="button"
-              disabled={busy !== null || !repoName}
+              disabled={busy !== null || !repoName || confirmations.length>0}
               onClick={() => void syncSecrets()}
               className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-token-sm bg-[var(--accent)] px-3 text-xs font-semibold text-white disabled:opacity-50"
             >

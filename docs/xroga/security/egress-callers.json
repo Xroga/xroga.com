@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "225c59037f5df5dc6247e8cbd70fed793526c88da75cba84fef0509c99184f93",
+  "sourceTreeDigest": "434d0487a79a33ea50038563bbf74b44eaada938d32a8098e7b68aa5bf7812fb",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2124,7 +2124,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         }
       ]
     },
@@ -2146,7 +2146,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         },
         {
           "path": "backend/src/routes/billingCheckout.security.test.ts",
@@ -2441,34 +2441,56 @@
     {
       "id": "cf71505267ebcf357a5c",
       "file": "backend/src/services/publish/electronSecrets.ts",
-      "line": 34,
+      "line": 86,
       "entryPoint": "putRepoSecret",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "9b79fcc2c0895b1bf18b6c5c2867f21c012dc23836edf7a48a7689b8b4eadc21",
+      "callSha256": "b23fec131d71df2db720a448574f221bd20758ab72e4bdd6fdff6c6c7d2bff91",
       "destination": "https://api.github.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_OFFICIAL_REPOSITORY_KEY_READ_AND_EXACT_CANONICALLY_APPROVED_SEALED_MATERIAL_WRITE",
+      "tenantAuthority": "ORIGINAL_ACTOR_OWNED_PROJECT_CURRENT_CANONICAL_SOURCE_AND_CONNECTION_VAULT_AUTHENTICATED_PRODUCER_EXACT_DURABLE_CONFIRMATION_ONE_USE_RECHECK",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+          "marker": "cf71505267ebcf357a5c",
+          "sha256": "aa04a0c8bf823ff71b1f923043366d823d04a5a632be69caf3a25f8e1f02d3db"
+        },
+        {
+          "path": "backend/src/routes/electronSigning.security.test.ts",
+          "marker": "actual signing routes require durable exact approval",
+          "sha256": "cf9c63c5defd08c4ca0cfe5b1ecd48a1cb9c6fbecbad31a1974c60590c4ccafb"
+        }
+      ]
     },
     {
       "id": "7cd9f7585381cfe94c57",
       "file": "backend/src/services/publish/electronSecrets.ts",
-      "line": 51,
+      "line": 118,
       "entryPoint": "putRepoSecret",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "96cce016c9bde9733640378cc40395a5487645fecbc9280b43173d5db523d82e",
-      "destination": "https://api.github.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "callSha256": "30e52cbcfab737b2211d88366d687b1401d89f41f968c22e9f51d380ecca6800",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "FIXED_OFFICIAL_REPOSITORY_KEY_READ_AND_EXACT_CANONICALLY_APPROVED_SEALED_MATERIAL_WRITE",
+      "tenantAuthority": "ORIGINAL_ACTOR_OWNED_PROJECT_CURRENT_CANONICAL_SOURCE_AND_CONNECTION_VAULT_AUTHENTICATED_PRODUCER_EXACT_DURABLE_CONFIRMATION_ONE_USE_RECHECK",
       "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+          "marker": "7cd9f7585381cfe94c57",
+          "sha256": "aa04a0c8bf823ff71b1f923043366d823d04a5a632be69caf3a25f8e1f02d3db"
+        },
+        {
+          "path": "backend/src/routes/electronSigning.security.test.ts",
+          "marker": "actual signing routes require durable exact approval",
+          "sha256": "cf9c63c5defd08c4ca0cfe5b1ecd48a1cb9c6fbecbad31a1974c60590c4ccafb"
+        }
+      ]
     },
     {
       "id": "99ec2dc4769b5eced6a5",
@@ -2573,7 +2595,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         }
       ]
     },
@@ -3895,7 +3917,7 @@
         {
           "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
           "marker": "fcad57247cfb79779f95",
-          "sha256": "9fd8728dbff488dd260d0f7c6a2c6f90cfd2ac57a273abf8ca2dafc7d6875b64"
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
         }
       ]
     },
@@ -4291,8 +4313,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 121,
-    "pending": 15,
+    "reviewed": 123,
+    "pending": 13,
     "unresolvedHighRiskBypasses": 8
   }
 }

@@ -127,6 +127,7 @@
     "backend/src/routes/drive.test.ts",
     "backend/src/routes/drive.ts",
     "backend/src/routes/driveRegistration.test.ts",
+    "backend/src/routes/electronSigning.security.test.ts",
     "backend/src/routes/github.ts",
     "backend/src/routes/githubTransport.security.test.ts",
     "backend/src/routes/guestChat.egress.test.ts",
@@ -136,6 +137,7 @@
     "backend/src/routes/phase1BusinessPreflight.test.ts",
     "backend/src/routes/phase1BusinessPreflight.ts",
     "backend/src/routes/projectRuntime.ts",
+    "backend/src/routes/publish.ts",
     "backend/src/routes/supabaseOAuth.ts",
     "backend/src/routes/supabaseOrganizations.security.test.ts",
     "backend/src/routes/swarm.ts",
@@ -258,6 +260,9 @@
     "backend/src/services/integrations/userProviderKeys.ts",
     "backend/src/services/integrations/vercelAuth.ts",
     "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+    "backend/src/services/publish/electronSecrets.authority.test.ts",
+    "backend/src/services/publish/electronSecrets.ts",
+    "backend/src/services/publish/electronSigningAdmission.security.test.ts",
     "backend/src/services/publish/expoIdentityTransport.security.test.ts",
     "backend/src/services/publish/nonWebShip.security.test.ts",
     "backend/src/services/publish/nonWebShip.ts",
@@ -1226,6 +1231,7 @@
     "frontend/src/components/profile/UserProfileBox.tsx",
     "frontend/src/components/projects/FilePreview.tsx",
     "frontend/src/components/providers/RootProviders.tsx",
+    "frontend/src/components/publish/DesktopPublishPanel.tsx",
     "frontend/src/components/seo/EditorialPage.tsx",
     "frontend/src/components/seo/GrowthEvidence.tsx",
     "frontend/src/components/showcase/products/AiSaas.tsx",
@@ -1295,6 +1301,9 @@
     "frontend/src/lib/sidebarOwnerRls.test.ts",
     "frontend/src/lib/sidebarProjectTask.test.ts",
     "frontend/src/lib/sidebarProjectTask.ts",
+    "frontend/src/lib/signingAdmission.test.ts",
+    "frontend/src/lib/signingAdmission.ts",
+    "frontend/src/lib/signingUi.security.test.ts",
     "frontend/src/lib/supabase/authCookiePolicy.test.ts",
     "frontend/src/lib/supabase/authCookiePolicy.ts",
     "frontend/src/lib/supabase/authProviders.ts",
@@ -1453,7 +1462,7 @@
     },
     "egress": {
       "changed": true,
-      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.15unreviewed callers and8high-risk obligations remain."
+      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.13unreviewed callers and8high-risk obligations remain."
     },
     "cost": {
       "changed": true,
@@ -1492,7 +1501,7 @@
   "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "15remaining source traces including8high-risk candidates, not all are demonstrated vulnerabilities",
+    "13remaining source traces including8high-risk candidates, not all are demonstrated vulnerabilities",
     "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
     "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
     "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
@@ -1507,6 +1516,7 @@
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
     "docs/xroga/evidence/command-010/AURA-CLIENTS-CHECKPOINT-20261028.json",
     "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json",
+    "docs/xroga/evidence/command-010/CI-3B94979A-20261028.json",
     "docs/xroga/evidence/command-010/CI-585D02C8-20261028.json",
     "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
     "docs/xroga/evidence/command-010/CONTAINER-ORGANIZATIONS-CHECKPOINT-20261028.json",
@@ -1517,6 +1527,8 @@
     "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-CHECKPOINT-20261028.json",
     "docs/xroga/evidence/command-010/NATIVE-CORRECTION-CHECKPOINT-20261028.json",
     "docs/xroga/evidence/command-010/NATIVE-RELEASE-TRANSPORT-CONTINUATION-20261028.json",
+    "docs/xroga/evidence/command-010/NATIVE-SIGNING-CHECKPOINT-20261028.json",
+    "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
     "docs/xroga/evidence/command-010/ORPHAN-CLEANUP-BOUNDARY-20261028.json",
     "docs/xroga/evidence/command-010/PLAN-READ-TRANSPORT-20261028.json",
     "docs/xroga/evidence/command-010/PREVIEW-GOOGLE-CALLER-TRACE.json",
@@ -1559,7 +1571,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Original strict caller audit incomplete:15pending and8high-risk candidates",
+      "Original strict caller audit incomplete:13pending and8high-risk candidates",
       "All12original criteria and exact-final-source authenticated/disposable/CI acceptance are not yet verified"
     ],
     "authenticatedE2e": "BLOCKED",

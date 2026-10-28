@@ -4384,16 +4384,19 @@ publicationReason:
     emit({
       agent: 'deploy',
       status: 'releasing',
-      message: 'Syncing signing secrets + starting multi-OS installer builds…',
+      message: 'Checking signing approval before installer builds...',
       swarmStatusLabel: 'Desktop Actions',
       swarmActivity: githubRepoName,
       swarmTodos: todos('push'),
     });
     try {
-      await syncElectronSigningSecretsToGitHub({
+      const signing = await syncElectronSigningSecretsToGitHub({
         userId: opts.userId,
         repoFullName: githubRepoName,
+        tenantContext,
+        signal:opts.signal,
       });
+      if(!signing.ok)throw Object.assign(new Error('Approve signing-material transfer in Publish before starting the signed release.'),{code:'SIGNING_APPROVAL_REQUIRED'});
       const released = await triggerElectronDesktopRelease({
         tenantContext,
         signal:opts.signal,

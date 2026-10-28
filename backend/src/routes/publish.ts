@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
+import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
+import {confirmBusinessAction} from '../services/integrations/businessActionConfirmations.js';
 import {
   getPublishStatus,
   verifyExpoToken,
@@ -368,10 +370,22 @@ router.post('/sync-electron-secrets', async (req: AuthRequest, res) => {
     const result = await syncElectronSigningSecretsToGitHub({
       userId: req.userId!,
       repoFullName: parsed.data.repoFullName,
+      tenantContext:req.tenantContext,
     });
-    res.status(result.ok ? 200 : 400).json(result);
+    res.status(result.needsConfirmation ? 202 : result.ok ? 200 : 400).json(result);
   } catch (err) {
-    res.status(500).json({ ok: false, error: (err as Error).message });
+    res.status(403).json({ok:false,error:'Signing material could not be prepared for this owned repository.'});
+  }
+});
+
+router.post('/sync-electron-secrets/:id/confirm',async(req:AuthRequest,res)=>{
+  try{
+    const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId);
+    const result=await confirmBusinessAction(context,String(req.params.id??''),{toolkit:'xroga-native-signing',toolSlug:'XROGA_SET_SIGNING_MATERIAL'});
+    res.json(JSON.parse(result.execution.resultText));
+  }catch(error){
+    const status=(error as {status?:unknown}).status;
+    res.status(typeof status==='number'&&status>=400&&status<=599?status:503).json({ok:false,error:'Signing approval could not complete. Check its status before preparing another action.'});
   }
 });
 

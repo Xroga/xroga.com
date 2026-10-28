@@ -142,7 +142,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "a6cdfb923889f78b91fb80c9400351ab6c4c2dcfb9d3fc2b2475041831c00240"
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -162,7 +162,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e"
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
     },
     {
       "path": "backend/src/index.ts",
@@ -298,5 +298,73 @@
         }
       }
     ]
+  },
+  "beforeNativeSigningSourceBindings": [
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "sha256": "96aa6a02668b9d2a568bf7863c3546edbdc7a26d9bf98d2ff9c8a54202108fe3"
+    },
+    {
+      "path": "backend/src/routes/billingCheckout.security.test.ts",
+      "sha256": "ac4d78352d3ea9352a8b1265aebc79d9cb32bdc3631a84c272e8c0df09f43c8d"
+    },
+    {
+      "path": "backend/src/routes/billing.ts",
+      "sha256": "981e939ad5cb97856cea7ab62b2f400ab06dc355373221b6f65b5ab1e328f87d"
+    },
+    {
+      "path": "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
+      "sha256": "adce243b8db77de709612980c232d26838c2013e205cc99878e87e3c3d851e3f"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "sha256": "d62a773f55b916320a9fc376d0c3057d0772a88bc27cf41d30ee0b67773f2b97"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.test.ts",
+      "sha256": "913e8d6aafa71b03e923102157fc61d231237a163e32d0e64ca6e95bfe25d333"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+    },
+    {
+      "path": "frontend/src/components/billing/CheckoutButton.tsx",
+      "sha256": "96dfb30b212d6e9652415a629140dd3a617a99aa5bae060f0275dba4056cbeb2"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.ts",
+      "sha256": "318559fb218c890e6baf2bf3204947b34934b564747b440b2349ddc52b3f9659"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.test.ts",
+      "sha256": "508ded38db96db3214b1e393a8cf8fda2f00dd048f2ea0363f49c6d776121cfe"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
+    },
+    {
+      "path": "backend/src/index.ts",
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
+    },
+    {
+      "path": "backend/src/middleware/auth.ts",
+      "sha256": "8bb257cd67ad643d9ccc59eae5e767e0e03bbda1ca16ee37fcd304d63d04aca8"
+    },
+    {
+      "path": "backend/src/services/fixtures/checkoutApproval.ts",
+      "sha256": "3775326388a815bf862deae27d20154f0e17b6f07e71dc79e36f58f8b631d95b"
+    }
+  ],
+  "nativeSigningCompatibility": {
+    "scope": "UNCHANGED_CHECKOUT_BRANCH_PLUS_ADDITIVE_SIGNING_ADAPTER_ONLY",
+    "proof": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+    "checkoutBranchSha256": "b39a82e3f7a6c4d4252bce0cf5cf1bc14853e22a7a673b6121c518b8846ab2f4",
+    "focusedReceipt": "aa835052-2882-4fdd-a619-282e400006d5"
   }
 }

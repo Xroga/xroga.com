@@ -5223,7 +5223,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+      "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5525,6 +5525,7 @@
         "shipVerify",
         "shouldPush",
         "shouldStopForMissingResearch",
+        "signing",
         "simpleStaticFastPath",
         "site",
         "siteForQa",
@@ -16226,6 +16227,7 @@
         "backend/src/middleware/auth.tenantContext.test.ts",
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/billingCheckout.security.test.ts",
+        "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/github.settings.test.ts",
         "backend/src/routes/phase1.quota.test.ts",
@@ -21052,13 +21054,15 @@
       "id": "surface:ca82598ae390b0314729",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/publish.ts",
-      "sha256": "9bfe08af4193a2a6924a5102c67e647d1469ab71996d25640dc05b52bdf4a99b",
+      "sha256": "4b541f17d718b440edc259461075fcb7c233315a595896862650081f9bf8552c",
       "symbols": [
         "apps",
         "builds",
         "built",
+        "context",
         "creds",
         "err",
+        "error",
         "linked",
         "parsed",
         "projectId",
@@ -21075,6 +21079,8 @@
       ],
       "imports": [
         "../middleware/auth.js",
+        "../security/tenantContext.js",
+        "../services/integrations/businessActionConfirmations.js",
         "../services/integrations/userProviderKeys.js",
         "../services/publish/chromeWebStore.js",
         "../services/publish/easCredentials.js",
@@ -21085,6 +21091,8 @@
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/services/publish/chromeWebStore.ts",
         "backend/src/services/publish/easCredentials.ts",
@@ -21097,6 +21105,7 @@
       ],
       "callers": [
         "backend/src/index.ts:26",
+        "backend/src/routes/electronSigning.security.test.ts:2",
         "backend/src/services/publish/easPublish.routeScope.test.ts:4"
       ],
       "reachable": true,
@@ -21110,13 +21119,16 @@
         "backend/src/routes/publish.ts#verifyExpoToken"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/routes/publish.ts#confirmBusinessAction"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [
         "backend/src/routes/publish.ts#verified",
         "backend/src/routes/publish.ts#verifyExpoToken"
       ],
       "testCoverage": [
+        "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/services/publish/easPublish.routeScope.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23317,6 +23329,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:5",
         "backend/src/services/integrations/composioClient.ts:5",
         "backend/src/services/integrations/credentialVault.ts:3",
+        "backend/src/services/publish/electronSecrets.ts:8",
         "backend/tests/securityReceipt.local.integration.ts:9"
       ],
       "reachable": true,
@@ -23412,6 +23425,7 @@
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6",
+        "backend/src/services/publish/electronSecrets.ts:11",
         "backend/src/services/publish/nonWebShip.ts:11",
         "backend/tests/securityReceipt.local.integration.ts:13"
       ],
@@ -23782,6 +23796,7 @@
         "backend/src/security/egress/securityDecision.ts:5",
         "backend/src/services/BillingService.ts:22",
         "backend/src/services/integrations/composioClient.ts:10",
+        "backend/src/services/publish/electronSecrets.ts:13",
         "backend/src/services/publish/nonWebShip.ts:12",
         "backend/tests/securityReceipt.local.integration.ts:10"
       ],
@@ -23912,6 +23927,7 @@
         "backend/src/security/egress/egress.integration.test.ts:10",
         "backend/src/services/BillingService.ts:23",
         "backend/src/services/integrations/composioClient.ts:11",
+        "backend/src/services/publish/electronSecrets.ts:14",
         "backend/tests/securityReceipt.local.integration.ts:11"
       ],
       "reachable": true,
@@ -24395,6 +24411,7 @@
         "backend/src/services/integrations/oauthPkceStore.ts:9",
         "backend/src/services/integrations/userProviderKeys.ts:12",
         "backend/src/services/integrations/vercelAuth.ts:9",
+        "backend/src/services/publish/electronSecrets.ts:10",
         "backend/src/services/referralService.ts:2",
         "backend/src/services/responseCache.ts:2",
         "backend/src/services/storage/privateFileDelivery.ts:3",
@@ -24500,6 +24517,7 @@
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/browserRuns.ts:17",
         "backend/src/routes/drive.test.ts:2",
+        "backend/src/routes/electronSigning.security.test.ts:2",
         "backend/src/routes/github.oauth.test.ts:6",
         "backend/src/routes/github.ts:5",
         "backend/src/routes/githubTransport.security.test.ts:9",
@@ -24516,6 +24534,7 @@
         "backend/src/routes/projects.deletion.test.ts:5",
         "backend/src/routes/projects.fileAuthority.test.ts:5",
         "backend/src/routes/projects.ts:4",
+        "backend/src/routes/publish.ts:4",
         "backend/src/routes/referrals.ts:4",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:8",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts:7",
@@ -24615,6 +24634,9 @@
         "backend/src/services/notificationService.receipt.test.ts:5",
         "backend/src/services/notificationService.ts:2",
         "backend/src/services/publish/chromeWebStore.ts:12",
+        "backend/src/services/publish/electronSecrets.authority.test.ts:5",
+        "backend/src/services/publish/electronSecrets.ts:9",
+        "backend/src/services/publish/electronSigningAdmission.security.test.ts:4",
         "backend/src/services/publish/nonWebShip.security.test.ts:5",
         "backend/src/services/publish/nonWebShip.ts:14",
         "backend/src/services/referralService.failure.test.ts:5",
@@ -24690,6 +24712,7 @@
         "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/drive.test.ts",
+        "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/githubTransport.security.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
@@ -24760,6 +24783,8 @@
         "backend/src/services/memory/buildProjectStore.failure.test.ts",
         "backend/src/services/memory/buildProjectStore.receipt.test.ts",
         "backend/src/services/notificationService.receipt.test.ts",
+        "backend/src/services/publish/electronSecrets.authority.test.ts",
+        "backend/src/services/publish/electronSigningAdmission.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts",
         "backend/src/services/referralService.failure.test.ts",
         "backend/src/services/referralService.relations.test.ts",
@@ -25236,7 +25261,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "a6cdfb923889f78b91fb80c9400351ab6c4c2dcfb9d3fc2b2475041831c00240",
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -25340,6 +25365,7 @@
         "../../security/authority/types.js",
         "../../security/tenantContext.js",
         "../BillingService.js",
+        "../publish/electronSecrets.js",
         "./composioClient.js",
         "./composioSkillGuidance.js",
         "./pluginPermissionPolicy.js",
@@ -25358,7 +25384,8 @@
         "backend/src/services/BillingService.ts",
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
-        "backend/src/services/integrations/pluginPermissionPolicy.ts"
+        "backend/src/services/integrations/pluginPermissionPolicy.ts",
+        "backend/src/services/publish/electronSecrets.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -25366,6 +25393,7 @@
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
         "backend/src/routes/billingCheckout.security.test.ts:5",
+        "backend/src/routes/electronSigning.security.test.ts:3",
         "backend/src/routes/phase1.ts:67",
         "backend/src/security/authority/digest.test.ts:5",
         "backend/src/security/businessAuthority.local.integration.ts:9",
@@ -25377,7 +25405,8 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:16",
         "backend/src/services/integrations/businessActionRisk.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:6",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:3"
+        "backend/src/services/integrations/businessWorkflowRuns.ts:3",
+        "backend/src/services/publish/electronSecrets.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -25417,6 +25446,7 @@
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/routes/billingCheckout.security.test.ts",
+        "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/security/authority/digest.test.ts",
         "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
@@ -25500,13 +25530,16 @@
       "callers": [
         "backend/src/routes/billing.ts:6",
         "backend/src/routes/billingCheckout.security.test.ts:4",
+        "backend/src/routes/electronSigning.security.test.ts:3",
         "backend/src/routes/phase1.ts:94",
+        "backend/src/routes/publish.ts:5",
         "backend/src/security/businessAuthority.local.integration.ts:8",
         "backend/src/security/confirmationMetadata.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.digest.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4",
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts:3",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:4"
+        "backend/src/services/integrations/businessWorkflowRuns.ts:4",
+        "backend/src/services/publish/electronSecrets.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -25550,6 +25583,7 @@
       ],
       "testCoverage": [
         "backend/src/routes/billingCheckout.security.test.ts",
+        "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts",
@@ -26626,6 +26660,7 @@
         "backend/src/ai/modelContext.security.test.ts:9",
         "backend/src/ai/repoSummarize.security.test.ts:7",
         "backend/src/ai/tenantModelDispatch.test.ts:5",
+        "backend/src/routes/electronSigning.security.test.ts:4",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:9",
         "backend/src/routes/supabaseOrganizations.security.test.ts:9",
         "backend/src/security/githubConsumer.local.integration.ts:11",
@@ -26644,6 +26679,7 @@
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:76",
         "backend/src/services/integrations/userProviderKeys.ts:16",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts:5",
+        "backend/src/services/publish/electronSecrets.ts:7",
         "backend/src/synthesis/projectRuntime/secretManager.ts:7"
       ],
       "reachable": true,
@@ -26662,6 +26698,7 @@
         "backend/src/ai/modelContext.security.test.ts",
         "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
+        "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOrganizations.security.test.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -27114,7 +27151,7 @@
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/githubSourceRead.ts:3",
         "backend/src/services/publish/easPublish.ts:12",
-        "backend/src/services/publish/electronSecrets.ts:6",
+        "backend/src/services/publish/electronSecrets.ts:5",
         "backend/src/services/publish/nonWebShip.ts:9",
         "backend/src/services/publish/userOwnedPublish.ts:6",
         "backend/src/services/showcase/templateExport.ts:15"
@@ -28982,7 +29019,7 @@
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:17",
         "backend/src/routes/integrations.ts:639",
-        "backend/src/routes/publish.ts:13",
+        "backend/src/routes/publish.ts:15",
         "backend/src/routes/supabaseOAuth.ts:28",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:5",
         "backend/src/security/credentialReadMatrix.local.integration.ts:6",
@@ -29009,7 +29046,7 @@
         "backend/src/services/publish/chromeWebStore.ts:13",
         "backend/src/services/publish/easCredentials.ts:6",
         "backend/src/services/publish/easPublish.ts:7",
-        "backend/src/services/publish/electronSecrets.ts:7",
+        "backend/src/services/publish/electronSecrets.ts:6",
         "backend/src/services/publish/userOwnedPublish.ts:9",
         "scripts/security/verify-oci-federation.ts:11"
       ],
@@ -29733,10 +29770,10 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:178",
-        "backend/src/routes/publish.ts:214",
-        "backend/src/routes/publish.ts:256",
-        "backend/src/routes/publish.ts:293",
-        "backend/src/routes/publish.ts:309",
+        "backend/src/routes/publish.ts:216",
+        "backend/src/routes/publish.ts:258",
+        "backend/src/routes/publish.ts:295",
+        "backend/src/routes/publish.ts:311",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:8",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:3"
@@ -29864,10 +29901,10 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:180",
-        "backend/src/routes/publish.ts:176",
-        "backend/src/routes/publish.ts:320",
-        "backend/src/routes/publish.ts:341",
-        "backend/src/routes/publish.ts:381",
+        "backend/src/routes/publish.ts:178",
+        "backend/src/routes/publish.ts:322",
+        "backend/src/routes/publish.ts:343",
+        "backend/src/routes/publish.ts:395",
         "backend/src/services/publish/easBuilds.authority.test.ts:4",
         "backend/src/services/publish/easCredentials.authority.test.ts:3",
         "backend/src/services/publish/easCredentials.test.ts:3"
@@ -29958,8 +29995,8 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:173",
-        "backend/src/routes/publish.ts:62",
-        "backend/src/routes/publish.ts:8",
+        "backend/src/routes/publish.ts:10",
+        "backend/src/routes/publish.ts:64",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/easCredentials.ts:9"
       ],
@@ -29987,43 +30024,98 @@
       "id": "surface:ca8c8243f74619a5a835",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/electronSecrets.ts",
-      "sha256": "d7b7461ee10e925f81cf666e210ef2afd15ff6845d857ee6bc3116108ce52924",
+      "sha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678",
       "symbols": [
-        "appleId",
-        "applePass",
-        "appleTeam",
+        "SigningInput",
         "binKey",
-        "cscLink",
-        "cscPass",
+        "binding",
+        "body",
+        "canonicalRow",
+        "check",
+        "checkedGitHubReceipt",
+        "chunks",
+        "confirmations",
+        "connection",
+        "consumed",
+        "context",
+        "current",
+        "denied",
+        "destination",
+        "digest",
         "encrypted",
-        "encryptedBytes",
-        "err",
-        "failed",
+        "executeElectronSigningMaterial",
         "imported",
+        "issuedAt",
         "keyData",
         "keyRes",
-        "messageBytes",
-        "ok",
+        "material",
+        "materialNames",
+        "name",
+        "nativeSigningProof",
+        "next",
+        "nonce",
+        "ownedProject",
         "owner",
         "parseElectronSecretRepository",
         "parsed",
         "parts",
+        "payload",
+        "plan",
+        "plans",
+        "prepared",
+        "projectId",
+        "proof",
+        "provider",
         "put",
         "putRepoSecret",
+        "reader",
         "repo",
+        "repoFullName",
+        "repository",
+        "result",
+        "scope",
+        "selected",
+        "signal",
+        "signingProofIdentity",
+        "size",
         "sodium",
-        "sodiumMod",
+        "sourceMaterial",
         "syncElectronSigningSecretsToGitHub",
-        "synced",
         "token",
-        "trySync"
+        "toolSlug",
+        "toolkit",
+        "unsigned",
+        "useCase",
+        "uuid",
+        "value"
       ],
       "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/securityDecision.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../integrations/businessAction.js",
+        "../integrations/businessActionConfirmations.js",
+        "../integrations/credentialVaultRuntime.js",
         "../integrations/githubAuth.js",
         "../integrations/userProviderKeys.js",
-        "libsodium-wrappers"
+        "libsodium-wrappers",
+        "node:crypto",
+        "node:util"
       ],
       "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/githubAuth.ts",
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
@@ -30032,21 +30124,49 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:179",
-        "backend/src/routes/publish.ts:365",
-        "backend/src/services/publish/electronSecrets.authority.test.ts:4"
+        "backend/src/routes/publish.ts:367",
+        "backend/src/services/integrations/businessAction.ts:1453",
+        "backend/src/services/publish/electronSecrets.authority.test.ts:4",
+        "backend/src/services/publish/electronSigningAdmission.security.test.ts:3"
       ],
       "reachable": true,
-      "persistenceDependencies": [],
-      "externalProviderDependencies": [
-        "libsodium-wrappers"
+      "persistenceDependencies": [
+        "business_action_confirmations",
+        "projects",
+        "user_integrations"
       ],
-      "authBoundary": [],
-      "tenantBoundary": [],
-      "approvalBoundary": [],
+      "externalProviderDependencies": [
+        "libsodium-wrappers",
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/publish/electronSecrets.ts#AuthorityError",
+        "backend/src/services/publish/electronSecrets.ts#AuthorityPermit",
+        "backend/src/services/publish/electronSecrets.ts#authorityContextForPermit",
+        "backend/src/services/publish/electronSecrets.ts#businessActionAuthorityScope",
+        "backend/src/services/publish/electronSecrets.ts#consumeAuthorityPermit",
+        "backend/src/services/publish/electronSecrets.ts#signingProofIdentity"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/publish/electronSecrets.ts:25 (user_id)",
+        "backend/src/services/publish/electronSecrets.ts:38 (user_id)",
+        "backend/src/services/publish/electronSecrets.ts:68 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/publish/electronSecrets.ts#actionPlanDigest",
+        "backend/src/services/publish/electronSecrets.ts#confirmations",
+        "backend/src/services/publish/electronSecrets.ts#createBusinessActionConfirmation",
+        "backend/src/services/publish/electronSecrets.ts#digest",
+        "backend/src/services/publish/electronSecrets.ts#preparedActionDigest"
+      ],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/publish/electronSecrets.ts#checkedGitHubReceipt"
+      ],
       "testCoverage": [
-        "backend/src/services/publish/electronSecrets.authority.test.ts"
+        "backend/src/services/publish/electronSecrets.authority.test.ts",
+        "backend/src/services/publish/electronSigningAdmission.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -30240,7 +30360,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/publish.ts:4",
+        "backend/src/routes/publish.ts:6",
         "backend/src/services/publish/expoIdentityTransport.security.test.ts:5",
         "backend/src/services/publish/userOwnedPublish.test.ts:3"
       ],
@@ -72358,12 +72478,13 @@
       "id": "surface:344ff8264e76f3f618ba",
       "subsystem": "publishing",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "sha256": "ec6309b785f659b3baf95c0637f31ed6b53c0849615e9b560c4e93026ff4b5cf",
+      "sha256": "e2d3d0c7279efff8bbbba1de95e436982b39e389d86efd660b605b36760596f2",
       "symbols": [
         "DesktopPublishPanel",
         "DesktopSigningSetup",
         "cscSaved",
         "error",
+        "finishSigning",
         "githubConnected",
         "notarizationSaved",
         "projectLabel",
@@ -72376,13 +72497,15 @@
         "@/components/publish/PublishPrimitives",
         "@/lib/api",
         "@/lib/publish/types",
+        "@/lib/signingAdmission",
         "lucide-react",
         "react",
         "react-hot-toast"
       ],
       "runtimeImports": [
         "frontend/src/components/publish/PublishPrimitives.tsx",
-        "frontend/src/lib/api.ts"
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/signingAdmission.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/dashboard/publish/page.tsx"
@@ -72399,7 +72522,10 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/publish/DesktopPublishPanel.tsx#requireSigningConfirmation",
+        "frontend/src/components/publish/DesktopPublishPanel.tsx#requireSigningConfirmations"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
@@ -83835,7 +83961,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e",
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -92517,6 +92643,51 @@
       ],
       "testCoverage": [
         "frontend/src/lib/sidebarProjectTask.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:61a031d2c70bbf6be15a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/signingAdmission.ts",
+      "sha256": "b9a1eabd38f486a5f2a0be1757fbfea7b91b9ce07cd03ef12032644158b858da",
+      "symbols": [
+        "SigningConfirmation",
+        "requireSigningConfirmation",
+        "requireSigningConfirmations",
+        "row",
+        "rows"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/publish/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/publish/DesktopPublishPanel.tsx:13",
+        "frontend/src/lib/signingAdmission.test.ts:2",
+        "frontend/src/lib/signingUi.security.test.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/signingAdmission.ts#SigningConfirmation",
+        "frontend/src/lib/signingAdmission.ts#requireSigningConfirmation",
+        "frontend/src/lib/signingAdmission.ts#requireSigningConfirmations"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/signingAdmission.test.ts",
+        "frontend/src/lib/signingUi.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -108199,9 +108370,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ba3af50d29fe4766de59",
+      "id": "registration:62615c32ddf8f640618c",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 21,
+      "line": 23,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -108211,9 +108382,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2e7b59769c0d888b0304",
+      "id": "registration:ed2c74a7e5dfdcbcddbb",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 38,
+      "line": 40,
       "receiver": "router",
       "method": "post",
       "path": "/expo-token",
@@ -108223,9 +108394,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6c5fcc937f688c8b235f",
+      "id": "registration:60ed48f25440fd807eed",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 91,
+      "line": 93,
       "receiver": "router",
       "method": "post",
       "path": "/verify-expo",
@@ -108235,9 +108406,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fecdc3039b5060f1ac64",
+      "id": "registration:c165852e990dfe27dc43",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 114,
+      "line": 116,
       "receiver": "router",
       "method": "post",
       "path": "/eas-project",
@@ -108247,9 +108418,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e4df1063c2664f464bcc",
+      "id": "registration:44288ff576758f1ce274",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 136,
+      "line": 138,
       "receiver": "router",
       "method": "get",
       "path": "/expo-apps",
@@ -108259,9 +108430,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d8774e3de95f8281da04",
+      "id": "registration:badfd84c3094eb47dc80",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 154,
+      "line": 156,
       "receiver": "router",
       "method": "post",
       "path": "/eas-publish",
@@ -108271,9 +108442,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ceebde0fd96ea29753d7",
+      "id": "registration:ccd064efa9213ecd7f4e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 196,
+      "line": 198,
       "receiver": "router",
       "method": "post",
       "path": "/cws-credentials",
@@ -108283,9 +108454,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:14ea8a78ea3b8611190d",
+      "id": "registration:7ddc028d51bc9f7ef825",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 242,
+      "line": 244,
       "receiver": "router",
       "method": "post",
       "path": "/cws-oauth/start",
@@ -108295,9 +108466,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a8bbc48c317114c6faa2",
+      "id": "registration:b30008fe0851ba809de3",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 281,
+      "line": 283,
       "receiver": "router",
       "method": "post",
       "path": "/cws-oauth/callback",
@@ -108307,9 +108478,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cf487971e92dd460c474",
+      "id": "registration:803987086f8e30a6767e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 307,
+      "line": 309,
       "receiver": "router",
       "method": "get",
       "path": "/cws-status",
@@ -108319,9 +108490,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9687a5ccd385edc57a9d",
+      "id": "registration:49c04721692ff2eb0761",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 318,
+      "line": 320,
       "receiver": "router",
       "method": "post",
       "path": "/sync-play-credentials",
@@ -108331,9 +108502,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6f85654359e2555fd9f1",
+      "id": "registration:4d1ac56c6bd5b640a8f6",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 331,
+      "line": 333,
       "receiver": "router",
       "method": "post",
       "path": "/sync-apple-credentials",
@@ -108343,9 +108514,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f0a2c24d12cce465ea2a",
+      "id": "registration:920777dcf41c9c8e0218",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 355,
+      "line": 357,
       "receiver": "router",
       "method": "post",
       "path": "/sync-electron-secrets",
@@ -108355,9 +108526,21 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ea67968f6553da3cc2e9",
+      "id": "registration:ea75b64ca1dda1c0d070",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 379,
+      "line": 381,
+      "receiver": "router",
+      "method": "post",
+      "path": "/sync-electron-secrets/:id/confirm",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:f467dc6402e85873c5ca",
+      "sourcePath": "backend/src/routes/publish.ts",
+      "line": 393,
       "receiver": "router",
       "method": "get",
       "path": "/eas-builds",
@@ -112435,10 +112618,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a48cccadafa3b58c7eb4",
-      "registrationId": "registration:ba3af50d29fe4766de59",
+      "id": "route:95ad33162398c7024ca5",
+      "registrationId": "registration:62615c32ddf8f640618c",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 21,
+      "line": 23,
       "method": "GET",
       "path": "/api/publish/status",
       "mountChain": [
@@ -112452,10 +112635,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a7341007d6d839b3d2a6",
-      "registrationId": "registration:2e7b59769c0d888b0304",
+      "id": "route:10254369dcc90d0e5e6d",
+      "registrationId": "registration:ed2c74a7e5dfdcbcddbb",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 38,
+      "line": 40,
       "method": "POST",
       "path": "/api/publish/expo-token",
       "mountChain": [
@@ -112469,10 +112652,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0d8b0b63abc03fc9c19a",
-      "registrationId": "registration:6c5fcc937f688c8b235f",
+      "id": "route:26204f8b493432bc4a1d",
+      "registrationId": "registration:60ed48f25440fd807eed",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 91,
+      "line": 93,
       "method": "POST",
       "path": "/api/publish/verify-expo",
       "mountChain": [
@@ -112486,10 +112669,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b40efa6523830cc4cc43",
-      "registrationId": "registration:fecdc3039b5060f1ac64",
+      "id": "route:c4e5287cab9f8d0d2279",
+      "registrationId": "registration:c165852e990dfe27dc43",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 114,
+      "line": 116,
       "method": "POST",
       "path": "/api/publish/eas-project",
       "mountChain": [
@@ -112503,10 +112686,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ad3ea1762039f8e9fa9b",
-      "registrationId": "registration:e4df1063c2664f464bcc",
+      "id": "route:027a894759ef5fc091b5",
+      "registrationId": "registration:44288ff576758f1ce274",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 136,
+      "line": 138,
       "method": "GET",
       "path": "/api/publish/expo-apps",
       "mountChain": [
@@ -112520,10 +112703,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9ec64a210b14f053f6fa",
-      "registrationId": "registration:d8774e3de95f8281da04",
+      "id": "route:7329e013af4a795398aa",
+      "registrationId": "registration:badfd84c3094eb47dc80",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 154,
+      "line": 156,
       "method": "POST",
       "path": "/api/publish/eas-publish",
       "mountChain": [
@@ -112537,10 +112720,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:343f247236f5368a1939",
-      "registrationId": "registration:ceebde0fd96ea29753d7",
+      "id": "route:8c729d4da4d1d21c97b9",
+      "registrationId": "registration:ccd064efa9213ecd7f4e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 196,
+      "line": 198,
       "method": "POST",
       "path": "/api/publish/cws-credentials",
       "mountChain": [
@@ -112554,10 +112737,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:462ed552d7ec2934ec13",
-      "registrationId": "registration:14ea8a78ea3b8611190d",
+      "id": "route:dc24d34524d5a52a273f",
+      "registrationId": "registration:7ddc028d51bc9f7ef825",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 242,
+      "line": 244,
       "method": "POST",
       "path": "/api/publish/cws-oauth/start",
       "mountChain": [
@@ -112571,10 +112754,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:70121f1d4410ed3ed667",
-      "registrationId": "registration:a8bbc48c317114c6faa2",
+      "id": "route:f00cc0aafa7f71ce7573",
+      "registrationId": "registration:b30008fe0851ba809de3",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 281,
+      "line": 283,
       "method": "POST",
       "path": "/api/publish/cws-oauth/callback",
       "mountChain": [
@@ -112588,10 +112771,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e0540d943b7e1ddb715c",
-      "registrationId": "registration:cf487971e92dd460c474",
+      "id": "route:db7b6df537f92fbb36df",
+      "registrationId": "registration:803987086f8e30a6767e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 307,
+      "line": 309,
       "method": "GET",
       "path": "/api/publish/cws-status",
       "mountChain": [
@@ -112605,10 +112788,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b85b0c92b99927c35a58",
-      "registrationId": "registration:9687a5ccd385edc57a9d",
+      "id": "route:07f1a9f4ac7a62e6f9a0",
+      "registrationId": "registration:49c04721692ff2eb0761",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 318,
+      "line": 320,
       "method": "POST",
       "path": "/api/publish/sync-play-credentials",
       "mountChain": [
@@ -112622,10 +112805,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0909e441d3a1e2cf1c89",
-      "registrationId": "registration:6f85654359e2555fd9f1",
+      "id": "route:54dfb3d69f279c219966",
+      "registrationId": "registration:4d1ac56c6bd5b640a8f6",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 331,
+      "line": 333,
       "method": "POST",
       "path": "/api/publish/sync-apple-credentials",
       "mountChain": [
@@ -112639,10 +112822,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:025d84aefa56852b36ba",
-      "registrationId": "registration:f0a2c24d12cce465ea2a",
+      "id": "route:183cc831176fa3b46780",
+      "registrationId": "registration:920777dcf41c9c8e0218",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 355,
+      "line": 357,
       "method": "POST",
       "path": "/api/publish/sync-electron-secrets",
       "mountChain": [
@@ -112656,10 +112839,27 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ec7f87b4b1ce16dae369",
-      "registrationId": "registration:ea67968f6553da3cc2e9",
+      "id": "route:75e63df9dd229f7e19a2",
+      "registrationId": "registration:ea75b64ca1dda1c0d070",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 379,
+      "line": 381,
+      "method": "POST",
+      "path": "/api/publish/sync-electron-secrets/:id/confirm",
+      "mountChain": [
+        "backend/src/index.ts:260"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:93a45feb23322460ffad",
+      "registrationId": "registration:f467dc6402e85873c5ca",
+      "sourcePath": "backend/src/routes/publish.ts",
+      "line": 393,
       "method": "GET",
       "path": "/api/publish/eas-builds",
       "mountChain": [
@@ -116719,9 +116919,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2730b5dd70dec8490f46",
+      "id": "finding:6a3a26826a3ba1dc97e7",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 125,
+      "line": 149,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -116729,9 +116929,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:46cec564ef8d0cfff1d2",
+      "id": "finding:70a147c3644a838549bc",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 141,
+      "line": 165,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -116739,9 +116939,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:264dff9c8b5005ab5ad4",
+      "id": "finding:06d7753f0d19a1c00eba",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 163,
+      "line": 187,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -116749,9 +116949,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:e7652448f64af7a1386b",
+      "id": "finding:f1ea477678e287d6256b",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 179,
+      "line": 203,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -116759,9 +116959,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:00aabe95ebc2a3945678",
+      "id": "finding:7d73be4292cf6147d06b",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 193,
+      "line": 217,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -116769,9 +116969,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:35a0839a78a836f0b283",
+      "id": "finding:418e85d55b4d69def90e",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 219,
+      "line": 243,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -120035,17 +120235,24 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:539fdc71862c19e136ee",
+      "id": "frontend-call:901cac1d1afd0caacedc",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 58,
+      "line": 60,
       "callee": "api.integrations.saveProviderKey",
       "reachable": true
     },
     {
-      "id": "frontend-call:460df56ece9f490f95d8",
+      "id": "frontend-call:40a738eb4e43e5d3a88e",
       "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "line": 81,
+      "line": 83,
       "callee": "api.publish.syncElectronSecrets",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:1c5cc2d9f46aacf3e232",
+      "sourcePath": "frontend/src/components/publish/DesktopPublishPanel.tsx",
+      "line": 100,
+      "callee": "api.publish.confirmElectronSecret",
       "reachable": true
     },
     {
@@ -123189,6 +123396,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:300bc5f0074dc1f73578",
+      "sourcePath": "backend/src/routes/electronSigning.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:4d2d6938e2aa43f15616",
       "sourcePath": "backend/src/routes/github.oauth.test.ts",
       "declaredTests": 1,
@@ -124718,6 +124932,13 @@
       "id": "test-suite:68aa07a402e941448d58",
       "sourcePath": "backend/src/services/publish/electronSecrets.authority.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c9c0fdd8f433edb3323a",
+      "sourcePath": "backend/src/services/publish/electronSigningAdmission.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -126823,6 +127044,20 @@
       "id": "test-suite:7b5ff0fde0dc07298199",
       "sourcePath": "frontend/src/lib/sidebarToolbarTheme.test.ts",
       "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e860d2166e6c1b95c6e9",
+      "sourcePath": "frontend/src/lib/signingAdmission.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cdf10d5b5ccc72905cc9",
+      "sourcePath": "frontend/src/lib/signingUi.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

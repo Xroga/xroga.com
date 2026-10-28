@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "585d02c886e77e01407de8cb70e4342e8350140e",
+  "source_sha": "3b94979a0411db4137678d23332900d496e889a9",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14932,7 +14932,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22"
+      "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -15976,7 +15976,7 @@
     },
     {
       "path": "backend/src/routes/publish.ts",
-      "sha256": "9bfe08af4193a2a6924a5102c67e647d1469ab71996d25640dc05b52bdf4a99b"
+      "sha256": "4b541f17d718b440edc259461075fcb7c233315a595896862650081f9bf8552c"
     },
     {
       "path": "backend/src/routes/referrals.ts",
@@ -16428,7 +16428,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "a6cdfb923889f78b91fb80c9400351ab6c4c2dcfb9d3fc2b2475041831c00240"
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16620,7 +16620,7 @@
     },
     {
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "sha256": "d7b7461ee10e925f81cf666e210ef2afd15ff6845d857ee6bc3116108ce52924"
+      "sha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678"
     },
     {
       "path": "backend/src/services/publish/nonWebShip.ts",
@@ -19456,7 +19456,7 @@
     },
     {
       "path": "frontend/src/components/publish/DesktopPublishPanel.tsx",
-      "sha256": "ec6309b785f659b3baf95c0637f31ed6b53c0849615e9b560c4e93026ff4b5cf"
+      "sha256": "e2d3d0c7279efff8bbbba1de95e436982b39e389d86efd660b605b36760596f2"
     },
     {
       "path": "frontend/src/components/publish/MobilePublishPanel.tsx",
@@ -20184,7 +20184,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e"
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -20785,6 +20785,10 @@
     {
       "path": "frontend/src/lib/sidebarProjectTask.ts",
       "sha256": "52e59ee594e8526257feef14c5eb8884ccad53f5cdded44dc4b839c0fe1458b6"
+    },
+    {
+      "path": "frontend/src/lib/signingAdmission.ts",
+      "sha256": "b9a1eabd38f486a5f2a0be1757fbfea7b91b9ce07cd03ef12032644158b858da"
     },
     {
       "path": "frontend/src/lib/siteHealthAudit.ts",
@@ -24281,14 +24285,21 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "line": 35,
+      "line": 79,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/electronSecrets.ts",
-      "line": 52,
+      "line": 86,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/electronSecrets.ts",
+      "line": 94,
       "credentialsInUrl": false
     },
     {
@@ -28565,7 +28576,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4934,
+      "line": 4937,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33530,6 +33541,13 @@
       "path": "frontend/src/lib/sidebarOrganization.ts",
       "line": 159,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/signingAdmission.ts",
+      "line": 10,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
