@@ -42029,7 +42029,7 @@
       "id": "surface:ba88158d592a18f99ff9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
+      "sha256": "8a66d4ea67b191f4c9ffa4d7e04ddea13b01e3808fff297034af03e0fd5c58f6",
       "symbols": [
         "IMPLEMENT_SYSTEM",
         "UniversalBuildOutcome",
@@ -42164,7 +42164,7 @@
       "id": "surface:feaf3567a44c33d99812",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/universalExecution.ts",
-      "sha256": "cb4c604d260d56d45f6b0101df8bf7b8a1fbd4b0c95a0c5a688e67b6cbc2db99",
+      "sha256": "d493d2b193215c0c2c39deffc0f032c3ede1e5832c9204aa51335ad25f4d27da",
       "symbols": [
         "ExecutionAdapters",
         "ExecutionEvidenceRecord",
@@ -128634,7 +128634,7 @@
     {
       "id": "test-suite:334da1a3063b25f978a6",
       "sourcePath": "backend/src/synthesis/builderUniversalAuthority.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

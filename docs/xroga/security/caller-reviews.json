@@ -872,9 +872,9 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "sourceSha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
+      "sourceSha256": "8a66d4ea67b191f4c9ffa4d7e04ddea13b01e3808fff297034af03e0fd5c58f6",
       "callIds": [
-        "d3320fe4985648eb0de7"
+        "3bde04a1d7cdf7d1828f"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
