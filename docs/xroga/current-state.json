@@ -3546,7 +3546,8 @@
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:11",
         "backend/src/synthesis/universalCanonicalTasks.test.ts:21",
         "backend/src/synthesis/universalCanonicalTasks.ts:32",
-        "backend/src/workers/browserCapability.ts:13",
+        "backend/src/workers/browserCapability.ts:14",
+        "backend/src/workers/browserInputSecret.security.test.ts:2",
         "backend/src/workers/browserTaskHandler.test.ts:4",
         "backend/src/workers/resumeRecovery.test.ts:4",
         "scripts/browser/run-workflows.mts:17"
@@ -3593,6 +3594,7 @@
         "backend/src/synthesis/reliability/canonicalResume.test.ts",
         "backend/src/synthesis/universalCanonicalTasks.test.ts",
         "backend/src/synthesis/universalPersistence.test.ts",
+        "backend/src/workers/browserInputSecret.security.test.ts",
         "backend/src/workers/browserTaskHandler.test.ts",
         "backend/src/workers/resumeRecovery.test.ts"
       ],
@@ -24299,6 +24301,7 @@
         "backend/src/services/publish/expoCredentialMaterial.ts:2",
         "backend/src/services/publish/expoWorkflow.ts:3",
         "backend/src/services/publish/nonWebShip.ts:5",
+        "backend/src/workers/browserCapability.ts:1",
         "backend/src/workers/browserCoordinator.ts:25",
         "backend/src/workers/browserModelDispatch.ts:8",
         "frontend/src/lib/showcase/auraGroq.ts:2"
@@ -25357,7 +25360,8 @@
         "backend/src/synthesis/universalPersistence.owner.test.ts:7",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts:6",
         "backend/src/synthesis/universalPersistence.ts:23",
-        "backend/src/workers/browserCapability.ts:14",
+        "backend/src/workers/browserCapability.ts:15",
+        "backend/src/workers/browserInputSecret.security.test.ts:2",
         "backend/src/workers/browserModelDispatch.ts:6",
         "backend/src/workers/browserModelFixture.test.ts:4",
         "backend/src/workers/browserSdkBoundary.security.test.ts:7",
@@ -25522,6 +25526,7 @@
         "backend/src/synthesis/projectRuntime/secretRead.test.ts",
         "backend/src/synthesis/universalPersistence.owner.test.ts",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts",
+        "backend/src/workers/browserInputSecret.security.test.ts",
         "backend/src/workers/browserModelFixture.test.ts",
         "backend/src/workers/browserSdkBoundary.security.test.ts",
         "backend/src/workers/googleSwarmQueue.test.ts",
@@ -36136,7 +36141,7 @@
         "backend/src/runtime/readiness.ts:13",
         "backend/src/storage/config.matrix.test.ts:4",
         "backend/src/storage/migration/cliContext.ts:2",
-        "backend/src/workers/browserCapability.ts:15",
+        "backend/src/workers/browserCapability.ts:16",
         "scripts/storage/inventory-storage.mts:7"
       ],
       "reachable": true,
@@ -44162,7 +44167,7 @@
       "id": "surface:ef2205cc157e5f9e82a2",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserCapability.ts",
-      "sha256": "56bdea730b89a1441a1d3f4ba5fde5335d633bbab966eb04c1a604fb91e71301",
+      "sha256": "2b28ecd8b77c60677931c7303ea23e56a345fbb91f589ecfc5f6cce7cb3a4a28",
       "symbols": [
         "BROWSER_RUN_DEFAULTS",
         "BrowserCapabilityDeps",
@@ -44170,6 +44175,8 @@
         "BrowserRunRequest",
         "UUID",
         "actor",
+        "assertBrowserInput",
+        "classification",
         "consequential",
         "driveProject",
         "e",
@@ -44188,6 +44195,7 @@
       ],
       "imports": [
         "../ai/executionRuntime.js",
+        "../security/egress/dataClassification.js",
         "../security/tenantContext.js",
         "../storage/runtime.js",
         "../storage/storageService.js",
@@ -44202,6 +44210,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/executionRuntime.ts",
+        "backend/src/security/egress/dataClassification.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/storage/runtime.ts",
         "backend/src/workers/browserJob.ts",
@@ -44213,6 +44222,7 @@
       ],
       "callers": [
         "backend/src/routes/browserRuns.ts:21",
+        "backend/src/workers/browserInputSecret.security.test.ts:2",
         "scripts/browser/run-workflows.mts:23"
       ],
       "reachable": true,
@@ -44228,7 +44238,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/routes/browserRuns.test.ts"
+        "backend/src/routes/browserRuns.test.ts",
+        "backend/src/workers/browserInputSecret.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -44407,7 +44418,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/workers/browserCapability.ts:19",
+        "backend/src/workers/browserCapability.ts:20",
         "backend/src/workers/browserCoordinator.test.ts:5",
         "backend/src/workers/browserCoordinator.ts:18",
         "backend/src/workers/browserCoordinatorProtocol.security.test.ts:4",
@@ -44757,7 +44768,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/workers/browserCapability.ts:20",
+        "backend/src/workers/browserCapability.ts:21",
         "backend/src/workers/browserCoordinator.ts:19",
         "backend/src/workers/browserPlan.test.ts:4",
         "backend/src/workers/browserPlanner.ts:14",
@@ -44943,7 +44954,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/workers/browserCapability.ts:21",
+        "backend/src/workers/browserCapability.ts:22",
         "backend/src/workers/browserCoordinator.test.ts:8",
         "backend/src/workers/browserCoordinator.ts:22",
         "backend/src/workers/browserModelLifetime.ts:4",
@@ -45837,6 +45848,7 @@
       ],
       "callers": [
         "backend/src/routes/browserRuns.test.ts:13",
+        "backend/src/workers/browserInputSecret.security.test.ts:2",
         "backend/src/workers/browserTaskHandler.test.ts:11",
         "backend/src/workers/browserTaskHandler.ts:29",
         "backend/src/workers/leaseStore.contract.ts:3",
@@ -45856,6 +45868,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/browserRuns.test.ts",
+        "backend/src/workers/browserInputSecret.security.test.ts",
         "backend/src/workers/browserTaskHandler.test.ts",
         "backend/src/workers/leaseStore.test.ts",
         "backend/src/workers/postgresLeaseStore.integration.test.ts",
@@ -129225,6 +129238,13 @@
       "id": "test-suite:92d322268fb191798f96",
       "sourcePath": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6023bab66a9f4e520b93",
+      "sourcePath": "backend/src/workers/browserInputSecret.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -109,7 +109,8 @@
       "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
       "evidence": [
         "backend/src/security/egress/heldCredentialFloor.test.ts",
-        "backend/src/services/integrations/githubPublication.security.test.ts"
+        "backend/src/services/integrations/githubPublication.security.test.ts",
+        "docs/xroga/evidence/command-010/BROWSER-INPUT-CREDENTIAL-FLOOR-20261028.json"
       ]
     },
     {

@@ -765,6 +765,10 @@
     {
       "path": "deploy/browser-worker/runJob.mjs",
       "sha256": "f0f63e2da95ff25ba8bb166a1f60fd9efb847298e4823a22dfbb33662ee9ebe3"
+    },
+    {
+      "path": "backend/src/workers/browserCapability.ts",
+      "sha256": "2b28ecd8b77c60677931c7303ea23e56a345fbb91f589ecfc5f6cce7cb3a4a28"
     }
   ],
   "previousCallerCounts": {
@@ -857,5 +861,6 @@
   "supabaseCreateContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json",
   "desktopWorkflowContinuation": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
   "githubPublicationContinuation": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
-  "browserReadOnlyContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
+  "browserReadOnlyContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+  "browserInputCredentialContinuation": "docs/xroga/evidence/command-010/BROWSER-INPUT-CREDENTIAL-FLOOR-20261028.json"
 }

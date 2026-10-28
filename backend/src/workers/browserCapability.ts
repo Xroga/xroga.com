@@ -1,3 +1,4 @@
+import{classifyOutboundData}from'../security/egress/dataClassification.js';
 /**
  * Browser automation as an Xroga capability (INFRA-007 / PRODUCT-001): a user request becomes ONE `browser_automation` task on the
  * canonical `ExecutionScheduler`, executed by the canonical browser task handler, with issued authority from the authenticated session.
@@ -59,6 +60,16 @@ export class BrowserRunError extends Error {
   constructor(readonly status: 400 | 401 | 404, readonly code: 'RUN_INVALID' | 'TENANT_AUTH_REQUIRED' | 'PROJECT_NOT_FOUND', message: string) { super(message); this.name = 'BrowserRunError'; }
 }
 
+/** Browser requests and explicit/planner plans share the existing credential
+ * floor. A direct plan cannot bypass model-gateway DLP or carry a secret to
+ * the isolated worker, URL query, execution checkpoint or artifact path. */
+function assertBrowserInput(input:unknown):void {
+  let classification;
+  try { classification=classifyOutboundData(input,'USER_PRIVATE').classification; }
+  catch { throw new BrowserRunError(400,'RUN_INVALID','Browser input could not be safely classified.'); }
+  if(classification==='CREDENTIAL_SECRET')throw new BrowserRunError(400,'RUN_INVALID','Credential material is not permitted in browser tasks.');
+}
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function taskFor(goal: string, plan: BrowserPlan, limits: BrowserJobLimits): ExecutableTaskNode {
@@ -84,6 +95,8 @@ export async function runBrowserTask(context: TenantContext, request: BrowserRun
   signal ??= new AbortController().signal;
   let actor: StorageActor;
   try { actor = actorFromTenantContext(requireTenantContext(context)); } catch { throw new BrowserRunError(401, 'TENANT_AUTH_REQUIRED', 'sign in again and retry'); }
+  request=structuredClone(request);
+  assertBrowserInput({goal:request.goal,startUrl:request.startUrl,allowedOrigins:request.allowedOrigins,plan:request.plan??null});
   if (typeof request.goal !== 'string' || !request.goal.trim() || request.goal.length > 2_000) throw new BrowserRunError(400, 'RUN_INVALID', 'goal must be 1-2000 characters');
 
   const driveProject = request.projectId ?? null;
@@ -111,6 +124,7 @@ export async function runBrowserTask(context: TenantContext, request: BrowserRun
     }}}); } catch { throw new BrowserRunError(400, 'RUN_INVALID', 'the browser plan could not be safely authorized, completed and accounted for'); }
   }
   const trustedPlan = parseBrowserPlan(plan!,job!);
+  assertBrowserInput({goal:request.goal,startUrl:request.startUrl,allowedOrigins:request.allowedOrigins,plan:trustedPlan});
   // This public route has no durable canonical approval adapter. A grant ID in
   // a request or planner result is data, never issued authority. Existing
   // business/Operations confirmation and permit execution remain unchanged.
