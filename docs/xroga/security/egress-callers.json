@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "1e68af1e1c26d0843999ab51f6ec80752b639e70616a1ac411c07936572e2ddd",
+  "sourceTreeDigest": "2d058b38c61f329dc031d4a0e3e44287d01beffb09ee71040dce14436d3a0bee",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2404,18 +2404,29 @@
     {
       "id": "d9708e60456bb2d7e538",
       "file": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 37,
+      "line": 54,
       "entryPoint": "cwsFetch",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "95e3aee85d520527b8894d148ae4bb8fc441beb491ebeac991f04471c1d96663",
+      "callSha256": "66ff1ccd50534c6f32a846e77534d1aa2d67a81a8fcc01234bbfcfc81136c998",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_GOOGLE_CWS_OPERATIONS_ORIGINAL_ACTOR_OWNED_ACCOUNT_AND_PRIVATE_ARTIFACT_EXACT_CANONICAL_PUBLICATION",
+      "tenantAuthority": "ORIGINAL_CONTEXT_OWNER_PROVIDER_ROW_CAS_OAUTH_EPOCH_SOURCE_EPOCH_AND_CURRENT_ONE_USE_DURABLE_CLAIM",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+          "marker": "EXACT_CWS_CALLER_PARTITIONS_ORIGINAL_ACTOR_PRIVATE_ARTIFACT_AND_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "31715e6b8e79311711eb953617f33bbf9ae83ebda9fbafdafb3c01626558ae72"
+        },
+        {
+          "path": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+          "marker": "CWS exact approval, current source and target receipts",
+          "sha256": "6aeb3ec66a09216237a107718d256e342683b489813afdb73596c468a076c936"
+        }
+      ]
     },
     {
       "id": "42cc7885da84d7295699",
@@ -4357,8 +4368,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 127,
-    "pending": 9,
-    "unresolvedHighRiskBypasses": 6
+    "reviewed": 128,
+    "pending": 8,
+    "unresolvedHighRiskBypasses": 5
   }
 }

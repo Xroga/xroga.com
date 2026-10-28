@@ -1459,6 +1459,11 @@ export async function executePreparedBusinessAction(
     const result=await executeNativeRelease(input.userId,input.plan,input.authorityPermit);
     return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
   }
+  if(input.plan.toolkit==='xroga-native-cws'){
+    const {executeCwsPublication}=await import('../publish/chromeWebStore.js');
+    const result=await executeCwsPublication(input.userId,input.plan,input.authorityPermit);
+    return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
   if (input.authorityPermit) {
     const admitted = businessActionAuthorityScope(input.plan);
     assertAuthorityPermit(input.authorityPermit, { userId: input.userId, provider: admitted.provider,

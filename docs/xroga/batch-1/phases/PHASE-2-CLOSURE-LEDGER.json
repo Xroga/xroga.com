@@ -6687,7 +6687,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+          "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6814,7 +6814,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+          "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8345,7 +8345,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+            "sha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
             "historicalBinding": {
               "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
               "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
@@ -8357,7 +8357,9 @@
             "githubActorPriorSourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
             "githubActorSourceReview": "docs/xroga/evidence/command-010/GITHUB-SOURCE-ACTOR-BOUNDARY-20261028.json",
             "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
-            "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+            "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+            "beforeCwsApprovalSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+            "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
           },
           {
             "path": "backend/src/routes/swarm.ts",

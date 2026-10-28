@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "fa7e892391e63ffcb2d057bfbd2d45011fd62a6e24f33260a625004e73f4838b",
+  "reviewRegistrySha256": "8c3662b6f5fc0fed09ef0d4aeca2a6e63e2c5e885fe46d42cfb791c8860adc16",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 201,
-    "persistenceCandidates": 840,
-    "ownerPredicateCandidates": 217,
+    "privilegedFactorySites": 203,
+    "persistenceCandidates": 843,
+    "ownerPredicateCandidates": 221,
     "reviewRequired": 126,
-    "reviewedCandidates": 714,
+    "reviewedCandidates": 717,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 471,
+    "SCOPED_BOUNDARY": 475,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 170,
+    "NOT_PERSISTENCE": 169,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 85,
-    "unresolvedCandidateBoundaries": 755,
+    "verifiedCandidateBoundaries": 84,
+    "unresolvedCandidateBoundaries": 759,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3151,6 +3151,18 @@
         "id": "OB-ed767d2a9b0916e5"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-76cdb413986aa706"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-76cdb413986aa706"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-76cdb413986aa706"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-b0ab804e5c3e6af9"
       },
@@ -3432,11 +3444,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "acfbdb182d9e682cce3f"
+        "id": "6fee86fe362464d0d82d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8c2f244d2269c3ff06ae"
+        "id": "f4c377ee778b1f6f674c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4808,6 +4820,22 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "0780a3cdcb51c9c188f3"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "03ebba7a12593d11b164"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4cbf057e5a459d04b0c5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6a4484ab40092d6d318e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "df81e330b32d3d3874d6"
       },
       {
@@ -6064,11 +6092,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "acfbdb182d9e682cce3f"
+        "id": "6fee86fe362464d0d82d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8c2f244d2269c3ff06ae"
+        "id": "f4c377ee778b1f6f674c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7932,6 +7960,22 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "0780a3cdcb51c9c188f3"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "03ebba7a12593d11b164"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "4cbf057e5a459d04b0c5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6a4484ab40092d6d318e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "df81e330b32d3d3874d6"
       },
       {
@@ -8373,12 +8417,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 840,
-    "structuredVerified": 85,
-    "structuredUnproven": 755,
+    "currentCallers": 843,
+    "structuredVerified": 84,
+    "structuredUnproven": 759,
     "manualUnresolved": 159,
-    "manualUnsupported": 596,
-    "agreedVerified": 85,
+    "manualUnsupported": 600,
+    "agreedVerified": 84,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -8974,15 +9018,15 @@
       }
     },
     {
-      "id": "acfbdb182d9e682cce3f",
+      "id": "6fee86fe362464d0d82d",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3784,
+      "line": 3783,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+      "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8995,15 +9039,15 @@
       }
     },
     {
-      "id": "8c2f244d2269c3ff06ae",
+      "id": "f4c377ee778b1f6f674c",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3964,
+      "line": 3963,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+      "sourceSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -21996,22 +22040,101 @@
       }
     },
     {
-      "id": "8cdc22e0147506033143",
-      "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 350,
-      "enclosing": "publishChromeExtensionToStore",
+      "id": "0780a3cdcb51c9c188f3",
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "line": 26,
+      "enclosing": "cwsConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "62a159ab8033ea6c4323fe271ad304027fa5a275085b6bce936956ed73ea1164",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "6a80d057c4e6421065848b10a6e88179da89bedf2ddc855c85cab81025b157ce",
       "semanticReview": {
-        "authority": "Exact receiver is Node Buffer.from, copying the caller ZIP bytes in memory before asynchronous credential access. It does not access database or remote storage.",
-        "reason": "Conservative from-method false positive only. Subsequent authenticated CWS upload and publication require separately validated targets and receipts, and live provider acceptance remains unverified.",
+        "authority": "Original issued actor precedes tenant-scoped client. Exact owner/provider constrain the full canonical connection read. Exact grant ID and owner constrain current executing confirmation, digest, expiry, claimed/effect timestamps around metadata and publication waits. No raw owner or request-supplied grant.",
+        "reason": "Only the exact CWS account/claim reads are reviewed. Shared callers, general tenant acceptance and all other original Phase4 obligations remain independent.",
         "evidence": [
           {
-            "path": "backend/src/services/publish/chromeWebStore.ts",
-            "marker": "opts={...opts,zip:Buffer.from(opts.zip)}"
+            "path": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+            "marker": "CWS exact approval, current source and target receipts"
+          },
+          {
+            "path": "backend/src/services/publish/cwsAdmission.ts",
+            "marker": "export async function admitCwsPublication"
+          }
+        ]
+      }
+    },
+    {
+      "id": "03ebba7a12593d11b164",
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "line": 26,
+      "enclosing": "cwsConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "6a80d057c4e6421065848b10a6e88179da89bedf2ddc855c85cab81025b157ce",
+      "semanticReview": {
+        "authority": "Original issued actor precedes tenant-scoped client. Exact owner/provider constrain the full canonical connection read. Exact grant ID and owner constrain current executing confirmation, digest, expiry, claimed/effect timestamps around metadata and publication waits. No raw owner or request-supplied grant.",
+        "reason": "Only the exact CWS account/claim reads are reviewed. Shared callers, general tenant acceptance and all other original Phase4 obligations remain independent.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+            "marker": "CWS exact approval, current source and target receipts"
+          },
+          {
+            "path": "backend/src/services/publish/cwsAdmission.ts",
+            "marker": "export async function admitCwsPublication"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4cbf057e5a459d04b0c5",
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "line": 61,
+      "enclosing": "admitCwsPublication",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "6a80d057c4e6421065848b10a6e88179da89bedf2ddc855c85cab81025b157ce",
+      "semanticReview": {
+        "authority": "Original issued actor precedes tenant-scoped client. Exact owner/provider constrain the full canonical connection read. Exact grant ID and owner constrain current executing confirmation, digest, expiry, claimed/effect timestamps around metadata and publication waits. No raw owner or request-supplied grant.",
+        "reason": "Only the exact CWS account/claim reads are reviewed. Shared callers, general tenant acceptance and all other original Phase4 obligations remain independent.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+            "marker": "CWS exact approval, current source and target receipts"
+          },
+          {
+            "path": "backend/src/services/publish/cwsAdmission.ts",
+            "marker": "export async function admitCwsPublication"
+          }
+        ]
+      }
+    },
+    {
+      "id": "6a4484ab40092d6d318e",
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "line": 61,
+      "enclosing": "admitCwsPublication",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "6a80d057c4e6421065848b10a6e88179da89bedf2ddc855c85cab81025b157ce",
+      "semanticReview": {
+        "authority": "Original issued actor precedes tenant-scoped client. Exact owner/provider constrain the full canonical connection read. Exact grant ID and owner constrain current executing confirmation, digest, expiry, claimed/effect timestamps around metadata and publication waits. No raw owner or request-supplied grant.",
+        "reason": "Only the exact CWS account/claim reads are reviewed. Shared callers, general tenant acceptance and all other original Phase4 obligations remain independent.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+            "marker": "CWS exact approval, current source and target receipts"
+          },
+          {
+            "path": "backend/src/services/publish/cwsAdmission.ts",
+            "marker": "export async function admitCwsPublication"
           }
         ]
       }

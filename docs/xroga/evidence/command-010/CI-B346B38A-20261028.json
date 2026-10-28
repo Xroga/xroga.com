@@ -1,0 +1,57 @@
+{
+  "source": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+  "result": "SEVEN_WORKFLOWS_PASS",
+  "observedAt": "2026-10-28T08:12:07.458Z",
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40618796102,
+      "headSha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+      "status": "completed",
+      "workflowName": "Growth technical publishing"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40618796212,
+      "headSha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+      "status": "completed",
+      "workflowName": "Xroga tenant security fixtures"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40618796123,
+      "headSha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+      "status": "completed",
+      "workflowName": "Xroga golden acceptance harness"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40618796045,
+      "headSha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+      "status": "completed",
+      "workflowName": "Command 4 authority distribution"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40618796049,
+      "headSha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+      "status": "completed",
+      "workflowName": "Xroga mission operating policy"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40618796140,
+      "headSha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+      "status": "completed",
+      "workflowName": "Agent V2 dependency lock"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40618796343,
+      "headSha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+      "status": "completed",
+      "workflowName": "Unit tests"
+    }
+  ],
+  "scope": "Exact native GitHub artifact checkpoint, not later CWS source or Phase4 acceptance"
+}

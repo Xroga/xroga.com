@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+  "source_sha": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2572,7 +2572,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/cwsAdmission.ts"
       ],
       "hostnames": [
         "chromewebstore.googleapis.com"
@@ -2596,7 +2597,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/services/publish/chromeWebStore.ts"
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/cwsAdmission.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -15010,7 +15012,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23"
+      "sha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16062,7 +16064,7 @@
     },
     {
       "path": "backend/src/routes/publish.ts",
-      "sha256": "4b541f17d718b440edc259461075fcb7c233315a595896862650081f9bf8552c"
+      "sha256": "febe6da7bed4465f534f03fcf1a2fb2cc42f4ff872aaad11958b5be58627e704"
     },
     {
       "path": "backend/src/routes/referrals.ts",
@@ -16514,7 +16516,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "de9a18304d39831c376fa2d3f32806641312fc137465e0a080d7527a81f13020"
+      "sha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16698,7 +16700,11 @@
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "sha256": "62a159ab8033ea6c4323fe271ad304027fa5a275085b6bce936956ed73ea1164"
+      "sha256": "3d013234b8f34b097c8eae06a5c349985f6bb313881bf4b6e2b225bb3382f4e1"
+    },
+    {
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "sha256": "6a80d057c4e6421065848b10a6e88179da89bedf2ddc855c85cab81025b157ce"
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
@@ -22207,7 +22213,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4012,
+      "line": 4011,
       "credentialsInUrl": false
     },
     {
@@ -24265,105 +24271,133 @@
       "hostname": "oauth2.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 24,
+      "line": 33,
       "credentialsInUrl": false
     },
     {
       "hostname": "accounts.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 25,
+      "line": 34,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 26,
+      "line": 35,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "chromewebstore.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "line": 48,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 65,
+      "line": 90,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 71,
+      "line": 96,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 72,
+      "line": 97,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 73,
+      "line": 98,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 96,
+      "line": 121,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 383,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "chrome.google.com",
-      "protocol": "https:",
-      "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 409,
+      "line": 219,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 413,
+      "line": 440,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 435,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "chrome.google.com",
-      "protocol": "https:",
-      "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 446,
+      "line": 467,
       "credentialsInUrl": false
     },
     {
       "hostname": "chromewebstore.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 476,
+      "line": 472,
       "credentialsInUrl": false
     },
     {
       "hostname": "chrome.google.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 493,
+      "line": 495,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "chrome.google.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "line": 506,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "chromewebstore.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "line": 542,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "chrome.google.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "line": 559,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "chromewebstore.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "line": 23,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "chromewebstore.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "line": 23,
       "credentialsInUrl": false
     },
     {
@@ -28682,56 +28716,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 533,
+      "line": 532,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 563,
+      "line": 562,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1113,
+      "line": 1112,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1483,
+      "line": 1482,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2226,
+      "line": 2225,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3782,
+      "line": 3781,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3962,
+      "line": 3961,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4947,
+      "line": 4915,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31006,21 +31040,21 @@
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 28,
+      "line": 37,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 29,
+      "line": 38,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/chromeWebStore.ts",
-      "line": 76,
+      "line": 101,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

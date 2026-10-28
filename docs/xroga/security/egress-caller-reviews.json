@@ -3565,6 +3565,26 @@
           "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
         }
       ]
+    },
+    {
+      "id": "d9708e60456bb2d7e538",
+      "callSha256": "66ff1ccd50534c6f32a846e77534d1aa2d67a81a8fcc01234bbfcfc81136c998",
+      "sourceFileSha256": "3d013234b8f34b097c8eae06a5c349985f6bb313881bf4b6e2b225bb3382f4e1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FINITE_GOOGLE_CWS_OPERATIONS_ORIGINAL_ACTOR_OWNED_ACCOUNT_AND_PRIVATE_ARTIFACT_EXACT_CANONICAL_PUBLICATION",
+      "tenantAuthority": "ORIGINAL_CONTEXT_OWNER_PROVIDER_ROW_CAS_OAUTH_EPOCH_SOURCE_EPOCH_AND_CURRENT_ONE_USE_DURABLE_CLAIM",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+          "marker": "EXACT_CWS_CALLER_PARTITIONS_ORIGINAL_ACTOR_PRIVATE_ARTIFACT_AND_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "31715e6b8e79311711eb953617f33bbf9ae83ebda9fbafdafb3c01626558ae72"
+        },
+        {
+          "path": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+          "marker": "CWS exact approval, current source and target receipts",
+          "sha256": "6aeb3ec66a09216237a107718d256e342683b489813afdb73596c468a076c936"
+        }
+      ]
     }
   ]
 }

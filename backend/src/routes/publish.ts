@@ -15,6 +15,7 @@ import {
 import {
   getUserProviderKey,
   saveUserProviderKey,
+  prepareUserProviderKeyWrite,
 } from '../services/integrations/userProviderKeys.js';
 
 const router = Router();
@@ -214,6 +215,8 @@ router.post('/cws-credentials', async (req: AuthRequest, res) => {
       saveCwsCredentials,
       validateCwsCredentials,
     } = await import('../services/publish/chromeWebStore.js');
+    const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId!);
+    const writeAdmission=await prepareUserProviderKeyWrite(context.userId,'cws_oauth');
     const creds = {
       clientId: parsed.data.clientId,
       clientSecret: parsed.data.clientSecret,
@@ -222,18 +225,18 @@ router.post('/cws-credentials', async (req: AuthRequest, res) => {
       publisherId: parsed.data.publisherId,
     };
     if (!parsed.data.skipValidate) {
-      const valid = await validateCwsCredentials(creds);
+      const valid = await validateCwsCredentials(creds,req.tenantContext);
       if (!valid.ok) {
         res.status(400).json({ ok: false, error: valid.error, validated: false });
         return;
       }
     }
-    await saveCwsCredentials(req.userId!, creds);
+    await saveCwsCredentials(req.userId!, creds,writeAdmission,context);
     res.json({
       ok: true,
       validated: !parsed.data.skipValidate,
       message:
-        'Chrome Web Store credentials saved. Next Chrome ship will upload + submit for Google review (listing must already exist in the CWS dashboard).',
+        'Chrome Web Store credentials saved. The next Chrome ship will prepare an upload and submission for your approval. The listing must already exist in the CWS dashboard.',
     });
   } catch (err) {
     res.status(400).json({ ok: false, error: (err as Error).message });
@@ -309,7 +312,7 @@ router.post('/cws-oauth/callback', async (req: AuthRequest, res) => {
 router.get('/cws-status', async (req: AuthRequest, res) => {
   try {
     const { fetchCwsItemStatus } = await import('../services/publish/chromeWebStore.js');
-    const result = await fetchCwsItemStatus(req.userId!);
+    const result = await fetchCwsItemStatus(req.userId!,req.tenantContext);
     res.status(result.ok ? 200 : 400).json(result);
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });

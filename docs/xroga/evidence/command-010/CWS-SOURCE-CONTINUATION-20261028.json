@@ -1,0 +1,23 @@
+{
+  "scope": "EXACT_EXISTING_ARRAY_CONVERSIONS_NOT_WHOLE_PIPELINE_CERTIFICATION",
+  "parent": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+  "path": "backend/src/ai/pipeline.ts",
+  "previousSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+  "currentSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+  "remaps": [
+    {
+      "beforeId": "acfbdb182d9e682cce3f",
+      "afterId": "6fee86fe362464d0d82d",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "unchangedNearestBlockSha256": "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436"
+    },
+    {
+      "beforeId": "8c2f244d2269c3ff06ae",
+      "afterId": "f4c377ee778b1f6f674c",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "unchangedNearestBlockSha256": "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+    }
+  ],
+  "originalProofsPreserved": true,
+  "phase4Accepted": false
+}

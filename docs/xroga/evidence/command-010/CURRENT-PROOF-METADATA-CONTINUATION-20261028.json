@@ -6,11 +6,13 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "4afa12abca45ce2e4569e2416d445010090146526591a2adac4c34252e48b525",
+      "currentSha256": "15b13f87dbcbb605d7efd69dab37a89e966e1bea79c904f1333a8d5d269d077e",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
-      "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+      "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+      "beforeCwsApprovalSha256": "4afa12abca45ce2e4569e2416d445010090146526591a2adac4c34252e48b525",
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -22,9 +24,11 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "ca3969dcc33e1c8d40133d088ec652598cdc1b983b97349349184e9017bea73b",
+      "currentSha256": "067e118c6aac5bfbba1b593f5dfcb30f6e05c653d4c63c72499e97444d364cb0",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
-      "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+      "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+      "beforeCwsApprovalSha256": "ca3969dcc33e1c8d40133d088ec652598cdc1b983b97349349184e9017bea73b",
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
     }
   ],
   "exactPersistenceRemaps": [

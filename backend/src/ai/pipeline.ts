@@ -184,7 +184,6 @@ import {
   listEasBuilds,
   packageIdFromProjectName,
 } from '../services/publish/easCredentials.js';
-import { chromeExtensionZipFilter, packageBuildZip } from '../services/scaffolds/packageBuildZip.js';
 import { ensureScaffoldIntegrity } from '../services/scaffolds/scaffoldIntegrity.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
@@ -4273,48 +4272,6 @@ publicationReason:
           swarmTodos: todos('push'),
         });
 
-        // Real CWS submit when user connected Chrome Web Store OAuth
-        try {
-          const zipBuf = packageBuildZip(nextFiles, { include: chromeExtensionZipFilter });
-          emit({
-            agent: 'deploy',
-            status: 'cws_submit',
-            message: 'Submitting extension.zip to Chrome Web Store…',
-            swarmStatusLabel: 'CWS submit',
-            swarmActivity: 'upload + publish',
-            swarmTodos: todos('push'),
-          });
-          const cws = await publishChromeExtensionToStore({
-            userId: opts.userId,
-            zip: zipBuf,
-          });
-          if (cws.submitted) {
-            chromeStoreSubmitted = true;
-            chromeStoreUrl = cws.dashboardUrl;
-            emit({
-              agent: 'deploy',
-              status: 'cws_submitted',
-              message: cws.message,
-              swarmStatusLabel: 'CWS submitted',
-              swarmActivity: cws.dashboardUrl || 'awaiting Google review',
-              swarmTodos: todos('push'),
-            });
-          } else if (cws.error && cws.error !== 'NO_CWS_CREDS') {
-            chromeStoreError = cws.message;
-            emit({
-              agent: 'deploy',
-              status: 'cws_failed',
-              message: cws.message,
-              swarmStatusLabel: 'CWS failed',
-              swarmActivity: cws.message.slice(0, 100),
-              swarmTodos: todos('push'),
-            });
-          } else if (cws.error === 'NO_CWS_CREDS') {
-            chromeStoreError = cws.message;
-          }
-        } catch (err) {
-          chromeStoreError = (err as Error).message;
-        }
       } else if(zipped.needsConfirmation && zipped.reviewUrl) {
         nativePublicationPending=true;
         chromeZipError=`Publication awaits approval: ${zipped.reviewUrl}`;
@@ -4330,6 +4287,17 @@ publicationReason:
           swarmActivity: chromeZipError.slice(0, 100),
           swarmTodos: todos('push'),
         });
+      }
+      if(zipped.needsConfirmation && zipped.preparedArtifact){
+        try{
+        const cws=await publishChromeExtensionToStore({userId:opts.userId,tenantContext,repoFullName:githubRepoName,artifact:zipped.preparedArtifact});
+        if(cws.needsConfirmation && cws.reviewUrl){
+          emit({agent:'deploy',status:'confirmation_required',message:`Review Chrome Web Store upload and submission separately: [Review store submission](${cws.reviewUrl})`,swarmStatusLabel:'Store approval required',swarmActivity:'Nothing was uploaded or submitted to the store',swarmTodos:todos('push')});
+        }else if(cws.error){chromeStoreError=cws.message;}
+        }catch{
+          chromeStoreError='Chrome Web Store preparation could not be verified. The GitHub publication still awaits your separate approval.';
+          emit({agent:'deploy',status:'cws_failed',message:chromeStoreError,swarmStatusLabel:'Store preparation unavailable',swarmActivity:'No store publication was approved',swarmTodos:todos('push')});
+        }
       }
     } catch (err) {
       chromeZipError = (err as Error).message;

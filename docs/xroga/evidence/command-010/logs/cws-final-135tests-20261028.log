@@ -1,0 +1,831 @@
+TAP version 13
+# Subtest: actual pipeline native publication shows approval without claiming upload or starting another action
+ok 1 - actual pipeline native publication shows approval without claiming upload or starting another action
+  ---
+  duration_ms: 1642.8406
+  type: 'test'
+  ...
+# Subtest: actual CWS manual connection pins credential write admission before Google validation
+    # Subtest: ok
+    ok 1 - ok
+      ---
+      duration_ms: 2960.8956
+      type: 'test'
+      ...
+    # Subtest: revoke
+    ok 2 - revoke
+      ---
+      duration_ms: 50.1343
+      type: 'test'
+      ...
+    1..2
+ok 2 - actual CWS manual connection pins credential write admission before Google validation
+  ---
+  duration_ms: 3095.9285
+  type: 'test'
+  ...
+# Subtest: OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch
+ok 3 - OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch
+  ---
+  duration_ms: 378.358
+  type: 'test'
+  ...
+# Subtest: CWS carries the consumed epoch through encrypted BYOK admission and denies lost epochs before or after exchange
+ok 4 - CWS carries the consumed epoch through encrypted BYOK admission and denies lost epochs before or after exchange
+  ---
+  duration_ms: 204.8732
+  type: 'test'
+  ...
+# Subtest: Supabase refresh captures revision before exchange and absent authority cannot revive a mirror
+ok 5 - Supabase refresh captures revision before exchange and absent authority cannot revive a mirror
+  ---
+  duration_ms: 41.6498
+  type: 'test'
+  ...
+# Subtest: one-use OAuth admission fails closed on unavailable or malformed receipts and never uses Storage
+ok 6 - one-use OAuth admission fails closed on unavailable or malformed receipts and never uses Storage
+  ---
+  duration_ms: 784.4958
+  type: 'test'
+  ...
+# Subtest: all OAuth callback entry points reject invalid one-use state before external exchange
+ok 7 - all OAuth callback entry points reject invalid one-use state before external exchange
+  ---
+  duration_ms: 8.8449
+  type: 'test'
+  ...
+# Subtest: session persistence and consumption reject raw, cloned or fabricated tenant authority before I/O
+ok 8 - session persistence and consumption reject raw, cloned or fabricated tenant authority before I/O
+  ---
+  duration_ms: 40.2271
+  type: 'test'
+  ...
+# [pluginPermissionPolicy] authoritative policy unavailable
+# [pluginPermissionPolicy] authoritative policy unavailable
+# [pluginPermissionPolicy] authoritative policy unavailable
+# [pluginPermissionPolicy] authoritative policy unavailable
+# [supabaseAuth] refresh failed
+# [supabaseAuth] refresh failed
+# Subtest: shared OAuth requires authority, persists revocation and rejects path traversal before I/O
+ok 9 - shared OAuth requires authority, persists revocation and rejects path traversal before I/O
+  ---
+  duration_ms: 3171.5817
+  type: 'test'
+  ...
+# Subtest: OAuth vault revalidation accepts only lease coordination changes and keeps credential account revision and revocation fences
+ok 10 - OAuth vault revalidation accepts only lease coordination changes and keeps credential account revision and revocation fences
+  ---
+  duration_ms: 477.1287
+  type: 'test'
+  ...
+# Subtest: CWS exact approval, current source and target receipts gate upload, publish and status
+    # Subtest: ok
+    ok 1 - ok
+      ---
+      duration_ms: 1287.1693
+      type: 'test'
+      ...
+    # Subtest: restart
+    ok 2 - restart
+      ---
+      duration_ms: 492.4797
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 3 - concurrent
+      ---
+      duration_ms: 385.558
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 4 - cancelled
+      ---
+      duration_ms: 88.125
+      type: 'test'
+      ...
+    # Subtest: foreign-project
+    ok 5 - foreign-project
+      ---
+      duration_ms: 105.9262
+      type: 'test'
+      ...
+    # Subtest: file-changed
+    ok 6 - file-changed
+      ---
+      duration_ms: 170.0486
+      type: 'test'
+      ...
+    # Subtest: file-at-audit
+    ok 7 - file-at-audit
+      ---
+      duration_ms: 233.8553
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 8 - audit-fail
+      ---
+      duration_ms: 184.2207
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 9 - cancel-at-audit
+      ---
+      duration_ms: 165.2394
+      type: 'test'
+      ...
+    # Subtest: cancel-at-claim
+    ok 10 - cancel-at-claim
+      ---
+      duration_ms: 169.5046
+      type: 'test'
+      ...
+    # Subtest: cancel-after-claim
+    ok 11 - cancel-after-claim
+      ---
+      duration_ms: 212.2362
+      type: 'test'
+      ...
+    # Subtest: expire-after-claim
+    ok 12 - expire-after-claim
+      ---
+      duration_ms: 194.4504
+      type: 'test'
+      ...
+    # Subtest: connection-before-confirm
+    ok 13 - connection-before-confirm
+      ---
+      duration_ms: 80.799
+      type: 'test'
+      ...
+    # Subtest: connection-at-audit
+    ok 14 - connection-at-audit
+      ---
+      duration_ms: 181.2896
+      type: 'test'
+      ...
+    # Subtest: foreign-account
+    ok 15 - foreign-account
+      ---
+      duration_ms: 125.1061
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 16 - changed-target
+      ---
+      duration_ms: 96.6098
+      type: 'test'
+      ...
+    # Subtest: changed-artifact
+    ok 17 - changed-artifact
+      ---
+      duration_ms: 83.7776
+      type: 'test'
+      ...
+    # Subtest: changed-expiry
+    ok 18 - changed-expiry
+      ---
+      duration_ms: 102.8987
+      type: 'test'
+      ...
+    # Subtest: changed-proof
+    ok 19 - changed-proof
+      ---
+      duration_ms: 117.8632
+      type: 'test'
+      ...
+    # Subtest: empty
+    ok 20 - empty
+      ---
+      duration_ms: 173.0536
+      type: 'test'
+      ...
+    # Subtest: null
+    ok 21 - null
+      ---
+      duration_ms: 227.2004
+      type: 'test'
+      ...
+    # Subtest: foreign
+    ok 22 - foreign
+      ---
+      duration_ms: 197.2757
+      type: 'test'
+      ...
+    # Subtest: pending
+    ok 23 - pending
+      ---
+      duration_ms: 232.9873
+      type: 'test'
+      ...
+    # Subtest: failed
+    ok 24 - failed
+      ---
+      duration_ms: 256.834
+      type: 'test'
+      ...
+    # Subtest: oauth
+    ok 25 - oauth
+      ---
+      duration_ms: 127.3916
+      type: 'test'
+      ...
+    # Subtest: token403
+    ok 26 - token403
+      ---
+      duration_ms: 140.2978
+      type: 'test'
+      ...
+    # Subtest: token-redirect
+    ok 27 - token-redirect
+      ---
+      duration_ms: 161.9288
+      type: 'test'
+      ...
+    # Subtest: revoke-at-refresh
+    ok 28 - revoke-at-refresh
+      ---
+      duration_ms: 108.1311
+      type: 'test'
+      ...
+    # Subtest: owner-at-refresh
+    ok 29 - owner-at-refresh
+      ---
+      duration_ms: 119.5589
+      type: 'test'
+      ...
+    # Subtest: cancel-at-refresh
+    ok 30 - cancel-at-refresh
+      ---
+      duration_ms: 136.7482
+      type: 'test'
+      ...
+    # Subtest: upload403
+    ok 31 - upload403
+      ---
+      duration_ms: 123.5178
+      type: 'test'
+      ...
+    # Subtest: upload503
+    ok 32 - upload503
+      ---
+      duration_ms: 194.9916
+      type: 'test'
+      ...
+    # Subtest: upload-redirect
+    ok 33 - upload-redirect
+      ---
+      duration_ms: 138.0097
+      type: 'test'
+      ...
+    # Subtest: oversize
+    ok 34 - oversize
+      ---
+      duration_ms: 138.3406
+      type: 'test'
+      ...
+    # Subtest: cancel-at-upload
+    ok 35 - cancel-at-upload
+      ---
+      duration_ms: 140.4443
+      type: 'test'
+      ...
+    # Subtest: revoke-at-upload
+    ok 36 - revoke-at-upload
+      ---
+      duration_ms: 158.4243
+      type: 'test'
+      ...
+    # Subtest: bad-publish
+    ok 37 - bad-publish
+      ---
+      duration_ms: 190.7278
+      type: 'test'
+      ...
+    # Subtest: publish403
+    ok 38 - publish403
+      ---
+      duration_ms: 197.2426
+      type: 'test'
+      ...
+    # Subtest: derived-token-in-source
+    ok 39 - derived-token-in-source
+      ---
+      duration_ms: 57.363
+      type: 'test'
+      ...
+    # Subtest: ok-after-outage
+    ok 40 - ok-after-outage
+      ---
+      duration_ms: 166.5504
+      type: 'test'
+      ...
+    # Subtest: owned status preserves exact receipt validation without publication
+    ok 41 - owned status preserves exact receipt validation without publication
+      ---
+      duration_ms: 103.0743
+      type: 'test'
+      ...
+    # Subtest: held connected secrets cannot enter a compressed artifact
+    ok 42 - held connected secrets cannot enter a compressed artifact
+      ---
+      duration_ms: 19.398
+      type: 'test'
+      ...
+    1..42
+ok 11 - CWS exact approval, current source and target receipts gate upload, publish and status
+  ---
+  duration_ms: 8032.9022
+  type: 'test'
+  ...
+# Subtest: CWS cannot upload opaque request ZIPs or act on raw/fabricated owner claims
+    # Subtest: raw
+    ok 1 - raw
+      ---
+      duration_ms: 7.7222
+      type: 'test'
+      ...
+    # Subtest: fabricated
+    ok 2 - fabricated
+      ---
+      duration_ms: 3.6541
+      type: 'test'
+      ...
+    # Subtest: issued-but-opaque
+    ok 3 - issued-but-opaque
+      ---
+      duration_ms: 0.5258
+      type: 'test'
+      ...
+    1..3
+ok 12 - CWS cannot upload opaque request ZIPs or act on raw/fabricated owner claims
+  ---
+  duration_ms: 36.7037
+  type: 'test'
+  ...
+# Subtest: native artifact preparation cannot publish or delete before exact durable approval
+    # Subtest: chrome
+    ok 1 - chrome
+      ---
+      duration_ms: 616.2833
+      type: 'test'
+      ...
+    # Subtest: electron
+    ok 2 - electron
+      ---
+      duration_ms: 230.5045
+      type: 'test'
+      ...
+    # Subtest: chrome ok
+    ok 3 - chrome ok
+      ---
+      duration_ms: 645.2592
+      type: 'test'
+      ...
+    # Subtest: chrome new-release
+    ok 4 - chrome new-release
+      ---
+      duration_ms: 427.0618
+      type: 'test'
+      ...
+    # Subtest: chrome replace-asset
+    ok 5 - chrome replace-asset
+      ---
+      duration_ms: 362.0839
+      type: 'test'
+      ...
+    # Subtest: chrome restart
+    ok 6 - chrome restart
+      ---
+      duration_ms: 277.8637
+      type: 'test'
+      ...
+    # Subtest: chrome jsonb-order
+    ok 7 - chrome jsonb-order
+      ---
+      duration_ms: 194.3108
+      type: 'test'
+      ...
+    # Subtest: chrome concurrent
+    ok 8 - chrome concurrent
+      ---
+      duration_ms: 247.1781
+      type: 'test'
+      ...
+    # Subtest: chrome cancelled
+    ok 9 - chrome cancelled
+      ---
+      duration_ms: 96.2314
+      type: 'test'
+      ...
+    # Subtest: chrome foreign-project
+    ok 10 - chrome foreign-project
+      ---
+      duration_ms: 117.8854
+      type: 'test'
+      ...
+    # Subtest: chrome file-changed
+    ok 11 - chrome file-changed
+      ---
+      duration_ms: 104.5842
+      type: 'test'
+      ...
+    # Subtest: chrome file-at-audit
+    ok 12 - chrome file-at-audit
+      ---
+      duration_ms: 144.0459
+      type: 'test'
+      ...
+    # Subtest: chrome audit-fail
+    ok 13 - chrome audit-fail
+      ---
+      duration_ms: 142.3325
+      type: 'test'
+      ...
+    # Subtest: chrome cancel-at-audit
+    ok 14 - chrome cancel-at-audit
+      ---
+      duration_ms: 125.1435
+      type: 'test'
+      ...
+    # Subtest: chrome cancel-at-claim
+    ok 15 - chrome cancel-at-claim
+      ---
+      duration_ms: 184.6919
+      type: 'test'
+      ...
+    # Subtest: chrome cancel-after-claim
+    ok 16 - chrome cancel-after-claim
+      ---
+      duration_ms: 146.3755
+      type: 'test'
+      ...
+    # Subtest: chrome expire-after-claim
+    ok 17 - chrome expire-after-claim
+      ---
+      duration_ms: 153.634
+      type: 'test'
+      ...
+    # Subtest: chrome connection-at-audit
+    ok 18 - chrome connection-at-audit
+      ---
+      duration_ms: 135.9528
+      type: 'test'
+      ...
+    # Subtest: chrome connection-before-confirm
+    ok 19 - chrome connection-before-confirm
+      ---
+      duration_ms: 85.6088
+      type: 'test'
+      ...
+    # Subtest: chrome release-replaced
+    ok 20 - chrome release-replaced
+      ---
+      duration_ms: 85.7612
+      type: 'test'
+      ...
+    # Subtest: chrome asset-replaced
+    ok 21 - chrome asset-replaced
+      ---
+      duration_ms: 120.8232
+      type: 'test'
+      ...
+    # Subtest: chrome changed-source
+    ok 22 - chrome changed-source
+      ---
+      duration_ms: 74.6365
+      type: 'test'
+      ...
+    # Subtest: chrome changed-target
+    ok 23 - chrome changed-target
+      ---
+      duration_ms: 89.3391
+      type: 'test'
+      ...
+    # Subtest: chrome changed-expiry
+    ok 24 - chrome changed-expiry
+      ---
+      duration_ms: 91.5402
+      type: 'test'
+      ...
+    # Subtest: chrome changed-proof
+    ok 25 - chrome changed-proof
+      ---
+      duration_ms: 77.2457
+      type: 'test'
+      ...
+    # Subtest: chrome provider403
+    ok 26 - chrome provider403
+      ---
+      duration_ms: 125.651
+      type: 'test'
+      ...
+    # Subtest: chrome provider503
+    ok 27 - chrome provider503
+      ---
+      duration_ms: 183.6184
+      type: 'test'
+      ...
+    # Subtest: chrome redirect
+    ok 28 - chrome redirect
+      ---
+      duration_ms: 158.6664
+      type: 'test'
+      ...
+    # Subtest: chrome wrong-receipt
+    ok 29 - chrome wrong-receipt
+      ---
+      duration_ms: 202.7617
+      type: 'test'
+      ...
+    # Subtest: chrome ok-after-outage
+    ok 30 - chrome ok-after-outage
+      ---
+      duration_ms: 167.0863
+      type: 'test'
+      ...
+    # Subtest: electron ok
+    ok 31 - electron ok
+      ---
+      duration_ms: 231.4345
+      type: 'test'
+      ...
+    # Subtest: electron new-release
+    ok 32 - electron new-release
+      ---
+      duration_ms: 203.724
+      type: 'test'
+      ...
+    # Subtest: electron replace-asset
+    ok 33 - electron replace-asset
+      ---
+      duration_ms: 238.248
+      type: 'test'
+      ...
+    # Subtest: electron restart
+    ok 34 - electron restart
+      ---
+      duration_ms: 146.2548
+      type: 'test'
+      ...
+    # Subtest: electron jsonb-order
+    ok 35 - electron jsonb-order
+      ---
+      duration_ms: 110.8571
+      type: 'test'
+      ...
+    # Subtest: electron concurrent
+    ok 36 - electron concurrent
+      ---
+      duration_ms: 148.1019
+      type: 'test'
+      ...
+    # Subtest: electron cancelled
+    ok 37 - electron cancelled
+      ---
+      duration_ms: 35.2101
+      type: 'test'
+      ...
+    # Subtest: electron foreign-project
+    ok 38 - electron foreign-project
+      ---
+      duration_ms: 62.4606
+      type: 'test'
+      ...
+    # Subtest: electron file-changed
+    ok 39 - electron file-changed
+      ---
+      duration_ms: 82.6157
+      type: 'test'
+      ...
+    # Subtest: electron file-at-audit
+    ok 40 - electron file-at-audit
+      ---
+      duration_ms: 118.4046
+      type: 'test'
+      ...
+    # Subtest: electron audit-fail
+    ok 41 - electron audit-fail
+      ---
+      duration_ms: 94.0975
+      type: 'test'
+      ...
+    # Subtest: electron cancel-at-audit
+    ok 42 - electron cancel-at-audit
+      ---
+      duration_ms: 104.7163
+      type: 'test'
+      ...
+    # Subtest: electron cancel-at-claim
+    ok 43 - electron cancel-at-claim
+      ---
+      duration_ms: 107.797
+      type: 'test'
+      ...
+    # Subtest: electron cancel-after-claim
+    ok 44 - electron cancel-after-claim
+      ---
+      duration_ms: 125.0588
+      type: 'test'
+      ...
+    # Subtest: electron expire-after-claim
+    ok 45 - electron expire-after-claim
+      ---
+      duration_ms: 102.8648
+      type: 'test'
+      ...
+    # Subtest: electron connection-at-audit
+    ok 46 - electron connection-at-audit
+      ---
+      duration_ms: 134.0165
+      type: 'test'
+      ...
+    # Subtest: electron connection-before-confirm
+    ok 47 - electron connection-before-confirm
+      ---
+      duration_ms: 39.2863
+      type: 'test'
+      ...
+    # Subtest: electron release-replaced
+    ok 48 - electron release-replaced
+      ---
+      duration_ms: 83.0432
+      type: 'test'
+      ...
+    # Subtest: electron asset-replaced
+    ok 49 - electron asset-replaced
+      ---
+      duration_ms: 118.9166
+      type: 'test'
+      ...
+    # Subtest: electron changed-source
+    ok 50 - electron changed-source
+      ---
+      duration_ms: 57.4012
+      type: 'test'
+      ...
+    # Subtest: electron changed-target
+    ok 51 - electron changed-target
+      ---
+      duration_ms: 57.8789
+      type: 'test'
+      ...
+    # Subtest: electron changed-expiry
+    ok 52 - electron changed-expiry
+      ---
+      duration_ms: 72.5114
+      type: 'test'
+      ...
+    # Subtest: electron changed-proof
+    ok 53 - electron changed-proof
+      ---
+      duration_ms: 41.5832
+      type: 'test'
+      ...
+    # Subtest: electron provider403
+    ok 54 - electron provider403
+      ---
+      duration_ms: 125.4626
+      type: 'test'
+      ...
+    # Subtest: electron provider503
+    ok 55 - electron provider503
+      ---
+      duration_ms: 130.8389
+      type: 'test'
+      ...
+    # Subtest: electron redirect
+    ok 56 - electron redirect
+      ---
+      duration_ms: 100.7823
+      type: 'test'
+      ...
+    # Subtest: electron wrong-receipt
+    ok 57 - electron wrong-receipt
+      ---
+      duration_ms: 121.9768
+      type: 'test'
+      ...
+    # Subtest: electron ok-after-outage
+    ok 58 - electron ok-after-outage
+      ---
+      duration_ms: 114.9665
+      type: 'test'
+      ...
+    1..58
+ok 13 - native artifact preparation cannot publish or delete before exact durable approval
+  ---
+  duration_ms: 8968.2311
+  type: 'test'
+  ...
+# Subtest: native source inspection rejects extraction aliases and credential files before compression
+ok 14 - native source inspection rejects extraction aliases and credential files before compression
+  ---
+  duration_ms: 18.0467
+  type: 'test'
+  ...
+# Subtest: native GitHub release transport never sends source or credentials to a substituted asset target
+    # Subtest: all four native entry points reject raw or fabricated actor contexts before credential access
+    ok 1 - all four native entry points reject raw or fabricated actor contexts before credential access
+      ---
+      duration_ms: 28.8692
+      type: 'test'
+      ...
+    # Subtest: foreign actors, malformed repositories and credential-bearing source fail before provider access
+    ok 2 - foreign actors, malformed repositories and credential-bearing source fail before provider access
+      ---
+      duration_ms: 50.0584
+      type: 'test'
+      ...
+    # Subtest: chrome refuses substituted upload origins and release paths before source egress
+    ok 3 - chrome refuses substituted upload origins and release paths before source egress
+      ---
+      duration_ms: 398.5006
+      type: 'test'
+      ...
+    # Subtest: chrome provider denial cannot create release, delete asset or fall through to upload
+    ok 4 - chrome provider denial cannot create release, delete asset or fall through to upload
+      ---
+      duration_ms: 914.051
+      type: 'test'
+      ...
+    # Subtest: chrome cannot publish a foreign download receipt
+    ok 5 - chrome cannot publish a foreign download receipt
+      ---
+      duration_ms: 420.7231
+      type: 'test'
+      ...
+    # Subtest: chrome opaque held credential cannot be embedded in the source archive
+    ok 6 - chrome opaque held credential cannot be embedded in the source archive
+      ---
+      duration_ms: 17.6004
+      type: 'test'
+      ...
+    # Subtest: chrome cancellation and credential rotation after metadata prevent later effects
+    ok 7 - chrome cancellation and credential rotation after metadata prevent later effects
+      ---
+      duration_ms: 165.3759
+      type: 'test'
+      ...
+    # Subtest: chrome ordinary outage remains a truthful failure and a later request works
+    ok 8 - chrome ordinary outage remains a truthful failure and a later request works
+      ---
+      duration_ms: 346.6592
+      type: 'test'
+      ...
+    # Subtest: electron refuses substituted upload origins and release paths before source egress
+    ok 9 - electron refuses substituted upload origins and release paths before source egress
+      ---
+      duration_ms: 79.7051
+      type: 'test'
+      ...
+    # Subtest: electron provider denial cannot create release, delete asset or fall through to upload
+    ok 10 - electron provider denial cannot create release, delete asset or fall through to upload
+      ---
+      duration_ms: 261.9902
+      type: 'test'
+      ...
+    # Subtest: electron cannot publish a foreign download receipt
+    ok 11 - electron cannot publish a foreign download receipt
+      ---
+      duration_ms: 234.6415
+      type: 'test'
+      ...
+    # Subtest: electron opaque held credential cannot be embedded in the source archive
+    ok 12 - electron opaque held credential cannot be embedded in the source archive
+      ---
+      duration_ms: 4.3678
+      type: 'test'
+      ...
+    # Subtest: electron cancellation and credential rotation after metadata prevent later effects
+    ok 13 - electron cancellation and credential rotation after metadata prevent later effects
+      ---
+      duration_ms: 103.7329
+      type: 'test'
+      ...
+    # Subtest: electron ordinary outage remains a truthful failure and a later request works
+    ok 14 - electron ordinary outage remains a truthful failure and a later request works
+      ---
+      duration_ms: 238.6769
+      type: 'test'
+      ...
+    # Subtest: desktop release authorization denial cannot trigger workflow fallback
+    ok 15 - desktop release authorization denial cannot trigger workflow fallback
+      ---
+      duration_ms: 9.8326
+      type: 'test'
+      ...
+    1..15
+ok 15 - native GitHub release transport never sends source or credentials to a substituted asset target
+  ---
+  duration_ms: 3304.8853
+  type: 'test'
+  ...
+1..15
+# tests 135
+# suites 0
+# pass 135
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 29690.4562
