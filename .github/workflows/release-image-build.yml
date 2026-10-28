@@ -10,7 +10,7 @@ permissions:
   contents: read
   packages: write
 env:
-  RELEASE_SHA: e1fe27c1390075df16e6b569b2bb9cfe448442fd
+  RELEASE_SHA: b0cd0ec31be56a8945ae41998563475237ed52fb
   IMAGE: ghcr.io/xroga/xroga-api-release
 jobs:
   build:
