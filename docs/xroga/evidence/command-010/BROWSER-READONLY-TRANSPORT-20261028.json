@@ -8,7 +8,7 @@
     },
     {
       "path": "backend/src/workers/browserReadOnlyTransport.security.test.ts",
-      "sha256": "8c84dab52996a153fbf58de98a3410818bd39d51d6339f623e4c3a5fc00635e3"
+      "sha256": "1a5b756adee2ac25d089e815b8a8261cbf63ee1c3c80fd446c1179d1c95ccf3b"
     }
   ],
   "receipts": [
@@ -67,5 +67,6 @@
   "productionChanged": false,
   "spend": 0,
   "phase4Accepted": false,
-  "originalRequirementsChanged": false
+  "originalRequirementsChanged": false,
+  "typeOnlyTestContinuation": "The dedicated-worker fixture accesses the browser global through a local constructor type, preserving the complete real Chromium test body while keeping DOM globals out of backend Node types."
 }

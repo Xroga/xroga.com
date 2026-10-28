@@ -44947,6 +44947,7 @@
         "backend/src/workers/browserCoordinator.test.ts:8",
         "backend/src/workers/browserCoordinator.ts:22",
         "backend/src/workers/browserModelLifetime.ts:4",
+        "backend/src/workers/browserReadOnlyTransport.security.test.ts:9",
         "backend/src/workers/browserTaskHandler.test.ts:8",
         "backend/src/workers/containerBrowserWorker.ts:25",
         "backend/src/workers/resumeRecovery.test.ts:7"
@@ -44972,6 +44973,7 @@
       "testCoverage": [
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/workers/browserCoordinator.test.ts",
+        "backend/src/workers/browserReadOnlyTransport.security.test.ts",
         "backend/src/workers/browserTaskHandler.test.ts",
         "backend/src/workers/resumeRecovery.test.ts"
       ],
@@ -45167,6 +45169,7 @@
       "callers": [
         "backend/src/workers/browserCoordinator.ts:20",
         "backend/src/workers/browserModelLifetime.security.test.ts:7",
+        "backend/src/workers/browserReadOnlyTransport.security.test.ts:9",
         "backend/src/workers/containerOrphanCleanup.security.test.ts:4",
         "backend/src/workers/containerWorkerProtocol.security.test.ts:7",
         "scripts/browser/browser-coordinator.mts:13",
@@ -45192,6 +45195,7 @@
       "testCoverage": [
         "backend/src/workers/browserCoordinator.test.ts",
         "backend/src/workers/browserModelLifetime.security.test.ts",
+        "backend/src/workers/browserReadOnlyTransport.security.test.ts",
         "backend/src/workers/containerOrphanCleanup.security.test.ts",
         "backend/src/workers/containerWorkerProtocol.security.test.ts"
       ],
@@ -129263,6 +129267,13 @@
       "id": "test-suite:04ec4fa359cd64ccc4cf",
       "sourcePath": "backend/src/workers/browserPlanner.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:385550564a7c26ef4b65",
+      "sourcePath": "backend/src/workers/browserReadOnlyTransport.security.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

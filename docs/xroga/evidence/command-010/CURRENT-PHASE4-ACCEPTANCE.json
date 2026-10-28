@@ -1,94 +1,136 @@
 {
-  "atUtc": "2026-10-28T17:19:04.920414+00:00",
+  "atUtc": "2026-10-28T17:48:15.936799+00:00",
   "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
   "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
   "formalAcceptedCriteria": 0,
-  "localEvidenceCriteria": 7,
+  "localEvidenceCriteria": 12,
   "criterionCount": 12,
   "criteria": [
     {
       "id": "XB01-C010-AC01",
       "originalText": "All arbitrary outbound URL callers are inventoried.",
-      "localEvidenceState": "PARTIALLY_VERIFIED",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Original criterion incomplete, see strict caller register and remaining obligations"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "docs/xroga/security/egress-callers.json"
+      ]
     },
     {
       "id": "XB01-C010-AC02",
       "originalText": "High-risk URL callers use central URL policy.",
-      "localEvidenceState": "PARTIALLY_VERIFIED",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Original criterion incomplete, see strict caller register and remaining obligations"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "backend/src/security/boundedPublicGet.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC03",
       "originalText": "All consequential external data egress passes egressPolicy.",
-      "localEvidenceState": "PARTIALLY_VERIFIED",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Original criterion incomplete, see strict caller register and remaining obligations"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+        "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
+      ]
     },
     {
       "id": "XB01-C010-AC04",
       "originalText": "businessAction integrates authority + egress before provider execution.",
-      "localEvidenceState": "VERIFIED_LOCAL",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Whole-source integration/release gate pending"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/services/integrations/composioProvenance.security.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC05",
       "originalText": "Tool descriptions cannot create authority.",
-      "localEvidenceState": "VERIFIED_LOCAL",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Whole-source integration/release gate pending"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC06",
       "originalText": "Malicious document/web/tool-output tests cannot override policy.",
-      "localEvidenceState": "VERIFIED_LOCAL",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Whole-source integration/release gate pending"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC07",
       "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
-      "localEvidenceState": "VERIFIED_LOCAL",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Whole-source integration/release gate pending"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/boundedPublicGet.test.ts",
+        "backend/src/security/egress/egress.integration.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC08",
       "originalText": "Redirect-to-private test passes.",
-      "localEvidenceState": "VERIFIED_LOCAL",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Whole-source integration/release gate pending"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC09",
       "originalText": "Cross-tenant external upload test passes.",
-      "localEvidenceState": "PARTIALLY_VERIFIED",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Original criterion incomplete, see strict caller register and remaining obligations"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/egress/fileEgress.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC10",
       "originalText": "Credential-secret egress test passes.",
-      "localEvidenceState": "VERIFIED_LOCAL",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Whole-source integration/release gate pending"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/egress/heldCredentialFloor.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC11",
       "originalText": "Security decision evidence contains no raw credential.",
-      "localEvidenceState": "VERIFIED_LOCAL",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Whole-source integration/release gate pending"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ]
     },
     {
       "id": "XB01-C010-AC12",
       "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
-      "localEvidenceState": "NOT_VERIFIED",
-      "finalCurrentSourceAcceptance": "NOT_VERIFIED",
-      "remaining": "Original criterion incomplete, see strict caller register and remaining obligations"
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PENDING_EXACT_CI_AND_CURRENT_MAIN_INTEGRATION",
+      "remaining": "Exact-source CI, current-main later-batch adapter integration and production browser image verification remain release gates.",
+      "evidence": [
+        "docs/xroga/security/egress-callers.json"
+      ]
     }
   ],
   "strictAudit": {
@@ -97,18 +139,18 @@
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   },
-  "ci": "FINAL_SOURCE_MAIN_RECONCILIATION_AND_EXACT_CI_PENDING",
+  "ci": "EXACT_FINAL_HEAD_PENDING",
   "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
-  "batch1": "NOT_CLOSED",
+  "batch1": "NOT_CLOSED_PRODUCTION_INTEGRATION_PENDING",
   "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
-  "externalBlocker": "NONE_IDENTIFIED",
+  "externalBlocker": "CURRENT_MAIN_BUILDER_TRANSPORT_COMPATIBILITY_REQUIRES_CLAUDE_OWNED_LATER_BATCH_INTEGRATION",
   "remainingBrowserObligations": [
     "Exact-source CI and production browser image must include the verified read-only transport correction. No public consequential browser execution is admitted."
   ],
   "publishingObligations": "All six original remaining GitHub, Supabase, research and Composio caller reviews are closed with source-bound evidence. Final exact-source integration and12 frozen criteria still require final checks.",
   "backendTypes": "PASS_CURRENT_LOCAL_SOURCE",
   "frontendTypes": "PASS_CURRENT_LOCAL_SOURCE",
-  "currentCheckpoint": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+  "currentCheckpoint": "docs/xroga/evidence/command-010/FINAL-SOURCE-VERIFICATION-20261028.json",
   "xResearchAccountingAvailability": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED",
   "orphanCleanupStatus": "Bounded stopped-only cleanup verified locally. Running leftovers retained for lease-aware operator review. No global force cleanup or live host mutation.",
   "ciFailureEvidence": "docs/xroga/evidence/command-010/CI-1F0761DA-20261028.json",
@@ -128,5 +170,6 @@
   "supabaseProjectCreateEvidence": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json",
   "desktopWorkflowEvidence": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
   "githubPublicationEvidence": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
-  "browserReadOnlyEvidence": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
+  "browserReadOnlyEvidence": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+  "releaseGateHandoff": "docs/xroga/evidence/command-010/MAIN-INTEGRATION-HANDOFF-20261028.md"
 }
