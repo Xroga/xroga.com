@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "7a282ddebf8e67a3cf7f7663043404ae8525e8ce",
+  "source_sha": "2ae8481277a5faf808428f52bed2d13bc553bb0d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15285,7 +15285,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b8c0ac8ff79fb95d268c8cdd4407706ad62fb3789d93755955645962dcb1c4b8"
+      "sha256": "3c921fe9072bffd0608b7b6346c07eda92721911d6c7357ead35bc0fe6b12c75"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -15313,11 +15313,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowPlanner.ts",
-      "sha256": "a47c5a52e66b874e283004378beeac7aadeb629e158232012c42b753a08762c5"
+      "sha256": "6490895ac8c1a28f86d58d7871e1ed6345987ed1aaf7be3811e632e00adc1693"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "fd9a1660ada1ecdf48a407e5620590971699b0dac99031b2d8f4887f2333a0d4"
+      "sha256": "5eb4d37bbf115241d92787f2988e91a0d8db3bb35d200966b2fbe30641cdb302"
     },
     {
       "path": "backend/src/services/integrations/composioCallback.ts",
@@ -17905,7 +17905,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "ad57d88aa22acba8b0bd746bc1f4ceeb5a0e0e64d0db1ec8dc57a829dc26dcdc"
+      "sha256": "1b853813ae44ac6e657369c27cbb87f431c5bd938e8a47cd7a4df9e11ae20284"
     },
     {
       "path": "frontend/src/components/integrations/PluginMarketplace.tsx",
@@ -19385,7 +19385,7 @@
     },
     {
       "path": "frontend/src/lib/phase1Routing.ts",
-      "sha256": "20c8bef30b2903fb5e2b86de9891367f24ac60fa7bcd87896ad2901af2546b03"
+      "sha256": "7d498b520f5f07a28e22dabd2ecbb3c9a8b919a1fed280ac92e5a78b9317b8ee"
     },
     {
       "path": "frontend/src/lib/plainAiText.tsx",
@@ -28889,14 +28889,14 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1186,
+      "line": 1187,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1212,
+      "line": 1213,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28960,6 +28960,20 @@
     {
       "path": "backend/src/services/integrations/businessRead.ts",
       "line": 1023,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
+      "line": 179,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
+      "line": 182,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30989,28 +31003,28 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 384,
+      "line": 385,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 625,
+      "line": 626,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 642,
+      "line": 643,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 851,
+      "line": 852,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
