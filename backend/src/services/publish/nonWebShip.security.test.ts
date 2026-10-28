@@ -3,18 +3,23 @@ import assert from 'node:assert/strict';
 import {shipChromeExtensionZip,shipElectronPortableZip,triggerElectronDesktopRelease,waitForDesktopReleaseZip} from './nonWebShip.js';
 import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
 import {createTenantContext,type TenantContext} from '../../security/tenantContext.js';
+import {nativeReleaseFixture} from './__tests__/nativeReleaseFixture.js';
+import {confirmBusinessAction} from '../integrations/businessActionConfirmations.js';
+import {resetCredentialVaultRuntimeForTests} from '../integrations/credentialVaultRuntime.js';
 
 test('native GitHub release transport never sends source or credentials to a substituted asset target',async t=>{
  const userId='11111111-1111-4111-8111-111111111111',token='synthetic-release-provider-token';
- const env={SUPABASE_URL:'https://release-fixture.invalid',SUPABASE_SERVICE_ROLE_KEY:'fixture'};
+ const env={NODE_ENV:'test',SUPABASE_URL:'https://release-fixture.invalid',SUPABASE_SERVICE_ROLE_KEY:'fixture',XROGA_TEST_CREDENTIAL_KEK:Buffer.alloc(32,12).toString('base64url')};
  const prior=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
- t.after(()=>{for(const[k,v]of Object.entries(prior)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+ resetCredentialVaultRuntimeForTests();
+ t.after(()=>{resetCredentialVaultRuntimeForTests();for(const[k,v]of Object.entries(prior)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+ const fixture=nativeReleaseFixture(userId);
  const context=createTenantContext({userId,via:'remote_getuser'});
  let mode='ok',assetName='extension.zip',tag='v1.0.0-extension',uploads=0,mutations=0,assetReads=0,reads=0,currentToken=token,revision='revision-one',revoked=false,controller:AbortController|undefined;
  const files=[{path:'manifest.json',content:'{"manifest_version":3,"name":"Synthetic fixture","version":"1.0.0"}'},{path:'package.json',content:'{"name":"synthetic-fixture","version":"1.0.0"}'},{path:'main.js',content:'console.log("synthetic fixture")'}];
  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
   const url=new URL(String(input));
-  if(url.origin===env.SUPABASE_URL){reads++;return Response.json({user_id:userId,provider:'github',access_token:currentToken,metadata:{revoked},credential_revision:revision});}
+  if(url.origin===env.SUPABASE_URL){reads++;return await fixture.database(url,init)??Response.json({user_id:userId,provider:'github',access_token:currentToken,metadata:{revoked},credential_revision:revision});}
   const method=init?.method??'GET';if(method!=='GET')mutations++;
   if(url.hostname!=='api.github.com'||url.pathname.endsWith('/assets')&&method==='POST'){
    uploads++;const size=(init?.body as Buffer).length;
@@ -50,7 +55,7 @@ test('native GitHub release transport never sends source or credentials to a sub
   assert.equal(reads,before);
  });
  for(const kind of ['chrome','electron']){
-  const run=()=>{const opts={userId,repoFullName:'Owner/repo',files,tenantContext:context,signal:controller?.signal};return kind==='chrome'?shipChromeExtensionZip(opts):shipElectronPortableZip(opts);};
+  const run=async()=>{const opts={userId,repoFullName:'Owner/repo',files,tenantContext:context,signal:controller?.signal};const prepared=kind==='chrome'?await shipChromeExtensionZip(opts):await shipElectronPortableZip(opts);if(!prepared.needsConfirmation)return prepared;assert.ok(prepared.confirmation);const executed=await confirmBusinessAction(context,prepared.confirmation.id);return JSON.parse(executed.execution.resultText) as typeof prepared;};
   assetName=kind==='chrome'?'extension.zip':'desktop.zip';tag=kind==='chrome'?'v1.0.0-extension':'v1.0.0-portable';
   await t.test(kind+' refuses substituted upload origins and release paths before source egress',async()=>{
    for(mode of ['foreignOrigin','foreignRelease','wrongTag']){uploads=0;assetReads=0;await assert.rejects(run());assert.equal(uploads,0);assert.equal(assetReads,0);}

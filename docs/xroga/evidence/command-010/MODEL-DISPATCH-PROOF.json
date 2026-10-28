@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+      "currentSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -128,7 +128,9 @@
           "acfbdb182d9e682cce3f",
           "8c2f244d2269c3ff06ae"
         ]
-      }
+      },
+      "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+      "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
     },
     {
       "path": "backend/src/routes/phase1.ts",

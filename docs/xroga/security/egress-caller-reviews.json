@@ -3525,6 +3525,46 @@
           "sha256": "677f058c8ff884dc8cbefd7ac7b869072d1ef08a1876045388703688ca0075df"
         }
       ]
+    },
+    {
+      "id": "094a251245ce9b6ab659",
+      "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
+      "sourceFileSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_GITHUB_NATIVE_ARTIFACT_ORIGINAL_ACTOR_PRIVATE_SOURCE_AND_EXACT_CANONICAL_PUBLICATION_PERMIT",
+      "tenantAuthority": "OWNED_PROJECT_FILE_EPOCH_FULL_CONNECTION_REVISION_ONE_USE_DURABLE_CLAIM_AND_CURRENT_REVOCATION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+          "marker": "EXACT_NATIVE_GITHUB_ARTIFACT_PUBLICATION_NOT_SHARED_CALLER_OR_PHASE4_ACCEPTANCE",
+          "sha256": "f3da84c3d2b2d4ef584454587f046ae0b5005f7586a5b311710b51c373ef629c"
+        },
+        {
+          "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+          "marker": "native artifact preparation cannot publish or delete",
+          "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
+        }
+      ]
+    },
+    {
+      "id": "07ca232e98dcc1720801",
+      "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
+      "sourceFileSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_GITHUB_NATIVE_ARTIFACT_ORIGINAL_ACTOR_PRIVATE_SOURCE_AND_EXACT_CANONICAL_PUBLICATION_PERMIT",
+      "tenantAuthority": "OWNED_PROJECT_FILE_EPOCH_FULL_CONNECTION_REVISION_ONE_USE_DURABLE_CLAIM_AND_CURRENT_REVOCATION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+          "marker": "EXACT_NATIVE_GITHUB_ARTIFACT_PUBLICATION_NOT_SHARED_CALLER_OR_PHASE4_ACCEPTANCE",
+          "sha256": "f3da84c3d2b2d4ef584454587f046ae0b5005f7586a5b311710b51c373ef629c"
+        },
+        {
+          "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+          "marker": "native artifact preparation cannot publish or delete",
+          "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
+        }
+      ]
     }
   ]
 }

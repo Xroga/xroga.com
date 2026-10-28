@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "96713a5803eb7de502a5ecbbcd1d3871c15396ff3b99d8d33ecd5960c202a2c9",
+  "sourceTreeDigest": "1e68af1e1c26d0843999ab51f6ec80752b639e70616a1ac411c07936572e2ddd",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2522,34 +2522,56 @@
     {
       "id": "094a251245ce9b6ab659",
       "file": "backend/src/services/publish/nonWebShip.ts",
-      "line": 198,
+      "line": 231,
       "entryPoint": "shipChromeExtensionZip",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_GITHUB_NATIVE_ARTIFACT_ORIGINAL_ACTOR_PRIVATE_SOURCE_AND_EXACT_CANONICAL_PUBLICATION_PERMIT",
+      "tenantAuthority": "OWNED_PROJECT_FILE_EPOCH_FULL_CONNECTION_REVISION_ONE_USE_DURABLE_CLAIM_AND_CURRENT_REVOCATION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+          "marker": "EXACT_NATIVE_GITHUB_ARTIFACT_PUBLICATION_NOT_SHARED_CALLER_OR_PHASE4_ACCEPTANCE",
+          "sha256": "f3da84c3d2b2d4ef584454587f046ae0b5005f7586a5b311710b51c373ef629c"
+        },
+        {
+          "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+          "marker": "native artifact preparation cannot publish or delete",
+          "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
+        }
+      ]
     },
     {
       "id": "07ca232e98dcc1720801",
       "file": "backend/src/services/publish/nonWebShip.ts",
-      "line": 326,
+      "line": 387,
       "entryPoint": "shipElectronPortableZip",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_GITHUB_NATIVE_ARTIFACT_ORIGINAL_ACTOR_PRIVATE_SOURCE_AND_EXACT_CANONICAL_PUBLICATION_PERMIT",
+      "tenantAuthority": "OWNED_PROJECT_FILE_EPOCH_FULL_CONNECTION_REVISION_ONE_USE_DURABLE_CLAIM_AND_CURRENT_REVOCATION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+          "marker": "EXACT_NATIVE_GITHUB_ARTIFACT_PUBLICATION_NOT_SHARED_CALLER_OR_PHASE4_ACCEPTANCE",
+          "sha256": "f3da84c3d2b2d4ef584454587f046ae0b5005f7586a5b311710b51c373ef629c"
+        },
+        {
+          "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+          "marker": "native artifact preparation cannot publish or delete",
+          "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
+        }
+      ]
     },
     {
       "id": "af32a0c4970ae3e8f71e",
@@ -4335,8 +4357,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 125,
-    "pending": 11,
-    "unresolvedHighRiskBypasses": 8
+    "reviewed": 127,
+    "pending": 9,
+    "unresolvedHighRiskBypasses": 6
   }
 }

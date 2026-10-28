@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "fbb0aa3912b5a889dcc50421bf6fc214b2da27fe4d289a73d7d4c377bb76607f",
+  "reviewRegistrySha256": "fa7e892391e63ffcb2d057bfbd2d45011fd62a6e24f33260a625004e73f4838b",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 198,
-    "persistenceCandidates": 833,
-    "ownerPredicateCandidates": 211,
-    "reviewRequired": 127,
-    "reviewedCandidates": 706,
-    "unresolvedSafetyCandidates": 160,
+    "privilegedFactorySites": 201,
+    "persistenceCandidates": 840,
+    "ownerPredicateCandidates": 217,
+    "reviewRequired": 126,
+    "reviewedCandidates": 714,
+    "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 127,
-    "SCOPED_BOUNDARY": 465,
+    "REVIEW_REQUIRED": 126,
+    "SCOPED_BOUNDARY": 471,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 168,
+    "NOT_PERSISTENCE": 170,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 85,
-    "unresolvedCandidateBoundaries": 748,
+    "unresolvedCandidateBoundaries": 755,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4836,7 +4836,35 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8b8eb392635ee87676c5"
+        "id": "c7add4881847e39bf451"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "69001b42f44be336f405"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "c78caac044a0341b8217"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "90c2141dd5860eba0cc2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b9b97a29f95fac6c4a1c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "c5b2b6720709bc2e665a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "fa96d1509c1e431ecf84"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4c3e8f42ba6315b93466"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5653,10 +5681,6 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "dc1960ee19b048e0649c"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8b8eb392635ee87676c5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7936,6 +7960,38 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c7add4881847e39bf451"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "69001b42f44be336f405"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c78caac044a0341b8217"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "90c2141dd5860eba0cc2"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b9b97a29f95fac6c4a1c"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c5b2b6720709bc2e665a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "fa96d1509c1e431ecf84"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "4c3e8f42ba6315b93466"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "5d597ec498081269f488"
       },
       {
@@ -8317,11 +8373,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 833,
+    "currentCallers": 840,
     "structuredVerified": 85,
-    "structuredUnproven": 748,
-    "manualUnresolved": 160,
-    "manualUnsupported": 588,
+    "structuredUnproven": 755,
+    "manualUnresolved": 159,
+    "manualUnsupported": 596,
     "agreedVerified": 85,
     "proofAwaitingManualReconciliation": 0
   },
@@ -8926,7 +8982,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+      "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8947,7 +9003,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+      "sourceSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -22132,15 +22188,204 @@
       }
     },
     {
-      "id": "8b8eb392635ee87676c5",
+      "id": "c7add4881847e39bf451",
+      "path": "backend/src/services/publish/nativeArtifact.ts",
+      "line": 34,
+      "enclosing": "requireNativeArtifactProject",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "26e4bc697d300367f6d01b96053d68b109dc540aecb8f6d0ad6d52190cca4bf9",
+      "semanticReview": {
+        "authority": "Original issued context, exact user/repository/project and owner filters precede the tenant-scoped client. Full connection metadata and currently executing owner-bound confirmation/expiry/claim/effect markers are required. Tests deny foreign projects, source epochs, cancelled grants and changed connection metadata.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nativeArtifact.ts",
+            "marker": "export async function requireNativeArtifactProject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "69001b42f44be336f405",
+      "path": "backend/src/services/publish/nativeArtifact.ts",
+      "line": 34,
+      "enclosing": "requireNativeArtifactProject",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "26e4bc697d300367f6d01b96053d68b109dc540aecb8f6d0ad6d52190cca4bf9",
+      "semanticReview": {
+        "authority": "Original issued context, exact user/repository/project and owner filters precede the tenant-scoped client. Full connection metadata and currently executing owner-bound confirmation/expiry/claim/effect markers are required. Tests deny foreign projects, source epochs, cancelled grants and changed connection metadata.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nativeArtifact.ts",
+            "marker": "export async function requireNativeArtifactProject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c78caac044a0341b8217",
+      "path": "backend/src/services/publish/nativeArtifact.ts",
+      "line": 61,
+      "enclosing": "inspectNativeArtifactSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "26e4bc697d300367f6d01b96053d68b109dc540aecb8f6d0ad6d52190cca4bf9",
+      "semanticReview": {
+        "authority": "These exact built-in Buffer.from expressions inspect already-held credential encodings locally. They are not database or storage operations.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nativeArtifact.ts",
+            "marker": "export async function requireNativeArtifactProject"
+          }
+        ]
+      }
+    },
+    {
+      "id": "90c2141dd5860eba0cc2",
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "line": 29,
+      "enclosing": "nativeReleaseConnection",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "9e89b5914a31c01f2b11499998080d13fcd94d97a412097d954e50995b8b0e7c",
+      "semanticReview": {
+        "authority": "Original issued context, exact user/repository/project and owner filters precede the tenant-scoped client. Full connection metadata and currently executing owner-bound confirmation/expiry/claim/effect markers are required. Tests deny foreign projects, source epochs, cancelled grants and changed connection metadata.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+            "marker": "export async function admitNativeRelease"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b9b97a29f95fac6c4a1c",
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "line": 29,
+      "enclosing": "nativeReleaseConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "9e89b5914a31c01f2b11499998080d13fcd94d97a412097d954e50995b8b0e7c",
+      "semanticReview": {
+        "authority": "Original issued context, exact user/repository/project and owner filters precede the tenant-scoped client. Full connection metadata and currently executing owner-bound confirmation/expiry/claim/effect markers are required. Tests deny foreign projects, source epochs, cancelled grants and changed connection metadata.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+            "marker": "export async function admitNativeRelease"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c5b2b6720709bc2e665a",
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "line": 92,
+      "enclosing": "admitNativeRelease",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "9e89b5914a31c01f2b11499998080d13fcd94d97a412097d954e50995b8b0e7c",
+      "semanticReview": {
+        "authority": "Original issued context, exact user/repository/project and owner filters precede the tenant-scoped client. Full connection metadata and currently executing owner-bound confirmation/expiry/claim/effect markers are required. Tests deny foreign projects, source epochs, cancelled grants and changed connection metadata.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+            "marker": "export async function admitNativeRelease"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fa96d1509c1e431ecf84",
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "line": 92,
+      "enclosing": "admitNativeRelease",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "9e89b5914a31c01f2b11499998080d13fcd94d97a412097d954e50995b8b0e7c",
+      "semanticReview": {
+        "authority": "Original issued context, exact user/repository/project and owner filters precede the tenant-scoped client. Full connection metadata and currently executing owner-bound confirmation/expiry/claim/effect markers are required. Tests deny foreign projects, source epochs, cancelled grants and changed connection metadata.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+            "marker": "export async function admitNativeRelease"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4c3e8f42ba6315b93466",
       "path": "backend/src/services/publish/nonWebShip.ts",
       "line": 90,
       "enclosing": "nativeReleaseLifetime",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "415bfc28e7d178b901bd7ce2d078d46d75302bf65806a7a8f027ff99aef932dd"
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+      "semanticReview": {
+        "authority": "These exact built-in Buffer.from expressions inspect already-held credential encodings locally. They are not database or storage operations.",
+        "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+            "marker": "native artifact preparation cannot publish or delete"
+          },
+          {
+            "path": "backend/src/services/publish/nonWebShip.ts",
+            "marker": "async function nativeReleaseLifetime"
+          }
+        ]
+      }
     },
     {
       "id": "d572b5a570bf7a6e8210",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b7e213a5057c2915298cdcef88e9884dc504c2b5",
+  "source_sha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4045,6 +4045,7 @@
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/githubRepoCreation.ts",
         "backend/src/services/memory/buildProjectStore.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts",
         "backend/src/services/publish/nonWebShip.ts",
         "frontend/src/app/changelog/page.tsx",
         "frontend/src/components/homepage-next/phase1/providerMarks.ts",
@@ -4103,6 +4104,7 @@
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/githubRepoCreation.ts",
         "backend/src/services/memory/buildProjectStore.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts",
         "backend/src/services/publish/nonWebShip.ts",
         "frontend/src/app/changelog/page.tsx",
         "frontend/src/components/homepage-next/phase1/providerMarks.ts",
@@ -15008,7 +15010,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480"
+      "sha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16512,7 +16514,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
+      "sha256": "de9a18304d39831c376fa2d3f32806641312fc137465e0a080d7527a81f13020"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16691,6 +16693,10 @@
       "sha256": "f43d83cb71c2ad82359cc26f6318c8b4d18169d18730221f45c2720bb6036edd"
     },
     {
+      "path": "backend/src/services/publish/__tests__/nativeReleaseFixture.ts",
+      "sha256": "1d90ece42b7e0f0abc7399f1ef0b4383c57cb196e4b5956f1e019b38c27d70bf"
+    },
+    {
       "path": "backend/src/services/publish/chromeWebStore.ts",
       "sha256": "62a159ab8033ea6c4323fe271ad304027fa5a275085b6bce936956ed73ea1164"
     },
@@ -16707,8 +16713,16 @@
       "sha256": "88a5346e5977862fb6a5e0523db91cc7685f0d95a8c5d44537a27eacdd1ae678"
     },
     {
+      "path": "backend/src/services/publish/nativeArtifact.ts",
+      "sha256": "26e4bc697d300367f6d01b96053d68b109dc540aecb8f6d0ad6d52190cca4bf9"
+    },
+    {
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "sha256": "9e89b5914a31c01f2b11499998080d13fcd94d97a412097d954e50995b8b0e7c"
+    },
+    {
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "sha256": "415bfc28e7d178b901bd7ce2d078d46d75302bf65806a7a8f027ff99aef932dd"
+      "sha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e"
     },
     {
       "path": "backend/src/services/publish/userOwnedPublish.ts",
@@ -24395,6 +24409,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "line": 50,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "line": 79,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
@@ -24426,14 +24454,14 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 389,
+      "line": 451,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 390,
+      "line": 452,
       "credentialsInUrl": false
     },
     {
@@ -28703,7 +28731,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4937,
+      "line": 4947,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30970,6 +30998,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/services/publish/__tests__/nativeReleaseFixture.ts",
+      "line": 10,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/services/publish/chromeWebStore.ts",
       "line": 28,
       "scope": "MODULE_LIFETIME",
@@ -31014,6 +31049,13 @@
     {
       "path": "backend/src/services/publish/easCredentials.ts",
       "line": 636,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/nativeArtifact.ts",
+      "line": 46,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -4232,6 +4232,7 @@ publicationReason:
   let chromeZipOk = false;
   let electronZipOk = false;
   let electronInstallerOk = false;
+  let nativePublicationPending = false;
   let easTriggered = false;
   let easUrl: string | undefined;
   let easError: string | undefined;
@@ -4314,6 +4315,10 @@ publicationReason:
         } catch (err) {
           chromeStoreError = (err as Error).message;
         }
+      } else if(zipped.needsConfirmation && zipped.reviewUrl) {
+        nativePublicationPending=true;
+        chromeZipError=`Publication awaits approval: ${zipped.reviewUrl}`;
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact extension publication before uploading source: [Review publication](${zipped.reviewUrl})`,swarmStatusLabel:'Approval required',swarmActivity:'No release asset was published',swarmTodos:todos('push')});
       } else {
         chromeZipError = zipped.error || 'extension.zip upload failed';
         chromeReleaseUrl = zipped.releaseUrl;
@@ -4371,6 +4376,10 @@ publicationReason:
           swarmActivity: portable.tag || 'desktop.zip',
           swarmTodos: todos('push'),
         });
+      } else if(portable.needsConfirmation && portable.reviewUrl) {
+        nativePublicationPending=true;
+        electronReleaseError=`Publication awaits approval: ${portable.reviewUrl}`;
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact desktop publication before uploading source: [Review publication](${portable.reviewUrl})`,swarmStatusLabel:'Approval required',swarmActivity:'No release asset was published',swarmTodos:todos('push')});
       } else {
         electronReleaseError = portable.error || 'desktop.zip upload failed';
         desktopReleasesUrl = portable.releaseUrl;
@@ -4390,6 +4399,7 @@ publicationReason:
       swarmTodos: todos('push'),
     });
     try {
+      if(nativePublicationPending)throw Object.assign(new Error(electronReleaseError || 'Approve the prepared publication before starting a separate installer release.'),{code:'PUBLICATION_APPROVAL_REQUIRED'});
       const signing = await syncElectronSigningSecretsToGitHub({
         userId: opts.userId,
         repoFullName: githubRepoName,
@@ -4461,7 +4471,7 @@ publicationReason:
       console.warn('[pipeline] electron release:', (err as Error).message);
     }
 
-    if (!electronZipOk && electronReleaseError) {
+    if (!nativePublicationPending && !electronZipOk && electronReleaseError) {
       emit({
         agent: 'deploy',
         status: 'release_failed',

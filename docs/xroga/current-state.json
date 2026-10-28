@@ -5381,7 +5381,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+      "sha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5575,6 +5575,7 @@
         "modelSwitches",
         "narrate",
         "narrator",
+        "nativePublicationPending",
         "needResearch",
         "needsVercelEarly",
         "negotiationPhaseForAgent",
@@ -15092,7 +15093,8 @@
         "backend/src/lib/vercelDomains.ts:1",
         "backend/src/lib/vercelEnv.ts:1",
         "backend/src/services/integrations/githubDeploy.ts:68",
-        "backend/src/services/publish/nonWebShip.ts:13"
+        "backend/src/services/publish/nativeArtifact.ts:4",
+        "backend/src/services/publish/nonWebShip.ts:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23608,6 +23610,7 @@
         "backend/src/services/integrations/composioClient.ts:5",
         "backend/src/services/integrations/credentialVault.ts:3",
         "backend/src/services/publish/electronSecrets.ts:8",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:3",
         "backend/tests/securityReceipt.local.integration.ts:9"
       ],
       "reachable": true,
@@ -23705,7 +23708,9 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6",
         "backend/src/services/publish/electronSecrets.ts:11",
-        "backend/src/services/publish/nonWebShip.ts:11",
+        "backend/src/services/publish/nativeArtifact.ts:7",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:4",
+        "backend/src/services/publish/nonWebShip.ts:16",
         "backend/tests/securityReceipt.local.integration.ts:13"
       ],
       "reachable": true,
@@ -24080,7 +24085,9 @@
         "backend/src/services/BillingService.ts:22",
         "backend/src/services/integrations/composioClient.ts:10",
         "backend/src/services/publish/electronSecrets.ts:13",
-        "backend/src/services/publish/nonWebShip.ts:12",
+        "backend/src/services/publish/nativeArtifact.ts:8",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:8",
+        "backend/src/services/publish/nonWebShip.ts:17",
         "backend/tests/securityReceipt.local.integration.ts:10"
       ],
       "reachable": true,
@@ -24211,6 +24218,7 @@
         "backend/src/services/BillingService.ts:23",
         "backend/src/services/integrations/composioClient.ts:11",
         "backend/src/services/publish/electronSecrets.ts:14",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:9",
         "backend/tests/securityReceipt.local.integration.ts:11"
       ],
       "reachable": true,
@@ -24697,6 +24705,8 @@
         "backend/src/services/integrations/userProviderKeys.ts:12",
         "backend/src/services/integrations/vercelAuth.ts:9",
         "backend/src/services/publish/electronSecrets.ts:10",
+        "backend/src/services/publish/nativeArtifact.ts:6",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:7",
         "backend/src/services/referralService.ts:2",
         "backend/src/services/responseCache.ts:2",
         "backend/src/services/storage/privateFileDelivery.ts:3",
@@ -24925,8 +24935,11 @@
         "backend/src/services/publish/electronSecrets.authority.test.ts:5",
         "backend/src/services/publish/electronSecrets.ts:9",
         "backend/src/services/publish/electronSigningAdmission.security.test.ts:4",
+        "backend/src/services/publish/nativeArtifact.ts:5",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts:4",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:6",
         "backend/src/services/publish/nonWebShip.security.test.ts:5",
-        "backend/src/services/publish/nonWebShip.ts:14",
+        "backend/src/services/publish/nonWebShip.ts:19",
         "backend/src/services/referralService.failure.test.ts:5",
         "backend/src/services/referralService.relations.test.ts:5",
         "backend/src/services/responseCache.receipt.test.ts:3",
@@ -25074,6 +25087,7 @@
         "backend/src/services/notificationService.receipt.test.ts",
         "backend/src/services/publish/electronSecrets.authority.test.ts",
         "backend/src/services/publish/electronSigningAdmission.security.test.ts",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts",
         "backend/src/services/referralService.failure.test.ts",
         "backend/src/services/referralService.relations.test.ts",
@@ -25550,7 +25564,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09",
+      "sha256": "de9a18304d39831c376fa2d3f32806641312fc137465e0a080d7527a81f13020",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -25655,6 +25669,7 @@
         "../../security/tenantContext.js",
         "../BillingService.js",
         "../publish/electronSecrets.js",
+        "../publish/nonWebShip.js",
         "./composioClient.js",
         "./composioSkillGuidance.js",
         "./pluginPermissionPolicy.js",
@@ -25674,7 +25689,8 @@
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts",
-        "backend/src/services/publish/electronSecrets.ts"
+        "backend/src/services/publish/electronSecrets.ts",
+        "backend/src/services/publish/nonWebShip.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -25695,7 +25711,9 @@
         "backend/src/services/integrations/businessActionRisk.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:6",
         "backend/src/services/integrations/businessWorkflowRuns.ts:3",
-        "backend/src/services/publish/electronSecrets.ts:15"
+        "backend/src/services/publish/electronSecrets.ts:15",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts:8",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -25742,7 +25760,8 @@
         "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts",
         "backend/src/services/integrations/businessActionRisk.test.ts",
-        "backend/src/services/integrations/businessModelEgress.test.ts"
+        "backend/src/services/integrations/businessModelEgress.test.ts",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -25828,7 +25847,10 @@
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4",
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts:3",
         "backend/src/services/integrations/businessWorkflowRuns.ts:4",
-        "backend/src/services/publish/electronSecrets.ts:16"
+        "backend/src/services/publish/electronSecrets.ts:16",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts:7",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:12",
+        "backend/src/services/publish/nonWebShip.security.test.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -25877,7 +25899,9 @@
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
-        "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts"
+        "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+        "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -26969,6 +26993,9 @@
         "backend/src/services/integrations/userProviderKeys.ts:16",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts:5",
         "backend/src/services/publish/electronSecrets.ts:7",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts:9",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:10",
+        "backend/src/services/publish/nonWebShip.security.test.ts:8",
         "backend/src/synthesis/projectRuntime/secretManager.ts:7"
       ],
       "reachable": true,
@@ -27000,7 +27027,9 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts",
-        "backend/src/services/integrations/vercelAccountReceipt.test.ts"
+        "backend/src/services/integrations/vercelAccountReceipt.test.ts",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+        "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -27441,7 +27470,7 @@
         "backend/src/services/integrations/githubSourceRead.ts:3",
         "backend/src/services/publish/easPublish.ts:12",
         "backend/src/services/publish/electronSecrets.ts:5",
-        "backend/src/services/publish/nonWebShip.ts:9",
+        "backend/src/services/publish/nonWebShip.ts:14",
         "backend/src/services/publish/userOwnedPublish.ts:6",
         "backend/src/services/showcase/templateExport.ts:15"
       ],
@@ -28215,7 +28244,7 @@
       "callers": [
         "backend/src/services/integrations/githubDeploy.ts:66",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:7",
-        "backend/src/services/publish/nonWebShip.ts:15"
+        "backend/src/services/publish/nonWebShip.ts:20"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -29974,6 +30003,62 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:9c91ecf16fc0cea77ea4",
+      "subsystem": "publishing",
+      "sourcePath": "backend/src/services/publish/__tests__/nativeReleaseFixture.ts",
+      "sha256": "1d90ece42b7e0f0abc7399f1ef0b4383c57cb196e4b5956f1e019b38c27d70bf",
+      "symbols": [
+        "ReleaseConfirmation",
+        "body",
+        "exact",
+        "expected",
+        "file",
+        "files",
+        "method",
+        "nativeReleaseFixture",
+        "project",
+        "response",
+        "row",
+        "state"
+      ],
+      "imports": [
+        "../../integrations/businessAction.js",
+        "node:assert/strict",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts:6",
+        "backend/src/services/publish/nonWebShip.security.test.ts:6"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/publish/__tests__/nativeReleaseFixture.ts#ReleaseConfirmation"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+        "backend/src/services/publish/nonWebShip.security.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:26a7a0e14f4a25338521",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/chromeWebStore.ts",
@@ -30465,22 +30550,240 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:3edf96fb4ace671118ec",
+      "subsystem": "publishing",
+      "sourcePath": "backend/src/services/publish/nativeArtifact.ts",
+      "sha256": "26e4bc697d300367f6d01b96053d68b109dc540aecb8f6d0ad6d52190cca4bf9",
+      "symbols": [
+        "NativeArtifactFlavor",
+        "NativeArtifactReference",
+        "actor",
+        "bytes",
+        "current",
+        "denied",
+        "error",
+        "file",
+        "files",
+        "hash",
+        "inspectNativeArtifactSource",
+        "key",
+        "name",
+        "packageArtifact",
+        "parts",
+        "path",
+        "paths",
+        "payload",
+        "projectId",
+        "query",
+        "readNativeArtifact",
+        "reference",
+        "requireNativeArtifactProject",
+        "result",
+        "row",
+        "saved",
+        "serialized",
+        "snapshot",
+        "source",
+        "storeNativeArtifact",
+        "uuid",
+        "value",
+        "zip"
+      ],
+      "imports": [
+        "../../lib/publishingProviderRequest.js",
+        "../../security/authority/enforce.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../integrations/githubDeploy.js",
+        "../scaffolds/packageBuildZip.js",
+        "../storage/fileDeliveryPolicy.js",
+        "../storage/privateFileDelivery.js",
+        "../storage/projectFiles.js",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/lib/publishingProviderRequest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/scaffolds/packageBuildZip.ts",
+        "backend/src/services/storage/fileDeliveryPolicy.ts",
+        "backend/src/services/storage/privateFileDelivery.ts",
+        "backend/src/services/storage/projectFiles.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts:10",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "projects"
+      ],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/publish/nativeArtifact.ts#AuthorityError"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/publish/nativeArtifact.ts:34 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e9e06f1811366ab35670",
+      "subsystem": "publishing",
+      "sourcePath": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "sha256": "9e89b5914a31c01f2b11499998080d13fcd94d97a412097d954e50995b8b0e7c",
+      "symbols": [
+        "actor",
+        "admitNativeRelease",
+        "args",
+        "artifact",
+        "begin",
+        "binding",
+        "check",
+        "confirmation",
+        "consumed",
+        "context",
+        "created",
+        "deleted",
+        "denied",
+        "digest",
+        "identity",
+        "issuedAt",
+        "method",
+        "nativeReleaseActor",
+        "nativeReleaseConnection",
+        "nativeReleaseProof",
+        "nonce",
+        "operation",
+        "plan",
+        "prefix",
+        "prepareNativeRelease",
+        "proof",
+        "proofInput",
+        "releaseId",
+        "scope",
+        "source",
+        "toolkit",
+        "unsigned",
+        "uploaded",
+        "useCase",
+        "value"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/securityDecision.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../integrations/businessAction.js",
+        "../integrations/businessActionConfirmations.js",
+        "../integrations/credentialVaultRuntime.js",
+        "../integrations/githubDeploy.js",
+        "./nativeArtifact.js",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/services/publish/nativeArtifact.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/publish/nonWebShip.ts:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "business_action_confirmations",
+        "user_integrations"
+      ],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/publish/nativeReleaseAdmission.ts#AuthorityError",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#AuthorityPermit",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#authorityContextForPermit",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#businessActionAuthorityScope",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#consumeAuthorityPermit",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#identity"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/publish/nativeReleaseAdmission.ts:29 (user_id)",
+        "backend/src/services/publish/nativeReleaseAdmission.ts:92 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/publish/nativeReleaseAdmission.ts#actionPlanDigest",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#confirmation",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#createBusinessActionConfirmation",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#digest",
+        "backend/src/services/publish/nativeReleaseAdmission.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:0498def24c96cb0b7a98",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/nonWebShip.ts",
-      "sha256": "415bfc28e7d178b901bd7ce2d078d46d75302bf65806a7a8f027ff99aef932dd",
+      "sha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
       "symbols": [
         "ChromeZipShipResult",
         "DesktopReleaseResult",
         "actionsUrl",
+        "actor",
+        "admission",
         "assetUrl",
+        "assets",
         "assetsRes",
         "attempt",
         "base",
         "bytes",
         "check",
         "chunks",
+        "connection",
         "context",
+        "createBody",
         "created",
         "credential",
         "data",
@@ -30488,23 +30791,28 @@
         "dispatchMaster",
         "downloadUrl",
         "err",
+        "executeNativeRelease",
         "existing",
         "ghFetch",
         "htmlUrl",
         "installerRe",
         "intervalMs",
         "item",
+        "lifetime",
         "master",
         "method",
         "nativeReleaseLifetime",
         "oldId",
         "oldReleaseAsset",
+        "opts",
         "parsed",
         "parts",
         "path",
         "paths",
         "preferred",
         "prefix",
+        "preparedOldId",
+        "preparedReleaseId",
         "readReleaseResponse",
         "reader",
         "ready",
@@ -30519,6 +30827,7 @@
         "request",
         "res",
         "response",
+        "result",
         "routes",
         "row",
         "rows",
@@ -30547,12 +30856,16 @@
       "imports": [
         "../../lib/publishingProviderRequest.js",
         "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
         "../../security/egress/egressPolicy.js",
         "../../security/tenantContext.js",
+        "../integrations/businessAction.js",
+        "../integrations/businessActionConfirmations.js",
         "../integrations/githubAuth.js",
         "../integrations/githubDeploy.js",
         "../integrations/githubSourceRead.js",
-        "../scaffolds/packageBuildZip.js"
+        "./nativeArtifact.js",
+        "./nativeReleaseAdmission.js"
       ],
       "runtimeImports": [
         "backend/src/lib/publishingProviderRequest.ts",
@@ -30561,26 +30874,32 @@
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAuth.ts",
         "backend/src/services/integrations/githubSourceRead.ts",
-        "backend/src/services/scaffolds/packageBuildZip.ts"
+        "backend/src/services/publish/nativeReleaseAdmission.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:167",
+        "backend/src/services/integrations/businessAction.ts:1458",
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts:5",
         "backend/src/services/publish/nonWebShip.security.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [
-        "backend/src/services/publish/nonWebShip.ts#AuthorityError"
+        "backend/src/services/publish/nonWebShip.ts#AuthorityError",
+        "backend/src/services/publish/nonWebShip.ts#AuthorityPermit"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/publish/nonWebShip.ts#SafeBusinessActionConfirmation"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -31204,7 +31523,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:187",
-        "backend/src/services/publish/nonWebShip.ts:16",
+        "backend/src/services/publish/nativeArtifact.ts:12",
         "backend/src/services/scaffolds/scaffolds.test.ts:8",
         "backend/src/synthesis/delivery/projectDelivery.ts:9"
       ],
@@ -31512,6 +31831,7 @@
         "backend/src/security/egress/fileEgress.test.ts:8",
         "backend/src/security/egress/fileEgress.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:50",
+        "backend/src/services/publish/nativeArtifact.ts:11",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.revocation.test.ts:6",
         "backend/src/services/storage/privateFileDelivery.ts:6",
@@ -31633,6 +31953,7 @@
         "backend/src/routes/projects.ts:6",
         "backend/src/security/egress/fileEgress.ts:3",
         "backend/src/security/tenantIsolation.local.integration.ts:49",
+        "backend/src/services/publish/nativeArtifact.ts:10",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5",
         "backend/src/services/storage/privateFileDelivery.revocation.test.ts:7"
       ],
@@ -31699,16 +32020,19 @@
         "backend/src/security/tenantContext.ts",
         "backend/src/services/storage/fileDeliveryPolicy.ts"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
       "callers": [
         "backend/src/security/buildProjectReceipt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:14",
         "backend/src/security/tenantIsolation.local.integration.ts:48",
         "backend/src/services/memory/buildProjectStore.ts:10",
+        "backend/src/services/publish/nativeArtifact.ts:9",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7",
         "backend/src/services/storage/projectFiles.receipt.test.ts:5"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [
         "project_files"
       ],
@@ -31730,11 +32054,11 @@
         "backend/src/services/storage/fileDeliveryPolicy.test.ts",
         "backend/src/services/storage/projectFiles.receipt.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -122494,6 +122818,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8bb466573439ff7d7f8e",
+      "sourcePath": "backend/src/ai/nativePublicationUi.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
       "declaredTests": 5,
@@ -125460,6 +125791,13 @@
       "id": "test-suite:7b6ff2b3bdbe75a3d708",
       "sourcePath": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:13b4d06455f74a84cfbd",
+      "sourcePath": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

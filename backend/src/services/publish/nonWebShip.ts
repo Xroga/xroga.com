@@ -6,6 +6,11 @@
  * Electron: portable desktop.zip immediately + optional Actions binary zip.
  */
 
+import type {BusinessActionPlan} from '../integrations/businessAction.js';
+import type {AuthorityPermit} from '../../security/authority/types.js';
+import type {SafeBusinessActionConfirmation} from '../integrations/businessActionConfirmations.js';
+import type {NativeArtifactReference} from './nativeArtifact.js';
+import {nativeReleaseActor, nativeReleaseConnection, prepareNativeRelease, admitNativeRelease} from './nativeReleaseAdmission.js';
 import { getGitHubToken } from '../integrations/githubAuth.js';
 import type { ProjectFile } from '../integrations/githubDeploy.js';
 import {AuthorityError} from '../../security/authority/enforce.js';
@@ -13,11 +18,6 @@ import {EgressDenied} from '../../security/egress/egressPolicy.js';
 import {snapshotPublishingSource} from '../../lib/publishingProviderRequest.js';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 import {createGitHubSourceReader} from '../integrations/githubSourceRead.js';
-import {
-  chromeExtensionZipFilter,
-  electronPortableZipFilter,
-  packageBuildZip,
-} from '../scaffolds/packageBuildZip.js';
 
 async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
   const method=(init?.method??'GET').toUpperCase();
@@ -105,6 +105,10 @@ export type ChromeZipShipResult = {
   releaseUrl?: string;
   tag?: string;
   error?: string;
+  needsConfirmation?: boolean;
+  confirmation?: SafeBusinessActionConfirmation;
+  reviewUrl?: string;
+  preparedArtifact?: NativeArtifactReference;
 };
 
 /**
@@ -118,20 +122,52 @@ export async function shipChromeExtensionZip(opts: {
   repoFullName: string;
   files: ProjectFile[];
   version?: string;
+  projectId?: string;
+  plan?: BusinessActionPlan;
+  authorityPermit?: AuthorityPermit;
 }): Promise<ChromeZipShipResult> {
-  opts={...opts,files:snapshotPublishingSource(opts.files)};
+  const actor=nativeReleaseActor(opts.userId,opts.tenantContext,opts.plan,opts.authorityPermit);
+  opts={...opts,tenantContext:actor.context,repoFullName:actor.plan?String(actor.plan.arguments.repository):opts.repoFullName,files:actor.plan?[]:snapshotPublishingSource(opts.files)};
   if(opts.version!==undefined&&(!/^[A-Za-z0-9_.-]{1,90}$/.test(opts.version)||opts.version.includes('..')))throw new EgressDenied('INVALID_EGRESS_INPUT');
   requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
   opts={...opts};
   const parsed = splitRepo(opts.repoFullName);
   if (!parsed) return { ok: false, error: 'Invalid repo name' };
-  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
+  const lifetime=await nativeReleaseLifetime(opts,parsed);
+  const {token}=lifetime;
+  const connection=await nativeReleaseConnection(actor.context);
+  let admission:Awaited<ReturnType<typeof admitNativeRelease>>|undefined;
+  const check=async()=>{await lifetime.check();if(await nativeReleaseConnection(actor.context)!==connection)throw new AuthorityError('NATIVE_RELEASE_ADMISSION_DENIED');};
+  const request=async(path:string,init?:RequestInit)=>{if(init?.method&&init.method!=='GET'){if(!admission)throw new AuthorityError('NATIVE_RELEASE_ADMISSION_DENIED');await admission.write(path,init);}const response=await lifetime.request(path,init);await admission?.check();return response;};
 
-  const zip = packageBuildZip(opts.files, { include: chromeExtensionZipFilter });
-  if (zip.length < 64) return { ok: false, error: 'Zip empty — missing extension files' };
-
-  const tag = opts.version?.startsWith('v') ? opts.version : `v${opts.version || '1.0.0'}-extension`;
+  const tag=actor.plan?String(actor.plan.arguments.tag):(opts.version?.startsWith('v') ? opts.version : `v${opts.version || '1.0.0'}-extension`);
+  if(!/^[A-Za-z0-9_.-]{1,100}$/.test(tag)||tag.includes('..'))throw new EgressDenied('INVALID_EGRESS_INPUT');
   const { owner, repo } = parsed;
+
+  const createBody={
+        tag_name: tag,
+        name: `Chrome extension ${tag}`,
+        body: 'Sideload zip packaged by Xroga. Load unpacked from the repo, or download this zip for Chrome Web Store (~$5 on your account).',
+        draft: false,
+        prerelease: false,
+      };
+  if(!actor.plan){
+    const existing=await request(`/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`);
+    let preparedReleaseId:number|null=null,preparedOldId:number|null=null;
+    if(existing.ok){
+      const row=await existing.json() as {id:number;tag_name:unknown;upload_url:string;html_url:string};
+      if(row.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
+      releaseTarget(row.upload_url,row.id,row.html_url,owner,repo,tag,"extension.zip");
+      preparedReleaseId=row.id;
+      const assets=await request(`/repos/${owner}/${repo}/releases/${row.id}/assets`);
+      if(!assets.ok)return {ok:false,error:'Release asset lookup is unavailable.'};
+      preparedOldId=oldReleaseAsset(await assets.json(),"extension.zip")??null;
+    }else if(existing.status!==404)return {ok:false,error:'Release lookup is unavailable.'};
+    return prepareNativeRelease({context:actor.context,repository:`${owner}/${repo}`,tag,flavor:'chrome',files:opts.files,token,connection,projectId:opts.projectId,releaseId:preparedReleaseId,oldAssetId:preparedOldId,createBody,check});
+  }
+  admission=await admitNativeRelease({actor,permit:opts.authorityPermit,flavor:'chrome',repository:`${owner}/${repo}`,tag,token,connection,check});
+  const zip=admission.zip;
+  try{
 
   // Create or reuse release
   let releaseId: number | null = null;
@@ -147,6 +183,7 @@ export async function shipChromeExtensionZip(opts: {
       html_url?: string;
     };
     if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
+    admission.release(data.id,false);
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
@@ -154,13 +191,7 @@ export async function shipChromeExtensionZip(opts: {
     if(existing.status!==404)return {ok:false,error:'Release lookup is unavailable.'};
     const created = await request(`/repos/${owner}/${repo}/releases`, {
       method: 'POST',
-      body: JSON.stringify({
-        tag_name: tag,
-        name: `Chrome extension ${tag}`,
-        body: 'Sideload zip packaged by Xroga. Load unpacked from the repo, or download this zip for Chrome Web Store (~$5 on your account).',
-        draft: false,
-        prerelease: false,
-      }),
+      body: JSON.stringify(createBody),
     });
     if (!created.ok) {
       const err = await created.text();
@@ -173,6 +204,7 @@ export async function shipChromeExtensionZip(opts: {
       html_url?: string;
     };
     if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
+    admission.release(data.id,true);
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
@@ -189,12 +221,13 @@ export async function shipChromeExtensionZip(opts: {
   const assetsRes = await request(`/repos/${owner}/${repo}/releases/${releaseId}/assets`);
   if(!assetsRes.ok)return {ok:false,error:'Release asset lookup is unavailable.',releaseUrl:htmlUrl,tag};
   const oldId=oldReleaseAsset(await assetsRes.json(),'extension.zip');
+  admission.oldAsset(oldId);
   if(oldId!==undefined){
     const removed=await request(`/repos/${owner}/${repo}/releases/assets/${oldId}`,{method:'DELETE'});
     if(removed.status!==204)return {ok:false,error:'Existing release asset could not be removed.',releaseUrl:htmlUrl,tag};
   }
 
-  await check();
+  await admission.beforeAssetWrite(releaseId,zip);
   const upload = await readReleaseResponse(await fetch(assetUrl, {
     method: 'POST',
     headers: {
@@ -208,7 +241,7 @@ export async function shipChromeExtensionZip(opts: {
     signal:AbortSignal.any([AbortSignal.timeout(30000),...(opts.signal?[opts.signal]:[])]),
   }));
 
-  await check();
+  await admission.check();
   if (!upload.ok) {
     const err = await upload.text();
     return {
@@ -226,6 +259,7 @@ export async function shipChromeExtensionZip(opts: {
     releaseUrl: htmlUrl,
     downloadUrl,
   };
+  }finally{admission.close();}
 }
 
 /**
@@ -239,22 +273,60 @@ export async function shipElectronPortableZip(opts: {
   repoFullName: string;
   files: ProjectFile[];
   version?: string;
+  projectId?: string;
+  plan?: BusinessActionPlan;
+  authorityPermit?: AuthorityPermit;
 }): Promise<ChromeZipShipResult> {
-  opts={...opts,files:snapshotPublishingSource(opts.files)};
+  const actor=nativeReleaseActor(opts.userId,opts.tenantContext,opts.plan,opts.authorityPermit);
+  opts={...opts,tenantContext:actor.context,repoFullName:actor.plan?String(actor.plan.arguments.repository):opts.repoFullName,files:actor.plan?[]:snapshotPublishingSource(opts.files)};
   if(opts.version!==undefined&&(!/^[A-Za-z0-9_.-]{1,90}$/.test(opts.version)||opts.version.includes('..')))throw new EgressDenied('INVALID_EGRESS_INPUT');
   requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
   opts={...opts};
   const parsed = splitRepo(opts.repoFullName);
   if (!parsed) return { ok: false, error: 'Invalid repo name' };
-  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
+  const lifetime=await nativeReleaseLifetime(opts,parsed);
+  const {token}=lifetime;
+  const connection=await nativeReleaseConnection(actor.context);
+  let admission:Awaited<ReturnType<typeof admitNativeRelease>>|undefined;
+  const check=async()=>{await lifetime.check();if(await nativeReleaseConnection(actor.context)!==connection)throw new AuthorityError('NATIVE_RELEASE_ADMISSION_DENIED');};
+  const request=async(path:string,init?:RequestInit)=>{if(init?.method&&init.method!=='GET'){if(!admission)throw new AuthorityError('NATIVE_RELEASE_ADMISSION_DENIED');await admission.write(path,init);}const response=await lifetime.request(path,init);await admission?.check();return response;};
 
-  const zip = packageBuildZip(opts.files, { include: electronPortableZipFilter });
-  if (zip.length < 64) return { ok: false, error: 'Zip empty — missing Electron files' };
-
-  const tag = opts.version?.startsWith('v')
-    ? `${opts.version}-portable`
-    : `v${opts.version || '1.0.0'}-portable`;
+  const tag=actor.plan?String(actor.plan.arguments.tag):(opts.version?.startsWith('v') ? `${opts.version}-portable` : `v${opts.version || '1.0.0'}-portable`);
+  if(!/^[A-Za-z0-9_.-]{1,100}$/.test(tag)||tag.includes('..'))throw new EgressDenied('INVALID_EGRESS_INPUT');
   const { owner, repo } = parsed;
+
+  const createBody={
+        tag_name: tag,
+        name: `Desktop portable ${tag}`,
+        body: [
+          'Portable Electron project packaged by Xroga.',
+          '',
+          '1. Download `desktop.zip` and unzip',
+          '2. `npm install && npm start`',
+          '',
+          'Optional: GitHub Actions can also build an unsigned Linux binary zip on a `v*` tag.',
+          'Code signing / Mac App Store / Microsoft Store are not included.',
+        ].join('\n'),
+        draft: false,
+        prerelease: false,
+      };
+  if(!actor.plan){
+    const existing=await request(`/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`);
+    let preparedReleaseId:number|null=null,preparedOldId:number|null=null;
+    if(existing.ok){
+      const row=await existing.json() as {id:number;tag_name:unknown;upload_url:string;html_url:string};
+      if(row.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
+      releaseTarget(row.upload_url,row.id,row.html_url,owner,repo,tag,"desktop.zip");
+      preparedReleaseId=row.id;
+      const assets=await request(`/repos/${owner}/${repo}/releases/${row.id}/assets`);
+      if(!assets.ok)return {ok:false,error:'Release asset lookup is unavailable.'};
+      preparedOldId=oldReleaseAsset(await assets.json(),"desktop.zip")??null;
+    }else if(existing.status!==404)return {ok:false,error:'Release lookup is unavailable.'};
+    return prepareNativeRelease({context:actor.context,repository:`${owner}/${repo}`,tag,flavor:'electron',files:opts.files,token,connection,projectId:opts.projectId,releaseId:preparedReleaseId,oldAssetId:preparedOldId,createBody,check});
+  }
+  admission=await admitNativeRelease({actor,permit:opts.authorityPermit,flavor:'electron',repository:`${owner}/${repo}`,tag,token,connection,check});
+  const zip=admission.zip;
+  try{
 
   let releaseId: number | null = null;
   let uploadUrl: string | null = null;
@@ -269,6 +341,7 @@ export async function shipElectronPortableZip(opts: {
       html_url?: string;
     };
     if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
+    admission.release(data.id,false);
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
@@ -276,21 +349,7 @@ export async function shipElectronPortableZip(opts: {
     if(existing.status!==404)return {ok:false,error:'Release lookup is unavailable.'};
     const created = await request(`/repos/${owner}/${repo}/releases`, {
       method: 'POST',
-      body: JSON.stringify({
-        tag_name: tag,
-        name: `Desktop portable ${tag}`,
-        body: [
-          'Portable Electron project packaged by Xroga.',
-          '',
-          '1. Download `desktop.zip` and unzip',
-          '2. `npm install && npm start`',
-          '',
-          'Optional: GitHub Actions can also build an unsigned Linux binary zip on a `v*` tag.',
-          'Code signing / Mac App Store / Microsoft Store are not included.',
-        ].join('\n'),
-        draft: false,
-        prerelease: false,
-      }),
+      body: JSON.stringify(createBody),
     });
     if (!created.ok) {
       const err = await created.text();
@@ -303,6 +362,7 @@ export async function shipElectronPortableZip(opts: {
       html_url?: string;
     };
     if(data.tag_name!==tag)throw new EgressDenied('INVALID_EGRESS_INPUT');
+    admission.release(data.id,true);
     releaseId = data.id;
     uploadUrl = data.upload_url ?? null;
     htmlUrl = data.html_url;
@@ -317,12 +377,13 @@ export async function shipElectronPortableZip(opts: {
   const assetsRes = await request(`/repos/${owner}/${repo}/releases/${releaseId}/assets`);
   if(!assetsRes.ok)return {ok:false,error:'Release asset lookup is unavailable.',releaseUrl:htmlUrl,tag};
   const oldId=oldReleaseAsset(await assetsRes.json(),'desktop.zip');
+  admission.oldAsset(oldId);
   if(oldId!==undefined){
     const removed=await request(`/repos/${owner}/${repo}/releases/assets/${oldId}`,{method:'DELETE'});
     if(removed.status!==204)return {ok:false,error:'Existing release asset could not be removed.',releaseUrl:htmlUrl,tag};
   }
 
-  await check();
+  await admission.beforeAssetWrite(releaseId,zip);
   const upload = await readReleaseResponse(await fetch(assetUrl, {
     method: 'POST',
     headers: {
@@ -336,7 +397,7 @@ export async function shipElectronPortableZip(opts: {
     signal:AbortSignal.any([AbortSignal.timeout(30000),...(opts.signal?[opts.signal]:[])]),
   }));
 
-  await check();
+  await admission.check();
   if (!upload.ok) {
     const err = await upload.text();
     return {
@@ -354,6 +415,7 @@ export async function shipElectronPortableZip(opts: {
     releaseUrl: htmlUrl,
     downloadUrl,
   };
+  }finally{admission.close();}
 }
 
 export type DesktopReleaseResult = {
@@ -546,4 +608,12 @@ export async function waitForDesktopReleaseZip(opts: {
     error:
       'Desktop installers not ready yet — GitHub Actions is still building. Open Actions/Releases when green.',
   };
+}
+
+/** Only the existing durable business-action executor supplies this permit. */
+export async function executeNativeRelease(userId:string,plan:BusinessActionPlan,authorityPermit?:AuthorityPermit){
+ const opts={userId,repoFullName:'',files:[],plan,authorityPermit};
+ const result=plan.toolSlug==='XROGA_PUBLISH_CHROME_ZIP'?await shipChromeExtensionZip(opts):plan.toolSlug==='XROGA_PUBLISH_ELECTRON_ZIP'?await shipElectronPortableZip(opts):null;
+ if(!result?.ok||!result.downloadUrl)throw new AuthorityError('NATIVE_RELEASE_NOT_VERIFIED');
+ return result;
 }

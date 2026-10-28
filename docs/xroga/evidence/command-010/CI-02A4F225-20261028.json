@@ -1,0 +1,57 @@
+{
+  "source": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+  "result": "SEVEN_WORKFLOWS_PASS",
+  "observedAt": "2026-10-28T02:01:27.796Z",
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40615198430,
+      "headSha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+      "status": "completed",
+      "workflowName": "Command 4 authority distribution"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40615198565,
+      "headSha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+      "status": "completed",
+      "workflowName": "Xroga mission operating policy"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40615198593,
+      "headSha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+      "status": "completed",
+      "workflowName": "Agent V2 dependency lock"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40615198646,
+      "headSha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+      "status": "completed",
+      "workflowName": "Xroga tenant security fixtures"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40615198596,
+      "headSha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+      "status": "completed",
+      "workflowName": "Growth technical publishing"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40615198560,
+      "headSha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+      "status": "completed",
+      "workflowName": "Xroga golden acceptance harness"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40615198435,
+      "headSha": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+      "status": "completed",
+      "workflowName": "Unit tests"
+    }
+  ],
+  "scope": "Voice source checkpoint CI, not new native artifact source or Phase4 acceptance"
+}
