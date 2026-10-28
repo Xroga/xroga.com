@@ -128,7 +128,7 @@ async function updateRun(context: TenantContext, row: RunRow, values: Partial<Ru
 export function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
   if (!step.dependsOnPrevious) return undefined;
   const earlier = row.outcomes.filter((outcome) => outcome.stepIndex < row.step_index);
-  const wantsReadResults = /\b(?:results?|summary|options|findings|report|information|data|details|found|matching|search(?:ed)?|leads?|clients?)\b/i.test(step.request);
+  const wantsReadResults = /\b(?:results?|summary|options|findings|report|information|data|details|found|matching|search(?:ed)?|leads?|clients?|titles?|names?|values?|content|text)\b/i.test(step.request);
   const wantsCreatedArtifact = /\b(?:that|the|this|new|created)\s+(?:spreadsheet|sheet|document|file|draft|record|task|event)\b/i.test(step.request);
   const relevant = wantsReadResults
     ? earlier.filter((outcome) => outcome.kind === 'read' || outcome.kind === 'web')
@@ -150,6 +150,38 @@ export function previousEvidence(row: RunRow, step: BusinessWorkflowStep): Busin
     toolSlug: outcome.toolSlug,
     data: outcome.data,
   }));
+}
+
+function collectStringFields(value: unknown, key: string | null, output: Set<string>): void {
+  if (typeof value === 'string') {
+    if (key === null || key.toLowerCase() === 'title') output.add(value);
+  } else if (Array.isArray(value)) {
+    value.forEach((item) => collectStringFields(item, key, output));
+  } else if (value && typeof value === 'object') {
+    Object.entries(value).forEach(([field, item]) => collectStringFields(item, key === null ? null : field, output));
+  }
+}
+
+/** An exact named-source title may not be replaced by the destination title. */
+export function assertExactSourceTitleTransfer(
+  step: BusinessWorkflowStep,
+  evidence: BusinessActionReferenceEvidence[] | undefined,
+  argumentsToExecute: Record<string, unknown>,
+): void {
+  if (!/\bexact\b/i.test(step.request) || !/\btitle\b/i.test(step.request) || !evidence?.length) return;
+  const namedSources = evidence.filter((item) => item.toolkit !== 'public_web'
+    && step.request.toLowerCase().includes(item.toolkit.toLowerCase())
+    && /^(?:read|find|search|list|show|check|get)\b/i.test(item.sourceRequest));
+  if (namedSources.length !== 1) return;
+  let parsed: unknown;
+  try { parsed = JSON.parse(namedSources[0]!.data); }
+  catch { throw new Error('The named source title could not be verified from the previous app read.'); }
+  const titles = new Set<string>();
+  collectStringFields(parsed, 'title', titles);
+  if (titles.size !== 1) throw new Error('The named source title is ambiguous or missing in the previous app read.');
+  const submitted = new Set<string>();
+  collectStringFields(argumentsToExecute, null, submitted);
+  if (!submitted.has([...titles][0]!)) throw new Error('The proposed action did not use the exact title from the named source app.');
 }
 
 async function advance(context: TenantContext, row: RunRow): Promise<BusinessWorkflowProgress> {
@@ -204,6 +236,7 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
         current = await updateRun(context, current, { status: 'setup_required' });
         return { run: view(current), pendingAction: preparation };
       }
+      assertExactSourceTitleTransfer(step, referenceEvidence, preparation.plan.arguments);
       const confirmation = await createBusinessActionConfirmation(current.user_id, preparation.plan);
       try {
         current = await updateRun(context, current, { status: 'awaiting_confirmation', current_confirmation_id: confirmation.id });

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createTenantContext} from '../../security/tenantContext.js';
-import {boundedWebWorkflowEvidence,getBusinessWorkflowRun,previousEvidence} from './businessWorkflowRuns.js';
+import {assertExactSourceTitleTransfer,boundedWebWorkflowEvidence,getBusinessWorkflowRun,previousEvidence} from './businessWorkflowRuns.js';
 
 test('dependent transfer retains the cited read and the newly created artifact ID', () => {
   const outcomes = [
@@ -17,6 +17,21 @@ test('dependent transfer retains the cited read and the newly created artifact I
   assert.deepEqual(previousEvidence(row,{...step,request:'update that spreadsheet'}), [
     {sourceRequest:outcomes[1]!.request,toolkit:'googlesheets',toolSlug:'CREATE',data:'{"spreadsheetId":"synthetic-id"}'},
   ]);
+});
+
+test('dependent title transfer retains source-app metadata and destination artifact', () => {
+  const outcomes = [
+    {stepIndex:0,request:'Read the title of my connected Canva design ID test',kind:'read',toolkit:'canva',toolSlug:'CANVA_GET_DESIGN',data:'{"design":{"title":"Source Design"}}'},
+    {stepIndex:1,request:'create a new spreadsheet named Destination Sheet',kind:'action',toolkit:'googlesheets',toolSlug:'CREATE',data:'{"spreadsheetId":"sheet-id","title":"Destination Sheet"}'},
+  ];
+  const row = {step_index:2,outcomes} as never;
+  const step = {kind:'action',request:'update cell A1 of that spreadsheet with that exact Canva design title',dependsOnPrevious:true} as const;
+  assert.deepEqual(previousEvidence(row,step), outcomes.map((outcome)=>({
+    sourceRequest:outcome.request,toolkit:outcome.toolkit,toolSlug:outcome.toolSlug,data:outcome.data,
+  })));
+  const references = previousEvidence(row,step);
+  assert.doesNotThrow(() => assertExactSourceTitleTransfer(step,references,{spreadsheet_id:'sheet-id',values:[['Source Design']]}));
+  assert.throws(() => assertExactSourceTitleTransfer(step,references,{spreadsheet_id:'sheet-id',values:[['Destination Sheet']]}),/exact title from the named source/);
 });
 
 test('bounds cited web evidence for a dependent app action without granting source text authority', () => {
