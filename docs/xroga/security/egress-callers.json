@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "1bcbf9d9fc9f2a005a3327aed68707a34274bfb04a414465a53474a4db08f5ca",
+  "sourceTreeDigest": "02557ae5547b8059d31297c703775b74e43b3c0a42fc4244205a2292700da5ce",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2431,7 +2431,7 @@
     {
       "id": "42cc7885da84d7295699",
       "file": "backend/src/services/publish/easCredentials.ts",
-      "line": 22,
+      "line": 23,
       "entryPoint": "expoFetch",
       "transport": "fetch",
       "callee": "fetch",
@@ -2451,25 +2451,41 @@
         {
           "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
           "marker": "actual Expo store verification preserves configured operation and denies raw secret export",
-          "sha256": "d09ec8eaa08c004a64013cf2c0dfb2cc2516b5f58db900d1a95d6f608e007f52"
+          "sha256": "98c232c45f491776423188d60b8a4b4815c2c24f8c7d1667e7f1eca4562d66cf"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+          "marker": "EXACT_EXPO_APP_METADATA_CREATION_AND_IMMUTABLE_SOURCE_WORKFLOW_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "9fb422a7a7194cd138f0a004650e1426f374ade514982f00e7ce17209a591c7e"
         }
       ]
     },
     {
       "id": "602637659fcacb16c1ef",
       "file": "backend/src/services/publish/easPublish.ts",
-      "line": 24,
+      "line": 31,
       "entryPoint": "expoFetch",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "9ab83b021b34a947514db0dd7ddc4427a1230e98aacc80265e3228ac56c50169",
+      "callSha256": "7a39289a4a80098f75a4a8e67200cec237bb44d01c5175abea73007e9b8496d4",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_EXPO_METADATA_OR_EXACT_NATIVE_CREATE_AND_IMMUTABLE_OWNED_SOURCE_WORKFLOW_ONE_USE_AUTHORITY",
+      "tenantAuthority": "ORIGINAL_CONTEXT_FULL_SOURCE_EPOCH_OWNED_LOCAL_AND_PROVIDER_PROJECT_COMPLETE_SOURCE_CURRENT_CANONICAL_CLAIM",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+          "marker": "EXACT_EXPO_APP_METADATA_CREATION_AND_IMMUTABLE_SOURCE_WORKFLOW_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "9fb422a7a7194cd138f0a004650e1426f374ade514982f00e7ce17209a591c7e"
+        },
+        {
+          "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+          "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch",
+          "sha256": "fd728c72339911c7192ed92ab8a3f5bac33c80b1756b0fbdc949e4986d6809c9"
+        }
+      ]
     },
     {
       "id": "cf71505267ebcf357a5c",
@@ -2619,6 +2635,11 @@
           "path": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
           "marker": "Expo credential identity probe cannot follow a real redirected endpoint",
           "sha256": "5d4819e281eb7f0ab0d996cce8aed2978271a8a022552bebecb981475cf1994e"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+          "marker": "EXACT_EXPO_APP_METADATA_CREATION_AND_IMMUTABLE_SOURCE_WORKFLOW_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "9fb422a7a7194cd138f0a004650e1426f374ade514982f00e7ce17209a591c7e"
         }
       ]
     },
@@ -3978,6 +3999,11 @@
           "path": "docs/xroga/evidence/command-010/EXPO-API-CLIENT-CONTINUATION-20261028.json",
           "marker": "UNCHANGED_FIRST_PARTY_API_TRANSPORT_AND_AUTH_FUNCTIONS_ONLY_NOT_EXPO_WORKFLOW_ACCEPTANCE",
           "sha256": "5f03c9501cb27d1c95aa08e44652d072e8d59a0a26027bdecee6a3dbd62eda6d"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+          "marker": "EXACT_EXPO_APP_METADATA_CREATION_AND_IMMUTABLE_SOURCE_WORKFLOW_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "9fb422a7a7194cd138f0a004650e1426f374ade514982f00e7ce17209a591c7e"
         }
       ]
     },
@@ -4384,8 +4410,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 129,
-    "pending": 7,
-    "unresolvedHighRiskBypasses": 4
+    "reviewed": 130,
+    "pending": 6,
+    "unresolvedHighRiskBypasses": 3
   }
 }

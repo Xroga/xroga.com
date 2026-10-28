@@ -4025,9 +4025,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
       "callIds": [
-        "704187e956115d9aa476"
+        "e4d85b225c1b15ed81a5"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -5444,13 +5444,24 @@
         },
         "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
       },
-      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+      "beforeExpoWorkflow": {
+        "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+        "path": "docs/xroga/security/caller-reviews.json",
+        "registrySha256": "c17eb7e512c89aa5dba00730a150344ab839b5221ddc85c4bef96e4d0006f628",
+        "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+        "callIds": [
+          "704187e956115d9aa476"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
       "callIds": [
-        "29355a8ed40d9768bdd2"
+        "86c1d25d68f4d6dc4446"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -6867,7 +6878,18 @@
         },
         "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
       },
-      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+      "beforeExpoWorkflow": {
+        "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+        "path": "docs/xroga/security/caller-reviews.json",
+        "registrySha256": "c17eb7e512c89aa5dba00730a150344ab839b5221ddc85c4bef96e4d0006f628",
+        "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+        "callIds": [
+          "29355a8ed40d9768bdd2"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -23748,10 +23770,10 @@
     },
     {
       "path": "backend/src/services/publish/expoAccess.ts",
-      "sourceSha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+      "sourceSha256": "27f443c736f0584985db9f884febe46c342e4d512228a32adb51506d7d14fd3c",
       "callIds": [
-        "830d44b7069ecb028334",
-        "13a489a31a9849b826e4"
+        "0451e237441c07358ba9",
+        "230cf93f46dcdc2cf5d4"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Original issued actor required before tenant client. Exact owner and finite canonical provider row constrain full connection fingerprint reads. No raw user ID authorization or fabricated-context fallback. Current revision, ciphertext and all metadata remain pinned before/after waits.",
@@ -23765,6 +23787,65 @@
         {
           "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
           "marker": "actual Expo store verification preserves configured operation and denies raw secret export"
+        }
+      ],
+      "beforeExpoWorkflow": {
+        "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+        "path": "docs/xroga/security/caller-reviews.json",
+        "registrySha256": "c17eb7e512c89aa5dba00730a150344ab839b5221ddc85c4bef96e4d0006f628",
+        "sourceSha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+        "callIds": [
+          "830d44b7069ecb028334",
+          "13a489a31a9849b826e4"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
+    },
+    {
+      "path": "backend/src/services/publish/expoApproval.ts",
+      "sourceSha256": "43311a8585fb2fc86dccda26962358838627e0c7d03095f4c148eca60b18dcf2",
+      "callIds": [
+        "01d0276d1d28426b4383",
+        "18fe16cde574a3f06672"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only original native actor from genuine permit. Full unsigned-plan producer attestation is verified before provider metadata. Current canonical confirmation is constrained by exact owner/grant, executing status, plan digest, expiry and claimed/effect timestamps before and after waits. Existing consumeAuthorityPermit performs the durable one-use effect claim.",
+      "reason": "Only these current claim reads are reviewed. No raw owner, caller-supplied grant, new store or general Phase2/Phase4 acceptance.",
+      "documentationTrace": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/services/publish/expoApproval.ts",
+          "marker": "export async function readExpoNativeAction"
+        },
+        {
+          "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+          "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "sourceSha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0",
+      "callIds": [
+        "b4a994aa5a3662c92dbf",
+        "406cbb9d8508ff5fed7f",
+        "fe6a0e4b32f3303ae21b",
+        "dd7a8355e62b9282712e",
+        "68c2d76184845b91d8ae"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Exactly four local Buffer.from conversions decode validated base64 Git bytes or transient held-value encodings. One Array.from creates a bounded four-reader Promise pool. These receivers are native data constructors, not a database or bucket.",
+      "reason": "Remote reads still pass the original canonical GitHub reader, owned project and current source/claim checks. This native-conversion disposition excludes no provider request, source inspection, external action or original acceptance obligation.",
+      "documentationTrace": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/services/publish/expoWorkflow.ts",
+          "marker": "async function workflowSource"
+        },
+        {
+          "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+          "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
         }
       ]
     }

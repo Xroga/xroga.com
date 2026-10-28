@@ -19,7 +19,8 @@ export function packageIdFromProjectName(name?: string | null): string {
 
 async function expoFetch(token:string,path:string,init:RequestInit|undefined,access:ExpoAccess):Promise<{ok:boolean;status:number;json:unknown;text:string}>{
  const signal=await beforeExpoRequest(access,token,path,init);
- const response=await fetch(`${EXPO_API}${path}`,{...init,redirect:'manual',signal,headers:{...(init?.headers??{}),Authorization:`Bearer ${token}`,Accept:'application/json','Content-Type':'application/json'}});
+ let response:Response;
+ try{response=await fetch(`${EXPO_API}${path}`,{...init,redirect:'manual',signal,headers:{...(init?.headers??{}),Authorization:`Bearer ${token}`,Accept:'application/json','Content-Type':'application/json'}});}catch{await access.check();if(signal.aborted)throw new DOMException('Expo request cancelled.','AbortError');throw new Error('Expo request is unavailable. No automatic retry was made.');}
  return readExpoResponse(access,response);
 }
 async function expoGraphql<T>(token:string,query:string,variables:Record<string,unknown>|undefined,access:ExpoAccess):Promise<T>{

@@ -7,7 +7,7 @@ import ts from 'typescript';
 test('actual pipeline native publication shows approval without claiming upload or starting another action', async () => {
   const source = readFileSync(new URL('./pipeline.ts', import.meta.url), 'utf8');
   const start = source.indexOf('  // Free-path artifacts for Chrome / Electron after sticky push');
-  const end = source.indexOf('  // Expo: auto-trigger EAS build', start);
+  const end = source.indexOf('  // Expo: prepare one exact build approval', start);
   assert.ok(start > 0 && end > start);
   const snippet = source.slice(start, end);
   const javascript = ts.transpileModule(`globalThis.run=async()=>{${snippet}\nreturn {chromeZipOk,electronZipOk,electronInstallerOk,nativePublicationPending};}`, {compilerOptions: {target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS}}).outputText;

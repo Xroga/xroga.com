@@ -121,9 +121,9 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 129,
-    "pending": 7,
-    "unresolvedHighRiskReviewCandidates": 4
+    "reviewed": 130,
+    "pending": 6,
+    "unresolvedHighRiskReviewCandidates": 3
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -280,7 +280,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+      "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -539,7 +539,13 @@
         },
         "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
       },
-      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
+      "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+      "beforeExpoWorkflow": {
+        "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+        "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+        "previousSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7"
+      },
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -645,7 +651,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf",
+      "sha256": "86ee4caa462432568293d0072110826643b665e774db1a6ed1f82c557dee7726",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -684,7 +690,13 @@
         },
         "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
       },
-      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+      "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+      "beforeExpoWorkflow": {
+        "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+        "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+        "previousSha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
+      },
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -833,5 +845,6 @@
   "voiceManualCallerContinuation": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
   "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
   "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
-  "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json"
+  "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+  "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
 }

@@ -3972,6 +3972,8 @@ export const api = {
           string,
       ) =>
         apiFetch<{
+          needsConfirmation?: boolean;
+          reviewUrl?: string;
           ok:
             boolean;
 
@@ -4105,6 +4107,8 @@ export const api = {
         },
       ) =>
         apiFetch<{
+          needsConfirmation?: boolean;
+          reviewUrl?: string;
           ok:
             boolean;
 

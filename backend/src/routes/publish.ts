@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
 import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
+import {AuthorityError}from'../security/authority/enforce.js';
+import {captureExpoAccess}from'../services/publish/expoAccess.js';
 import {confirmBusinessAction} from '../services/integrations/businessActionConfirmations.js';
 import {
   getPublishStatus,
@@ -11,6 +13,7 @@ import {
   listExpoApps,
   triggerEasPublish,
   resolveExpoProjectId,
+  linkOwnedExpoProject,
 } from '../services/publish/easPublish.js';
 import {
   getUserProviderKey,
@@ -30,7 +33,7 @@ router.get('/status', async (req: AuthRequest, res) => {
       ...status,
       easProjectId: projectId || null,
       message:
-        'Web: GitHub + Vercel. Chrome/Desktop: GitHub only (zip on ship). Mobile: GitHub + Expo token (EAS auto-starts). Store listing fees stay on you.',
+        'Web: GitHub + Vercel. Chrome/Desktop: approved GitHub artifact publication. Mobile: owned GitHub + Expo project and exact action approval. Store listing fees stay on you.',
     });
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });
@@ -50,6 +53,8 @@ router.post('/expo-token', async (req: AuthRequest, res) => {
   }
 
   try {
+    const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId!);
+    const writeAdmission=await prepareUserProviderKeyWrite(context.userId,'expo');
     const verified = await verifyExpoToken(parsed.data.token);
     if (!verified.ok) {
       res.status(400).json({
@@ -60,12 +65,13 @@ router.post('/expo-token', async (req: AuthRequest, res) => {
       return;
     }
 
-    const saved = await saveUserProviderKey(req.userId!, 'expo', parsed.data.token);
+    const saved = await saveUserProviderKey(req.userId!, 'expo', parsed.data.token,{writeAdmission});
 
     const { ensureExpoProjectLinked } = await import('../services/publish/easPublish.js');
     const linked = await ensureExpoProjectLinked({
       userId: req.userId!,
       projectName: parsed.data.projectName || 'xroga-app',
+      tenantContext:req.tenantContext,
     });
 
     res.json({
@@ -78,12 +84,14 @@ router.post('/expo-token', async (req: AuthRequest, res) => {
       easLinked: Boolean(linked.projectId),
       easCreated: linked.created,
       easMessage: linked.message,
+      needsConfirmation:linked.needsConfirmation,
+      reviewUrl:linked.reviewUrl,
       needsProjectPick: linked.error === 'NEED_PROJECT_PICK',
       message: linked.projectId
-        ? `Expo connected as @${verified.username}. ${linked.message}. Next mobile ship starts an EAS build automatically.`
+        ? `Expo connected as @${verified.username}. ${linked.message}. Builds require review before dispatch.`
         : linked.error === 'NEED_PROJECT_PICK'
-          ? `Expo connected as @${verified.username}. Pick an Expo project below, then ship — EAS starts automatically.`
-          : `Expo connected as @${verified.username}. Ship a mobile app next — we will create/link EAS when possible.`,
+          ? `Expo connected as @${verified.username}. Pick an Expo project below, then review a build request.`
+          : `Expo connected as @${verified.username}. ${linked.message}`,
     });
   } catch (err) {
     res.status(400).json({ ok: false, error: (err as Error).message });
@@ -92,13 +100,12 @@ router.post('/expo-token', async (req: AuthRequest, res) => {
 
 /** Re-verify the token already in the vault. */
 router.post('/verify-expo', async (req: AuthRequest, res) => {
+  let access:Awaited<ReturnType<typeof captureExpoAccess>>|undefined;
   try {
-    const token = await getUserProviderKey(req.userId!, 'expo');
-    if (!token) {
-      res.status(404).json({ ok: false, verified: false, error: 'No Expo token saved yet' });
-      return;
-    }
+    access=await captureExpoAccess(req.userId!,req.tenantContext);
+    const token = access.token;
     const verified = await verifyExpoToken(token);
+    await access.check();
     if (!verified.ok) {
       res.status(400).json({
         ok: false,
@@ -110,7 +117,7 @@ router.post('/verify-expo', async (req: AuthRequest, res) => {
     res.json({ ok: true, verified: true, username: verified.username });
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });
-  }
+  }finally{access?.close();}
 });
 
 /** Save EAS project UUID (from expo.dev project settings). */
@@ -124,11 +131,7 @@ router.post('/eas-project', async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const saved = await saveUserProviderKey(
-      req.userId!,
-      'expo_project_id',
-      parsed.data.projectId.trim(),
-    );
+    const saved = await linkOwnedExpoProject({userId:req.userId!,tenantContext:req.tenantContext,projectId:parsed.data.projectId.trim()});
     res.json({ ok: true, masked: saved.masked, message: 'EAS project linked' });
   } catch (err) {
     res.status(400).json({ ok: false, error: (err as Error).message });
@@ -138,12 +141,13 @@ router.post('/eas-project', async (req: AuthRequest, res) => {
 /** List Expo apps for this user's token (project picker). */
 router.get('/expo-apps', async (req: AuthRequest, res) => {
   try {
+    const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId!);
     const token = await getUserProviderKey(req.userId!, 'expo');
     if (!token) {
       res.status(403).json({ ok: false, apps: [], error: 'Save Expo token first' });
       return;
     }
-    const apps = await listExpoApps(token);
+    const apps = await listExpoApps(token,{userId:req.userId!,tenantContext:context});
     res.json({ ok: true, apps });
   } catch (err) {
     res.status(400).json({ ok: false, apps: [], error: (err as Error).message });
@@ -159,6 +163,7 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
     platform: z.enum(['android', 'ios']),
     projectId: z.string().min(8).max(80).optional(),
     gitRef: z.string().min(1).max(120).optional(),
+    databaseProjectId:z.string().uuid().optional(),
     submit: z.boolean().optional(),
   });
   const parsed = schema.safeParse(req.body);
@@ -169,9 +174,9 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
 
   try {
     if (parsed.data.submit) {
-      const projectId = await resolveExpoProjectId(req.userId!, parsed.data.projectId);
+      const projectId = await resolveExpoProjectId(req.userId!, parsed.data.projectId,req.tenantContext);
       if (!projectId) { res.status(400).json({ok:false,error:'NO_PROJECT',message:'Link an EAS project before submitting.'});return; }
-      // Keep credential attachment and dispatch on one admitted destination.
+      // Verify the selected owned configuration before preparing a submission.
       parsed.data.projectId = projectId;
       const {
         syncGooglePlayCredentialsToExpo,
@@ -184,14 +189,16 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
     }
     const result = await triggerEasPublish({
       userId: req.userId!,
+      tenantContext:req.tenantContext,
       platform: parsed.data.platform,
       projectId: parsed.data.projectId,
       gitRef: parsed.data.gitRef,
+      databaseProjectId:parsed.data.databaseProjectId,
       submit: parsed.data.submit,
     });
-    res.status(result.ok ? 200 : 400).json(result);
+    res.status(result.needsConfirmation ? 202 : result.ok ? 200 : 400).json(result);
   } catch (err) {
-    res.status(500).json({ ok: false, error: (err as Error).message });
+    res.status(err instanceof AuthorityError?err.status:500).json({ ok: false, error: (err as Error).message });
   }
 });
 

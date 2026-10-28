@@ -1,5 +1,6 @@
 import {preparedActionDigest} from '../../security/authority/digest.js';
-import {AuthorityError} from '../../security/authority/enforce.js';
+import {AuthorityError,authorityContextForPermit} from '../../security/authority/enforce.js';
+import type{AuthorityPermit,AuthorityDispatchBinding}from'../../security/authority/types.js';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 import {getTenantSupabaseAdmin} from '../../security/serviceRoleGuard.js';
 import {getUserProviderKey} from '../integrations/userProviderKeys.js';
@@ -12,7 +13,7 @@ const digest=(value:unknown)=>preparedActionDigest(JSON.parse(JSON.stringify(val
 export const validExpoId=(value:unknown):value is string=>typeof value==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(value);
 const validName=(value:unknown):value is string=>typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/.test(value);
 interface PinnedSource {fingerprint:string|null;value:string|null}
-interface AccessState {context:TenantContext;token:string;signal?:AbortSignal;check:()=>Promise<void>}
+interface AccessState {context:TenantContext;token:string;signal?:AbortSignal;check:()=>Promise<void>;write?:(operation:string,body:Record<string,unknown>)=>Promise<void>}
 const issued=new WeakMap<object,AccessState>();
 export interface ExpoAccess {
  readonly context:TenantContext;readonly token:string;
@@ -31,13 +32,13 @@ async function rowFingerprint(context:TenantContext,provider:Source):Promise<str
 }
 /** One original actor and credential epoch for the whole operation or poll.
  * Reconnecting after revocation requires a new request, not a hidden retry. */
-export async function captureExpoAccess(userId:string,tenantContext?:TenantContext,signal?:AbortSignal):Promise<ExpoAccess>{
+export async function captureExpoAccess(userId:string,tenantContext?:TenantContext,signal?:AbortSignal,checkClaim?:()=>Promise<void>):Promise<ExpoAccess>{
  const context=requireTenantContext(tenantContext);requireResourceOwner(context,userId);signal?.throwIfAborted();
  const pinned=new Map<Source,PinnedSource>();let closed=false;
  const check=async()=>{
   if(closed)throw denied();requireResourceOwner(context,userId);signal?.throwIfAborted();
   for(const[provider,selected]of pinned)if(await rowFingerprint(context,provider)!==selected.fingerprint)throw denied();
-  signal?.throwIfAborted();if(closed)throw denied();
+  if(checkClaim)await checkClaim();signal?.throwIfAborted();if(closed)throw denied();
  };
  const pin=async(provider:Source)=>{
   if(!sources.has(provider))throw denied();await check();
@@ -59,10 +60,24 @@ export async function beforeExpoRequest(access:ExpoAccess|undefined,token:string
   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>512*1024)throw new EgressDenied('INVALID_EGRESS_INPUT');
   let body:{query?:unknown;variables?:unknown};try{body=JSON.parse(init.body);}catch{throw new EgressDenied('INVALID_EGRESS_INPUT');}
   if(!body||typeof body.query!=='string'||!/^\s*(?:query|mutation)\b/.test(body.query)||Object.keys(body).some(key=>!['query','variables'].includes(key)))throw new EgressDenied('INVALID_EGRESS_INPUT');
-  if(/^\s*mutation\b/.test(body.query))throw denied();
- }else if(!(method==='GET'&&/^\/v2\/projects\/[A-Za-z0-9_-]{1,128}\/builds\?limit=(?:[1-9]|[1-9][0-9]|100)&offset=0$/.test(path)))throw new EgressDenied('UNSAFE_DESTINATION');
+  if(/^\s*mutation\b/.test(body.query)){
+   if(!state.write||!body.variables||typeof body.variables!=='object'||Array.isArray(body.variables))throw denied();
+   await state.write(body.query,body.variables as Record<string,unknown>);
+  }
+ }else if(method==='POST'&&path==='/v2/workflows/dispatch'){
+  if(!state.write||typeof init.body!=='string'||Buffer.byteLength(init.body)>8192)throw denied();
+  let body:unknown;try{body=JSON.parse(init.body);}catch{throw denied();}if(!body||typeof body!=='object'||Array.isArray(body))throw denied();
+  await state.write(path,body as Record<string,unknown>);
+ }else if(!(method==='GET'&&(/^\/v2\/projects\/[A-Za-z0-9_-]{1,128}\/builds\?limit=(?:[1-9]|[1-9][0-9]|100)&offset=0$/.test(path)||/^\/v2\/workflows\/runs\/[a-f0-9-]{36}$/i.test(path))))throw new EgressDenied('UNSAFE_DESTINATION');
  await state.check();init.signal?.throwIfAborted();
  return AbortSignal.any([AbortSignal.timeout(30000),...(state.signal?[state.signal]:[]),...(init.signal?[init.signal]:[])]);
+}
+/** Only a genuine permit for this exact native action installs one write guard.
+ * Readiness callers never install it and remain read-only. */
+export function installExpoWriteGuard(access:ExpoAccess,permit:AuthorityPermit|undefined,binding:AuthorityDispatchBinding,guard:(operation:string,body:Record<string,unknown>)=>Promise<void>){
+ const state=issued.get(access);
+ if(!state||state.write||binding.provider!=='xroga-native-expo'||!['XROGA_EXPO_CREATE_APP','XROGA_EXPO_WORKFLOW'].includes(binding.operation)||authorityContextForPermit(permit,binding)!==state.context)throw denied();
+ state.write=guard;
 }
 export async function readExpoResponse(access:ExpoAccess,response:Response):Promise<{ok:boolean;status:number;json:unknown;text:string}>{
  const state=issued.get(access);if(!state)throw denied();
@@ -71,9 +86,11 @@ export async function readExpoResponse(access:ExpoAccess,response:Response):Prom
  if(!response.ok){await response.body?.cancel().catch(()=>undefined);await state.check();return{ok:false,status:response.status,json:{message:'Expo request unavailable.'},text:'Expo request unavailable.'};}
  const chunks:Uint8Array[]=[];let size=0;const reader=response.body?.getReader();
  try{if(reader)for(;;){const item=await reader.read();if(item.done)break;size+=item.value.length;if(size>2*1024*1024)throw new EgressDenied('INVALID_EGRESS_INPUT');chunks.push(item.value);}}
+ catch(error){await state.check();if(error instanceof EgressDenied)throw error;throw new Error('Expo response is unavailable. No automatic retry was made.');}
  finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
  await state.check();let json:unknown;try{json=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new EgressDenied('INVALID_EGRESS_INPUT');}
  const errors=(json as{errors?:unknown}|null)?.errors;
+ if(errors!==undefined&&!Array.isArray(errors))throw new EgressDenied('INVALID_EGRESS_INPUT');
  if(Array.isArray(errors)&&errors.length)throw new AuthorityError('EXPO_GRAPHQL_NOT_ADMITTED');
  return{ok:true,status:response.status,json,text:''};
 }

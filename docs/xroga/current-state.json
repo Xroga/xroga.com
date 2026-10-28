@@ -286,7 +286,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
-        "backend/src/ai/pipeline.ts:209",
+        "backend/src/ai/pipeline.ts:201",
         "backend/src/ai/tenantModelDispatch.test.ts:9"
       ],
       "reachable": true,
@@ -381,7 +381,7 @@
       "callers": [
         "backend/src/ai/attachments.docx.test.ts:6",
         "backend/src/ai/attachments.test.ts:7",
-        "backend/src/ai/pipeline.ts:56"
+        "backend/src/ai/pipeline.ts:55"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -789,7 +789,7 @@
         "backend/src/ai/black-hole/migration.test.ts:7",
         "backend/src/ai/black-hole/productionBridge.ts:26",
         "backend/src/ai/black-hole/router.test.ts:11",
-        "backend/src/ai/pipeline.ts:21"
+        "backend/src/ai/pipeline.ts:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -924,7 +924,7 @@
       "callers": [
         "backend/src/ai/black-hole/converterPolicy.test.ts:4",
         "backend/src/ai/black-hole/migration.test.ts:6",
-        "backend/src/ai/pipeline.ts:19"
+        "backend/src/ai/pipeline.ts:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -977,7 +977,7 @@
         "backend/src/ai/black-hole/migration.test.ts:5",
         "backend/src/ai/black-hole/productionBridge.test.ts:10",
         "backend/src/ai/black-hole/productionBridge.ts:24",
-        "backend/src/ai/pipeline.ts:9"
+        "backend/src/ai/pipeline.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1152,7 +1152,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/productionBridge.test.ts:4",
-        "backend/src/ai/pipeline.ts:11"
+        "backend/src/ai/pipeline.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1273,7 +1273,7 @@
         "backend/src/ai/black-hole/leakAudit.test.ts:4",
         "backend/src/ai/black-hole/migration.test.ts:4",
         "backend/src/ai/black-hole/publicIdentity.test.ts:4",
-        "backend/src/ai/pipeline.ts:8",
+        "backend/src/ai/pipeline.ts:7",
         "backend/src/routes/capabilities.ts:30"
       ],
       "reachable": true,
@@ -1766,7 +1766,7 @@
         "backend/src/ai/black-hole/taskClass.test.ts:4",
         "backend/src/ai/black-hole/toolBindings.test.ts:6",
         "backend/src/ai/black-hole/toolRegistry.test.ts:13",
-        "backend/src/ai/pipeline.ts:20"
+        "backend/src/ai/pipeline.ts:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1991,7 +1991,7 @@
         "backend/src/ai/black-hole/productionBridge.ts:29",
         "backend/src/ai/black-hole/webIntelligence.test.ts:4",
         "backend/src/ai/black-hole/xResearchAdmission.security.test.ts:3",
-        "backend/src/ai/pipeline.ts:15"
+        "backend/src/ai/pipeline.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2109,7 +2109,7 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
-        "backend/src/ai/pipeline.ts:235",
+        "backend/src/ai/pipeline.ts:227",
         "backend/src/security/learningOwnerReads.local.integration.ts:5",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:89"
@@ -2399,7 +2399,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
-        "backend/src/ai/pipeline.ts:234",
+        "backend/src/ai/pipeline.ts:226",
         "backend/src/security/learningOwnerReads.local.integration.ts:6",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:84"
@@ -2452,7 +2452,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.test.ts:3",
-        "backend/src/ai/pipeline.ts:31"
+        "backend/src/ai/pipeline.ts:30"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2545,7 +2545,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:236",
+        "backend/src/ai/pipeline.ts:228",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
         "backend/src/security/learningOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/productIntelligence.ts:18",
@@ -2603,7 +2603,7 @@
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
-        "backend/src/ai/pipeline.ts:101"
+        "backend/src/ai/pipeline.ts:100"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2674,7 +2674,7 @@
       "callers": [
         "backend/src/ai/builderAttempt.test.ts:3",
         "backend/src/ai/openaiCompat.ts:16",
-        "backend/src/ai/pipeline.ts:39",
+        "backend/src/ai/pipeline.ts:38",
         "backend/src/ai/tenantModelDispatch.test.ts:16",
         "backend/src/synthesis/coherentImplementation.ts:7"
       ],
@@ -2885,7 +2885,7 @@
       ],
       "callers": [
         "backend/src/ai/compileBlockerMessage.test.ts:4",
-        "backend/src/ai/pipeline.ts:32",
+        "backend/src/ai/pipeline.ts:31",
         "backend/src/ai/validationVerdict.ts:2"
       ],
       "reachable": true,
@@ -3042,7 +3042,7 @@
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
         "backend/src/ai/compileValidate.test.ts:3",
-        "backend/src/ai/pipeline.ts:204",
+        "backend/src/ai/pipeline.ts:196",
         "backend/src/ai/validationVerdict.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:11"
       ],
@@ -3121,7 +3121,7 @@
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
-        "backend/src/ai/pipeline.ts:238",
+        "backend/src/ai/pipeline.ts:230",
         "backend/src/ai/repositoryTools.ts:23",
         "backend/src/synthesis/coherentImplementation.ts:12"
       ],
@@ -3175,7 +3175,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:7",
+        "backend/src/ai/pipeline.ts:6",
         "backend/src/ai/tenantModelDispatch.test.ts:10"
       ],
       "reachable": true,
@@ -3246,7 +3246,7 @@
       "callers": [
         "backend/src/ai/artifactDurability.test.ts:4",
         "backend/src/ai/engineeringArtifact.test.ts:4",
-        "backend/src/ai/pipeline.ts:10",
+        "backend/src/ai/pipeline.ts:9",
         "backend/src/ai/runStore.ts:15",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
         "backend/src/synthesis/browserVerificationAdapter.test.ts:7"
@@ -3369,7 +3369,7 @@
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
-        "backend/src/ai/pipeline.ts:251"
+        "backend/src/ai/pipeline.ts:243"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3520,7 +3520,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
-        "backend/src/ai/pipeline.ts:239",
+        "backend/src/ai/pipeline.ts:231",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/routes/browserRuns.test.ts:10",
@@ -3638,7 +3638,7 @@
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
-        "backend/src/ai/pipeline.ts:189"
+        "backend/src/ai/pipeline.ts:181"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3678,7 +3678,7 @@
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
-        "backend/src/ai/pipeline.ts:219"
+        "backend/src/ai/pipeline.ts:211"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3984,7 +3984,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:4",
         "backend/src/ai/executionRuntime.test.ts:13",
         "backend/src/ai/intelligentRouter.test.ts:3",
-        "backend/src/ai/pipeline.ts:225",
+        "backend/src/ai/pipeline.ts:217",
         "backend/src/routes/capabilities.ts:22"
       ],
       "reachable": true,
@@ -4231,7 +4231,7 @@
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
-        "backend/src/ai/pipeline.ts:93"
+        "backend/src/ai/pipeline.ts:92"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4526,7 +4526,7 @@
         "backend/src/ai/executionRuntime.test.ts:14",
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
-        "backend/src/ai/pipeline.ts:237",
+        "backend/src/ai/pipeline.ts:229",
         "backend/src/ai/providerPolicy.test.ts:330",
         "backend/src/ai/providerPolicy.test.ts:389",
         "backend/src/ai/providerPolicy.test.ts:468",
@@ -4676,7 +4676,7 @@
         "backend/src/ai/modelCapabilityRegistry.ts:3",
         "backend/src/ai/openaiCompat.egress.test.ts:6",
         "backend/src/ai/openaiCompat.ts:3",
-        "backend/src/ai/pipeline.ts:22",
+        "backend/src/ai/pipeline.ts:21",
         "backend/src/ai/postCompletionAccounting.ts:3",
         "backend/src/ai/providerBudget.ts:5",
         "backend/src/ai/providerPolicy.test.ts:15",
@@ -4855,7 +4855,7 @@
         "backend/src/ai/openaiCompat.egress.test.ts:5",
         "backend/src/ai/openaiCompat.test.ts:3",
         "backend/src/ai/operationsSdkAdmission.test.ts:5",
-        "backend/src/ai/pipeline.ts:23",
+        "backend/src/ai/pipeline.ts:22",
         "backend/src/ai/qa.ts:1",
         "backend/src/ai/repoSummarize.ts:8",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:8",
@@ -5332,7 +5332,7 @@
         "backend/src/ai/fileSelector.test.ts:4",
         "backend/src/ai/patchSafety.test.ts:3",
         "backend/src/ai/patches.test.ts:3",
-        "backend/src/ai/pipeline.ts:76",
+        "backend/src/ai/pipeline.ts:75",
         "backend/src/synthesis/universalExecution.ts:32"
       ],
       "reachable": true,
@@ -5381,7 +5381,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+      "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5397,7 +5397,6 @@
         "admittedDatabaseProjectId",
         "admittedModelAttempt",
         "all",
-        "appleAsc",
         "applied",
         "architectBlock",
         "architectPlanSummary",
@@ -5480,11 +5479,9 @@
         "deterministicStaticUpdate",
         "docs",
         "earlyShipBlockers",
-        "eas",
         "easArtifactUrl",
         "easBuildOk",
         "easError",
-        "easIos",
         "easStoreSubmitted",
         "easTriggered",
         "easUrl",
@@ -5532,7 +5529,6 @@
         "githubRepoName",
         "githubRepoUrl",
         "githubShippingPlan",
-        "google",
         "handoffReady",
         "hasAttachments",
         "hasPreviewable",
@@ -5542,7 +5538,6 @@
         "historyNote",
         "hydratePriorFiles",
         "idx",
-        "ignoreBuildIds",
         "implementationExecutionTask",
         "implementationTask",
         "inferredRoute",
@@ -5597,7 +5592,6 @@
         "phase",
         "pick",
         "pkg",
-        "pkgId",
         "plan",
         "portable",
         "preferred",
@@ -5607,7 +5601,6 @@
         "previewOutput",
         "previousFiles",
         "prior",
-        "priorBuilds",
         "priorCommitSha",
         "priorPreview",
         "productScaffoldKind",
@@ -5692,7 +5685,6 @@
         "skipConverter",
         "slug",
         "softwareProject",
-        "startedAfterMs",
         "staticPre",
         "status",
         "statusMessage",
@@ -5703,7 +5695,6 @@
         "supabaseNote",
         "supabaseStatus",
         "synced",
-        "syncedApple",
         "synthesis",
         "system",
         "t",
@@ -5742,9 +5733,6 @@
         "verifyMarkdown",
         "vision",
         "waited",
-        "waitedIos",
-        "wantAndroidSubmit",
-        "wantIosSubmit",
         "web",
         "words",
         "zipped"
@@ -5757,7 +5745,6 @@
         "../lib/truthfulExecution.js",
         "../lib/vercelAuthError.js",
         "../lib/vercelEnv.js",
-        "../security/authority/enforce.js",
         "../security/ownership.js",
         "../security/tenantContext.js",
         "../services/integrations/githubAuth.js",
@@ -5767,7 +5754,6 @@
         "../services/integrations/vercelAuth.js",
         "../services/projectScaffold.js",
         "../services/publish/chromeWebStore.js",
-        "../services/publish/easCredentials.js",
         "../services/publish/easPublish.js",
         "../services/publish/electronSecrets.js",
         "../services/publish/nonWebShip.js",
@@ -5908,7 +5894,6 @@
         "backend/src/lib/taskClassifier.ts",
         "backend/src/lib/truthfulExecution.ts",
         "backend/src/lib/vercelAuthError.ts",
-        "backend/src/security/authority/enforce.ts",
         "backend/src/security/ownership.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAuth.ts",
@@ -5918,7 +5903,6 @@
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/projectScaffold.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/easPublish.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts",
@@ -5958,7 +5942,6 @@
         "crypto"
       ],
       "authBoundary": [
-        "backend/src/ai/pipeline.ts#AuthorityError",
         "backend/src/ai/pipeline.ts#authorizeLegacyBuild",
         "backend/src/ai/pipeline.ts#isVercelAuthFailure",
         "backend/src/ai/pipeline.ts#reauth",
@@ -6104,7 +6087,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:106",
+        "backend/src/ai/pipeline.ts:105",
         "backend/src/ai/progressHeartbeat.test.ts:3"
       ],
       "reachable": true,
@@ -6195,7 +6178,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
         "backend/src/ai/modelContext.security.test.ts:6",
-        "backend/src/ai/pipeline.ts:190",
+        "backend/src/ai/pipeline.ts:182",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:7",
@@ -6265,7 +6248,7 @@
       ],
       "callers": [
         "backend/src/ai/converter.ts:4",
-        "backend/src/ai/pipeline.ts:47",
+        "backend/src/ai/pipeline.ts:46",
         "backend/src/ai/prompts.test.ts:4",
         "backend/src/ai/richResponsePrompt.test.ts:4",
         "backend/src/routes/guestChat.ts:20"
@@ -6786,7 +6769,7 @@
         "backend/src/ai/modelRedirectFallback.security.test.ts:8",
         "backend/src/ai/openaiCompat.ts:10",
         "backend/src/ai/parallelWeb.security.test.ts:5",
-        "backend/src/ai/pipeline.ts:230",
+        "backend/src/ai/pipeline.ts:222",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
         "backend/src/ai/providerBudget.ts:6",
@@ -6815,6 +6798,8 @@
         "backend/src/services/integrations/githubDeploy.ts:67",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:9",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts:4",
+        "backend/src/services/publish/expoWorkflow.ts:12",
+        "backend/src/services/publish/expoWorkflowDenial.security.test.ts:2",
         "backend/src/services/publish/nonWebShip.security.test.ts:4",
         "backend/src/services/systemErrorLog.ts:2",
         "backend/src/synthesis/coherentImplementation.ts:10",
@@ -6852,6 +6837,7 @@
         "backend/src/services/integrations/composioClient.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts",
+        "backend/src/services/publish/expoWorkflowDenial.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -6938,7 +6924,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:84",
+        "backend/src/ai/pipeline.ts:83",
         "backend/src/ai/qa.test.ts:3",
         "backend/src/ai/reviewerRouting.test.ts:3",
         "backend/src/synthesis/productionAdapters.ts:25"
@@ -7054,7 +7040,7 @@
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:5",
-        "backend/src/ai/pipeline.ts:62",
+        "backend/src/ai/pipeline.ts:61",
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
@@ -7143,7 +7129,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:197",
+        "backend/src/ai/pipeline.ts:189",
         "backend/src/ai/repoSummarize.security.test.ts:5"
       ],
       "reachable": true,
@@ -7394,7 +7380,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:70",
+        "backend/src/ai/pipeline.ts:69",
         "backend/src/ai/router.test.ts:7",
         "backend/src/lib/adaptiveOrchestrator.ts:10"
       ],
@@ -7525,7 +7511,7 @@
         "backend/src/ai/black-hole/router.ts:47",
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
-        "backend/src/ai/pipeline.ts:233",
+        "backend/src/ai/pipeline.ts:225",
         "backend/src/ai/routingOutcomes.receipt.test.ts:5",
         "backend/src/ai/routingPersistence.test.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:9"
@@ -7763,7 +7749,7 @@
         "backend/src/ai/failRun.test.ts:4",
         "backend/src/ai/parallelDispatch.ts:10",
         "backend/src/ai/parallelWeb.security.test.ts:8",
-        "backend/src/ai/pipeline.ts:85",
+        "backend/src/ai/pipeline.ts:84",
         "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
@@ -7918,7 +7904,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:215",
+        "backend/src/ai/pipeline.ts:207",
         "backend/src/ai/runTrace.attempt.test.ts:4",
         "backend/src/security/runTraceAttempt.local.integration.ts:8"
       ],
@@ -7969,7 +7955,7 @@
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
-        "backend/src/ai/pipeline.ts:198",
+        "backend/src/ai/pipeline.ts:190",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/synthesis/coherentImplementation.ts:13"
       ],
@@ -8031,7 +8017,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
         "backend/src/ai/modelContext.security.test.ts:7",
-        "backend/src/ai/pipeline.ts:210",
+        "backend/src/ai/pipeline.ts:202",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:8",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:8"
       ],
@@ -8090,7 +8076,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:218",
+        "backend/src/ai/pipeline.ts:210",
         "backend/src/ai/shipOutcome.test.ts:3"
       ],
       "reachable": true,
@@ -8158,7 +8144,7 @@
         "backend/src/ai/buildOutputValidation.ts:5",
         "backend/src/ai/buildStreamNarrator.test.ts:8",
         "backend/src/ai/patches.test.ts:10",
-        "backend/src/ai/pipeline.ts:71"
+        "backend/src/ai/pipeline.ts:70"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9619,7 +9605,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:260",
+        "backend/src/ai/pipeline.ts:252",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:19",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:50"
       ],
@@ -10113,7 +10099,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:94",
+        "backend/src/ai/pipeline.ts:93",
         "backend/src/ai/startupProgress.test.ts:3"
       ],
       "reachable": true,
@@ -10182,7 +10168,7 @@
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
-        "backend/src/ai/pipeline.ts:199",
+        "backend/src/ai/pipeline.ts:191",
         "backend/src/ai/qa.ts:5",
         "backend/src/ai/securityScan.test.ts:4"
       ],
@@ -10470,7 +10456,7 @@
         "backend/src/ai/modelRedirectFallback.security.test.ts:6",
         "backend/src/ai/openaiCompat.egress.test.ts:8",
         "backend/src/ai/parallelDispatch.ts:11",
-        "backend/src/ai/pipeline.ts:5",
+        "backend/src/ai/pipeline.ts:4",
         "backend/src/ai/qa.ts:2",
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:3",
@@ -10751,7 +10737,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
-        "backend/src/ai/pipeline.ts:157",
+        "backend/src/ai/pipeline.ts:156",
         "backend/src/ai/universal/goalContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:23",
         "backend/src/ai/universal/semanticRequestPlanner.ts:38",
@@ -10949,7 +10935,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:158",
+        "backend/src/ai/pipeline.ts:157",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:51",
         "backend/src/lib/xrogaCapabilities.ts:1"
@@ -11000,7 +10986,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:155",
+        "backend/src/ai/pipeline.ts:154",
         "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:107"
@@ -11108,7 +11094,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:16",
-        "backend/src/ai/pipeline.ts:159",
+        "backend/src/ai/pipeline.ts:158",
         "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:32",
@@ -11369,7 +11355,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:160",
+        "backend/src/ai/pipeline.ts:159",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
@@ -11491,7 +11477,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:34",
+        "backend/src/ai/pipeline.ts:33",
         "backend/src/ai/validationVerdict.test.ts:4",
         "backend/src/sandbox/sandboxIsolation.test.ts:12"
       ],
@@ -11547,7 +11533,7 @@
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
-        "backend/src/ai/pipeline.ts:250",
+        "backend/src/ai/pipeline.ts:242",
         "backend/src/ai/previewNotVerified.test.ts:21",
         "backend/src/ai/verificationLifecycle.test.ts:12"
       ],
@@ -13039,7 +13025,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:156",
+        "backend/src/ai/pipeline.ts:155",
         "backend/src/ai/softwareAgent/agentV2LaunchGate.test.ts:9",
         "backend/src/config/universalAgentFlags.test.ts:12",
         "backend/src/synthesis/browserGateVerification.test.ts:18",
@@ -15213,7 +15199,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:231",
+        "backend/src/ai/pipeline.ts:223",
         "backend/src/lib/adaptiveEngine.test.ts:7"
       ],
       "reachable": true,
@@ -15592,7 +15578,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:216"
+        "backend/src/ai/pipeline.ts:208"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15854,7 +15840,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
-        "backend/src/ai/pipeline.ts:232",
+        "backend/src/ai/pipeline.ts:224",
         "backend/src/ai/router.ts:5",
         "backend/src/lib/adaptiveOrchestrator.ts:30",
         "backend/src/lib/taskClassifier.test.ts:3"
@@ -15916,7 +15902,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:5",
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelWeb.ts:3",
-        "backend/src/ai/pipeline.ts:220",
+        "backend/src/ai/pipeline.ts:212",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
@@ -16048,7 +16034,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:33",
+        "backend/src/ai/pipeline.ts:32",
         "backend/src/lib/vercelAuthError.test.ts:3"
       ],
       "reachable": true,
@@ -16542,6 +16528,7 @@
         "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/routes/cwsCredentialAdmission.security.test.ts",
         "backend/src/routes/electronSigning.security.test.ts",
+        "backend/src/routes/expoCredentialAdmission.security.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/github.settings.test.ts",
         "backend/src/routes/phase1.quota.test.ts",
@@ -21308,8 +21295,9 @@
       "id": "surface:ca82598ae390b0314729",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/publish.ts",
-      "sha256": "c432413be66981b65436cc7d1d1158a47beb4a5ddcd3e8b4fb23a32825c3d61a",
+      "sha256": "145e0d250a83c52d4f019f85fd549a63c93816c55e0dc01877553748d8e3bb5c",
       "symbols": [
+        "access",
         "apps",
         "builds",
         "built",
@@ -21334,6 +21322,7 @@
       ],
       "imports": [
         "../middleware/auth.js",
+        "../security/authority/enforce.js",
         "../security/tenantContext.js",
         "../services/integrations/businessActionConfirmations.js",
         "../services/integrations/userProviderKeys.js",
@@ -21341,11 +21330,13 @@
         "../services/publish/easCredentials.js",
         "../services/publish/easPublish.js",
         "../services/publish/electronSecrets.js",
+        "../services/publish/expoAccess.js",
         "../services/publish/userOwnedPublish.js",
         "express",
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/security/authority/enforce.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/businessActionConfirmations.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
@@ -21353,6 +21344,7 @@
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/easPublish.ts",
         "backend/src/services/publish/electronSecrets.ts",
+        "backend/src/services/publish/expoAccess.ts",
         "backend/src/services/publish/userOwnedPublish.ts"
       ],
       "entryPoints": [
@@ -21362,6 +21354,7 @@
         "backend/src/index.ts:26",
         "backend/src/routes/cwsCredentialAdmission.security.test.ts:2",
         "backend/src/routes/electronSigning.security.test.ts:2",
+        "backend/src/routes/expoCredentialAdmission.security.test.ts:2",
         "backend/src/services/publish/easPublish.routeScope.test.ts:4",
         "backend/src/services/publish/expoStoreRoutes.security.test.ts:7"
       ],
@@ -21373,6 +21366,7 @@
       ],
       "authBoundary": [
         "backend/src/routes/publish.ts#AuthRequest",
+        "backend/src/routes/publish.ts#AuthorityError",
         "backend/src/routes/publish.ts#verifyExpoToken"
       ],
       "tenantBoundary": [],
@@ -21387,6 +21381,7 @@
       "testCoverage": [
         "backend/src/routes/cwsCredentialAdmission.security.test.ts",
         "backend/src/routes/electronSigning.security.test.ts",
+        "backend/src/routes/expoCredentialAdmission.security.test.ts",
         "backend/src/services/publish/easPublish.routeScope.test.ts",
         "backend/src/services/publish/expoStoreRoutes.security.test.ts"
       ],
@@ -23621,6 +23616,7 @@
         "backend/src/services/publish/cwsAdmission.ts:3",
         "backend/src/services/publish/electronSecrets.ts:8",
         "backend/src/services/publish/expoAccess.ts:1",
+        "backend/src/services/publish/expoApproval.ts:2",
         "backend/src/services/publish/expoStoreReadiness.ts:5",
         "backend/src/services/publish/nativeReleaseAdmission.ts:3",
         "backend/tests/securityReceipt.local.integration.ts:9"
@@ -23703,13 +23699,13 @@
         "backend/src/ai/executionRuntime.test.ts:16",
         "backend/src/ai/expoStoreDenial.security.test.ts:6",
         "backend/src/ai/parallelDispatch.ts:15",
-        "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/providerRuntime.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:13",
         "backend/src/ai/tenantModelDispatch.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:30",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/lib/netlify.ts:4",
+        "backend/src/routes/publish.ts:5",
         "backend/src/routes/voice.ts:5",
         "backend/src/security/authority/enforce.test.ts:5",
         "backend/src/security/egress/egress.integration.test.ts:6",
@@ -23724,9 +23720,12 @@
         "backend/src/services/publish/chromeWebStore.ts:13",
         "backend/src/services/publish/cwsAdmission.ts:4",
         "backend/src/services/publish/easCredentials.ts:4",
+        "backend/src/services/publish/easPublish.ts:12",
         "backend/src/services/publish/electronSecrets.ts:11",
         "backend/src/services/publish/expoAccess.ts:2",
+        "backend/src/services/publish/expoApproval.ts:3",
         "backend/src/services/publish/expoStoreReadiness.ts:7",
+        "backend/src/services/publish/expoWorkflow.ts:2",
         "backend/src/services/publish/nativeArtifact.ts:7",
         "backend/src/services/publish/nativeReleaseAdmission.ts:4",
         "backend/src/services/publish/nonWebShip.ts:16",
@@ -24021,7 +24020,9 @@
         "backend/src/security/egress/heldCredentialFloor.test.ts:3",
         "backend/src/services/integrations/composioClient.ts:12",
         "backend/src/services/integrations/githubSourceRead.ts:4",
+        "backend/src/services/publish/expoApproval.ts:8",
         "backend/src/services/publish/expoCredentialMaterial.ts:2",
+        "backend/src/services/publish/expoWorkflow.ts:3",
         "backend/src/workers/browserCoordinator.ts:25",
         "backend/src/workers/browserModelDispatch.ts:8",
         "frontend/src/lib/showcase/auraGroq.ts:2"
@@ -24109,7 +24110,8 @@
         "backend/src/services/publish/cwsAdmission.ts:8",
         "backend/src/services/publish/easCredentials.ts:5",
         "backend/src/services/publish/electronSecrets.ts:13",
-        "backend/src/services/publish/expoAccess.ts:6",
+        "backend/src/services/publish/expoAccess.ts:7",
+        "backend/src/services/publish/expoApproval.ts:7",
         "backend/src/services/publish/expoStoreReadiness.ts:4",
         "backend/src/services/publish/nativeArtifact.ts:8",
         "backend/src/services/publish/nativeReleaseAdmission.ts:8",
@@ -24245,6 +24247,7 @@
         "backend/src/services/integrations/composioClient.ts:11",
         "backend/src/services/publish/cwsAdmission.ts:9",
         "backend/src/services/publish/electronSecrets.ts:14",
+        "backend/src/services/publish/expoApproval.ts:9",
         "backend/src/services/publish/expoStoreReadiness.ts:6",
         "backend/src/services/publish/nativeReleaseAdmission.ts:9",
         "backend/tests/securityReceipt.local.integration.ts:11"
@@ -24596,7 +24599,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:4",
+        "backend/src/ai/pipeline.ts:3",
         "backend/src/ai/tenantModelDispatch.ts:4",
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
@@ -24735,7 +24738,8 @@
         "backend/src/services/integrations/vercelAuth.ts:9",
         "backend/src/services/publish/cwsAdmission.ts:6",
         "backend/src/services/publish/electronSecrets.ts:10",
-        "backend/src/services/publish/expoAccess.ts:4",
+        "backend/src/services/publish/expoAccess.ts:5",
+        "backend/src/services/publish/expoApproval.ts:5",
         "backend/src/services/publish/nativeArtifact.ts:6",
         "backend/src/services/publish/nativeReleaseAdmission.ts:7",
         "backend/src/services/referralService.ts:2",
@@ -24811,7 +24815,7 @@
         "backend/src/ai/openaiCompat.egress.test.ts:7",
         "backend/src/ai/parallelDispatch.ts:3",
         "backend/src/ai/parallelWeb.security.test.ts:4",
-        "backend/src/ai/pipeline.ts:3",
+        "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/postCompletionAccounting.ts:5",
         "backend/src/ai/providerBudget.test.ts:3",
         "backend/src/ai/providerBudget.ts:4",
@@ -24846,6 +24850,7 @@
         "backend/src/routes/cwsCredentialAdmission.security.test.ts:2",
         "backend/src/routes/drive.test.ts:2",
         "backend/src/routes/electronSigning.security.test.ts:2",
+        "backend/src/routes/expoCredentialAdmission.security.test.ts:2",
         "backend/src/routes/github.oauth.test.ts:6",
         "backend/src/routes/github.ts:5",
         "backend/src/routes/githubTransport.security.test.ts:9",
@@ -24971,12 +24976,16 @@
         "backend/src/services/publish/easCredentials.authority.test.ts:2",
         "backend/src/services/publish/easCredentials.ts:3",
         "backend/src/services/publish/easPublish.routeScope.test.ts:6",
+        "backend/src/services/publish/easPublish.ts:14",
         "backend/src/services/publish/electronSecrets.authority.test.ts:5",
         "backend/src/services/publish/electronSecrets.ts:9",
         "backend/src/services/publish/electronSigningAdmission.security.test.ts:4",
-        "backend/src/services/publish/expoAccess.ts:3",
+        "backend/src/services/publish/expoAccess.ts:4",
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:2",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts:2",
         "backend/src/services/publish/expoStoreRoutes.security.test.ts:5",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts:2",
+        "backend/src/services/publish/expoWorkflowDenial.security.test.ts:2",
         "backend/src/services/publish/nativeArtifact.ts:5",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:4",
         "backend/src/services/publish/nativeReleaseAdmission.ts:6",
@@ -25057,6 +25066,7 @@
         "backend/src/routes/cwsCredentialAdmission.security.test.ts",
         "backend/src/routes/drive.test.ts",
         "backend/src/routes/electronSigning.security.test.ts",
+        "backend/src/routes/expoCredentialAdmission.security.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/githubTransport.security.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
@@ -25135,8 +25145,11 @@
         "backend/src/services/publish/easPublish.routeScope.test.ts",
         "backend/src/services/publish/electronSecrets.authority.test.ts",
         "backend/src/services/publish/electronSigningAdmission.security.test.ts",
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts",
         "backend/src/services/publish/expoStoreRoutes.security.test.ts",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts",
+        "backend/src/services/publish/expoWorkflowDenial.security.test.ts",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts",
         "backend/src/services/referralService.failure.test.ts",
@@ -25614,7 +25627,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf",
+      "sha256": "86ee4caa462432568293d0072110826643b665e774db1a6ed1f82c557dee7726",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -25719,6 +25732,7 @@
         "../../security/tenantContext.js",
         "../BillingService.js",
         "../publish/chromeWebStore.js",
+        "../publish/easPublish.js",
         "../publish/electronSecrets.js",
         "../publish/nonWebShip.js",
         "./composioClient.js",
@@ -25741,6 +25755,7 @@
         "backend/src/services/integrations/composioSkillGuidance.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts",
         "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/easPublish.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
       ],
@@ -25766,6 +25781,8 @@
         "backend/src/services/publish/chromeWebStore.authority.test.ts:9",
         "backend/src/services/publish/cwsAdmission.ts:11",
         "backend/src/services/publish/electronSecrets.ts:15",
+        "backend/src/services/publish/expoApproval.ts:11",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts:5",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:8",
         "backend/src/services/publish/nativeReleaseAdmission.ts:11"
       ],
@@ -25775,6 +25792,7 @@
         "node:crypto"
       ],
       "authBoundary": [
+        "backend/src/services/integrations/businessAction.ts#AuthorityError",
         "backend/src/services/integrations/businessAction.ts#AuthorityPermit",
         "backend/src/services/integrations/businessAction.ts#BusinessActionAuthorization",
         "backend/src/services/integrations/businessAction.ts#PreparedAuthorityScope",
@@ -25816,6 +25834,7 @@
         "backend/src/services/integrations/businessActionRisk.test.ts",
         "backend/src/services/integrations/businessModelEgress.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -25895,7 +25914,7 @@
         "backend/src/routes/billingCheckout.security.test.ts:4",
         "backend/src/routes/electronSigning.security.test.ts:3",
         "backend/src/routes/phase1.ts:94",
-        "backend/src/routes/publish.ts:5",
+        "backend/src/routes/publish.ts:7",
         "backend/src/security/businessAuthority.local.integration.ts:8",
         "backend/src/security/confirmationMetadata.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.digest.test.ts:5",
@@ -25905,6 +25924,8 @@
         "backend/src/services/publish/chromeWebStore.authority.test.ts:8",
         "backend/src/services/publish/cwsAdmission.ts:12",
         "backend/src/services/publish/electronSecrets.ts:16",
+        "backend/src/services/publish/expoApproval.ts:12",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts:4",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:7",
         "backend/src/services/publish/nativeReleaseAdmission.ts:12",
         "backend/src/services/publish/nonWebShip.security.test.ts:7"
@@ -25958,6 +25979,7 @@
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
@@ -27033,6 +27055,7 @@
         "backend/src/ai/tenantModelDispatch.test.ts:5",
         "backend/src/routes/cwsCredentialAdmission.security.test.ts:3",
         "backend/src/routes/electronSigning.security.test.ts:4",
+        "backend/src/routes/expoCredentialAdmission.security.test.ts:2",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:9",
         "backend/src/routes/supabaseOrganizations.security.test.ts:9",
         "backend/src/security/githubConsumer.local.integration.ts:11",
@@ -27054,6 +27077,8 @@
         "backend/src/services/publish/chromeWebStore.authority.test.ts:10",
         "backend/src/services/publish/cwsAdmission.ts:10",
         "backend/src/services/publish/electronSecrets.ts:7",
+        "backend/src/services/publish/expoApproval.ts:10",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts:6",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:9",
         "backend/src/services/publish/nativeReleaseAdmission.ts:10",
         "backend/src/services/publish/nonWebShip.security.test.ts:8",
@@ -27077,6 +27102,7 @@
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/routes/cwsCredentialAdmission.security.test.ts",
         "backend/src/routes/electronSigning.security.test.ts",
+        "backend/src/routes/expoCredentialAdmission.security.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOrganizations.security.test.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -27091,6 +27117,7 @@
         "backend/src/services/integrations/userProviderKeys.migration.test.ts",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
@@ -27522,7 +27549,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:162",
+        "backend/src/ai/pipeline.ts:161",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:59",
         "backend/src/routes/github.settings.test.ts:17",
@@ -27531,8 +27558,8 @@
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/githubSourceRead.ts:3",
-        "backend/src/services/publish/easPublish.ts:12",
         "backend/src/services/publish/electronSecrets.ts:5",
+        "backend/src/services/publish/expoWorkflow.ts:5",
         "backend/src/services/publish/nonWebShip.ts:14",
         "backend/src/services/publish/userOwnedPublish.ts:6",
         "backend/src/services/showcase/templateExport.ts:15"
@@ -27973,7 +28000,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:107",
+        "backend/src/ai/pipeline.ts:106",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:2",
         "backend/src/lib/publishingTransport.security.test.ts:9",
@@ -28307,6 +28334,7 @@
       "callers": [
         "backend/src/services/integrations/githubDeploy.ts:66",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:7",
+        "backend/src/services/publish/expoWorkflow.ts:5",
         "backend/src/services/publish/nonWebShip.ts:20"
       ],
       "reachable": true,
@@ -29140,8 +29168,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3793",
-        "backend/src/ai/pipeline.ts:3796",
+        "backend/src/ai/pipeline.ts:3785",
+        "backend/src/ai/pipeline.ts:3788",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/routes/integrations.ts:227",
@@ -29394,13 +29422,13 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:119",
-        "backend/src/ai/pipeline.ts:3792",
+        "backend/src/ai/pipeline.ts:118",
+        "backend/src/ai/pipeline.ts:3784",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:17",
         "backend/src/routes/integrations.ts:639",
-        "backend/src/routes/publish.ts:15",
+        "backend/src/routes/publish.ts:18",
         "backend/src/routes/supabaseOAuth.ts:28",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:5",
         "backend/src/security/credentialReadMatrix.local.integration.ts:6",
@@ -29427,7 +29455,7 @@
         "backend/src/services/publish/chromeWebStore.ts:22",
         "backend/src/services/publish/easPublish.ts:7",
         "backend/src/services/publish/electronSecrets.ts:6",
-        "backend/src/services/publish/expoAccess.ts:5",
+        "backend/src/services/publish/expoAccess.ts:6",
         "backend/src/services/publish/userOwnedPublish.ts:9",
         "scripts/security/verify-oci-federation.ts:11"
       ],
@@ -29625,7 +29653,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:118",
+        "backend/src/ai/pipeline.ts:117",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:28",
         "backend/src/routes/supabaseOAuth.ts:35",
@@ -30040,7 +30068,7 @@
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
-        "backend/src/ai/pipeline.ts:124",
+        "backend/src/ai/pipeline.ts:123",
         "backend/src/routes/github.ts:611",
         "backend/src/routes/swarm.ts:11",
         "backend/src/routes/vercel.ts:24",
@@ -30094,6 +30122,9 @@
       "entryPoints": [],
       "callers": [
         "backend/src/services/publish/chromeWebStore.authority.test.ts:6",
+        "backend/src/services/publish/easPublish.routeScope.test.ts:7",
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:5",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts:7",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:6",
         "backend/src/services/publish/nonWebShip.security.test.ts:6"
       ],
@@ -30113,6 +30144,9 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
+        "backend/src/services/publish/easPublish.routeScope.test.ts",
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
         "backend/src/services/publish/nonWebShip.security.test.ts"
       ],
@@ -30241,11 +30275,11 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:179",
-        "backend/src/routes/publish.ts:217",
-        "backend/src/routes/publish.ts:261",
-        "backend/src/routes/publish.ts:298",
-        "backend/src/routes/publish.ts:314",
+        "backend/src/ai/pipeline.ts:178",
+        "backend/src/routes/publish.ts:224",
+        "backend/src/routes/publish.ts:268",
+        "backend/src/routes/publish.ts:305",
+        "backend/src/routes/publish.ts:321",
         "backend/src/services/integrations/businessAction.ts:1463",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:8",
@@ -30411,7 +30445,7 @@
       "id": "surface:d1c2140ad50607193caf",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/easCredentials.ts",
-      "sha256": "e03f37f68b1dad629639fbc0f98b93bc0dfe32371bd073ba3c82e81e606581b9",
+      "sha256": "4d943522bba020a8eaf5268a8da948f814a3ca4c6e4359a6004185c5b59b9e5e",
       "symbols": [
         "EXPO_API",
         "EasBuildInfo",
@@ -30479,15 +30513,16 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:181",
-        "backend/src/routes/publish.ts:179",
-        "backend/src/routes/publish.ts:327",
-        "backend/src/routes/publish.ts:349",
-        "backend/src/routes/publish.ts:403",
+        "backend/src/routes/publish.ts:184",
+        "backend/src/routes/publish.ts:334",
+        "backend/src/routes/publish.ts:356",
+        "backend/src/routes/publish.ts:410",
         "backend/src/services/publish/easBuilds.authority.test.ts:2",
         "backend/src/services/publish/easCredentials.authority.test.ts:2",
         "backend/src/services/publish/easCredentials.test.ts:3",
-        "backend/src/services/publish/expoStoreReadiness.security.test.ts:3"
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:3",
+        "backend/src/services/publish/expoStoreReadiness.security.test.ts:3",
+        "backend/src/services/publish/expoWorkflow.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -30509,6 +30544,7 @@
         "backend/src/services/publish/easBuilds.authority.test.ts",
         "backend/src/services/publish/easCredentials.authority.test.ts",
         "backend/src/services/publish/easCredentials.test.ts",
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -30522,80 +30558,99 @@
       "id": "surface:3b76593d10289f704a26",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/easPublish.ts",
-      "sha256": "39f3d39588b965933172f429ecd72ae00cf8ec3f64ceb1cd5f47eaa51af045aa",
+      "sha256": "7c744ca46dc7562a29dedcf26c9f64902ba64d61bf360012dd9e845530e1bdec",
       "symbols": [
         "EXPO_API",
+        "ExpoActorInput",
         "MobilePlatform",
+        "access",
         "account",
         "accounts",
         "app",
         "apps",
+        "body",
+        "context",
         "createExpoApp",
-        "createdId",
         "data",
+        "denied",
         "eas",
         "ensureExpoProjectLinked",
-        "ensured",
-        "err",
-        "existing",
+        "executeExpoNativeAction",
         "expoFetch",
         "extra",
-        "fallback",
-        "fileName",
-        "gitRef",
-        "githubOk",
-        "id",
         "json",
+        "linkOwnedExpoProject",
         "listExpoAccounts",
         "listExpoApps",
-        "msg",
-        "mutation",
-        "name",
         "patchExpoProjectIdInFiles",
+        "prepared",
         "projectId",
         "query",
+        "queryFor",
         "res",
         "resolveExpoProjectId",
-        "retry",
+        "response",
+        "rows",
         "saved",
+        "selected",
+        "signal",
         "slug",
         "slugifyProjectName",
-        "text",
-        "token",
         "triggerEasPublish",
-        "wantSubmit",
         "writeAdmission"
       ],
       "imports": [
-        "../integrations/githubAuth.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/tenantContext.js",
+        "../integrations/businessAction.js",
         "../integrations/githubDeploy.js",
-        "../integrations/userProviderKeys.js"
+        "../integrations/userProviderKeys.js",
+        "./expoAccess.js",
+        "./expoApproval.js",
+        "./expoWorkflow.js"
       ],
       "runtimeImports": [
-        "backend/src/services/integrations/githubAuth.ts",
-        "backend/src/services/integrations/userProviderKeys.ts"
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/userProviderKeys.ts",
+        "backend/src/services/publish/expoAccess.ts",
+        "backend/src/services/publish/expoApproval.ts",
+        "backend/src/services/publish/expoWorkflow.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:174",
-        "backend/src/routes/publish.ts:10",
-        "backend/src/routes/publish.ts:65",
-        "backend/src/services/integrations/userProviderKeys.revision.test.ts:9"
+        "backend/src/ai/pipeline.ts:173",
+        "backend/src/routes/publish.ts:12",
+        "backend/src/routes/publish.ts:70",
+        "backend/src/services/integrations/businessAction.ts:1468",
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:4",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts:3",
+        "backend/src/services/publish/expoWorkflowDenial.security.test.ts:2"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:api.expo.dev"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/services/publish/easPublish.ts#AuthorityError",
+        "backend/src/services/publish/easPublish.ts#AuthorityPermit"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/publish/easPublish.ts#verifyExpoProject"
+      ],
       "testCoverage": [
-        "backend/src/services/integrations/userProviderKeys.revision.test.ts"
+        "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+        "backend/src/services/publish/expoCanonicalAdmission.security.test.ts",
+        "backend/src/services/publish/expoWorkflow.authority.test.ts",
+        "backend/src/services/publish/expoWorkflowDenial.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -30707,8 +30762,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:180",
-        "backend/src/routes/publish.ts:375",
+        "backend/src/ai/pipeline.ts:179",
+        "backend/src/routes/publish.ts:382",
         "backend/src/services/integrations/businessAction.ts:1453",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4",
         "backend/src/services/publish/electronSigningAdmission.security.test.ts:3"
@@ -30763,7 +30818,7 @@
       "id": "surface:852f80796a307383ab20",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/expoAccess.ts",
-      "sha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+      "sha256": "27f443c736f0584985db9f884febe46c342e4d512228a32adb51506d7d14fd3c",
       "symbols": [
         "AccessState",
         "ExpoAccess",
@@ -30785,8 +30840,10 @@
         "context",
         "denied",
         "digest",
+        "error",
         "errors",
         "fingerprint",
+        "installExpoWriteGuard",
         "issued",
         "item",
         "json",
@@ -30813,6 +30870,7 @@
       "imports": [
         "../../security/authority/digest.js",
         "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
         "../../security/egress/egressPolicy.js",
         "../../security/serviceRoleGuard.js",
         "../../security/tenantContext.js",
@@ -30830,8 +30888,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/routes/publish.ts:6",
         "backend/src/services/publish/easCredentials.ts:7",
-        "backend/src/services/publish/expoStoreReadiness.ts:2"
+        "backend/src/services/publish/easPublish.ts:13",
+        "backend/src/services/publish/expoApproval.ts:14",
+        "backend/src/services/publish/expoStoreReadiness.ts:2",
+        "backend/src/services/publish/expoWorkflow.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -30839,10 +30901,13 @@
       ],
       "externalProviderDependencies": [],
       "authBoundary": [
-        "backend/src/services/publish/expoAccess.ts#AuthorityError"
+        "backend/src/services/publish/expoAccess.ts#AuthorityDispatchBinding",
+        "backend/src/services/publish/expoAccess.ts#AuthorityError",
+        "backend/src/services/publish/expoAccess.ts#AuthorityPermit",
+        "backend/src/services/publish/expoAccess.ts#authorityContextForPermit"
       ],
       "tenantBoundary": [
-        "backend/src/services/publish/expoAccess.ts:27 (user_id)"
+        "backend/src/services/publish/expoAccess.ts:28 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/publish/expoAccess.ts#digest",
@@ -30855,6 +30920,107 @@
       "testCoverage": [
         "backend/src/services/publish/easBuilds.authority.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f493495837c10a8c815a",
+      "subsystem": "publishing",
+      "sourcePath": "backend/src/services/publish/expoApproval.ts",
+      "sha256": "43311a8585fb2fc86dccda26962358838627e0c7d03095f4c148eca60b18dcf2",
+      "symbols": [
+        "ExpoNativeOperation",
+        "actionClass",
+        "checkClaim",
+        "confirmation",
+        "consumed",
+        "denied",
+        "destination",
+        "digest",
+        "identity",
+        "issuedAt",
+        "nativeExpoProof",
+        "nonce",
+        "parameters",
+        "prepareExpoNativeAction",
+        "projectFor",
+        "proof",
+        "readExpoNativeAction",
+        "started",
+        "toolkit",
+        "unsigned",
+        "unsignedValue",
+        "useCase",
+        "value"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/dataClassification.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/securityDecision.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../integrations/businessAction.js",
+        "../integrations/businessActionConfirmations.js",
+        "../integrations/credentialVaultRuntime.js",
+        "./expoAccess.js",
+        "./nativeReleaseAdmission.js",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/services/publish/expoAccess.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/publish/easPublish.ts:198",
+        "backend/src/services/publish/expoWorkflow.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "business_action_confirmations"
+      ],
+      "externalProviderDependencies": [
+        "declared-host:api.expo.dev",
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/publish/expoApproval.ts#AuthorityError",
+        "backend/src/services/publish/expoApproval.ts#AuthorityPermit",
+        "backend/src/services/publish/expoApproval.ts#consumeAuthorityPermit",
+        "backend/src/services/publish/expoApproval.ts#identity"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/publish/expoApproval.ts:51 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/publish/expoApproval.ts#actionPlanDigest",
+        "backend/src/services/publish/expoApproval.ts#confirmation",
+        "backend/src/services/publish/expoApproval.ts#createBusinessActionConfirmation",
+        "backend/src/services/publish/expoApproval.ts#digest",
+        "backend/src/services/publish/expoApproval.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -31001,6 +31167,145 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:14d8f092913ba9e280a9",
+      "subsystem": "publishing",
+      "sourcePath": "backend/src/services/publish/expoWorkflow.ts",
+      "sha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0",
+      "symbols": [
+        "CREATE",
+        "QueryFor",
+        "StoreInput",
+        "Transport",
+        "WorkflowInput",
+        "WorkflowResult",
+        "access",
+        "account",
+        "actor",
+        "admission",
+        "args",
+        "blob",
+        "body",
+        "bytes",
+        "check",
+        "checkAccount",
+        "checkTarget",
+        "commit",
+        "connection",
+        "created",
+        "current",
+        "currentProject",
+        "currentStore",
+        "cursor",
+        "databaseProjectId",
+        "denied",
+        "destination",
+        "encoded",
+        "entries",
+        "error",
+        "executeExpoAction",
+        "expected",
+        "facts",
+        "failed",
+        "fileName",
+        "files",
+        "gitCommit",
+        "gitRef",
+        "hasFailure",
+        "id",
+        "input",
+        "operation",
+        "path",
+        "prepareExpoWorkflow",
+        "prepared",
+        "project",
+        "projectId",
+        "reader",
+        "receipt",
+        "request",
+        "response",
+        "responseReceipt",
+        "result",
+        "row",
+        "rows",
+        "run",
+        "source",
+        "sourceSha256",
+        "sourceSignal",
+        "store",
+        "storeReadiness",
+        "submit",
+        "text",
+        "token",
+        "tree",
+        "url",
+        "variables",
+        "workflowFile",
+        "workflowSource"
+      ],
+      "imports": [
+        "../../ai/providerRuntime.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/dataClassification.js",
+        "../integrations/businessAction.js",
+        "../integrations/githubAuth.js",
+        "../integrations/githubSourceRead.js",
+        "./easCredentials.js",
+        "./easPublish.js",
+        "./expoAccess.js",
+        "./expoApproval.js",
+        "./nativeArtifact.js",
+        "./nativeReleaseAdmission.js",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/providerRuntime.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/services/integrations/githubAuth.ts",
+        "backend/src/services/integrations/githubSourceRead.ts",
+        "backend/src/services/publish/easCredentials.ts",
+        "backend/src/services/publish/expoAccess.ts",
+        "backend/src/services/publish/expoApproval.ts",
+        "backend/src/services/publish/nativeArtifact.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/publish/easPublish.ts:283",
+        "backend/src/services/publish/easPublish.ts:289"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:api.expo.dev",
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/publish/expoWorkflow.ts#AuthorityError",
+        "backend/src/services/publish/expoWorkflow.ts#AuthorityPermit"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/publish/expoWorkflow.ts#receipt",
+        "backend/src/services/publish/expoWorkflow.ts#responseReceipt",
+        "backend/src/services/publish/expoWorkflow.ts#verifyExpoProject"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:3edf96fb4ace671118ec",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/nativeArtifact.ts",
@@ -31072,6 +31377,7 @@
         "backend/src/services/publish/chromeWebStore.authority.test.ts:5",
         "backend/src/services/publish/chromeWebStore.ts:19",
         "backend/src/services/publish/cwsAdmission.ts:13",
+        "backend/src/services/publish/expoWorkflow.ts:7",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:10",
         "backend/src/services/publish/nativeReleaseAdmission.ts:13"
       ],
@@ -31178,6 +31484,7 @@
       ],
       "callers": [
         "backend/src/services/publish/chromeWebStore.ts:18",
+        "backend/src/services/publish/expoWorkflow.ts:6",
         "backend/src/services/publish/nonWebShip.ts:13"
       ],
       "reachable": true,
@@ -31336,7 +31643,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:168",
+        "backend/src/ai/pipeline.ts:167",
         "backend/src/services/integrations/businessAction.ts:1458",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:5",
         "backend/src/services/publish/nonWebShip.security.test.ts:3"
@@ -31369,7 +31676,7 @@
       "id": "surface:0a385ceeaa3956dfb5fe",
       "subsystem": "publishing",
       "sourcePath": "backend/src/services/publish/userOwnedPublish.ts",
-      "sha256": "5dd9bf3f4db350462eb197321f9c73c343e3ba4a33247157c47502ce6737b3e7",
+      "sha256": "f53f9f8ffb9bad01a773cd1d2a8ecaa3599f5e2a919180d4451bfb6803b10bde",
       "symbols": [
         "PublishChannel",
         "PublishChecklistItem",
@@ -31424,7 +31731,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/publish.ts:6",
+        "backend/src/routes/publish.ts:8",
         "backend/src/services/publish/expoIdentityTransport.security.test.ts:5",
         "backend/src/services/publish/userOwnedPublish.test.ts:3"
       ],
@@ -31662,7 +31969,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:163",
+        "backend/src/ai/pipeline.ts:162",
         "backend/src/services/projectScaffold.ts:11",
         "backend/src/services/projectScaffold.ts:5",
         "backend/src/services/scaffolds/nextjsScaffold.ts:3",
@@ -32028,7 +32335,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:188",
+        "backend/src/ai/pipeline.ts:180",
         "backend/src/services/scaffolds/scaffoldIntegrity.test.ts:3"
       ],
       "reachable": true,
@@ -35939,7 +36246,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:148",
+        "backend/src/ai/pipeline.ts:147",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:24"
@@ -36330,7 +36637,7 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.attempt.test.ts:6",
-        "backend/src/ai/pipeline.ts:252",
+        "backend/src/ai/pipeline.ts:244",
         "backend/src/synthesis/foundation.fixture.test.ts:4"
       ],
       "reachable": true,
@@ -37315,7 +37622,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:151",
+        "backend/src/ai/pipeline.ts:150",
         "backend/src/routes/projectRuntime.ts:18",
         "backend/src/security/runtimeProjectBinding.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:40",
@@ -38039,7 +38346,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:95",
+        "backend/src/ai/pipeline.ts:94",
         "backend/src/synthesis/productBlueprints.test.ts:3"
       ],
       "reachable": true,
@@ -38426,7 +38733,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:136",
+        "backend/src/ai/pipeline.ts:135",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:7",
         "backend/src/synthesis/canonicalFoundation.test.ts:13",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:16",
@@ -39352,7 +39659,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:144",
+        "backend/src/ai/pipeline.ts:143",
         "backend/src/sandbox/google/googleSandbox.test.ts:4",
         "backend/src/sandbox/google/googleSandbox.ts:5",
         "backend/src/sandbox/registryNetwork.test.ts:9",
@@ -39564,7 +39871,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:246",
+        "backend/src/ai/pipeline.ts:238",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.ts:47",
         "backend/src/workers/resumeRecovery.ts:14"
@@ -40974,7 +41281,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:141",
+        "backend/src/ai/pipeline.ts:140",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:8",
         "backend/src/synthesis/canonicalFoundation.test.ts:18",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:20",
@@ -41206,7 +41513,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:161",
+        "backend/src/ai/pipeline.ts:160",
         "backend/src/synthesis/universalCommit.test.ts:3"
       ],
       "reachable": true,
@@ -41324,7 +41631,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:135",
+        "backend/src/ai/pipeline.ts:134",
         "backend/src/ai/providerPolicy.test.ts:19",
         "backend/src/synthesis/universalEntrypoint.test.ts:14"
       ],
@@ -41852,7 +42159,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:131",
+        "backend/src/ai/pipeline.ts:130",
         "backend/src/synthesis/universalShadow.test.ts:13"
       ],
       "reachable": true,
@@ -73615,7 +73922,7 @@
       "id": "surface:6deb309463b787a7c2c8",
       "subsystem": "publishing",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "sha256": "6afb29185d4ed60d2242f4aba5148c9ea181cc1d40c1fc4c0a3edb729b2dad68",
+      "sha256": "1d76a84c4dafa8ec7bbbe0817e86fd2177c5e80c7202a02a76f6f64c6fb403e3",
       "symbols": [
         "MobilePublishPanel",
         "buildTone",
@@ -73636,6 +73943,7 @@
         "result",
         "saveAppleAsc",
         "saveProvider",
+        "showApproval",
         "startBuild",
         "submitToStore",
         "syncStore",
@@ -73674,7 +73982,9 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/publish/MobilePublishPanel.tsx#showApproval"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [
         "frontend/src/components/publish/MobilePublishPanel.tsx#verifyExpo"
@@ -85041,7 +85351,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "dfd6cb0926e5c496d7c0561a9cb5ddeeb1b8ca92542a21cf12d3e14183dd0c85",
+      "sha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -109600,9 +109910,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7893df4b6d43742f923d",
+      "id": "registration:290a7f7e5c65635a0a16",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 24,
+      "line": 27,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -109612,9 +109922,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:dd32efa50346b6dd60c8",
+      "id": "registration:6afbd05cb127f79f41f3",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 41,
+      "line": 44,
       "receiver": "router",
       "method": "post",
       "path": "/expo-token",
@@ -109624,9 +109934,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a99a2a7fa90ae0d82e9e",
+      "id": "registration:13401f3c29d1deab397c",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 94,
+      "line": 102,
       "receiver": "router",
       "method": "post",
       "path": "/verify-expo",
@@ -109636,9 +109946,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7c530445a15a6f262e3b",
+      "id": "registration:8e1d97dfe0144221c5e9",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 117,
+      "line": 124,
       "receiver": "router",
       "method": "post",
       "path": "/eas-project",
@@ -109648,9 +109958,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7d4dda43fc20e0f7b12e",
+      "id": "registration:de7d0621f6465dad9573",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 139,
+      "line": 142,
       "receiver": "router",
       "method": "get",
       "path": "/expo-apps",
@@ -109660,9 +109970,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6fd59ec108d7b2425456",
+      "id": "registration:38d578d4c1f2ff5f198e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 157,
+      "line": 161,
       "receiver": "router",
       "method": "post",
       "path": "/eas-publish",
@@ -109672,9 +109982,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:50d59395155d13893e8d",
+      "id": "registration:d0610cfae80d4f10161d",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 199,
+      "line": 206,
       "receiver": "router",
       "method": "post",
       "path": "/cws-credentials",
@@ -109684,9 +109994,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7f6c218f7adbc2a9a5df",
+      "id": "registration:435a3bac79d37fe331d3",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 247,
+      "line": 254,
       "receiver": "router",
       "method": "post",
       "path": "/cws-oauth/start",
@@ -109696,9 +110006,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f4d00ea5c0a1e21a20ef",
+      "id": "registration:b65f817ef25f40a7d43f",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 286,
+      "line": 293,
       "receiver": "router",
       "method": "post",
       "path": "/cws-oauth/callback",
@@ -109708,9 +110018,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5c05d36b55736ca57653",
+      "id": "registration:f6dcbbdfea93d6192a1e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 312,
+      "line": 319,
       "receiver": "router",
       "method": "get",
       "path": "/cws-status",
@@ -109720,9 +110030,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:55a1a5fa6cb02028c416",
+      "id": "registration:6d537a4d526237b2eb50",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 323,
+      "line": 330,
       "receiver": "router",
       "method": "post",
       "path": "/sync-play-credentials",
@@ -109732,9 +110042,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a0060a398754f684839e",
+      "id": "registration:b36fec9e38fa61ca2641",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 338,
+      "line": 345,
       "receiver": "router",
       "method": "post",
       "path": "/sync-apple-credentials",
@@ -109744,9 +110054,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b710fb678a53525ff8ca",
+      "id": "registration:ad74b41bbdb14e031d05",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 365,
+      "line": 372,
       "receiver": "router",
       "method": "post",
       "path": "/sync-electron-secrets",
@@ -109756,9 +110066,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:15583f00051f9295d979",
+      "id": "registration:663bc0fdba904434418c",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 389,
+      "line": 396,
       "receiver": "router",
       "method": "post",
       "path": "/sync-electron-secrets/:id/confirm",
@@ -109768,9 +110078,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fe4897275f5fff24719a",
+      "id": "registration:a08b7ed54016e1ef656b",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 401,
+      "line": 408,
       "receiver": "router",
       "method": "get",
       "path": "/eas-builds",
@@ -113848,10 +114158,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:11909e23354bdb9602f9",
-      "registrationId": "registration:7893df4b6d43742f923d",
+      "id": "route:922d5c5224aef4e1cdff",
+      "registrationId": "registration:290a7f7e5c65635a0a16",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 24,
+      "line": 27,
       "method": "GET",
       "path": "/api/publish/status",
       "mountChain": [
@@ -113865,10 +114175,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8efdefa391d3ff79b91c",
-      "registrationId": "registration:dd32efa50346b6dd60c8",
+      "id": "route:ea2dc329442366e31e2a",
+      "registrationId": "registration:6afbd05cb127f79f41f3",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 41,
+      "line": 44,
       "method": "POST",
       "path": "/api/publish/expo-token",
       "mountChain": [
@@ -113882,10 +114192,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e01a3b7679e82c5b11fa",
-      "registrationId": "registration:a99a2a7fa90ae0d82e9e",
+      "id": "route:68c1b549936cf17f5fa7",
+      "registrationId": "registration:13401f3c29d1deab397c",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 94,
+      "line": 102,
       "method": "POST",
       "path": "/api/publish/verify-expo",
       "mountChain": [
@@ -113899,10 +114209,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0f9be6b997dd354e21cc",
-      "registrationId": "registration:7c530445a15a6f262e3b",
+      "id": "route:20ffc3283a8c84e6f5ce",
+      "registrationId": "registration:8e1d97dfe0144221c5e9",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 117,
+      "line": 124,
       "method": "POST",
       "path": "/api/publish/eas-project",
       "mountChain": [
@@ -113916,10 +114226,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e867c534866f56db28b8",
-      "registrationId": "registration:7d4dda43fc20e0f7b12e",
+      "id": "route:85de74db5313e3c4405f",
+      "registrationId": "registration:de7d0621f6465dad9573",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 139,
+      "line": 142,
       "method": "GET",
       "path": "/api/publish/expo-apps",
       "mountChain": [
@@ -113933,10 +114243,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:eb67cf53df209170fc09",
-      "registrationId": "registration:6fd59ec108d7b2425456",
+      "id": "route:f1a4f8e7aabf855e38d3",
+      "registrationId": "registration:38d578d4c1f2ff5f198e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 157,
+      "line": 161,
       "method": "POST",
       "path": "/api/publish/eas-publish",
       "mountChain": [
@@ -113950,10 +114260,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:57cc7901bcf8e98b68cd",
-      "registrationId": "registration:50d59395155d13893e8d",
+      "id": "route:81c90d45d72236096d23",
+      "registrationId": "registration:d0610cfae80d4f10161d",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 199,
+      "line": 206,
       "method": "POST",
       "path": "/api/publish/cws-credentials",
       "mountChain": [
@@ -113967,10 +114277,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a9c4056b3cf91de4883e",
-      "registrationId": "registration:7f6c218f7adbc2a9a5df",
+      "id": "route:39f0654ba493eaf1fb1f",
+      "registrationId": "registration:435a3bac79d37fe331d3",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 247,
+      "line": 254,
       "method": "POST",
       "path": "/api/publish/cws-oauth/start",
       "mountChain": [
@@ -113984,10 +114294,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:edb51eaa617270cb4ca6",
-      "registrationId": "registration:f4d00ea5c0a1e21a20ef",
+      "id": "route:a2f962d1ab876a9fa935",
+      "registrationId": "registration:b65f817ef25f40a7d43f",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 286,
+      "line": 293,
       "method": "POST",
       "path": "/api/publish/cws-oauth/callback",
       "mountChain": [
@@ -114001,10 +114311,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4524ca0ba5f54872ea0b",
-      "registrationId": "registration:5c05d36b55736ca57653",
+      "id": "route:9431b19781ef54a7dfbf",
+      "registrationId": "registration:f6dcbbdfea93d6192a1e",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 312,
+      "line": 319,
       "method": "GET",
       "path": "/api/publish/cws-status",
       "mountChain": [
@@ -114018,10 +114328,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:fcda9d6a64f57c395602",
-      "registrationId": "registration:55a1a5fa6cb02028c416",
+      "id": "route:bc30d3fd1cd629409232",
+      "registrationId": "registration:6d537a4d526237b2eb50",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 323,
+      "line": 330,
       "method": "POST",
       "path": "/api/publish/sync-play-credentials",
       "mountChain": [
@@ -114035,10 +114345,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:30d1edae37fa86864398",
-      "registrationId": "registration:a0060a398754f684839e",
+      "id": "route:46c25aff82067d846223",
+      "registrationId": "registration:b36fec9e38fa61ca2641",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 338,
+      "line": 345,
       "method": "POST",
       "path": "/api/publish/sync-apple-credentials",
       "mountChain": [
@@ -114052,10 +114362,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:97eae172d09c645eff22",
-      "registrationId": "registration:b710fb678a53525ff8ca",
+      "id": "route:b0df974eeaeb375b1ae0",
+      "registrationId": "registration:ad74b41bbdb14e031d05",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 365,
+      "line": 372,
       "method": "POST",
       "path": "/api/publish/sync-electron-secrets",
       "mountChain": [
@@ -114069,10 +114379,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:77a63d587b22133dded2",
-      "registrationId": "registration:15583f00051f9295d979",
+      "id": "route:c963d0074e0329b4bd53",
+      "registrationId": "registration:663bc0fdba904434418c",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 389,
+      "line": 396,
       "method": "POST",
       "path": "/api/publish/sync-electron-secrets/:id/confirm",
       "mountChain": [
@@ -114086,10 +114396,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6fe4b11affde46b7287c",
-      "registrationId": "registration:fe4897275f5fff24719a",
+      "id": "route:a5511740ca7491e0061b",
+      "registrationId": "registration:a08b7ed54016e1ef656b",
       "sourcePath": "backend/src/routes/publish.ts",
-      "line": 401,
+      "line": 408,
       "method": "GET",
       "path": "/api/publish/eas-builds",
       "mountChain": [
@@ -116259,9 +116569,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f3a4e60c1fb1a38a31c5",
+      "id": "finding:405c5412328b1f8b68cd",
       "sourcePath": "backend/src/services/publish/easPublish.ts",
-      "line": 291,
+      "line": 228,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118209,9 +118519,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c10a5b0b17d8424ecbb3",
+      "id": "finding:c3ced2f82ec09f767080",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 360,
+      "line": 370,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118219,9 +118529,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:058da8b19d86b6eae6b5",
+      "id": "finding:06c36250b3db69cd16ad",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 451,
+      "line": 461,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118229,9 +118539,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ed5f4c15ae5e7fd934c7",
+      "id": "finding:60711ca288ffe2de088c",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 590,
+      "line": 600,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118239,9 +118549,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2197b8b164cb8d8b2a89",
+      "id": "finding:e58079cd7158bc6471c5",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 672,
+      "line": 682,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118249,9 +118559,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:622b0673ea7806e99585",
+      "id": "finding:3e8217798109903eecfd",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 678,
+      "line": 688,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118259,9 +118569,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3fdfddded910a833124c",
+      "id": "finding:4cabede20bd3e9ba6814",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 685,
+      "line": 695,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -118269,9 +118579,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:52db1fc3a83865e68654",
+      "id": "finding:a7310c01a5ff7fdc4ee2",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 762,
+      "line": 772,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -121486,72 +121796,72 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:ecab7b4b7d54e5f49391",
+      "id": "frontend-call:32cbb55ef24785d44d4b",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 75,
+      "line": 81,
       "callee": "api.publish.listExpoApps",
       "reachable": true
     },
     {
-      "id": "frontend-call:e2fc076af87988af2a7c",
+      "id": "frontend-call:dd42c162956ae24db86b",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 89,
+      "line": 95,
       "callee": "api.publish.easBuilds",
       "reachable": true
     },
     {
-      "id": "frontend-call:9c39c48037b04619a5f9",
+      "id": "frontend-call:e533a14052cb83167570",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 126,
+      "line": 132,
       "callee": "api.publish.saveExpoToken",
       "reachable": true
     },
     {
-      "id": "frontend-call:e18e5099bdac404016f7",
+      "id": "frontend-call:3074929923e644bbc952",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 143,
+      "line": 150,
       "callee": "api.publish.verifyExpo",
       "reachable": true
     },
     {
-      "id": "frontend-call:ded4ff20082340bec6dc",
+      "id": "frontend-call:5ff0e9ef77ad4ceae028",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 164,
+      "line": 171,
       "callee": "api.publish.saveEasProject",
       "reachable": true
     },
     {
-      "id": "frontend-call:ebd782e986592bec1cbb",
+      "id": "frontend-call:a82337ba32d1145bec87",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 178,
+      "line": 185,
       "callee": "api.publish.easPublish",
       "reachable": true
     },
     {
-      "id": "frontend-call:7ccfa34d2765c17a1eaa",
+      "id": "frontend-call:dbde5f9583b0d10df307",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 204,
+      "line": 212,
       "callee": "api.integrations.saveProviderKey",
       "reachable": true
     },
     {
-      "id": "frontend-call:33fbafb2e829a183f13b",
+      "id": "frontend-call:3a9f179c3a84a47b8217",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 243,
+      "line": 251,
       "callee": "api.publish.syncPlayCredentials",
       "reachable": true
     },
     {
-      "id": "frontend-call:b27c2a5a7a34a5662096",
+      "id": "frontend-call:7785a072fd530aa2a04c",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 244,
+      "line": 252,
       "callee": "api.publish.syncAppleCredentials",
       "reachable": true
     },
     {
-      "id": "frontend-call:9d3f181e2742ceb3c694",
+      "id": "frontend-call:317dbe8721e5e5a86e00",
       "sourcePath": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 256,
+      "line": 264,
       "callee": "api.publish.easPublish",
       "reachable": true
     },
@@ -124710,6 +125020,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:5af5461b7e443246c1a2",
+      "sourcePath": "backend/src/routes/expoCredentialAdmission.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:4d2d6938e2aa43f15616",
       "sourcePath": "backend/src/routes/github.oauth.test.ts",
       "declaredTests": 1,
@@ -126264,6 +126581,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:2665347fb9453b1670a0",
+      "sourcePath": "backend/src/services/publish/expoCanonicalAdmission.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:7b6ff2b3bdbe75a3d708",
       "sourcePath": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
       "declaredTests": 3,
@@ -126280,6 +126604,20 @@
     {
       "id": "test-suite:ed0e5960d8173fdfd1c0",
       "sourcePath": "backend/src/services/publish/expoStoreRoutes.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:62b9add45948032c1df2",
+      "sourcePath": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:22a782748051730fb2fa",
+      "sourcePath": "backend/src/services/publish/expoWorkflowDenial.security.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
@@ -127630,6 +127968,13 @@
       "id": "test-suite:07b7947e9acd174081b4",
       "sourcePath": "frontend/src/components/library/libraryFilePreview.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7f47230fdf23681e489e",
+      "sourcePath": "frontend/src/components/publish/MobilePublishPanel.approval.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

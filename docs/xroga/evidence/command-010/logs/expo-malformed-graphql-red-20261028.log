@@ -1,0 +1,337 @@
+TAP version 13
+# Subtest: actual Expo store verification preserves configured operation and denies raw secret export
+    # Subtest: android unissued actor
+    ok 1 - android unissued actor
+      ---
+      duration_ms: 1.8285
+      type: 'test'
+      ...
+    # Subtest: android unissued actor
+    ok 2 - android unissued actor
+      ---
+      duration_ms: 0.1707
+      type: 'test'
+      ...
+    # Subtest: android configured
+    ok 3 - android configured
+      ---
+      duration_ms: 30.294
+      type: 'test'
+      ...
+    # Subtest: android no-saved-configured
+    ok 4 - android no-saved-configured
+      ---
+      duration_ms: 13.2371
+      type: 'test'
+      ...
+    # Subtest: android missing
+    ok 5 - android missing
+      ---
+      duration_ms: 14.103
+      type: 'test'
+      ...
+    # Subtest: android mismatch
+    ok 6 - android mismatch
+      ---
+      duration_ms: 13.1477
+      type: 'test'
+      ...
+    # Subtest: android foreign-project
+    ok 7 - android foreign-project
+      ---
+      duration_ms: 6.3774
+      type: 'test'
+      ...
+    # Subtest: android foreign-account
+    ok 8 - android foreign-account
+      ---
+      duration_ms: 5.4711
+      type: 'test'
+      ...
+    # Subtest: android foreign-child
+    ok 9 - android foreign-child
+      ---
+      duration_ms: 6.7486
+      type: 'test'
+      ...
+    # Subtest: android ambiguous
+    ok 10 - android ambiguous
+      ---
+      duration_ms: 9.5402
+      type: 'test'
+      ...
+    # Subtest: android credential-revision
+    ok 11 - android credential-revision
+      ---
+      duration_ms: 4.9058
+      type: 'test'
+      ...
+    # Subtest: android credential-metadata
+    ok 12 - android credential-metadata
+      ---
+      duration_ms: 4.5175
+      type: 'test'
+      ...
+    # Subtest: android provider401
+    ok 13 - android provider401
+      ---
+      duration_ms: 4.693
+      type: 'test'
+      ...
+    # Subtest: android provider403
+    ok 14 - android provider403
+      ---
+      duration_ms: 4.7307
+      type: 'test'
+      ...
+    # Subtest: android redirect
+    ok 15 - android redirect
+      ---
+      duration_ms: 5.8764
+      type: 'test'
+      ...
+    # Subtest: android oversize
+    ok 16 - android oversize
+      ---
+      duration_ms: 4.9833
+      type: 'test'
+      ...
+    # Subtest: android graphql-denial
+    ok 17 - android graphql-denial
+      ---
+      duration_ms: 5.1335
+      type: 'test'
+      ...
+    # Subtest: android malformed-graphql-errors
+    not ok 18 - android malformed-graphql-errors
+      ---
+      duration_ms: 12.5047
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoStoreReadiness.security.test.ts:1:6692'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      stack: |-
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoStoreReadiness.security.test.ts:48:9)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoStoreReadiness.security.test.ts:44:374)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: android outage
+    ok 19 - android outage
+      ---
+      duration_ms: 3.7974
+      type: 'test'
+      ...
+    # Subtest: android audit-fail
+    ok 20 - android audit-fail
+      ---
+      duration_ms: 14.2973
+      type: 'test'
+      ...
+    # Subtest: android revoke-at-audit
+    ok 21 - android revoke-at-audit
+      ---
+      duration_ms: 8.6189
+      type: 'test'
+      ...
+    # Subtest: android cancel-at-metadata
+    ok 22 - android cancel-at-metadata
+      ---
+      duration_ms: 4.506
+      type: 'test'
+      ...
+    # Subtest: android fresh-authorized-recovery
+    ok 23 - android fresh-authorized-recovery
+      ---
+      duration_ms: 8.1028
+      type: 'test'
+      ...
+    # Subtest: ios unissued actor
+    ok 24 - ios unissued actor
+      ---
+      duration_ms: 0.2078
+      type: 'test'
+      ...
+    # Subtest: ios unissued actor
+    ok 25 - ios unissued actor
+      ---
+      duration_ms: 0.0672
+      type: 'test'
+      ...
+    # Subtest: ios configured
+    ok 26 - ios configured
+      ---
+      duration_ms: 9.0523
+      type: 'test'
+      ...
+    # Subtest: ios no-saved-configured
+    ok 27 - ios no-saved-configured
+      ---
+      duration_ms: 5.0243
+      type: 'test'
+      ...
+    # Subtest: ios missing
+    ok 28 - ios missing
+      ---
+      duration_ms: 6.1723
+      type: 'test'
+      ...
+    # Subtest: ios mismatch
+    ok 29 - ios mismatch
+      ---
+      duration_ms: 9.3874
+      type: 'test'
+      ...
+    # Subtest: ios foreign-project
+    ok 30 - ios foreign-project
+      ---
+      duration_ms: 11.969
+      type: 'test'
+      ...
+    # Subtest: ios foreign-account
+    ok 31 - ios foreign-account
+      ---
+      duration_ms: 3.8787
+      type: 'test'
+      ...
+    # Subtest: ios foreign-child
+    ok 32 - ios foreign-child
+      ---
+      duration_ms: 4.0487
+      type: 'test'
+      ...
+    # Subtest: ios ambiguous
+    ok 33 - ios ambiguous
+      ---
+      duration_ms: 4.9273
+      type: 'test'
+      ...
+    # Subtest: ios credential-revision
+    ok 34 - ios credential-revision
+      ---
+      duration_ms: 3.4462
+      type: 'test'
+      ...
+    # Subtest: ios credential-metadata
+    ok 35 - ios credential-metadata
+      ---
+      duration_ms: 3.3697
+      type: 'test'
+      ...
+    # Subtest: ios provider401
+    ok 36 - ios provider401
+      ---
+      duration_ms: 2.953
+      type: 'test'
+      ...
+    # Subtest: ios provider403
+    ok 37 - ios provider403
+      ---
+      duration_ms: 2.7183
+      type: 'test'
+      ...
+    # Subtest: ios redirect
+    ok 38 - ios redirect
+      ---
+      duration_ms: 3.0778
+      type: 'test'
+      ...
+    # Subtest: ios oversize
+    ok 39 - ios oversize
+      ---
+      duration_ms: 5.2463
+      type: 'test'
+      ...
+    # Subtest: ios graphql-denial
+    ok 40 - ios graphql-denial
+      ---
+      duration_ms: 4.0392
+      type: 'test'
+      ...
+    # Subtest: ios malformed-graphql-errors
+    not ok 41 - ios malformed-graphql-errors
+      ---
+      duration_ms: 7.1894
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoStoreReadiness.security.test.ts:1:6692'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      stack: |-
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoStoreReadiness.security.test.ts:48:9)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoStoreReadiness.security.test.ts:44:374)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: ios outage
+    ok 42 - ios outage
+      ---
+      duration_ms: 7.8323
+      type: 'test'
+      ...
+    # Subtest: ios audit-fail
+    ok 43 - ios audit-fail
+      ---
+      duration_ms: 4.7081
+      type: 'test'
+      ...
+    # Subtest: ios revoke-at-audit
+    ok 44 - ios revoke-at-audit
+      ---
+      duration_ms: 5.5601
+      type: 'test'
+      ...
+    # Subtest: ios cancel-at-metadata
+    ok 45 - ios cancel-at-metadata
+      ---
+      duration_ms: 2.8396
+      type: 'test'
+      ...
+    # Subtest: ios fresh-authorized-recovery
+    ok 46 - ios fresh-authorized-recovery
+      ---
+      duration_ms: 5.0171
+      type: 'test'
+      ...
+    # Subtest: unknown-extra
+    ok 47 - unknown-extra
+      ---
+      duration_ms: 3.2399
+      type: 'test'
+      ...
+    # Subtest: private-token-uri
+    ok 48 - private-token-uri
+      ---
+      duration_ms: 3.1918
+      type: 'test'
+      ...
+    # Subtest: malformed-key
+    ok 49 - malformed-key
+      ---
+      duration_ms: 2.5298
+      type: 'test'
+      ...
+    1..49
+not ok 1 - actual Expo store verification preserves configured operation and denies raw secret export
+  ---
+  duration_ms: 340.7137
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoStoreReadiness.security.test.ts:1:457'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 50
+# suites 0
+# pass 47
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 903.0271

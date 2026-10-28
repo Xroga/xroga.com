@@ -60,6 +60,12 @@ export function MobilePublishPanel({
   const [legacyApplePassword, setLegacyApplePassword] = useState('');
   const [confirmSubmit, setConfirmSubmit] = useState<'android' | 'ios' | null>(null);
   const [lastRunUrl, setLastRunUrl] = useState<string | null>(null);
+  const [reviewUrl,setReviewUrl]=useState<string|null>(null);
+  function showApproval(result:{needsConfirmation?:boolean;reviewUrl?:string}){
+    if(!result.needsConfirmation)return false;
+    if(!result.reviewUrl||!/^\/dashboard\/actions\/confirm\/[a-f0-9-]{36}$/i.test(result.reviewUrl))throw new Error('The action review link is unavailable. No build was started.');
+    setReviewUrl(result.reviewUrl);toast('Review the exact Expo action before execution.');return true;
+  }
 
   useEffect(() => {
     setEasProjectId(initialEasProjectId ?? '');
@@ -126,6 +132,7 @@ export function MobilePublishPanel({
       const result = await api.publish.saveExpoToken(token);
       setExpoToken('');
       if (result.easProjectId) setEasProjectId(result.easProjectId);
+      showApproval(result);
       toast.success(result.message || 'Expo connected');
       onRefresh();
       void loadApps();
@@ -180,6 +187,7 @@ export function MobilePublishPanel({
         projectId: easProjectId.trim() || undefined,
         submit: false,
       });
+      if(showApproval(result))return;
       if (result.url) setLastRunUrl(result.url);
       toast.success(result.message || `${platform} build started`);
       await loadBuilds();
@@ -258,6 +266,7 @@ export function MobilePublishPanel({
         projectId: easProjectId.trim() || undefined,
         submit: true,
       });
+      if(showApproval(result)){setConfirmSubmit(null);return;}
       if (result.url) setLastRunUrl(result.url);
       toast.success(result.message || 'Submission workflow started');
       setConfirmSubmit(null);
@@ -279,6 +288,7 @@ export function MobilePublishPanel({
 
   return (
     <div className="space-y-5">
+      {reviewUrl ? <a href={reviewUrl} className="block rounded-token-md border border-amber-500/25 p-4 text-sm font-semibold text-[var(--text-primary)]">Review the prepared Expo action. Execution requires confirmation.</a> : null}
       <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -501,7 +511,7 @@ export function MobilePublishPanel({
                 {busy === `build-${platform}` ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                 ) : null}
-                Start {platform === 'ios' ? 'iOS' : 'Android'} build
+                Review {platform === 'ios' ? 'iOS' : 'Android'} build
               </button>
             </div>
           ))}
@@ -645,7 +655,7 @@ export function MobilePublishPanel({
             ) : (
               <button
                 type="button"
-                disabled={!ready || !status?.googlePlaySaved || busy !== null}
+                disabled={!ready || !projectLinked || busy !== null}
                 onClick={() => setConfirmSubmit('android')}
                 className="mt-3 min-h-10 rounded-token-sm bg-[var(--accent)] px-4 text-xs font-semibold text-white disabled:opacity-45"
               >
@@ -741,7 +751,7 @@ export function MobilePublishPanel({
             ) : (
               <button
                 type="button"
-                disabled={!ready || !status?.appleAscApiSaved || busy !== null}
+                disabled={!ready || !projectLinked || busy !== null}
                 onClick={() => setConfirmSubmit('ios')}
                 className="mt-3 min-h-10 rounded-token-sm bg-[var(--accent)] px-4 text-xs font-semibold text-white disabled:opacity-45"
               >

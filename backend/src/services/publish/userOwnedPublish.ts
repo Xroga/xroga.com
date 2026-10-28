@@ -261,7 +261,7 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       label: '2. Connect Expo (access token)',
       done: Boolean(expoKey),
       required: true,
-      hint: 'Paste once — next mobile ship auto-creates/links EAS and starts a build',
+      hint: 'Connect Expo, select an owned project, then review the exact build request',
       href: 'https://expo.dev/settings/access-tokens',
     },
     {
@@ -354,9 +354,9 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       easProjectLinked: Boolean(easProject),
       checklist: mobileChecklist,
       commands: [
-        '# Preferred: Connect Expo once → describe mobile app → Xroga ships + starts EAS',
-        '# Sync Play / Apple ASC buttons push vault creds into Expo via real GraphQL',
-        '# Start EAS Android / iOS with submit when store creds are synced',
+        '# Connect Expo, select an owned project, then review the exact action',
+        '# Configure store keys directly in Expo and verify them here. Saved private keys are not uploaded',
+        '# Each EAS build or submission requires exact durable confirmation',
       ],
     },
     costs: {

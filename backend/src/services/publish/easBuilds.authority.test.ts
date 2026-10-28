@@ -40,5 +40,5 @@ test('EAS reads and polling retain current owned project, cancellation and exact
   const patch=t.mock.method(globalThis,'setTimeout',((callback:()=>void,ms?:number,...args:unknown[])=>{const timer=Reflect.apply(native,globalThis,[callback,ms,...args]);if(ms===31415){waited=true;queueMicrotask(()=>controller.abort());}return timer;})as typeof setTimeout);
   try{await assert.rejects(waitForEasBuildArtifact({userId:owner,tenantContext:context,signal:controller.signal,projectId:'project-a',ignoreBuildIds:[],intervalMs:31415,timeoutMs:60000}));assert.equal(waited,true);assert.equal(buildReads,1);}finally{patch.mock.restore();}
  });
- const pipeline=await readFile(new URL('../../ai/pipeline.ts',import.meta.url),'utf8');assert.match(pipeline,/waitForEasBuildArtifact\(\{\s*userId: opts.userId,\s*projectId: eas.projectId/);assert.match(pipeline,/waitForEasBuildArtifact\(\{\s*userId: opts.userId,\s*projectId: easIos.projectId/);
+ const pipeline=await readFile(new URL('../../ai/pipeline.ts',import.meta.url),'utf8');assert.doesNotMatch(pipeline,/await waitForEasBuildArtifact\(/,'Preparation must not associate an unrelated build-list receipt with an approved workflow');
 });

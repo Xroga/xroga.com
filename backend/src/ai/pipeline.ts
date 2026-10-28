@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto';
-import {AuthorityError} from '../security/authority/enforce.js';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
 import {withTenantModelReservation,requireModelProjectBinding,modelContextNamespace,type TenantModelScope,type BoundModelDispatch} from './tenantModelDispatch.js';
@@ -178,13 +177,6 @@ import {
 } from '../services/publish/easPublish.js';
 import { publishChromeExtensionToStore } from '../services/publish/chromeWebStore.js';
 import { syncElectronSigningSecretsToGitHub } from '../services/publish/electronSecrets.js';
-import {
-  syncGooglePlayCredentialsToExpo,
-  syncAppleAscApiKeyToExpo,
-  waitForEasBuildArtifact,
-  listEasBuilds,
-  packageIdFromProjectName,
-} from '../services/publish/easCredentials.js';
 import { ensureScaffoldIntegrity } from '../services/scaffolds/scaffoldIntegrity.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
@@ -4044,6 +4036,8 @@ publicationReason:
       const linked = await ensureExpoProjectLinked({
         userId: opts.userId,
         projectName,
+        tenantContext,
+        signal:opts.signal,
       });
       if (linked.projectId) {
         nextFiles = patchExpoProjectIdInFiles(nextFiles, linked.projectId);
@@ -4056,6 +4050,8 @@ publicationReason:
           swarmActivity: linked.projectId.slice(0, 12),
           swarmTodos: todos('push'),
         });
+      } else if(linked.needsConfirmation&&linked.reviewUrl){
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact Expo app creation: [Review action](${linked.reviewUrl}). No app or build has been created.`,swarmStatusLabel:'Approval required',swarmActivity:'Expo app creation awaits approval',swarmTodos:todos('push')});
       } else if (linked.error === 'NEED_PROJECT_PICK') {
         emit({
           agent: 'deploy',
@@ -4452,223 +4448,26 @@ publicationReason:
     }
   }
 
-  // Expo: auto-trigger EAS build, poll artifact, optionally submit when store creds synced
+  // Expo: prepare one exact build approval. A saved key never authorizes submission.
   if (githubPushConfirmed && productScaffoldKind === 'expo') {
-    const expoToken = await getUserProviderKey(opts.userId, 'expo').catch(() => null);
-    if (expoToken) {
-      // Best-effort: push store credentials into Expo before submit
-      const google = await getUserProviderKey(opts.userId, 'google_play').catch(() => null);
-      const appleAsc = await getUserProviderKey(opts.userId, 'apple_asc_api').catch(() => null);
-      const pkgId = packageIdFromProjectName(projectName);
-      if (google) {
-        const synced = await syncGooglePlayCredentialsToExpo({
-          userId: opts.userId,
-          tenantContext,
-          signal:opts.signal,
-          applicationIdentifier: pkgId,
-          projectName,
-        });
-        emit({
-          agent: 'deploy',
-          status: synced.ok ? 'eas_creds' : 'eas_creds_skip',
-          message: synced.message,
-          swarmStatusLabel: synced.ok ? 'Expo Play configuration verified' : 'Play configuration required',
-          swarmActivity: synced.message.slice(0, 80),
-          swarmTodos: todos('push'),
-        });
-        if(!synced.ok)throw new AuthorityError('EXPO_STORE_CONFIGURATION_REQUIRED');
-      }
-      if (appleAsc) {
-        const syncedApple = await syncAppleAscApiKeyToExpo({
-          userId: opts.userId,
-          tenantContext,
-          signal:opts.signal,
-          bundleIdentifier: pkgId,
-          projectName,
-        });
-        emit({
-          agent: 'deploy',
-          status: syncedApple.ok ? 'eas_apple_creds' : 'eas_apple_creds_skip',
-          message: syncedApple.message,
-          swarmStatusLabel: syncedApple.ok ? 'Expo Apple configuration verified' : 'Apple configuration required',
-          swarmActivity: syncedApple.message.slice(0, 80),
-          swarmTodos: todos('push'),
-        });
-        if(!syncedApple.ok)throw new AuthorityError('EXPO_STORE_CONFIGURATION_REQUIRED');
-      }
-
-      const wantAndroidSubmit = Boolean(google);
-      const wantIosSubmit = Boolean(appleAsc);
-      const priorBuilds = await listEasBuilds({ userId: opts.userId,tenantContext,signal:opts.signal, limit: 10 });
-      const ignoreBuildIds = priorBuilds.map((b) => b.id);
-      const startedAfterMs = Date.now() - 15_000;
-
-      emit({
-        agent: 'deploy',
-        status: 'eas_dispatch',
-        message: wantAndroidSubmit
-          ? 'Starting EAS Android build + store submit on your Expo account…'
-          : 'Starting EAS Android build on your Expo account…',
-        swarmStatusLabel: 'EAS',
-        swarmActivity: wantAndroidSubmit ? 'publish-android' : 'build-android',
-        swarmTodos: todos('push'),
+    try {
+      const prepared = await triggerEasPublish({
+        userId: opts.userId, tenantContext, signal: opts.signal,
+        databaseProjectId:admittedDatabaseProjectId??undefined,
+        platform: 'android', gitRef: commitSha || githubBranch || 'main',
+        submit: false, projectName,
       });
-      try {
-        const eas = await triggerEasPublish({
-          userId: opts.userId,
-          platform: 'android',
-          gitRef: githubBranch || 'main',
-          submit: wantAndroidSubmit,
-          projectName,
-        });
-        if (eas.ok) {
-          easTriggered = true;
-          easUrl = eas.url;
-          easStoreSubmitted = wantAndroidSubmit && /publish|submit/i.test(eas.fileName || '');
-          emit({
-            agent: 'deploy',
-            status: 'eas_started',
-            message: eas.message,
-            swarmStatusLabel: 'EAS started',
-            swarmActivity: eas.url || eas.fileName,
-            swarmTodos: todos('push'),
-          });
-
-          const waited = await waitForEasBuildArtifact({
-            userId: opts.userId,
-            projectId: eas.projectId,
-            tenantContext,
-            signal:opts.signal,
-            platform: 'android',
-            timeoutMs: 8 * 60 * 1000,
-            ignoreBuildIds,
-            startedAfterMs,
-            onProgress: (msg) => {
-              emit({
-                agent: 'deploy',
-                status: 'eas_waiting',
-                message: msg,
-                swarmStatusLabel: 'EAS building',
-                swarmActivity: easUrl || 'expo.dev',
-                swarmTodos: todos('push'),
-              });
-            },
-          });
-          if (waited.ok && waited.build) {
-            easBuildOk = true;
-            easArtifactUrl =
-              waited.build.artifactUrl || waited.build.buildDetailsPageUrl;
-            emit({
-              agent: 'deploy',
-              status: 'eas_ready',
-              message: waited.message,
-              swarmStatusLabel: 'EAS binary ready',
-              swarmActivity: easArtifactUrl?.slice(0, 80) || 'artifact',
-              swarmTodos: todos('push'),
-            });
-          } else {
-            easError = waited.message;
-          }
-        } else {
-          easError = eas.message || eas.error || 'EAS dispatch failed';
-          emit({
-            agent: 'deploy',
-            status: 'eas_skipped',
-            message: easError,
-            swarmStatusLabel: 'EAS needs setup',
-            swarmActivity: easError.slice(0, 100),
-            swarmTodos: todos('push'),
-          });
-        }
-
-        // iOS path when ASC API key is in vault (parallel store track — does not block Android)
-        if (wantIosSubmit) {
-          emit({
-            agent: 'deploy',
-            status: 'eas_ios_dispatch',
-            message: 'Starting EAS iOS build + App Store submit on your Expo account…',
-            swarmStatusLabel: 'EAS iOS',
-            swarmActivity: 'publish-ios',
-            swarmTodos: todos('push'),
-          });
-          const easIos = await triggerEasPublish({
-            userId: opts.userId,
-            platform: 'ios',
-            gitRef: githubBranch || 'main',
-            submit: true,
-            projectName,
-          });
-          if (easIos.ok) {
-            easTriggered = true;
-            easUrl = easIos.url || easUrl;
-            easStoreSubmitted = true;
-            emit({
-              agent: 'deploy',
-              status: 'eas_ios_started',
-              message: easIos.message,
-              swarmStatusLabel: 'EAS iOS started',
-              swarmActivity: easIos.url || easIos.fileName,
-              swarmTodos: todos('push'),
-            });
-            const waitedIos = await waitForEasBuildArtifact({
-              userId: opts.userId,
-              projectId: easIos.projectId,
-              tenantContext,
-              signal:opts.signal,
-              platform: 'ios',
-              timeoutMs: 6 * 60 * 1000,
-              ignoreBuildIds,
-              startedAfterMs,
-              onProgress: (msg) => {
-                emit({
-                  agent: 'deploy',
-                  status: 'eas_ios_waiting',
-                  message: msg,
-                  swarmStatusLabel: 'EAS iOS building',
-                  swarmActivity: easUrl || 'expo.dev',
-                  swarmTodos: todos('push'),
-                });
-              },
-            });
-            if (waitedIos.ok && waitedIos.build) {
-              easBuildOk = true;
-              if (!easArtifactUrl) {
-                easArtifactUrl =
-                  waitedIos.build.artifactUrl || waitedIos.build.buildDetailsPageUrl;
-              }
-              emit({
-                agent: 'deploy',
-                status: 'eas_ios_ready',
-                message: waitedIos.message,
-                swarmStatusLabel: 'EAS iOS ready',
-                swarmActivity: (easArtifactUrl || '').slice(0, 80) || 'artifact',
-                swarmTodos: todos('push'),
-              });
-            }
-          } else {
-            emit({
-              agent: 'deploy',
-              status: 'eas_ios_skipped',
-              message: easIos.message || easIos.error || 'iOS EAS dispatch failed',
-              swarmStatusLabel: 'EAS iOS',
-              swarmActivity: (easIos.message || '').slice(0, 100),
-              swarmTodos: todos('push'),
-            });
-          }
-        }
-      } catch (err) {
-        easError = (err as Error).message;
-        emit({
-          agent: 'deploy',
-          status: 'eas_error',
-          message: easError,
-          swarmStatusLabel: 'EAS error',
-          swarmActivity: easError.slice(0, 100),
-          swarmTodos: todos('push'),
-        });
+      if (prepared.needsConfirmation && prepared.reviewUrl) {
+        easError = `Expo action awaits approval: ${prepared.reviewUrl}`;
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact Expo build: [Review action](${prepared.reviewUrl}). No build or store submission has started.`,swarmStatusLabel:'Approval required',swarmActivity:'Expo build awaits approval',swarmTodos:todos('push')});
+      } else {
+        easError = prepared.message || 'Select an owned Expo project in Publish.';
+        emit({agent:'deploy',status:'eas_skipped',message:easError,swarmStatusLabel:'Expo setup required',swarmActivity:easError.slice(0,100),swarmTodos:todos('push')});
       }
-    } else {
-      easError = 'No Expo token — Connect Expo in Publish to start EAS builds automatically';
+    } catch (error) {
+      if (isTerminalModelFailure(error)) throw error;
+      easError = (error as Error).message;
+      emit({agent:'deploy',status:'eas_error',message:easError,swarmStatusLabel:'Expo request unavailable',swarmActivity:easError.slice(0,100),swarmTodos:todos('push')});
     }
   }
 
@@ -5092,7 +4891,7 @@ publicationReason:
                 : productScaffoldKind === 'expo'
                   ? easBuildOk
                     ? `**${projectName}** EAS binary ready${easStoreSubmitted ? ' + store submit started (awaiting Apple/Google)' : ''}.`
-                    : `**${projectName}** on GitHub${easTriggered ? ' + EAS building' : ' — Connect Expo to auto-build'}.`
+                    : `**${projectName}** on GitHub. ${easError || 'Open Publish to review an Expo build request.'}`
                   : `**${projectName}** handoff ready.`
             : buildOk
               ? `Built **${projectName}** — **not fully shipped.** ${finalBlockers[0] || 'Finish integrations / artifacts below.'}`

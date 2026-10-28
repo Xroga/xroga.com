@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c17eb7e512c89aa5dba00730a150344ab839b5221ddc85c4bef96e4d0006f628",
+  "reviewRegistrySha256": "54bf8ed6e7e447a8fc8bf2847fc68a4ad7662b82598180322233b7035cc3a0af",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 204,
-    "persistenceCandidates": 845,
-    "ownerPredicateCandidates": 223,
+    "privilegedFactorySites": 205,
+    "persistenceCandidates": 852,
+    "ownerPredicateCandidates": 225,
     "reviewRequired": 126,
-    "reviewedCandidates": 719,
+    "reviewedCandidates": 726,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 477,
+    "SCOPED_BOUNDARY": 479,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 169,
+    "NOT_PERSISTENCE": 174,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 84,
-    "unresolvedCandidateBoundaries": 761,
+    "unresolvedCandidateBoundaries": 768,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3444,11 +3444,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "704187e956115d9aa476"
+        "id": "e4d85b225c1b15ed81a5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "29355a8ed40d9768bdd2"
+        "id": "86c1d25d68f4d6dc4446"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4864,11 +4864,39 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "830d44b7069ecb028334"
+        "id": "0451e237441c07358ba9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "13a489a31a9849b826e4"
+        "id": "230cf93f46dcdc2cf5d4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "01d0276d1d28426b4383"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "18fe16cde574a3f06672"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b4a994aa5a3662c92dbf"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "406cbb9d8508ff5fed7f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "fe6a0e4b32f3303ae21b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "dd7a8355e62b9282712e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "68c2d76184845b91d8ae"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6100,11 +6128,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "704187e956115d9aa476"
+        "id": "e4d85b225c1b15ed81a5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "29355a8ed40d9768bdd2"
+        "id": "86c1d25d68f4d6dc4446"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8012,11 +8040,39 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "830d44b7069ecb028334"
+        "id": "0451e237441c07358ba9"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "13a489a31a9849b826e4"
+        "id": "230cf93f46dcdc2cf5d4"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "01d0276d1d28426b4383"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "18fe16cde574a3f06672"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b4a994aa5a3662c92dbf"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "406cbb9d8508ff5fed7f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "fe6a0e4b32f3303ae21b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "dd7a8355e62b9282712e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "68c2d76184845b91d8ae"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8433,11 +8489,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 845,
+    "currentCallers": 852,
     "structuredVerified": 84,
-    "structuredUnproven": 761,
+    "structuredUnproven": 768,
     "manualUnresolved": 159,
-    "manualUnsupported": 602,
+    "manualUnsupported": 609,
     "agreedVerified": 84,
     "proofAwaitingManualReconciliation": 0
   },
@@ -9034,15 +9090,15 @@
       }
     },
     {
-      "id": "704187e956115d9aa476",
+      "id": "e4d85b225c1b15ed81a5",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3784,
+      "line": 3776,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9055,15 +9111,15 @@
       }
     },
     {
-      "id": "29355a8ed40d9768bdd2",
+      "id": "86c1d25d68f4d6dc4446",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3964,
+      "line": 3956,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -22327,15 +22383,15 @@
       }
     },
     {
-      "id": "830d44b7069ecb028334",
+      "id": "0451e237441c07358ba9",
       "path": "backend/src/services/publish/expoAccess.ts",
-      "line": 27,
+      "line": 28,
       "enclosing": "rowFingerprint",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+      "sourceSha256": "27f443c736f0584985db9f884febe46c342e4d512228a32adb51506d7d14fd3c",
       "semanticReview": {
         "authority": "Original issued actor required before tenant client. Exact owner and finite canonical provider row constrain full connection fingerprint reads. No raw user ID authorization or fabricated-context fallback. Current revision, ciphertext and all metadata remain pinned before/after waits.",
         "reason": "Read-only Expo metadata helper only. No remote mutation or workflow authority is granted. Remaining shared callers and original Phase4 acceptance stay open.",
@@ -22352,15 +22408,15 @@
       }
     },
     {
-      "id": "13a489a31a9849b826e4",
+      "id": "230cf93f46dcdc2cf5d4",
       "path": "backend/src/services/publish/expoAccess.ts",
-      "line": 27,
+      "line": 28,
       "enclosing": "rowFingerprint",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910",
+      "sourceSha256": "27f443c736f0584985db9f884febe46c342e4d512228a32adb51506d7d14fd3c",
       "semanticReview": {
         "authority": "Original issued actor required before tenant client. Exact owner and finite canonical provider row constrain full connection fingerprint reads. No raw user ID authorization or fabricated-context fallback. Current revision, ciphertext and all metadata remain pinned before/after waits.",
         "reason": "Read-only Expo metadata helper only. No remote mutation or workflow authority is granted. Remaining shared callers and original Phase4 acceptance stay open.",
@@ -22372,6 +22428,181 @@
           {
             "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
             "marker": "actual Expo store verification preserves configured operation and denies raw secret export"
+          }
+        ]
+      }
+    },
+    {
+      "id": "01d0276d1d28426b4383",
+      "path": "backend/src/services/publish/expoApproval.ts",
+      "line": 51,
+      "enclosing": "readExpoNativeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "43311a8585fb2fc86dccda26962358838627e0c7d03095f4c148eca60b18dcf2",
+      "semanticReview": {
+        "authority": "Only original native actor from genuine permit. Full unsigned-plan producer attestation is verified before provider metadata. Current canonical confirmation is constrained by exact owner/grant, executing status, plan digest, expiry and claimed/effect timestamps before and after waits. Existing consumeAuthorityPermit performs the durable one-use effect claim.",
+        "reason": "Only these current claim reads are reviewed. No raw owner, caller-supplied grant, new store or general Phase2/Phase4 acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoApproval.ts",
+            "marker": "export async function readExpoNativeAction"
+          },
+          {
+            "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+            "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "18fe16cde574a3f06672",
+      "path": "backend/src/services/publish/expoApproval.ts",
+      "line": 51,
+      "enclosing": "readExpoNativeAction",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "43311a8585fb2fc86dccda26962358838627e0c7d03095f4c148eca60b18dcf2",
+      "semanticReview": {
+        "authority": "Only original native actor from genuine permit. Full unsigned-plan producer attestation is verified before provider metadata. Current canonical confirmation is constrained by exact owner/grant, executing status, plan digest, expiry and claimed/effect timestamps before and after waits. Existing consumeAuthorityPermit performs the durable one-use effect claim.",
+        "reason": "Only these current claim reads are reviewed. No raw owner, caller-supplied grant, new store or general Phase2/Phase4 acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoApproval.ts",
+            "marker": "export async function readExpoNativeAction"
+          },
+          {
+            "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+            "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b4a994aa5a3662c92dbf",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 47,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0",
+      "semanticReview": {
+        "authority": "Exactly four local Buffer.from conversions decode validated base64 Git bytes or transient held-value encodings. One Array.from creates a bounded four-reader Promise pool. These receivers are native data constructors, not a database or bucket.",
+        "reason": "Remote reads still pass the original canonical GitHub reader, owned project and current source/claim checks. This native-conversion disposition excludes no provider request, source inspection, external action or original acceptance obligation.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoWorkflow.ts",
+            "marker": "async function workflowSource"
+          },
+          {
+            "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+            "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "406cbb9d8508ff5fed7f",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 48,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0",
+      "semanticReview": {
+        "authority": "Exactly four local Buffer.from conversions decode validated base64 Git bytes or transient held-value encodings. One Array.from creates a bounded four-reader Promise pool. These receivers are native data constructors, not a database or bucket.",
+        "reason": "Remote reads still pass the original canonical GitHub reader, owned project and current source/claim checks. This native-conversion disposition excludes no provider request, source inspection, external action or original acceptance obligation.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoWorkflow.ts",
+            "marker": "async function workflowSource"
+          },
+          {
+            "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+            "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fe6a0e4b32f3303ae21b",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 48,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0",
+      "semanticReview": {
+        "authority": "Exactly four local Buffer.from conversions decode validated base64 Git bytes or transient held-value encodings. One Array.from creates a bounded four-reader Promise pool. These receivers are native data constructors, not a database or bucket.",
+        "reason": "Remote reads still pass the original canonical GitHub reader, owned project and current source/claim checks. This native-conversion disposition excludes no provider request, source inspection, external action or original acceptance obligation.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoWorkflow.ts",
+            "marker": "async function workflowSource"
+          },
+          {
+            "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+            "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dd7a8355e62b9282712e",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 59,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0",
+      "semanticReview": {
+        "authority": "Exactly four local Buffer.from conversions decode validated base64 Git bytes or transient held-value encodings. One Array.from creates a bounded four-reader Promise pool. These receivers are native data constructors, not a database or bucket.",
+        "reason": "Remote reads still pass the original canonical GitHub reader, owned project and current source/claim checks. This native-conversion disposition excludes no provider request, source inspection, external action or original acceptance obligation.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoWorkflow.ts",
+            "marker": "async function workflowSource"
+          },
+          {
+            "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+            "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "68c2d76184845b91d8ae",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 63,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0",
+      "semanticReview": {
+        "authority": "Exactly four local Buffer.from conversions decode validated base64 Git bytes or transient held-value encodings. One Array.from creates a bounded four-reader Promise pool. These receivers are native data constructors, not a database or bucket.",
+        "reason": "Remote reads still pass the original canonical GitHub reader, owned project and current source/claim checks. This native-conversion disposition excludes no provider request, source inspection, external action or original acceptance obligation.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/expoWorkflow.ts",
+            "marker": "async function workflowSource"
+          },
+          {
+            "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+            "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
           }
         ]
       }

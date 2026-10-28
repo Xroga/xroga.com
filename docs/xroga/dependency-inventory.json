@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a8c663defebf0a73a9895fffc5a6641b195042c9",
+  "source_sha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1356,7 +1356,9 @@
       "config_sources": [
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/easPublish.ts",
-        "backend/src/services/publish/expoStoreReadiness.ts"
+        "backend/src/services/publish/expoApproval.ts",
+        "backend/src/services/publish/expoStoreReadiness.ts",
+        "backend/src/services/publish/expoWorkflow.ts"
       ],
       "hostnames": [
         "api.expo.dev"
@@ -1379,7 +1381,9 @@
       "observability_source": [
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/easPublish.ts",
-        "backend/src/services/publish/expoStoreReadiness.ts"
+        "backend/src/services/publish/expoApproval.ts",
+        "backend/src/services/publish/expoStoreReadiness.ts",
+        "backend/src/services/publish/expoWorkflow.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -3680,6 +3684,7 @@
       "config_sources": [
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/expoStoreReadiness.ts",
+        "backend/src/services/publish/expoWorkflow.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
       ],
@@ -3704,6 +3709,7 @@
       "observability_source": [
         "backend/src/services/publish/easCredentials.ts",
         "backend/src/services/publish/expoStoreReadiness.ts",
+        "backend/src/services/publish/expoWorkflow.ts",
         "backend/src/services/publish/userOwnedPublish.ts",
         "frontend/src/components/publish/MobilePublishPanel.tsx"
       ],
@@ -15022,7 +15028,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7"
+      "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16074,7 +16080,7 @@
     },
     {
       "path": "backend/src/routes/publish.ts",
-      "sha256": "c432413be66981b65436cc7d1d1158a47beb4a5ddcd3e8b4fb23a32825c3d61a"
+      "sha256": "145e0d250a83c52d4f019f85fd549a63c93816c55e0dc01877553748d8e3bb5c"
     },
     {
       "path": "backend/src/routes/referrals.ts",
@@ -16526,7 +16532,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
+      "sha256": "86ee4caa462432568293d0072110826643b665e774db1a6ed1f82c557dee7726"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16718,11 +16724,11 @@
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "sha256": "e03f37f68b1dad629639fbc0f98b93bc0dfe32371bd073ba3c82e81e606581b9"
+      "sha256": "4d943522bba020a8eaf5268a8da948f814a3ca4c6e4359a6004185c5b59b9e5e"
     },
     {
       "path": "backend/src/services/publish/easPublish.ts",
-      "sha256": "39f3d39588b965933172f429ecd72ae00cf8ec3f64ceb1cd5f47eaa51af045aa"
+      "sha256": "7c744ca46dc7562a29dedcf26c9f64902ba64d61bf360012dd9e845530e1bdec"
     },
     {
       "path": "backend/src/services/publish/electronSecrets.ts",
@@ -16730,7 +16736,11 @@
     },
     {
       "path": "backend/src/services/publish/expoAccess.ts",
-      "sha256": "3d9ee8a33567b8a78c159bd3e15e7b492975d6cce78f2c9e0cb59fb9722b3910"
+      "sha256": "27f443c736f0584985db9f884febe46c342e4d512228a32adb51506d7d14fd3c"
+    },
+    {
+      "path": "backend/src/services/publish/expoApproval.ts",
+      "sha256": "43311a8585fb2fc86dccda26962358838627e0c7d03095f4c148eca60b18dcf2"
     },
     {
       "path": "backend/src/services/publish/expoCredentialMaterial.ts",
@@ -16739,6 +16749,10 @@
     {
       "path": "backend/src/services/publish/expoStoreReadiness.ts",
       "sha256": "f7dc2d1500527b629be96864f9a87a7cf04973e6dab3417f09b9d58512ad361e"
+    },
+    {
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "sha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0"
     },
     {
       "path": "backend/src/services/publish/nativeArtifact.ts",
@@ -16754,7 +16768,7 @@
     },
     {
       "path": "backend/src/services/publish/userOwnedPublish.ts",
-      "sha256": "5dd9bf3f4db350462eb197321f9c73c343e3ba4a33247157c47502ce6737b3e7"
+      "sha256": "f53f9f8ffb9bad01a773cd1d2a8ecaa3599f5e2a919180d4451bfb6803b10bde"
     },
     {
       "path": "backend/src/services/referralService.ts",
@@ -19586,7 +19600,7 @@
     },
     {
       "path": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "sha256": "6afb29185d4ed60d2242f4aba5148c9ea181cc1d40c1fc4c0a3edb729b2dad68"
+      "sha256": "1d76a84c4dafa8ec7bbbe0817e86fd2177c5e80c7202a02a76f6f64c6fb403e3"
     },
     {
       "path": "frontend/src/components/publish/PublishPrimitives.tsx",
@@ -20310,7 +20324,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "dfd6cb0926e5c496d7c0561a9cb5ddeeb1b8ca92542a21cf12d3e14183dd0c85"
+      "sha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22235,7 +22249,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4012,
+      "line": 4004,
       "credentialsInUrl": false
     },
     {
@@ -24433,14 +24447,14 @@
       "hostname": "expo.dev",
       "protocol": "https:",
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 82,
+      "line": 83,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.expo.dev",
       "protocol": "https:",
       "path": "backend/src/services/publish/easPublish.ts",
-      "line": 15,
+      "line": 18,
       "credentialsInUrl": false
     },
     {
@@ -24462,6 +24476,20 @@
       "protocol": "https:",
       "path": "backend/src/services/publish/electronSecrets.ts",
       "line": 94,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.expo.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoApproval.ts",
+      "line": 22,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.expo.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoApproval.ts",
+      "line": 22,
       "credentialsInUrl": false
     },
     {
@@ -24518,6 +24546,27 @@
       "protocol": "https:",
       "path": "backend/src/services/publish/expoStoreReadiness.ts",
       "line": 24,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.expo.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 15,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.expo.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 95,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "expo.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "line": 124,
       "credentialsInUrl": false
     },
     {
@@ -26253,21 +26302,21 @@
       "hostname": "expo.dev",
       "protocol": "https:",
       "path": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 385,
+      "line": 395,
       "credentialsInUrl": false
     },
     {
       "hostname": "play.google.com",
       "protocol": "https:",
       "path": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 611,
+      "line": 621,
       "credentialsInUrl": false
     },
     {
       "hostname": "appstoreconnect.apple.com",
       "protocol": "https:",
       "path": "frontend/src/components/publish/MobilePublishPanel.tsx",
-      "line": 707,
+      "line": 717,
       "credentialsInUrl": false
     },
     {
@@ -28794,56 +28843,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 533,
+      "line": 525,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 563,
+      "line": 555,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1113,
+      "line": 1105,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1483,
+      "line": 1475,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2226,
+      "line": 2218,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3782,
+      "line": 3774,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3962,
+      "line": 3954,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4926,
+      "line": 4725,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31139,42 +31188,63 @@
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 84,
+      "line": 85,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 120,
+      "line": 121,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/easCredentials.ts",
-      "line": 123,
+      "line": 124,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/easPublish.ts",
+      "line": 112,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/easPublish.ts",
+      "line": 127,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/publish/easPublish.ts",
+      "line": 155,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/expoAccess.ts",
-      "line": 9,
+      "line": 10,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/expoAccess.ts",
-      "line": 36,
+      "line": 37,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/publish/expoAccess.ts",
-      "line": 87,
+      "line": 104,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
