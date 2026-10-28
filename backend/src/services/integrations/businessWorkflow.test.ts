@@ -52,6 +52,10 @@ test('passes a created artifact to the later request for its link', () => {
 
 test('does not turn a public search, ordinary sentence, or ambiguous clause into an app workflow', () => {
   assert.equal(splitExplicitBusinessWorkflow('Search the web for flights and send me options'), null);
+  assert.deepEqual(splitExplicitBusinessWorkflow('Search the public web for NASA APOD; create a new Google Sheets spreadsheet with its title'), [
+    { kind: 'web', request: 'Search the public web for NASA APOD', dependsOnPrevious: false },
+    { kind: 'action', request: 'create a new Google Sheets spreadsheet with its title', dependsOnPrevious: true },
+  ]);
   assert.equal(splitExplicitBusinessWorkflow('Explain Gmail and calendar integrations'), null);
   assert.equal(splitExplicitBusinessWorkflow('Send the email and be concise'), null);
   assert.equal(splitExplicitBusinessWorkflow('Send an email to Jane, John, and Alex'), null);
@@ -80,6 +84,18 @@ test('accepts only exact source-bound app and web steps, deriving dependencies o
     { kind: 'web', request: 'Search the web for current fares', dependsOnPrevious: false },
     { kind: 'action', request: 'email them to Jane', dependsOnPrevious: true },
   ]);
+  const publicWebMessage = 'Search the public web for NASA APOD; create a new Google Sheets spreadsheet with its title';
+  const publicWebSteps = [
+    { kind: 'web', request: 'Search the public web for NASA APOD' },
+    { kind: 'action', request: 'create a new Google Sheets spreadsheet with its title' },
+  ];
+  assert.deepEqual(validateSourceBoundBusinessWorkflow(publicWebMessage, publicWebSteps, new Set(['web', 'read', 'action'])), [
+    { ...publicWebSteps[0], dependsOnPrevious: false },
+    { ...publicWebSteps[1], dependsOnPrevious: true },
+  ]);
+  assert.equal(validateSourceBoundBusinessWorkflow(publicWebMessage, [
+    { ...publicWebSteps[0], kind: 'read' }, publicWebSteps[1],
+  ], new Set(['web', 'read', 'action'])), null);
 });
 
 test('rejects paraphrases, unapproved kinds, and omitted middle or final actions', () => {

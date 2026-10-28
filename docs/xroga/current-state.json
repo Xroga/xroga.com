@@ -23640,7 +23640,7 @@
       "id": "surface:0756eaaa034fcdc72577",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "2f5d0b91d6c79c58d6425155d9db88be2a7bcb43e4b8e946f3201eb8980975cc",
+      "sha256": "3a706dc3d6f196e75fc1cddc420995b8e1a79edaf477f6fb348aeba573c7dcd2",
       "symbols": [
         "ACTION_VERBS",
         "BusinessWorkflowStep",
@@ -23657,6 +23657,7 @@
         "clauses",
         "index",
         "kind",
+        "mentionsPublicWeb",
         "offset",
         "remainder",
         "request",

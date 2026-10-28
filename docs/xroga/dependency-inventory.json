@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "51ef9aedb2787aab28ce00d52443e7d1d4038e1a",
+  "source_sha": "58f713838d7dff5b163f1bf4b4a0a590d1a2f6d6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15309,7 +15309,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "2f5d0b91d6c79c58d6425155d9db88be2a7bcb43e4b8e946f3201eb8980975cc"
+      "sha256": "3a706dc3d6f196e75fc1cddc420995b8e1a79edaf477f6fb348aeba573c7dcd2"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowPlanner.ts",

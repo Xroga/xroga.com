@@ -15,7 +15,7 @@ const READ_VERBS = /^(?:please\s+)?(?:find|search|list|show|check|look up|lookup
 const ACTION_VERBS = /^(?:please\s+)?(?:send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|invite|add|put|save|move|copy|attach|submit|set|archive|reply|refund|transfer|pay|share)\b/i;
 const NEXT_TASK = /(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|get|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|invite|add|put|save|move|copy|attach|submit|set|archive|reply|refund|transfer|pay|share)\b/i;
 const DEPENDENT_REFERENCE = /\b(?:them|those|these|it|its|that|their|each|every|all|found|matching|(?:qualified|selected|chosen)\s+ones|top\s+\d+|first\s+\d+|(?:the|those|these|a)\s+(?:results?|summary|options|findings|report|information|data|details|spreadsheet|sheet|document|file|link|task|event|draft|record)|the (?:people|clients|leads|items|records|files|events|messages) (?:you|we) (?:found|created|listed)|from (?:that|the previous) (?:step|search)|(?:based on|using|from)\s+(?:the|those|this|that))\b/i;
-const WEB_REQUEST = /^(?:please\s+)?(?:search|research|look up|find|check)\s+(?:the\s+)?(?:web|internet|online)\b/i;
+const WEB_REQUEST = /^(?:please\s+)?(?:search|research|look up|find|check)\s+(?:the\s+)?(?:public\s+)?(?:web|internet|online)\b/i;
 const NEGATED_ACTION = /^(?:please\s+)?(?:do\s+not|don't|never|avoid)\b/i;
 const NEGATED_PREFIX = /\b(?:do\s+not|don't|never|avoid|without)\s+$/i;
 const UNACCOUNTED_TASK = /(?:^|[.;]\s*|,\s*(?:and\s+)?|\b(?:and|then|also)\s+)(?:please\s+)?(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b/i;
@@ -54,7 +54,8 @@ export function validateSourceBoundBusinessWorkflow(
 
 export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflowStep[] | null {
   const text = message.trim();
-  if (text.length < 8 || text.length > 1_500 || /\b(?:web|internet)\s+(?:search|research)|\bsearch\s+(?:the\s+)?(?:web|internet)\b/i.test(text)) {
+  const mentionsPublicWeb = /\b(?:web|internet)\s+(?:search|research)|\bsearch\s+(?:the\s+)?(?:public\s+)?(?:web|internet)\b/i.test(text);
+  if (text.length < 8 || text.length > 1_500 || (mentionsPublicWeb && !/[;\n]/.test(text))) {
     return null;
   }
 
@@ -64,7 +65,7 @@ export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflow
 
   const steps: BusinessWorkflowStep[] = [];
   for (const request of clauses) {
-    const kind = ACTION_VERBS.test(request) ? 'action' : READ_VERBS.test(request) ? 'read' : null;
+    const kind = WEB_REQUEST.test(request) ? 'web' : ACTION_VERBS.test(request) ? 'action' : READ_VERBS.test(request) ? 'read' : null;
     if (!kind) return null;
     steps.push({
       kind,
