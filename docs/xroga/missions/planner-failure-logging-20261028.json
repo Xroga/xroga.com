@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-PLANNER-FAILURE-LOGGING-20261028",
+  "baseSha": "7674dccc24fb632a9e136b5690c92d98d47ad81c",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Live authenticated Batch 2 builds fail at the semantic planner with PLANNER_SCHEMA_INVALID or PLANNER_INVALID_OUTPUT, and the validation detail is discarded. Log reason, repair count and a 300-character validation detail (never the prompt or raw reply) so the cause is visible.",
+  "changedFiles": [
+    "backend/src/ai/universal/plannerFailureLogging.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "docs/xroga/missions/planner-failure-logging-20261028.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Planner contract and failure codes are unchanged"
+    ],
+    "extend": [
+      "Planner failure now emits one bounded diagnostic log line"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change.",
+    "rollback": "Revert the commit and redeploy the previous image."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress change; the line goes to the existing process log only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --experimental-strip-types --test backend/src/ai/universal/plannerFailureLogging.test.ts",
+      "scope": "Log line carries reason, repairs and bounded detail and excludes the prompt and raw reply. 2 PASS.",
+      "negative": true,
+      "reference": "backend/src/ai/universal/plannerFailureLogging.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adds one log line inside the existing planner. No new orchestrator or control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks, build the release image, create a 0% revision, then repeat the authenticated build to read the log line.",
+  "rollback": "Revert the commit and redeploy; restore the previous service revision and Job image and label.",
+  "knownGaps": [
+    "Does not fix the planner failure; it only makes the cause visible"
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch 2 building is not accepted until a live authenticated build saves a revision"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and merge",
+      "Release image build and deploy",
+      "Live authenticated Batch 2 build evidence"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "backend/src/ai/universal/plannerFailureLogging.test.ts"
+  ]
+}

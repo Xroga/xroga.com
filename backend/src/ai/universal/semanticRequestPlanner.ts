@@ -1093,6 +1093,14 @@ export async function resolveStructuredGoalContract(
     generated.detail !==
       'the model returned no content';
 
+  console.warn(
+    `[planner-failure] ${JSON.stringify({
+      reason: generated.reason,
+      repairs: generated.repairs,
+      detail: String(generated.detail).slice(0, 300),
+    })}`,
+  );
+
   throw new RuntimeFailure(
     schemaFailure
       ? 'PLANNER_SCHEMA_INVALID'

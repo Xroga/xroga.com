@@ -10560,7 +10560,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "17462981dde40052b3639d88e77c44f0e4a6e910a5f5e8c843ea5e1de8d7532c",
+      "sha256": "74689dacbb68a16efce53a1f17ce31d02a5f5489aac52f89c84f170a1c986bbe",
       "symbols": [
         "PlannerRouteOutcome",
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
@@ -126004,6 +126004,13 @@
       "id": "test-suite:644b5eb7fba7af1fa02f",
       "sourcePath": "backend/src/ai/universal/goalContract.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:35787aff9b9e63931fb6",
+      "sourcePath": "backend/src/ai/universal/plannerFailureLogging.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
