@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "76aa9491c1c6e8e92df61c768c2585b50d4b63b9",
+  "source_sha": "8ca7fb6e842aca56da709509e3e9ae11e92a72f9",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5298,9 +5298,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "da626393dd3e5095ab2a7418a21031dfd7e77fa5a04f350bd57cb79f9e437999",
+      "sha256": "3096cf762cbaa245c9ea97ed2420fa0ae40a7c72df166764eb86bf502938894c",
       "byte_size": 4464123,
-      "modified_timestamp": "2026-10-26T20:19:45.854Z",
+      "modified_timestamp": "2026-10-28T09:58:45.267Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -23030,9 +23030,9 @@
       "source_id": "SRC-50bc393f833d8aee",
       "filename": "phase1Routing.ts",
       "path_or_url": "frontend/src/lib/phase1Routing.ts",
-      "sha256": "06e96abfcdbf24962742466a680e7def60dc729d081f68609f4792630c875468",
-      "byte_size": 3731,
-      "modified_timestamp": "2026-10-26T20:17:50.192Z",
+      "sha256": "20c8bef30b2903fb5e2b86de9891367f24ac60fa7bcd87896ad2901af2546b03",
+      "byte_size": 3777,
+      "modified_timestamp": "2026-10-28T09:45:33.015Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
