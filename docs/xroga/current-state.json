@@ -7329,7 +7329,7 @@
         "backend/src/existingSource/change/canonicalJob.ts:29",
         "backend/src/index.ts:61",
         "backend/src/routes/dashboard.ts:6",
-        "backend/src/routes/existingSource.ts:208",
+        "backend/src/routes/existingSource.ts:214",
         "backend/src/routes/existingSource.ts:88",
         "backend/src/routes/swarm.notificationAuthority.test.ts:6",
         "backend/src/routes/swarm.ts:17",
@@ -25739,9 +25739,10 @@
       "id": "surface:9de73948fcfe2a99b724",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "sha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
+      "sha256": "9819fc61a2f966389d2eb93f3fa93f5d56bda0f73ec1875410d698c3ddcb42cb",
       "symbols": [
         "ARCHIVE_UPLOAD_LIMIT",
+        "ChangeQueue",
         "ExistingSourceChanges",
         "ExistingSourceChangesFactory",
         "ExistingSourceIntelligenceFactory",
@@ -25779,6 +25780,7 @@
         "link",
         "loaded",
         "locateBody",
+        "m",
         "neighborhoodQuery",
         "outcome",
         "p",
@@ -47732,7 +47734,7 @@
       "callers": [
         "backend/src/index.ts:11",
         "backend/src/routes/businessAutomationScheduler.ts:4",
-        "backend/src/routes/existingSource.ts:98",
+        "backend/src/routes/existingSource.ts:102",
         "backend/src/routes/swarm.ts:9",
         "backend/src/workers/googleSwarmQueue.test.ts:8"
       ],
@@ -113525,9 +113527,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2fd2812713e065c35fc8",
+      "id": "registration:44da2f62bd45e5f14885",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 144,
+      "line": 150,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -113537,9 +113539,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2cbb9d1ddd6604f80632",
+      "id": "registration:037f08332a5b29358499",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 145,
+      "line": 151,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -113549,9 +113551,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f8bc4a6301e524cd7612",
+      "id": "registration:98f1efa6f9fcef76f744",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 164,
+      "line": 170,
       "receiver": "router",
       "method": "get",
       "path": "/repositories",
@@ -113563,9 +113565,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8b4f4652a2addd59cc4d",
+      "id": "registration:a9cbfa3c7f0504d6f3cc",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 165,
+      "line": 171,
       "receiver": "router",
       "method": "post",
       "path": "/links",
@@ -113577,9 +113579,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:21282e61147e2882147b",
+      "id": "registration:4d769fef443d61c171d3",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 170,
+      "line": 176,
       "receiver": "router",
       "method": "get",
       "path": "/links",
@@ -113591,9 +113593,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:67dffcc066adf40d1184",
+      "id": "registration:d9c48f61815046f41a86",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 171,
+      "line": 177,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id",
@@ -113605,9 +113607,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9355ada377ee26a2aeb1",
+      "id": "registration:ad8f2e28a1b20a0017d0",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 172,
+      "line": 178,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/refresh",
@@ -113619,9 +113621,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7fe2432c4877a1a4e40b",
+      "id": "registration:ec5af05e110dbeaa0a26",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 173,
+      "line": 179,
       "receiver": "router",
       "method": "delete",
       "path": "/links/:id",
@@ -113633,9 +113635,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:bafc5fced3e8d2ecc87d",
+      "id": "registration:3fc38e33f143e7f4b39b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 174,
+      "line": 180,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/directory",
@@ -113647,9 +113649,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c3ce0e8bf241a7018222",
+      "id": "registration:5581e538cc19bc568193",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 177,
+      "line": 183,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/index",
@@ -113661,9 +113663,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:80ddaa6827cea94c633c",
+      "id": "registration:83ec952e96929d79a04f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 178,
+      "line": 184,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/index",
@@ -113675,9 +113677,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1489167e9b4ccd5c11f5",
+      "id": "registration:755e076578f7b1087732",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 183,
+      "line": 189,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/search",
@@ -113689,9 +113691,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4c92f35e8dbdf87ca44f",
+      "id": "registration:05f9eff935fef3718b92",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 184,
+      "line": 190,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/locate",
@@ -113703,9 +113705,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:7f5f2bf7d3bb4736ea24",
+      "id": "registration:24f6732c97d341f92b0b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 185,
+      "line": 191,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/neighborhood",
@@ -113717,9 +113719,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1ab81bb5acb6dbbfe8d7",
+      "id": "registration:faa47314aeb0dff17150",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 186,
+      "line": 192,
       "receiver": "router",
       "method": "post",
       "path": "/archives",
@@ -113732,9 +113734,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d63ca983b67a4de25d56",
+      "id": "registration:5de02b9bded72ddc36a3",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 195,
+      "line": 201,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/changes",
@@ -113746,9 +113748,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b52c9591ed5bbf9a189f",
+      "id": "registration:3eb9c36c82b0cb610690",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 201,
+      "line": 207,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/changes",
@@ -113760,9 +113762,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:bb0bd324d6605639fca4",
+      "id": "registration:93795e7d1a4c3448c24f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 202,
+      "line": 208,
       "receiver": "router",
       "method": "get",
       "path": "/changes/:changeId",
@@ -113774,9 +113776,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a07c2a0463e95960e15c",
+      "id": "registration:52a1e01bc9ec38d80e32",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 203,
+      "line": 209,
       "receiver": "router",
       "method": "post",
       "path": "/changes/:changeId/cancel",
@@ -113788,9 +113790,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e99d58263f3b9a7e2fa6",
+      "id": "registration:538b1b8c9165b6c5c001",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 213,
+      "line": 219,
       "receiver": "router",
       "method": "post",
       "path": "/changes/:changeId/resume",
@@ -113802,9 +113804,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:27fe89dbffb39c0ccd15",
+      "id": "registration:65b99b88abbf29b61a1b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 219,
+      "line": 225,
       "receiver": "router",
       "method": "post",
       "path": "/changes/:changeId/deliver",
@@ -113816,9 +113818,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:611af240bbb52dfa50a2",
+      "id": "registration:dc00ea2b282acbf3943b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 225,
+      "line": 231,
       "receiver": "router",
       "method": "get",
       "path": "/changes/:changeId/export",
@@ -113830,9 +113832,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:158451acb15f3e48c1c3",
+      "id": "registration:b71b4a2b6eb875f57bfe",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 232,
+      "line": 238,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/file",
@@ -113844,9 +113846,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:cac03120f3f0ac074b7f",
+      "id": "registration:d46ecf2bae2fb7b19269",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 233,
+      "line": 239,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -118998,10 +119000,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:72240146fb49e60382aa",
-      "registrationId": "registration:f8bc4a6301e524cd7612",
+      "id": "route:79926d14721e290407ae",
+      "registrationId": "registration:98f1efa6f9fcef76f744",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 164,
+      "line": 170,
       "method": "GET",
       "path": "/api/existing-source/repositories",
       "mountChain": [
@@ -119015,10 +119017,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:1bb8eeb0e736cd4aab88",
-      "registrationId": "registration:8b4f4652a2addd59cc4d",
+      "id": "route:d325c62f8ddafe5ed002",
+      "registrationId": "registration:a9cbfa3c7f0504d6f3cc",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 165,
+      "line": 171,
       "method": "POST",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -119032,10 +119034,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:489c39837bee7b88069a",
-      "registrationId": "registration:21282e61147e2882147b",
+      "id": "route:ba05d93c6063d923e71d",
+      "registrationId": "registration:4d769fef443d61c171d3",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 170,
+      "line": 176,
       "method": "GET",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -119049,10 +119051,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:068d323ce74776eb42b2",
-      "registrationId": "registration:67dffcc066adf40d1184",
+      "id": "route:c9eaf24d4ea222ba3668",
+      "registrationId": "registration:d9c48f61815046f41a86",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 171,
+      "line": 177,
       "method": "GET",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -119066,10 +119068,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:d8b7caf316c271d242d9",
-      "registrationId": "registration:9355ada377ee26a2aeb1",
+      "id": "route:bc2e88cd98cb48d18fa3",
+      "registrationId": "registration:ad8f2e28a1b20a0017d0",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 172,
+      "line": 178,
       "method": "POST",
       "path": "/api/existing-source/links/:id/refresh",
       "mountChain": [
@@ -119083,10 +119085,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:3c03ba6ee01e4b3e87b6",
-      "registrationId": "registration:7fe2432c4877a1a4e40b",
+      "id": "route:b0ebe415db7c0690b092",
+      "registrationId": "registration:ec5af05e110dbeaa0a26",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 173,
+      "line": 179,
       "method": "DELETE",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -119100,10 +119102,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:dfacaf4be79831726534",
-      "registrationId": "registration:bafc5fced3e8d2ecc87d",
+      "id": "route:d7eb75d4d87a4287469c",
+      "registrationId": "registration:3fc38e33f143e7f4b39b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 174,
+      "line": 180,
       "method": "GET",
       "path": "/api/existing-source/links/:id/directory",
       "mountChain": [
@@ -119117,10 +119119,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:7b53d10cdb993cf47b80",
-      "registrationId": "registration:c3ce0e8bf241a7018222",
+      "id": "route:e0c74fd1db1461b332d3",
+      "registrationId": "registration:5581e538cc19bc568193",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 177,
+      "line": 183,
       "method": "GET",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -119134,10 +119136,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:10dc34bb5b8b2d16338d",
-      "registrationId": "registration:80ddaa6827cea94c633c",
+      "id": "route:bd7a1d835f6b713c1967",
+      "registrationId": "registration:83ec952e96929d79a04f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 178,
+      "line": 184,
       "method": "POST",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -119151,10 +119153,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ed96db49236bb2c97f45",
-      "registrationId": "registration:1489167e9b4ccd5c11f5",
+      "id": "route:e49c2aa9732d432386fd",
+      "registrationId": "registration:755e076578f7b1087732",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 183,
+      "line": 189,
       "method": "GET",
       "path": "/api/existing-source/links/:id/search",
       "mountChain": [
@@ -119168,10 +119170,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:295bdde5aa1cdf69c123",
-      "registrationId": "registration:4c92f35e8dbdf87ca44f",
+      "id": "route:0d697e9cedb8f5932637",
+      "registrationId": "registration:05f9eff935fef3718b92",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 184,
+      "line": 190,
       "method": "POST",
       "path": "/api/existing-source/links/:id/locate",
       "mountChain": [
@@ -119185,10 +119187,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:9724b8ef413f2de32f4a",
-      "registrationId": "registration:7f5f2bf7d3bb4736ea24",
+      "id": "route:1a25c9f08783a2615766",
+      "registrationId": "registration:24f6732c97d341f92b0b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 185,
+      "line": 191,
       "method": "GET",
       "path": "/api/existing-source/links/:id/neighborhood",
       "mountChain": [
@@ -119202,10 +119204,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:4e63e4bd509487f04e28",
-      "registrationId": "registration:1ab81bb5acb6dbbfe8d7",
+      "id": "route:701daf65b4b1e40e58ac",
+      "registrationId": "registration:faa47314aeb0dff17150",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 186,
+      "line": 192,
       "method": "POST",
       "path": "/api/existing-source/archives",
       "mountChain": [
@@ -119219,10 +119221,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ffae099b9837909f31ef",
-      "registrationId": "registration:d63ca983b67a4de25d56",
+      "id": "route:82ede4c6b1fa0562b4bb",
+      "registrationId": "registration:5de02b9bded72ddc36a3",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 195,
+      "line": 201,
       "method": "POST",
       "path": "/api/existing-source/links/:id/changes",
       "mountChain": [
@@ -119236,10 +119238,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:62e6adff736fc2a2152b",
-      "registrationId": "registration:b52c9591ed5bbf9a189f",
+      "id": "route:e759b3e20697073bbbc1",
+      "registrationId": "registration:3eb9c36c82b0cb610690",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 201,
+      "line": 207,
       "method": "GET",
       "path": "/api/existing-source/links/:id/changes",
       "mountChain": [
@@ -119253,10 +119255,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:fd34c6ab108a28f01f9a",
-      "registrationId": "registration:bb0bd324d6605639fca4",
+      "id": "route:56f807c5db507a01116f",
+      "registrationId": "registration:93795e7d1a4c3448c24f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 202,
+      "line": 208,
       "method": "GET",
       "path": "/api/existing-source/changes/:changeId",
       "mountChain": [
@@ -119270,10 +119272,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:5eb96c2be1433bd78381",
-      "registrationId": "registration:a07c2a0463e95960e15c",
+      "id": "route:cc77e708ae013651ff41",
+      "registrationId": "registration:52a1e01bc9ec38d80e32",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 203,
+      "line": 209,
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/cancel",
       "mountChain": [
@@ -119287,10 +119289,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:a97faa30c41eb44a26cf",
-      "registrationId": "registration:e99d58263f3b9a7e2fa6",
+      "id": "route:f66a1ff4f021f59cdeb0",
+      "registrationId": "registration:538b1b8c9165b6c5c001",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 213,
+      "line": 219,
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/resume",
       "mountChain": [
@@ -119304,10 +119306,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:4be09f23a612b617a8d9",
-      "registrationId": "registration:27fe89dbffb39c0ccd15",
+      "id": "route:51900ddf3a121dfd0022",
+      "registrationId": "registration:65b99b88abbf29b61a1b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 219,
+      "line": 225,
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/deliver",
       "mountChain": [
@@ -119321,10 +119323,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:9ac9fb7d89a837fdaf8b",
-      "registrationId": "registration:611af240bbb52dfa50a2",
+      "id": "route:82509b94eaee37771572",
+      "registrationId": "registration:dc00ea2b282acbf3943b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 225,
+      "line": 231,
       "method": "GET",
       "path": "/api/existing-source/changes/:changeId/export",
       "mountChain": [
@@ -119338,10 +119340,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:d764308ac889cbe4538b",
-      "registrationId": "registration:158451acb15f3e48c1c3",
+      "id": "route:275c447f2b73dc12200b",
+      "registrationId": "registration:b71b4a2b6eb875f57bfe",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 232,
+      "line": 238,
       "method": "GET",
       "path": "/api/existing-source/links/:id/file",
       "mountChain": [

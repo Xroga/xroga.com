@@ -94,8 +94,14 @@ export const defaultExistingSourceChanges: ExistingSourceChangesFactory = (tenan
  * Starts a change. On the durable Google path the change is queued as a canonical run and executes in the Cloud Run Job; otherwise it
  * runs in this process as before. A change that cannot be handed to a worker is ended with the reason, never left looking queued.
  */
-export async function launchChange(tenant: TenantContext, c: ExistingSourceChanges, task: ChangeTask, queue?: { selected: () => boolean; admit: typeof import('../workers/googleSwarmQueue.js').admitGoogleRun }): Promise<ChangeTask> {
-  const loaded = queue ?? await import('../workers/googleSwarmQueue.js').then((m) => ({ selected: () => m.googleBackgroundSelected(), admit: m.admitGoogleRun }));
+type ChangeQueue = { selected: () => boolean; admit: typeof import('../workers/googleSwarmQueue.js').admitGoogleRun };
+export async function launchChange(tenant: TenantContext, c: ExistingSourceChanges, task: ChangeTask, queue?: ChangeQueue): Promise<ChangeTask> {
+  let loaded: ChangeQueue;
+  if (queue) loaded = queue;
+  else {
+    const m = await import('../workers/googleSwarmQueue.js');
+    loaded = { selected: () => m.googleBackgroundSelected(), admit: m.admitGoogleRun };
+  }
   const admitGoogleRun = loaded.admit;
   if (!loaded.selected()) { c.changes.start(tenant.userId, task.id); return task; }
   const runId = randomUUID();

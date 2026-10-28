@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "2fb164b1d940ed21d5ba41ed7855f9161bb31bcc3dcdb66b036825ccf5a3afb5",
+  "reviewRegistrySha256": "a9a5b4a25c248641df8847d4d7ab8b23000e04dfffdcb404dea49503175de5f1",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -16017,7 +16017,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
+      "sourceSha256": "9819fc61a2f966389d2eb93f3fa93f5d56bda0f73ec1875410d698c3ddcb42cb",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
@@ -16038,7 +16038,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
+      "sourceSha256": "9819fc61a2f966389d2eb93f3fa93f5d56bda0f73ec1875410d698c3ddcb42cb",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
@@ -16059,7 +16059,7 @@
       "target": "save_owned_project_atomic",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
+      "sourceSha256": "9819fc61a2f966389d2eb93f3fa93f5d56bda0f73ec1875410d698c3ddcb42cb",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
