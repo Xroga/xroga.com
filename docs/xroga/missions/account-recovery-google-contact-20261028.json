@@ -29,6 +29,7 @@
     "frontend/src/lib/api.ts",
     "frontend/src/lib/contactPhone.test.ts",
     "frontend/src/lib/contactPhone.ts",
+    "frontend/src/lib/publicUrlInventory.ts",
     "frontend/src/lib/supabase/oauthReturn.test.ts",
     "frontend/src/lib/supabase/oauthReturn.ts",
     "frontend/src/lib/supabase/authErrors.ts",
