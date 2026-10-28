@@ -9,7 +9,7 @@ import {
   type BusinessWorkflowStep,
 } from './businessWorkflow.js';
 
-const SEPARATED_TASK = /(?:;|\n|\b(?:and then|then)\b|\b(?:also|and)\s+(?:please\s+)?(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b|,\s*(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b)/i;
+const SEPARATED_TASK = /(?:[;\n,]\s*|\b(?:and then|then|also|and)\s+)(?:please\s+)?(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b/i;
 
 /** Avoid a second model call for ordinary single-tool requests. */
 export function mayNeedSemanticBusinessWorkflow(message: string): boolean {

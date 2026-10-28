@@ -58,7 +58,7 @@ export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflow
     return null;
   }
 
-  const separator = new RegExp(`\\s*(?:;|\\n+|,\\s*(?:and\\s+)?(?=${NEXT_TASK.source}))\\s*|\\s+(?:and then|then|and|also)\\s+(?=${NEXT_TASK.source})`, 'gi');
+  const separator = new RegExp(`\\s*(?:[;\\n]+|,\\s*(?:and\\s+)?)\\s*(?=${NEXT_TASK.source})|\\s+(?:and then|then|and|also)\\s+(?=${NEXT_TASK.source})`, 'gi');
   const clauses = text.split(separator).map((item) => item.trim().replace(/^[,.;\s]+|[,.;\s]+$/g, ''));
   if (clauses.length < 2 || clauses.length > MAX_BUSINESS_WORKFLOW_STEPS || clauses.some((item) => item.length < 5 || item.length > 500)) return null;
 

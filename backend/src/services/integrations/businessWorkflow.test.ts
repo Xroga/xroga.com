@@ -66,6 +66,9 @@ test('segments six app tasks without knowing or hard-coding the app names', () =
 test('recognizes a multi-task candidate but leaves one email to multiple people alone', () => {
   assert.equal(mayNeedSemanticBusinessWorkflow('Find clients in a connected CRM and email them a summary'), true);
   assert.equal(mayNeedSemanticBusinessWorkflow('Send an email to Jane and John'), false);
+  assert.equal(mayNeedSemanticBusinessWorkflow('Create a spreadsheet with two rows: header Item, Value; data test, 42. Do not modify existing files.'), false);
+  assert.equal(splitExplicitBusinessWorkflow('Create a spreadsheet with two rows: header Item, Value; data test, 42. Do not modify existing files.'), null);
+  assert.equal(mayNeedSemanticBusinessWorkflow('Create a spreadsheet; send its link to me'), true);
 });
 
 test('accepts only exact source-bound app and web steps, deriving dependencies on the server', () => {
