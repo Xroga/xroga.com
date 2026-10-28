@@ -54,5 +54,16 @@
     "focusedGreenJob": "d2e4b077-0b41-4fbf-8899-70fce608db51",
     "realDatabaseRetest": "REQUIRED_ON_FINAL_SOURCE",
     "productionMutations": false
+  },
+  "vaultMirrorFixtureCorrection": {
+    "source": "8abb6e1a0e5fe9cdb25112d4354a087f85e52a32",
+    "run": 40776582443,
+    "databaseTests": 212,
+    "databasePass": 211,
+    "databaseFail": 1,
+    "cause": "Private-storage fixture expected a plaintext migration mirror to remain readable after canonical v3 credential custody superseded its authority. The actual mirror reader correctly refuses the mismatched current credential.",
+    "correction": "Assert stale mirror denial and successful owner-bound canonical vault retrieval. Keep raw-row bounded503, private object integrity, foreign/anonymous browser download and signing denials, and owned metadata success. Production code and custody rules are unchanged.",
+    "realDatabaseRetest": "REQUIRED_ON_FINAL_SOURCE",
+    "productionMutations": false
   }
 }

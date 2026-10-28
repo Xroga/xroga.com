@@ -654,7 +654,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "588a39ee5848b8a176de7db733df4c8268a4adaffc6271c9048c03e885d7fced",
+      "sha256": "b152c62ee7be63efbd05766c2028491be0a53bceed6fce7de4ff110d43802420",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/security/tenantIsolation.local.integration.ts",
         "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"

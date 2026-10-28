@@ -218,6 +218,42 @@
       },
       "log": null,
       "sha256": null
+    },
+    {
+      "label": "vault-mirror-focused-green",
+      "job": "b21932b2-20e8-49ab-a108-bcf02b527e62",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 172475
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/vault-mirror-focused-green.log",
+      "sha256": "2230da3ef6f80a27ab4a2a172d8afb9d93d992e0bedd58baa715470b5b3ca09d"
+    },
+    {
+      "label": "mirror-source-integrity-green",
+      "job": "bfbb70b5-322a-4c78-b5db-2f72d3964656",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/mirror-source-integrity-green.log",
+      "sha256": "efa26954ee44ab33cea3cc421c28a0985ce7a8057ac5e0c603009e1113d8261e"
+    },
+    {
+      "label": "mirror-fixture-types-green",
+      "job": "90be90af-f6b8-416d-8340-031aacbf9879",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322028
+      },
+      "log": null,
+      "sha256": null
     }
   ],
   "modelCalls": 0,

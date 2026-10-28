@@ -817,7 +817,10 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     for(const forged of [owner.id,{...owner.context}]) assert.equal(await saveGitHubTokenToStorage(forged as typeof owner.context,{...mirror,access_token:'SYNTHETIC_REJECTED'}),false);
     const unchanged=await admin.storage.from(bucket).download(path);assert.equal(unchanged.error,null);assert.deepEqual(JSON.parse(await unchanged.data!.text()),mirror);
     const config=await admin.storage.getBucket(bucket);assert.equal(config.error,null);assert.equal(config.data?.public,false);
-    assert.equal((await getGitHubTokenFromStorage(owner.id))?.access_token,canary);
+    // Canonical v3 custody supersedes the plaintext migration mirror. A stale
+    // mirror must stay denied, while the owned vault connection remains usable.
+    assert.equal(await getGitHubTokenFromStorage(owner.id),null);
+    assert.equal(await getGitHubToken(owner.id),canary);
     const ownStatus=await request(`/api/github/status?userId=${other.id}`,owner.token);assert.equal(ownStatus.status,200);
     const ownText=await ownStatus.text();assert.equal((JSON.parse(ownText) as {connected:boolean}).connected,true);assert.ok(!ownText.includes(canary));
     assert.equal(await getGitHubTokenFromStorage(other.id),null);
