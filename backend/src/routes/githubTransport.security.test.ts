@@ -10,9 +10,9 @@ import * as tenant from '../security/tenantContext.js';
 const require=createRequire(import.meta.url),owner='11111111-1111-4111-8111-111111111111';
 function fixture(){
   const handlers=new Map<string,Function>(),router:any={};for(const method of ['get','post','patch','delete'])router[method]=(path:string,handler:Function)=>{handlers.set(method+':'+path,handler);return router;};
-  let saves=0,lookups=0,revision='11111111-1111-4111-8111-111111111112',revoked=false;
+  let saves=0,lookups=0,revision='11111111-1111-4111-8111-111111111112',revoked=false,custody='vault:v3:synthetic';
   const auth={getGitHubToken:async()=>{lookups++;return'synthetic-owner-token';},getGitHubStorageMeta:async()=>null,saveGitHubConnection:async()=>{saves++;}};
-  const query:any={select(){return this;},eq(column:string,value:string){if(column==='user_id')assert.equal(value,owner);if(column==='provider')assert.equal(value,'github');return this;},maybeSingle:async()=>({data:{user_id:owner,provider:'github',access_token:'vault:v3:synthetic',credential_revision:revision,metadata:{revoked}},error:null})};
+  const query:any={select(){return this;},eq(column:string,value:string){if(column==='user_id')assert.equal(value,owner);if(column==='provider')assert.equal(value,'github');return this;},maybeSingle:async()=>({data:{user_id:owner,provider:'github',access_token:custody,credential_revision:revision,metadata:{revoked}},error:null})};
   const ports:any={'express':{Router:()=>router},'zod':require('zod')};
   const exports:any={};vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./github.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,
     {exports,process:{env:{GITHUB_CLIENT_ID:'synthetic-client',GITHUB_CLIENT_SECRET:'synthetic-secret'}},Buffer,URL,URLSearchParams,Headers,Response,AbortSignal,console,fetch:(...args:Parameters<typeof fetch>)=>fetch(...args),require:(id:string)=>{
@@ -21,13 +21,23 @@ function fixture(){
       if(id.endsWith('/serviceRoleGuard.js'))return{getTenantSupabaseAdmin:(context:unknown)=>{tenant.requireTenantContext(context);return{from:()=>query};}};
       if(id.endsWith('/supabase.js'))return{getSupabaseAdmin:()=>({from:()=>query})};return{};
     }});
-  return{handlers,saves:()=>saves,lookups:()=>lookups,rotate(){revision='11111111-1111-4111-8111-111111111113';},revoke(){revoked=true;}};
+  return{handlers,saves:()=>saves,lookups:()=>lookups,rotate(){revision='11111111-1111-4111-8111-111111111113';},revoke(){revoked=true;},invalidateCustody(){custody='synthetic-unmanaged';}};
 }
 async function invoke(f:ReturnType<typeof fixture>,route:string,context:unknown=tenant.createTenantContext({userId:owner,via:'remote_getuser'}),params={owner:'owned',repo:'repository'}){
   let status=200,payload:any;const res={status(n:number){status=n;return this;},json(value:unknown){payload=value;return this;}};
   await f.handlers.get(route)!({userId:owner,tenantContext:context,body:{code:'synthetic-code',state:'synthetic-state'},params},res);
   return{status,payload};
 }
+
+test('GitHub raw or invalid stored custody returns a bounded denial on every account-read route',async t=>{
+  let dispatches=0;t.mock.method(globalThis,'fetch',async()=>{dispatches++;return Response.json({});});
+  for(const route of ['get:/status','get:/repos','get:/repos/:owner/:repo/branches']){
+    const f=fixture();f.invalidateCustody();const result=await invoke(f,route);
+    assert.equal(result.status,503);assert.equal(result.payload.connected,false);assert.equal(f.lookups(),0);
+    assert.doesNotMatch(JSON.stringify(result.payload),/synthetic-unmanaged/);
+  }
+  assert.equal(dispatches,0);
+});
 test('actual GitHub OAuth token, identity and account-read routes reject real redirects before save or successful listing',async t=>{
   const nativeFetch=globalThis.fetch;let mode='',forwarded=0;
   const sink=createServer((_req,res)=>{forwarded++;res.writeHead(200,{'content-type':'application/json'}).end(JSON.stringify({access_token:'redirected-token',login:'redirected-user',id:1}));});

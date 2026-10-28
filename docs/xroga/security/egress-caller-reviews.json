@@ -3455,7 +3455,7 @@
     {
       "id": "35923d1b52d197c378e1",
       "callSha256": "779bfe6876ecb8be86573c05dc446c92055d795563fdb81c0b4dbb061f7550ba",
-      "sourceFileSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
+      "sourceFileSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FINITE_OFFICIAL_GITHUB_OAUTH_AND_READ_ONLY_ACCOUNT_OPERATIONS_NO_SOURCE_PUBLISH_OR_REPOSITORY_MUTATION_AUTHORITY",
       "tenantAuthority": "ORIGINAL_ISSUED_ACTOR_OWNER_BEFORE_CANONICAL_ROW_AND_VAULT_LOOKUP_CURRENT_SEALED_REVISION_RECHECKED_BEFORE_WIRE_AND_AFTER_RESPONSE_OAUTH_CONSUMED_REVISION_PRESERVED",
@@ -3466,9 +3466,19 @@
           "sha256": "4af58c0928f79225135c18dff48ed6b90832a8559ebd992f7ee9c655d7771528"
         },
         {
-          "path": "backend/src/routes/githubTransport.security.test.ts",
+          "path": "docs/xroga/evidence/command-010/integration-20261029/AT-d394-backend_src_routes_githubTransport.security.test.ts.txt",
           "marker": "actual GitHub OAuth token, identity and account-read routes reject real redirects before save or successful listing",
           "sha256": "629b4beea68b679f35529a2e7666735f3bf363ebca851da97db34f681fb84f6e"
+        },
+        {
+          "path": "backend/src/routes/githubTransport.security.test.ts",
+          "marker": "actual GitHub OAuth token, identity and account-read routes reject real redirects before save or successful listing",
+          "sha256": "6f729bf050d3ca5a0ec2547ed9d24fec08b2719fc3dd1316818ded0d2ddb0a3f"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/integration-20261029/GITHUB-BOUNDED-RESPONSE.json",
+          "marker": "BOUNDED_DENIAL_AND_CURRENT_CANONICAL_FIXTURES_NOT_NEW_AUTHORITY",
+          "sha256": "a2ba5095f8a9f3ea791926dfa7d68d1276428369f4394ae54cd1aae1127649c0"
         }
       ],
       "actorContinuationSourceReview": {

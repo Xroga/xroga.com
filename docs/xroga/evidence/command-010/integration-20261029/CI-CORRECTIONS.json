@@ -37,5 +37,22 @@
     ],
     "focusedJob": "4d8dc7cd-5eba-4e49-a00c-b2c0cd846d72",
     "requiredVerification": "Final complete exact-source baseline"
+  },
+  "authenticatedDatabaseCorrections": {
+    "source": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
+    "run": 40770896439,
+    "authenticatedBrowserSteps": "PASS",
+    "databaseTests": 212,
+    "databasePass": 210,
+    "databaseFail": 2,
+    "governedSkips": 0,
+    "causes": [
+      "Connection-route fixture expected a private read to dispatch without the existing required exact consent. It now confirms through the authenticated owner-only canonical endpoint and denies foreign approval.",
+      "A raw legacy GitHub row caused an uncaught Express4 async custody denial. The actual account routes now return sanitized503 before provider lookup. The fixture proves this bounded denial, then uses consumed PKCE and canonical v3 custody for the positive private-storage case."
+    ],
+    "negativeJob": "07d092be-15cc-447d-9019-4167e1204799",
+    "focusedGreenJob": "d2e4b077-0b41-4fbf-8899-70fce608db51",
+    "realDatabaseRetest": "REQUIRED_ON_FINAL_SOURCE",
+    "productionMutations": false
   }
 }

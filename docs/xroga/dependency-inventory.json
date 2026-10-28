@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
+  "source_sha": "d394fba5e9478b18dc31563dbf4b478e285b70cf",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16684,7 +16684,7 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b"
+      "sha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -16936,7 +16936,7 @@
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "sha256": "7f2eeaa7692db6e1ce438d3574a40228da92d77287612163db88a1a2e894dd2f"
+      "sha256": "0bca6bb9a602efef4507aea90af781515f957f47e5184c00d8b9f7f7838dba7d"
     },
     {
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
@@ -17140,7 +17140,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "d16d82aeb587150da44dba0ec6638bbae38e05eb11dd8b3063820f005fd01ed9"
+      "sha256": "588a39ee5848b8a176de7db733df4c8268a4adaffc6271c9048c03e885d7fced"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -23764,49 +23764,49 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 100,
+      "line": 111,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 101,
+      "line": 112,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 102,
+      "line": 113,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 117,
+      "line": 128,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 140,
+      "line": 151,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 217,
+      "line": 228,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 239,
+      "line": 250,
       "credentialsInUrl": false
     },
     {
@@ -24009,21 +24009,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "line": 12,
+      "line": 13,
       "credentialsInUrl": false
     },
     {
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "line": 21,
+      "line": 22,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "line": 49,
+      "line": 51,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
+      "line": 64,
       "credentialsInUrl": false
     },
     {
@@ -24555,42 +24562,49 @@
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 869,
+      "line": 812,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "example.invalid",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 876,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 927,
+      "line": 934,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1614,
+      "line": 1621,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1632,
+      "line": 1639,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1640,
+      "line": 1647,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1644,
+      "line": 1651,
       "credentialsInUrl": false
     },
     {
@@ -32045,14 +32059,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1113,
+      "line": 1120,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1450,
+      "line": 1457,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "18a0c6e9461c6a3c3f6d705a9bb3d4891521e915791b80267235c211c97ae6ad",
+  "reviewRegistrySha256": "3ff48e76cd0bca110c678980514ab81f4078e7fa77c134fa398aff5cef2ce617",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -4112,23 +4112,23 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "105bf445742d0d40d7cc"
+        "id": "c9f24908f3902e3cf2a8"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "126af63b441c91019028"
+        "id": "e452f3e3a2f1263c0716"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fa85a7affe57fe8615c1"
+        "id": "e7cc8bded28a4afc05db"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0b8393ef789df9e76d18"
+        "id": "f2da94bb96f753a44a0d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9ccaf29d98b973526d7b"
+        "id": "286d73d18019adf7e9b7"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7440,23 +7440,23 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "105bf445742d0d40d7cc"
+        "id": "c9f24908f3902e3cf2a8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "126af63b441c91019028"
+        "id": "e452f3e3a2f1263c0716"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fa85a7affe57fe8615c1"
+        "id": "e7cc8bded28a4afc05db"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "0b8393ef789df9e76d18"
+        "id": "f2da94bb96f753a44a0d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9ccaf29d98b973526d7b"
+        "id": "286d73d18019adf7e9b7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -16805,7 +16805,7 @@
       }
     },
     {
-      "id": "105bf445742d0d40d7cc",
+      "id": "c9f24908f3902e3cf2a8",
       "path": "backend/src/routes/github.ts",
       "line": 80,
       "enclosing": "getUserGitHubToken",
@@ -16813,7 +16813,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
+      "sourceSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
       "semanticReview": {
         "authority": "Original issued actor and exact owner before tenant-scoped canonical github row read. Current sealed credential/revision/metadata revalidated around bounded official account reads. No write or new grant.",
         "reason": "Focused Phase4 account-route security proof only. Does not certify other source hydration, deployment, credential exports or whole007/010 acceptance. Existing historical status projection remains independently preserved.",
@@ -16830,7 +16830,7 @@
       }
     },
     {
-      "id": "126af63b441c91019028",
+      "id": "e452f3e3a2f1263c0716",
       "path": "backend/src/routes/github.ts",
       "line": 80,
       "enclosing": "getUserGitHubToken",
@@ -16838,7 +16838,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
+      "sourceSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
       "semanticReview": {
         "authority": "Original issued actor and exact owner before tenant-scoped canonical github row read. Current sealed credential/revision/metadata revalidated around bounded official account reads. No write or new grant.",
         "reason": "Focused Phase4 account-route security proof only. Does not certify other source hydration, deployment, credential exports or whole007/010 acceptance. Existing historical status projection remains independently preserved.",
@@ -16855,15 +16855,15 @@
       }
     },
     {
-      "id": "fa85a7affe57fe8615c1",
+      "id": "e7cc8bded28a4afc05db",
       "path": "backend/src/routes/github.ts",
-      "line": 275,
+      "line": 287,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
+      "sourceSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
       "semanticReview": {
         "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -16876,15 +16876,15 @@
       }
     },
     {
-      "id": "0b8393ef789df9e76d18",
+      "id": "f2da94bb96f753a44a0d",
       "path": "backend/src/routes/github.ts",
-      "line": 277,
+      "line": 289,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
+      "sourceSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
       "semanticReview": {
         "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -16897,15 +16897,15 @@
       }
     },
     {
-      "id": "9ccaf29d98b973526d7b",
+      "id": "286d73d18019adf7e9b7",
       "path": "backend/src/routes/github.ts",
-      "line": 287,
+      "line": 299,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
+      "sourceSha256": "e36f844e09dfd35789b6052ecaef7429ea55da2f2b70675299b2e8c17f92eb23",
       "semanticReview": {
         "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",

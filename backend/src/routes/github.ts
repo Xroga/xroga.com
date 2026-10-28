@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Response as ExpressResponse } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
@@ -91,6 +91,17 @@ async function getUserGitHubToken(req:AuthRequest):Promise<GitHubReadLease|null>
   if(!token)return null;
   const assertCurrent=async()=>{if(invalidated||await read()!==selected)throw denied();};
   await assertCurrent();return{token,assertCurrent};
+}
+
+/** A refused stored credential must finish the HTTP request without attempting
+ * provider lookup or exposing the credential. Missing connections stay distinct. */
+async function gitHubTokenOrRespond(req:AuthRequest,res:ExpressResponse):Promise<GitHubReadLease|null|undefined>{
+  try{return await getUserGitHubToken(req);}
+  catch(error){
+    if(!(error instanceof GitHubIdentityTransportDenied))throw error;
+    res.status(503).json({connected:false,error:'GitHub account verification is unavailable.'});
+    return undefined;
+  }
 }
 
 /** Finite credential issuer/account reads only. No repository write, source
@@ -266,7 +277,8 @@ router.post('/connect', async (req: AuthRequest, res) => {
 });
 
 router.get('/status', async (req: AuthRequest, res) => {
-  const token = await getUserGitHubToken(req);
+  const token = await gitHubTokenOrRespond(req,res);
+  if(token===undefined)return;
   if (!token) {
     res.json({ connected: false });
     return;
@@ -317,7 +329,8 @@ router.get('/status', async (req: AuthRequest, res) => {
 
 /** List repositories the user can push to */
 router.get('/repos', async (req: AuthRequest, res) => {
-  const token = await getUserGitHubToken(req);
+  const token = await gitHubTokenOrRespond(req,res);
+  if(token===undefined)return;
   if (!token) {
     res.status(401).json({ error: 'GitHub not connected' });
     return;
@@ -343,7 +356,8 @@ router.get('/repos', async (req: AuthRequest, res) => {
 
 /** List branches for a repository */
 router.get('/repos/:owner/:repo/branches', async (req: AuthRequest, res) => {
-  const token = await getUserGitHubToken(req);
+  const token = await gitHubTokenOrRespond(req,res);
+  if(token===undefined)return;
   if (!token) {
     res.status(401).json({ error: 'GitHub not connected' });
     return;

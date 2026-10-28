@@ -170,6 +170,54 @@
       },
       "log": null,
       "sha256": null
+    },
+    {
+      "label": "github-custody-denial-red",
+      "job": "07d092be-15cc-447d-9019-4167e1204799",
+      "status": "failed",
+      "exitCode": 1,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 18940
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/github-custody-denial-red.log",
+      "sha256": "e4b9e0c211971d3429c973ad5f2a7e3950122b4afa98998cc8e740fd490b73b3"
+    },
+    {
+      "label": "github-consent-green",
+      "job": "d2e4b077-0b41-4fbf-8899-70fce608db51",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1037366
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/github-consent-green.log",
+      "sha256": "057b04963ac2bd07591f2fcaebc472264ebf4a23806ff4e0e4d1f3e6e7b0f7c8"
+    },
+    {
+      "label": "frontend-full-1269-green",
+      "job": "7e0d2ecb-f07f-4224-830b-e202c4dc333d",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 4813880
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/frontend-full-1269-green.log",
+      "sha256": "7bbe20d55d1c97426af7d83677a0d0be5697e112842fc9c2e09d7f0fdee3d560"
+    },
+    {
+      "label": "github-boundary-types-green",
+      "job": "82f9b625-8f48-4b62-aaff-a45495c09a07",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322092
+      },
+      "log": null,
+      "sha256": null
     }
   ],
   "modelCalls": 0,

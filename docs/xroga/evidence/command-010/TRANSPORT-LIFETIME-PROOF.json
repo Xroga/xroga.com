@@ -654,11 +654,16 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "d16d82aeb587150da44dba0ec6638bbae38e05eb11dd8b3063820f005fd01ed9",
+      "sha256": "588a39ee5848b8a176de7db733df4c8268a4adaffc6271c9048c03e885d7fced",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/security/tenantIsolation.local.integration.ts",
         "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
-      }
+      },
+      "beforeCurrentMainIntegration": {
+        "sha256": "d16d82aeb587150da44dba0ec6638bbae38e05eb11dd8b3063820f005fd01ed9",
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
     },
     {
       "path": "backend/src/services/integrations/businessAccounting.failure.test.ts",

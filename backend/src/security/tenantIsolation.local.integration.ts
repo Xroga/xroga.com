@@ -806,6 +806,12 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
   const canary='SYNTHETIC_PRIVATE_STORAGE_CANARY_NOT_A_PROVIDER_CREDENTIAL';
   try {
     assert.equal((await admin.from('user_integrations').insert({user_id:owner.id,provider:'github',access_token:canary,metadata:{}})).error,null);
+    const rawStatus=await fetch(`${api}/api/github/status`,{headers:{Authorization:`Bearer ${owner.token}`},signal:AbortSignal.timeout(5000)});
+    assert.equal(rawStatus.status,503);const deniedText=await rawStatus.text();assert.ok(!deniedText.includes(canary));assert.equal((JSON.parse(deniedText) as {connected:boolean}).connected,false);
+    const state=randomUUID();
+    await storePkceSession(owner.context,'github_oauth_pkce',{verifier:'synthetic',state,redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()});
+    const admission=await consumePkceSession(owner.context,'github_oauth_pkce',state);assert.ok(admission?.authorization_revision);
+    await saveGitHubConnection(owner.id,canary,{providerUserId:'fixture',username:'fixture',authorizationRevision:admission.authorization_revision});
     const mirror={access_token:canary,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto' as const,default_repo:null,updated_at:new Date().toISOString()};
     assert.equal(await saveGitHubTokenToStorage(owner.context,mirror),true);
     for(const forged of [owner.id,{...owner.context}]) assert.equal(await saveGitHubTokenToStorage(forged as typeof owner.context,{...mirror,access_token:'SYNTHETIC_REJECTED'}),false);
@@ -824,6 +830,7 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     const status=await request(`/api/github/status?userId=${owner.id}`,other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
   } finally {
     const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');
+    assert.equal((await admin.from('github_integrations').delete().eq('user_id',owner.id)).error,null);
     assert.equal((await admin.from('user_integrations').delete().eq('user_id',owner.id).eq('provider','github')).error,null);
   }
 });
