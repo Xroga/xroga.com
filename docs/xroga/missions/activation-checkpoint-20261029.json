@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH15-2-ACTIVATION-CHECKPOINT-20261029",
+  "baseSha": "b0cd0ec31be56a8945ae41998563475237ed52fb",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Documentation only: a resumable checkpoint recording Batch 1.5 and Batch 2 live activation state, percentages, open failures, production revisions and spend, so future agents can resume without this chat.",
+  "changedFiles": [
+    "docs/xroga/ACTIVATION_CHECKPOINT.md",
+    "docs/xroga/missions/activation-checkpoint-20261029.json"
+  ],
+  "decisions": {
+    "keep": [
+      "No code, schema or runtime change"
+    ],
+    "extend": [
+      "Adds a resumable activation checkpoint"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change.",
+    "rollback": "Revert the commit and redeploy the previous image."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change; documentation only."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No change; documentation only."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No change; documentation only."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No change; documentation only."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No change; documentation only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No change; documentation only."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No change; documentation only."
+    }
+  },
+  "tests": [
+    {
+      "command": "node scripts/xroga/mission-check.mjs",
+      "scope": "Mission policy accepts the documentation-only change.",
+      "negative": false,
+      "reference": "docs/xroga/ACTIVATION_CHECKPOINT.md"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adds a limit and a log line to the existing SoftwareAgent executor. No new orchestrator or control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks, build the release image, create a 0% revision, switch traffic with the Job, then repeat the authenticated build.",
+  "rollback": "Revert the commit and redeploy; restore the previous service revision and Job image and label.",
+  "knownGaps": [
+    "Percentages are a count of PASS acceptance items, not effort or code-completeness",
+    "Earlier-session items are recorded as reported and need re-verification before a release claim"
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch 2 building is not accepted until a live build saves a revision"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and merge",
+      "Release image build and deploy",
+      "Live authenticated Batch 2 build evidence"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "docs/xroga/ACTIVATION_CHECKPOINT.md"
+  ]
+}
