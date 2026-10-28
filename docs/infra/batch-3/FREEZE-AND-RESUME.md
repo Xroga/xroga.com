@@ -1,5 +1,10 @@
-# Batch 3 is ON HOLD (founder priority change, 2026-10-27)
+# Batch 3 status (resumed 2026-10-29)
 
+The freeze of 2026-10-27 was lifted by the founder on 2026-10-29: development resumes, production activation stays paused. Draft PR #865 stays a draft. Nothing is merged, deployed, migrated or activated.
+
+What changed since the freeze, and what is still open, is recorded in `CERTIFICATION.md` section 11. The original freeze notes follow, kept for history.
+
+## Original freeze notes (2026-10-27)
 Batch 3 development is frozen. Draft PR #865 stays a draft. Nothing is merged, deployed, migrated or activated. Resume only after Batch 1.5 and Batch 2 pass final acceptance.
 
 ## Checkpoint

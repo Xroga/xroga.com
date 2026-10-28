@@ -83,3 +83,14 @@ Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permissi
 | npm postinstall network/metadata access | PARTIAL: installs run with `--ignore-scripts` and registry-only network, tests with none; the Google sandbox enforcement itself is not exercised here | `testRunner.test.ts` |
 | Patch applies to changed version of file | VERIFIED: delivery compares base and remote blob per changed path and returns a structured conflict | `change/delivery.test.ts` |
 | Concurrent pushes, lost PR response, missing PR permission, force-push, cancellation, crashes, failing tests, provider timeout, unapproved migration/deploy, public-PR leak, evidence-store failure, budget exhaustion, parser crash, protected branch, ZIP traversal/bomb, model outage | VERIFIED (contract) for every row: `golden.test.ts` negative matrix, `delivery.test.ts`, `change.test.ts`, `zipReader.test.ts`, `intelligence/service.test.ts`. Not exercised against real providers | `golden.test.ts` |
+
+## Resume additions (2026-10-29)
+
+| Requirement | State | Evidence |
+|---|---|---|
+| A change runs through the canonical durable path (outbox, Job claim, run attempt, cancellation, terminal authority); no second scheduler | PASS (fakes); live NOT RUN | `change/canonical.test.ts`, `workers/googleDeliveryStore.test.ts`, `routes/existingSourceChanges.test.ts` |
+| A command executes only through the canonical sandbox seam with the run's own state holding the exact files; a supplied binding is ignored | PASS (fakes); live NOT RUN | `change/canonical.test.ts` |
+| A Job never runs a change that was not queued for its run or that another owner owns | PASS | `change/canonical.test.ts` |
+| A visual change is verified only after a browser observed the page; an unrun or errored check is unverified; a broken page fails with evidence | PASS (fakes); live NOT RUN | `change/canonical.test.ts`, `existing-source/changeView.test.ts` |
+| Finished changes are retained for a bounded time and count; unfinished and depended-on changes are never removed; owner isolated | PASS | `change/canonical.test.ts` |
+| Real provider, Google sandbox, browser and database/RLS runs | BLOCKED: staging database and disposable GitHub account needed | none |
