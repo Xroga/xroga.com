@@ -125,11 +125,22 @@ async function updateRun(context: TenantContext, row: RunRow, values: Partial<Ru
   return data;
 }
 
-function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
+export function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
   if (!step.dependsOnPrevious) return undefined;
   const earlier = row.outcomes.filter((outcome) => outcome.stepIndex < row.step_index);
   const wantsReadResults = /\b(?:results?|summary|options|findings|report|information|data|details|found|matching|search(?:ed)?|leads?|clients?)\b/i.test(step.request);
-  const relevant = wantsReadResults ? earlier.filter((outcome) => outcome.kind === 'read' || outcome.kind === 'web') : earlier.slice(-1);
+  const wantsCreatedArtifact = /\b(?:that|the|this|new|created)\s+(?:spreadsheet|sheet|document|file|draft|record|task|event)\b/i.test(step.request);
+  const relevant = wantsReadResults
+    ? earlier.filter((outcome) => outcome.kind === 'read' || outcome.kind === 'web')
+    : earlier.slice(-1);
+  // A transfer such as "put the found title in that spreadsheet" needs both
+  // the untrusted read result and the ID returned by the preceding create.
+  // Include only the latest completed action, never an unrelated app result.
+  if (wantsReadResults && wantsCreatedArtifact) {
+    const created = earlier.filter((outcome) => outcome.kind === 'action').slice(-1);
+    relevant.push(...created);
+    relevant.sort((a, b) => a.stepIndex - b.stepIndex);
+  }
   if (!relevant.length || relevant.length > 3 || relevant.some((outcome) => outcome.data.length > 8_000)) {
     throw new Error('The dependent action needs an exact, bounded previous result before it can be prepared.');
   }

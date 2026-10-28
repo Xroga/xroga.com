@@ -23765,7 +23765,7 @@
       "id": "surface:0cc7e3112dcf7f702112",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "b15ea3012ae609cff0056251094a72a7d6c6d744cf42b275b26d9e855afb02a7",
+      "sha256": "fd9a1660ada1ecdf48a407e5620590971699b0dac99031b2d8f4887f2333a0d4",
       "symbols": [
         "BusinessWorkflowProgress",
         "BusinessWorkflowRunView",
@@ -23779,6 +23779,7 @@
         "cancelled",
         "confirmation",
         "createBusinessWorkflowRun",
+        "created",
         "current",
         "earlier",
         "error",
@@ -23801,6 +23802,7 @@
         "validRun",
         "value",
         "view",
+        "wantsCreatedArtifact",
         "wantsReadResults"
       ],
       "imports": [
@@ -23839,9 +23841,9 @@
       "tenantBoundary": [
         "backend/src/services/integrations/businessWorkflowRuns.ts:103 (user_id)",
         "backend/src/services/integrations/businessWorkflowRuns.ts:115 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:245 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:270 (user_id)",
-        "backend/src/services/integrations/businessWorkflowRuns.ts:311 (user_id)"
+        "backend/src/services/integrations/businessWorkflowRuns.ts:256 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:281 (user_id)",
+        "backend/src/services/integrations/businessWorkflowRuns.ts:322 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessWorkflowRuns.ts#cancelBusinessActionConfirmation",
@@ -119666,14 +119668,14 @@
     {
       "id": "test-suite:b64d08deac9922c347cc",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:257776d2099c7e1ba181",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

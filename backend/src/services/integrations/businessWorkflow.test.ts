@@ -30,6 +30,12 @@ test('keeps three explicitly separated app tasks as three steps', () => {
   assert.equal(steps?.[2]?.request, 'create a task for Friday');
 });
 
+test('keeps public research, artifact creation, and dependent cell update separate', () => {
+  const steps = splitExplicitBusinessWorkflow('Search the public web for the APOD title; create a new Google Sheets spreadsheet named Xroga Stage; update cell A1 of that spreadsheet with the title found in the web search');
+  assert.deepEqual(steps?.map((step) => step.kind), ['web', 'action', 'action']);
+  assert.deepEqual(steps?.map((step) => step.dependsOnPrevious), [false, false, true]);
+});
+
 test('keeps comma-separated read, spreadsheet write, and email as three dependent steps', () => {
   const message = 'Find prospective clients, add qualified ones to a spreadsheet, and email me the results.';
   assert.deepEqual(splitExplicitBusinessWorkflow(message), [

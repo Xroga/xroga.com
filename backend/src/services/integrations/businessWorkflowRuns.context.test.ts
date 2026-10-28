@@ -1,7 +1,23 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createTenantContext} from '../../security/tenantContext.js';
-import {boundedWebWorkflowEvidence,getBusinessWorkflowRun} from './businessWorkflowRuns.js';
+import {boundedWebWorkflowEvidence,getBusinessWorkflowRun,previousEvidence} from './businessWorkflowRuns.js';
+
+test('dependent transfer retains the cited read and the newly created artifact ID', () => {
+  const outcomes = [
+    {stepIndex:0,request:'Search the public web for the title',kind:'web',toolkit:'public_web',toolSlug:'SEARCH',data:'cited title'},
+    {stepIndex:1,request:'create a new spreadsheet',kind:'action',toolkit:'googlesheets',toolSlug:'CREATE',data:'{"spreadsheetId":"synthetic-id"}'},
+  ];
+  const row = {step_index:2,outcomes} as never;
+  const step = {kind:'action',request:'update cell A1 of that spreadsheet with the title found in the web search',dependsOnPrevious:true} as const;
+  assert.deepEqual(previousEvidence(row,step), [
+    {sourceRequest:outcomes[0]!.request,toolkit:'public_web',toolSlug:'SEARCH',data:'cited title'},
+    {sourceRequest:outcomes[1]!.request,toolkit:'googlesheets',toolSlug:'CREATE',data:'{"spreadsheetId":"synthetic-id"}'},
+  ]);
+  assert.deepEqual(previousEvidence(row,{...step,request:'update that spreadsheet'}), [
+    {sourceRequest:outcomes[1]!.request,toolkit:'googlesheets',toolSlug:'CREATE',data:'{"spreadsheetId":"synthetic-id"}'},
+  ]);
+});
 
 test('bounds cited web evidence for a dependent app action without granting source text authority', () => {
   const evidence=boundedWebWorkflowEvidence({
