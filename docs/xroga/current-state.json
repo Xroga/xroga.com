@@ -8322,6 +8322,7 @@
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:34",
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:35",
         "backend/src/ai/softwareAgent/index.ts:10",
+        "backend/src/ai/softwareAgent/readFilesInput.test.ts:4",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts:6",
         "backend/src/sandbox/google/executionBinding.test.ts:6",
@@ -8341,6 +8342,7 @@
         "backend/src/ai/softwareAgent/createAgentEvidence.ts#createAgentEvidence"
       ],
       "testCoverage": [
+        "backend/src/ai/softwareAgent/readFilesInput.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
         "backend/src/sandbox/google/executionBinding.test.ts",
@@ -8564,6 +8566,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:3",
+        "backend/src/ai/softwareAgent/readFilesInput.test.ts:5",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:11",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:41"
       ],
@@ -8582,6 +8585,7 @@
         "backend/src/ai/softwareAgent/runEvents.ts#SoftwareRunEventType"
       ],
       "testCoverage": [
+        "backend/src/ai/softwareAgent/readFilesInput.test.ts",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts",
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts"
       ],
@@ -9484,7 +9488,7 @@
       "id": "surface:d3b75cad39bce7ff38fa",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "sha256": "315e5759a03ff8b4777ab8d9592e854c416a3632846c8eb97f8976aa69c2848d",
+      "sha256": "67cc56cd1f3995f8f8f68bf1e267368caea1393fbb4006bcb8b7022b6adbc149",
       "symbols": [
         "CreateXrogaSoftwareToolsInput",
         "MAX_PUBLIC_COMMAND_OUTPUT",
@@ -9510,10 +9514,12 @@
         "listFiles",
         "message",
         "now",
+        "paths",
         "preview",
         "publicCommandOutput",
         "readFiles",
         "renameFile",
+        "requested",
         "result",
         "results",
         "runChecks",
@@ -9527,6 +9533,7 @@
         "toolInput",
         "upsertChangedFile",
         "valid",
+        "validPaths",
         "verification",
         "verifyPreview",
         "writeFile"
@@ -9552,7 +9559,8 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:38",
-        "backend/src/ai/softwareAgent/index.ts:12"
+        "backend/src/ai/softwareAgent/index.ts:12",
+        "backend/src/ai/softwareAgent/readFilesInput.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9570,7 +9578,9 @@
         "backend/src/ai/softwareAgent/xrogaTools.ts#verification",
         "backend/src/ai/softwareAgent/xrogaTools.ts#verifyPreview"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/softwareAgent/readFilesInput.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -125921,6 +125931,13 @@
       "id": "test-suite:83978aa596dc091daf05",
       "sourcePath": "backend/src/ai/softwareAgent/completionGate.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bb68aa530823d7e41dcb",
+      "sourcePath": "backend/src/ai/softwareAgent/readFilesInput.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

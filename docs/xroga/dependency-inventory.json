@@ -15486,7 +15486,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "sha256": "315e5759a03ff8b4777ab8d9592e854c416a3632846c8eb97f8976aa69c2848d"
+      "sha256": "67cc56cd1f3995f8f8f68bf1e267368caea1393fbb4006bcb8b7022b6adbc149"
     },
     {
       "path": "backend/src/ai/startupProgress.ts",
@@ -29349,7 +29349,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "line": 479,
+      "line": 487,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

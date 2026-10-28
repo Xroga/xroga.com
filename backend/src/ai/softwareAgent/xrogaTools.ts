@@ -263,17 +263,25 @@ export function createXrogaSoftwareTools(
         async (
           rawInput: unknown,
         ) => {
-          const toolInput =
-            rawInput as {
-              paths:
-                string[];
-            };
+          const requested =
+            (rawInput as { paths?: unknown } | null | undefined)?.paths;
 
           try {
+            // A model that omits or malforms "paths" would otherwise get the same generic failure
+            // on every retry and loop. Reading the project's listed files (bounded) always makes progress.
+            const validPaths =
+              Array.isArray(requested) &&
+              requested.length > 0 &&
+              requested.every((value) => typeof value === 'string' && value.trim() !== '');
+
+            const paths: string[] = validPaths
+              ? (requested as string[])
+              : (await host.listFiles(contract)).slice(0, 20).map((file) => file.path);
+
             const files =
               await host.readFiles(
                 contract,
-                toolInput.paths,
+                paths,
               );
 
             for (
