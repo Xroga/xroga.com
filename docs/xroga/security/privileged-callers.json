@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "92459b191892ee3d296055210b872633fdac09fbbc2f1ae05e012bfeace20a88",
+  "reviewRegistrySha256": "739bdde319d20a83df4dc8b7a4bca35914a6dbac235e488f2f621fd90ac6bd72",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3948,7 +3948,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "18f7c2043f2ceb0ebac3"
+        "id": "406c8c64df398852c20d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6684,7 +6684,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "18f7c2043f2ceb0ebac3"
+        "id": "406c8c64df398852c20d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -23472,15 +23472,15 @@
       "sourceSha256": "ad90f5eb688b6cb0cc72fa129cd1c2a27a2fc1d9caaadef64cfc7a26577acfb9"
     },
     {
-      "id": "18f7c2043f2ceb0ebac3",
+      "id": "406c8c64df398852c20d",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 426,
+      "line": 428,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "sourceSha256": "f966a9ac92a7ad2719f186ae4979efc959765e268f5ef4fc2a50d68ef6ab94ba",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bad3058541f46905e9e73f911bdb7e801b21a0dd",
+  "source_sha": "f77a588d24c167dc9609807ccea3ac946bcfca9a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18645,7 +18645,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860"
+      "sha256": "f966a9ac92a7ad2719f186ae4979efc959765e268f5ef4fc2a50d68ef6ab94ba"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -19385,7 +19385,7 @@
     },
     {
       "path": "frontend/src/lib/phase1Routing.ts",
-      "sha256": "2a93a9606b7b5bd48510813ac333c0f2f0e7149b92437f3636bbb48d0db88f02"
+      "sha256": "06e96abfcdbf24962742466a680e7def60dc729d081f68609f4792630c875468"
     },
     {
       "path": "frontend/src/lib/plainAiText.tsx",
@@ -19490,6 +19490,10 @@
     {
       "path": "frontend/src/lib/repoWorkspaceGate.ts",
       "sha256": "43476886c17dbb478a63e82acc039910e096afaceca1c8fb6dd9d06a37b40dbe"
+    },
+    {
+      "path": "frontend/src/lib/requiresRepoWorkspaceForPrompt.ts",
+      "sha256": "d38f5dd62fb6483b610af098fb227db37a8916921e8068807c587fe16808ad58"
     },
     {
       "path": "frontend/src/lib/researchWait.ts",
