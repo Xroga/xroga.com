@@ -681,7 +681,7 @@
       "id": "B1-P2-fba3a9a069050e3f",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/routes/github.ts",
-      "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "baselineCallerIds": [
         "8a4f5a61a698f969e941",
         "7ea068acaab899c1c99e",
@@ -736,7 +736,7 @@
         {
           "path": "backend/src/routes/github.ts",
           "marker": "repo_strategy",
-          "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+          "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -756,27 +756,27 @@
       "id": "B1-P2-812abbd1d9e8178e",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "sourceSha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
       "baselineCallerIds": [
         "b4b2b91f3280a140691a",
         "48c115e3fcc79a824240"
       ],
       "currentCallerIds": [
-        "16e9bd43351094b6a7fb",
-        "51b0a88f73c6d7dbf811"
+        "6517de08d7faf2996d41",
+        "d1dae1934b42415b2c82"
       ],
       "mapping": [
         {
           "baselineCallerId": "b4b2b91f3280a140691a",
           "currentCallerIds": [
-            "16e9bd43351094b6a7fb"
+            "6517de08d7faf2996d41"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "48c115e3fcc79a824240",
           "currentCallerIds": [
-            "51b0a88f73c6d7dbf811"
+            "d1dae1934b42415b2c82"
           ],
           "change": "RETAINED"
         }
@@ -801,7 +801,7 @@
         {
           "path": "backend/src/services/integrations/githubDeploy.ts",
           "marker": "async function getIntegration",
-          "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+          "sourceSha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -834,27 +834,27 @@
       "id": "B1-P2-47ed76ce09cbb18f",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/synthesis/delivery/projectDeliveryService.ts",
-      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "sourceSha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c",
       "baselineCallerIds": [
         "371f13126c4ab7aab2dc",
         "74cc6545383bea8e320f"
       ],
       "currentCallerIds": [
-        "371f13126c4ab7aab2dc",
-        "74cc6545383bea8e320f"
+        "e2f7ae31e252ffce2559",
+        "e880bdc44f676acfd89e"
       ],
       "mapping": [
         {
           "baselineCallerId": "371f13126c4ab7aab2dc",
           "currentCallerIds": [
-            "371f13126c4ab7aab2dc"
+            "e2f7ae31e252ffce2559"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "74cc6545383bea8e320f",
           "currentCallerIds": [
-            "74cc6545383bea8e320f"
+            "e880bdc44f676acfd89e"
           ],
           "change": "RETAINED"
         }
@@ -864,7 +864,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-47ed76ce09cbb18f",
-        "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+        "sourceSha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c",
         "executionStatus": "IN_PROGRESS",
         "finding": "EXISTING_AUTHENTICATED_CONSUMER_OWNERSHIP_PROOF_PREPARED_NO_PRODUCTION_CHANGE",
         "actorTrace": "index mounts delivery routes behind authMiddleware. The GET handler uses requireUser(req) and validated project path only. loadProjectDelivery reads the exact owner/project revision before any envelope is returned, and its private evidence query filters that same owner/project with a fixed event-type projection. Fresh disposable subjects have no provider credentials. Actual HTTP evidence uses distinct owner rows under the same logical project label and a second private project. No publish/deploy action is called.",
@@ -879,7 +879,12 @@
         "remaining": [
           "Authenticate the actual own/foreign/anonymous endpoint and unavailable authority case. Persisted fictional ready events prove tenant-scoped metadata projection only, never live provider success, full publication/deployment authority or egress.",
           "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
-        ]
+        ],
+        "beforeGitHubPublicationSource": {
+          "ref": "197637d2cfc360295e750cad6100ea71fcddc6df",
+          "sha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+          "proof": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
+        }
       },
       "actor": {
         "existingTrace": "loadProjectDelivery supplies user/project to the runtime revision loader and loadEvidence; evidence selects owner/project and four publication/deployment types.",
@@ -897,7 +902,7 @@
         {
           "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
           "marker": "async function loadEvidence",
-          "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+          "sourceSha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6697,7 +6702,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+          "sourceSha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6824,7 +6829,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+          "sourceSha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8355,7 +8360,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+            "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
             "historicalBinding": {
               "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
               "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"

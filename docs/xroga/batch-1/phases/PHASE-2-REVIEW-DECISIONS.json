@@ -2392,7 +2392,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+          "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
           "historicalBinding": {
             "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
             "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
@@ -3017,7 +3017,7 @@
     },
     {
       "packetId": "B1-P2-47ed76ce09cbb18f",
-      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "sourceSha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c",
       "executionStatus": "IN_PROGRESS",
       "finding": "EXISTING_AUTHENTICATED_CONSUMER_OWNERSHIP_PROOF_PREPARED_NO_PRODUCTION_CHANGE",
       "actorTrace": "index mounts delivery routes behind authMiddleware. The GET handler uses requireUser(req) and validated project path only. loadProjectDelivery reads the exact owner/project revision before any envelope is returned, and its private evidence query filters that same owner/project with a fixed event-type projection. Fresh disposable subjects have no provider credentials. Actual HTTP evidence uses distinct owner rows under the same logical project label and a second private project. No publish/deploy action is called.",
@@ -3032,7 +3032,12 @@
       "remaining": [
         "Authenticate the actual own/foreign/anonymous endpoint and unavailable authority case. Persisted fictional ready events prove tenant-scoped metadata projection only, never live provider success, full publication/deployment authority or egress.",
         "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
-      ]
+      ],
+      "beforeGitHubPublicationSource": {
+        "ref": "197637d2cfc360295e750cad6100ea71fcddc6df",
+        "sha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+        "proof": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
+      }
     },
     {
       "packetId": "B1-P2-50f57cd7c2568e3b",

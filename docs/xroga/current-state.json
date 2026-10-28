@@ -5010,7 +5010,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelDispatch.ts:6",
-        "backend/src/services/integrations/businessAction.ts:1484"
+        "backend/src/services/integrations/businessAction.ts:1489"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -5536,7 +5536,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+      "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6962,7 +6962,7 @@
         "backend/src/services/integrations/businessRead.ts:10",
         "backend/src/services/integrations/composioClient.security.test.ts:6",
         "backend/src/services/integrations/composioConsentConsumers.security.test.ts:6",
-        "backend/src/services/integrations/githubDeploy.ts:67",
+        "backend/src/services/integrations/githubDeploy.ts:46",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:9",
         "backend/src/services/publish/desktopWorkflow.ts:1",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts:4",
@@ -12737,7 +12737,7 @@
         "backend/src/lib/vercel.ts:1",
         "backend/src/lib/youtubeSearch.ts:1",
         "backend/src/operations/benchmarkAdapter.ts:21",
-        "backend/src/services/integrations/githubDeploy.ts:15"
+        "backend/src/services/integrations/githubDeploy.ts:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12887,10 +12887,11 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/githubDeploy.ts:65",
+        "backend/src/services/integrations/githubDeploy.ts:44",
         "backend/src/services/memory/buildProjectStore.ts:3"
       ],
       "reachable": true,
@@ -13154,7 +13155,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:7",
         "backend/src/services/integrations/businessAutomations.ts:3",
         "backend/src/services/integrations/githubAuth.ts:1",
-        "backend/src/services/integrations/githubDeploy.ts:2",
+        "backend/src/services/integrations/githubDeploy.ts:5",
         "backend/src/services/integrations/githubSourceRead.ts:2",
         "backend/src/services/integrations/githubTokenStore.ts:1",
         "backend/src/services/integrations/oauthPkceStore.ts:6",
@@ -13165,7 +13166,7 @@
         "backend/src/services/memory/buildProjectStore.ts:4",
         "backend/src/services/notificationService.ts:1",
         "backend/src/services/storage/projectFiles.ts:3",
-        "backend/src/synthesis/delivery/projectDeliveryService.ts:1",
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:4",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:1",
         "backend/src/synthesis/projectRuntime/store.ts:6",
         "backend/src/synthesis/universalEntrypoint.ts:52"
@@ -14411,11 +14412,12 @@
         "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/shipVerify.ts:5",
-        "backend/src/services/integrations/githubDeploy.ts:11"
+        "backend/src/services/integrations/githubDeploy.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -14618,10 +14620,11 @@
         "backend/src/lib/normalizeBuildSource.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/githubDeploy.ts:13",
+        "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/projectScaffold.ts:2"
       ],
       "reachable": true,
@@ -14835,11 +14838,12 @@
         "backend/src/security/authority/enforce.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/publishingTransport.security.test.ts:6",
-        "backend/src/services/integrations/githubDeploy.ts:10"
+        "backend/src/services/integrations/githubDeploy.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -14878,12 +14882,13 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/landingPreview.ts:1",
         "backend/src/routes/vercel.ts:23",
-        "backend/src/services/integrations/githubDeploy.ts:12",
+        "backend/src/services/integrations/githubDeploy.ts:15",
         "backend/src/services/projectScaffold.ts:1"
       ],
       "reachable": true,
@@ -15279,7 +15284,7 @@
         "backend/src/lib/vercel.ts:2",
         "backend/src/lib/vercelDomains.ts:1",
         "backend/src/lib/vercelEnv.ts:1",
-        "backend/src/services/integrations/githubDeploy.ts:68",
+        "backend/src/services/integrations/githubDeploy.ts:47",
         "backend/src/services/publish/nativeArtifact.ts:4",
         "backend/src/services/publish/nonWebShip.ts:23"
       ],
@@ -15441,10 +15446,11 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/githubDeploy.ts:60"
+        "backend/src/services/integrations/githubDeploy.ts:40"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16186,11 +16192,12 @@
         "backend/src/lib/publishingProviderRequest.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/publishingTransport.security.test.ts:5",
-        "backend/src/services/integrations/githubDeploy.ts:3"
+        "backend/src/services/integrations/githubDeploy.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16367,12 +16374,13 @@
         "backend/src/security/egress/egressPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/publishingTransport.security.test.ts:7",
         "backend/src/lib/vercelEnv.authority.test.ts:3",
-        "backend/src/services/integrations/githubDeploy.ts:9"
+        "backend/src/services/integrations/githubDeploy.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16408,10 +16416,11 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/githubDeploy.ts:14",
+        "backend/src/services/integrations/githubDeploy.ts:17",
         "backend/src/services/projectScaffold.ts:3"
       ],
       "reachable": true,
@@ -20148,7 +20157,7 @@
       "id": "surface:49f562e97866e488737b",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/delivery.ts",
-      "sha256": "eba82946835afde6a4697b9ca07c9b1babc2d6d879883cd0c585cf8e56e0488d",
+      "sha256": "0a509d555ca21bb95acc86b180b659917ce5578cbdcf8617caf35950bde63172",
       "symbols": [
         "archive",
         "delivery",
@@ -20274,7 +20283,7 @@
       "id": "surface:e037639d29105e028e8a",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/github.ts",
-      "sha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -21710,7 +21719,7 @@
       "id": "surface:587e52abc6aed829e331",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/showcase.ts",
-      "sha256": "f26ff330eb7032f74930ee9a7db112016dbb0df48efb9a192a74354ddf0f5533",
+      "sha256": "a81f35306678f64b6c36294d34bc0926e1e58fd464ccbe06998b94712347e986",
       "symbols": [
         "BASE_BRANCH_RE",
         "BRANCH_RE",
@@ -23838,6 +23847,7 @@
         "backend/src/services/integrations/composioClient.ts:5",
         "backend/src/services/integrations/composioControl.ts:10",
         "backend/src/services/integrations/credentialVault.ts:3",
+        "backend/src/services/integrations/githubApproval.ts:5",
         "backend/src/services/integrations/supabaseAccess.ts:1",
         "backend/src/services/integrations/supabaseApproval.ts:3",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:3",
@@ -23956,6 +23966,10 @@
         "backend/src/services/integrations/composioClient.ts:6",
         "backend/src/services/integrations/composioConsentConsumers.security.test.ts:5",
         "backend/src/services/integrations/composioControl.ts:5",
+        "backend/src/services/integrations/githubApproval.ts:4",
+        "backend/src/services/integrations/githubDeploy.ts:2",
+        "backend/src/services/integrations/githubPublication.ts:5",
+        "backend/src/services/integrations/githubRequest.ts:2",
         "backend/src/services/integrations/supabaseAccess.ts:2",
         "backend/src/services/integrations/supabaseApproval.ts:4",
         "backend/src/services/integrations/supabaseProjectCreation.ts:6",
@@ -24275,6 +24289,8 @@
         "backend/src/security/egress/heldCredentialFloor.test.ts:3",
         "backend/src/services/integrations/composioClient.ts:12",
         "backend/src/services/integrations/composioControl.ts:7",
+        "backend/src/services/integrations/githubApproval.ts:5",
+        "backend/src/services/integrations/githubRequest.ts:5",
         "backend/src/services/integrations/githubSourceRead.ts:4",
         "backend/src/services/integrations/supabaseApproval.ts:9",
         "backend/src/services/integrations/supabaseProjectCreation.ts:9",
@@ -24374,6 +24390,9 @@
         "backend/src/services/BillingService.ts:22",
         "backend/src/services/integrations/composioClient.ts:10",
         "backend/src/services/integrations/composioControl.ts:8",
+        "backend/src/services/integrations/githubApproval.ts:5",
+        "backend/src/services/integrations/githubDeploy.ts:3",
+        "backend/src/services/integrations/githubRequest.ts:4",
         "backend/src/services/integrations/supabaseApproval.ts:8",
         "backend/src/services/integrations/supabaseProjectCreation.ts:10",
         "backend/src/services/publish/chromeWebStore.ts:15",
@@ -24519,6 +24538,7 @@
         "backend/src/services/BillingService.ts:23",
         "backend/src/services/integrations/composioClient.ts:11",
         "backend/src/services/integrations/composioControl.ts:9",
+        "backend/src/services/integrations/githubApproval.ts:5",
         "backend/src/services/integrations/supabaseApproval.ts:10",
         "backend/src/services/integrations/supabaseProjectCreation.ts:11",
         "backend/src/services/publish/cwsAdmission.ts:9",
@@ -24698,6 +24718,7 @@
         "backend/src/security/egress/fileEgress.ts:9",
         "backend/src/security/egress/publicPost.test.ts:6",
         "backend/src/services/integrations/composioClient.ts:13",
+        "backend/src/services/integrations/githubRequest.ts:6",
         "backend/src/services/integrations/githubSourceRead.ts:5",
         "backend/src/services/integrations/vercelAuth.ts:10",
         "backend/src/services/publish/easCredentials.ts:6",
@@ -24889,7 +24910,10 @@
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
         "backend/src/security/tenantIsolation.local.integration.ts:23",
+        "backend/src/services/integrations/githubApproval.ts:3",
+        "backend/src/services/integrations/githubPublication.ts:4",
         "backend/src/services/storage/projectFiles.ts:6",
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:2",
         "backend/src/synthesis/projectRuntime/googleAuthority.ts:3",
         "backend/src/workers/googleDeliveryStore.ts:5"
       ],
@@ -25020,6 +25044,7 @@
         "backend/src/services/integrations/businessWorkflowRuns.ts:2",
         "backend/src/services/integrations/composioControl.ts:4",
         "backend/src/services/integrations/credentialStorageBucket.ts:2",
+        "backend/src/services/integrations/githubApproval.ts:3",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
         "backend/src/services/integrations/supabaseAccess.ts:5",
         "backend/src/services/integrations/supabaseApproval.ts:7",
@@ -25146,6 +25171,7 @@
         "backend/src/routes/expoCredentialAdmission.security.test.ts:2",
         "backend/src/routes/github.oauth.test.ts:6",
         "backend/src/routes/github.ts:5",
+        "backend/src/routes/githubPublication.pending.test.ts:1",
         "backend/src/routes/githubTransport.security.test.ts:9",
         "backend/src/routes/integrations.ts:3",
         "backend/src/routes/messageShares.ts:5",
@@ -25235,7 +25261,12 @@
         "backend/src/services/integrations/credentialVault.test.ts:4",
         "backend/src/services/integrations/credentialVault.ts:2",
         "backend/src/services/integrations/credentialVaultRuntime.ts:5",
-        "backend/src/services/integrations/githubDeploy.ts:1",
+        "backend/src/services/integrations/githubApproval.ts:2",
+        "backend/src/services/integrations/githubDeploy.ts:4",
+        "backend/src/services/integrations/githubPublication.security.test.ts:2",
+        "backend/src/services/integrations/githubPublication.ts:3",
+        "backend/src/services/integrations/githubRequest.security.test.ts:4",
+        "backend/src/services/integrations/githubRequest.ts:1",
         "backend/src/services/integrations/githubSourceRead.test.ts:4",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:8",
         "backend/src/services/integrations/githubSourceRead.ts:1",
@@ -25306,6 +25337,7 @@
         "backend/src/services/responseCache.receipt.test.ts:3",
         "backend/src/services/responseCache.test.ts:3",
         "backend/src/services/responseCache.ts:3",
+        "backend/src/services/showcase/templateExport.ts:1",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:3",
         "backend/src/services/storage/fileDeliveryPolicy.ts:5",
         "backend/src/services/storage/privateFileDelivery.revocation.test.ts:5",
@@ -25313,6 +25345,7 @@
         "backend/src/services/storage/projectFiles.receipt.test.ts:7",
         "backend/src/services/storage/projectFiles.ts:5",
         "backend/src/storage/runtime.ts:4",
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:1",
         "backend/src/synthesis/livePreview/store.ts:6",
         "backend/src/synthesis/projectRuntime/googleAuthority.test.ts:3",
         "backend/src/synthesis/projectRuntime/googleAuthority.ts:2",
@@ -25378,6 +25411,7 @@
         "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/routes/expoCredentialAdmission.security.test.ts",
         "backend/src/routes/github.oauth.test.ts",
+        "backend/src/routes/githubPublication.pending.test.ts",
         "backend/src/routes/githubTransport.security.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
         "backend/src/routes/projects.collectionDetail.test.ts",
@@ -25433,6 +25467,8 @@
         "backend/src/services/integrations/composioProvenance.security.test.ts",
         "backend/src/services/integrations/credentialUploadBoundary.test.ts",
         "backend/src/services/integrations/credentialVault.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
+        "backend/src/services/integrations/githubRequest.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.test.ts",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
@@ -25994,7 +26030,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b0e8cacbae9d3821132fa1e16ee664aa045787fa628dcd6c91ba69d5d19d101f",
+      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -26108,6 +26144,7 @@
         "./composioClient.js",
         "./composioControl.js",
         "./composioSkillGuidance.js",
+        "./githubApproval.js",
         "./pluginPermissionPolicy.js",
         "./supabaseProjectCreation.js",
         "./supabaseProvision.js",
@@ -26128,6 +26165,7 @@
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/composioControl.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
+        "backend/src/services/integrations/githubApproval.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts",
         "backend/src/services/integrations/supabaseProjectCreation.ts",
         "backend/src/services/integrations/supabaseProvision.ts",
@@ -26161,6 +26199,7 @@
         "backend/src/services/integrations/businessWorkflowRuns.ts:3",
         "backend/src/services/integrations/composioClient.ts:2648",
         "backend/src/services/integrations/composioControl.ts:13",
+        "backend/src/services/integrations/githubApproval.ts:6",
         "backend/src/services/integrations/supabaseApproval.ts:12",
         "backend/src/services/integrations/supabaseProjectCreation.ts:15",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:8",
@@ -26319,6 +26358,8 @@
         "backend/src/services/integrations/composioControl.security.test.ts:8",
         "backend/src/services/integrations/composioControl.ts:12",
         "backend/src/services/integrations/composioProvenance.security.test.ts:5",
+        "backend/src/services/integrations/githubApproval.ts:6",
+        "backend/src/services/integrations/githubPublication.security.test.ts:5",
         "backend/src/services/integrations/supabaseApproval.ts:13",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:5",
         "backend/src/services/integrations/supabaseProjectCreation.ts:16",
@@ -26387,6 +26428,7 @@
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/composioProvenance.security.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
@@ -27284,7 +27326,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1489",
+        "backend/src/services/integrations/businessAction.ts:1494",
         "backend/src/services/integrations/businessAutomations.ts:5",
         "backend/src/services/integrations/composioClient.ts:14"
       ],
@@ -27670,7 +27712,9 @@
         "backend/src/services/integrations/composioControl.ts:11",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts:6",
         "backend/src/services/integrations/credentialVaultStartup.ts:8",
+        "backend/src/services/integrations/githubApproval.ts:6",
         "backend/src/services/integrations/githubAuth.ts:6",
+        "backend/src/services/integrations/githubPublication.security.test.ts:7",
         "backend/src/services/integrations/githubSourceRead.test.ts:8",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:5",
@@ -27725,6 +27769,7 @@
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.test.ts",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
@@ -27972,6 +28017,142 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:8c953decf3dc81f8f6ae",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/githubApproval.ts",
+      "sha256": "50bd566b12896f2c4c6ab290e2107e1d633db348c642b6843ddfa7bae45beb08",
+      "symbols": [
+        "GitHubNativeKind",
+        "GitHubPending",
+        "SourceReference",
+        "TemplateSource",
+        "actor",
+        "beginning",
+        "built",
+        "candidates",
+        "check",
+        "checkClaim",
+        "checkSource",
+        "confirmation",
+        "consumed",
+        "context",
+        "denied",
+        "digest",
+        "executeGitHubNativeAction",
+        "file",
+        "files",
+        "hash",
+        "identity",
+        "issuedAt",
+        "nativeGitHubProof",
+        "nonce",
+        "prepareGitHubAction",
+        "prepareSource",
+        "proof",
+        "readGitHubAction",
+        "row",
+        "sealed",
+        "sha256",
+        "snapshot",
+        "source",
+        "text",
+        "toolkit",
+        "unsigned",
+        "useCase",
+        "value"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/dataClassification.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/securityDecision.js",
+        "../../security/ownership.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../publish/nativeArtifact.js",
+        "../publish/nativeReleaseAdmission.js",
+        "../showcase/templateExport.js",
+        "../showcase/templateSources.js",
+        "../storage/fileDeliveryPolicy.js",
+        "../storage/privateFileDelivery.js",
+        "../storage/projectFiles.js",
+        "./businessAction.js",
+        "./businessActionConfirmations.js",
+        "./credentialVaultRuntime.js",
+        "./githubDeploy.js",
+        "./githubRequest.js",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/ownership.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubRequest.ts",
+        "backend/src/services/publish/nativeArtifact.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts",
+        "backend/src/services/showcase/templateExport.ts",
+        "backend/src/services/showcase/templateSources.ts",
+        "backend/src/services/storage/fileDeliveryPolicy.ts",
+        "backend/src/services/storage/privateFileDelivery.ts",
+        "backend/src/services/storage/projectFiles.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/businessAction.ts:1458",
+        "backend/src/services/integrations/githubPublication.ts:11",
+        "backend/src/services/showcase/templateExport.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "business_action_confirmations"
+      ],
+      "externalProviderDependencies": [
+        "declared-host:api.github.com",
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/githubApproval.ts#AuthorityError",
+        "backend/src/services/integrations/githubApproval.ts#AuthorityPermit",
+        "backend/src/services/integrations/githubApproval.ts#consumeAuthorityPermit",
+        "backend/src/services/integrations/githubApproval.ts#identity"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/integrations/githubApproval.ts:45 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/integrations/githubApproval.ts#actionPlanDigest",
+        "backend/src/services/integrations/githubApproval.ts#confirmation",
+        "backend/src/services/integrations/githubApproval.ts#createBusinessActionConfirmation",
+        "backend/src/services/integrations/githubApproval.ts#digest",
+        "backend/src/services/integrations/githubApproval.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:29892ce182cf6cd487bd",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -28004,12 +28185,15 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:26",
         "backend/src/services/integrations/githubAtomicTransport.test.ts:3",
-        "backend/src/services/integrations/githubDeploy.ts:42",
+        "backend/src/services/integrations/githubDeploy.ts:24",
+        "backend/src/services/integrations/githubPublication.ts:13",
+        "backend/src/services/showcase/templateExport.ts:6",
         "backend/src/synthesis/universalCommit.ts:30"
       ],
       "reachable": true,
@@ -28095,12 +28279,14 @@
         "backend/src/services/integrations/githubTreeSnapshot.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:22",
         "backend/src/services/integrations/githubAtomicWrite.test.ts:3",
-        "backend/src/services/integrations/githubDeploy.ts:36",
+        "backend/src/services/integrations/githubDeploy.ts:23",
+        "backend/src/services/integrations/githubPublication.ts:14",
         "backend/src/synthesis/universalCommit.ts:34"
       ],
       "reachable": true,
@@ -28176,13 +28362,15 @@
         "backend/src/routes/github.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
-        "backend/src/services/integrations/githubDeploy.ts:16",
+        "backend/src/services/integrations/githubDeploy.ts:19",
+        "backend/src/services/integrations/githubPublication.ts:8",
+        "backend/src/services/integrations/githubRequest.ts:7",
         "backend/src/services/integrations/githubSourceRead.ts:3",
         "backend/src/services/publish/electronSecrets.ts:5",
         "backend/src/services/publish/expoWorkflow.ts:5",
         "backend/src/services/publish/nonWebShip.ts:19",
         "backend/src/services/publish/userOwnedPublish.ts:6",
-        "backend/src/services/showcase/templateExport.ts:15"
+        "backend/src/services/showcase/templateExport.ts:24"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -28238,12 +28426,13 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/githubAtomicWrite.ts:52",
         "backend/src/services/integrations/githubBranchAuthorization.test.ts:3",
-        "backend/src/services/integrations/githubDeploy.ts:53"
+        "backend/src/services/integrations/githubDeploy.ts:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -28306,13 +28495,14 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:44",
         "backend/src/services/integrations/githubAtomicWrite.ts:36",
         "backend/src/services/integrations/githubBranchSafety.test.ts:3",
-        "backend/src/services/integrations/githubDeploy.ts:30"
+        "backend/src/services/integrations/githubDeploy.ts:22"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -28342,13 +28532,10 @@
       "id": "surface:c1b2ae43de1ceeb5e7f3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "sha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
       "symbols": [
-        "AtomicPushOptions",
-        "ConnectedRepositoryPushOptions",
         "ConnectedRepositoryState",
         "DeployPipelineResult",
-        "GitCommitIdentity",
         "GitHubIntegrationRow",
         "GitHubPushOptions",
         "GitHubPushResult",
@@ -28363,41 +28550,35 @@
         "UPDATE_HYDRATE_PATHS",
         "UserVercelDeployOptions",
         "VercelGitProjectResult",
+        "access",
+        "admitted",
         "analysis",
         "analyzeGitHubRepo",
         "api",
         "appJson",
-        "atomicWriteApiFor",
         "attempt",
         "attempts",
         "batch",
         "blob",
         "blobs",
-        "body",
-        "bot",
         "branch",
         "branchData",
         "branchRes",
-        "branchWriteNeedsAuthorization",
-        "buildBrandedCommitMessage",
         "buildEvidencePaths",
         "buildFiles",
         "bundle",
         "bytes",
+        "cacheRepo",
         "cached",
-        "candidate",
         "candidates",
+        "chunks",
         "clean",
-        "coAuthor",
         "configured",
         "content",
-        "createRepo",
         "created",
         "criticalPaths",
         "css",
         "data",
-        "date",
-        "decision",
         "decodeRepositoryTextBlob",
         "decoded",
         "defaultBranch",
@@ -28433,15 +28614,10 @@
         "framework",
         "frameworkForDeploy",
         "fullHtml",
-        "fullName",
         "getBranchHeadSha",
-        "getDefaultBranch",
-        "getGitHubCoAuthor",
-        "getGitHubUsername",
         "getGithubDefaultRepo",
         "getIntegration",
         "ghFetch",
-        "gitCommitAuthorFields",
         "gitProject",
         "github",
         "hasBuildFiles",
@@ -28450,12 +28626,10 @@
         "hasManagedVercelDeployment",
         "hasNetlify",
         "hasVercel",
-        "head",
         "headSha",
         "headers",
         "hostingDeployFiles",
         "html",
-        "htmlUrl",
         "inferRepositoryTechStack",
         "inspectConnectedRepositoryState",
         "integration",
@@ -28470,27 +28644,24 @@
         "langList",
         "langRes",
         "languages",
-        "lastFailure",
         "link",
         "linked",
         "linkedRepo",
         "lite",
-        "makeBranchApi",
         "managed",
         "managedVercelProjectName",
         "merged",
         "message",
         "metadata",
         "msg",
-        "needsAuthorization",
         "netlify",
         "netlifyFiles",
         "normalized",
         "offset",
         "opts",
         "out",
-        "owner",
         "parseRepoName",
+        "part",
         "path",
         "paths",
         "pkg",
@@ -28501,35 +28672,33 @@
         "pushAndDeployLivePreview",
         "pushBuildFromSource",
         "pushBuildToGitHub",
-        "pushFilesAtomically",
-        "pushToConnectedRepository",
         "query",
         "rateLimited",
+        "raw",
+        "read",
+        "reader",
         "readme",
         "reason",
-        "record",
         "redeployPreviewFromGitHub",
         "ref",
         "refResponse",
         "replacements",
         "repo",
         "repoMeta",
-        "repoName",
         "repoRes",
         "repoResponse",
         "report",
         "repository",
         "repositoryBuildEvidencePaths",
-        "requestedBranch",
         "res",
         "resetAt",
         "resetSeconds",
         "response",
         "result",
         "rollbackRepoToCommit",
-        "runBranch",
         "scanBranch",
-        "selectedRepo",
+        "signal",
+        "size",
         "slug",
         "snapshot",
         "source",
@@ -28549,16 +28718,13 @@
         "treeRes",
         "treeSample",
         "treeSha",
-        "trimmed",
         "unique",
-        "user",
         "userVercelToken",
         "value",
         "vercel",
         "vercelFiles",
         "vercelTeamQuery",
-        "verified",
-        "xrogaBotIdentity"
+        "verified"
       ],
       "imports": [
         "../../ai/providerRuntime.js",
@@ -28574,6 +28740,8 @@
         "../../lib/vercel.js",
         "../../lib/vercelEnv.js",
         "../../lib/vercelStaticConfig.js",
+        "../../security/authority/enforce.js",
+        "../../security/egress/egressPolicy.js",
         "../../security/tenantContext.js",
         "./githubAtomicTransport.js",
         "./githubAtomicWrite.js",
@@ -28581,7 +28749,9 @@
         "./githubBranchAuthorization.js",
         "./githubBranchSafety.js",
         "./githubMutationPlan.js",
+        "./githubPublication.js",
         "./githubRepoCreation.js",
+        "./githubRequest.js",
         "./githubRunBranch.js",
         "./githubSourceRead.js",
         "./githubTreeSnapshot.js",
@@ -28602,6 +28772,8 @@
         "backend/src/lib/vercel.ts",
         "backend/src/lib/vercelEnv.ts",
         "backend/src/lib/vercelStaticConfig.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
         "backend/src/services/integrations/githubAtomicWrite.ts",
@@ -28609,7 +28781,8 @@
         "backend/src/services/integrations/githubBranchAuthorization.ts",
         "backend/src/services/integrations/githubBranchSafety.ts",
         "backend/src/services/integrations/githubMutationPlan.ts",
-        "backend/src/services/integrations/githubRepoCreation.ts",
+        "backend/src/services/integrations/githubPublication.ts",
+        "backend/src/services/integrations/githubRequest.ts",
         "backend/src/services/integrations/githubRunBranch.ts",
         "backend/src/services/integrations/githubSourceRead.ts",
         "backend/src/services/integrations/githubTreeSnapshot.ts",
@@ -28617,7 +28790,8 @@
         "backend/src/services/integrations/vercelAuth.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:108",
@@ -28629,22 +28803,27 @@
         "backend/src/routes/github.ts:491",
         "backend/src/routes/github.ts:524",
         "backend/src/routes/github.ts:610",
-        "backend/src/routes/github.ts:678",
+        "backend/src/routes/github.ts:680",
         "backend/src/routes/integrations.ts:39",
         "backend/src/routes/phase1.ts:45",
         "backend/src/routes/supabaseOAuth.ts:39",
         "backend/src/routes/vercel.ts:25",
         "backend/src/security/githubConsumer.local.integration.ts:9",
         "backend/src/services/integrations/githubAnalysis.test.ts:3",
+        "backend/src/services/integrations/githubApproval.ts:72",
+        "backend/src/services/integrations/githubApproval.ts:73",
         "backend/src/services/integrations/githubDeploy.credential.test.ts:4",
+        "backend/src/services/integrations/githubPublication.security.test.ts:3",
+        "backend/src/services/integrations/githubPublication.ts:10",
         "backend/src/services/integrations/githubRepositoryState.test.ts:3",
+        "backend/src/services/integrations/githubRequest.security.test.ts:2",
         "backend/src/services/integrations/githubSourceRead.test.ts:9",
         "backend/src/services/integrations/managedVercelDeployment.test.ts:10",
         "backend/src/services/integrations/universalRepositoryHydration.test.ts:4",
         "backend/src/services/integrations/vercelGitProject.test.ts:3",
         "backend/src/services/publish/userOwnedPublish.ts:8",
-        "backend/src/services/showcase/templateExport.ts:14",
-        "backend/src/synthesis/delivery/projectDeliveryService.ts:5",
+        "backend/src/services/showcase/templateExport.ts:23",
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:8",
         "backend/src/synthesis/universalCommit.ts:29"
       ],
       "reachable": true,
@@ -28653,26 +28832,16 @@
       ],
       "externalProviderDependencies": [],
       "authBoundary": [
+        "backend/src/services/integrations/githubDeploy.ts#AuthorityError",
         "backend/src/services/integrations/githubDeploy.ts#BranchAuthorizationError",
-        "backend/src/services/integrations/githubDeploy.ts#GitCommitIdentity",
-        "backend/src/services/integrations/githubDeploy.ts#authorizeBranchWrite",
-        "backend/src/services/integrations/githubDeploy.ts#branchWriteNeedsAuthorization",
-        "backend/src/services/integrations/githubDeploy.ts#coAuthor",
-        "backend/src/services/integrations/githubDeploy.ts#describeBranchAuthorizationRefusal",
-        "backend/src/services/integrations/githubDeploy.ts#getGitHubCoAuthor",
-        "backend/src/services/integrations/githubDeploy.ts#gitCommitAuthorFields",
-        "backend/src/services/integrations/githubDeploy.ts#needsAuthorization",
-        "backend/src/services/integrations/githubDeploy.ts#xrogaBotIdentity"
+        "backend/src/services/integrations/githubDeploy.ts#describeBranchAuthorizationRefusal"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/githubDeploy.ts:168 (user_id)"
+        "backend/src/services/integrations/githubDeploy.ts:149 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/githubDeploy.ts#BranchAuthorizationError",
-        "backend/src/services/integrations/githubDeploy.ts#authorizeBranchWrite",
-        "backend/src/services/integrations/githubDeploy.ts#branchWriteNeedsAuthorization",
-        "backend/src/services/integrations/githubDeploy.ts#describeBranchAuthorizationRefusal",
-        "backend/src/services/integrations/githubDeploy.ts#needsAuthorization"
+        "backend/src/services/integrations/githubDeploy.ts#describeBranchAuthorizationRefusal"
       ],
       "costBoundary": [],
       "evidenceBoundary": [
@@ -28680,7 +28849,6 @@
         "backend/src/services/integrations/githubDeploy.ts#buildEvidencePaths",
         "backend/src/services/integrations/githubDeploy.ts#repositoryBuildEvidencePaths",
         "backend/src/services/integrations/githubDeploy.ts#verified",
-        "backend/src/services/integrations/githubDeploy.ts#verifyBranchHead",
         "backend/src/services/integrations/githubDeploy.ts#verifyLivePreviewUrl"
       ],
       "testCoverage": [
@@ -28688,7 +28856,9 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubAnalysis.test.ts",
         "backend/src/services/integrations/githubDeploy.credential.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/githubRepositoryState.test.ts",
+        "backend/src/services/integrations/githubRequest.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.test.ts",
         "backend/src/services/integrations/managedVercelDeployment.test.ts",
         "backend/src/services/integrations/universalRepositoryHydration.test.ts",
@@ -28772,15 +28942,17 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:30",
         "backend/src/hardening/launchHardening.test.ts:34",
         "backend/src/services/integrations/githubAtomicWrite.test.ts:12",
         "backend/src/services/integrations/githubAtomicWrite.ts:42",
-        "backend/src/services/integrations/githubDeploy.ts:43",
-        "backend/src/services/integrations/githubMutationPlan.test.ts:3"
+        "backend/src/services/integrations/githubDeploy.ts:25",
+        "backend/src/services/integrations/githubMutationPlan.test.ts:3",
+        "backend/src/services/integrations/githubPublication.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -28796,6 +28968,158 @@
         "backend/src/services/integrations/githubMutationPlan.test.ts",
         "backend/src/synthesis/universalCommit.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:8aa8ecdff616913149ea",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/githubPublication.ts",
+      "sha256": "8089f58f7f4452c44e44328de23be97e1361bc9e0cb4d917ab5718f9aad3064d",
+      "symbols": [
+        "Parameters",
+        "access",
+        "action",
+        "after",
+        "all",
+        "api",
+        "attempt",
+        "b",
+        "base",
+        "before",
+        "blobContents",
+        "bootstrap",
+        "branch",
+        "branchValid",
+        "byPath",
+        "bytes",
+        "candidate",
+        "commitSha",
+        "context",
+        "createFrom",
+        "created",
+        "creating",
+        "credentials",
+        "current",
+        "data",
+        "defaultBranch",
+        "denied",
+        "error",
+        "executeApprovedGitHubPush",
+        "executeApprovedGitHubRestore",
+        "executePublication",
+        "existing",
+        "expected",
+        "expectedTree",
+        "files",
+        "fullSha",
+        "gitBlob",
+        "head",
+        "identity",
+        "login",
+        "meta",
+        "mutation",
+        "mutations",
+        "name",
+        "p",
+        "parameters",
+        "parent",
+        "pending",
+        "prepareGitHubPush",
+        "prepareGitHubRestore",
+        "probe",
+        "protectedBranch",
+        "pullRequest",
+        "readJSON",
+        "record",
+        "ref",
+        "refCreated",
+        "refUpdated",
+        "repository",
+        "request",
+        "res",
+        "response",
+        "restoreTree",
+        "result",
+        "run",
+        "selected",
+        "snapshot",
+        "stored",
+        "token",
+        "tree",
+        "treeSha",
+        "updated",
+        "urlFor",
+        "user",
+        "visibility"
+      ],
+      "imports": [
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/ownership.js",
+        "../../security/tenantContext.js",
+        "../publish/nativeArtifact.js",
+        "./businessAction.js",
+        "./githubApproval.js",
+        "./githubAtomicTransport.js",
+        "./githubAtomicWrite.js",
+        "./githubAuth.js",
+        "./githubDeploy.js",
+        "./githubMutationPlan.js",
+        "./githubRepoCreation.js",
+        "./githubRequest.js",
+        "./githubRunBranch.js",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/ownership.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/githubApproval.ts",
+        "backend/src/services/integrations/githubAtomicTransport.ts",
+        "backend/src/services/integrations/githubAtomicWrite.ts",
+        "backend/src/services/integrations/githubAuth.ts",
+        "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubMutationPlan.ts",
+        "backend/src/services/integrations/githubRepoCreation.ts",
+        "backend/src/services/integrations/githubRequest.ts",
+        "backend/src/services/integrations/githubRunBranch.ts",
+        "backend/src/services/publish/nativeArtifact.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/githubDeploy.ts:1332",
+        "backend/src/services/integrations/githubDeploy.ts:329",
+        "backend/src/services/integrations/githubDeploy.ts:332",
+        "backend/src/services/showcase/templateExport.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "Initialized by Xroga AI. This marker is removed by the first product commit.\n"
+      ],
+      "externalProviderDependencies": [
+        "declared-host:github.com",
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/githubPublication.ts#AuthorityError",
+        "backend/src/services/integrations/githubPublication.ts#AuthorityPermit",
+        "backend/src/services/integrations/githubPublication.ts#identity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -28829,11 +29153,12 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:35",
-        "backend/src/services/integrations/githubDeploy.ts:18",
+        "backend/src/services/integrations/githubPublication.ts:17",
         "backend/src/services/integrations/githubRepoCreation.test.ts:3"
       ],
       "reachable": true,
@@ -28847,6 +29172,99 @@
       "testCoverage": [
         "backend/src/ai/p0Regressions.test.ts",
         "backend/src/services/integrations/githubRepoCreation.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:8bc18405df9a2a5127b8",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/githubRequest.ts",
+      "sha256": "aa0259f7dbaafafa423920884fc69e3d9ecc18b8c575eb075d53a253af1130f0",
+      "symbols": [
+        "GitHubCall",
+        "GitHubRequestScope",
+        "Guard",
+        "State",
+        "admitGitHubRequest",
+        "base",
+        "body",
+        "call",
+        "check",
+        "combined",
+        "context",
+        "controller",
+        "createGitHubRequestScope",
+        "decoded",
+        "denied",
+        "error",
+        "fail",
+        "fingerprint",
+        "installGitHubWriteGuard",
+        "issued",
+        "method",
+        "parsed",
+        "read",
+        "relative",
+        "scope",
+        "signal",
+        "state",
+        "stateFor",
+        "url",
+        "validGitHubRepository",
+        "write"
+      ],
+      "imports": [
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/dataClassification.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/urlPolicy.js",
+        "../../security/tenantContext.js",
+        "../publish/nativeReleaseAdmission.js",
+        "./githubAuth.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/urlPolicy.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/githubAuth.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/githubApproval.ts:8",
+        "backend/src/services/integrations/githubDeploy.ts:1",
+        "backend/src/services/integrations/githubPublication.ts:9",
+        "backend/src/services/integrations/githubRequest.security.test.ts:5",
+        "backend/src/services/showcase/templateExport.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:api.github.com"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/githubRequest.ts#AuthorityDispatchBinding",
+        "backend/src/services/integrations/githubRequest.ts#AuthorityError",
+        "backend/src/services/integrations/githubRequest.ts#AuthorityPermit",
+        "backend/src/services/integrations/githubRequest.ts#authorityContextForPermit"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/githubRequest.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -28881,11 +29299,13 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:36",
-        "backend/src/services/integrations/githubDeploy.ts:58",
+        "backend/src/services/integrations/githubDeploy.ts:38",
+        "backend/src/services/integrations/githubPublication.ts:16",
         "backend/src/services/integrations/githubRunBranch.test.ts:4",
         "backend/src/synthesis/universalCommit.ts:41"
       ],
@@ -28953,7 +29373,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/githubDeploy.ts:66",
+        "backend/src/services/integrations/githubDeploy.ts:45",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:7",
         "backend/src/services/publish/expoWorkflow.ts:5",
         "backend/src/services/publish/nonWebShip.ts:25"
@@ -29096,12 +29516,14 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/githubAtomicWrite.ts:51",
-        "backend/src/services/integrations/githubDeploy.ts:48",
-        "backend/src/services/integrations/githubTreeSnapshot.test.ts:3"
+        "backend/src/services/integrations/githubDeploy.ts:29",
+        "backend/src/services/integrations/githubTreeSnapshot.test.ts:3",
+        "backend/src/services/showcase/templateExport.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -29934,7 +30356,7 @@
       ],
       "callers": [
         "backend/src/routes/supabaseOAuth.ts:1",
-        "backend/src/services/integrations/businessAction.ts:1473",
+        "backend/src/services/integrations/businessAction.ts:1478",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:4"
       ],
       "reachable": true,
@@ -30160,7 +30582,7 @@
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:56",
-        "backend/src/services/integrations/businessAction.ts:1478",
+        "backend/src/services/integrations/businessAction.ts:1483",
         "backend/src/services/integrations/supabaseActorBoundary.security.test.ts:5",
         "backend/src/services/integrations/supabaseManagement.security.test.ts:13",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:5",
@@ -30436,7 +30858,7 @@
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/credentialUploadLifecycle.test.ts:4",
-        "backend/src/services/integrations/githubDeploy.ts:59",
+        "backend/src/services/integrations/githubDeploy.ts:39",
         "backend/src/services/integrations/supabaseBundle.authority.test.ts:4",
         "backend/src/services/integrations/supabaseBundle.test.ts:5",
         "backend/src/services/integrations/supabaseProvision.ts:13",
@@ -30647,7 +31069,8 @@
         "backend/src/services/integrations/oauthPkceStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:119",
@@ -30659,7 +31082,7 @@
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:10",
         "backend/src/security/tenantIsolation.local.integration.ts:43",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
-        "backend/src/services/integrations/githubDeploy.ts:17",
+        "backend/src/services/integrations/githubDeploy.ts:20",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:6",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts:4",
@@ -30669,7 +31092,7 @@
         "backend/src/services/integrations/vercelAuthCapabilities.test.ts:3",
         "backend/src/services/integrations/vercelAuthTransport.security.test.ts:3",
         "backend/src/services/publish/userOwnedPublish.ts:7",
-        "backend/src/synthesis/delivery/projectDeliveryService.ts:11"
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -31124,6 +31547,7 @@
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioControl.security.test.ts:7",
         "backend/src/services/integrations/composioProvenance.security.test.ts:4",
+        "backend/src/services/integrations/githubPublication.security.test.ts:6",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:10",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
@@ -31156,6 +31580,7 @@
         "backend/src/services/integrations/businessModelEgress.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/composioProvenance.security.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
         "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
@@ -31298,7 +31723,7 @@
         "backend/src/routes/publish.ts:268",
         "backend/src/routes/publish.ts:305",
         "backend/src/routes/publish.ts:321",
-        "backend/src/services/integrations/businessAction.ts:1468",
+        "backend/src/services/integrations/businessAction.ts:1473",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:8",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:4",
@@ -31558,7 +31983,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1458",
+        "backend/src/services/integrations/businessAction.ts:1463",
         "backend/src/services/publish/nonWebShip.ts:2"
       ],
       "reachable": true,
@@ -31784,7 +32209,7 @@
         "backend/src/ai/pipeline.ts:175",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
-        "backend/src/services/integrations/businessAction.ts:1494",
+        "backend/src/services/integrations/businessAction.ts:1499",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:4",
         "backend/src/services/publish/expoWorkflow.authority.test.ts:3",
@@ -32540,6 +32965,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/services/integrations/githubApproval.ts:7",
+        "backend/src/services/integrations/githubPublication.ts:12",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:5",
         "backend/src/services/publish/chromeWebStore.ts:19",
         "backend/src/services/publish/cwsAdmission.ts:13",
@@ -32547,7 +32974,8 @@
         "backend/src/services/publish/expoWorkflow.ts:7",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:10",
         "backend/src/services/publish/nativeReleaseAdmission.ts:13",
-        "backend/src/services/publish/nonWebShip.ts:3"
+        "backend/src/services/publish/nonWebShip.ts:3",
+        "backend/src/services/showcase/templateExport.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -32654,6 +33082,8 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:14",
         "backend/src/services/integrations/composioControl.ts:14",
+        "backend/src/services/integrations/githubApproval.ts:6",
+        "backend/src/services/integrations/githubRequest.ts:8",
         "backend/src/services/integrations/supabaseProjectCreation.ts:17",
         "backend/src/services/integrations/supabaseProvision.ts:26",
         "backend/src/services/publish/chromeWebStore.ts:18",
@@ -32824,7 +33254,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:169",
-        "backend/src/services/integrations/businessAction.ts:1463",
+        "backend/src/services/integrations/businessAction.ts:1468",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:3",
         "backend/src/services/publish/desktopWorkflow.security.test.ts:4",
         "backend/src/services/publish/desktopWorkflow.ts:68",
@@ -33152,7 +33582,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:164",
@@ -33317,7 +33748,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/projectScaffold.ts:6",
@@ -33356,7 +33788,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/scaffolds/nextjsScaffold.ts:4"
@@ -33381,7 +33814,7 @@
       "id": "surface:1c1802bf4e4540a0be78",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/scaffolds/nextjsScaffold.ts",
-      "sha256": "f4c7c684f64e8035ba3e7c6bde9b12f9746f9f46aab2ee9b62bd1b3796e0c943",
+      "sha256": "4831097c15a43339f15273aa0db9bd5ba0df50d10ce8ab756498f305622c1bb6",
       "symbols": [
         "base",
         "buildNextjsScaffold",
@@ -33406,7 +33839,8 @@
         "backend/src/services/scaffolds/supabaseProjectSql.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/projectScaffold.ts:7",
@@ -33564,7 +33998,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/scaffolds/nextjsScaffold.ts:2"
@@ -33589,78 +34024,85 @@
       "id": "surface:4a31fc8440aff494b73d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/showcase/templateExport.ts",
-      "sha256": "dfe469edc29361a90fa9dd67e7352740cc81df699621c08fba9316422fe22e49",
+      "sha256": "90032352847fb16dc35c8769b440dd05edaf1f06c1fbf3cad899de9c338f0b62",
       "symbols": [
         "ExportError",
         "ExportPlanFile",
         "ExportResult",
-        "RepoInfo",
+        "access",
+        "api",
         "baseBranch",
-        "baseSha",
-        "blob",
-        "blobs",
-        "branchSha",
         "built",
-        "candidates",
-        "commit",
-        "commitFiles",
-        "commitRes",
-        "commitSha",
-        "createBranch",
-        "data",
-        "detail",
-        "entry",
+        "conflict",
+        "context",
+        "executeApprovedTemplateExport",
         "existing",
         "exportTemplateToRepo",
         "file",
-        "full",
-        "getRepoInfo",
-        "info",
-        "listExistingPaths",
-        "missingCritical",
-        "openPullRequest",
+        "files",
+        "head",
+        "meta",
+        "parameters",
         "path",
-        "paths",
-        "perms",
+        "pending",
         "plan",
-        "pr",
-        "refRes",
+        "read",
+        "repository",
         "res",
-        "resolveExactBranchHead",
         "skipped",
         "source",
-        "targetDir",
-        "toWrite",
+        "target",
         "token",
-        "tree",
-        "treeRes",
-        "warnings"
+        "tree"
       ],
       "imports": [
+        "../../security/authority/types.js",
+        "../../security/tenantContext.js",
+        "../integrations/businessAction.js",
+        "../integrations/githubApproval.js",
+        "../integrations/githubAtomicTransport.js",
         "../integrations/githubAuth.js",
         "../integrations/githubDeploy.js",
+        "../integrations/githubPublication.js",
+        "../integrations/githubRequest.js",
+        "../integrations/githubTreeSnapshot.js",
+        "../publish/nativeArtifact.js",
         "./templateSources.js"
       ],
       "runtimeImports": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/githubApproval.ts",
+        "backend/src/services/integrations/githubAtomicTransport.ts",
         "backend/src/services/integrations/githubAuth.ts",
         "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubPublication.ts",
+        "backend/src/services/integrations/githubRequest.ts",
+        "backend/src/services/integrations/githubTreeSnapshot.ts",
+        "backend/src/services/publish/nativeArtifact.ts",
         "backend/src/services/showcase/templateSources.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/routes/showcase.ts:4"
+        "backend/src/routes/showcase.ts:4",
+        "backend/src/services/integrations/githubApproval.ts:74",
+        "backend/src/services/integrations/githubPublication.security.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/services/showcase/templateExport.ts#AuthorityPermit"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/services/integrations/githubPublication.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -33702,11 +34144,13 @@
         "backend/src/services/scaffolds/nextjsScaffold.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/showcase.ts:5",
-        "backend/src/services/showcase/templateExport.ts:16",
+        "backend/src/services/integrations/githubApproval.ts:52",
+        "backend/src/services/showcase/templateExport.ts:25",
         "backend/src/services/showcase/templateSources.test.ts:3"
       ],
       "reachable": true,
@@ -33781,6 +34225,7 @@
         "backend/src/security/egress/fileEgress.test.ts:8",
         "backend/src/security/egress/fileEgress.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:50",
+        "backend/src/services/integrations/githubApproval.ts:7",
         "backend/src/services/publish/nativeArtifact.ts:11",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.revocation.test.ts:6",
@@ -33904,6 +34349,7 @@
         "backend/src/routes/projects.ts:6",
         "backend/src/security/egress/fileEgress.ts:3",
         "backend/src/security/tenantIsolation.local.integration.ts:49",
+        "backend/src/services/integrations/githubApproval.ts:7",
         "backend/src/services/publish/nativeArtifact.ts:10",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5",
         "backend/src/services/storage/privateFileDelivery.revocation.test.ts:7"
@@ -33979,6 +34425,7 @@
         "backend/src/security/buildProjectReceipt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:14",
         "backend/src/security/tenantIsolation.local.integration.ts:48",
+        "backend/src/services/integrations/githubApproval.ts:7",
         "backend/src/services/memory/buildProjectStore.ts:10",
         "backend/src/services/publish/nativeArtifact.ts:9",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7",
@@ -37440,7 +37887,7 @@
         "backend/src/ai/pipeline.ts:149",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
-        "backend/src/synthesis/delivery/projectDeliveryService.ts:24"
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:27"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -37468,7 +37915,7 @@
       "id": "surface:dc87bbef811362d2c9e8",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/delivery/projectDeliveryService.ts",
-      "sha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "sha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c",
       "symbols": [
         "ProjectDeliveryActionError",
         "ProjectDeliveryEnvelope",
@@ -37477,6 +37924,7 @@
         "ProjectDeploymentEvidence",
         "ProjectPublicationEvidence",
         "PublishProjectDeliveryInput",
+        "actor",
         "appendProjectEvent",
         "boolean",
         "currentRepository",
@@ -37519,6 +37967,9 @@
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../security/ownership.js",
+        "../../security/tenantContext.js",
+        "../../services/integrations/githubApproval.js",
         "../../services/integrations/githubDeploy.js",
         "../../services/integrations/vercelAuth.js",
         "../projectRuntime/index.js",
@@ -37527,6 +37978,8 @@
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/ownership.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/delivery/projectDelivery.ts",
@@ -37547,7 +38000,7 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/synthesis/delivery/projectDeliveryService.ts:194 (user_id)"
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:197 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -40470,7 +40923,7 @@
         "backend/src/middleware/runtimePreviewGateway.ts:22",
         "backend/src/routes/delivery.ts:13",
         "backend/src/routes/projectRuntime.ts:13",
-        "backend/src/synthesis/delivery/projectDeliveryService.ts:15",
+        "backend/src/synthesis/delivery/projectDeliveryService.ts:18",
         "backend/src/synthesis/livePreview/agentBridge.ts:28",
         "backend/src/synthesis/livePreview/coordinator.ts:19"
       ],
@@ -76933,7 +77386,7 @@
       "id": "surface:5a6d25c8c07769d420ee",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/showcase/ShowcaseDialogs.tsx",
-      "sha256": "220bb4499fe79e47be8149a5c4eeefb2c23ee17248d8f7f53bd8357c9cfa5c36",
+      "sha256": "2455f68fd4669cf64aec8fc37af872645e9b152f4da932869f30931f18b06444",
       "symbols": [
         "CustomizeDialog",
         "GithubExportDialog",
@@ -79955,7 +80408,7 @@
       "id": "surface:3bf267873c7f63d0b003",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ProjectDeliveryPanel.tsx",
-      "sha256": "9041524a8793bc9d6e18c8e1a6b36586de32b293f77f433f6f205153a65a14b0",
+      "sha256": "df49e5c7038384e0d5fc168cdbc4337d58c4f993420decf6b05ffced38f7f870",
       "symbols": [
         "ProjectDeliveryPanel",
         "applyDelivery",
@@ -86550,7 +87003,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3",
+      "sha256": "f3edcd5a2e7c3c21a3ab7ba3fbb4b9396cfd07e502f2c48cb910d7e54076e639",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -92640,7 +93093,7 @@
       "id": "surface:b9755ad3a90f9de70e5a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/projectDeliveryApi.ts",
-      "sha256": "11e169cd69f6a701e04da5044e692942030e8be8748db0dac6f39ff179a8fd4f",
+      "sha256": "3f12838c9c6fbf583be45ea1db5a30c035430b2a60ddb5ace31425fb01f67f00",
       "symbols": [
         "DeliveryChannelStatus",
         "ProjectDeliveryEnvelope",
@@ -93792,7 +94245,7 @@
       "id": "surface:add7b0a4c6faaa187e5f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/rollbackProjectUpdate.ts",
-      "sha256": "6b491fda1a787ac6b0d24134c4b65dd525da71cb051e97e01a7bc8df56d77afe",
+      "sha256": "930c5fcb414a588c1238afd53e6ad6f64f8223ba037f3d9afea4297a49d0f0ab",
       "symbols": [
         "RollbackFile",
         "RollbackProjectUpdateInput",
@@ -109457,7 +109910,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:adbb7349b8f63256d621",
+      "id": "registration:494cf0641ca29e8b1893",
       "sourcePath": "backend/src/routes/delivery.ts",
       "line": 298,
       "receiver": "router",
@@ -109469,9 +109922,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:45605c178b94d3ab041a",
+      "id": "registration:f95744bc852d2e17e1d1",
       "sourcePath": "backend/src/routes/delivery.ts",
-      "line": 392,
+      "line": 391,
       "receiver": "router",
       "method": "post",
       "path": "/:projectId/deploy",
@@ -109747,7 +110200,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3b176eef9157365a1e39",
+      "id": "registration:cd676e3e7b18d62a3bb8",
       "sourcePath": "backend/src/routes/github.ts",
       "line": 579,
       "receiver": "router",
@@ -109759,9 +110212,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2ea76f5f51087a45d956",
+      "id": "registration:789666963aafecb874aa",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 665,
+      "line": 667,
       "receiver": "router",
       "method": "post",
       "path": "/rollback",
@@ -111342,7 +111795,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e44964204609601d8a46",
+      "id": "registration:db602dab9c32153ef919",
       "sourcePath": "backend/src/routes/showcase.ts",
       "line": 43,
       "receiver": "router",
@@ -111957,8 +112410,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6cfd5f8a4e1afbe231c3",
-      "registrationId": "registration:adbb7349b8f63256d621",
+      "id": "route:60de239dbb68f1b11e23",
+      "registrationId": "registration:494cf0641ca29e8b1893",
       "sourcePath": "backend/src/routes/delivery.ts",
       "line": 298,
       "method": "POST",
@@ -111974,10 +112427,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:22c64d1adc0f0565eb5c",
-      "registrationId": "registration:45605c178b94d3ab041a",
+      "id": "route:e4b696312086962632ce",
+      "registrationId": "registration:f95744bc852d2e17e1d1",
       "sourcePath": "backend/src/routes/delivery.ts",
-      "line": 392,
+      "line": 391,
       "method": "POST",
       "path": "/api/delivery/:projectId/deploy",
       "mountChain": [
@@ -114025,8 +114478,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1a6208ac70ba71fce042",
-      "registrationId": "registration:e44964204609601d8a46",
+      "id": "route:7b1c3007294cf8551e68",
+      "registrationId": "registration:db602dab9c32153ef919",
       "sourcePath": "backend/src/routes/showcase.ts",
       "line": 43,
       "method": "POST",
@@ -114521,8 +114974,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:aa87d73e0bab74a18f45",
-      "registrationId": "registration:3b176eef9157365a1e39",
+      "id": "route:b824e4eaa6877281e5f7",
+      "registrationId": "registration:cd676e3e7b18d62a3bb8",
       "sourcePath": "backend/src/routes/github.ts",
       "line": 579,
       "method": "POST",
@@ -114538,10 +114991,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:12b96db2736c099778a6",
-      "registrationId": "registration:2ea76f5f51087a45d956",
+      "id": "route:e9164168ddf3013c2136",
+      "registrationId": "registration:789666963aafecb874aa",
       "sourcePath": "backend/src/routes/github.ts",
-      "line": 665,
+      "line": 667,
       "method": "POST",
       "path": "/api/github/rollback",
       "mountChain": [
@@ -119893,9 +120346,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5a13298910672b8318c3",
+      "id": "finding:ad02e661754f732010d7",
       "sourcePath": "frontend/src/components/showcase/ShowcaseDialogs.tsx",
-      "line": 420,
+      "line": 421,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -123196,23 +123649,23 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:e99ca660dda70a481c96",
+      "id": "frontend-call:701ec079b107833ce378",
       "sourcePath": "frontend/src/components/showcase/ShowcaseDialogs.tsx",
-      "line": 302,
+      "line": 303,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:89267b82263207aaedc1",
+      "id": "frontend-call:5bb5cfb0498a28159acd",
       "sourcePath": "frontend/src/components/showcase/ShowcaseDialogs.tsx",
-      "line": 307,
+      "line": 308,
       "callee": "api.github.listRepos",
       "reachable": true
     },
     {
-      "id": "frontend-call:82abd13dd1cc858a7c1a",
+      "id": "frontend-call:4d4ed8b3e4861b89ac74",
       "sourcePath": "frontend/src/components/showcase/ShowcaseDialogs.tsx",
-      "line": 328,
+      "line": 329,
       "callee": "api.showcase.exportTemplate",
       "reachable": true
     },
@@ -124043,7 +124496,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:d575b7b6c20c4c7e60ec",
+      "id": "frontend-call:8ff9976cb2e202fee75e",
       "sourcePath": "frontend/src/lib/projectDeliveryApi.ts",
       "line": 358,
       "callee": "fetchApiResponse",
@@ -124127,9 +124580,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:d248b60af12acd2b9751",
+      "id": "frontend-call:e7b64f816ae9eb653175",
       "sourcePath": "frontend/src/lib/rollbackProjectUpdate.ts",
-      "line": 137,
+      "line": 138,
       "callee": "api.github.redeployPreview",
       "reachable": true
     },
@@ -126266,6 +126719,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:7c0c1bed349ac80e57c1",
+      "sourcePath": "backend/src/routes/githubPublication.pending.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:37ab812ac231a0f77a8c",
       "sourcePath": "backend/src/routes/githubTransport.security.test.ts",
       "declaredTests": 4,
@@ -127463,6 +127923,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:f455a4ab37ed10646839",
+      "sourcePath": "backend/src/services/integrations/githubPublication.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:8fb0ac5d907c1c83ae88",
       "sourcePath": "backend/src/services/integrations/githubRepoCreation.test.ts",
       "declaredTests": 13,
@@ -127473,6 +127940,13 @@
       "id": "test-suite:b08fbe9c7a35ada153ea",
       "sourcePath": "backend/src/services/integrations/githubRepositoryState.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c4270720d98fef7c8171",
+      "sourcePath": "backend/src/services/integrations/githubRequest.security.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

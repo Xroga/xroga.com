@@ -2704,7 +2704,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3",
+      "sourceFileSha256": "f3edcd5a2e7c3c21a3ab7ba3fbb4b9396cfd07e502f2c48cb910d7e54076e639",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -2837,6 +2837,12 @@
         "id": "c09bb8607fa4d00f23b7",
         "sourceSha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600",
         "proof": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json"
+      },
+      "beforeGitHubPublication": {
+        "ref": "197637d2cfc360295e750cad6100ea71fcddc6df",
+        "id": "c09bb8607fa4d00f23b7",
+        "sourceSha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3",
+        "proof": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
       }
     },
     {
@@ -3224,7 +3230,7 @@
     {
       "id": "35923d1b52d197c378e1",
       "callSha256": "779bfe6876ecb8be86573c05dc446c92055d795563fdb81c0b4dbb061f7550ba",
-      "sourceFileSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sourceFileSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FINITE_OFFICIAL_GITHUB_OAUTH_AND_READ_ONLY_ACCOUNT_OPERATIONS_NO_SOURCE_PUBLISH_OR_REPOSITORY_MUTATION_AUTHORITY",
       "tenantAuthority": "ORIGINAL_ISSUED_ACTOR_OWNER_BEFORE_CANONICAL_ROW_AND_VAULT_LOOKUP_CURRENT_SEALED_REVISION_RECHECKED_BEFORE_WIRE_AND_AFTER_RESPONSE_OAUTH_CONSUMED_REVISION_PRESERVED",
@@ -3243,6 +3249,12 @@
       "actorContinuationSourceReview": {
         "priorSourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
         "proof": "docs/xroga/evidence/command-010/UNCHANGED-EGRESS-SOURCE-CONTINUATION-20261028.json"
+      },
+      "beforeGitHubPublication": {
+        "ref": "197637d2cfc360295e750cad6100ea71fcddc6df",
+        "id": "35923d1b52d197c378e1",
+        "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+        "proof": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
       }
     },
     {
@@ -3907,6 +3919,36 @@
           "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
           "marker": "native artifact preparation cannot publish or delete before exact durable approval",
           "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
+        }
+      ]
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "callSha256": "5f4f9964feea1ce9bb203819ca02b6e77eb2d4aa018626a775fceb77c445e164",
+      "sourceFileSha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_GITHUB_TRANSPORT_ORIGINAL_ACTOR_CURRENT_KEY_EXACT_NATIVE_PUBLICATION_APPROVAL_AT_EACH_MUTATION",
+      "tenantAuthority": "OWNED_IMMUTABLE_SOURCE_CURRENT_PROJECT_CREDENTIAL_EPOCH_DURABLE_CLAIM_CANONICAL_EGRESS_ONE_USE_APPROVAL_VERIFIED_RECEIPTS_NO_FORCE_OR_FALSE_COMPLETION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+          "marker": "90eeada0337da120131f",
+          "sha256": "68980fc9035e4a86d0223134d34cb97b2e839e138b0faed62faf738c74918287"
+        },
+        {
+          "path": "backend/src/services/integrations/githubPublication.security.test.ts",
+          "marker": "exact GitHub publication:",
+          "sha256": "37b2ae87418e1734f52304af2745c045e450f349eda95f88895c1b3567bf0fe1"
+        },
+        {
+          "path": "backend/src/services/integrations/githubRequest.security.test.ts",
+          "marker": "shared GitHub transport cannot dispatch a raw-token write",
+          "sha256": "26dbbf8430bd91dad0f3dd145a9a842678cc7670735dc303d0c8a14ca9b68327"
+        },
+        {
+          "path": "backend/src/routes/githubPublication.pending.test.ts",
+          "marker": "actual GitHub push and rollback handlers expose pending approval",
+          "sha256": "ea8b1bfe9617d49bb5e5ca870492bdb4d902da835b6ec7624fa54b08990ecfa1"
         }
       ]
     }

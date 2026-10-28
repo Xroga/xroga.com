@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+      "currentSha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -1059,7 +1059,1063 @@
           "proof": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
         }
       },
-      "desktopWorkflowContinuation": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json"
+      "desktopWorkflowContinuation": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
+      "beforeGitHubPublication": {
+        "path": "backend/src/ai/pipeline.ts",
+        "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+        "currentSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+        "genericSdkPreviousCurrentBinding": {
+          "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "afterIds": [
+            "6c962371859b256ff96c",
+            "8db8b524179b45694274"
+          ],
+          "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+        },
+        "beforeIds": [
+          "01d5efe9b761bc670212",
+          "944a58bb15dca85b3ddd"
+        ],
+        "afterIds": [
+          "6545d561a6182d0234a1",
+          "c700ca8f9a68a62068f4"
+        ],
+        "unchangedNearestBlockSha256": [
+          "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+          "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+        ],
+        "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+        "beforeCurrentMetadataReconciliation": {
+          "path": "backend/src/ai/pipeline.ts",
+          "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+          "genericSdkPreviousCurrentBinding": {
+            "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "afterIds": [
+              "6c962371859b256ff96c",
+              "8db8b524179b45694274"
+            ],
+            "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+          },
+          "beforeIds": [
+            "01d5efe9b761bc670212",
+            "944a58bb15dca85b3ddd"
+          ],
+          "afterIds": [
+            "af88e0f5ab6048f75011",
+            "863e45f48048017eb977"
+          ],
+          "unchangedNearestBlockSha256": [
+            "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+            "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+          ],
+          "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+        },
+        "beforeGithubActorContinuation": {
+          "path": "backend/src/ai/pipeline.ts",
+          "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "genericSdkPreviousCurrentBinding": {
+            "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "afterIds": [
+              "6c962371859b256ff96c",
+              "8db8b524179b45694274"
+            ],
+            "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+          },
+          "beforeIds": [
+            "01d5efe9b761bc670212",
+            "944a58bb15dca85b3ddd"
+          ],
+          "afterIds": [
+            "b092008f2d41b3ddf1d9",
+            "40b6d116790751a2b569"
+          ],
+          "unchangedNearestBlockSha256": [
+            "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+            "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+          ],
+          "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "af88e0f5ab6048f75011",
+              "863e45f48048017eb977"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+          }
+        },
+        "beforeNativeReleaseContinuation": {
+          "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+          "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+          "afterIds": [
+            "acfbdb182d9e682cce3f",
+            "8c2f244d2269c3ff06ae"
+          ]
+        },
+        "beforeNativeSigningContinuation": {
+          "parent": "3b94979a0411db4137678d23332900d496e889a9",
+          "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+          "afterIds": [
+            "acfbdb182d9e682cce3f",
+            "8c2f244d2269c3ff06ae"
+          ]
+        },
+        "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+        "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+        "beforeCwsApproval": {
+          "path": "backend/src/ai/pipeline.ts",
+          "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "currentSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+          "genericSdkPreviousCurrentBinding": {
+            "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "afterIds": [
+              "6c962371859b256ff96c",
+              "8db8b524179b45694274"
+            ],
+            "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+          },
+          "beforeIds": [
+            "01d5efe9b761bc670212",
+            "944a58bb15dca85b3ddd"
+          ],
+          "afterIds": [
+            "acfbdb182d9e682cce3f",
+            "8c2f244d2269c3ff06ae"
+          ],
+          "unchangedNearestBlockSha256": [
+            "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+            "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+          ],
+          "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "af88e0f5ab6048f75011",
+              "863e45f48048017eb977"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+          },
+          "beforeGithubActorContinuation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "b092008f2d41b3ddf1d9",
+              "40b6d116790751a2b569"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "af88e0f5ab6048f75011",
+                "863e45f48048017eb977"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+            }
+          },
+          "beforeNativeReleaseContinuation": {
+            "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+            "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativeSigningContinuation": {
+            "parent": "3b94979a0411db4137678d23332900d496e889a9",
+            "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+          "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+        },
+        "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+        "beforeExpoReadiness": {
+          "path": "backend/src/ai/pipeline.ts",
+          "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "currentSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+          "genericSdkPreviousCurrentBinding": {
+            "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "afterIds": [
+              "6c962371859b256ff96c",
+              "8db8b524179b45694274"
+            ],
+            "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+          },
+          "beforeIds": [
+            "01d5efe9b761bc670212",
+            "944a58bb15dca85b3ddd"
+          ],
+          "afterIds": [
+            "6fee86fe362464d0d82d",
+            "f4c377ee778b1f6f674c"
+          ],
+          "unchangedNearestBlockSha256": [
+            "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+            "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+          ],
+          "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "af88e0f5ab6048f75011",
+              "863e45f48048017eb977"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+          },
+          "beforeGithubActorContinuation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "b092008f2d41b3ddf1d9",
+              "40b6d116790751a2b569"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "af88e0f5ab6048f75011",
+                "863e45f48048017eb977"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+            }
+          },
+          "beforeNativeReleaseContinuation": {
+            "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+            "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativeSigningContinuation": {
+            "parent": "3b94979a0411db4137678d23332900d496e889a9",
+            "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+          "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+          "beforeCwsApproval": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "af88e0f5ab6048f75011",
+                "863e45f48048017eb977"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+            },
+            "beforeGithubActorContinuation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "b092008f2d41b3ddf1d9",
+                "40b6d116790751a2b569"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+              "beforeCurrentMetadataReconciliation": {
+                "path": "backend/src/ai/pipeline.ts",
+                "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+                "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                "genericSdkPreviousCurrentBinding": {
+                  "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                  "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                  "afterIds": [
+                    "6c962371859b256ff96c",
+                    "8db8b524179b45694274"
+                  ],
+                  "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+                },
+                "beforeIds": [
+                  "01d5efe9b761bc670212",
+                  "944a58bb15dca85b3ddd"
+                ],
+                "afterIds": [
+                  "af88e0f5ab6048f75011",
+                  "863e45f48048017eb977"
+                ],
+                "unchangedNearestBlockSha256": [
+                  "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                  "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+                ],
+                "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+              }
+            },
+            "beforeNativeReleaseContinuation": {
+              "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+              "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+              "afterIds": [
+                "acfbdb182d9e682cce3f",
+                "8c2f244d2269c3ff06ae"
+              ]
+            },
+            "beforeNativeSigningContinuation": {
+              "parent": "3b94979a0411db4137678d23332900d496e889a9",
+              "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+              "afterIds": [
+                "acfbdb182d9e682cce3f",
+                "8c2f244d2269c3ff06ae"
+              ]
+            },
+            "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+            "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+          },
+          "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+        },
+        "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+        "beforeExpoWorkflow": {
+          "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+          "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+          "currentSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+          "afterIds": [
+            "704187e956115d9aa476",
+            "29355a8ed40d9768bdd2"
+          ]
+        },
+        "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+        "beforeSupabaseProvision": {
+          "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+          "currentSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+          "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+        },
+        "beforeParallelApproval": {
+          "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+          "currentSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+          "proof": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
+        },
+        "beforeDesktopWorkflow": {
+          "path": "backend/src/ai/pipeline.ts",
+          "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "currentSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
+          "genericSdkPreviousCurrentBinding": {
+            "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+            "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "afterIds": [
+              "6c962371859b256ff96c",
+              "8db8b524179b45694274"
+            ],
+            "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+          },
+          "beforeIds": [
+            "01d5efe9b761bc670212",
+            "944a58bb15dca85b3ddd"
+          ],
+          "afterIds": [
+            "6545d561a6182d0234a1",
+            "c700ca8f9a68a62068f4"
+          ],
+          "unchangedNearestBlockSha256": [
+            "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+            "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+          ],
+          "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "af88e0f5ab6048f75011",
+              "863e45f48048017eb977"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+          },
+          "beforeGithubActorContinuation": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "b092008f2d41b3ddf1d9",
+              "40b6d116790751a2b569"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "af88e0f5ab6048f75011",
+                "863e45f48048017eb977"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+            }
+          },
+          "beforeNativeReleaseContinuation": {
+            "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+            "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativeSigningContinuation": {
+            "parent": "3b94979a0411db4137678d23332900d496e889a9",
+            "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ]
+          },
+          "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+          "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+          "beforeCwsApproval": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "acfbdb182d9e682cce3f",
+              "8c2f244d2269c3ff06ae"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "af88e0f5ab6048f75011",
+                "863e45f48048017eb977"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+            },
+            "beforeGithubActorContinuation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "b092008f2d41b3ddf1d9",
+                "40b6d116790751a2b569"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+              "beforeCurrentMetadataReconciliation": {
+                "path": "backend/src/ai/pipeline.ts",
+                "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+                "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                "genericSdkPreviousCurrentBinding": {
+                  "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                  "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                  "afterIds": [
+                    "6c962371859b256ff96c",
+                    "8db8b524179b45694274"
+                  ],
+                  "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+                },
+                "beforeIds": [
+                  "01d5efe9b761bc670212",
+                  "944a58bb15dca85b3ddd"
+                ],
+                "afterIds": [
+                  "af88e0f5ab6048f75011",
+                  "863e45f48048017eb977"
+                ],
+                "unchangedNearestBlockSha256": [
+                  "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                  "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+                ],
+                "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+              }
+            },
+            "beforeNativeReleaseContinuation": {
+              "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+              "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+              "afterIds": [
+                "acfbdb182d9e682cce3f",
+                "8c2f244d2269c3ff06ae"
+              ]
+            },
+            "beforeNativeSigningContinuation": {
+              "parent": "3b94979a0411db4137678d23332900d496e889a9",
+              "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+              "afterIds": [
+                "acfbdb182d9e682cce3f",
+                "8c2f244d2269c3ff06ae"
+              ]
+            },
+            "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+            "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+          },
+          "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+          "beforeExpoReadiness": {
+            "path": "backend/src/ai/pipeline.ts",
+            "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+            "currentSha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b",
+            "genericSdkPreviousCurrentBinding": {
+              "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+              "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+              "afterIds": [
+                "6c962371859b256ff96c",
+                "8db8b524179b45694274"
+              ],
+              "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "01d5efe9b761bc670212",
+              "944a58bb15dca85b3ddd"
+            ],
+            "afterIds": [
+              "6fee86fe362464d0d82d",
+              "f4c377ee778b1f6f674c"
+            ],
+            "unchangedNearestBlockSha256": [
+              "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+              "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+            ],
+            "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+            "beforeCurrentMetadataReconciliation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "af88e0f5ab6048f75011",
+                "863e45f48048017eb977"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+            },
+            "beforeGithubActorContinuation": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "b092008f2d41b3ddf1d9",
+                "40b6d116790751a2b569"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+              "beforeCurrentMetadataReconciliation": {
+                "path": "backend/src/ai/pipeline.ts",
+                "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+                "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                "genericSdkPreviousCurrentBinding": {
+                  "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                  "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                  "afterIds": [
+                    "6c962371859b256ff96c",
+                    "8db8b524179b45694274"
+                  ],
+                  "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+                },
+                "beforeIds": [
+                  "01d5efe9b761bc670212",
+                  "944a58bb15dca85b3ddd"
+                ],
+                "afterIds": [
+                  "af88e0f5ab6048f75011",
+                  "863e45f48048017eb977"
+                ],
+                "unchangedNearestBlockSha256": [
+                  "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                  "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+                ],
+                "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+              }
+            },
+            "beforeNativeReleaseContinuation": {
+              "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+              "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+              "afterIds": [
+                "acfbdb182d9e682cce3f",
+                "8c2f244d2269c3ff06ae"
+              ]
+            },
+            "beforeNativeSigningContinuation": {
+              "parent": "3b94979a0411db4137678d23332900d496e889a9",
+              "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+              "afterIds": [
+                "acfbdb182d9e682cce3f",
+                "8c2f244d2269c3ff06ae"
+              ]
+            },
+            "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+            "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+            "beforeCwsApproval": {
+              "path": "backend/src/ai/pipeline.ts",
+              "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+              "currentSha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23",
+              "genericSdkPreviousCurrentBinding": {
+                "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                "afterIds": [
+                  "6c962371859b256ff96c",
+                  "8db8b524179b45694274"
+                ],
+                "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+              },
+              "beforeIds": [
+                "01d5efe9b761bc670212",
+                "944a58bb15dca85b3ddd"
+              ],
+              "afterIds": [
+                "acfbdb182d9e682cce3f",
+                "8c2f244d2269c3ff06ae"
+              ],
+              "unchangedNearestBlockSha256": [
+                "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+              ],
+              "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+              "beforeCurrentMetadataReconciliation": {
+                "path": "backend/src/ai/pipeline.ts",
+                "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+                "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                "genericSdkPreviousCurrentBinding": {
+                  "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                  "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                  "afterIds": [
+                    "6c962371859b256ff96c",
+                    "8db8b524179b45694274"
+                  ],
+                  "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+                },
+                "beforeIds": [
+                  "01d5efe9b761bc670212",
+                  "944a58bb15dca85b3ddd"
+                ],
+                "afterIds": [
+                  "af88e0f5ab6048f75011",
+                  "863e45f48048017eb977"
+                ],
+                "unchangedNearestBlockSha256": [
+                  "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                  "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+                ],
+                "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+              },
+              "beforeGithubActorContinuation": {
+                "path": "backend/src/ai/pipeline.ts",
+                "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+                "currentSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+                "genericSdkPreviousCurrentBinding": {
+                  "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                  "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                  "afterIds": [
+                    "6c962371859b256ff96c",
+                    "8db8b524179b45694274"
+                  ],
+                  "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+                },
+                "beforeIds": [
+                  "01d5efe9b761bc670212",
+                  "944a58bb15dca85b3ddd"
+                ],
+                "afterIds": [
+                  "b092008f2d41b3ddf1d9",
+                  "40b6d116790751a2b569"
+                ],
+                "unchangedNearestBlockSha256": [
+                  "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                  "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+                ],
+                "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical.",
+                "beforeCurrentMetadataReconciliation": {
+                  "path": "backend/src/ai/pipeline.ts",
+                  "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+                  "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+                  "genericSdkPreviousCurrentBinding": {
+                    "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+                    "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+                    "afterIds": [
+                      "6c962371859b256ff96c",
+                      "8db8b524179b45694274"
+                    ],
+                    "scope": "HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"
+                  },
+                  "beforeIds": [
+                    "01d5efe9b761bc670212",
+                    "944a58bb15dca85b3ddd"
+                  ],
+                  "afterIds": [
+                    "af88e0f5ab6048f75011",
+                    "863e45f48048017eb977"
+                  ],
+                  "unchangedNearestBlockSha256": [
+                    "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+                    "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+                  ],
+                  "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+                }
+              },
+              "beforeNativeReleaseContinuation": {
+                "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+                "currentSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+                "afterIds": [
+                  "acfbdb182d9e682cce3f",
+                  "8c2f244d2269c3ff06ae"
+                ]
+              },
+              "beforeNativeSigningContinuation": {
+                "parent": "3b94979a0411db4137678d23332900d496e889a9",
+                "currentSha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22",
+                "afterIds": [
+                  "acfbdb182d9e682cce3f",
+                  "8c2f244d2269c3ff06ae"
+                ]
+              },
+              "beforeNativePublicationSha256": "46077fabbdc6c73e499c564b0e463de6dedea4b779924351c240cd35a50fc480",
+              "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json"
+            },
+            "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json"
+          },
+          "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+          "beforeExpoWorkflow": {
+            "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+            "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+            "currentSha256": "3dff88dbaed57a76488b67a590ae12733d5a04f67e3254400113fae0504a38f7",
+            "afterIds": [
+              "704187e956115d9aa476",
+              "29355a8ed40d9768bdd2"
+            ]
+          },
+          "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+          "beforeSupabaseProvision": {
+            "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+            "currentSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+            "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+          },
+          "beforeParallelApproval": {
+            "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+            "currentSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+            "proof": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
+          }
+        },
+        "desktopWorkflowContinuation": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json"
+      },
+      "githubPublicationContinuation": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
     },
     {
       "path": "backend/src/routes/phase1.ts",

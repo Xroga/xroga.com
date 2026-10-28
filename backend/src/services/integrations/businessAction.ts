@@ -1454,6 +1454,11 @@ export async function executePreparedBusinessAction(
     const result=await executeElectronSigningMaterial(input.userId,input.plan,input.authorityPermit);
     return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
   }
+  if(input.plan.toolkit==='xroga-native-github'){
+    const{executeGitHubNativeAction}=await import('./githubApproval.js');
+    const result=await executeGitHubNativeAction(input.userId,input.plan,input.authorityPermit);
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
   if(input.plan.toolkit==='xroga-native-desktop-workflow'){
     const{executeDesktopWorkflow}=await import('../publish/desktopWorkflow.js');
     const result=await executeDesktopWorkflow(input.userId,input.plan,input.authorityPermit);

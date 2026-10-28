@@ -1,3 +1,12 @@
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
+import type {AuthorityPermit} from '../../security/authority/types.js';
+import type {BusinessActionPlan} from '../integrations/businessAction.js';
+import {prepareGitHubAction} from '../integrations/githubApproval.js';
+import {createGitHubRequestScope} from '../integrations/githubRequest.js';
+import {makeAtomicWriteApi} from '../integrations/githubAtomicTransport.js';
+import {readStartingTree} from '../integrations/githubTreeSnapshot.js';
+import {inspectNativeArtifactSource} from '../publish/nativeArtifact.js';
+import {executePublication} from '../integrations/githubPublication.js';
 /**
  * Copies a showcase template into a repository the user owns, on a feature branch,
  * and opens a pull request.
@@ -27,6 +36,8 @@ export interface ExportPlanFile {
 }
 
 export interface ExportResult {
+  needsConfirmation?:boolean;
+  reviewUrl?:string;
   ok: boolean;
   repoFullName: string;
   branch: string;
@@ -60,289 +71,24 @@ export class ExportError extends Error {
   }
 }
 
-interface RepoInfo {
-  defaultBranch: string;
-  private: boolean;
-  canPush: boolean;
+export async function exportTemplateToRepo(opts:{userId:string;tenantContext?:TenantContext;templateId:string;repoFullName:string;branch:string;projectName:string;userPrompt?:string;targetDirectory?:unknown;baseBranch?:string}):Promise<ExportResult>{
+ const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
+ const token=await getGitHubToken(opts.userId);if(!token)throw new ExportError('GitHub is not connected.','not_connected',409);
+ const source=resolveTemplateSource(opts.templateId),target=normalizeTargetDirectory(opts.targetDirectory);if(!source)throw new ExportError('Unknown template.','unknown_template');if(target===null)throw new ExportError('Unsafe target directory.','unsafe_path');
+ const {owner,repo}=parseRepoName(opts.repoFullName),repository=owner+'/'+repo;
+ if(!/^xroga\/template-[a-z0-9-]{1,40}-[a-z0-9]{1,8}$/.test(opts.branch))throw new ExportError('A new template feature branch is required.','branch_failed');
+ const access=await createGitHubRequestScope(context,token,repository);
+ try{
+  const read=(path:string)=>ghFetch(token,path,undefined,access.scope),res=await read('/repos/'+repository);if(!res.ok)throw new ExportError('Repository is unavailable.','bad_repo');const meta=await res.json() as{full_name?:string;default_branch?:string;private?:boolean;permissions?:{push?:boolean}};
+  if(meta.full_name!==repository||meta.permissions?.push!==true||!meta.default_branch)throw new ExportError('Repository write access is required.','no_permission',403);
+  const baseBranch=opts.baseBranch?.trim()||meta.default_branch;if(opts.branch===baseBranch||opts.branch===meta.default_branch)throw new ExportError('Feature branch must be distinct.','branch_failed');
+  const api=makeAtomicWriteApi((t,p,i)=>ghFetch(t,p,i,access.scope),token,owner,repo),head=await api.getRef(baseBranch);if(!head||!/^[a-f0-9]{40}$/.test(head.sha)||await api.getRef(opts.branch))throw new ExportError('Base is unavailable or the feature branch already exists.','branch_failed',409);
+  const tree=await readStartingTree(api,head.sha),existing=new Set(tree.entries.map(f=>f.path)),built=buildTemplateFiles({templateId:opts.templateId,projectName:opts.projectName,userPrompt:opts.userPrompt});if(!built)throw new ExportError('Unknown template.','unknown_template');
+  const plan:ExportPlanFile[]=[],files:ProjectFile[]=[];for(const file of built.files){const path=target?target+'/'+file.path:file.path;if(!isSafeRepoPath(path))throw new ExportError('Unsafe template file path.','unsafe_path');const conflict=existing.has(path);plan.push({path,status:conflict?'skip-conflict':'create',bytes:Buffer.byteLength(file.content)});if(!conflict)files.push({path,content:file.content});}
+  inspectNativeArtifactSource(files,[token]);if(!files.length)throw new ExportError('All template files already exist. Choose another target directory.','nothing_to_write',409);
+  const skipped=plan.length-files.length,parameters={repository,connection:access.fingerprint,branch:opts.branch,defaultBranch:meta.default_branch,head:head.sha,createFrom:head.sha,creating:false,visibility:meta.private?'private':'public',allowEmptyBootstrap:false,deletePaths:[],message:'Add '+source.slug+' template via Xroga',pullRequest:{base:baseBranch,title:'Add '+source.slug+' template',body:'Review the exact template source before merging.'},template:{id:source.slug,version:String(source.version),skipped}};
+  const pending=await prepareGitHubAction({context,kind:'TEMPLATE',parameters,token,files,rebuildTemplate:{templateId:opts.templateId,projectName:opts.projectName,userPrompt:opts.userPrompt,targetDirectory:target??'',paths:files.map(f=>f.path)},check:access.check,summary:`Copy ${source.slug} v${source.version} to ${repository} on new branch ${opts.branch}, based on ${head.sha}, and open a pull request to ${baseBranch}. ${skipped} existing files remain untouched. Repository hooks may run under its own billing.`});
+  return{...pending,ok:false,repoFullName:repository,branch:opts.branch,baseBranch,filesCreated:0,filesSkipped:skipped,plan,warnings:[]};
+ }finally{access.close();}
 }
-
-/** Reads repo metadata and verifies the token actually has push rights. */
-async function getRepoInfo(token: string, owner: string, repo: string): Promise<RepoInfo> {
-  const res = await ghFetch(token, `/repos/${owner}/${repo}`);
-  if (!res.ok) {
-    throw new ExportError(`Repository is not accessible (${res.status}).`, 'bad_repo', res.status === 404 ? 404 : 403);
-  }
-  const data = (await res.json()) as {
-    default_branch?: string;
-    private?: boolean;
-    permissions?: { push?: boolean; admin?: boolean; maintain?: boolean };
-  };
-  const perms = data.permissions ?? {};
-  return {
-    defaultBranch: data.default_branch || 'main',
-    private: Boolean(data.private),
-    canPush: Boolean(perms.push || perms.admin || perms.maintain),
-  };
-}
-
-/** Exact branch head with no fallback — the branch identity matters here. */
-async function resolveExactBranchHead(
-  token: string,
-  owner: string,
-  repo: string,
-  branch: string,
-): Promise<string | null> {
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
-  if (!res.ok) return null;
-  const data = (await res.json()) as { object?: { sha?: string } };
-  return data.object?.sha ?? null;
-}
-
-/** Creates the feature branch from a base SHA. Tolerates an existing branch. */
-async function createBranch(
-  token: string,
-  owner: string,
-  repo: string,
-  branch: string,
-  fromSha: string,
-): Promise<void> {
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
-    method: 'POST',
-    body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: fromSha }),
-  });
-  if (res.ok) return;
-  // 422 means the ref already exists, which is fine for a retry.
-  if (res.status === 422) return;
-  const detail = await res.text().catch(() => '');
-  throw new ExportError(`Could not create branch ${branch} (${res.status}). ${detail.slice(0, 200)}`, 'branch_failed', 502);
-}
-
-/** Lists the paths already present on a branch, for conflict detection. */
-async function listExistingPaths(
-  token: string,
-  owner: string,
-  repo: string,
-  branchSha: string | null,
-): Promise<Set<string>> {
-  if (!branchSha) return new Set();
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/git/trees/${branchSha}?recursive=1`);
-  if (!res.ok) return new Set();
-  const data = (await res.json()) as { tree?: Array<{ path?: string; type?: string }> };
-  const paths = new Set<string>();
-  for (const entry of data.tree ?? []) {
-    if (entry.type === 'blob' && entry.path) paths.add(entry.path);
-  }
-  return paths;
-}
-
-/** Commits the planned files onto the feature branch via the Git data API. */
-async function commitFiles(
-  token: string,
-  owner: string,
-  repo: string,
-  branch: string,
-  parentSha: string,
-  files: ProjectFile[],
-  message: string,
-): Promise<string> {
-  const blobs: Array<{ path: string; mode: '100644'; type: 'blob'; sha: string }> = [];
-  for (const file of files) {
-    const res = await ghFetch(token, `/repos/${owner}/${repo}/git/blobs`, {
-      method: 'POST',
-      body: JSON.stringify({ content: Buffer.from(file.content, 'utf8').toString('base64'), encoding: 'base64' }),
-    });
-    if (!res.ok) {
-      throw new ExportError(`Failed to upload ${file.path} (${res.status}).`, 'push_failed', 502);
-    }
-    const blob = (await res.json()) as { sha: string };
-    blobs.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
-  }
-
-  const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees`, {
-    method: 'POST',
-    body: JSON.stringify({ base_tree: parentSha, tree: blobs }),
-  });
-  if (!treeRes.ok) throw new ExportError(`Failed to build tree (${treeRes.status}).`, 'push_failed', 502);
-  const tree = (await treeRes.json()) as { sha: string };
-
-  const commitRes = await ghFetch(token, `/repos/${owner}/${repo}/git/commits`, {
-    method: 'POST',
-    body: JSON.stringify({ message, tree: tree.sha, parents: [parentSha] }),
-  });
-  if (!commitRes.ok) throw new ExportError(`Failed to create commit (${commitRes.status}).`, 'push_failed', 502);
-  const commit = (await commitRes.json()) as { sha: string };
-
-  const refRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ sha: commit.sha, force: false }),
-  });
-  if (!refRes.ok) throw new ExportError(`Failed to update ${branch} (${refRes.status}).`, 'push_failed', 502);
-
-  return commit.sha;
-}
-
-async function openPullRequest(
-  token: string,
-  owner: string,
-  repo: string,
-  head: string,
-  base: string,
-  title: string,
-  body: string,
-): Promise<{ url?: string; number?: number; warning?: string }> {
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/pulls`, {
-    method: 'POST',
-    body: JSON.stringify({ title, head, base, body }),
-  });
-  if (res.ok) {
-    const pr = (await res.json()) as { html_url?: string; number?: number };
-    return { url: pr.html_url, number: pr.number };
-  }
-  const detail = await res.text().catch(() => '');
-  // The branch and commit are already real; report the PR gap honestly rather
-  // than failing the whole export.
-  return { warning: `Branch pushed, but the pull request could not be opened (${res.status}). ${detail.slice(0, 200)}` };
-}
-
-export async function exportTemplateToRepo(opts: {
-  userId: string;
-  templateId: string;
-  repoFullName: string;
-  branch: string;
-  projectName: string;
-  userPrompt?: string;
-  targetDirectory?: unknown;
-  baseBranch?: string;
-}): Promise<ExportResult> {
-  const token = await getGitHubToken(opts.userId);
-  if (!token) throw new ExportError('GitHub is not connected for this account.', 'not_connected', 409);
-
-  const source = resolveTemplateSource(opts.templateId);
-  if (!source) throw new ExportError('Unknown template.', 'unknown_template', 400);
-
-  const targetDir = normalizeTargetDirectory(opts.targetDirectory);
-  if (targetDir === null) throw new ExportError('Target directory is not allowed.', 'unsafe_path', 400);
-
-  if (!opts.repoFullName?.includes('/')) throw new ExportError('Repository must be owner/name.', 'bad_repo', 400);
-  const { owner, repo } = parseRepoName(opts.repoFullName);
-
-  const info = await getRepoInfo(token, owner, repo);
-  if (!info.canPush) {
-    throw new ExportError('You do not have write access to that repository.', 'no_permission', 403);
-  }
-
-  const baseBranch = opts.baseBranch?.trim() || info.defaultBranch;
-  const baseSha = await resolveExactBranchHead(token, owner, repo, baseBranch);
-  if (!baseSha) {
-    throw new ExportError(
-      `Base branch "${baseBranch}" was not found. An empty repository needs an initial commit first.`,
-      'branch_failed',
-      409,
-    );
-  }
-
-  const built = buildTemplateFiles({
-    templateId: opts.templateId,
-    projectName: opts.projectName,
-    userPrompt: opts.userPrompt,
-  });
-  if (!built) throw new ExportError('Unknown template.', 'unknown_template', 400);
-
-  // Prefix with the optional target directory and validate every resulting path.
-  const candidates: ProjectFile[] = [];
-  for (const file of built.files) {
-    const path = targetDir ? `${targetDir}/${file.path}` : file.path;
-    if (!isSafeRepoPath(path)) {
-      throw new ExportError(`Refusing to write unsafe path: ${path}`, 'unsafe_path', 400);
-    }
-    candidates.push({ path, content: file.content });
-  }
-
-  // Inspect the repository before writing so nothing is clobbered silently.
-  const existing = await listExistingPaths(token, owner, repo, baseSha);
-  const plan: ExportPlanFile[] = [];
-  const toWrite: ProjectFile[] = [];
-  for (const file of candidates) {
-    if (existing.has(file.path)) {
-      plan.push({ path: file.path, status: 'skip-conflict', bytes: Buffer.byteLength(file.content, 'utf8') });
-      continue;
-    }
-    plan.push({ path: file.path, status: 'create', bytes: Buffer.byteLength(file.content, 'utf8') });
-    toWrite.push(file);
-  }
-
-  const warnings: string[] = [];
-  const skipped = plan.filter((entry) => entry.status === 'skip-conflict');
-  if (skipped.length) {
-    warnings.push(
-      `${skipped.length} file(s) already exist and were left untouched: ${skipped
-        .slice(0, 8)
-        .map((entry) => entry.path)
-        .join(', ')}${skipped.length > 8 ? '…' : ''}`,
-    );
-  }
-
-  if (!toWrite.length) {
-    throw new ExportError(
-      'Every template file already exists in that location. Choose a target directory to avoid overwriting your work.',
-      'nothing_to_write',
-      409,
-    );
-  }
-
-  // Feature branch only — never the default branch.
-  await createBranch(token, owner, repo, opts.branch, baseSha);
-  const branchSha = (await resolveExactBranchHead(token, owner, repo, opts.branch)) ?? baseSha;
-
-  const commitSha = await commitFiles(
-    token,
-    owner,
-    repo,
-    opts.branch,
-    branchSha,
-    toWrite,
-    `Add ${source.slug} template via Xroga AI`,
-  );
-
-  const missingCritical = source.criticalPaths.filter((critical) => {
-    const full = targetDir ? `${targetDir}/${critical}` : critical;
-    return !toWrite.some((file) => file.path === full) && !existing.has(full);
-  });
-  if (missingCritical.length) {
-    warnings.push(`Expected files were not written: ${missingCritical.join(', ')}`);
-  }
-
-  const pr = await openPullRequest(
-    token,
-    owner,
-    repo,
-    opts.branch,
-    baseBranch,
-    `Add ${source.slug} template`,
-    [
-      `Adds the **${source.slug}** template (v${source.version}) generated with Xroga AI.`,
-      '',
-      `Files added: ${toWrite.length}`,
-      skipped.length ? `Existing files left untouched: ${skipped.length}` : '',
-      '',
-      'Review the diff before merging.',
-    ]
-      .filter(Boolean)
-      .join('\n'),
-  );
-  if (pr.warning) warnings.push(pr.warning);
-
-  return {
-    ok: true,
-    repoFullName: `${owner}/${repo}`,
-    branch: opts.branch,
-    baseBranch,
-    commitSha,
-    pullRequestUrl: pr.url,
-    pullRequestNumber: pr.number,
-    filesCreated: toWrite.length,
-    filesSkipped: skipped.length,
-    plan,
-    warnings,
-  };
-}
+export async function executeApprovedTemplateExport(userId:string,plan:BusinessActionPlan,permit?:AuthorityPermit){return executePublication(userId,plan,permit,'TEMPLATE');}

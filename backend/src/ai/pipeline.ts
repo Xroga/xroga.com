@@ -4134,6 +4134,7 @@ publicationReason:
     });
   }
 
+  let nativePublicationPending = false;
   if (shouldPush) {
     emit({
       agent: 'deploy',
@@ -4147,6 +4148,7 @@ publicationReason:
     });
     try {
       const pushed = await pushBuildToGitHub(opts.userId, filesToPush, {
+        tenantContext,projectId:opts.projectId,
         targetRepo: meta?.githubTargetRepo,
         targetBranch: githubBranch,
         slug: `xroga-${projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`,
@@ -4159,6 +4161,8 @@ publicationReason:
         allowEmptyBootstrap: !isUpdate && prior.files.length === 0,
         visibility: meta?.githubVisibility ?? 'private',
       });
+      if(pushed.needsConfirmation){nativePublicationPending=true;emit({agent:'deploy',status:'confirmation_required',message:`Review GitHub publication: [Review action](${pushed.reviewUrl}). No commit has been written.`,swarmStatusLabel:'Approval required'});}
+      else {
       githubRepoUrl = pushed.htmlUrl;
       githubRepoName = pushed.repoName;
       const verifiedCommitSha = pushed.commitSha;
@@ -4208,7 +4212,9 @@ publicationReason:
             )
           : todos('deploy'),
       });
+      }
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       // Typed refusals from the atomic write path describe themselves, and the one fact
       // that matters most to whoever reads this — that the branch was not changed — only
       // survives if it comes from there rather than from a raw vendor message.
@@ -4241,7 +4247,7 @@ publicationReason:
   let chromeZipOk = false;
   let electronZipOk = false;
   let electronInstallerOk = false;
-  let nativePublicationPending = false;
+
   let easTriggered = false;
   let easUrl: string | undefined;
   let easError: string | undefined;

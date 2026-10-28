@@ -633,6 +633,7 @@ router.post('/push-build', async (req: AuthRequest, res) => {
     }
 
     const github = await pushBuildToGitHub(req.userId!, files, {
+      tenantContext:req.tenantContext,
       targetRepo: parsed.data.repoName,
       targetBranch: parsed.data.branch ?? 'main',
       slug: parsed.data.projectSlug,
@@ -644,6 +645,7 @@ router.post('/push-build', async (req: AuthRequest, res) => {
         : {}),
       ...(parsed.data.directWriteAuthorized === true ? { directWriteAuthorized: true } : {}),
     });
+    if(github.needsConfirmation){res.status(202).json({...github,pushed:false,githubRepoName:github.repoName,githubRepoUrl:github.htmlUrl});return;}
     res.json({
       githubRepoUrl: github.htmlUrl,
       githubRepoName: github.repoName,
@@ -681,7 +683,9 @@ router.post('/rollback', async (req: AuthRequest, res) => {
       parsed.data.repoName,
       parsed.data.commitSha,
       parsed.data.branch ?? 'main',
+      req.tenantContext,
     );
+    if(rolled.needsConfirmation){res.status(202).json(rolled);return;}
     let deployUrl = '';
     let deployVerified = false;
     try {

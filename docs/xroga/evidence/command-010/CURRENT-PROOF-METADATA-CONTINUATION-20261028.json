@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "ea414a7f21f9447bfc8349ef5c5e8f4bb039140257597df7ebabc025b563a24a",
+      "currentSha256": "a2266b303cf4b8e58208ff9d473c6d1a7c8e55946bf1e1395e6a6ba6f5d38af7",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
@@ -22,13 +22,13 @@
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/SOURCE-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "e34b675dfe7fc24eba51e8c5e06a02ac15495f126c0a58c432207f0592bc0b48",
-      "currentSha256": "2c83f4336e8872e9ffe86931ae15140564ebadc456cbddfc765a7128bf86389a"
+      "currentSha256": "33634a689a7fbc5bce2a9965c6db6e6e91231ef4c0cedfce5ab245da7f2f525c"
     },
     {
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "c34dad4e212bf57f3b7fc54131a7225a1409f2ebaa3dcdea24fa47ab4f6a50a0",
+      "currentSha256": "617065c06447a93a5cc974c03fbdfd32f139a0605045cc78c2c3e7449b80ee4f",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
       "beforeCwsApprovalSha256": "ca3969dcc33e1c8d40133d088ec652598cdc1b983b97349349184e9017bea73b",

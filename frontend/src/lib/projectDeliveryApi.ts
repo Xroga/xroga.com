@@ -310,8 +310,8 @@ export const projectDeliveryApi = {
         'public';
     } =
       {},
-  ): Promise<ProjectDeliveryEnvelope> {
-    return request<ProjectDeliveryEnvelope>(
+  ): Promise<ProjectDeliveryEnvelope|{needsConfirmation:true;reviewUrl:string;message:string}> {
+    return request<ProjectDeliveryEnvelope|{needsConfirmation:true;reviewUrl:string;message:string}>(
       `/api/delivery/${encodeURIComponent(
         projectId,
       )}/publish`,

@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `c855b541f4803c656ece900f6e1648c23e321c3e`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `197637d2cfc360295e750cad6100ea71fcddc6df`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -115,7 +115,7 @@ Values are forbidden. Source SHA: `c855b541f4803c656ece900f6e1648c23e321c3e`. Na
 | MOONSHOT_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | MORPH_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | NEON_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| NETLIFY_ACCESS_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-netlify-com, endpoint-api-vercel-com, endpoint-github-com |
+| NETLIFY_ACCESS_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-netlify-com, endpoint-api-vercel-com |
 | NEXT_PUBLIC_API_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1, endpoint-localhost |
 | NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-analytics-ahrefs-com |
 | NEXT_PUBLIC_PROMO_FULL_ACCESS_END | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
@@ -188,12 +188,12 @@ Values are forbidden. Source SHA: `c855b541f4803c656ece900f6e1648c23e321c3e`. Na
 | USERPROFILE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | USER_SECRETS_ENCRYPTION_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | credential-store, endpoint-127-0-0-1 |
 | VERCEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| VERCEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-vercel-com, endpoint-github-com |
+| VERCEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-vercel-com |
 | VERCEL_CLIENT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
 | VERCEL_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
 | VERCEL_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1, endpoint-schema-org |
 | VERCEL_GIT_COMMIT_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1 |
-| VERCEL_MANAGED_PROJECT_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-github-com, endpoint-api-vercel-com, endpoint-github-com |
+| VERCEL_MANAGED_PROJECT_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-github-com, endpoint-api-vercel-com |
 | VERCEL_OAUTH_CALLBACK_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
 | VERCEL_OAUTH_CLIENT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
 | VERCEL_OAUTH_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
@@ -248,8 +248,8 @@ Values are forbidden. Source SHA: `c855b541f4803c656ece900f6e1648c23e321c3e`. Na
 | XROGA_GCE_SUBNET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
 | XROGA_GCE_VERIFY_ONLY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
 | XROGA_GCE_ZONE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution, endpoint-metadata-google-internal |
-| XROGA_GITHUB_BOT_EMAIL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-github-com, endpoint-api-vercel-com, endpoint-github-com |
-| XROGA_GITHUB_BOT_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-github-com, endpoint-api-vercel-com, endpoint-github-com |
+| XROGA_GITHUB_BOT_EMAIL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_GITHUB_BOT_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_GOOGLE_CLOUD_AUTH_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-delivery, endpoint-www-googleapis-com |
 | XROGA_GOOGLE_CLOUD_KMS_KEY_NAME | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | google-delivery |
 | XROGA_GOOGLE_DISPATCH_ACCOUNT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-delivery |

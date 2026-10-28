@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c855b541f4803c656ece900f6e1648c23e321c3e",
+  "source_sha": "197637d2cfc360295e750cad6100ea71fcddc6df",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1439,7 +1439,9 @@
       "config_sources": [
         "backend/src/routes/github.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
+        "backend/src/services/integrations/githubApproval.ts",
         "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubRequest.ts",
         "backend/src/services/integrations/githubSourceRead.ts",
         "backend/src/services/publish/desktopWorkflow.ts",
         "backend/src/services/publish/electronSecrets.ts",
@@ -1464,9 +1466,7 @@
         "SUPABASE_URL",
         "VERCEL_API_KEY",
         "VERCEL_MANAGED_PROJECT_NAME",
-        "XB01_DISPOSABLE_SUPABASE",
-        "XROGA_GITHUB_BOT_EMAIL",
-        "XROGA_GITHUB_BOT_NAME"
+        "XB01_DISPOSABLE_SUPABASE"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -1482,7 +1482,9 @@
       "observability_source": [
         "backend/src/routes/github.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
+        "backend/src/services/integrations/githubApproval.ts",
         "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubRequest.ts",
         "backend/src/services/integrations/githubSourceRead.ts",
         "backend/src/services/publish/desktopWorkflow.ts",
         "backend/src/services/publish/electronSecrets.ts",
@@ -1983,9 +1985,7 @@
         "VERCEL_OAUTH_CLIENT_SECRET",
         "VERCEL_OAUTH_SCOPES",
         "VERCEL_TEAM_ID",
-        "XB01_DISPOSABLE_SUPABASE",
-        "XROGA_GITHUB_BOT_EMAIL",
-        "XROGA_GITHUB_BOT_NAME"
+        "XB01_DISPOSABLE_SUPABASE"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -4066,7 +4066,7 @@
         "backend/src/ai/pipeline.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
-        "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubPublication.ts",
         "backend/src/services/integrations/githubRepoCreation.ts",
         "backend/src/services/memory/buildProjectStore.ts",
         "backend/src/services/publish/desktopWorkflow.ts",
@@ -4103,13 +4103,8 @@
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "GITHUB_OAUTH_CALLBACK_URL",
-        "NETLIFY_ACCESS_TOKEN",
         "NODE_ENV",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "VERCEL_API_KEY",
-        "VERCEL_MANAGED_PROJECT_NAME",
-        "XROGA_GITHUB_BOT_EMAIL",
-        "XROGA_GITHUB_BOT_NAME"
+        "SUPABASE_SERVICE_ROLE_KEY"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -4126,7 +4121,7 @@
         "backend/src/ai/pipeline.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
-        "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubPublication.ts",
         "backend/src/services/integrations/githubRepoCreation.ts",
         "backend/src/services/memory/buildProjectStore.ts",
         "backend/src/services/publish/desktopWorkflow.ts",
@@ -7618,6 +7613,7 @@
         "backend/src/storage/r2ObjectStore.ts",
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
+        "backend/src/synthesis/universalCommit.ts",
         "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/api/showcase/aura/chat/route.ts"
@@ -7758,6 +7754,8 @@
         "XROGA_FLY_OIDC_ISSUER",
         "XROGA_FLY_OIDC_ORGANIZATION_ID",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
+        "XROGA_GITHUB_BOT_EMAIL",
+        "XROGA_GITHUB_BOT_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
@@ -7826,6 +7824,7 @@
         "backend/src/storage/r2ObjectStore.ts",
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
+        "backend/src/synthesis/universalCommit.ts",
         "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/api/showcase/aura/chat/route.ts"
@@ -10319,8 +10318,7 @@
       "dependency_ids": [
         "endpoint-api-github-com",
         "endpoint-api-netlify-com",
-        "endpoint-api-vercel-com",
-        "endpoint-github-com"
+        "endpoint-api-vercel-com"
       ]
     },
     {
@@ -12087,8 +12085,7 @@
       ],
       "dependency_ids": [
         "endpoint-api-github-com",
-        "endpoint-api-vercel-com",
-        "endpoint-github-com"
+        "endpoint-api-vercel-com"
       ]
     },
     {
@@ -12202,8 +12199,7 @@
       ],
       "dependency_ids": [
         "endpoint-api-github-com",
-        "endpoint-api-vercel-com",
-        "endpoint-github-com"
+        "endpoint-api-vercel-com"
       ]
     },
     {
@@ -13482,7 +13478,6 @@
     {
       "name": "XROGA_GITHUB_BOT_EMAIL",
       "consuming_sources": [
-        "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/synthesis/universalCommit.ts"
       ],
       "environments": [
@@ -13496,15 +13491,12 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-github-com",
-        "endpoint-api-vercel-com",
-        "endpoint-github-com"
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
       "name": "XROGA_GITHUB_BOT_NAME",
       "consuming_sources": [
-        "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/synthesis/universalCommit.ts"
       ],
       "environments": [
@@ -13518,9 +13510,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-api-github-com",
-        "endpoint-api-vercel-com",
-        "endpoint-github-com"
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -15089,7 +15079,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd"
+      "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16073,7 +16063,7 @@
     },
     {
       "path": "backend/src/routes/delivery.ts",
-      "sha256": "eba82946835afde6a4697b9ca07c9b1babc2d6d879883cd0c585cf8e56e0488d"
+      "sha256": "0a509d555ca21bb95acc86b180b659917ce5578cbdcf8617caf35950bde63172"
     },
     {
       "path": "backend/src/routes/drive.ts",
@@ -16081,7 +16071,7 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4"
+      "sha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -16153,7 +16143,7 @@
     },
     {
       "path": "backend/src/routes/showcase.ts",
-      "sha256": "f26ff330eb7032f74930ee9a7db112016dbb0df48efb9a192a74354ddf0f5533"
+      "sha256": "a81f35306678f64b6c36294d34bc0926e1e58fd464ccbe06998b94712347e986"
     },
     {
       "path": "backend/src/routes/simpleChat.ts",
@@ -16597,7 +16587,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b0e8cacbae9d3821132fa1e16ee664aa045787fa628dcd6c91ba69d5d19d101f"
+      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16672,6 +16662,10 @@
       "sha256": "9bd1a0a08eb68cd52773f00c6b861f5cfcf8f75d2bd2a9c1d2e032fd377c719f"
     },
     {
+      "path": "backend/src/services/integrations/githubApproval.ts",
+      "sha256": "50bd566b12896f2c4c6ab290e2107e1d633db348c642b6843ddfa7bae45beb08"
+    },
+    {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
       "sha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0"
     },
@@ -16693,15 +16687,23 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1"
+      "sha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d"
     },
     {
       "path": "backend/src/services/integrations/githubMutationPlan.ts",
       "sha256": "c9fa33ee8d56c3a4b0167a52a64bb05a7a19018715f020bcda35ba9e8a375ed9"
     },
     {
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "sha256": "8089f58f7f4452c44e44328de23be97e1361bc9e0cb4d917ab5718f9aad3064d"
+    },
+    {
       "path": "backend/src/services/integrations/githubRepoCreation.ts",
       "sha256": "42ffaf35d0b6cb5e978d4dd569b61df337de74e12c0d0d695a5bff15ab5dcc16"
+    },
+    {
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "sha256": "aa0259f7dbaafafa423920884fc69e3d9ecc18b8c575eb075d53a253af1130f0"
     },
     {
       "path": "backend/src/services/integrations/githubRunBranch.ts",
@@ -16889,7 +16891,7 @@
     },
     {
       "path": "backend/src/services/scaffolds/nextjsScaffold.ts",
-      "sha256": "f4c7c684f64e8035ba3e7c6bde9b12f9746f9f46aab2ee9b62bd1b3796e0c943"
+      "sha256": "4831097c15a43339f15273aa0db9bd5ba0df50d10ce8ab756498f305622c1bb6"
     },
     {
       "path": "backend/src/services/scaffolds/packageBuildZip.ts",
@@ -16905,7 +16907,7 @@
     },
     {
       "path": "backend/src/services/showcase/templateExport.ts",
-      "sha256": "dfe469edc29361a90fa9dd67e7352740cc81df699621c08fba9316422fe22e49"
+      "sha256": "90032352847fb16dc35c8769b440dd05edaf1f06c1fbf3cad899de9c338f0b62"
     },
     {
       "path": "backend/src/services/showcase/templateSources.ts",
@@ -17113,7 +17115,7 @@
     },
     {
       "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
-      "sha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b"
+      "sha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c"
     },
     {
       "path": "backend/src/synthesis/dynamicPlanning.ts",
@@ -19805,7 +19807,7 @@
     },
     {
       "path": "frontend/src/components/showcase/ShowcaseDialogs.tsx",
-      "sha256": "220bb4499fe79e47be8149a5c4eeefb2c23ee17248d8f7f53bd8357c9cfa5c36"
+      "sha256": "2455f68fd4669cf64aec8fc37af872645e9b152f4da932869f30931f18b06444"
     },
     {
       "path": "frontend/src/components/showcase/ShowcaseExplorer.tsx",
@@ -20005,7 +20007,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ProjectDeliveryPanel.tsx",
-      "sha256": "9041524a8793bc9d6e18c8e1a6b36586de32b293f77f433f6f205153a65a14b0"
+      "sha256": "df49e5c7038384e0d5fc168cdbc4337d58c4f993420decf6b05ffced38f7f870"
     },
     {
       "path": "frontend/src/components/terminal/ProjectPreviewDock.tsx",
@@ -20409,7 +20411,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3"
+      "sha256": "f3edcd5a2e7c3c21a3ab7ba3fbb4b9396cfd07e502f2c48cb910d7e54076e639"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -20845,7 +20847,7 @@
     },
     {
       "path": "frontend/src/lib/projectDeliveryApi.ts",
-      "sha256": "11e169cd69f6a701e04da5044e692942030e8be8748db0dac6f39ff179a8fd4f"
+      "sha256": "3f12838c9c6fbf583be45ea1db5a30c035430b2a60ddb5ace31425fb01f67f00"
     },
     {
       "path": "frontend/src/lib/projectResume.ts",
@@ -20925,7 +20927,7 @@
     },
     {
       "path": "frontend/src/lib/rollbackProjectUpdate.ts",
-      "sha256": "6b491fda1a787ac6b0d24134c4b65dd525da71cb051e97e01a7bc8df56d77afe"
+      "sha256": "930c5fcb414a588c1238afd53e6ad6f64f8223ba037f3d9afea4297a49d0f0ab"
     },
     {
       "path": "frontend/src/lib/runGuestLaneChat.ts",
@@ -24081,6 +24083,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/githubApproval.ts",
+      "line": 66,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -24091,42 +24100,28 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 286,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "github.com",
-      "protocol": "https:",
-      "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 665,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "github.com",
-      "protocol": "https:",
-      "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 717,
+      "line": 270,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 843,
+      "line": 453,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 876,
+      "line": 486,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
-      "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1742,
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "line": 23,
       "credentialsInUrl": false
     },
     {
@@ -24134,6 +24129,27 @@
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubRepoCreation.ts",
       "line": 141,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "line": 44,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "line": 45,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "line": 45,
       "credentialsInUrl": false
     },
     {
@@ -29061,7 +29077,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4740,
+      "line": 4746,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31097,6 +31113,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/services/integrations/githubApproval.ts",
+      "line": 52,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/services/integrations/githubAtomicWrite.ts",
       "line": 257,
       "scope": "FUNCTION_LOCAL",
@@ -31112,28 +31135,28 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1458,
+      "line": 1067,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1492,
+      "line": 1101,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1498,
+      "line": 1107,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1573,
+      "line": 1186,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31190,6 +31213,20 @@
     {
       "path": "backend/src/services/integrations/githubMutationPlan.ts",
       "line": 582,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "line": 66,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "line": 103,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31560,21 +31597,7 @@
     },
     {
       "path": "backend/src/services/showcase/templateExport.ts",
-      "line": 127,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/services/showcase/templateExport.ts",
-      "line": 129,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/services/showcase/templateExport.ts",
-      "line": 131,
+      "line": 86,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

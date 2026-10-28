@@ -126,6 +126,7 @@ export async function rollbackProjectUpdate(
     projectName: 'Xroga Undo',
   });
 
+  if(pushed.needsConfirmation&&pushed.reviewUrl){window.location.assign(pushed.reviewUrl);throw new Error('Review the exact Undo action before changing the repository.');}
   const actualRepo = pushed.githubRepoName || repo;
   const actualBranch = pushed.branch || branch;
   let deployUrl: string | null = null;

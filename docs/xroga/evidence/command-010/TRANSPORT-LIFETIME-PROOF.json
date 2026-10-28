@@ -121,8 +121,8 @@
   ],
   "counts": {
     "total": 137,
-    "reviewed": 136,
-    "pending": 1,
+    "reviewed": 137,
+    "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
@@ -156,7 +156,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "sha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/githubDeploy.ts",
         "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706"
@@ -280,7 +280,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+      "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -651,7 +651,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b0e8cacbae9d3821132fa1e16ee664aa045787fa628dcd6c91ba69d5d19d101f",
+      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -851,5 +851,6 @@
   "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
   "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
   "supabaseCreateContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json",
-  "desktopWorkflowContinuation": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json"
+  "desktopWorkflowContinuation": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
+  "githubPublicationContinuation": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
 }

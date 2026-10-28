@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "aa24f6b074dc0a4c9ec9207d565b3ba02859e7404e10636681535e338cd2ac95",
+  "reviewRegistrySha256": "7f65ec998e06ee7d39f6a33d9faf59b9ea291455be711a763d93eb579d7f8416",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 211,
-    "persistenceCandidates": 870,
-    "ownerPredicateCandidates": 237,
+    "privilegedFactorySites": 212,
+    "persistenceCandidates": 876,
+    "ownerPredicateCandidates": 239,
     "reviewRequired": 126,
-    "reviewedCandidates": 744,
+    "reviewedCandidates": 750,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 492,
+    "SCOPED_BOUNDARY": 494,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 179,
+    "NOT_PERSISTENCE": 183,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 84,
-    "unresolvedCandidateBoundaries": 786,
+    "verifiedCandidateBoundaries": 83,
+    "unresolvedCandidateBoundaries": 793,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -333,6 +333,22 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-812abbd1d9e8178e"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-47ed76ce09cbb18f"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-47ed76ce09cbb18f"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-47ed76ce09cbb18f"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-47ed76ce09cbb18f"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -1185,6 +1201,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-52503cb2ef435822"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-3198262baf300dc7"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-3198262baf300dc7"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-3198262baf300dc7"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -4376,6 +4404,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "59f39519376d5997886e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "90d3c923bba7e9e0d3a8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "41ad1c8958ec765129f6"
       },
       {
@@ -4428,19 +4464,39 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "16e9bd43351094b6a7fb"
+        "id": "6517de08d7faf2996d41"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "51b0a88f73c6d7dbf811"
+        "id": "d1dae1934b42415b2c82"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "30bbc8593d36230fdfe9"
+        "id": "6cfb4e499c560cba0365"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d86fc4994d93219933ff"
+        "id": "0dff22209e876c03310f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e02f17985cef321b17a9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "651d8b8e3e425d8ee7da"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ae119418698bac73c49f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9df64d0b72b1011ea3b0"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "19a7f25a581c80a5c494"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5149,6 +5205,14 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "2c69ef5998ffefb521bc"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e2f7ae31e252ffce2559"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e880bdc44f676acfd89e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7636,6 +7700,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "59f39519376d5997886e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "90d3c923bba7e9e0d3a8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "41ad1c8958ec765129f6"
       },
       {
@@ -7672,19 +7744,39 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "16e9bd43351094b6a7fb"
+        "id": "6517de08d7faf2996d41"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "51b0a88f73c6d7dbf811"
+        "id": "d1dae1934b42415b2c82"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "30bbc8593d36230fdfe9"
+        "id": "6cfb4e499c560cba0365"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d86fc4994d93219933ff"
+        "id": "0dff22209e876c03310f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e02f17985cef321b17a9"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "651d8b8e3e425d8ee7da"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "ae119418698bac73c49f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "9df64d0b72b1011ea3b0"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "19a7f25a581c80a5c494"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8364,11 +8456,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "371f13126c4ab7aab2dc"
+        "id": "e2f7ae31e252ffce2559"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "74cc6545383bea8e320f"
+        "id": "e880bdc44f676acfd89e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8645,12 +8737,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 870,
-    "structuredVerified": 84,
-    "structuredUnproven": 786,
+    "currentCallers": 876,
+    "structuredVerified": 83,
+    "structuredUnproven": 793,
     "manualUnresolved": 159,
-    "manualUnsupported": 627,
-    "agreedVerified": 84,
+    "manualUnsupported": 634,
+    "agreedVerified": 83,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -9329,7 +9421,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+      "sourceSha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9350,7 +9442,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
+      "sourceSha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -15509,7 +15601,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "semanticReview": {
         "authority": "Original issued actor and exact owner before tenant-scoped canonical github row read. Current sealed credential/revision/metadata revalidated around bounded official account reads. No write or new grant.",
         "reason": "Focused Phase4 account-route security proof only. Does not certify other source hydration, deployment, credential exports or whole007/010 acceptance. Existing historical status projection remains independently preserved.",
@@ -15534,7 +15626,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "semanticReview": {
         "authority": "Original issued actor and exact owner before tenant-scoped canonical github row read. Current sealed credential/revision/metadata revalidated around bounded official account reads. No write or new grant.",
         "reason": "Focused Phase4 account-route security proof only. Does not certify other source hydration, deployment, credential exports or whole007/010 acceptance. Existing historical status projection remains independently preserved.",
@@ -15559,7 +15651,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "semanticReview": {
         "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -15580,7 +15672,7 @@
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "semanticReview": {
         "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -15601,7 +15693,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "sourceSha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b",
       "semanticReview": {
         "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -19189,6 +19281,56 @@
       }
     },
     {
+      "id": "59f39519376d5997886e",
+      "path": "backend/src/services/integrations/githubApproval.ts",
+      "line": 45,
+      "enclosing": "readGitHubAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "50bd566b12896f2c4c6ab290e2107e1d633db348c642b6843ddfa7bae45beb08",
+      "semanticReview": {
+        "authority": "Original canonical permit context, owner-scoped executing confirmation, exact plan digest, expiry, current project/source fingerprint, credential epoch and consumed effect marker are checked across each wait.",
+        "reason": "Actual durable confirmation tests reject forged context, foreign project, changed source plan, cancellation, revoked credentials, audit/dispatch denial and replay. No raw-user context, supplied boolean approval, SQL, new issuer or authority fallback.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubApproval.ts",
+            "marker": ".eq('user_id',context.userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/githubPublication.security.test.ts",
+            "marker": "exact GitHub publication:"
+          }
+        ]
+      }
+    },
+    {
+      "id": "90d3c923bba7e9e0d3a8",
+      "path": "backend/src/services/integrations/githubApproval.ts",
+      "line": 45,
+      "enclosing": "readGitHubAction",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "50bd566b12896f2c4c6ab290e2107e1d633db348c642b6843ddfa7bae45beb08",
+      "semanticReview": {
+        "authority": "Original canonical permit context, owner-scoped executing confirmation, exact plan digest, expiry, current project/source fingerprint, credential epoch and consumed effect marker are checked across each wait.",
+        "reason": "Actual durable confirmation tests reject forged context, foreign project, changed source plan, cancellation, revoked credentials, audit/dispatch denial and replay. No raw-user context, supplied boolean approval, SQL, new issuer or authority fallback.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubApproval.ts",
+            "marker": ".eq('user_id',context.userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/githubPublication.security.test.ts",
+            "marker": "exact GitHub publication:"
+          }
+        ]
+      }
+    },
+    {
       "id": "61043cdc80b90c8d957b",
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
       "line": 72,
@@ -19504,15 +19646,15 @@
       }
     },
     {
-      "id": "16e9bd43351094b6a7fb",
+      "id": "6517de08d7faf2996d41",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 167,
+      "line": 148,
       "enclosing": "getIntegration",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "sourceSha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
       "semanticReview": {
         "authority": "The private integration reader is used only by the existing authenticated GitHub routes and admitted pipeline consumer. Original server actor is retained for canonical token and owner-filtered metadata, then canonical token is re-read after metadata. Missing, disconnected, replaced or unavailable authority returns no integration, before ghFetch. The actual repo-state router uses authenticated req.userId regardless of query actor and passes this exact selected token to its existing repository reader. Fixed owner metadata cannot replace the credential. The provider stub refuses every GET without forwarding any network call.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two exact private consumer read/factory sites, supplementing rather than inheriting the OAuth helper proof. The real Auth/HTTP/database fixture seeds distinct real owners, sees the exact respective synthetic bearer at the actual refusing consumer, rejects anonymous access, and ignores forged opposite-user query parameters. Real database disconnect or replacement during the delivered metadata response and a database outage prevent any provider call. Exact other-owner rows remain unchanged and a current legitimate owner reconnect works. This establishes account selection at the consumer, not live provider success, custody or post-dispatch cancellation guarantees. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -19525,15 +19667,15 @@
       }
     },
     {
-      "id": "51b0a88f73c6d7dbf811",
+      "id": "d1dae1934b42415b2c82",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 168,
+      "line": 149,
       "enclosing": "getIntegration",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "sourceSha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
       "semanticReview": {
         "authority": "The private integration reader is used only by the existing authenticated GitHub routes and admitted pipeline consumer. Original server actor is retained for canonical token and owner-filtered metadata, then canonical token is re-read after metadata. Missing, disconnected, replaced or unavailable authority returns no integration, before ghFetch. The actual repo-state router uses authenticated req.userId regardless of query actor and passes this exact selected token to its existing repository reader. Fixed owner metadata cannot replace the credential. The provider stub refuses every GET without forwarding any network call.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two exact private consumer read/factory sites, supplementing rather than inheriting the OAuth helper proof. The real Auth/HTTP/database fixture seeds distinct real owners, sees the exact respective synthetic bearer at the actual refusing consumer, rejects anonymous access, and ignores forged opposite-user query parameters. Real database disconnect or replacement during the delivered metadata response and a database outage prevent any provider call. Exact other-owner rows remain unchanged and a current legitimate owner reconnect works. This establishes account selection at the consumer, not live provider success, custody or post-dispatch cancellation guarantees. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -19546,15 +19688,15 @@
       }
     },
     {
-      "id": "30bbc8593d36230fdfe9",
+      "id": "6cfb4e499c560cba0365",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1302,
+      "line": 911,
       "enclosing": "fetchRepoTextFile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "sourceSha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -19567,15 +19709,15 @@
       }
     },
     {
-      "id": "d86fc4994d93219933ff",
+      "id": "0dff22209e876c03310f",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1368,
+      "line": 977,
       "enclosing": "decodeRepositoryTextBlob",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "sourceSha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -19583,6 +19725,111 @@
           {
             "path": "backend/src/services/integrations/githubDeploy.ts",
             "marker": "  const bytes = Buffer.from(content, 'base64');\n  if (bytes.includes(0)) return null;\n  const text = bytes.toString('utf8');"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e02f17985cef321b17a9",
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "line": 22,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "8089f58f7f4452c44e44328de23be97e1361bc9e0cb4d917ab5718f9aad3064d",
+      "semanticReview": {
+        "authority": "Exactly these native Buffer.from byte conversions encode approved source, calculate Git object hashes, compare fixed bootstrap content or reject selected credential encodings in outbound paths. No database, table, bucket, RPC, actor or grant is selected.",
+        "reason": "Conservative .from AST candidates are not persistence. Current native and transport tests independently enforce owner, secret denial, source digest, canonical approval and effect receipts.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubPublication.ts",
+            "marker": "Buffer.from("
+          }
+        ]
+      }
+    },
+    {
+      "id": "651d8b8e3e425d8ee7da",
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "line": 66,
+      "enclosing": "executePublication",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "8089f58f7f4452c44e44328de23be97e1361bc9e0cb4d917ab5718f9aad3064d",
+      "semanticReview": {
+        "authority": "Exactly these native Buffer.from byte conversions encode approved source, calculate Git object hashes, compare fixed bootstrap content or reject selected credential encodings in outbound paths. No database, table, bucket, RPC, actor or grant is selected.",
+        "reason": "Conservative .from AST candidates are not persistence. Current native and transport tests independently enforce owner, secret denial, source digest, canonical approval and effect receipts.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubPublication.ts",
+            "marker": "Buffer.from("
+          }
+        ]
+      }
+    },
+    {
+      "id": "ae119418698bac73c49f",
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "line": 75,
+      "enclosing": "executePublication",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "Initialized by Xroga AI. This marker is removed by the first product commit.\n",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "8089f58f7f4452c44e44328de23be97e1361bc9e0cb4d917ab5718f9aad3064d",
+      "semanticReview": {
+        "authority": "Exactly these native Buffer.from byte conversions encode approved source, calculate Git object hashes, compare fixed bootstrap content or reject selected credential encodings in outbound paths. No database, table, bucket, RPC, actor or grant is selected.",
+        "reason": "Conservative .from AST candidates are not persistence. Current native and transport tests independently enforce owner, secret denial, source digest, canonical approval and effect receipts.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubPublication.ts",
+            "marker": "Buffer.from("
+          }
+        ]
+      }
+    },
+    {
+      "id": "9df64d0b72b1011ea3b0",
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "line": 46,
+      "enclosing": "admitGitHubRequest",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "aa0259f7dbaafafa423920884fc69e3d9ecc18b8c575eb075d53a253af1130f0",
+      "semanticReview": {
+        "authority": "Exactly these native Buffer.from byte conversions encode approved source, calculate Git object hashes, compare fixed bootstrap content or reject selected credential encodings in outbound paths. No database, table, bucket, RPC, actor or grant is selected.",
+        "reason": "Conservative .from AST candidates are not persistence. Current native and transport tests independently enforce owner, secret denial, source digest, canonical approval and effect receipts.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubRequest.ts",
+            "marker": "Buffer.from("
+          }
+        ]
+      }
+    },
+    {
+      "id": "19a7f25a581c80a5c494",
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "line": 46,
+      "enclosing": "admitGitHubRequest",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "aa0259f7dbaafafa423920884fc69e3d9ecc18b8c575eb075d53a253af1130f0",
+      "semanticReview": {
+        "authority": "Exactly these native Buffer.from byte conversions encode approved source, calculate Git object hashes, compare fixed bootstrap content or reject selected credential encodings in outbound paths. No database, table, bucket, RPC, actor or grant is selected.",
+        "reason": "Conservative .from AST candidates are not persistence. Current native and transport tests independently enforce owner, secret denial, source digest, canonical approval and effect receipts.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubRequest.ts",
+            "marker": "Buffer.from("
           }
         ]
       }
@@ -23920,27 +24167,6 @@
       }
     },
     {
-      "id": "8716f40a420d9e72fd19",
-      "path": "backend/src/services/showcase/templateExport.ts",
-      "line": 152,
-      "enclosing": "commitFiles",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "dfe469edc29361a90fa9dd67e7352740cc81df699621c08fba9316422fe22e49",
-      "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in commitFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-        "evidence": [
-          {
-            "path": "backend/src/services/showcase/templateExport.ts",
-            "marker": "      body: JSON.stringify({ content: Buffer.from(file.content, 'utf8').toString('base64'), encoding: 'base64' }),\n    });\n    if (!res.ok) {"
-          }
-        ]
-      }
-    },
-    {
       "id": "ad1deb57ab7601502bb2",
       "path": "backend/src/services/storage/fileDeliveryPolicy.ts",
       "line": 35,
@@ -24570,15 +24796,15 @@
       "sourceSha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
     },
     {
-      "id": "371f13126c4ab7aab2dc",
+      "id": "e2f7ae31e252ffce2559",
       "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
-      "line": 194,
+      "line": 197,
       "enclosing": "loadEvidence",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_events",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "sourceSha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c",
       "semanticReview": {
         "authority": "The actual delivery route is mounted behind authMiddleware. It supplies only requireUser(req) and the validated project path. loadProjectDelivery reads the exact owned revision in parallel with its private event query and returns no envelope if that revision is absent. The event query constrains the same original owner plus logical project and fixed four event types before mapping bounded evidence fields. No body/query actor, default other account, provider request or durable mutation occurs in these selected reads. Existing publishing/deployment consumer authority is separate.",
         "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Two exact evidence read/factory sites only. The real HTTP/database fixture gives two fresh unconnected Auth subjects distinct evidence and revisions for the same logical project label. Forged opposite-owner query does not change exact returned revision/repository/deployment IDs, a second private project cannot be read by the other actor and anonymous requests deny. Missing canonical event authority rejects, while exact event/revision rows remain unchanged. Ready events and URLs are explicitly fictional seeded metadata with verified:false, never live-provider deployment acceptance. Whole publish/deploy actions, URL/content trust, credentials and010 egress remain independently open. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
@@ -24591,15 +24817,15 @@
       }
     },
     {
-      "id": "74cc6545383bea8e320f",
+      "id": "e880bdc44f676acfd89e",
       "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
-      "line": 194,
+      "line": 197,
       "enclosing": "loadEvidence",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b91e324ac71817102b0d8f12e6f7d99a8632d774b551c42f920a16312130218b",
+      "sourceSha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c",
       "semanticReview": {
         "authority": "The actual delivery route is mounted behind authMiddleware. It supplies only requireUser(req) and the validated project path. loadProjectDelivery reads the exact owned revision in parallel with its private event query and returns no envelope if that revision is absent. The event query constrains the same original owner plus logical project and fixed four event types before mapping bounded evidence fields. No body/query actor, default other account, provider request or durable mutation occurs in these selected reads. Existing publishing/deployment consumer authority is separate.",
         "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Two exact evidence read/factory sites only. The real HTTP/database fixture gives two fresh unconnected Auth subjects distinct evidence and revisions for the same logical project label. Forged opposite-owner query does not change exact returned revision/repository/deployment IDs, a second private project cannot be read by the other actor and anonymous requests deny. Missing canonical event authority rejects, while exact event/revision rows remain unchanged. Ready events and URLs are explicitly fictional seeded metadata with verified:false, never live-provider deployment acceptance. Whole publish/deploy actions, URL/content trust, credentials and010 egress remain independently open. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
