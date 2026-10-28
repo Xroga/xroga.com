@@ -129,7 +129,7 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
     const created=await originalFetch(`${origin}/create-project`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name:'Fixture',organizationId:'synthetic-org',userId:'22222222-2222-4222-8222-222222222222'})});
     assert.equal(created.status,400);assert.equal(createdProjects,1);
-    assert.deepEqual(attempted,['bundle']);
+    assert.deepEqual(attempted,[],'A revoked creation source stops before derived-credential persistence');
     assert.deepEqual(saved,[]);assert.equal(prepares,1);assert.equal(oauthToken,'');
     await new Promise<void>(resolve=>setTimeout(resolve,50));
   } finally {

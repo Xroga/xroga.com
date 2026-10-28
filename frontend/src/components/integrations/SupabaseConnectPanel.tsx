@@ -25,6 +25,8 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
   const [projects, setProjects] = useState<ListedProject[]>([]);
   const [orgs, setOrgs] = useState<ListedOrg[]>([]);
   const [message, setMessage] = useState('');
+  const [reviewUrl,setReviewUrl]=useState<string>();
+  const reviewLink=(value:unknown)=>typeof value==='string'&&/^\/dashboard\/actions\/confirm\/[a-f0-9-]{36}$/i.test(value)?value:undefined;
   const [newName, setNewName] = useState('my-app');
   const [orgId, setOrgId] = useState('');
   const [region, setRegion] = useState('us-east-1');
@@ -34,7 +36,7 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
       const st = await api.supabase.status();
       setOauthConfigured(st.oauthConfigured !== false);
       setOauthConnected(Boolean(st.oauthConnected));
-      setProvisioned(Boolean(st.provisioned || st.ready));
+      setProvisioned(st.provisioned===true);
       setMessage(st.message || '');
       if (st.oauthConnected && !st.provisioned) {
         const list = await api.supabase.projects().catch(() => ({ projects: [] as ListedProject[] }));
@@ -69,7 +71,8 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
     const unsub = subscribeOAuthResults((data) => {
       if (data.type === 'xroga-supabase-connected') {
         setOauthConnected(true);
-        setProvisioned(Boolean(data.provisioned));
+        setProvisioned(data.provisioned===true);
+        setReviewUrl(reviewLink(data.reviewUrl));
         setProjects((data.projects as ListedProject[]) ?? []);
         setMessage(data.message || 'Authorized');
         if (data.provisioned) {
@@ -104,7 +107,8 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
         (result) => {
           stop();
           setOauthConnected(true);
-          setProvisioned(Boolean(result.provisioned));
+          setProvisioned(result.provisioned===true);
+          setReviewUrl(reviewLink(result.reviewUrl));
           if (result.projects?.length) setProjects(result.projects);
           setMessage(result.message || 'Authorized');
           if (result.provisioned) {
@@ -136,13 +140,18 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
   }
 
   async function selectProject(p: ListedProject) {
-    setBusy(true);
+    setReviewUrl(undefined);setBusy(true);
     try {
       const res = await api.supabase.selectProject({
         projectRef: p.ref || p.id,
         projectName: p.name,
       });
-      if (res.ok || res.provision?.schemaApplied || res.status?.ready) {
+      if(res.provision?.needsConfirmation){
+        const link=reviewLink(res.provision.reviewUrl);if(!link)throw new Error('The action review link is unavailable. Retry setup.');
+        setReviewUrl(link);setProvisioned(false);setMessage(res.provision.message||'Review the exact schema and storage action.');
+        return;
+      }
+      if (res.provision?.ok===true && res.provision?.schemaApplied===true && res.provision?.memoryTablesReady===true) {
         toast.success(res.message || 'Project provisioned automatically');
         setProvisioned(true);
         onConnected?.();
@@ -179,8 +188,12 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
         organizationId: orgId,
         region,
       });
+      if(res.provision?.needsConfirmation){
+        const link=reviewLink(res.provision.reviewUrl);if(!link)throw new Error('The action review link is unavailable.');
+        setReviewUrl(link);setProvisioned(false);setMessage(res.provision.message||'Review schema and storage setup.');return;
+      }
       if (res.ok) {
-        toast.success(res.message || 'Created and provisioned');
+        toast.success(res.message || 'Project created. Schema and private storage require separate verification.');
         setProvisioned(true);
         onConnected?.();
         void refresh();
@@ -229,11 +242,11 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
       <div>
         <p className="text-sm font-semibold">Connect Supabase</p>
         <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">
-          Authorize once. We fetch keys and run SQL on <strong>your</strong> project — schema, AI
-          memory, and storage RLS. If you have no project yet, create one here.
+          Authorize your project, then review the exact schema and private storage changes before execution.
         </p>
       </div>
 
+      {reviewUrl && <a href={reviewUrl} className="inline-flex text-sm underline">Review Supabase setup</a>}
       {provisioned ? (
         <div className="space-y-2">
           <p className="text-xs text-emerald-600 font-medium">

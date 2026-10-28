@@ -4025,9 +4025,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
       "callIds": [
-        "e4d85b225c1b15ed81a5"
+        "98eff4c73564a22cc1f0"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -5455,13 +5455,23 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+        "callIds": [
+          "e4d85b225c1b15ed81a5"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
       "callIds": [
-        "86c1d25d68f4d6dc4446"
+        "08f0ea46f9ffcabdaff0"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -6889,7 +6899,17 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+        "callIds": [
+          "86c1d25d68f4d6dc4446"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -9202,9 +9222,9 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+      "sourceSha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839",
       "callIds": [
-        "76db5ae741f58e8ad98b"
+        "c411916d520cbe22dc2d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the original dormant userSupabaseMemoryReady query remains reviewed. Its original issued TenantContext, owner predicate, canonical account and complete nearest function body are byte-identical to the pushed parent. Management transport, SQL, project creation, direct password execution, storage setup and upstream production callers remain independent unresolved Phase4 obligations.",
@@ -9327,7 +9347,17 @@
         ],
         "disposition": "SCOPED_BOUNDARY"
       },
-      "supabaseManagementContinuation": "docs/xroga/evidence/command-010/SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json"
+      "supabaseManagementContinuation": "docs/xroga/evidence/command-010/SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json",
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+        "callIds": [
+          "76db5ae741f58e8ad98b"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/ai/sessionMemory.ts",
@@ -16401,7 +16431,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "3d61f3f5ae6402c20b58",
         "64f0d9db49a13b562831"
@@ -16422,11 +16452,22 @@
           "bf25908290a49aa14bd7",
           "399344f16bc489f1e5b1"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "3d61f3f5ae6402c20b58",
+          "64f0d9db49a13b562831"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "8784feaf266f3ae5d72e"
       ],
@@ -16539,11 +16580,21 @@
         "callIds": [
           "ee377e28847a820d3e60"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "8784feaf266f3ae5d72e"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "b101c0c287c875bae159"
       ],
@@ -16618,11 +16669,21 @@
         "callIds": [
           "2ce84a51bf89c83602d6"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "b101c0c287c875bae159"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "1c2765565427d7a39f41"
       ],
@@ -16645,11 +16706,21 @@
         "callIds": [
           "5a80567257e34b837a33"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "1c2765565427d7a39f41"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "c135db5a5ea7536cfe6f",
         "bfd902ca64f5f7780a21"
@@ -16674,11 +16745,22 @@
           "a2b9af9cc94fc4528e67",
           "973e39406d138c83edea"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "c135db5a5ea7536cfe6f",
+          "bfd902ca64f5f7780a21"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "726ceac5ed6ed44f0821"
       ],
@@ -16705,11 +16787,21 @@
         "callIds": [
           "76af43fa48bf2989a7da"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "726ceac5ed6ed44f0821"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "37cfa6ca45abf19a23eb"
       ],
@@ -16766,11 +16858,21 @@
         "callIds": [
           "77b006f82faf88017a2c"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "37cfa6ca45abf19a23eb"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "fe37d49899df3732b5cc",
         "ef2d01aaa4ae1572ad53"
@@ -16841,13 +16943,24 @@
           "9f316f0cfad5794c27c5",
           "965d682f9f5d530bb929"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "fe37d49899df3732b5cc",
+          "ef2d01aaa4ae1572ad53"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
-        "21bfc5f4b895f0031a37"
+        "91c17cc8f6bff705b598"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
@@ -16864,11 +16977,21 @@
         "callIds": [
           "dcde97f1e49cda370789"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "21bfc5f4b895f0031a37"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "b8a2f76b780dc05a1342"
       ],
@@ -16934,11 +17057,21 @@
         "callIds": [
           "c0ae76586326abbbba08"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "b8a2f76b780dc05a1342"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "bf70a476decc73712608"
       ],
@@ -17004,11 +17137,21 @@
         "callIds": [
           "27483f27b03af7e1669b"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "bf70a476decc73712608"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "fc6a606bde6698305460"
       ],
@@ -17074,11 +17217,21 @@
         "callIds": [
           "78fbb99c106916e565c3"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "fc6a606bde6698305460"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "a48ccd229f5da7688e01"
       ],
@@ -17097,13 +17250,23 @@
         "callIds": [
           "4b2e42e58a10751072e2"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "a48ccd229f5da7688e01"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
-        "ff2f67e37627c078ddb6"
+        "1efd8ec34ba641c03034"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
@@ -17120,13 +17283,23 @@
         "callIds": [
           "f5f03db18b208dcd4855"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "ff2f67e37627c078ddb6"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
-        "dda425f65c86b04927bd"
+        "d68b6df592d887684c6f"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
@@ -17143,13 +17316,23 @@
         "callIds": [
           "bf2f29e05f610d929567"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "dda425f65c86b04927bd"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
-        "00a5b7095a4b9bb8d860"
+        "d2968f7d0b0673e4e552"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
@@ -17166,7 +17349,17 @@
         "callIds": [
           "8eadb3d8b716ca3f7120"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "00a5b7095a4b9bb8d860"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
@@ -20586,7 +20779,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "feecde5ebb7ae5f4ad78",
         "5e37205582073bfc30c9",
@@ -20727,7 +20920,33 @@
           "0671bfb9368569581fba",
           "7dd7b79ecd7c4840a960"
         ]
-      }
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "feecde5ebb7ae5f4ad78",
+          "5e37205582073bfc30c9",
+          "018c071575ceb3f8516a",
+          "c0cad7450906cef3fce8",
+          "125d1fa1b446def91170",
+          "56f1365c1095ea75af85",
+          "5f84595697b6399ed442",
+          "30d93bb175651c6091b1",
+          "6021c31eedb4e0085d2b",
+          "c36354753e5d659f1133",
+          "36190833aa1b3b96e8ee",
+          "cac7d32579dae1ccf84c",
+          "a497ca44a05b78d07e6c",
+          "977606a7b1f57d55adb2",
+          "4c3d52cdd8d4da245c3a",
+          "fa50fc7afb1cc2af0bfe",
+          "aa227a13e3f851a147cb"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -23076,7 +23295,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "1f040da6c68c16cd33e2"
       ],
@@ -23093,11 +23312,21 @@
         "XB01-C009-AC03",
         "XB01-C009-AC07",
         "XB01-C009-AC08"
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "1f040da6c68c16cd33e2"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "c0b89211921517abfb82"
       ],
@@ -23114,11 +23343,21 @@
         "XB01-C009-AC03",
         "XB01-C009-AC07",
         "XB01-C009-AC08"
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "c0b89211921517abfb82"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "6a42e1dbe625c387daee"
       ],
@@ -23135,11 +23374,21 @@
         "XB01-C009-AC03",
         "XB01-C009-AC07",
         "XB01-C009-AC08"
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "6a42e1dbe625c387daee"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "f7171c690025f6a4bdde"
       ],
@@ -23156,11 +23405,21 @@
         "XB01-C009-AC03",
         "XB01-C009-AC07",
         "XB01-C009-AC08"
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "f7171c690025f6a4bdde"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "88c53c3d219aa201d578"
       ],
@@ -23177,11 +23436,21 @@
         "XB01-C009-AC03",
         "XB01-C009-AC07",
         "XB01-C009-AC08"
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "88c53c3d219aa201d578"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "callIds": [
         "dc1960ee19b048e0649c"
       ],
@@ -23198,7 +23467,17 @@
         "XB01-C009-AC03",
         "XB01-C009-AC07",
         "XB01-C009-AC08"
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "callIds": [
+          "dc1960ee19b048e0649c"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
@@ -23415,9 +23694,9 @@
     },
     {
       "path": "backend/src/security/egress/dataClassification.ts",
-      "sourceSha256": "726082d23297dfeb3e8b7fdc6f0288cc61e72b28b5fb27839fe7ee101fbcf530",
+      "sourceSha256": "249ba3d92a9084e755ebb41ae332d1dc01412b0b6d4727ba5c3e6a4120bac55f",
       "callIds": [
-        "135997e375f52a030d46"
+        "64d0c6fa8b1c602f8c68"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "The single unshadowed native Buffer.from encodes an already-held server credential transiently for comparison with base64/base64url text. It performs no database or object-store call, no credential decryption, no return of credential values and no external effect.",
@@ -23431,7 +23710,17 @@
           "path": "backend/src/security/egress/heldCredentialFloor.test.ts",
           "marker": "opaque held credentials cannot escape through innocent text labels or simple encodings"
         }
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "registrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+        "sourceSha256": "726082d23297dfeb3e8b7fdc6f0288cc61e72b28b5fb27839fe7ee101fbcf530",
+        "callIds": [
+          "135997e375f52a030d46"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
@@ -23857,6 +24146,48 @@
         {
           "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
           "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseAccess.ts",
+      "sourceSha256": "d023f742926f86bf6dab0d254b45fa20ab7feff05cbb58bcaa9fed455ca7bba1",
+      "callIds": [
+        "34d41864b9724cd70b8d",
+        "225f172cd2ea1781c3da"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Original issued TenantContext scopes the exact six provider rows to actor.userId. Foreign, duplicate, changed and revoked rows fail closed across waits and provider boundaries.",
+      "reason": "Only these two original-context scoped reads are reviewed. Synthetic actual-path positive and negative tests are source-bound. This does not claim live database or whole Phase4 acceptance.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/supabaseAccess.ts",
+          "marker": ".eq('user_id',actor.userId)"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+          "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseApproval.ts",
+      "sourceSha256": "6a7e06a9eadd076a603cd8ff5c38ac643222c5eaba23afb202b6173998d952cc",
+      "callIds": [
+        "19c4db7da649a83977a2",
+        "3b699381e96950c0ca6b"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only original actor-scoped executing confirmation matching exact grant, plan digest, expiry, claim and effect state admits the already issued native permit. No raw-user context or new confirmation ledger.",
+      "reason": "Only these two original-context scoped reads are reviewed. Synthetic actual-path positive and negative tests are source-bound. This does not claim live database or whole Phase4 acceptance.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/supabaseApproval.ts",
+          "marker": ".eq('user_id',context.userId)"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+          "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write"
         }
       ]
     }

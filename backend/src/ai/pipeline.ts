@@ -1,3 +1,5 @@
+import {AuthorityError} from '../security/authority/enforce.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
 import { randomUUID } from 'crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
@@ -3788,23 +3790,26 @@ publicationReason:
     const { getUserSupabaseManagementToken } = await import(
       '../services/integrations/supabaseProvision.js'
     );
-    const sbPat = await getUserSupabaseManagementToken(opts.userId);
+    const sbPat = await getUserSupabaseManagementToken(opts.userId, tenantContext);
     if (sbUrl && sbService && (sbPat || sbDb)) {
       emit({
         agent: 'deploy',
         status: 'provisioning_supabase',
-        message: 'Setting up schema, AI memory & storage on your Supabase…',
+        message: 'Preparing the exact Supabase schema and private storage action for review.',
         swarmStatusLabel: 'Supabase',
         swarmActivity: 'Auto-provision',
       });
       const provisioned = await provisionUserSupabase({
+        userId: opts.userId, tenantContext, signal:opts.signal,
         projectUrl: sbUrl,
         serviceRoleKey: sbService,
         accessToken: sbPat || undefined,
         dbPassword: sbDb || undefined,
         projectName,
       });
-      if (provisioned.ok) {
+      if (provisioned.needsConfirmation && provisioned.reviewUrl) {
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact Supabase setup: [Review action](${provisioned.reviewUrl}). Schema and storage changes require confirmation.`,swarmStatusLabel:'Approval required',swarmActivity:'Supabase setup awaits approval'});
+      } else if (provisioned.ok) {
         emit({
           agent: 'deploy',
           status: 'supabase_ready',
@@ -3815,6 +3820,7 @@ publicationReason:
       }
     }
   } catch (err) {
+    if(err instanceof AuthorityError || err instanceof EgressDenied || (err instanceof Error && ['AbortError','TimeoutError'].includes(err.name)) || (err && typeof err==='object' && 'code' in err && ['SUPABASE_MANAGEMENT_DENIED','SUPABASE_TRANSPORT_DENIED','CREDENTIAL_WRITE_CONFLICT','TENANT_AUTH_REQUIRED'].includes(String(err.code))))throw err;
     console.warn('[pipeline] supabase provision skipped:', (err as Error).message);
   }
 

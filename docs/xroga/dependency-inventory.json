@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1f0761daa88420e5ef00d98e99135cd542915188",
+  "source_sha": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -5521,6 +5521,43 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/lib/socialSharePack.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-supabase-management-tests-invalid",
+      "provider": "Source-defined endpoint supabase-management-tests.invalid",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts"
+      ],
+      "hostnames": [
+        "supabase-management-tests.invalid"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -11610,6 +11647,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts",
         "backend/src/services/fixtures/checkoutApproval.ts",
+        "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/storage/migration/cliContext.ts",
         "backend/src/synthesis/livePreview/signing.ts",
@@ -11639,6 +11677,7 @@
         "endpoint-github-com",
         "endpoint-localhost",
         "endpoint-public-example-invalid",
+        "endpoint-supabase-management-tests-invalid",
         "endpoint-xroga-api-fly-dev",
         "endpoint-xrogaaicom-vercel-app"
       ]
@@ -11741,6 +11780,7 @@
         "backend/src/services/billingOwnership.local.integration.ts",
         "backend/src/services/billingRoutes.local.integration.ts",
         "backend/src/services/fixtures/checkoutApproval.ts",
+        "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts",
         "backend/src/storage/migration/cliContext.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
@@ -11771,6 +11811,7 @@
         "endpoint-localhost",
         "endpoint-open-bigmodel-cn",
         "endpoint-public-example-invalid",
+        "endpoint-supabase-management-tests-invalid",
         "endpoint-whop-com",
         "endpoint-xroga-api-fly-dev",
         "endpoint-xrogaaicom-vercel-app"
@@ -15028,7 +15069,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577"
+      "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16036,7 +16077,7 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "21ad532bbc8e266afc8d14bd6ace8600dd61f69f61c29144cd06b3e19dee4cf6"
+      "sha256": "28db7d3d2e13a4194ebbe5a846f884145f42bf1f6b86d0d470e7e79d13e462fa"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -16100,7 +16141,7 @@
     },
     {
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675"
+      "sha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df"
     },
     {
       "path": "backend/src/routes/swarm.ts",
@@ -16284,7 +16325,7 @@
     },
     {
       "path": "backend/src/security/egress/dataClassification.ts",
-      "sha256": "726082d23297dfeb3e8b7fdc6f0288cc61e72b28b5fb27839fe7ee101fbcf530"
+      "sha256": "249ba3d92a9084e755ebb41ae332d1dc01412b0b6d4727ba5c3e6a4120bac55f"
     },
     {
       "path": "backend/src/security/egress/egressPolicy.ts",
@@ -16531,8 +16572,12 @@
       "sha256": "3775326388a815bf862deae27d20154f0e17b6f07e71dc79e36f58f8b631d95b"
     },
     {
+      "path": "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts",
+      "sha256": "514a5a28cae8913af4f4d4c393903bd65a71d07a6a93746cc6306e2fef89a730"
+    },
+    {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "86ee4caa462432568293d0072110826643b665e774db1a6ed1f82c557dee7726"
+      "sha256": "6bcf22c4861902cc3825e64b0863f5e6cb4346599d5a2cfac813d4cbd11e0dbd"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16671,6 +16716,14 @@
       "sha256": "e2f5003e2bf6f567b9f893812668288e9dfb01e920df0eea7870896cdb3b3b3d"
     },
     {
+      "path": "backend/src/services/integrations/supabaseAccess.ts",
+      "sha256": "d023f742926f86bf6dab0d254b45fa20ab7feff05cbb58bcaa9fed455ca7bba1"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseApproval.ts",
+      "sha256": "6a7e06a9eadd076a603cd8ff5c38ac643222c5eaba23afb202b6173998d952cc"
+    },
+    {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "sha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522"
     },
@@ -16680,11 +16733,11 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b"
+      "sha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
+      "sha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -17548,7 +17601,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/integrations/supabase/callback/page.tsx",
-      "sha256": "473a0ae8bf559f4e545e32a4d16d23d7389eb4850c82a6d5ce297ac54571a86c"
+      "sha256": "f50239eb60286a6bb8d6b53e2ec198f6ff2c8e756877102886e37575fe3cc3c4"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/integrations/vercel/callback/page.tsx",
@@ -19252,7 +19305,7 @@
     },
     {
       "path": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "sha256": "3a8833383628ae7fa7ca24ab821bca5418a951a183d7a76b030605257accd80a"
+      "sha256": "4913a0968355cf83ea8cb5e3338760beab95c48c126b537b8039bc3ae7825e6c"
     },
     {
       "path": "frontend/src/components/integrations/XrogaConnectPanel.tsx",
@@ -20324,7 +20377,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8"
+      "sha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -20668,7 +20721,7 @@
     },
     {
       "path": "frontend/src/lib/oauthPopupResult.ts",
-      "sha256": "f154e5871cded54dfb5433b172ee4e4ebc82cc59bbd34967c12df96efe9578bd"
+      "sha256": "b7eee0d7d63a3f4b3ded1967d5e9deb3d95aae163a2d322e65f8c21974be51e7"
     },
     {
       "path": "frontend/src/lib/onboarding.ts",
@@ -20992,7 +21045,7 @@
     },
     {
       "path": "frontend/src/lib/supabaseConnect.ts",
-      "sha256": "b850fb5da247a9fe2d0e72233e6a8135f30af6ede0ceece40c44d9ce24412b5d"
+      "sha256": "cc2dc0c9ee88f9d644bc5f5d6c3628e135b3adc0f877e108e781b0e8633a9f49"
     },
     {
       "path": "frontend/src/lib/swarm.ts",
@@ -22249,7 +22302,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4004,
+      "line": 4010,
       "credentialsInUrl": false
     },
     {
@@ -22970,7 +23023,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/integrations.ts",
-      "line": 2024,
+      "line": 2035,
       "credentialsInUrl": false
     },
     {
@@ -22984,14 +23037,14 @@
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 331,
+      "line": 344,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 425,
+      "line": 443,
       "credentialsInUrl": false
     },
     {
@@ -23940,6 +23993,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "supabase-management-tests.invalid",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts",
+      "line": 6,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
@@ -24132,7 +24192,7 @@
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 20,
+      "line": 22,
       "credentialsInUrl": false
     },
     {
@@ -28843,56 +28903,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 525,
+      "line": 527,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 555,
+      "line": 557,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1105,
+      "line": 1107,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1475,
+      "line": 1477,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2218,
+      "line": 2220,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3774,
+      "line": 3776,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3954,
+      "line": 3960,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4725,
+      "line": 4731,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31040,8 +31100,57 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/services/integrations/supabaseAccess.ts",
+      "line": 8,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseAccess.ts",
+      "line": 25,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 261,
+      "line": 292,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "line": 379,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "line": 410,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "line": 414,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "line": 486,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "line": 492,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -108,6 +108,7 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
     globalThis.fetch=async(input,init)=>{
       const url=String(input instanceof Request?input.url:input);
       if(url.startsWith(process.env.SUPABASE_URL!))return originalFetch(input,init);
+      if(url==='https://api.supabase.com/v1/projects')return Response.json([{id:'fixtureproject',name:'Owned project'}]);
       assert.equal(url,'https://api.supabase.com/v1/projects/fixtureproject/api-keys?reveal=true');
       managementCalls++;
       assert.equal(calls.filter(call=>call.path.endsWith('/prepare_provider_key_write')).at(-1)?.body.p_provider,'apikey_supabase_pat');
@@ -115,17 +116,18 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
       return new Response(JSON.stringify([{name:'anon',api_key:'SYNTHETIC_ANON_KEY'},{name:'service_role',api_key:'SYNTHETIC_SERVICE_KEY'}]),{status:200});
     };
     try {
-      await assert.rejects(oneClickConnectSupabase({userId:user,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject'}),{code:'CREDENTIAL_WRITE_CONFLICT'});
+      await assert.rejects(oneClickConnectSupabase({userId:user,tenantContext:context,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject'}),{code:'SUPABASE_SOURCE_ADMISSION_DENIED'});
       assert.equal(managementCalls,1);
       assert.equal(revoked,true,'Remote key lookup completion cannot undo revocation');
       const writeAdmissions = await prepareSupabaseConnectionWrite(user);
       await deleteUserProviderKey(context, 'supabase_url');
       const beforeDelayed = calls.filter(call => call.path.endsWith('/prepare_provider_key_write')).length;
-      const options = {userId:user,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject',writeAdmissions};
+      const options = {userId:user,tenantContext:context,accessToken:'SYNTHETIC_PAT',projectRef:'fixtureproject',writeAdmissions};
       globalThis.fetch = async(input,init) => {
         const url=String(input instanceof Request?input.url:input);
         if(url.startsWith(process.env.SUPABASE_URL!))return originalFetch(input,init);
-        assert.equal(url,'https://api.supabase.com/v1/projects/fixtureproject/api-keys?reveal=true');
+        if(url==='https://api.supabase.com/v1/projects')return Response.json([{id:'fixtureproject',name:'Owned project'}]);
+      assert.equal(url,'https://api.supabase.com/v1/projects/fixtureproject/api-keys?reveal=true');
         options.userId='22222222-2222-4222-8222-222222222222';
         options.projectRef='foreignproject';
         return Response.json([{name:'anon',api_key:'SYNTHETIC_ANON_KEY'},{name:'service_role',api_key:'SYNTHETIC_SERVICE_KEY'}]);

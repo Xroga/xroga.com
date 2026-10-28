@@ -1742,7 +1742,7 @@
     },
     {
       "packetId": "B1-P2-8c13793907db3388",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
       "actualVerification": {
@@ -1807,6 +1807,11 @@
         "historicalSourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+      },
+      "beforeSupabaseProvisionSource": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
       }
     },
     {
@@ -2235,7 +2240,7 @@
     },
     {
       "packetId": "B1-P2-d3895e94f03fa522",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -2281,6 +2286,11 @@
         "historicalSourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+      },
+      "beforeSupabaseProvisionSource": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
       }
     },
     {
@@ -2382,7 +2392,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+          "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
           "historicalBinding": {
             "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
             "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
@@ -3026,7 +3036,7 @@
     },
     {
       "packetId": "B1-P2-50f57cd7c2568e3b",
-      "sourceSha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+      "sourceSha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839",
       "executionStatus": "IN_PROGRESS",
       "finding": "DORMANT_READINESS_EXPORT_REQUIRES_EXISTING_ISSUED_CONTEXT_REAL_PROOF_PENDING",
       "actorTrace": "Only the dormant userSupabaseMemoryReady function remains scoped. Its complete original issued-context, canonical owner/account and owner-constrained query body is byte-identical to the pushed parent. Other provisioning methods have partial transport corrections, independently unresolved for Phase4. See SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json. No caller promotion or phase acceptance.",
@@ -3051,6 +3061,11 @@
         "ref": "1f0761daa88420e5ef00d98e99135cd542915188",
         "path": "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
         "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014"
+      },
+      "beforeSupabaseProvisionSource": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "sha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
       }
     },
     {

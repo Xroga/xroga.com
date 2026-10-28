@@ -1,4 +1,4 @@
-import {requireTenantContext} from '../security/tenantContext.js';
+import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
 import {
   Router,
   type Response,
@@ -222,6 +222,8 @@ router.post(
     }
 
     try {
+      const context = requireTenantContext(req.tenantContext);
+      requireResourceOwner(context, req.userId);
       const {
         listSupabaseProjects,
       } = await import(
@@ -233,6 +235,7 @@ router.post(
           parsed.data
             .accessToken
             .trim(),
+          context,
         );
 
       res.json({
@@ -307,6 +310,8 @@ router.post(
     }
 
     try {
+      const context = requireTenantContext(req.tenantContext);
+      requireResourceOwner(context, req.userId);
       const {
         oneClickConnectSupabase,
       } = await import(
@@ -316,6 +321,7 @@ router.post(
       const result =
         await oneClickConnectSupabase(
           {
+            tenantContext: context,
             userId:
               req.userId!,
 
@@ -350,6 +356,7 @@ router.post(
           ?.trim();
 
       if (
+        !result.provision.needsConfirmation &&
         project &&
         (await getVercelToken(
           req.userId!,
@@ -529,6 +536,7 @@ router.post(
           ?.trim();
 
       if (
+        !provision?.needsConfirmation &&
         project &&
         (await getVercelToken(
           req.userId!,
@@ -634,6 +642,8 @@ router.post(
     }
 
     try {
+      const context = requireTenantContext(req.tenantContext);
+      requireResourceOwner(context, req.userId);
       const {
         readUserSupabaseBundle,
       } = await import(
@@ -657,7 +667,7 @@ router.post(
 
       const pat =
         await getUserSupabaseManagementToken(
-          req.userId!,
+          req.userId!, context,
         );
 
       if (
@@ -675,6 +685,7 @@ router.post(
       const provision =
         await provisionUserSupabase(
           {
+            userId: context.userId, tenantContext: context,
             projectUrl: url,
 
             serviceRoleKey:

@@ -286,7 +286,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
-        "backend/src/ai/pipeline.ts:201",
+        "backend/src/ai/pipeline.ts:203",
         "backend/src/ai/tenantModelDispatch.test.ts:9"
       ],
       "reachable": true,
@@ -381,7 +381,7 @@
       "callers": [
         "backend/src/ai/attachments.docx.test.ts:6",
         "backend/src/ai/attachments.test.ts:7",
-        "backend/src/ai/pipeline.ts:55"
+        "backend/src/ai/pipeline.ts:57"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -789,7 +789,7 @@
         "backend/src/ai/black-hole/migration.test.ts:7",
         "backend/src/ai/black-hole/productionBridge.ts:26",
         "backend/src/ai/black-hole/router.test.ts:11",
-        "backend/src/ai/pipeline.ts:20"
+        "backend/src/ai/pipeline.ts:22"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -924,7 +924,7 @@
       "callers": [
         "backend/src/ai/black-hole/converterPolicy.test.ts:4",
         "backend/src/ai/black-hole/migration.test.ts:6",
-        "backend/src/ai/pipeline.ts:18"
+        "backend/src/ai/pipeline.ts:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -977,7 +977,7 @@
         "backend/src/ai/black-hole/migration.test.ts:5",
         "backend/src/ai/black-hole/productionBridge.test.ts:10",
         "backend/src/ai/black-hole/productionBridge.ts:24",
-        "backend/src/ai/pipeline.ts:8"
+        "backend/src/ai/pipeline.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1152,7 +1152,7 @@
       ],
       "callers": [
         "backend/src/ai/black-hole/productionBridge.test.ts:4",
-        "backend/src/ai/pipeline.ts:10"
+        "backend/src/ai/pipeline.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1273,7 +1273,7 @@
         "backend/src/ai/black-hole/leakAudit.test.ts:4",
         "backend/src/ai/black-hole/migration.test.ts:4",
         "backend/src/ai/black-hole/publicIdentity.test.ts:4",
-        "backend/src/ai/pipeline.ts:7",
+        "backend/src/ai/pipeline.ts:9",
         "backend/src/routes/capabilities.ts:30"
       ],
       "reachable": true,
@@ -1663,7 +1663,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/structuredOutput.test.ts:4",
@@ -1766,7 +1767,7 @@
         "backend/src/ai/black-hole/taskClass.test.ts:4",
         "backend/src/ai/black-hole/toolBindings.test.ts:6",
         "backend/src/ai/black-hole/toolRegistry.test.ts:13",
-        "backend/src/ai/pipeline.ts:19"
+        "backend/src/ai/pipeline.ts:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1991,7 +1992,7 @@
         "backend/src/ai/black-hole/productionBridge.ts:29",
         "backend/src/ai/black-hole/webIntelligence.test.ts:4",
         "backend/src/ai/black-hole/xResearchAdmission.security.test.ts:3",
-        "backend/src/ai/pipeline.ts:14"
+        "backend/src/ai/pipeline.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2109,7 +2110,7 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
-        "backend/src/ai/pipeline.ts:227",
+        "backend/src/ai/pipeline.ts:229",
         "backend/src/security/learningOwnerReads.local.integration.ts:5",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:89"
@@ -2301,7 +2302,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:19",
@@ -2399,7 +2401,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
-        "backend/src/ai/pipeline.ts:226",
+        "backend/src/ai/pipeline.ts:228",
         "backend/src/security/learningOwnerReads.local.integration.ts:6",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
         "backend/src/synthesis/universalEntrypoint.ts:84"
@@ -2452,7 +2454,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.test.ts:3",
-        "backend/src/ai/pipeline.ts:30"
+        "backend/src/ai/pipeline.ts:32"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2545,7 +2547,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:228",
+        "backend/src/ai/pipeline.ts:230",
         "backend/src/ai/step7LearningStrategy.test.ts:21",
         "backend/src/security/learningOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/productIntelligence.ts:18",
@@ -2603,7 +2605,7 @@
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
-        "backend/src/ai/pipeline.ts:100"
+        "backend/src/ai/pipeline.ts:102"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2669,12 +2671,13 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/builderAttempt.test.ts:3",
         "backend/src/ai/openaiCompat.ts:16",
-        "backend/src/ai/pipeline.ts:38",
+        "backend/src/ai/pipeline.ts:40",
         "backend/src/ai/tenantModelDispatch.test.ts:16",
         "backend/src/synthesis/coherentImplementation.ts:7"
       ],
@@ -2830,7 +2833,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/capacityUnavailable.test.ts:3",
@@ -2885,7 +2889,7 @@
       ],
       "callers": [
         "backend/src/ai/compileBlockerMessage.test.ts:4",
-        "backend/src/ai/pipeline.ts:31",
+        "backend/src/ai/pipeline.ts:33",
         "backend/src/ai/validationVerdict.ts:2"
       ],
       "reachable": true,
@@ -3042,7 +3046,7 @@
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
         "backend/src/ai/compileValidate.test.ts:3",
-        "backend/src/ai/pipeline.ts:196",
+        "backend/src/ai/pipeline.ts:198",
         "backend/src/ai/validationVerdict.ts:3",
         "backend/src/sandbox/sandboxIsolation.test.ts:11"
       ],
@@ -3121,7 +3125,7 @@
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
-        "backend/src/ai/pipeline.ts:230",
+        "backend/src/ai/pipeline.ts:232",
         "backend/src/ai/repositoryTools.ts:23",
         "backend/src/synthesis/coherentImplementation.ts:12"
       ],
@@ -3175,7 +3179,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:6",
+        "backend/src/ai/pipeline.ts:8",
         "backend/src/ai/tenantModelDispatch.test.ts:10"
       ],
       "reachable": true,
@@ -3241,12 +3245,13 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/artifactDurability.test.ts:4",
         "backend/src/ai/engineeringArtifact.test.ts:4",
-        "backend/src/ai/pipeline.ts:9",
+        "backend/src/ai/pipeline.ts:11",
         "backend/src/ai/runStore.ts:15",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
         "backend/src/synthesis/browserVerificationAdapter.test.ts:7"
@@ -3369,7 +3374,7 @@
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
-        "backend/src/ai/pipeline.ts:243"
+        "backend/src/ai/pipeline.ts:245"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3520,7 +3525,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
-        "backend/src/ai/pipeline.ts:231",
+        "backend/src/ai/pipeline.ts:233",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/routes/browserRuns.test.ts:10",
@@ -3638,7 +3643,7 @@
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
-        "backend/src/ai/pipeline.ts:181"
+        "backend/src/ai/pipeline.ts:183"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3678,7 +3683,7 @@
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
-        "backend/src/ai/pipeline.ts:211"
+        "backend/src/ai/pipeline.ts:213"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3984,7 +3989,7 @@
         "backend/src/ai/executionRuntime.owner.test.ts:4",
         "backend/src/ai/executionRuntime.test.ts:13",
         "backend/src/ai/intelligentRouter.test.ts:3",
-        "backend/src/ai/pipeline.ts:217",
+        "backend/src/ai/pipeline.ts:219",
         "backend/src/routes/capabilities.ts:22"
       ],
       "reachable": true,
@@ -4174,7 +4179,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.ts:9",
@@ -4231,7 +4237,7 @@
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
-        "backend/src/ai/pipeline.ts:92"
+        "backend/src/ai/pipeline.ts:94"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4526,7 +4532,7 @@
         "backend/src/ai/executionRuntime.test.ts:14",
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
-        "backend/src/ai/pipeline.ts:229",
+        "backend/src/ai/pipeline.ts:231",
         "backend/src/ai/providerPolicy.test.ts:330",
         "backend/src/ai/providerPolicy.test.ts:389",
         "backend/src/ai/providerPolicy.test.ts:468",
@@ -4587,7 +4593,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/openaiCompat.ts:15",
@@ -4660,7 +4667,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkRunner.ts:36",
@@ -4676,7 +4684,7 @@
         "backend/src/ai/modelCapabilityRegistry.ts:3",
         "backend/src/ai/openaiCompat.egress.test.ts:6",
         "backend/src/ai/openaiCompat.ts:3",
-        "backend/src/ai/pipeline.ts:21",
+        "backend/src/ai/pipeline.ts:23",
         "backend/src/ai/postCompletionAccounting.ts:3",
         "backend/src/ai/providerBudget.ts:5",
         "backend/src/ai/providerPolicy.test.ts:15",
@@ -4839,7 +4847,8 @@
         "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/architect.ts:5",
@@ -4855,7 +4864,7 @@
         "backend/src/ai/openaiCompat.egress.test.ts:5",
         "backend/src/ai/openaiCompat.test.ts:3",
         "backend/src/ai/operationsSdkAdmission.test.ts:5",
-        "backend/src/ai/pipeline.ts:22",
+        "backend/src/ai/pipeline.ts:24",
         "backend/src/ai/qa.ts:1",
         "backend/src/ai/repoSummarize.ts:8",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:8",
@@ -5332,7 +5341,7 @@
         "backend/src/ai/fileSelector.test.ts:4",
         "backend/src/ai/patchSafety.test.ts:3",
         "backend/src/ai/patches.test.ts:3",
-        "backend/src/ai/pipeline.ts:75",
+        "backend/src/ai/pipeline.ts:77",
         "backend/src/synthesis/universalExecution.ts:32"
       ],
       "reachable": true,
@@ -5381,7 +5390,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+      "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5745,6 +5754,8 @@
         "../lib/truthfulExecution.js",
         "../lib/vercelAuthError.js",
         "../lib/vercelEnv.js",
+        "../security/authority/enforce.js",
+        "../security/egress/egressPolicy.js",
         "../security/ownership.js",
         "../security/tenantContext.js",
         "../services/integrations/githubAuth.js",
@@ -5894,6 +5905,8 @@
         "backend/src/lib/taskClassifier.ts",
         "backend/src/lib/truthfulExecution.ts",
         "backend/src/lib/vercelAuthError.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
         "backend/src/security/ownership.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAuth.ts",
@@ -5942,6 +5955,7 @@
         "crypto"
       ],
       "authBoundary": [
+        "backend/src/ai/pipeline.ts#AuthorityError",
         "backend/src/ai/pipeline.ts#authorizeLegacyBuild",
         "backend/src/ai/pipeline.ts#isVercelAuthFailure",
         "backend/src/ai/pipeline.ts#reauth",
@@ -6014,7 +6028,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:15",
@@ -6087,7 +6102,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:105",
+        "backend/src/ai/pipeline.ts:107",
         "backend/src/ai/progressHeartbeat.test.ts:3"
       ],
       "reachable": true,
@@ -6178,7 +6193,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
         "backend/src/ai/modelContext.security.test.ts:6",
-        "backend/src/ai/pipeline.ts:182",
+        "backend/src/ai/pipeline.ts:184",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:7",
@@ -6248,7 +6263,7 @@
       ],
       "callers": [
         "backend/src/ai/converter.ts:4",
-        "backend/src/ai/pipeline.ts:46",
+        "backend/src/ai/pipeline.ts:48",
         "backend/src/ai/prompts.test.ts:4",
         "backend/src/ai/richResponsePrompt.test.ts:4",
         "backend/src/routes/guestChat.ts:20"
@@ -6387,7 +6402,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:6",
@@ -6575,7 +6591,8 @@
         "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/providerHealthStore.test.ts:3",
@@ -6631,7 +6648,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkLedger.ts:28",
@@ -6756,7 +6774,8 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkRunner.ts:37",
@@ -6769,7 +6788,7 @@
         "backend/src/ai/modelRedirectFallback.security.test.ts:8",
         "backend/src/ai/openaiCompat.ts:10",
         "backend/src/ai/parallelWeb.security.test.ts:5",
-        "backend/src/ai/pipeline.ts:222",
+        "backend/src/ai/pipeline.ts:224",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
         "backend/src/ai/providerBudget.ts:6",
@@ -6924,7 +6943,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:83",
+        "backend/src/ai/pipeline.ts:85",
         "backend/src/ai/qa.test.ts:3",
         "backend/src/ai/reviewerRouting.test.ts:3",
         "backend/src/synthesis/productionAdapters.ts:25"
@@ -7036,11 +7055,12 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:5",
-        "backend/src/ai/pipeline.ts:61",
+        "backend/src/ai/pipeline.ts:63",
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
@@ -7129,7 +7149,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:189",
+        "backend/src/ai/pipeline.ts:191",
         "backend/src/ai/repoSummarize.security.test.ts:5"
       ],
       "reachable": true,
@@ -7380,7 +7400,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:69",
+        "backend/src/ai/pipeline.ts:71",
         "backend/src/ai/router.test.ts:7",
         "backend/src/lib/adaptiveOrchestrator.ts:10"
       ],
@@ -7505,13 +7525,14 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/router.ts:47",
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
-        "backend/src/ai/pipeline.ts:225",
+        "backend/src/ai/pipeline.ts:227",
         "backend/src/ai/routingOutcomes.receipt.test.ts:5",
         "backend/src/ai/routingPersistence.test.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:9"
@@ -7739,7 +7760,8 @@
         "backend/src/workers/googleDeliveryStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/artifactDurability.test.ts:5",
@@ -7749,7 +7771,7 @@
         "backend/src/ai/failRun.test.ts:4",
         "backend/src/ai/parallelDispatch.ts:10",
         "backend/src/ai/parallelWeb.security.test.ts:8",
-        "backend/src/ai/pipeline.ts:84",
+        "backend/src/ai/pipeline.ts:86",
         "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
@@ -7904,7 +7926,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:207",
+        "backend/src/ai/pipeline.ts:209",
         "backend/src/ai/runTrace.attempt.test.ts:4",
         "backend/src/security/runTraceAttempt.local.integration.ts:8"
       ],
@@ -7955,7 +7977,7 @@
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
-        "backend/src/ai/pipeline.ts:190",
+        "backend/src/ai/pipeline.ts:192",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/synthesis/coherentImplementation.ts:13"
       ],
@@ -8017,7 +8039,7 @@
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
         "backend/src/ai/modelContext.security.test.ts:7",
-        "backend/src/ai/pipeline.ts:202",
+        "backend/src/ai/pipeline.ts:204",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:8",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:8"
       ],
@@ -8076,7 +8098,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:210",
+        "backend/src/ai/pipeline.ts:212",
         "backend/src/ai/shipOutcome.test.ts:3"
       ],
       "reachable": true,
@@ -8144,7 +8166,7 @@
         "backend/src/ai/buildOutputValidation.ts:5",
         "backend/src/ai/buildStreamNarrator.test.ts:8",
         "backend/src/ai/patches.test.ts:10",
-        "backend/src/ai/pipeline.ts:70"
+        "backend/src/ai/pipeline.ts:72"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9605,7 +9627,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:252",
+        "backend/src/ai/pipeline.ts:254",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:19",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:50"
       ],
@@ -10099,7 +10121,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:93",
+        "backend/src/ai/pipeline.ts:95",
         "backend/src/ai/startupProgress.test.ts:3"
       ],
       "reachable": true,
@@ -10168,7 +10190,7 @@
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
-        "backend/src/ai/pipeline.ts:191",
+        "backend/src/ai/pipeline.ts:193",
         "backend/src/ai/qa.ts:5",
         "backend/src/ai/securityScan.test.ts:4"
       ],
@@ -10342,7 +10364,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/openaiCompat.ts:12",
@@ -10446,7 +10469,8 @@
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/architect.ts:6",
@@ -10456,7 +10480,7 @@
         "backend/src/ai/modelRedirectFallback.security.test.ts:6",
         "backend/src/ai/openaiCompat.egress.test.ts:8",
         "backend/src/ai/parallelDispatch.ts:11",
-        "backend/src/ai/pipeline.ts:4",
+        "backend/src/ai/pipeline.ts:6",
         "backend/src/ai/qa.ts:2",
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:3",
@@ -10585,7 +10609,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/universal/planner.ts:2",
@@ -10733,11 +10758,12 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
-        "backend/src/ai/pipeline.ts:156",
+        "backend/src/ai/pipeline.ts:158",
         "backend/src/ai/universal/goalContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:23",
         "backend/src/ai/universal/semanticRequestPlanner.ts:38",
@@ -10886,7 +10912,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/universal/semanticRequestPlanner.ts:47",
@@ -10932,10 +10959,11 @@
         "backend/src/capabilities/index.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:157",
+        "backend/src/ai/pipeline.ts:159",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:51",
         "backend/src/lib/xrogaCapabilities.ts:1"
@@ -10986,7 +11014,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:154",
+        "backend/src/ai/pipeline.ts:156",
         "backend/src/ai/universal/resumeProjectContext.test.ts:4",
         "backend/src/ai/universal/universalContracts.test.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:107"
@@ -11090,11 +11118,12 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:16",
-        "backend/src/ai/pipeline.ts:158",
+        "backend/src/ai/pipeline.ts:160",
         "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:32",
@@ -11352,10 +11381,11 @@
         "backend/src/services/integrations/githubAuth.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:159",
+        "backend/src/ai/pipeline.ts:161",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
@@ -11417,7 +11447,8 @@
         "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/postCompletionAccounting.ts:4",
@@ -11477,7 +11508,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:33",
+        "backend/src/ai/pipeline.ts:35",
         "backend/src/ai/validationVerdict.test.ts:4",
         "backend/src/sandbox/sandboxIsolation.test.ts:12"
       ],
@@ -11533,7 +11564,7 @@
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
-        "backend/src/ai/pipeline.ts:242",
+        "backend/src/ai/pipeline.ts:244",
         "backend/src/ai/previewNotVerified.test.ts:21",
         "backend/src/ai/verificationLifecycle.test.ts:12"
       ],
@@ -11797,7 +11828,8 @@
         "backend/src/capabilities/modules/xResearch.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/index.ts:2"
@@ -11838,7 +11870,8 @@
         "backend/src/capabilities/generated.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/universal/capabilityReadiness.test.ts:3",
@@ -11881,7 +11914,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:2"
@@ -11919,7 +11953,8 @@
         "backend/src/services/integrations/composioClient.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:3"
@@ -11957,7 +11992,8 @@
         "backend/src/services/integrations/composioClient.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:4"
@@ -11993,7 +12029,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:5"
@@ -12029,7 +12066,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:6"
@@ -12065,7 +12103,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:7"
@@ -12101,7 +12140,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:8"
@@ -12137,7 +12177,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:9"
@@ -12173,7 +12214,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:10"
@@ -12209,7 +12251,8 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:11"
@@ -12527,7 +12570,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/modelCapabilityRegistry.ts:1",
@@ -12770,7 +12814,8 @@
         "backend/src/ai/models.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/quota.test.ts:11",
@@ -13025,7 +13070,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:155",
+        "backend/src/ai/pipeline.ts:157",
         "backend/src/ai/softwareAgent/agentV2LaunchGate.test.ts:9",
         "backend/src/config/universalAgentFlags.test.ts:12",
         "backend/src/synthesis/browserGateVerification.test.ts:18",
@@ -15072,7 +15117,8 @@
         "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/netlify.ts:3",
@@ -15144,7 +15190,8 @@
         "backend/src/services/storage/fileDeliveryPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:6",
@@ -15199,7 +15246,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:223",
+        "backend/src/ai/pipeline.ts:225",
         "backend/src/lib/adaptiveEngine.test.ts:7"
       ],
       "reachable": true,
@@ -15578,7 +15625,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:208"
+        "backend/src/ai/pipeline.ts:210"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15840,7 +15887,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:2",
         "backend/src/ai/blackBoxExecution.test.ts:3",
         "backend/src/ai/intelligentRouter.ts:9",
-        "backend/src/ai/pipeline.ts:224",
+        "backend/src/ai/pipeline.ts:226",
         "backend/src/ai/router.ts:5",
         "backend/src/lib/adaptiveOrchestrator.ts:30",
         "backend/src/lib/taskClassifier.test.ts:3"
@@ -15902,7 +15949,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:5",
         "backend/src/ai/executionRuntime.ts:2",
         "backend/src/ai/parallelWeb.ts:3",
-        "backend/src/ai/pipeline.ts:212",
+        "backend/src/ai/pipeline.ts:214",
         "backend/src/ai/research.ts:5",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:47",
@@ -16034,7 +16081,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:32",
+        "backend/src/ai/pipeline.ts:34",
         "backend/src/lib/vercelAuthError.test.ts:3"
       ],
       "reachable": true,
@@ -17008,7 +17055,8 @@
         "backend/src/security/authority/digest.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.ts:16",
@@ -20426,12 +20474,13 @@
       "id": "surface:e651ec704dda3ac3aa42",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "sha256": "21ad532bbc8e266afc8d14bd6ace8600dd61f69f61c29144cd06b3e19dee4cf6",
+      "sha256": "28db7d3d2e13a4194ebbe5a846f884145f42bf1f6b86d0d470e7e79d13e462fa",
       "symbols": [
         "bundle",
         "callbackUrl",
         "catalog",
         "categories",
+        "context",
         "dbPass",
         "envSync",
         "envSyncFailed",
@@ -21586,7 +21635,7 @@
       "id": "surface:02d224e67cfed441bb6e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675",
+      "sha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df",
       "symbols": [
         "abort",
         "accessToken",
@@ -21600,6 +21649,7 @@
         "dbPass",
         "envSync",
         "err",
+        "error",
         "failed",
         "i",
         "item",
@@ -21624,6 +21674,7 @@
         "selected",
         "size",
         "slug",
+        "source",
         "stateInfo",
         "status",
         "value",
@@ -21632,9 +21683,12 @@
       ],
       "imports": [
         "../middleware/auth.js",
+        "../security/authority/enforce.js",
+        "../security/egress/egressPolicy.js",
         "../security/tenantContext.js",
         "../services/integrations/githubDeploy.js",
         "../services/integrations/oauthPkceStore.js",
+        "../services/integrations/supabaseAccess.js",
         "../services/integrations/supabaseAuth.js",
         "../services/integrations/supabaseProvision.js",
         "../services/integrations/userProviderKeys.js",
@@ -21644,9 +21698,12 @@
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/oauthPkceStore.ts",
+        "backend/src/services/integrations/supabaseAccess.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/supabaseProvision.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
@@ -21671,6 +21728,7 @@
       ],
       "authBoundary": [
         "backend/src/routes/supabaseOAuth.ts#AuthRequest",
+        "backend/src/routes/supabaseOAuth.ts#AuthorityError",
         "backend/src/routes/supabaseOAuth.ts#buildSupabaseAuthorizeUrl",
         "backend/src/routes/supabaseOAuth.ts#clearSupabaseOAuth",
         "backend/src/routes/supabaseOAuth.ts#exchangeSupabaseOAuthCode",
@@ -22696,7 +22754,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:32",
@@ -22812,7 +22871,8 @@
         "backend/src/sandbox/google/gceMachineControl.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/gceSshTransport.test.ts:7",
@@ -23032,7 +23092,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:20",
@@ -23308,7 +23369,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:22",
@@ -23613,6 +23675,8 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:5",
         "backend/src/services/integrations/composioClient.ts:5",
         "backend/src/services/integrations/credentialVault.ts:3",
+        "backend/src/services/integrations/supabaseAccess.ts:1",
+        "backend/src/services/integrations/supabaseApproval.ts:3",
         "backend/src/services/publish/cwsAdmission.ts:3",
         "backend/src/services/publish/electronSecrets.ts:8",
         "backend/src/services/publish/expoAccess.ts:1",
@@ -23693,19 +23757,23 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/executionRuntime.test.ts:16",
         "backend/src/ai/expoStoreDenial.security.test.ts:6",
         "backend/src/ai/parallelDispatch.ts:15",
+        "backend/src/ai/pipeline.ts:1",
         "backend/src/ai/providerRuntime.ts:4",
+        "backend/src/ai/supabaseApprovalPipeline.security.test.ts:6",
         "backend/src/ai/tenantModelDispatch.test.ts:13",
         "backend/src/ai/tenantModelDispatch.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:30",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/lib/netlify.ts:4",
         "backend/src/routes/publish.ts:5",
+        "backend/src/routes/supabaseOAuth.ts:41",
         "backend/src/routes/voice.ts:5",
         "backend/src/security/authority/enforce.test.ts:5",
         "backend/src/security/egress/egress.integration.test.ts:6",
@@ -23717,6 +23785,9 @@
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6",
+        "backend/src/services/integrations/supabaseAccess.ts:2",
+        "backend/src/services/integrations/supabaseApproval.ts:4",
+        "backend/src/services/integrations/supabaseProvision.ts:11",
         "backend/src/services/publish/chromeWebStore.ts:13",
         "backend/src/services/publish/cwsAdmission.ts:4",
         "backend/src/services/publish/easCredentials.ts:4",
@@ -23760,6 +23831,7 @@
       "testCoverage": [
         "backend/src/ai/executionRuntime.test.ts",
         "backend/src/ai/expoStoreDenial.security.test.ts",
+        "backend/src/ai/supabaseApprovalPipeline.security.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
@@ -23792,7 +23864,8 @@
         "backend/src/security/authority/types.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/authority/enforce.test.ts:7",
@@ -23834,7 +23907,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/authority/enforce.test.ts:6",
@@ -23938,7 +24012,8 @@
       "entryPoints": [
         "backend/src/index.ts",
         "frontend/src/app/api/browser-view/route.ts",
-        "frontend/src/app/api/image-fetch/route.ts"
+        "frontend/src/app/api/image-fetch/route.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/boundedPublicGet.test.ts:6",
@@ -23979,7 +24054,7 @@
       "id": "surface:a3e59c8210ad713cad2a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/egress/dataClassification.ts",
-      "sha256": "726082d23297dfeb3e8b7fdc6f0288cc61e72b28b5fb27839fe7ee101fbcf530",
+      "sha256": "249ba3d92a9084e755ebb41ae332d1dc01412b0b6d4727ba5c3e6a4120bac55f",
       "symbols": [
         "bytes",
         "classifyOutboundData",
@@ -24006,7 +24081,8 @@
       ],
       "entryPoints": [
         "backend/src/index.ts",
-        "frontend/src/app/api/showcase/aura/chat/route.ts"
+        "frontend/src/app/api/showcase/aura/chat/route.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/openaiCompat.ts:13",
@@ -24020,6 +24096,7 @@
         "backend/src/security/egress/heldCredentialFloor.test.ts:3",
         "backend/src/services/integrations/composioClient.ts:12",
         "backend/src/services/integrations/githubSourceRead.ts:4",
+        "backend/src/services/integrations/supabaseApproval.ts:9",
         "backend/src/services/publish/expoApproval.ts:8",
         "backend/src/services/publish/expoCredentialMaterial.ts:2",
         "backend/src/services/publish/expoWorkflow.ts:3",
@@ -24091,21 +24168,26 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/executionRuntime.test.ts:15",
         "backend/src/ai/parallelDispatch.ts:6",
+        "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/providerRuntime.ts:5",
+        "backend/src/ai/supabaseApprovalPipeline.security.test.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:31",
         "backend/src/lib/publishingProviderRequest.ts:2",
         "backend/src/lib/publishingTransport.security.test.ts:10",
         "backend/src/lib/vercelEnv.ts:2",
+        "backend/src/routes/supabaseOAuth.ts:42",
         "backend/src/security/egress/egress.integration.test.ts:9",
         "backend/src/security/egress/fileEgress.ts:6",
         "backend/src/security/egress/securityDecision.ts:5",
         "backend/src/services/BillingService.ts:22",
         "backend/src/services/integrations/composioClient.ts:10",
+        "backend/src/services/integrations/supabaseApproval.ts:8",
         "backend/src/services/publish/chromeWebStore.ts:15",
         "backend/src/services/publish/cwsAdmission.ts:8",
         "backend/src/services/publish/easCredentials.ts:5",
@@ -24137,6 +24219,7 @@
       ],
       "testCoverage": [
         "backend/src/ai/executionRuntime.test.ts",
+        "backend/src/ai/supabaseApprovalPipeline.security.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/lib/publishingTransport.security.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
@@ -24238,13 +24321,15 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/parallelDispatch.ts:7",
         "backend/src/security/egress/egress.integration.test.ts:10",
         "backend/src/services/BillingService.ts:23",
         "backend/src/services/integrations/composioClient.ts:11",
+        "backend/src/services/integrations/supabaseApproval.ts:10",
         "backend/src/services/publish/cwsAdmission.ts:9",
         "backend/src/services/publish/electronSecrets.ts:14",
         "backend/src/services/publish/expoApproval.ts:9",
@@ -24328,7 +24413,8 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
-        "frontend/src/app/api/showcase/aura/chat/route.ts"
+        "frontend/src/app/api/showcase/aura/chat/route.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/egress/dataClassification.ts:3",
@@ -24402,7 +24488,8 @@
         "backend/src/security/boundedPublicGet.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/attachments.ts:7",
@@ -24471,7 +24558,8 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:13",
@@ -24596,10 +24684,11 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3",
+        "backend/src/ai/pipeline.ts:5",
         "backend/src/ai/tenantModelDispatch.ts:4",
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
@@ -24734,6 +24823,8 @@
         "backend/src/services/integrations/businessWorkflowRuns.ts:2",
         "backend/src/services/integrations/credentialStorageBucket.ts:2",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
+        "backend/src/services/integrations/supabaseAccess.ts:5",
+        "backend/src/services/integrations/supabaseApproval.ts:7",
         "backend/src/services/integrations/userProviderKeys.ts:12",
         "backend/src/services/integrations/vercelAuth.ts:9",
         "backend/src/services/publish/cwsAdmission.ts:6",
@@ -24815,7 +24906,7 @@
         "backend/src/ai/openaiCompat.egress.test.ts:7",
         "backend/src/ai/parallelDispatch.ts:3",
         "backend/src/ai/parallelWeb.security.test.ts:4",
-        "backend/src/ai/pipeline.ts:2",
+        "backend/src/ai/pipeline.ts:4",
         "backend/src/ai/postCompletionAccounting.ts:5",
         "backend/src/ai/providerBudget.test.ts:3",
         "backend/src/ai/providerBudget.ts:4",
@@ -24947,11 +25038,17 @@
         "backend/src/services/integrations/oauthPkceStore.ts:8",
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts:6",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:5",
+        "backend/src/services/integrations/supabaseAccess.ts:4",
+        "backend/src/services/integrations/supabaseActorBoundary.security.test.ts:4",
         "backend/src/services/integrations/supabaseAuth.ts:8",
+        "backend/src/services/integrations/supabaseManagement.security.test.ts:7",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:5",
+        "backend/src/services/integrations/supabaseProvision.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.ts:10",
+        "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts:4",
         "backend/src/services/integrations/supabaseTransport.security.test.ts:9",
-        "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:8",
@@ -25125,7 +25222,12 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
+        "backend/src/services/integrations/supabaseActorBoundary.security.test.ts",
+        "backend/src/services/integrations/supabaseManagement.security.test.ts",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+        "backend/src/services/integrations/supabaseProvision.test.ts",
+        "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts",
         "backend/src/services/integrations/supabaseTransport.security.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
@@ -25408,7 +25510,8 @@
         "backend/src/services/whopCheckoutOwnership.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/billing.ts:3",
@@ -25624,10 +25727,54 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:82720514c0c2d9c7f949",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts",
+      "sha256": "514a5a28cae8913af4f4d4c393903bd65a71d07a6a93746cc6306e2fef89a730",
+      "symbols": [
+        "installed",
+        "old",
+        "origin",
+        "url",
+        "withSupabaseSourceFixture"
+      ],
+      "imports": [
+        "../../../security/tenantContext.js",
+        "node:test"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/integrations/supabaseManagement.security.test.ts:1",
+        "backend/src/services/integrations/supabaseProvision.test.ts:1"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:supabase-management-tests.invalid",
+        "node:test"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/supabaseManagement.security.test.ts",
+        "backend/src/services/integrations/supabaseProvision.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "86ee4caa462432568293d0072110826643b665e774db1a6ed1f82c557dee7726",
+      "sha256": "6bcf22c4861902cc3825e64b0863f5e6cb4346599d5a2cfac813d4cbd11e0dbd",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -25738,6 +25885,7 @@
         "./composioClient.js",
         "./composioSkillGuidance.js",
         "./pluginPermissionPolicy.js",
+        "./supabaseProvision.js",
         "node:crypto"
       ],
       "runtimeImports": [
@@ -25754,13 +25902,15 @@
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts",
+        "backend/src/services/integrations/supabaseProvision.ts",
         "backend/src/services/publish/chromeWebStore.ts",
         "backend/src/services/publish/easPublish.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
@@ -25778,6 +25928,8 @@
         "backend/src/services/integrations/businessActionRisk.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:6",
         "backend/src/services/integrations/businessWorkflowRuns.ts:3",
+        "backend/src/services/integrations/supabaseApproval.ts:12",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts:8",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:9",
         "backend/src/services/publish/cwsAdmission.ts:11",
         "backend/src/services/publish/electronSecrets.ts:15",
@@ -25833,6 +25985,7 @@
         "backend/src/services/integrations/businessAction.digest.test.ts",
         "backend/src/services/integrations/businessActionRisk.test.ts",
         "backend/src/services/integrations/businessModelEgress.test.ts",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
         "backend/src/services/publish/expoWorkflow.authority.test.ts",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts"
@@ -25907,7 +26060,8 @@
         "backend/src/services/integrations/composioClient.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/billing.ts:6",
@@ -25921,6 +26075,9 @@
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4",
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts:3",
         "backend/src/services/integrations/businessWorkflowRuns.ts:4",
+        "backend/src/services/integrations/supabaseApproval.ts:13",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts:7",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts:9",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:8",
         "backend/src/services/publish/cwsAdmission.ts:12",
         "backend/src/services/publish/electronSecrets.ts:16",
@@ -25978,6 +26135,7 @@
         "backend/src/services/integrations/businessAction.digest.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
         "backend/src/services/publish/expoWorkflow.authority.test.ts",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
@@ -26314,7 +26472,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/universal/semanticRequestPlanner.ts:63",
@@ -26668,7 +26827,8 @@
         "backend/src/services/integrations/composioNamespace.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/capabilities/modules/businessAction.ts:6",
@@ -26740,7 +26900,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/composioClient.ts:1",
@@ -26787,7 +26948,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/businessAction.ts:41",
@@ -27071,6 +27233,8 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:9",
         "backend/src/services/integrations/oauthPkceStore.ts:10",
         "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts:5",
+        "backend/src/services/integrations/supabaseApproval.ts:11",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts:11",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:76",
         "backend/src/services/integrations/userProviderKeys.ts:16",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts:5",
@@ -27114,6 +27278,7 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
@@ -27546,10 +27711,11 @@
         "backend/src/services/integrations/githubTokenStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:161",
+        "backend/src/ai/pipeline.ts:163",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:59",
         "backend/src/routes/github.settings.test.ts:17",
@@ -28000,7 +28166,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:106",
+        "backend/src/ai/pipeline.ts:108",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:2",
         "backend/src/lib/publishingTransport.security.test.ts:9",
@@ -28329,7 +28495,8 @@
         "backend/src/services/integrations/githubAuth.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/githubDeploy.ts:66",
@@ -28876,7 +29043,8 @@
         "backend/src/services/integrations/oauthPkceStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/integrations.ts:32",
@@ -28908,6 +29076,181 @@
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b549883b4abf49fda1f6",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/supabaseAccess.ts",
+      "sha256": "d023f742926f86bf6dab0d254b45fa20ab7feff05cbb58bcaa9fed455ca7bba1",
+      "symbols": [
+        "State",
+        "SupabaseAccess",
+        "access",
+        "actor",
+        "allowed",
+        "beforeSupabaseWrite",
+        "captureSupabaseAccess",
+        "check",
+        "context",
+        "denied",
+        "digest",
+        "fingerprint",
+        "installSupabaseWriteGuard",
+        "issued",
+        "original",
+        "providers",
+        "requireSupabaseAccess",
+        "row",
+        "state"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/routes/supabaseOAuth.ts:44",
+        "backend/src/services/integrations/supabaseApproval.ts:15",
+        "backend/src/services/integrations/supabaseProvision.ts:12",
+        "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "user_integrations"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/services/integrations/supabaseAccess.ts#AuthorityDispatchBinding",
+        "backend/src/services/integrations/supabaseAccess.ts#AuthorityError",
+        "backend/src/services/integrations/supabaseAccess.ts#AuthorityPermit",
+        "backend/src/services/integrations/supabaseAccess.ts#authorityContextForPermit"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/integrations/supabaseAccess.ts:19 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/integrations/supabaseAccess.ts#digest",
+        "backend/src/services/integrations/supabaseAccess.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:9c52bb76df92b5de163f",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/supabaseApproval.ts",
+      "sha256": "6a7e06a9eadd076a603cd8ff5c38ac643222c5eaba23afb202b6173998d952cc",
+      "symbols": [
+        "checkClaim",
+        "confirmation",
+        "consumed",
+        "context",
+        "denied",
+        "digest",
+        "identity",
+        "issuedAt",
+        "nativeSupabaseProof",
+        "nonce",
+        "operation",
+        "prepareSupabaseNativeAction",
+        "proof",
+        "readSupabaseNativeAction",
+        "started",
+        "toolkit",
+        "unsigned",
+        "useCase",
+        "value"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/dataClassification.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/securityDecision.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../publish/nativeReleaseAdmission.js",
+        "./businessAction.js",
+        "./businessActionConfirmations.js",
+        "./credentialVaultRuntime.js",
+        "./supabaseAccess.js",
+        "node:crypto",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/services/integrations/supabaseAccess.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/supabaseProvision.ts:27"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "business_action_confirmations"
+      ],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/supabaseApproval.ts#AuthorityError",
+        "backend/src/services/integrations/supabaseApproval.ts#AuthorityPermit",
+        "backend/src/services/integrations/supabaseApproval.ts#consumeAuthorityPermit",
+        "backend/src/services/integrations/supabaseApproval.ts#identity"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/integrations/supabaseApproval.ts:47 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/integrations/supabaseApproval.ts#actionPlanDigest",
+        "backend/src/services/integrations/supabaseApproval.ts#confirmation",
+        "backend/src/services/integrations/supabaseApproval.ts#createBusinessActionConfirmation",
+        "backend/src/services/integrations/supabaseApproval.ts#digest",
+        "backend/src/services/integrations/supabaseApproval.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -28992,7 +29335,9 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
-        "backend/src/services/integrations/supabaseProvision.ts:578",
+        "backend/src/services/integrations/supabaseProvision.ts:477",
+        "backend/src/services/integrations/supabaseProvision.ts:528",
+        "backend/src/services/integrations/supabaseProvision.ts:613",
         "backend/src/services/integrations/userProviderKeys.ts:1064"
       ],
       "reachable": true,
@@ -29060,8 +29405,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/supabaseProvision.ts:21",
-        "backend/src/services/integrations/supabaseProvision.ts:22",
+        "backend/src/services/integrations/supabaseProvision.ts:28",
+        "backend/src/services/integrations/supabaseProvision.ts:29",
         "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.ts:15"
       ],
@@ -29087,28 +29432,37 @@
       "id": "surface:20b164dcdac7e7fd299f",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.ts",
-      "sha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+      "sha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839",
       "symbols": [
         "MGMT",
         "MgmtProject",
         "ProvisionResult",
         "SupabaseManagementDenied",
+        "SupabaseProvisionInput",
+        "SupabaseStorageConflict",
         "SupabaseWriteAdmissions",
+        "access",
         "accessToken",
+        "actor",
         "anon",
         "appSql",
+        "applied",
         "body",
+        "bucket",
         "buckets",
         "buildUserSupabaseProvisionSql",
         "bundle",
         "bytes",
         "chunks",
         "client",
-        "created",
+        "code",
+        "confirmed",
+        "connected",
+        "context",
         "data",
         "ensureStorageBuckets",
-        "err",
         "error",
+        "executeSupabaseNativeAction",
         "existing",
         "fetchProjectApiKeys",
         "getUserSupabaseAdmin",
@@ -29120,82 +29474,111 @@
         "includeApp",
         "includeStorage",
         "keys",
-        "lastError",
         "listSupabaseProjects",
         "managementDenied",
         "memorySql",
         "method",
         "mgmtFetch",
+        "name",
+        "native",
         "next",
         "oauth",
-        "ok",
         "oneClickConnectSupabase",
+        "opts",
+        "parameters",
         "password",
+        "pat",
         "pick",
         "port",
-        "ports",
         "pred",
         "prepareSupabaseConnectionWrite",
         "prepareSupabaseWriteAdmissions",
+        "prepared",
         "projects",
         "provision",
+        "provisionDenied",
         "provisionUserSupabase",
+        "readBuckets",
         "reader",
         "ref",
         "res",
+        "rows",
         "runSqlViaDatabasePassword",
         "runSqlViaManagementApi",
         "schemaApplied",
+        "schemaVerificationSql",
+        "schemaVerified",
+        "selected",
         "service",
         "signal",
         "slug",
+        "source",
         "sql",
         "status",
+        "storageRef",
         "storageSql",
-        "supabase",
         "terminalSupabaseDenial",
+        "token",
         "url",
-        "user",
         "userSupabaseMemoryReady",
-        "validProjectRef"
+        "validProjectRef",
+        "value",
+        "verification",
+        "verified",
+        "written"
       ],
       "imports": [
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
         "../../security/tenantContext.js",
+        "../publish/nativeReleaseAdmission.js",
+        "./businessAction.js",
+        "./supabaseAccess.js",
+        "./supabaseApproval.js",
         "./supabaseAuth.js",
         "./supabaseProjectUrl.js",
         "./userProviderKeys.js",
         "@supabase/supabase-js",
+        "node:util",
         "pg"
       ],
       "runtimeImports": [
+        "backend/src/security/authority/enforce.ts",
         "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/supabaseAccess.ts",
+        "backend/src/services/integrations/supabaseApproval.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/supabaseProjectUrl.ts",
-        "backend/src/services/integrations/userProviderKeys.ts"
+        "backend/src/services/integrations/userProviderKeys.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3785",
-        "backend/src/ai/pipeline.ts:3788",
+        "backend/src/ai/pipeline.ts:3787",
+        "backend/src/ai/pipeline.ts:3790",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
-        "backend/src/routes/integrations.ts:227",
-        "backend/src/routes/integrations.ts:312",
-        "backend/src/routes/integrations.ts:645",
-        "backend/src/routes/integrations.ts:654",
+        "backend/src/routes/integrations.ts:229",
+        "backend/src/routes/integrations.ts:317",
+        "backend/src/routes/integrations.ts:655",
+        "backend/src/routes/integrations.ts:664",
         "backend/src/routes/supabaseOAuth.ts:21",
+        "backend/src/routes/supabaseOAuth.ts:43",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:56",
-        "backend/src/services/integrations/supabaseManagement.security.test.ts:10",
+        "backend/src/services/integrations/businessAction.ts:1468",
+        "backend/src/services/integrations/supabaseActorBoundary.security.test.ts:5",
+        "backend/src/services/integrations/supabaseManagement.security.test.ts:13",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts:5",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:4",
-        "backend/src/services/integrations/supabaseProvision.test.ts:3",
+        "backend/src/services/integrations/supabaseProvision.test.ts:6",
+        "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts:6",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:1303",
-        "backend/src/services/integrations/userProviderKeys.ts:1312"
+        "backend/src/services/integrations/userProviderKeys.ts:1305"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -29204,22 +29587,35 @@
       "externalProviderDependencies": [
         "@supabase/supabase-js",
         "declared-host:api.supabase.com",
+        "node:util",
         "pg"
       ],
       "authBoundary": [
+        "backend/src/services/integrations/supabaseProvision.ts#AuthorityError",
+        "backend/src/services/integrations/supabaseProvision.ts#AuthorityPermit",
         "backend/src/services/integrations/supabaseProvision.ts#oauth"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/integrations/supabaseProvision.ts#confirmed"
+      ],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/integrations/supabaseProvision.ts#schemaVerificationSql",
+        "backend/src/services/integrations/supabaseProvision.ts#schemaVerified",
+        "backend/src/services/integrations/supabaseProvision.ts#verification",
+        "backend/src/services/integrations/supabaseProvision.ts#verified"
+      ],
       "testCoverage": [
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/services/integrations/supabaseActorBoundary.security.test.ts",
         "backend/src/services/integrations/supabaseManagement.security.test.ts",
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
         "backend/src/services/integrations/supabaseProvision.test.ts",
+        "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -29233,7 +29629,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -29264,7 +29660,6 @@
         "associated",
         "binding",
         "boundBundle",
-        "buckets",
         "buildProviderEnvFiles",
         "bundle",
         "bundleAdmissions",
@@ -29434,12 +29829,12 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:118",
-        "backend/src/ai/pipeline.ts:3784",
+        "backend/src/ai/pipeline.ts:120",
+        "backend/src/ai/pipeline.ts:3786",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:17",
-        "backend/src/routes/integrations.ts:639",
+        "backend/src/routes/integrations.ts:649",
         "backend/src/routes/publish.ts:18",
         "backend/src/routes/supabaseOAuth.ts:28",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:5",
@@ -29454,8 +29849,8 @@
         "backend/src/services/integrations/githubDeploy.ts:59",
         "backend/src/services/integrations/supabaseBundle.authority.test.ts:4",
         "backend/src/services/integrations/supabaseBundle.test.ts:5",
-        "backend/src/services/integrations/supabaseProvision.ts:11",
-        "backend/src/services/integrations/userProviderKeys.connect.test.ts:5",
+        "backend/src/services/integrations/supabaseProvision.ts:13",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts:6",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:6",
         "backend/src/services/integrations/userProviderKeys.publicEnv.test.ts:3",
@@ -29665,7 +30060,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:117",
+        "backend/src/ai/pipeline.ts:119",
         "backend/src/lib/platformReady.ts:7",
         "backend/src/routes/integrations.ts:28",
         "backend/src/routes/supabaseOAuth.ts:35",
@@ -30080,7 +30475,7 @@
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
-        "backend/src/ai/pipeline.ts:123",
+        "backend/src/ai/pipeline.ts:125",
         "backend/src/routes/github.ts:611",
         "backend/src/routes/swarm.ts:11",
         "backend/src/routes/vercel.ts:24",
@@ -30133,6 +30528,8 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts:10",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:6",
         "backend/src/services/publish/easPublish.routeScope.test.ts:7",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:5",
@@ -30155,6 +30552,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+        "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
         "backend/src/services/publish/easPublish.routeScope.test.ts",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts",
@@ -30284,10 +30683,11 @@
         "backend/src/services/publish/nativeReleaseAdmission.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:178",
+        "backend/src/ai/pipeline.ts:180",
         "backend/src/routes/publish.ts:224",
         "backend/src/routes/publish.ts:268",
         "backend/src/routes/publish.ts:305",
@@ -30410,7 +30810,8 @@
         "backend/src/services/publish/nativeArtifact.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/publish/chromeWebStore.ts:20"
@@ -30522,7 +30923,8 @@
         "backend/src/services/publish/expoStoreReadiness.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/publish.ts:184",
@@ -30631,13 +31033,14 @@
         "backend/src/services/publish/expoWorkflow.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:173",
+        "backend/src/ai/pipeline.ts:175",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
-        "backend/src/services/integrations/businessAction.ts:1468",
+        "backend/src/services/integrations/businessAction.ts:1474",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:4",
         "backend/src/services/publish/expoWorkflow.authority.test.ts:3",
@@ -30771,10 +31174,11 @@
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:179",
+        "backend/src/ai/pipeline.ts:181",
         "backend/src/routes/publish.ts:382",
         "backend/src/services/integrations/businessAction.ts:1453",
         "backend/src/services/publish/electronSecrets.authority.test.ts:4",
@@ -30897,7 +31301,8 @@
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/publish.ts:6",
@@ -30999,7 +31404,8 @@
         "backend/src/services/publish/expoAccess.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/publish/easPublish.ts:198",
@@ -31069,7 +31475,8 @@
         "backend/src/security/egress/dataClassification.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/publish/expoStoreReadiness.ts:3"
@@ -31146,7 +31553,8 @@
         "backend/src/services/publish/expoCredentialMaterial.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/publish/easCredentials.ts:8"
@@ -31284,7 +31692,8 @@
         "backend/src/services/publish/nativeReleaseAdmission.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/publish/easPublish.ts:283",
@@ -31383,7 +31792,8 @@
         "backend/src/services/storage/projectFiles.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/publish/chromeWebStore.authority.test.ts:5",
@@ -31492,9 +31902,11 @@
         "backend/src/services/publish/nativeArtifact.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/services/integrations/supabaseProvision.ts:26",
         "backend/src/services/publish/chromeWebStore.ts:18",
         "backend/src/services/publish/expoWorkflow.ts:6",
         "backend/src/services/publish/nonWebShip.ts:13"
@@ -31652,10 +32064,11 @@
         "backend/src/services/publish/nativeReleaseAdmission.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:167",
+        "backend/src/ai/pipeline.ts:169",
         "backend/src/services/integrations/businessAction.ts:1458",
         "backend/src/services/publish/nativeArtifactApproval.security.test.ts:5",
         "backend/src/services/publish/nonWebShip.security.test.ts:3"
@@ -31981,7 +32394,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:162",
+        "backend/src/ai/pipeline.ts:164",
         "backend/src/services/projectScaffold.ts:11",
         "backend/src/services/projectScaffold.ts:5",
         "backend/src/services/scaffolds/nextjsScaffold.ts:3",
@@ -32294,7 +32707,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/publish/nativeArtifact.ts:12",
@@ -32347,7 +32761,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:180",
+        "backend/src/ai/pipeline.ts:182",
         "backend/src/services/scaffolds/scaffoldIntegrity.test.ts:3"
       ],
       "reachable": true,
@@ -32597,7 +33011,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/r2.ts:3",
@@ -32721,7 +33136,8 @@
         "backend/src/services/storage/fileDeliveryPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
@@ -32795,7 +33211,8 @@
         "backend/src/services/storage/fileDeliveryPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/buildProjectReceipt.local.integration.ts:7",
@@ -32968,7 +33385,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/BillingService.ts:17",
@@ -36258,7 +36676,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:147",
+        "backend/src/ai/pipeline.ts:149",
         "backend/src/routes/delivery.ts:17",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:25",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:24"
@@ -36649,7 +37067,7 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.attempt.test.ts:6",
-        "backend/src/ai/pipeline.ts:244",
+        "backend/src/ai/pipeline.ts:246",
         "backend/src/synthesis/foundation.fixture.test.ts:4"
       ],
       "reachable": true,
@@ -37634,7 +38052,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:150",
+        "backend/src/ai/pipeline.ts:152",
         "backend/src/routes/projectRuntime.ts:18",
         "backend/src/security/runtimeProjectBinding.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:40",
@@ -38358,7 +38776,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:94",
+        "backend/src/ai/pipeline.ts:96",
         "backend/src/synthesis/productBlueprints.test.ts:3"
       ],
       "reachable": true,
@@ -38745,7 +39163,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:135",
+        "backend/src/ai/pipeline.ts:137",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:7",
         "backend/src/synthesis/canonicalFoundation.test.ts:13",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:16",
@@ -39042,7 +39460,8 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/googleAuthority.test.ts:4",
@@ -39106,7 +39525,8 @@
         "backend/src/synthesis/projectRuntime/googleProvider.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:24",
@@ -39226,7 +39646,8 @@
         "backend/src/synthesis/projectRuntime/types.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/googleSandbox.ts:4",
@@ -39668,10 +40089,11 @@
         "backend/src/services/integrations/credentialVault.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:143",
+        "backend/src/ai/pipeline.ts:145",
         "backend/src/sandbox/google/googleSandbox.test.ts:4",
         "backend/src/sandbox/google/googleSandbox.ts:5",
         "backend/src/sandbox/registryNetwork.test.ts:9",
@@ -39803,7 +40225,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/googleProvider.ts:9",
@@ -39883,7 +40306,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:238",
+        "backend/src/ai/pipeline.ts:240",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.ts:47",
         "backend/src/workers/resumeRecovery.ts:14"
@@ -41293,7 +41716,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:140",
+        "backend/src/ai/pipeline.ts:142",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:8",
         "backend/src/synthesis/canonicalFoundation.test.ts:18",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:20",
@@ -41525,7 +41948,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:160",
+        "backend/src/ai/pipeline.ts:162",
         "backend/src/synthesis/universalCommit.test.ts:3"
       ],
       "reachable": true,
@@ -41643,7 +42066,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:134",
+        "backend/src/ai/pipeline.ts:136",
         "backend/src/ai/providerPolicy.test.ts:19",
         "backend/src/synthesis/universalEntrypoint.test.ts:14"
       ],
@@ -42171,7 +42594,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:130",
+        "backend/src/ai/pipeline.ts:132",
         "backend/src/synthesis/universalShadow.test.ts:13"
       ],
       "reachable": true,
@@ -43810,7 +44233,8 @@
         "backend/src/workers/googleDispatch.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.queuedAdmission.test.ts:5",
@@ -43888,7 +44312,8 @@
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/index.ts:12",
@@ -45489,7 +45914,7 @@
       "id": "surface:7eeacb0c977f2a0a3a95",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/app/(shell)/dashboard/integrations/supabase/callback/page.tsx",
-      "sha256": "473a0ae8bf559f4e545e32a4d16d23d7389eb4850c82a6d5ce297ac54571a86c",
+      "sha256": "f50239eb60286a6bb8d6b53e2ec198f6ff2c8e756877102886e37575fe3cc3c4",
       "symbols": [
         "CallbackHandler",
         "SupabaseCallbackPage",
@@ -68196,7 +68621,7 @@
       "id": "surface:bfad1424863ed15d3203",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "sha256": "3a8833383628ae7fa7ca24ab821bca5418a951a183d7a76b030605257accd80a",
+      "sha256": "4913a0968355cf83ea8cb5e3338760beab95c48c126b537b8039bc3ae7825e6c",
       "symbols": [
         "ListedOrg",
         "ListedProject",
@@ -68206,6 +68631,7 @@
         "createProject",
         "envSync",
         "err",
+        "link",
         "list",
         "o",
         "onChangeProject",
@@ -68214,6 +68640,7 @@
         "refreshProjects",
         "res",
         "result",
+        "reviewLink",
         "selectProject",
         "st",
         "stop",
@@ -85363,7 +85790,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8",
+      "sha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -90188,7 +90615,7 @@
       "id": "surface:90f760341bd210b4a4a6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/oauthPopupResult.ts",
-      "sha256": "f154e5871cded54dfb5433b172ee4e4ebc82cc59bbd34967c12df96efe9578bd",
+      "sha256": "b7eee0d7d63a3f4b3ded1967d5e9deb3d95aae163a2d322e65f8c21974be51e7",
       "symbols": [
         "CHANNEL",
         "OAuthResultPayload",
@@ -95216,7 +95643,7 @@
       "id": "surface:ef4a5ac95bc08ff06763",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabaseConnect.ts",
-      "sha256": "b850fb5da247a9fe2d0e72233e6a8135f30af6ede0ceece40c44d9ce24412b5d",
+      "sha256": "cc2dc0c9ee88f9d644bc5f5d6c3628e135b3adc0f877e108e781b0e8633a9f49",
       "symbols": [
         "SupabaseOAuthSuccess",
         "cleanup",
@@ -95250,7 +95677,7 @@
       "entryPoints": [],
       "callers": [
         "frontend/src/components/integrations/ConnectShipWizard.tsx:231",
-        "frontend/src/components/integrations/SupabaseConnectPanel.tsx:100"
+        "frontend/src/components/integrations/SupabaseConnectPanel.tsx:103"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -108812,7 +109239,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e18a379a48e6167c9626",
+      "id": "registration:17ec94be54bef4efd299",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 73,
       "receiver": "router",
@@ -108824,7 +109251,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:de4823ef7b1d3123f9f3",
+      "id": "registration:2a90e6db90350fe270a5",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 141,
       "receiver": "router",
@@ -108836,7 +109263,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e698fda69a0e41c8caf2",
+      "id": "registration:6ee51465dc214887b9eb",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 196,
       "receiver": "router",
@@ -108848,9 +109275,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6d9c97ad98b6c1781d5e",
+      "id": "registration:e2b72f43e5a83995df16",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 264,
+      "line": 267,
       "receiver": "router",
       "method": "post",
       "path": "/supabase/one-click",
@@ -108860,9 +109287,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c48e9a0ad44037eab669",
+      "id": "registration:e6d2b86d6328a099576b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 421,
+      "line": 428,
       "receiver": "router",
       "method": "post",
       "path": "/supabase/connect",
@@ -108872,9 +109299,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:31079ef665b8807b8f2c",
+      "id": "registration:cc74cf430c5593a2d969",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 607,
+      "line": 615,
       "receiver": "router",
       "method": "post",
       "path": "/supabase/provision",
@@ -108884,9 +109311,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:09bedb787267342801ac",
+      "id": "registration:39c5d81949f6f9aa309c",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 716,
+      "line": 727,
       "receiver": "router",
       "method": "get",
       "path": "/provider-keys",
@@ -108896,9 +109323,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a5d0b70d23313ed1ac68",
+      "id": "registration:5235d7b519968b197ec1",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 740,
+      "line": 751,
       "receiver": "router",
       "method": "post",
       "path": "/provider-keys",
@@ -108908,9 +109335,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:57efb8b9eca64de8ab08",
+      "id": "registration:4f99886eff0a7d350969",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 898,
+      "line": 909,
       "receiver": "router",
       "method": "delete",
       "path": "/provider-keys/:provider",
@@ -108920,9 +109347,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a7a33ef71edcf2e149a8",
+      "id": "registration:6c5d67a53787c22a405a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 931,
+      "line": 942,
       "receiver": "router",
       "method": "post",
       "path": "/sync-vercel-env",
@@ -108932,9 +109359,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7fc3c8023a35d6fbaeab",
+      "id": "registration:1ae8e80576febdac1eb0",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1058,
+      "line": 1069,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/permission-policy",
@@ -108944,9 +109371,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a793a6f7a33b15e5e2e3",
+      "id": "registration:e16cac748c7589ad1f55",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1110,
+      "line": 1121,
       "receiver": "router",
       "method": "patch",
       "path": "/xroga-connect/permission-policy",
@@ -108956,9 +109383,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9b95c59de4f157894ad2",
+      "id": "registration:bb6adb8bc0737f02f1a4",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1169,
+      "line": 1180,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/status",
@@ -108968,9 +109395,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7f315a5c9925a1c319fd",
+      "id": "registration:1b22fe615eac00c04423",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1187,
+      "line": 1198,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog",
@@ -108980,9 +109407,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c76270e8f0d7e939e570",
+      "id": "registration:eecc7ba5e6e8f9b306a7",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1293,
+      "line": 1304,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog-categories",
@@ -108992,9 +109419,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8b7b7e654624b8a0b0fe",
+      "id": "registration:179bd3b473870226cc59",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1312,
+      "line": 1323,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit/tools",
@@ -109004,9 +109431,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:700110e066c452bc1715",
+      "id": "registration:90409912ad03f671c349",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1373,
+      "line": 1384,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit/triggers",
@@ -109016,9 +109443,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:de22cfeb078fa646e31d",
+      "id": "registration:2c40f1fd31caf745b9d1",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1434,
+      "line": 1445,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/catalog/:toolkit",
@@ -109028,9 +109455,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:71c4328baaa388f17a85",
+      "id": "registration:66d4b5070a4ef03c9b9d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1496,
+      "line": 1507,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/tool-details/:toolSlug",
@@ -109040,9 +109467,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:cee0989e8b01f2c8f52e",
+      "id": "registration:3c45e4c7be33149f6776",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1553,
+      "line": 1564,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/session",
@@ -109052,9 +109479,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4dc968fed47226507d8a",
+      "id": "registration:fa1d4afe68ccd1fac99b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1590,
+      "line": 1601,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/search",
@@ -109064,9 +109491,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:853eb2afaf45caa8ffcf",
+      "id": "registration:c2b512420d73005957ee",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1676,
+      "line": 1687,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/action-search",
@@ -109076,9 +109503,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:818289a2bf00dc72d02f",
+      "id": "registration:f502b3bd885cc0814f9a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1744,
+      "line": 1755,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/toolkits",
@@ -109088,9 +109515,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:eafd86113fc4063caf51",
+      "id": "registration:9db0ccf37881ca12084a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1809,
+      "line": 1820,
       "receiver": "router",
       "method": "get",
       "path": "/xroga-connect/custom-mcp",
@@ -109100,9 +109527,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:88fe8fe1b08ecd3dee61",
+      "id": "registration:979b671d9baaa31e5bec",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1828,
+      "line": 1839,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/custom-mcp",
@@ -109112,9 +109539,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:471b439d7cb6cb1bfd24",
+      "id": "registration:ad587132f6f63a17838d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1869,
+      "line": 1880,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/custom-mcp/:toolkit/sync",
@@ -109124,9 +109551,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e2027fa0ba5b26bde4c1",
+      "id": "registration:e6b588c95042b44040fa",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1924,
+      "line": 1935,
       "receiver": "router",
       "method": "delete",
       "path": "/xroga-connect/custom-mcp/:toolkit",
@@ -109136,9 +109563,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4d5c0b6aef00c057e3f3",
+      "id": "registration:0628864fd4a5fd8d5eec",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1971,
+      "line": 1982,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/link",
@@ -109148,9 +109575,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d17c0d399c4932ece9c4",
+      "id": "registration:27f7a56034065eebe8d1",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2068,
+      "line": 2079,
       "receiver": "router",
       "method": "post",
       "path": "/xroga-connect/execute",
@@ -109160,9 +109587,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:723ff817f06db3d23893",
+      "id": "registration:c6d5e1a5ff8a95e741a2",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2148,
+      "line": 2159,
       "receiver": "router",
       "method": "use",
       "path": "/live-ai",
@@ -109172,9 +109599,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1c7012666a96a5d8f85e",
+      "id": "registration:9116275b796eb258f09e",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2154,
+      "line": 2165,
       "receiver": "router",
       "method": "use",
       "path": "/search",
@@ -110162,9 +110589,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a80ded8fe694ea9d5b5d",
+      "id": "registration:6b50ee0a0dae69ea9939",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 63,
+      "line": 67,
       "receiver": "router",
       "method": "get",
       "path": "/oauth",
@@ -110174,9 +110601,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bacbf935e6a201400b26",
+      "id": "registration:288a96b4a7b189d4def3",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 85,
+      "line": 89,
       "receiver": "router",
       "method": "get",
       "path": "/status",
@@ -110186,9 +110613,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2320c8945f975f57b6a7",
+      "id": "registration:bc7360f4d3345518c93d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 123,
+      "line": 127,
       "receiver": "router",
       "method": "post",
       "path": "/connect",
@@ -110198,9 +110625,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d3f4912061020df507ec",
+      "id": "registration:37d8ac23cb83a54dd994",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 238,
+      "line": 244,
       "receiver": "router",
       "method": "get",
       "path": "/projects",
@@ -110210,9 +110637,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:f6aaba2398153bb6da66",
+      "id": "registration:32f1adb9c93c3ae10fe8",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 255,
+      "line": 263,
       "receiver": "router",
       "method": "post",
       "path": "/select-project",
@@ -110222,9 +110649,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6efdd519f7b5322a7034",
+      "id": "registration:e9874dc32060f584216d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 306,
+      "line": 316,
       "receiver": "router",
       "method": "post",
       "path": "/create-project",
@@ -110234,9 +110661,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:69a6016ab2263de4985f",
+      "id": "registration:52caecffe418c6d91a6d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 404,
+      "line": 422,
       "receiver": "router",
       "method": "get",
       "path": "/organizations",
@@ -110246,9 +110673,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0072afd4718238af5259",
+      "id": "registration:90ea15f7c12cf7b60037",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 448,
+      "line": 466,
       "receiver": "router",
       "method": "delete",
       "path": "/disconnect",
@@ -113533,8 +113960,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:504a79dd1cd2a0bfe88e",
-      "registrationId": "registration:e18a379a48e6167c9626",
+      "id": "route:fa55b6cf813baf1db248",
+      "registrationId": "registration:17ec94be54bef4efd299",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 73,
       "method": "GET",
@@ -113550,8 +113977,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8f9c949f65f84b3d7b32",
-      "registrationId": "registration:de4823ef7b1d3123f9f3",
+      "id": "route:6678be54ad95a6e6004a",
+      "registrationId": "registration:2a90e6db90350fe270a5",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 141,
       "method": "GET",
@@ -113567,8 +113994,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a9b1bdef8ba5540157f6",
-      "registrationId": "registration:e698fda69a0e41c8caf2",
+      "id": "route:bff1e6f5b2a0dd3d0616",
+      "registrationId": "registration:6ee51465dc214887b9eb",
       "sourcePath": "backend/src/routes/integrations.ts",
       "line": 196,
       "method": "POST",
@@ -113584,10 +114011,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4ff99da314f3f7490cee",
-      "registrationId": "registration:6d9c97ad98b6c1781d5e",
+      "id": "route:d777f7c0765387a2568a",
+      "registrationId": "registration:e2b72f43e5a83995df16",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 264,
+      "line": 267,
       "method": "POST",
       "path": "/api/integrations/supabase/one-click",
       "mountChain": [
@@ -113601,10 +114028,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8735ec06e9701cdca962",
-      "registrationId": "registration:c48e9a0ad44037eab669",
+      "id": "route:0cba3e8441d9e6405825",
+      "registrationId": "registration:e6d2b86d6328a099576b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 421,
+      "line": 428,
       "method": "POST",
       "path": "/api/integrations/supabase/connect",
       "mountChain": [
@@ -113618,10 +114045,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:aa119677d4d0d897c91a",
-      "registrationId": "registration:31079ef665b8807b8f2c",
+      "id": "route:172ca3563c3c9f9e380e",
+      "registrationId": "registration:cc74cf430c5593a2d969",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 607,
+      "line": 615,
       "method": "POST",
       "path": "/api/integrations/supabase/provision",
       "mountChain": [
@@ -113635,10 +114062,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8244dc82dac9d3cf57b4",
-      "registrationId": "registration:09bedb787267342801ac",
+      "id": "route:d0ca544a3f8b78f6bee9",
+      "registrationId": "registration:39c5d81949f6f9aa309c",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 716,
+      "line": 727,
       "method": "GET",
       "path": "/api/integrations/provider-keys",
       "mountChain": [
@@ -113652,10 +114079,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c6c146a619ab5043228a",
-      "registrationId": "registration:a5d0b70d23313ed1ac68",
+      "id": "route:f21472b65c43e28b35ec",
+      "registrationId": "registration:5235d7b519968b197ec1",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 740,
+      "line": 751,
       "method": "POST",
       "path": "/api/integrations/provider-keys",
       "mountChain": [
@@ -113669,10 +114096,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c0426177aab775cf5e2d",
-      "registrationId": "registration:57efb8b9eca64de8ab08",
+      "id": "route:19b260b83ffe4dee831a",
+      "registrationId": "registration:4f99886eff0a7d350969",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 898,
+      "line": 909,
       "method": "DELETE",
       "path": "/api/integrations/provider-keys/:provider",
       "mountChain": [
@@ -113686,10 +114113,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f3ca91d7ac09e87f47d0",
-      "registrationId": "registration:a7a33ef71edcf2e149a8",
+      "id": "route:8cdafe356289a33bfe83",
+      "registrationId": "registration:6c5d67a53787c22a405a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 931,
+      "line": 942,
       "method": "POST",
       "path": "/api/integrations/sync-vercel-env",
       "mountChain": [
@@ -113703,10 +114130,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:517983a9d5f65b2459e9",
-      "registrationId": "registration:7fc3c8023a35d6fbaeab",
+      "id": "route:cb60cb0815dd5fcaf09c",
+      "registrationId": "registration:1ae8e80576febdac1eb0",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1058,
+      "line": 1069,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
@@ -113720,10 +114147,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6a2d19b9317857bf1c68",
-      "registrationId": "registration:a793a6f7a33b15e5e2e3",
+      "id": "route:18d9ce0e5ebc3d8db083",
+      "registrationId": "registration:e16cac748c7589ad1f55",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1110,
+      "line": 1121,
       "method": "PATCH",
       "path": "/api/integrations/xroga-connect/permission-policy",
       "mountChain": [
@@ -113737,10 +114164,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2f2d7bf85f3927a06337",
-      "registrationId": "registration:9b95c59de4f157894ad2",
+      "id": "route:71f6ad5f893e851ccc1f",
+      "registrationId": "registration:bb6adb8bc0737f02f1a4",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1169,
+      "line": 1180,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/status",
       "mountChain": [
@@ -113754,10 +114181,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5d200e7a23dd6ce0b2bd",
-      "registrationId": "registration:7f315a5c9925a1c319fd",
+      "id": "route:ff352433e167dd1a1d13",
+      "registrationId": "registration:1b22fe615eac00c04423",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1187,
+      "line": 1198,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog",
       "mountChain": [
@@ -113771,10 +114198,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:81ceaba3ff50d1590f8d",
-      "registrationId": "registration:c76270e8f0d7e939e570",
+      "id": "route:042a29592e0797c43eef",
+      "registrationId": "registration:eecc7ba5e6e8f9b306a7",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1293,
+      "line": 1304,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog-categories",
       "mountChain": [
@@ -113788,10 +114215,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:97cd07639705cd28c69b",
-      "registrationId": "registration:8b7b7e654624b8a0b0fe",
+      "id": "route:8c5d5cd44b5a5e9c3d0b",
+      "registrationId": "registration:179bd3b473870226cc59",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1312,
+      "line": 1323,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/tools",
       "mountChain": [
@@ -113805,10 +114232,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e2a8ff6d49941dad3309",
-      "registrationId": "registration:700110e066c452bc1715",
+      "id": "route:a541e195367cda6231b3",
+      "registrationId": "registration:90409912ad03f671c349",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1373,
+      "line": 1384,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit/triggers",
       "mountChain": [
@@ -113822,10 +114249,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8ac5e894c6a1ac78b2aa",
-      "registrationId": "registration:de22cfeb078fa646e31d",
+      "id": "route:f15b9ba6a5d70ad450b1",
+      "registrationId": "registration:2c40f1fd31caf745b9d1",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1434,
+      "line": 1445,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/catalog/:toolkit",
       "mountChain": [
@@ -113839,10 +114266,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a44e673121c9b6b195ac",
-      "registrationId": "registration:71c4328baaa388f17a85",
+      "id": "route:fab17ea12861861f5658",
+      "registrationId": "registration:66d4b5070a4ef03c9b9d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1496,
+      "line": 1507,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/tool-details/:toolSlug",
       "mountChain": [
@@ -113856,10 +114283,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1552a0818ff1bdba38b6",
-      "registrationId": "registration:cee0989e8b01f2c8f52e",
+      "id": "route:cd4c52c7e3de56ed7cd7",
+      "registrationId": "registration:3c45e4c7be33149f6776",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1553,
+      "line": 1564,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/session",
       "mountChain": [
@@ -113873,10 +114300,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:75ec9a856d8311fa4d64",
-      "registrationId": "registration:4dc968fed47226507d8a",
+      "id": "route:a263114d3b578acb2887",
+      "registrationId": "registration:fa1d4afe68ccd1fac99b",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1590,
+      "line": 1601,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/search",
       "mountChain": [
@@ -113890,10 +114317,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:fdb04d87447dd7f17890",
-      "registrationId": "registration:853eb2afaf45caa8ffcf",
+      "id": "route:0b26a6bc5d0cafb3b7dd",
+      "registrationId": "registration:c2b512420d73005957ee",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1676,
+      "line": 1687,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/action-search",
       "mountChain": [
@@ -113907,10 +114334,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2dcbd8d237fdf0880ad5",
-      "registrationId": "registration:818289a2bf00dc72d02f",
+      "id": "route:1668406862505a9b2d22",
+      "registrationId": "registration:f502b3bd885cc0814f9a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1744,
+      "line": 1755,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/toolkits",
       "mountChain": [
@@ -113924,10 +114351,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:08c309d55a28f3597e09",
-      "registrationId": "registration:eafd86113fc4063caf51",
+      "id": "route:f819e7c93c68c2dbdc91",
+      "registrationId": "registration:9db0ccf37881ca12084a",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1809,
+      "line": 1820,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
@@ -113941,10 +114368,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:293165576d973fc196ee",
-      "registrationId": "registration:88fe8fe1b08ecd3dee61",
+      "id": "route:b9e9cb151a271dffc81d",
+      "registrationId": "registration:979b671d9baaa31e5bec",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1828,
+      "line": 1839,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp",
       "mountChain": [
@@ -113958,10 +114385,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c467f17c4c2245d73a12",
-      "registrationId": "registration:471b439d7cb6cb1bfd24",
+      "id": "route:194dca5f6b72872291e2",
+      "registrationId": "registration:ad587132f6f63a17838d",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1869,
+      "line": 1880,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit/sync",
       "mountChain": [
@@ -113975,10 +114402,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:74a923edc1e40fa1acc3",
-      "registrationId": "registration:e2027fa0ba5b26bde4c1",
+      "id": "route:fae89a74bdd41d731f5b",
+      "registrationId": "registration:e6b588c95042b44040fa",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1924,
+      "line": 1935,
       "method": "DELETE",
       "path": "/api/integrations/xroga-connect/custom-mcp/:toolkit",
       "mountChain": [
@@ -113992,10 +114419,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:669c68cccca3f1d3bc20",
-      "registrationId": "registration:4d5c0b6aef00c057e3f3",
+      "id": "route:eeb648382f77bbeddea2",
+      "registrationId": "registration:0628864fd4a5fd8d5eec",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 1971,
+      "line": 1982,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/link",
       "mountChain": [
@@ -114009,10 +114436,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9b21330877b8ae2bedfd",
-      "registrationId": "registration:d17c0d399c4932ece9c4",
+      "id": "route:c9e0810e30e998e46c3f",
+      "registrationId": "registration:27f7a56034065eebe8d1",
       "sourcePath": "backend/src/routes/integrations.ts",
-      "line": 2068,
+      "line": 2079,
       "method": "POST",
       "path": "/api/integrations/xroga-connect/execute",
       "mountChain": [
@@ -114026,10 +114453,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e74f03836a2821f6a9d1",
-      "registrationId": "registration:a80ded8fe694ea9d5b5d",
+      "id": "route:292557826215eccaef3f",
+      "registrationId": "registration:6b50ee0a0dae69ea9939",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 63,
+      "line": 67,
       "method": "GET",
       "path": "/api/supabase/oauth",
       "mountChain": [
@@ -114044,10 +114471,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4024e3ff883566e0277f",
-      "registrationId": "registration:bacbf935e6a201400b26",
+      "id": "route:794a96e1433f7b2b7b19",
+      "registrationId": "registration:288a96b4a7b189d4def3",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 85,
+      "line": 89,
       "method": "GET",
       "path": "/api/supabase/status",
       "mountChain": [
@@ -114062,10 +114489,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a86612ceae718420b15e",
-      "registrationId": "registration:2320c8945f975f57b6a7",
+      "id": "route:0ba706b93a15109351ec",
+      "registrationId": "registration:bc7360f4d3345518c93d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 123,
+      "line": 127,
       "method": "POST",
       "path": "/api/supabase/connect",
       "mountChain": [
@@ -114080,10 +114507,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c0f6323cfc596cd13a9c",
-      "registrationId": "registration:d3f4912061020df507ec",
+      "id": "route:5004b7cdc4ab4c07dc6f",
+      "registrationId": "registration:37d8ac23cb83a54dd994",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 238,
+      "line": 244,
       "method": "GET",
       "path": "/api/supabase/projects",
       "mountChain": [
@@ -114098,10 +114525,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:84141440ec00acb106f0",
-      "registrationId": "registration:f6aaba2398153bb6da66",
+      "id": "route:43197b555f15f49d6f16",
+      "registrationId": "registration:32f1adb9c93c3ae10fe8",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 255,
+      "line": 263,
       "method": "POST",
       "path": "/api/supabase/select-project",
       "mountChain": [
@@ -114116,10 +114543,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:7e1ea3f83cf90f164108",
-      "registrationId": "registration:6efdd519f7b5322a7034",
+      "id": "route:a137dbd2ba844fc0896a",
+      "registrationId": "registration:e9874dc32060f584216d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 306,
+      "line": 316,
       "method": "POST",
       "path": "/api/supabase/create-project",
       "mountChain": [
@@ -114134,10 +114561,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b808b668331f3d563af9",
-      "registrationId": "registration:69a6016ab2263de4985f",
+      "id": "route:24434633006dd4924713",
+      "registrationId": "registration:52caecffe418c6d91a6d",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 404,
+      "line": 422,
       "method": "GET",
       "path": "/api/supabase/organizations",
       "mountChain": [
@@ -114152,10 +114579,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e4afe8ecaff5cd61099f",
-      "registrationId": "registration:0072afd4718238af5259",
+      "id": "route:ed0428406c9e2a2ec2de",
+      "registrationId": "registration:90ea15f7c12cf7b60037",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 448,
+      "line": 466,
       "method": "DELETE",
       "path": "/api/supabase/disconnect",
       "mountChain": [
@@ -121353,93 +121780,93 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:ef185f880a9da71dd059",
+      "id": "frontend-call:88a5eeedbc6be86d7eda",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 34,
+      "line": 36,
       "callee": "api.supabase.status",
       "reachable": false
     },
     {
-      "id": "frontend-call:f9257b971521c681c5bd",
+      "id": "frontend-call:3f116fa9cec011444bd2",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 40,
+      "line": 42,
       "callee": "api.supabase.projects().catch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c9661cd26b0e8369d8a4",
+      "id": "frontend-call:e7fafa97be73e3c56e7d",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 40,
+      "line": 42,
       "callee": "api.supabase.projects",
       "reachable": false
     },
     {
-      "id": "frontend-call:a33c9ae8c9cd86e74ffd",
+      "id": "frontend-call:d6eef4569df8bf050842",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 43,
+      "line": 45,
       "callee": "api.supabase.organizations().catch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6b2ef1c38327e040cd61",
+      "id": "frontend-call:d7bcc12ddc665430f140",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 43,
+      "line": 45,
       "callee": "api.supabase.organizations",
       "reachable": false
     },
     {
-      "id": "frontend-call:653965533fc6ca6b9187",
+      "id": "frontend-call:fc231e9992a1b0968f3f",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 141,
+      "line": 145,
       "callee": "api.supabase.selectProject",
       "reachable": false
     },
     {
-      "id": "frontend-call:6e86f068a4b4e8b08522",
+      "id": "frontend-call:6a7b12ace4044a685d64",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 177,
+      "line": 186,
       "callee": "api.supabase.createProject",
       "reachable": false
     },
     {
-      "id": "frontend-call:0db9eb61465ec30d5e4c",
+      "id": "frontend-call:0dfd03d619df0d9f6bdb",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 208,
+      "line": 221,
       "callee": "api.supabase.projects",
       "reachable": false
     },
     {
-      "id": "frontend-call:18846eb4a404c424f785",
+      "id": "frontend-call:b3b8a59c22c64c318c9f",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 211,
+      "line": 224,
       "callee": "api.supabase.organizations",
       "reachable": false
     },
     {
-      "id": "frontend-call:38cc7add5a9d461b883e",
+      "id": "frontend-call:6e4ebff6b9e281248362",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 267,
+      "line": 280,
       "callee": "api.supabase.disconnect().then().catch().finally",
       "reachable": false
     },
     {
-      "id": "frontend-call:ba33a847da1925c2a719",
+      "id": "frontend-call:56de61f462e58df6a6d6",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 267,
+      "line": 280,
       "callee": "api.supabase.disconnect().then().catch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6ef56166c5e6fbe0fad5",
+      "id": "frontend-call:18254c5e0f4c38de0c9d",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 267,
+      "line": 280,
       "callee": "api.supabase.disconnect().then",
       "reachable": false
     },
     {
-      "id": "frontend-call:c5fc3e30b05349c7353c",
+      "id": "frontend-call:8504c7f9beaa3fe2fca4",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 267,
+      "line": 280,
       "callee": "api.supabase.disconnect",
       "reachable": false
     },
@@ -122984,16 +123411,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:e675a8d1fb8cb710557d",
+      "id": "frontend-call:d352963faf0a60130ab5",
       "sourcePath": "frontend/src/lib/supabaseConnect.ts",
-      "line": 26,
+      "line": 27,
       "callee": "api.supabase.oauthUrl",
       "reachable": false
     },
     {
-      "id": "frontend-call:14120cc07589dc470e28",
+      "id": "frontend-call:dd6f2055fa1ba5c3d443",
       "sourcePath": "frontend/src/lib/supabaseConnect.ts",
-      "line": 143,
+      "line": 145,
       "callee": "api.supabase.status",
       "reachable": false
     },
@@ -124123,6 +124550,20 @@
       "id": "test-suite:5933ad7cade6967bfbb9",
       "sourcePath": "backend/src/ai/step7LearningStrategy.test.ts",
       "declaredTests": 11,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:80c35abb529dcbbbc0bc",
+      "sourcePath": "backend/src/ai/supabaseApprovalPipeline.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7bb508f4553166897e13",
+      "sourcePath": "backend/src/ai/supabaseApprovalUi.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -125538,7 +125979,7 @@
     {
       "id": "test-suite:e0660d906d30a4c4d904",
       "sourcePath": "backend/src/security/egress/heldCredentialFloor.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -126341,6 +126782,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:71ff1033f773e8c8d03c",
+      "sourcePath": "backend/src/services/integrations/supabaseActorBoundary.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:3dc997bd0551138da3e2",
       "sourcePath": "backend/src/services/integrations/supabaseBundle.authority.test.ts",
       "declaredTests": 1,
@@ -126362,6 +126810,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:a2303a85d3efdad0283a",
+      "sourcePath": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9e3d32f345f6ff4b0ae5",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
       "declaredTests": 1,
@@ -126372,6 +126827,13 @@
       "id": "test-suite:66b49fb760f9fb022307",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6217dc7c9d380a578c5d",
+      "sourcePath": "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

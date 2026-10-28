@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `1f0761daa88420e5ef00d98e99135cd542915188`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `cace633a3cbcadc9f37fc7c74a29cec1acb7a143`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -141,6 +141,7 @@ Source SHA: `1f0761daa88420e5ef00d98e99135cd542915188`; exact current source/con
 | endpoint-stripe-com | Source-defined endpoint stripe.com | CONFIGURED_BUT_UNVERIFIED | stripe.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-sts-googleapis-com | Source-defined endpoint sts.googleapis.com | CONFIGURED_BUT_UNVERIFIED | sts.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-studio-youtube-com | Source-defined endpoint studio.youtube.com | CONFIGURED_BUT_UNVERIFIED | studio.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-supabase-management-tests-invalid | Source-defined endpoint supabase-management-tests.invalid | CONFIGURED_BUT_UNVERIFIED | supabase-management-tests.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-token-actions-githubusercontent-com | Source-defined endpoint token.actions.githubusercontent.com | CONFIGURED_BUT_UNVERIFIED | token.actions.githubusercontent.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -227,4 +228,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-841 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+848 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

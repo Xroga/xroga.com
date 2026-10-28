@@ -192,7 +192,7 @@
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
       "beforeSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
-      "currentSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "currentSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "matches": [
         {
           "beforeId": "a6063fe099976dc970f7",
@@ -502,7 +502,7 @@
         },
         {
           "beforeId": "f59d11df4719c567f3ba",
-          "afterId": "ff2f67e37627c078ddb6",
+          "afterId": "1efd8ec34ba641c03034",
           "enclosing": "saveSupabaseBundle",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -510,7 +510,7 @@
         },
         {
           "beforeId": "2ee5ca9468b0a47bc429",
-          "afterId": "dda425f65c86b04927bd",
+          "afterId": "d68b6df592d887684c6f",
           "enclosing": "saveSupabaseBundle",
           "kind": "RPC_CANDIDATE",
           "target": "save_supabase_bundle_if_current",
@@ -518,7 +518,7 @@
         },
         {
           "beforeId": "f1c0b859e956f853f600",
-          "afterId": "00a5b7095a4b9bb8d860",
+          "afterId": "d2968f7d0b0673e4e552",
           "enclosing": "saveSupabaseBundle",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -526,13 +526,18 @@
         },
         {
           "beforeId": "30f1b688a8b8ec4f22c0",
-          "afterId": "21bfc5f4b895f0031a37",
+          "afterId": "91c17cc8f6bff705b598",
           "enclosing": "connectUserSupabase",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
           "callSha256": "feb5a3e74d32a7765073ba9bed140aff89727ab2135feaa492e610610784f90d"
         }
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "currentSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      }
     }
   ],
   "reviewedSourceCallsOnly": "Unchanged call expressions map by kind, target and enclosing function. Duplicate expressions require an unchanged whole function. All new calls and function-level security obligations remain separate. Nested historical receipts are preserved.",

@@ -3,7 +3,7 @@ import { canonicalAuthorityJson } from '../authority/digest.js';
 import { DATA_CLASSES, type DataClass } from './types.js';
 
 const secretField = /password|secret|token|authorization|cookie|api[_-]?key|private[_-]?key|credential/i;
-const secretValue = /-----BEGIN [A-Z ]*PRIVATE KEY-----|\b(?:sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{15,}|Bearer\s+\S+|vault:v3:[A-Za-z0-9_-]+|SYNTHETIC_[A-Z_]*(?:CREDENTIAL|SECRET|TOKEN|API_KEY)[A-Z_]*)/i;
+const secretValue = /-----BEGIN [A-Z ]*PRIVATE KEY-----|\b(?:sb_secret_[A-Za-z0-9_-]{8,}|sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{15,}|Bearer\s+\S+|vault:v3:[A-Za-z0-9_-]+|SYNTHETIC_[A-Z_]*(?:CREDENTIAL|SECRET|TOKEN|API_KEY)[A-Z_]*)/i;
 
 /** Compare transiently with already-held server credentials. No decryption,
  * credential lookup, cache, value logging or new credential store is involved.

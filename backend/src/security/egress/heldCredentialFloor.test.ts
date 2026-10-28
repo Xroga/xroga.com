@@ -19,3 +19,8 @@ test('public environment values and model configuration do not become private cr
   try{for(const value of Object.values(values))assert.equal(containsCredentialSecretText(value),false);}
   finally{for(const[key,value]of Object.entries(old)){if(value===undefined)delete process.env[key];else process.env[key]=value;}}
 });
+
+test('Supabase secret keys remain secret under neutral field names while publishable keys retain public classification',()=>{
+ assert.equal(classifyOutboundData({value:'sb_secret_abcdefghijklmnopqrstuvwxyz0123456789'},'PUBLIC').classification,'CREDENTIAL_SECRET');
+ assert.equal(classifyOutboundData({value:'sb_publishable_abcdefghijklmnopqrstuvwxyz0123456789'},'PUBLIC').classification,'PUBLIC');
+});

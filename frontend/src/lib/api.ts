@@ -3145,6 +3145,9 @@ export const api = {
             boolean;
 
           provision?: {
+            needsConfirmation?: boolean;
+            reviewUrl?: string;
+            memoryTablesReady?: boolean;
             ok?:
               boolean;
 
@@ -3252,6 +3255,9 @@ export const api = {
             boolean;
 
           provision?: {
+            needsConfirmation?: boolean;
+            reviewUrl?: string;
+            memoryTablesReady?: boolean;
             ok?:
               boolean;
 
@@ -3334,6 +3340,9 @@ export const api = {
             string;
 
           provision?: {
+            needsConfirmation?: boolean;
+            reviewUrl?: string;
+            memoryTablesReady?: boolean;
             message?:
               string;
           };

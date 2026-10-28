@@ -121,9 +121,9 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 130,
-    "pending": 6,
-    "unresolvedHighRiskReviewCandidates": 3
+    "reviewed": 131,
+    "pending": 5,
+    "unresolvedHighRiskReviewCandidates": 2
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -193,7 +193,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
+      "sha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7"
     },
     {
       "path": "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
@@ -280,7 +280,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+      "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -651,7 +651,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "86ee4caa462432568293d0072110826643b665e774db1a6ed1f82c557dee7726",
+      "sha256": "6bcf22c4861902cc3825e64b0863f5e6cb4346599d5a2cfac813d4cbd11e0dbd",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -846,5 +846,6 @@
   "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
   "cwsApprovalContinuation": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
   "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
-  "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
+  "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+  "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
 }

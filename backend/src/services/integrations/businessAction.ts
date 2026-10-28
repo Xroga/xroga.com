@@ -1464,6 +1464,12 @@ export async function executePreparedBusinessAction(
     const result=await executeCwsPublication(input.userId,input.plan,input.authorityPermit);
     return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
   }
+  if(input.plan.toolkit==='xroga-native-supabase'){
+    const {executeSupabaseNativeAction}=await import('./supabaseProvision.js');
+    const result=await executeSupabaseNativeAction(input.userId,input.plan,input.authorityPermit);
+    if(result.ok!==true)throw new AuthorityError('SUPABASE_NATIVE_ACTION_NOT_VERIFIED');
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
   if(input.plan.toolkit==='xroga-native-expo'){
     const{executeExpoNativeAction}=await import('../publish/easPublish.js');
     const result=await executeExpoNativeAction(input.userId,input.plan,input.authorityPermit);

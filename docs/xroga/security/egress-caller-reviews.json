@@ -2685,7 +2685,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8",
+      "sourceFileSha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -2807,6 +2807,11 @@
         "registrySha256": "48884dd72151e829fc73e15788e3177d1a21f03cb786a32352c179038cb67791",
         "sourceFileSha256": "dfd6cb0926e5c496d7c0561a9cb5ddeeb1b8ca92542a21cf12d3e14183dd0c85",
         "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224"
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "sourceSha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
       }
     },
     {
@@ -3243,7 +3248,7 @@
     {
       "id": "c7711580844b520345cf",
       "callSha256": "89ee36190deb9acd207e31b721521ab1ee9173c7baab3e9621d74b8472dfe8a2",
-      "sourceFileSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceFileSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PRIVATE_CONFIGURED_SUPABASE_CIPHERTEXT_MIRROR_ONLY_NOT_ARBITRARY_EXTERNAL_UPLOAD",
       "tenantAuthority": "CANONICAL_SEALED_OWNER_PROVIDER_ROW_AND_EXACT_CURRENT_REVISION_METADATA_BEFORE_PRIVATE_UPLOAD_POSTCHECK_NO_PLAINTEXT_OR_REVOCATION_FALLBACK",
@@ -3263,7 +3268,12 @@
           "marker": "actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests",
           "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
         }
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      }
     },
     {
       "id": "68df836263d1eff0010b",
@@ -3453,7 +3463,7 @@
     {
       "id": "96fbfea42a399a233486",
       "callSha256": "7f108f6d651966ee8abf288336bb1df93ea2c6816a08806155667c76608f8b8c",
-      "sourceFileSha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675",
+      "sourceFileSha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_OFFICIAL_ISSUER_OWNER_ORGANIZATIONS_READ_ONLY",
       "tenantAuthority": "ORIGINAL_ISSUED_OWNER_AND_CANONICAL_TOKEN_REVISION_BEFORE_AND_AFTER_BOUNDED_READ",
@@ -3468,7 +3478,12 @@
           "marker": "organization listing requires original owner",
           "sha256": "353a3573fd510fca9c39e143122defbfd3011435df2ea3c8f1dc458179ceb957"
         }
-      ]
+      ],
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "sourceSha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      }
     },
     {
       "id": "fcad57247cfb79779f95",
@@ -3719,6 +3734,26 @@
           "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
           "marker": "actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch",
           "sha256": "fd728c72339911c7192ed92ab8a3f5bac33c80b1756b0fbdc949e4986d6809c9"
+        }
+      ]
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "callSha256": "f1d2a6165fae625d112a1c6017dfd69a517fd0ab170a79e16693fb81ca2f1bc3",
+      "sourceFileSha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FINITE_FIXED_SUPABASE_ISSUERS_ORIGINAL_ACTOR_COMPLETE_SOURCE_EPOCH_EXACT_NATIVE_SCHEMA_STORAGE_CONFIRMATION",
+      "tenantAuthority": "ORIGINAL_ISSUED_ACTOR_OWNED_PROVIDER_PROJECT_NATIVE_PRODUCER_ATTESTATION_DURABLE_CLAIM_CENTRAL_EGRESS_SINGLE_EFFECT_AND_REVOCATION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-AUTHORITY-20261028.json",
+          "marker": "15dcdf4bce3cfa3abf94",
+          "sha256": "5ad4fe1c36b97cfe69e49e22c01791745a582ee248cc1e50097c05e000f17a28"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+          "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write",
+          "sha256": "2e9c1276e2c2b1da54289cb5cc273b2480a92f54bb6f1a37a4f09b45743c1ce7"
         }
       ]
     }

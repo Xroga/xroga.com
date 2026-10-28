@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "10646dcf00b5b5a4a04d5442d59826b443f500ea78a36f6e3ed06903611d31d5",
+  "reviewRegistrySha256": "e95c44f26f0d1100a1fb51ee4eb93472c2edd6799f9b277c0d0c11991198290d",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 205,
-    "persistenceCandidates": 852,
-    "ownerPredicateCandidates": 225,
+    "privilegedFactorySites": 207,
+    "persistenceCandidates": 856,
+    "ownerPredicateCandidates": 229,
     "reviewRequired": 126,
-    "reviewedCandidates": 726,
+    "reviewedCandidates": 730,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 479,
+    "SCOPED_BOUNDARY": 483,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 174,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 84,
-    "unresolvedCandidateBoundaries": 768,
+    "unresolvedCandidateBoundaries": 772,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3452,11 +3452,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e4d85b225c1b15ed81a5"
+        "id": "98eff4c73564a22cc1f0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "86c1d25d68f4d6dc4446"
+        "id": "08f0ea46f9ffcabdaff0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3992,7 +3992,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "135997e375f52a030d46"
+        "id": "64d0c6fa8b1c602f8c68"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4608,11 +4608,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "34d41864b9724cd70b8d"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "225f172cd2ea1781c3da"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "19c4db7da649a83977a2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3b699381e96950c0ca6b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "29cc88320204856d031f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "76db5ae741f58e8ad98b"
+        "id": "c411916d520cbe22dc2d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4772,19 +4788,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ff2f67e37627c078ddb6"
+        "id": "1efd8ec34ba641c03034"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "dda425f65c86b04927bd"
+        "id": "d68b6df592d887684c6f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "00a5b7095a4b9bb8d860"
+        "id": "d2968f7d0b0673e4e552"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "21bfc5f4b895f0031a37"
+        "id": "91c17cc8f6bff705b598"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6140,11 +6156,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e4d85b225c1b15ed81a5"
+        "id": "98eff4c73564a22cc1f0"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "86c1d25d68f4d6dc4446"
+        "id": "08f0ea46f9ffcabdaff0"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7264,7 +7280,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "135997e375f52a030d46"
+        "id": "64d0c6fa8b1c602f8c68"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7744,6 +7760,22 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "34d41864b9724cd70b8d"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "225f172cd2ea1781c3da"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "19c4db7da649a83977a2"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3b699381e96950c0ca6b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "006a26709183308572df"
       },
       {
@@ -7756,7 +7788,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "76db5ae741f58e8ad98b"
+        "id": "c411916d520cbe22dc2d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7888,19 +7920,19 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ff2f67e37627c078ddb6"
+        "id": "1efd8ec34ba641c03034"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "dda425f65c86b04927bd"
+        "id": "d68b6df592d887684c6f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "00a5b7095a4b9bb8d860"
+        "id": "d2968f7d0b0673e4e552"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "21bfc5f4b895f0031a37"
+        "id": "91c17cc8f6bff705b598"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8501,11 +8533,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 852,
+    "currentCallers": 856,
     "structuredVerified": 84,
-    "structuredUnproven": 768,
+    "structuredUnproven": 772,
     "manualUnresolved": 159,
-    "manualUnsupported": 609,
+    "manualUnsupported": 613,
     "agreedVerified": 84,
     "proofAwaitingManualReconciliation": 0
   },
@@ -9102,15 +9134,15 @@
       }
     },
     {
-      "id": "e4d85b225c1b15ed81a5",
+      "id": "98eff4c73564a22cc1f0",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3776,
+      "line": 3778,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9123,15 +9155,15 @@
       }
     },
     {
-      "id": "86c1d25d68f4d6dc4446",
+      "id": "08f0ea46f9ffcabdaff0",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3956,
+      "line": 3962,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -16733,7 +16765,7 @@
       }
     },
     {
-      "id": "135997e375f52a030d46",
+      "id": "64d0c6fa8b1c602f8c68",
       "path": "backend/src/security/egress/dataClassification.ts",
       "line": 17,
       "enclosing": "containsHeldCredential",
@@ -16741,7 +16773,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "726082d23297dfeb3e8b7fdc6f0288cc61e72b28b5fb27839fe7ee101fbcf530",
+      "sourceSha256": "249ba3d92a9084e755ebb41ae332d1dc01412b0b6d4727ba5c3e6a4120bac55f",
       "semanticReview": {
         "authority": "The single unshadowed native Buffer.from encodes an already-held server credential transiently for comparison with base64/base64url text. It performs no database or object-store call, no credential decryption, no return of credential values and no external effect.",
         "reason": "Only this exact local byte conversion is excluded from persistence candidates. Opaque credential/canary, original authority, egress, DLP limitations and all reachable callers remain separate security obligations. No acceptance criterion is promoted.",
@@ -20333,6 +20365,106 @@
       }
     },
     {
+      "id": "34d41864b9724cd70b8d",
+      "path": "backend/src/services/integrations/supabaseAccess.ts",
+      "line": 19,
+      "enclosing": "fingerprint",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "d023f742926f86bf6dab0d254b45fa20ab7feff05cbb58bcaa9fed455ca7bba1",
+      "semanticReview": {
+        "authority": "Original issued TenantContext scopes the exact six provider rows to actor.userId. Foreign, duplicate, changed and revoked rows fail closed across waits and provider boundaries.",
+        "reason": "Only these two original-context scoped reads are reviewed. Synthetic actual-path positive and negative tests are source-bound. This does not claim live database or whole Phase4 acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseAccess.ts",
+            "marker": ".eq('user_id',actor.userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+            "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write"
+          }
+        ]
+      }
+    },
+    {
+      "id": "225f172cd2ea1781c3da",
+      "path": "backend/src/services/integrations/supabaseAccess.ts",
+      "line": 19,
+      "enclosing": "fingerprint",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "d023f742926f86bf6dab0d254b45fa20ab7feff05cbb58bcaa9fed455ca7bba1",
+      "semanticReview": {
+        "authority": "Original issued TenantContext scopes the exact six provider rows to actor.userId. Foreign, duplicate, changed and revoked rows fail closed across waits and provider boundaries.",
+        "reason": "Only these two original-context scoped reads are reviewed. Synthetic actual-path positive and negative tests are source-bound. This does not claim live database or whole Phase4 acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseAccess.ts",
+            "marker": ".eq('user_id',actor.userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+            "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write"
+          }
+        ]
+      }
+    },
+    {
+      "id": "19c4db7da649a83977a2",
+      "path": "backend/src/services/integrations/supabaseApproval.ts",
+      "line": 47,
+      "enclosing": "readSupabaseNativeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "6a7e06a9eadd076a603cd8ff5c38ac643222c5eaba23afb202b6173998d952cc",
+      "semanticReview": {
+        "authority": "Only original actor-scoped executing confirmation matching exact grant, plan digest, expiry, claim and effect state admits the already issued native permit. No raw-user context or new confirmation ledger.",
+        "reason": "Only these two original-context scoped reads are reviewed. Synthetic actual-path positive and negative tests are source-bound. This does not claim live database or whole Phase4 acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseApproval.ts",
+            "marker": ".eq('user_id',context.userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+            "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3b699381e96950c0ca6b",
+      "path": "backend/src/services/integrations/supabaseApproval.ts",
+      "line": 47,
+      "enclosing": "readSupabaseNativeAction",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "6a7e06a9eadd076a603cd8ff5c38ac643222c5eaba23afb202b6173998d952cc",
+      "semanticReview": {
+        "authority": "Only original actor-scoped executing confirmation matching exact grant, plan digest, expiry, claim and effect state admits the already issued native permit. No raw-user context or new confirmation ledger.",
+        "reason": "Only these two original-context scoped reads are reviewed. Synthetic actual-path positive and negative tests are source-bound. This does not claim live database or whole Phase4 acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseApproval.ts",
+            "marker": ".eq('user_id',context.userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+            "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write"
+          }
+        ]
+      }
+    },
+    {
       "id": "006a26709183308572df",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 65,
@@ -20408,15 +20540,15 @@
       }
     },
     {
-      "id": "76db5ae741f58e8ad98b",
+      "id": "c411916d520cbe22dc2d",
       "path": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 590,
+      "line": 625,
       "enclosing": "userSupabaseMemoryReady",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_session_memory",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+      "sourceSha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839",
       "semanticReview": {
         "authority": "Only the original dormant userSupabaseMemoryReady query remains reviewed. Its original issued TenantContext, owner predicate, canonical account and complete nearest function body are byte-identical to the pushed parent. Management transport, SQL, project creation, direct password execution, storage setup and upstream production callers remain independent unresolved Phase4 obligations.",
         "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. One original readiness query, not whole provisioning/custody certification. Actual canonical owner credentials with issued contexts select each correct synthetic account and exact owner predicate. Cloned contexts and primitive identities reject before any query, missing account returns false, and revoked/outage authority reaches no provider. Dormancy is recorded, never used as an exemption. No enabled production caller was removed. External schema/provider success and009 migration/custody remain separate. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
@@ -20449,7 +20581,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20474,7 +20606,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7"
     },
     {
       "id": "5e37205582073bfc30c9",
@@ -20485,7 +20617,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20510,7 +20642,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20535,7 +20667,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20560,7 +20692,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20585,7 +20717,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20610,7 +20742,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20635,7 +20767,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20656,7 +20788,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
         "reason": "Only these binary conversions are excluded. Cryptography, legacy encoding, key custody and secret egress remain separate unverified obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20677,7 +20809,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -20698,7 +20830,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -20719,7 +20851,7 @@
       "target": "prepare_provider_key_write",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Fixed admission RPC/client use VERIFIED at696322f0, disposable39124146660: absent/existing save/revoke, exact owner/provider revision separation, malformed provider paths and browser-denial cases pass. Only production consumers are the authenticated provider-key/publish routes or internal provisioning/CWS helpers carrying server owner and captured admission. The service validates allowed provider/env, accepts only a UUID revision and issues a frozen WeakMap-backed owner/provider/env handle. SQL touches only that explicit owner/provider, inserting an empty revoked CAS target when absent. Runtime/SQL/fixtures unchanged. Only admission persistence/client use closes. Remote work before admission, mirrors and full credential lifecycle/KMS remain separate gaps, with no external account ownership or provider certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20744,7 +20876,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Fixed admission RPC/client use VERIFIED at696322f0, disposable39124146660: absent/existing save/revoke, exact owner/provider revision separation, malformed provider paths and browser-denial cases pass. Only production consumers are the authenticated provider-key/publish routes or internal provisioning/CWS helpers carrying server owner and captured admission. The service validates allowed provider/env, accepts only a UUID revision and issues a frozen WeakMap-backed owner/provider/env handle. SQL touches only that explicit owner/provider, inserting an empty revoked CAS target when absent. Runtime/SQL/fixtures unchanged. Only admission persistence/client use closes. Remote work before admission, mirrors and full credential lifecycle/KMS remain separate gaps, with no external account ownership or provider certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20769,7 +20901,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two remaining shared-save/CWS RPC sites only. Actual helper positives for two disposable owners preserve own decrypted values and reject foreign or cloned admissions, consumed handle replay and revoke-raced save, retaining exact foreign row. Fresh original-owner PKCE reconnect succeeds. Mirrors finish before cleanup. No OAuth-provider request, external app identity assertion, vault replacement or live custody claim. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20794,7 +20926,7 @@
       "target": "save_cws_oauth_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two remaining shared-save/CWS RPC sites only. Actual helper positives for two disposable owners preserve own decrypted values and reject foreign or cloned admissions, consumed handle replay and revoke-raced save, retaining exact foreign row. Fresh original-owner PKCE reconnect succeeds. Mirrors finish before cleanup. No OAuth-provider request, external app identity assertion, vault replacement or live custody claim. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20815,7 +20947,7 @@
       "target": "save_provider_key_if_current",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
         "reason": "Exact owner/provider/revision save transaction VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660. Actual absent/existing two-client save/revoke races retain tombstones, cross-owner/provider revision reuse and malformed metadata deny, concurrent saves yield one winner, browser RPC and direct BYOK writes/rename bypasses deny. Runtime helper, SQL and fixtures are unchanged. Save arguments derive from an opaque issued admission bound to original owner/provider/env and the canonical private alias policy. Only this encrypted-row CAS closes. Storage mirrors, upstream remote work, external account selection, bulk enumeration, already-issued credentials and complete lifecycle/KMS remain independently unresolved. No provider calls or whole vault certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20840,7 +20972,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -20861,7 +20993,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -20882,7 +21014,7 @@
       "target": "migrate_provider_key_to_vault",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -20903,7 +21035,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -20924,7 +21056,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20949,7 +21081,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20974,7 +21106,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20999,7 +21131,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21024,7 +21156,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21045,7 +21177,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21066,7 +21198,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21091,7 +21223,7 @@
       "target": "revoke_provider_key",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
         "reason": "Real421a6b10 disposable38791937032 passed four BYOK cases for existing/absent save-revoke ordering, exact owner/provider binding, stale-save denial and browser mutation/RPC denial. SQL is unchanged. Current legacy alias and disconnect failure semantics have focused tests. Scope excludes bulk-custom completeness, mirror cleanup success, upstream reconnect admission, already-issued credentials and provider-side revocation. Those remain separately unresolved. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21120,7 +21252,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21145,7 +21277,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21170,7 +21302,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21195,7 +21327,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21220,7 +21352,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21245,7 +21377,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty exact existing selection, private mirror and cleanup sites, no new production code. Actual fresh Auth actors save the same custom provider through real HTTP despite forged opposite owner, retain exact canonical ciphertext and asynchronous owner mirror bytes, select only own getter/list/deploy env values, and reject the absent foreign provider. A real delayed local Storage response is followed by actual canonical connect or revoke, proving current authority selection. 102 canonical keys plus one orphan mirror exercise both enumeration pages and103 tombstones, anonymous denial, exact foreign row/object retention, unrelated-object retention and replay. Raw CWS save RPC and shared saveUserProviderKey factory are excluded here until their separate wrapper proof. This is owner/provider selection, not all downstream remote-account identity, complete009 vault or010 egress certification. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21270,7 +21402,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Three exact snapshot read/factory sites only. Real distinct actor/owner bundle reads, matching legacy canonical positive, orphan private objects, explicit reconnect refusal to inherit a privileged mirror, partial authority removal, absence, concurrent generations, stale rollback and wrong-owner save denial are preserved. Association and legacy JWT decoding are consistency checks, not external provider identity or mainnet/provider proof. The external customer-project client, ordinary BYOK reads/mirrors, remote preparation and Phase3 custody remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21291,7 +21423,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Three exact snapshot read/factory sites only. Real distinct actor/owner bundle reads, matching legacy canonical positive, orphan private objects, explicit reconnect refusal to inherit a privileged mirror, partial authority removal, absence, concurrent generations, stale rollback and wrong-owner save denial are preserved. Association and legacy JWT decoding are consistency checks, not external provider identity or mainnet/provider proof. The external customer-project client, ordinary BYOK reads/mirrors, remote preparation and Phase3 custody remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21312,7 +21444,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Three exact snapshot read/factory sites only. Real distinct actor/owner bundle reads, matching legacy canonical positive, orphan private objects, explicit reconnect refusal to inherit a privileged mirror, partial authority removal, absence, concurrent generations, stale rollback and wrong-owner save denial are preserved. Association and legacy JWT decoding are consistency checks, not external provider identity or mainnet/provider proof. The external customer-project client, ordinary BYOK reads/mirrors, remote preparation and Phase3 custody remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21333,7 +21465,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
         "reason": "Conservative from-method scanner false positive only. Decoding cannot grant provider identity, provisioning or tenant authorization. Adjacent bundle storage paths have separate unresolved source-bound reviews. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21346,15 +21478,15 @@
       }
     },
     {
-      "id": "ff2f67e37627c078ddb6",
+      "id": "1efd8ec34ba641c03034",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1224,
+      "line": 1225,
       "enclosing": "saveSupabaseBundle",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
         "reason": "Conservative from-method scanner false positive only. Decoding cannot grant provider identity, provisioning or tenant authorization. Adjacent bundle storage paths have separate unresolved source-bound reviews. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21367,15 +21499,15 @@
       }
     },
     {
-      "id": "dda425f65c86b04927bd",
+      "id": "d68b6df592d887684c6f",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1254,
+      "line": 1255,
       "enclosing": "saveSupabaseBundle",
       "kind": "RPC_CANDIDATE",
       "target": "save_supabase_bundle_if_current",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
         "reason": "Four-row owner/revision bundle transaction VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660 tests51-53: absent-owner admission does not mutate rows, two clients yield one common generation, a last-row stale revision rolls back all earlier writes, wrong owner/browser cannot save, individual revocation invalidates the bundle, generic single-key overwrite removes association. Runtime/SQL/fixtures unchanged. Only atomic association/persistence closes. Association and legacy JWT decoding do not verify provider identity. Upstream account/project selection, mirrors, already-issued external effects and full lifecycle/KMS remain separately unresolved. No live provider or whole vault certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21388,15 +21520,15 @@
       }
     },
     {
-      "id": "00a5b7095a4b9bb8d860",
+      "id": "d2968f7d0b0673e4e552",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1254,
+      "line": 1255,
       "enclosing": "saveSupabaseBundle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
         "reason": "Fixed bundle client use VERIFIED at696322f0, disposable39124146660 tests51-53. The client is invoked only after resolving an opaque admission from the private WeakMap. Its frozen owner supplies p_owner_id, the payload has the four fixed providers and captured revisions, and only true acknowledges the existing atomic transaction. Successful save consumes the admission. Protected connect requires issued TenantContext, with internal OAuth/provisioning callers capturing admissions before remote work. Runtime helper and transaction unchanged. Only this fixed client use closes. Full upstream actor/provider account lifecycle, legacy mirror policy, external effects and KMS remain independently open. No whole credential caller certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21409,15 +21541,15 @@
       }
     },
     {
-      "id": "21bfc5f4b895f0031a37",
+      "id": "91c17cc8f6bff705b598",
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1284,
+      "line": 1286,
       "enclosing": "connectUserSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "semanticReview": {
         "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
         "reason": "Exclude only this AST conversion false positive. It does not authenticate the JWT claims or certify subsequent credential persistence/provisioning. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",

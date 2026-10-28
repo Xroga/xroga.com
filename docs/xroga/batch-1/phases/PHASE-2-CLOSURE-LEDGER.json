@@ -6504,18 +6504,18 @@
       "id": "B1-P2-50f57cd7c2568e3b",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/services/integrations/supabaseProvision.ts",
-      "sourceSha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+      "sourceSha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839",
       "baselineCallerIds": [
         "b1d69d6354dd94af3c3e"
       ],
       "currentCallerIds": [
-        "76db5ae741f58e8ad98b"
+        "c411916d520cbe22dc2d"
       ],
       "mapping": [
         {
           "baselineCallerId": "b1d69d6354dd94af3c3e",
           "currentCallerIds": [
-            "76db5ae741f58e8ad98b"
+            "c411916d520cbe22dc2d"
           ],
           "change": "RETAINED"
         }
@@ -6525,7 +6525,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-50f57cd7c2568e3b",
-        "sourceSha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+        "sourceSha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839",
         "executionStatus": "IN_PROGRESS",
         "finding": "DORMANT_READINESS_EXPORT_REQUIRES_EXISTING_ISSUED_CONTEXT_REAL_PROOF_PENDING",
         "actorTrace": "Only the dormant userSupabaseMemoryReady function remains scoped. Its complete original issued-context, canonical owner/account and owner-constrained query body is byte-identical to the pushed parent. Other provisioning methods have partial transport corrections, independently unresolved for Phase4. See SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json. No caller promotion or phase acceptance.",
@@ -6550,6 +6550,11 @@
           "ref": "1f0761daa88420e5ef00d98e99135cd542915188",
           "path": "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
           "sourceSha256": "78a71490f381ab699c55168fc075b0042dbb081bc0cc3b6e13d440d2a13fe014"
+        },
+        "beforeSupabaseProvisionSource": {
+          "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+          "sha256": "3c251668d394f048ec839f6d739a4884267f8ef097cbe290a27b85f7a73a663b",
+          "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
         }
       },
       "actor": {
@@ -6574,7 +6579,7 @@
         {
           "path": "backend/src/services/integrations/supabaseProvision.test.ts",
           "marker": "existing public or unknown buckets cannot be reported private",
-          "sourceSha256": "959294d9d2683c7e8862a88f4ab6c458ae76c6de5e9beec3bc45720eb7332137",
+          "sourceSha256": "dcfecd5bb89cf9f1b3f0e051141becd23516d2ab7990f51840f4706fea5a94b6",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6692,7 +6697,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+          "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6819,7 +6824,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+          "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8350,7 +8355,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
+            "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
             "historicalBinding": {
               "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
               "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
@@ -8518,7 +8523,7 @@
       "id": "B1-P2-8c13793907db3388",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "baselineCallerIds": [
         "c3f2ca136ccab92884f3",
         "8466decbcb9ca41d5da8",
@@ -8692,7 +8697,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-8c13793907db3388",
-        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
         "actualVerification": {
@@ -8757,6 +8762,11 @@
           "historicalSourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
           "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
           "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        },
+        "beforeSupabaseProvisionSource": {
+          "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+          "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+          "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
         }
       },
       "actor": {
@@ -8790,7 +8800,7 @@
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
           "marker": "rejects a concurrent revoke",
-          "sourceSha256": "31a98efd03d226565294e9bf8d0c045ad86d07f59f74dcfad73e424f7e02e6c1",
+          "sourceSha256": "0f715b7c6195ba292f74a32444feebdf4b8557691da061e80041a2103408219c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8844,7 +8854,7 @@
       "id": "B1-P2-d3895e94f03fa522",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "baselineCallerIds": [
         "00329f071464b8e43b18"
       ],
@@ -8865,7 +8875,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d3895e94f03fa522",
-        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+        "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -8911,6 +8921,11 @@
           "historicalSourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
           "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
           "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        },
+        "beforeSupabaseProvisionSource": {
+          "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+          "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+          "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
         }
       },
       "actor": {
@@ -8928,7 +8943,7 @@
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
           "marker": "rejects a concurrent revoke",
-          "sourceSha256": "31a98efd03d226565294e9bf8d0c045ad86d07f59f74dcfad73e424f7e02e6c1",
+          "sourceSha256": "0f715b7c6195ba292f74a32444feebdf4b8557691da061e80041a2103408219c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8982,7 +8997,7 @@
       "id": "B1-P2-bee64099846891d0",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "baselineCallerIds": [
         "3fd4baa9d381d8e8ebdb"
       ],
@@ -9064,7 +9079,7 @@
       "id": "B1-P2-ee04e35f1fc33a98",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "baselineCallerIds": [
         "bffd24f4371afe0068ce",
         "c0a660520b23bcf21065"
@@ -9156,7 +9171,7 @@
       "id": "B1-P2-0814a4d254cfad84",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "baselineCallerIds": [
         "616340b0d7522ddd6992"
       ],
@@ -9238,7 +9253,7 @@
       "id": "B1-P2-4f31a2595f724ac7",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "baselineCallerIds": [
         "20831c35d677b0bb0980"
       ],
@@ -9320,7 +9335,7 @@
       "id": "B1-P2-2114492823658128",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "sourceSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
       "baselineCallerIds": [
         "f18023f7a692ccdd61fe"
       ],

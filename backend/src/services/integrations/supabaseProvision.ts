@@ -7,7 +7,9 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import pg from 'pg';
-import {requireTenantContext,type TenantContext} from '../../security/tenantContext.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
+import {AuthorityError} from '../../security/authority/enforce.js';
+import {captureSupabaseAccess,requireSupabaseAccess,beforeSupabaseWrite,installSupabaseWriteGuard,type SupabaseAccess} from './supabaseAccess.js';
 import {
   getUserProviderKey,
   getUserSupabaseStatus,
@@ -18,6 +20,11 @@ import {
 } from './userProviderKeys.js';
 
 const MGMT = 'https://api.supabase.com/v1';
+import {isDeepStrictEqual} from 'node:util';
+import type {AuthorityPermit} from '../../security/authority/types.js';
+import type {BusinessActionPlan} from './businessAction.js';
+import {nativeReleaseActor} from '../publish/nativeReleaseAdmission.js';
+import {prepareSupabaseNativeAction,readSupabaseNativeAction} from './supabaseApproval.js';
 import { projectRefFromUrl } from './supabaseProjectUrl.js';
 export { projectRefFromUrl } from './supabaseProjectUrl.js';
 
@@ -201,6 +208,7 @@ export class SupabaseManagementDenied extends Error {
 const validProjectRef = (value: unknown): value is string => typeof value === 'string' && /^[a-z0-9]{1,63}$/.test(value);
 const managementDenied = () => new SupabaseManagementDenied();
 const terminalSupabaseDenial = (error: unknown) => error instanceof SupabaseManagementDenied
+  || error instanceof AuthorityError
   || error instanceof Error && ['AbortError', 'TimeoutError'].includes(error.name)
   || !!error && typeof error === 'object' && 'code' in error && ['SUPABASE_TRANSPORT_DENIED','TENANT_AUTH_REQUIRED','CREDENTIAL_WRITE_CONFLICT'].includes(String(error.code));
 
@@ -210,31 +218,49 @@ async function mgmtFetch<T>(
   path: string,
   accessToken: string,
   init: RequestInit = {},
+  context?: TenantContext,
+  source?: SupabaseAccess,
+  storageOrigin?: string,
 ): Promise<T> {
-  const method = init.method ?? 'GET';
+  const actor = requireTenantContext(context);
+  const access = requireSupabaseAccess(source, actor);
+  await access.check();
+  const method = init.method ?? 'GET', storageRef = storageOrigin ? projectRefFromUrl(storageOrigin) : null;
+  if (storageOrigin && !storageRef) throw managementDenied();
   if (typeof accessToken !== 'string' || !accessToken || accessToken.length > 16384 || /[\x00-\x20\x7f]/.test(accessToken)
-    || !(method === 'GET' && (path === '/projects' || /^\/projects\/[a-z0-9]{1,63}\/api-keys\?reveal=true$/.test(path))
-      || method === 'POST' && /^\/projects\/[a-z0-9]{1,63}\/database\/query$/.test(path))) throw managementDenied();
+    || !(storageRef && path === '/storage/v1/bucket' && (method === 'GET' || method === 'POST')
+      || !storageRef && method === 'GET' && (path === '/projects' || /^\/projects\/[a-z0-9]{1,63}\/api-keys\?reveal=true$/.test(path))
+      || !storageRef && method === 'POST' && /^\/projects\/[a-z0-9]{1,63}\/database\/query$/.test(path))) throw managementDenied();
   if (method === 'POST') {
     if (typeof init.body !== 'string' || Buffer.byteLength(init.body) > 512 * 1024) throw managementDenied();
     let body: unknown; try { body = JSON.parse(init.body); } catch { throw managementDenied(); }
-    if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).join() !== 'query'
-      || typeof (body as {query?:unknown}).query !== 'string' || !(body as {query:string}).query.trim()) throw managementDenied();
+    if (storageRef) {
+      const bucket = body as {id?:unknown;name?:unknown;public?:unknown;file_size_limit?:unknown};
+      if (!bucket || typeof bucket !== 'object' || Array.isArray(bucket) || Object.keys(bucket).some(key=>!['id','name','public','file_size_limit'].includes(key))
+        || typeof bucket.id !== 'string' || !/^[a-z0-9][a-z0-9-]{0,62}$/.test(bucket.id) || bucket.name!==bucket.id || bucket.public!==false || bucket.file_size_limit!==52428800) throw managementDenied();
+      await beforeSupabaseWrite(access,'bucket-create',{projectRef:storageRef,id:bucket.id,public:false,fileSizeLimit:52428800});
+    } else {
+      if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).join() !== 'query'
+        || typeof (body as {query?:unknown}).query !== 'string' || !(body as {query:string}).query.trim()) throw managementDenied();
+      await beforeSupabaseWrite(access,'management-sql',{projectRef:path.split('/')[2],query:(body as {query:string}).query});
+    }
   } else if (init.body != null) throw managementDenied();
   const signal = AbortSignal.any([AbortSignal.timeout(20000), ...(init.signal ? [init.signal] : [])]);
   signal.throwIfAborted();
+  await access.check();
   let res: Response;
   try {
-    res = await fetch(`${MGMT}${path}`, {
+    res = await fetch(`${storageOrigin ?? MGMT}${path}`, {
       method, body: init.body, redirect: 'manual', signal,
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: 'application/json', 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${accessToken}`, Accept: 'application/json', 'Content-Type': 'application/json', ...(storageRef ? {apikey:accessToken} : {}) },
     });
   } catch { signal.throwIfAborted(); if (method === 'POST') throw managementDenied();
     throw new Error('Supabase management service is unavailable. No automatic retry was made.'); }
   if (res.redirected || res.status >= 300 && res.status < 400 || res.status === 401 || res.status === 403 || res.status === 429) {
     await res.body?.cancel().catch(() => undefined); throw managementDenied();
   }
-  if (!res.ok) { await res.body?.cancel().catch(() => undefined); throw new Error('Supabase could not complete this request. Check your connection permissions and retry.'); }
+  if (storageRef && method==='POST' && res.status===409) { await res.body?.cancel().catch(()=>undefined); await access.check(); throw new SupabaseStorageConflict(); }
+  if (!res.ok) { await res.body?.cancel().catch(() => undefined); await access.check(); throw new Error('Supabase could not complete this request. Check your connection permissions and retry.'); }
   const reader = res.body?.getReader(), chunks: Uint8Array[] = []; let bytes = 0;
   try {
     if (reader) for (;;) { const next = await reader.read(); if (next.done) break;
@@ -244,13 +270,18 @@ async function mgmtFetch<T>(
     throw new Error('Supabase management response is unavailable. No automatic retry was made.');
   } finally { await reader?.cancel().catch(() => undefined); reader?.releaseLock(); }
   signal.throwIfAborted();
+  await access.check();
   let body: unknown; try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { throw managementDenied(); }
-  if (!Array.isArray(body)) throw managementDenied();
+  if (storageRef && method==='POST') { if(!body || typeof body!=='object' || Array.isArray(body)) throw managementDenied(); }
+  else if (!Array.isArray(body)) throw managementDenied();
   return body as T;
 }
 
-export async function listSupabaseProjects(accessToken: string): Promise<MgmtProject[]> {
-  const data = await mgmtFetch<Array<Record<string, unknown>>>('/projects', accessToken);
+export async function listSupabaseProjects(accessToken: string, context?: TenantContext, source?: SupabaseAccess): Promise<MgmtProject[]> {
+  const actor = requireTenantContext(context);
+  const access = source ? requireSupabaseAccess(source, actor) : await captureSupabaseAccess(actor);
+  try {
+  const data = await mgmtFetch<Array<Record<string, unknown>>>('/projects', accessToken, undefined, actor, access);
   if (data.length > 1000 || data.some(p => !p || typeof p !== 'object' || Array.isArray(p)
     || p.id !== undefined && (typeof p.id !== 'string' || !p.id || p.id.length > 128)
     || !validProjectRef(p.ref ?? p.id) || typeof p.name !== 'string' || !p.name || p.name.length > 256
@@ -260,13 +291,20 @@ export async function listSupabaseProjects(accessToken: string): Promise<MgmtPro
     organization_id: p.organization_id as string | undefined, region: p.region as string | undefined }));
   if (new Set(projects.map(p => p.ref)).size !== projects.length) throw managementDenied();
   return projects;
+  } finally { if (!source) access.close(); }
 }
 
 export async function fetchProjectApiKeys(
   accessToken: string,
   projectRef: string,
+  context?: TenantContext,
+  source?: SupabaseAccess,
 ): Promise<{ url: string; anonKey: string; serviceRoleKey: string }> {
+  const actor = requireTenantContext(context);
   if (!validProjectRef(projectRef)) throw managementDenied();
+  const access = source ? requireSupabaseAccess(source, actor) : await captureSupabaseAccess(actor);
+  try {
+  if (!(await listSupabaseProjects(accessToken, actor, access)).some(project => project.ref === projectRef)) throw new AuthorityError('SUPABASE_SOURCE_ADMISSION_DENIED');
   // Current Management API requires reveal=true for secret values
   const keys = await mgmtFetch<
     Array<{
@@ -275,7 +313,7 @@ export async function fetchProjectApiKeys(
       type?: string;
       id?: string;
     }>
-  >(`/projects/${encodeURIComponent(projectRef)}/api-keys?reveal=true`, accessToken);
+  >(`/projects/${encodeURIComponent(projectRef)}/api-keys?reveal=true`, accessToken, undefined, actor, access);
 
   if (keys.length > 100 || keys.some(key => !key || typeof key !== 'object' || Array.isArray(key)
     || key.api_key !== undefined && (typeof key.api_key !== 'string' || !key.api_key || key.api_key.length > 48000 || /[\x00-\x20\x7f]/.test(key.api_key))
@@ -290,14 +328,15 @@ export async function fetchProjectApiKeys(
   };
 
   const anon = pick(
-    (k) => k.name === 'anon' || k.type === 'legacyAnonKey' || k.type === 'anon',
+    (k) => (k.type === undefined || k.type === 'legacy') && k.name === 'anon' || k.type === 'legacyAnonKey' || k.type === 'anon',
     (k) => k.type === 'publishable',
   );
   const service = pick(
-    (k) => k.name === 'service_role' || k.type === 'legacyServiceRoleKey' || k.type === 'service_role',
+    (k) => (k.type === undefined || k.type === 'legacy') && k.name === 'service_role' || k.type === 'legacyServiceRoleKey' || k.type === 'service_role',
     (k) => k.type === 'secret',
   );
 
+  if (anon && /^sb_secret_/i.test(anon) || service && /^sb_publishable_/i.test(service) || anon && service && anon===service) throw managementDenied();
   if (!anon || !service) {
     throw new Error(
       'Could not read anon/service_role keys from Supabase Management API. Ensure the OAuth app has Secrets Read (and try re-authorize).',
@@ -308,107 +347,92 @@ export async function fetchProjectApiKeys(
     anonKey: anon,
     serviceRoleKey: service,
   };
+  } finally { if (!source) access.close(); }
 }
 
 export async function runSqlViaManagementApi(
   accessToken: string,
   projectRef: string,
   query: string,
+  context?: TenantContext,
+  source?: SupabaseAccess,
 ): Promise<void> {
+  const actor = requireTenantContext(context);
   if (!validProjectRef(projectRef)) throw managementDenied();
+  const access = source ? requireSupabaseAccess(source, actor) : await captureSupabaseAccess(actor);
+  try {
+  if (!(await listSupabaseProjects(accessToken, actor, access)).some(project => project.ref === projectRef)) throw new AuthorityError('SUPABASE_SOURCE_ADMISSION_DENIED');
   await mgmtFetch(`/projects/${encodeURIComponent(projectRef)}/database/query`, accessToken, {
     method: 'POST',
     body: JSON.stringify({ query }),
-  });
+  }, actor, access);
+  } finally { if (!source) access.close(); }
 }
 
 export async function runSqlViaDatabasePassword(
-  projectRef: string,
-  dbPassword: string,
-  query: string,
-  regionHint?: string,
-): Promise<void> {
-  const password = dbPassword.trim().replace(/^["']|["']$/g, '');
-  const hosts = [
-    regionHint
-      ? `aws-1-${regionHint}.pooler.supabase.com`
-      : 'aws-1-ap-southeast-1.pooler.supabase.com',
-    'aws-0-us-east-1.pooler.supabase.com',
-    'aws-1-us-east-1.pooler.supabase.com',
-    'aws-0-eu-central-1.pooler.supabase.com',
-    `${projectRef}.supabase.co`,
-  ];
-  const ports = [6543, 5432];
-  let lastError: Error | undefined;
-
-  for (const host of hosts) {
-    for (const port of ports) {
-      const user = host.includes('pooler') ? `postgres.${projectRef}` : 'postgres';
-      const client = new pg.Client({
-        host,
-        port,
-        user,
-        password,
-        database: 'postgres',
-        ssl: { rejectUnauthorized: false },
-        connectionTimeoutMillis: 12_000,
-      });
-      try {
-        await client.connect();
-        await client.query(query);
-        await client.end();
-        return;
-      } catch (err) {
-        lastError = err as Error;
-        try {
-          await client.end();
-        } catch {
-          /* ignore */
-        }
-      }
+ projectRef:string,dbPassword:string,query:string,regionHint?:string,context?:TenantContext,source?:SupabaseAccess,
+):Promise<void>{
+ const actor=requireTenantContext(context);
+ if(!validProjectRef(projectRef)||typeof dbPassword!=='string'||!dbPassword||dbPassword.length>16384||dbPassword.includes('\0')
+  ||regionHint!==undefined&&!/^[a-z]{2}-(?:[a-z]+-)+[1-9]$/.test(regionHint))throw managementDenied();
+ const access=source?requireSupabaseAccess(source,actor):await captureSupabaseAccess(actor);
+ const hosts=[...new Set([`db.${projectRef}.supabase.co`,regionHint?`aws-1-${regionHint}.pooler.supabase.com`:'aws-1-ap-southeast-1.pooler.supabase.com',
+  'aws-0-us-east-1.pooler.supabase.com','aws-1-us-east-1.pooler.supabase.com','aws-0-eu-central-1.pooler.supabase.com'])];
+ try{
+  for(const host of hosts)for(const port of host.startsWith('db.')?[5432]:[5432,6543]){
+   await beforeSupabaseWrite(access,'password-connect',{projectRef});
+   const client=new pg.Client({host,port,user:host.includes('.pooler.')?`postgres.${projectRef}`:'postgres',password:dbPassword,database:'postgres',
+    ssl:{rejectUnauthorized:true},connectionTimeoutMillis:3000,statement_timeout:20000,query_timeout:25000});
+   let connected=false;
+   try{
+    try{await client.connect();connected=true;}catch(error){
+     await access.check();const code=String((error as {code?:unknown})?.code??'');
+     if(!['ENETUNREACH','EHOSTUNREACH','ENOTFOUND','ECONNREFUSED','ETIMEDOUT'].includes(code))throw provisionDenied();
+     continue;
     }
+    await beforeSupabaseWrite(access,'password-sql',{projectRef,query});await client.query(query);await access.check();
+    await beforeSupabaseWrite(access,'password-sql',{projectRef,query:schemaVerificationSql});
+    const verification=await client.query(schemaVerificationSql);await access.check();
+    if(!schemaVerified(verification.rows))throw provisionDenied();return;
+   }catch(error){if(terminalSupabaseDenial(error))throw error;throw provisionDenied();}
+   finally{await client.end().catch(()=>undefined);if(connected)await access.check();}
   }
-  throw new Error(lastError?.message || 'Could not connect with database password');
+  throw new Error('Supabase database connection is unavailable. No SQL was retried.');
+ }finally{if(!source)access.close();}
 }
 
+class SupabaseStorageConflict extends Error { constructor(){super('Supabase bucket already exists.');} }
 export async function ensureStorageBuckets(
-  url: string,
-  serviceRoleKey: string,
-  bucketIds: string[] = ['xroga-uploads'],
-): Promise<string[]> {
-  if (!projectRefFromUrl(url)) throw new Error('Invalid Supabase project URL');
-  if (bucketIds.some(id => !/^[a-z0-9][a-z0-9-]{0,62}$/.test(id))) throw new Error('Invalid storage bucket name');
-  const supabase = createClient(url, serviceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-  const created: string[] = [];
-  for (const id of bucketIds) {
-    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-    if (listError || !Array.isArray(buckets)) throw new Error('Storage access could not be verified. Check your connection and retry.');
-    const existing = buckets.find(bucket => bucket.id === id);
-    if (existing) {
-      if (existing.public !== false) throw new Error('Storage privacy could not be verified. Review the bucket settings before retrying.');
-      created.push(id);
-      continue;
-    }
-    const { error } = await supabase.storage.createBucket(id, {
-      public: false,
-      fileSizeLimit: 52_428_800,
-    });
-    if (error && !/already exists|duplicate/i.test(error.message)) {
-      throw new Error('Storage setup failed. Check your connection permissions and retry.');
-    }
-    const { data: confirmed, error: confirmError } = await supabase.storage.listBuckets();
-    if (confirmError || !Array.isArray(confirmed) || confirmed.find(bucket => bucket.id === id)?.public !== false) {
-      throw new Error('Storage privacy could not be verified. Review the bucket settings before retrying.');
-    }
-    created.push(id);
+  url:string,serviceRoleKey:string,bucketIds:string[]=['xroga-uploads'],context?:TenantContext,source?:SupabaseAccess,
+):Promise<string[]>{
+ const actor=requireTenantContext(context),ref=projectRefFromUrl(url);
+ if(!ref)throw new Error('Invalid Supabase project URL');
+ if(bucketIds.length>2||bucketIds.some(id=>!/^[a-z0-9][a-z0-9-]{0,62}$/.test(id))||new Set(bucketIds).size!==bucketIds.length)throw new Error('Invalid storage bucket name');
+ const access=source?requireSupabaseAccess(source,actor):await captureSupabaseAccess(actor);
+ const readBuckets=async()=>{
+  const rows=await mgmtFetch<Array<{id?:unknown;public?:unknown}>>('/storage/v1/bucket',serviceRoleKey,undefined,actor,access,url);
+  if(rows.length>1000||rows.some(row=>!row||typeof row.id!=='string')||new Set(rows.map(row=>row.id)).size!==rows.length)throw managementDenied();
+  return rows;
+ };
+ try{
+  const confirmed:string[]=[];
+  for(const id of bucketIds){
+   let rows;try{rows=await readBuckets();}catch(error){if(terminalSupabaseDenial(error))throw error;throw new Error('Storage access could not be verified. Check your connection and retry.');}
+   const existing=rows.find(row=>row.id===id);
+   if(existing){if(existing.public!==false)throw new Error('Storage privacy could not be verified. Review the bucket settings before retrying.');confirmed.push(id);continue;}
+   try{await mgmtFetch('/storage/v1/bucket',serviceRoleKey,{method:'POST',body:JSON.stringify({id,name:id,public:false,file_size_limit:52428800})},actor,access,url);}
+   catch(error){if(!(error instanceof SupabaseStorageConflict))throw error;}
+   if((await readBuckets()).find(row=>row.id===id)?.public!==false)throw new Error('Storage privacy could not be verified. Review the bucket settings before retrying.');
+   confirmed.push(id);
   }
-  return created;
+  await access.check();return confirmed;
+ }finally{if(!source)access.close();}
 }
 
 export interface ProvisionResult {
   ok: boolean;
+  needsConfirmation?: boolean;
+  reviewUrl?: string;
   method: 'management_api' | 'database_password' | 'keys_only';
   projectRef?: string;
   projectUrl?: string;
@@ -419,87 +443,92 @@ export interface ProvisionResult {
   error?: string;
 }
 
-/** Apply schema + storage on the user's project. */
-export async function provisionUserSupabase(opts: {
-  projectUrl: string;
-  serviceRoleKey: string;
-  accessToken?: string;
-  dbPassword?: string;
-  projectName?: string;
-  region?: string;
-}): Promise<ProvisionResult> {
-  const ref = projectRefFromUrl(opts.projectUrl);
-  if (!ref) {
-    return {
-      ok: false,
-      method: 'keys_only',
-      buckets: [],
-      schemaApplied: false,
-      memoryTablesReady: false,
-      message: 'Invalid Supabase project URL',
-      error: 'Invalid URL',
-    };
-  }
+/** Verification query reads schema metadata only, never customer records. */
+const schemaVerificationSql = `select count(*)::int as table_count, bool_and(c.relrowsecurity) as rls_enabled
+from pg_class c join pg_namespace n on n.oid=c.relnamespace
+where n.nspname='public' and c.relname in ('profiles','app_items','xroga_project_memory','xroga_session_memory') and c.relkind='r'`;
+const schemaVerified = (rows:unknown) => Array.isArray(rows) && rows.length===1 && Number(rows[0]?.table_count)===4 && rows[0]?.rls_enabled===true;
+const provisionDenied = () => new AuthorityError('SUPABASE_PROVISION_ADMISSION_DENIED');
+export interface SupabaseProvisionInput {
+  userId:string; tenantContext?:TenantContext; projectUrl:string; serviceRoleKey:string;
+  accessToken?:string; dbPassword?:string; projectName?:string; region?:string; signal?:AbortSignal;
+  plan?:BusinessActionPlan; authorityPermit?:AuthorityPermit;
+}
 
-  const sql = buildUserSupabaseProvisionSql({
-    projectName: opts.projectName || ref,
-    includeAppSchema: true,
-    includeStorage: true,
+/** Prepare one exact action. SQL and bucket writes belong only to the existing
+ * canonical confirmation executor, never connection, model text or a raw ID. */
+export async function provisionUserSupabase(input:SupabaseProvisionInput):Promise<ProvisionResult>{
+ const opts={...input},actor=nativeReleaseActor(opts.userId,opts.tenantContext,opts.plan,opts.authorityPermit),context=actor.context;
+ requireResourceOwner(context,opts.userId);opts.signal?.throwIfAborted();
+ const native=actor.plan?await readSupabaseNativeAction(actor,opts.authorityPermit):undefined;
+ const access=await captureSupabaseAccess(context,opts.signal,native?.checkClaim);
+ try{
+  if(native && native.plan.arguments.connection!==access.fingerprint)throw provisionDenied();
+  const ref=projectRefFromUrl(opts.projectUrl);if(!ref)throw managementDenied();
+  opts.projectUrl=`https://${ref}.supabase.co`;
+  const bundle=await readUserSupabaseBundle(context.userId);await access.check();
+  if(!bundle||bundle.projectUrl!==opts.projectUrl||bundle.serviceRoleKey!==opts.serviceRoleKey||!opts.serviceRoleKey)throw provisionDenied();
+  const selected=actor.plan?.arguments.connectionMethod;
+  let source:string,token:string|undefined,password:string|undefined;
+  if(selected==='storage_only'||!actor.plan&&!opts.accessToken&&!opts.dbPassword)source='storage_only';
+  else if(selected==='database_password'||!actor.plan&&!opts.accessToken&&opts.dbPassword){
+   if(!bundle.dbPassword||opts.dbPassword!==bundle.dbPassword)throw provisionDenied();source='database_password';password=bundle.dbPassword;
+  }else{
+   const{getSupabaseOAuthAccessToken}=await import('./supabaseAuth.js');
+   const oauth=await getSupabaseOAuthAccessToken(context.userId),pat=await getUserProviderKey(context.userId,'supabase_pat');await access.check();
+   source=selected==='supabase_oauth'?'supabase_oauth':selected==='apikey_supabase_pat'?'apikey_supabase_pat':opts.accessToken&&opts.accessToken===oauth?'supabase_oauth':'apikey_supabase_pat';
+   token=source==='supabase_oauth'?oauth??undefined:pat??undefined;
+   if(!token||opts.accessToken!==token)throw provisionDenied();
+   if(!(await listSupabaseProjects(token,context,access)).some(project=>project.ref===ref))throw provisionDenied();
+  }
+  const name=opts.projectName??ref;if(typeof name!=='string'||!name||name.length>120||opts.region!==undefined&&!/^[a-z]{2}-(?:[a-z]+-)+[1-9]$/.test(opts.region))throw provisionDenied();
+  const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,24)||'xroga';
+  const buckets=[...new Set(['xroga-uploads',`${slug}-uploads`])];
+  const sql=source==='storage_only'?null:buildUserSupabaseProvisionSql({projectName:name,includeAppSchema:true,includeStorage:true});
+  const parameters={projectRef:ref,projectUrl:opts.projectUrl,projectName:name,region:opts.region??null,connectionMethod:source,sql,buckets,connection:access.fingerprint};
+  for(const value of [bundle.serviceRoleKey,bundle.dbPassword,token])if(value&&value.length>=8&&JSON.stringify(parameters).includes(value))throw provisionDenied();
+  if(!native){const prepared=await prepareSupabaseNativeAction(access,parameters);return{ok:false,method:'keys_only',projectRef:ref,projectUrl:opts.projectUrl,buckets:[],schemaApplied:false,memoryTablesReady:false,...prepared};}
+  native.assertArguments(parameters);
+  let applied=false,verified=false;const written=new Set<string>();
+  installSupabaseWriteGuard(access,opts.authorityPermit,native.binding,async(operation,payload)=>{
+   await access.check();
+   if(operation==='management-sql'&&token&&source!=='database_password'){
+    if(isDeepStrictEqual(payload,{projectRef:ref,query:sql})&&!applied){applied=true;return;}
+    if(isDeepStrictEqual(payload,{projectRef:ref,query:schemaVerificationSql})&&applied&&!verified){verified=true;return;}
+   }
+   if(operation==='password-connect'&&source==='database_password'&&!applied&&isDeepStrictEqual(payload,{projectRef:ref}))return;
+   if(operation==='password-sql'&&source==='database_password'){
+    if(isDeepStrictEqual(payload,{projectRef:ref,query:sql})&&!applied){applied=true;return;}
+    if(isDeepStrictEqual(payload,{projectRef:ref,query:schemaVerificationSql})&&applied&&!verified){verified=true;return;}
+   }
+   if(operation==='bucket-create'&&buckets.includes(String(payload.id))&&!written.has(String(payload.id))
+     &&(source==='storage_only'||verified)&&isDeepStrictEqual(payload,{projectRef:ref,id:payload.id,public:false,fileSizeLimit:52428800})){written.add(String(payload.id));return;}
+   throw provisionDenied();
   });
-
-  let schemaApplied = false;
-  let method: ProvisionResult['method'] = 'keys_only';
-  let lastError: string | undefined;
-
-  if (opts.accessToken?.trim()) {
-    try {
-      await runSqlViaManagementApi(opts.accessToken.trim(), ref, sql);
-      schemaApplied = true;
-      method = 'management_api';
-    } catch (error) {
-      if (terminalSupabaseDenial(error)) throw error;
-      lastError = 'Schema setup was not confirmed. Check your connection permissions and retry.';
-    }
+  await native.begin(access.check);
+  let schemaApplied=false;
+  if(token&&sql){
+   await runSqlViaManagementApi(token,ref,sql,context,access);
+   const rows=await mgmtFetch<unknown[]>(`/projects/${ref}/database/query`,token,{method:'POST',body:JSON.stringify({query:schemaVerificationSql})},context,access);
+   if(!schemaVerified(rows))throw provisionDenied();schemaApplied=true;
+  }else if(password&&sql){
+   await runSqlViaDatabasePassword(ref,password,sql,opts.region,context,access);schemaApplied=true;
   }
+  const confirmed=await ensureStorageBuckets(opts.projectUrl,bundle.serviceRoleKey,buckets,context,access);await access.check();
+  return{ok:source==='storage_only'?confirmed.length===buckets.length:schemaApplied&&confirmed.length===buckets.length,
+   method:token?'management_api':password?'database_password':'keys_only',projectRef:ref,projectUrl:opts.projectUrl,buckets:confirmed,schemaApplied,memoryTablesReady:schemaApplied,
+   message:source==='storage_only'?'Private storage verified. Schema and memory tables were not changed.':'Approved SQL executed. Expected tables have RLS enabled, and private storage was independently verified.'};
+ }finally{access.close();}
+}
 
-  if (!schemaApplied && opts.dbPassword?.trim()) {
-    try {
-      await runSqlViaDatabasePassword(ref, opts.dbPassword, sql, opts.region);
-      schemaApplied = true;
-      method = 'database_password';
-    } catch {
-      lastError = 'Schema setup was not confirmed. Check your database connection and retry.';
-    }
-  }
-
-  let buckets: string[] = [];
-  try {
-    buckets = await ensureStorageBuckets(opts.projectUrl, opts.serviceRoleKey, [
-      'xroga-uploads',
-      `${(opts.projectName || ref).toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24)}-uploads`,
-    ]);
-  } catch {
-    lastError = 'Private storage setup was not confirmed. Review your connection and bucket privacy before retrying.';
-  }
-
-  const ok = schemaApplied && buckets.length > 0;
-  return {
-    ok,
-    method,
-    projectRef: ref,
-    projectUrl: opts.projectUrl,
-    buckets,
-    schemaApplied,
-    memoryTablesReady: schemaApplied,
-    message: ok
-      ? 'Schema, memory tables and private storage setup completed on your Supabase project.'
-      : schemaApplied
-        ? `Schema and memory tables were saved, but private storage is not ready. ${lastError}`
-      : buckets.length
-        ? 'Private storage is ready, but schema setup was not confirmed. Review your connection permissions and retry.'
-        : `Setup was not confirmed. ${lastError || 'Connect an account with schema and storage permissions, then retry.'}`,
-    error: ok ? undefined : lastError,
-  };
+export async function executeSupabaseNativeAction(userId:string,plan:BusinessActionPlan,authorityPermit?:AuthorityPermit){
+ const actor=nativeReleaseActor(userId,undefined,plan,authorityPermit);await readSupabaseNativeAction(actor,authorityPermit);
+ const bundle=await readUserSupabaseBundle(actor.context.userId);if(!bundle?.serviceRoleKey)throw provisionDenied();
+ const source=actor.plan!.arguments.connectionMethod;
+ const token=source==='supabase_oauth'?(await import('./supabaseAuth.js')).getSupabaseOAuthAccessToken(userId):source==='apikey_supabase_pat'?getUserProviderKey(userId,'supabase_pat'):Promise.resolve(null);
+ return provisionUserSupabase({userId,tenantContext:actor.context,projectUrl:String(actor.plan!.arguments.projectUrl),serviceRoleKey:bundle.serviceRoleKey,
+  accessToken:await token??undefined,dbPassword:source==='database_password'?bundle.dbPassword??undefined:undefined,
+  projectName:String(actor.plan!.arguments.projectName),region:actor.plan!.arguments.region===null?undefined:String(actor.plan!.arguments.region),plan:actor.plan,authorityPermit});
 }
 
 export type SupabaseWriteAdmissions = Readonly<{
@@ -525,6 +554,7 @@ export async function prepareSupabaseConnectionWrite(userId: string) {
 /** One-click: PAT + project ref → save keys + provision everything. */
 export async function oneClickConnectSupabase(opts: {
   userId: string;
+  tenantContext?: TenantContext;
   accessToken: string;
   projectRef: string;
   vercelProject?: string;
@@ -535,14 +565,17 @@ export async function oneClickConnectSupabase(opts: {
   provision: ProvisionResult;
   keysSaved: boolean;
 }> {
+  const context = requireTenantContext(opts.tenantContext);
+  requireResourceOwner(context, opts.userId);
   const { userId, projectRef, projectName, writeAdmissions } = opts;
   const accessToken = opts.accessToken.trim();
   const {bundle, pat} = writeAdmissions ?? await prepareSupabaseConnectionWrite(userId);
-  const keys = await fetchProjectApiKeys(accessToken, projectRef);
+  const keys = await fetchProjectApiKeys(accessToken, projectRef, context);
   await saveSupabaseBundle(bundle, { projectUrl: keys.url, anonKey: keys.anonKey, serviceRoleKey: keys.serviceRoleKey });
   await saveUserProviderKey(userId, 'supabase_pat', accessToken,{writeAdmission:pat});
 
   const provision = await provisionUserSupabase({
+    userId, tenantContext: context,
     projectUrl: keys.url,
     serviceRoleKey: keys.serviceRoleKey,
     accessToken,
@@ -574,7 +607,9 @@ export async function getUserSupabaseAdmin(userId: string): Promise<SupabaseClie
 }
 
 /** Prefer OAuth Management token, then pasted PAT. */
-export async function getUserSupabaseManagementToken(userId: string): Promise<string | null> {
+export async function getUserSupabaseManagementToken(userId: string, suppliedContext?: TenantContext): Promise<string | null> {
+  const context = requireTenantContext(suppliedContext);
+  requireResourceOwner(context, userId);
   const { getSupabaseOAuthAccessToken } = await import('./supabaseAuth.js');
   // The OAuth adapter returns null for ordinary refresh unavailability. A thrown
   // authority/transport failure must never select a different credential.

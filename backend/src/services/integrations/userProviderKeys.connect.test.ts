@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import test from 'node:test';
+import {nativeReleaseFixture} from '../publish/__tests__/nativeReleaseFixture.js';
 import { createTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import { connectUserSupabase, deleteUserProviderKey, getUserSupabaseStatus } from './userProviderKeys.js';
 
 test('manual Supabase connection binds all writes before yielding and reports only verified provisioning', async () => {
   const context = createTenantContext({ userId: '11111111-1111-4111-8111-111111111111', via: 'remote_getuser' });
+  const confirmations=nativeReleaseFixture(context.userId);
   const originalFetch = globalThis.fetch;
   const names = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'USER_SECRETS_ENCRYPTION_KEY'];
   const before = names.map(name => process.env[name]);
@@ -32,6 +34,7 @@ test('manual Supabase connection binds all writes before yielding and reports on
       if (privateBucketAvailable) return reply([{ id: 'xroga-uploads', public: false }]);
       return reply({ message: 'synthetic denied' }, 403);
     }
+    if(url.pathname.endsWith('/business_action_confirmations'))return (await confirmations.database(url,init))!;
     if (url.pathname.endsWith('/prepare_provider_key_write')) {
       prepares++;
       assert.equal(body.p_owner_id, context.userId);
@@ -113,7 +116,7 @@ test('manual Supabase connection binds all writes before yielding and reports on
     const failed = await connectUserSupabase(context, { projectUrl: request.projectUrl, anonKey: request.anonKey, serviceRoleKey: 'SYNTHETIC_SERVICE_KEY_LONG' });
     assert.equal(failed.provision?.ok, false); assert.equal(failed.status.provisioned, false);
     assert.equal(failed.status.ready, true);
-    rows.set('apikey_supabase_pat', { provider: 'apikey_supabase_pat', metadata: { provider: 'supabase_pat' } });
+    rows.set('apikey_supabase_pat', { provider: 'apikey_supabase_pat', access_token:'', metadata: { provider: 'supabase_pat' } });
     rows.set('apikey_supabase_db_password', { provider: 'apikey_supabase_db_password', access_token: 'synthetic-active-ciphertext', metadata: { provider: 'supabase_db_password' } });
     const status = await getUserSupabaseStatus(context.userId);
     assert.equal(status.provisioned, false); assert.equal(status.ready, false, 'Unbound password invalidates ready status');
@@ -122,7 +125,8 @@ test('manual Supabase connection binds all writes before yielding and reports on
     privateBucketAvailable = true;
     rows.delete('apikey_supabase_db_password');
     const storageOnly = await connectUserSupabase(context, { projectUrl: request.projectUrl, anonKey: request.anonKey, serviceRoleKey: 'SYNTHETIC_SERVICE_KEY_LONG' });
-    assert.equal(storageOnly.provision?.ok, true);
+    assert.equal(storageOnly.provision?.ok, false);
+    assert.equal(storageOnly.provision?.needsConfirmation,true);assert.equal(external,0,'Saving credentials does not authorize storage execution');
     assert.equal(storageOnly.provision?.schemaApplied, false);
     assert.equal(storageOnly.status.provisioned, false, 'A private bucket alone does not prove schema provisioning');
     const changing = { projectUrl: 'https://otherproject.supabase.co', anonKey: 'sb_publishable_synthetic_opaque' };

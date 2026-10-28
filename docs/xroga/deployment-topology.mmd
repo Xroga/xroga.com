@@ -137,6 +137,7 @@ flowchart LR
   endpoint_stripe_com["Source-defined endpoint stripe.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_sts_googleapis_com["Source-defined endpoint sts.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_studio_youtube_com["Source-defined endpoint studio.youtube.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_supabase_management_tests_invalid["Source-defined endpoint supabase-management-tests.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_supabase_com["Source-defined endpoint supabase.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_support_bolt_new["Source-defined endpoint support.bolt.new - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_token_actions_githubusercontent_com["Source-defined endpoint token.actions.githubusercontent.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -322,6 +323,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_stripe_com
   api -. "source host/reference; unverified" .-> endpoint_sts_googleapis_com
   frontend -. "source host/reference; unverified" .-> endpoint_studio_youtube_com
+  api -. "source host/reference; unverified" .-> endpoint_supabase_management_tests_invalid
   frontend -. "source host/reference; unverified" .-> endpoint_supabase_com
   frontend -. "source host/reference; unverified" .-> endpoint_support_bolt_new
   api -. "source host/reference; unverified" .-> endpoint_token_actions_githubusercontent_com

@@ -59,7 +59,7 @@ function CallbackHandler() {
         const msg =
           res.message ||
           (res.autoSelected
-            ? 'Supabase connected — schema & memory set up automatically'
+            ? 'Supabase connected. Review schema and storage setup separately.'
             : 'Supabase authorized');
         setMessage(msg);
 
@@ -68,7 +68,8 @@ function CallbackHandler() {
           needsProjectPick: Boolean(res.needsProjectPick),
           projects: res.projects ?? [],
           autoSelected: Boolean(res.autoSelected),
-          provisioned: Boolean(res.provision?.schemaApplied || res.status?.provisioned),
+          provisioned:res.provision?.ok===true&&res.provision?.schemaApplied===true&&res.provision?.memoryTablesReady===true,
+          reviewUrl:res.provision?.needsConfirmation?res.provision.reviewUrl:undefined,
           message: msg,
           envSync: (res as { envSync?: { ok?: boolean; error?: string } }).envSync,
         };

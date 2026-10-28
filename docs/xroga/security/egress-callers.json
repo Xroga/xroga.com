@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "6cdecdde7e676d50eac5d1ba6dd6700e616dd38e2fe6ec399152c9ddcdceaf52",
+  "sourceTreeDigest": "efa67048db9480181bc5347611c932f428fa60a5d14ac374ec0aa846aa22cc81",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -1809,7 +1809,7 @@
     {
       "id": "807c2948cdfa16e19b84",
       "file": "backend/src/routes/supabaseOAuth.ts",
-      "line": 331,
+      "line": 344,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
@@ -1825,7 +1825,7 @@
     {
       "id": "96fbfea42a399a233486",
       "file": "backend/src/routes/supabaseOAuth.ts",
-      "line": 425,
+      "line": 443,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
@@ -2314,18 +2314,29 @@
     {
       "id": "15dcdf4bce3cfa3abf94",
       "file": "backend/src/services/integrations/supabaseProvision.ts",
-      "line": 228,
+      "line": 253,
       "entryPoint": "mgmtFetch",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "b60d749399a812790e2912eb7114ce69cc870ba6896493826c502b3538ceb2cd",
+      "callSha256": "f1d2a6165fae625d112a1c6017dfd69a517fd0ab170a79e16693fb81ca2f1bc3",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_FIXED_SUPABASE_ISSUERS_ORIGINAL_ACTOR_COMPLETE_SOURCE_EPOCH_EXACT_NATIVE_SCHEMA_STORAGE_CONFIRMATION",
+      "tenantAuthority": "ORIGINAL_ISSUED_ACTOR_OWNED_PROVIDER_PROJECT_NATIVE_PRODUCER_ATTESTATION_DURABLE_CLAIM_CENTRAL_EGRESS_SINGLE_EFFECT_AND_REVOCATION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-AUTHORITY-20261028.json",
+          "marker": "15dcdf4bce3cfa3abf94",
+          "sha256": "5ad4fe1c36b97cfe69e49e22c01791745a582ee248cc1e50097c05e000f17a28"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+          "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write",
+          "sha256": "2e9c1276e2c2b1da54289cb5cc273b2480a92f54bb6f1a37a4f09b45743c1ce7"
+        }
+      ]
     },
     {
       "id": "c7711580844b520345cf",
@@ -4410,8 +4421,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 130,
-    "pending": 6,
-    "unresolvedHighRiskBypasses": 3
+    "reviewed": 131,
+    "pending": 5,
+    "unresolvedHighRiskBypasses": 2
   }
 }

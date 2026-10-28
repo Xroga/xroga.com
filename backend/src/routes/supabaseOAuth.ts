@@ -38,6 +38,10 @@ import {
 } from '../services/integrations/vercelAuth.js';
 import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js';
 import {loadProviderToken} from '../services/integrations/oauthPkceStore.js';
+import {AuthorityError} from '../security/authority/enforce.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
+import {SupabaseManagementDenied} from '../services/integrations/supabaseProvision.js';
+import {captureSupabaseAccess,type SupabaseAccess} from '../services/integrations/supabaseAccess.js';
 
 const router = Router();
 
@@ -161,8 +165,9 @@ router.post('/connect', async (req: AuthRequest, res) => {
     let projects: Array<{ id: string; ref: string; name: string; region?: string }> = [];
     let projectsError: string | undefined;
     try {
-      projects = await listSupabaseProjects(accessToken);
+      projects = await listSupabaseProjects(accessToken, context);
     } catch (err) {
+      if(err instanceof AuthorityError||err instanceof EgressDenied||err instanceof SupabaseManagementDenied)throw err;
       projectsError = (err as Error).message;
       console.warn('[supabaseOAuth] list projects after authorize:', projectsError);
     }
@@ -177,7 +182,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
       autoSelected = p.ref;
       try {
         const result = await oneClickConnectSupabase({
-          userId: req.userId!,
+          userId: req.userId!, tenantContext: context,
           accessToken,
           projectRef: p.ref,
           projectName: p.name,
@@ -185,12 +190,13 @@ router.post('/connect', async (req: AuthRequest, res) => {
         });
         provision = result.provision;
         status = result.status;
-        envSync = await maybeSyncVaultToVercel(req.userId!);
+        envSync = result.provision.needsConfirmation ? null : await maybeSyncVaultToVercel(req.userId!);
       } catch (err) {
         if ((err as { code?: string }).code === 'CREDENTIAL_WRITE_CONFLICT') {
           res.status(409).json({ ok: false, error: 'Supabase connection changed during authorization. Authorize again.' });
           return;
         }
+        if(err instanceof AuthorityError||err instanceof EgressDenied||err instanceof SupabaseManagementDenied)throw err;
         console.warn('[supabaseOAuth] auto-provision failed:', (err as Error).message);
         provision = { ok: false, message: (err as Error).message };
       }
@@ -237,12 +243,14 @@ router.post('/connect', async (req: AuthRequest, res) => {
 
 router.get('/projects', async (req: AuthRequest, res) => {
   try {
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
     const accessToken = await getSupabaseOAuthAccessToken(req.userId!);
     if (!accessToken) {
       res.status(403).json({ error: 'Authorize Supabase first', projects: [] });
       return;
     }
-    const projects = await listSupabaseProjects(accessToken);
+    const projects = await listSupabaseProjects(accessToken, context);
     res.json({ projects });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message, projects: [] });
@@ -266,6 +274,8 @@ router.post('/select-project', async (req: AuthRequest, res) => {
   }
 
   try {
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
     const writeAdmissions = await prepareSupabaseConnectionWrite(req.userId!);
     let accessToken = await getSupabaseOAuthAccessToken(req.userId!);
     if (!accessToken) {
@@ -277,7 +287,7 @@ router.post('/select-project', async (req: AuthRequest, res) => {
     }
 
     const result = await oneClickConnectSupabase({
-      userId: req.userId!,
+      userId: req.userId!, tenantContext: context,
       accessToken,
       projectRef: parsed.data.projectRef,
       projectName: parsed.data.projectName,
@@ -285,7 +295,7 @@ router.post('/select-project', async (req: AuthRequest, res) => {
       writeAdmissions,
     });
 
-    const envSync = await maybeSyncVaultToVercel(
+    const envSync = result.provision.needsConfirmation ? null : await maybeSyncVaultToVercel(
       req.userId!,
       parsed.data.vercelProject,
     );
@@ -316,6 +326,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     return;
   }
 
+  let source:SupabaseAccess|undefined;
   try {
     const context = requireTenantContext(req.tenantContext);
     requireResourceOwner(context, req.userId);
@@ -327,6 +338,8 @@ router.post('/create-project', async (req: AuthRequest, res) => {
       return;
     }
 
+    source=await captureSupabaseAccess(context);
+    await source.check();
     const dbPass = randomBytes(24).toString('base64url');
     const createRes = await fetch('https://api.supabase.com/v1/projects', {
       method: 'POST',
@@ -341,6 +354,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
         db_pass: dbPass,
       }),
     });
+    await source.check();
     const created = (await createRes.json().catch(() => ({}))) as {
       id?: string;
       ref?: string;
@@ -352,7 +366,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
       throw new Error(created.message || created.error || `Create project failed (${createRes.status})`);
     }
 
-    const ref = String(created.id || created.ref || '');
+    const ref = String(created.ref || created.id || '');
     if (!ref) throw new Error('Project created but ref missing');
 
     // Wait briefly for project to become active before keys/SQL
@@ -362,18 +376,22 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     let keys: { url: string; anonKey: string; serviceRoleKey: string } | null = null;
     for (let i = 0; i < 8; i++) {
       try {
-        keys = await fetchProjectApiKeys(accessToken, ref);
+        keys = await fetchProjectApiKeys(accessToken, ref, context, source);
         break;
-      } catch {
+      } catch (error) {
+        if(error instanceof AuthorityError||error instanceof SupabaseManagementDenied||(error instanceof Error&&['AbortError','TimeoutError'].includes(error.name)))throw error;
+        await source.check();
         await new Promise((r) => setTimeout(r, 3000));
       }
     }
     if (!keys) throw new Error('Project created but API keys not ready yet — click the project in a minute');
 
     await saveSupabaseBundle(writeAdmissions.bundle, { projectUrl: keys.url, anonKey: keys.anonKey, serviceRoleKey: keys.serviceRoleKey, dbPassword: dbPass });
+    source.close();source=undefined;
     await saveUserProviderKey(userId, 'supabase_pat', accessToken, { writeAdmission: writeAdmissions.pat });
 
     const provision = await provisionUserSupabase({
+      userId, tenantContext: context,
       projectUrl: keys.url,
       serviceRoleKey: keys.serviceRoleKey,
       accessToken,
@@ -382,7 +400,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
       region: parsed.data.region,
     });
 
-    const envSync = await maybeSyncVaultToVercel(
+    const envSync = provision.needsConfirmation ? null : await maybeSyncVaultToVercel(
       req.userId!,
       parsed.data.vercelProject,
     );
@@ -398,7 +416,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });
-  }
+  } finally { source?.close(); }
 });
 
 router.get('/organizations', async (req: AuthRequest, res) => {
