@@ -1797,7 +1797,7 @@ const universalRequestPrompt =
     : {}
 ),
     // A builder project saves a durable revision instead of writing to a GitHub repository.
-    ...(opts.builder ? { commit: opts.builder.commit } : {}),
+    ...(opts.builder ? { commit: opts.builder.commit, builderBound: true } : {}),
   });
   if (!universal && opts.builder) {
     // Never fall through to the legacy generator for a builder project: it has no builder

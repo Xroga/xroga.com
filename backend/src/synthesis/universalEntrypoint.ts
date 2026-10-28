@@ -410,6 +410,13 @@ export async function tryUniversalBuild(
     writeTarget?:
       ActiveProjectContext;
 
+    /**
+     * Set only by trusted server code after the AI Product Builder has resolved
+     * ownership of the project this run builds into. The only write path is the
+     * injected builder commit; no repository is attached to such a project.
+     */
+    builderBound?: boolean;
+
     routingMemory?:
       BuildOutcomeRoutingMemory;
 
@@ -708,7 +715,7 @@ export async function tryUniversalBuild(
         'model:execute',
         'sandbox:execute',
 
-        ...(input.activeProjectContext
+        ...(input.activeProjectContext || input.builderBound
           ? [
               'repository:read',
               'repository:write',

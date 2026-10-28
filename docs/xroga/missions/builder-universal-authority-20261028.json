@@ -1,0 +1,111 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-BUILDER-UNIVERSAL-AUTHORITY-20261028",
+  "baseSha": "bd716570b061a678b29f0201e6cb5a55fd9cd6a7",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Found during live authenticated Batch 2 build on 2026-10-28: the durable worker reached the universal engine, which refused with repository.read/repository.write missing because a Builder project has no attached GitHub repository. Grant those two authorities only when trusted server code has bound a Builder project to the run (the only write path is the injected builder commit).",
+  "changedFiles": [
+    "backend/src/ai/pipeline.ts",
+    "backend/src/synthesis/builderUniversalAuthority.test.ts",
+    "backend/src/synthesis/universalEntrypoint.ts",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/missions/builder-universal-authority-20261028.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/privileged-callers.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Authority is derived by the backend, never by model text or a request body",
+      "The builder commit is the only write path for a Builder project"
+    ],
+    "extend": [
+      "Universal capability authorities include repository read/write for a server-bound Builder run"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change; enqueue_google_canonical_run already accepts any JSON object input.",
+    "rollback": "Revert the commit and redeploy the previous image. Queued deliveries without a builderProjectId are unaffected."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authentication change. The id is accepted only after the verified owner matches the durable project."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant boundary change. The Builder binding is created only after ownership is resolved from the verified identity."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Adds repository:read and repository:write authority for a Builder-bound run. The flag is set only by the pipeline when the server-resolved builder binding exists; it is never read from a request body, and writes can only go through the injected builder commit that saves a durable revision for the verified owner."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential handling change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress change."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No new spend path. Builds use the existing provider budget reservation."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing path change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --experimental-strip-types --test backend/src/synthesis/builderUniversalAuthority.test.ts",
+      "scope": "Authority granted for a Builder-bound run; flag set only by the pipeline beside the builder commit; never read from a request body. 3 PASS.",
+      "negative": true,
+      "reference": "backend/src/synthesis/builderUniversalAuthority.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends the existing Google durable delivery input and the existing canonical worker. No second orchestrator, scheduler or control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks, build the release image, update the API service and canonical Job together at the new SHA, then repeat the authenticated build.",
+  "rollback": "Revert the commit and redeploy; restore the previous service revision and Job image/label.",
+  "knownGaps": [
+    "Live end-to-end build proof is recorded only after deployment",
+    "Preview, QA and external delivery remain separate gates"
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch 2 building is not accepted until a live authenticated build saves a revision"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and merge",
+      "Release image build, Job and service update",
+      "Live authenticated Batch 2 build evidence"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "backend/src/synthesis/builderUniversalAuthority.test.ts"
+  ]
+}
