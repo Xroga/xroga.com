@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f77a588d24c167dc9609807ccea3ac946bcfca9a",
+  "source_sha": "411103acce91035e8d6d32a4958e0ac51a7177fe",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19385,7 +19385,7 @@
     },
     {
       "path": "frontend/src/lib/phase1Routing.ts",
-      "sha256": "06e96abfcdbf24962742466a680e7def60dc729d081f68609f4792630c875468"
+      "sha256": "20c8bef30b2903fb5e2b86de9891367f24ac60fa7bcd87896ad2901af2546b03"
     },
     {
       "path": "frontend/src/lib/plainAiText.tsx",
