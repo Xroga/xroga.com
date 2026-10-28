@@ -1,0 +1,21 @@
+{
+  "scope": "DEMONSTRATED_INTEGRATION_GATE_CORRECTIONS_ONLY",
+  "firstCandidate": "bc225b8e9441f146a385b09f157f4fcd6180e07b",
+  "failures": [
+    {
+      "run": 40769810621,
+      "cause": "Standalone frontend-only install omitted existing backend ioredis and bullmq dependencies imported by shared canonical guest accounting.",
+      "correction": "Use the same frozen root npm ci in both Vercel entry configurations and the frontend production build gate. No new dependency, counter, fallback or paid service.",
+      "requiredVerification": "Final exact-source frontend production build and complete baseline"
+    },
+    {
+      "run": 40769810168,
+      "cause": "The new terminal provider denial mapper ran before TenantAccessError and converted the existing missing-identity HTTP401 into HTTP403 in Phase2 and Preview restart routes.",
+      "correction": "Preserve the existing tenant error response first. Other canonical security denials remain terminal HTTP403. No test expectation or authorization rule was weakened.",
+      "focusedVerification": { "job": "328f9269-97de-43e9-949b-38a52b8b4e1d", "tests": 15, "pass": 15, "fail": 0, "skipped": 0 },
+      "requiredVerification": "Final exact-source disposable PostgreSQL/Chromium Builder suite"
+    }
+  ],
+  "additionalGate": "The unchanged strict egress audit now runs explicitly in tenant-security CI with --require-complete.",
+  "productionActivation": false
+}

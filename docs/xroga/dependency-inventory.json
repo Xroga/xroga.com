@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b0cd0ec31be56a8945ae41998563475237ed52fb",
+  "source_sha": "bc225b8e9441f146a385b09f157f4fcd6180e07b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15204,7 +15204,7 @@
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
-      "sha256": "8858f908b862b7fbbdb216848eb5e24c6261ea74d782b661db2a3227c615213a"
+      "sha256": "0b65b0c8f8e895298283a3d0bde43ce35b6775285f42306b54701fb24f237594"
     },
     {
       "path": ".github/workflows/xroga-golden-journeys.yml",
@@ -15216,7 +15216,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "cd97684e7d2bf1cb7bb65a310b1d5fc8422a58cb75265c6e74f39d614fbccb44"
+      "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417"
     },
     {
       "path": "Dockerfile.api",
@@ -16636,7 +16636,7 @@
     },
     {
       "path": "backend/src/routes/builderPhase2.ts",
-      "sha256": "d5383a5dbff90d28a022aad973d165e00878480e19f05b2a375426ac4dc22b1b"
+      "sha256": "a7ed00f7e50cd0b1beba4cdd62da0037ee1048c75e6b57b72c5b66b586819fe2"
     },
     {
       "path": "backend/src/routes/builderPhase3.ts",
@@ -22056,7 +22056,7 @@
     },
     {
       "path": "vercel.json",
-      "sha256": "f60761f7c9b9a3579c8a09eb37fdf356f9ddc573a570ff65b9115d40d1ac7ff9"
+      "sha256": "fce3ccc3214b782bb78649cb50dc92b8e7fb509cbb6e177648ac0c067f1c659b"
     }
   ],
   "dynamic_bindings": [

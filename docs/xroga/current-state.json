@@ -23605,7 +23605,7 @@
       "id": "surface:18308761a6b13a22efcc",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "sha256": "d5383a5dbff90d28a022aad973d165e00878480e19f05b2a375426ac4dc22b1b",
+      "sha256": "a7ed00f7e50cd0b1beba4cdd62da0037ee1048c75e6b57b72c5b66b586819fe2",
       "symbols": [
         "OPERATION_KEY",
         "Phase2ServicesFactory",
@@ -109530,11 +109530,13 @@
         "typescript"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "scripts/security/audit-egress-callers.mjs"
+      ],
       "callers": [
         "scripts/security/audit-egress-callers.test.mjs:3"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:child_process",
@@ -109552,11 +109554,11 @@
       "testCoverage": [
         "scripts/security/audit-egress-callers.test.mjs"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -124705,7 +124707,7 @@
     {
       "id": "workflow:35f7d63a2c5b6c3706b8",
       "sourcePath": ".github/workflows/vercel-build-check.yml",
-      "sha256": "8858f908b862b7fbbdb216848eb5e24c6261ea74d782b661db2a3227c615213a",
+      "sha256": "0b65b0c8f8e895298283a3d0bde43ce35b6775285f42306b54701fb24f237594",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
@@ -124733,11 +124735,13 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "cd97684e7d2bf1cb7bb65a310b1d5fc8422a58cb75265c6e74f39d614fbccb44",
+      "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
         "scripts/security/audit-credential-usage.test.mjs",
+        "scripts/security/audit-egress-callers.mjs",
+        "scripts/security/audit-egress-callers.test.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/audit-tenant-policies.test.mjs",
         "scripts/security/tenant-rls.database.test.mjs"
