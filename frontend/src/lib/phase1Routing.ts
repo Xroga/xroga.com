@@ -27,6 +27,13 @@ const BROWSER_AUTOMATION =
 const EXPLICIT_CONNECTED_APP =
   /\b(?:using|with|via)\s+(?:my|our|the)\s+connected\b|\bconnected\s+(?:app|apps|account|accounts)\b/i;
 
+/** Carry the app the user selected in Plugins into the workspace request. */
+export function workspacePromptForPluginTask(prompt: string, pluginName: string): string {
+  const task = prompt.trim();
+  const app = pluginName.trim();
+  return `${task}\nUse the ${app} connected app for this task.`;
+}
+
 /** Extra guard — catch product builds that slip past isWebsiteBuildPrompt into Phase 1 essays. */
 function looksLikeProductBuild(prompt: string): boolean {
   const t = prompt.trim();

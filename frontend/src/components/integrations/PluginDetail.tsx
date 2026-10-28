@@ -50,6 +50,7 @@ import {
   type XrogaConnectTriggerType,
 } from '@/lib/xrogaConnect';
 import { useAppStore } from '@/store/useAppStore';
+import { workspacePromptForPluginTask } from '@/lib/phase1Routing';
 
 type NativeSnapshot = {
   state: ConnectionState;
@@ -785,7 +786,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
   }
 
   function handleExample(prompt: string) {
-    setChatPrefill(prompt);
+    setChatPrefill(workspacePromptForPluginTask(prompt, definition.name));
     router.push('/workspace');
   }
 

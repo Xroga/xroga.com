@@ -79,6 +79,8 @@ test('recognizes a multi-task candidate but leaves one email to multiple people 
   assert.equal(mayNeedSemanticBusinessWorkflow('Create a spreadsheet with two rows: header Item, Value; data test, 42. Do not modify existing files.'), false);
   assert.equal(splitExplicitBusinessWorkflow('Create a spreadsheet with two rows: header Item, Value; data test, 42. Do not modify existing files.'), null);
   assert.equal(mayNeedSemanticBusinessWorkflow('Create a spreadsheet; send its link to me'), true);
+  assert.equal(mayNeedSemanticBusinessWorkflow('Using my connected Canva app, create a new design titled Xroga Stage Logo Test.'), false);
+  assert.equal(mayNeedSemanticBusinessWorkflow('Using my connected Canva app, create a design; add a title to it.'), true);
 });
 
 test('accepts only exact source-bound app and web steps, deriving dependencies on the server', () => {

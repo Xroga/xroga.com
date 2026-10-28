@@ -10,10 +10,17 @@ import {
 } from './businessWorkflow.js';
 
 const SEPARATED_TASK = /(?:[;\n,]\s*|\b(?:and then|then|also|and)\s+)(?:please\s+)?(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b/i;
+const TASK_VERB = /\b(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b/i;
 
 /** Avoid a second model call for ordinary single-tool requests. */
 export function mayNeedSemanticBusinessWorkflow(message: string): boolean {
-  return message.length >= 12 && message.length <= 1_500 && SEPARATED_TASK.test(message);
+  if (message.length < 12 || message.length > 1_500) return false;
+  // An app-context preface such as "Using my connected Canva app, create..."
+  // contains a comma and one task, not two independent requests.
+  for (const separator of message.matchAll(new RegExp(SEPARATED_TASK.source, 'gi'))) {
+    if (TASK_VERB.test(message.slice(0, separator.index))) return true;
+  }
+  return false;
 }
 
 /**
