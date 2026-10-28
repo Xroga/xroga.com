@@ -1,0 +1,71 @@
+{
+  "scope": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+  "parent": "c6540dac64360763fe1f36f6f3f85ddf30ee6dea",
+  "sources": [
+    {
+      "path": "deploy/browser-worker/runJob.mjs",
+      "sha256": "f0f63e2da95ff25ba8bb166a1f60fd9efb847298e4823a22dfbb33662ee9ebe3"
+    },
+    {
+      "path": "backend/src/workers/browserReadOnlyTransport.security.test.ts",
+      "sha256": "8c84dab52996a153fbf58de98a3410818bd39d51d6339f623e4c3a5fc00635e3"
+    }
+  ],
+  "receipts": [
+    {
+      "label": "unmarkedPostRed",
+      "job": "027b716d-f757-467b-b1e2-09cdceb16f72",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/browser-readonly-unmarkedPostRed-20261028.log.gz",
+      "sha256": "fa6ee82ef343d6141ef4203ab6b0807ef333181ad1e1400d183c6a93212dd319"
+    },
+    {
+      "label": "dedicatedSocketRed",
+      "job": "e77fd520-f616-48b4-b1c5-221e54692e60",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/browser-readonly-dedicatedSocketRed-20261028.log.gz",
+      "sha256": "056549a8783be73654bcd9f4246a734c3becbd598fc2a0f6f944f603fa06e435"
+    },
+    {
+      "label": "browserAndProtocol52",
+      "job": "b13cc194-a4f5-4dd2-9100-47b474010283",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/browser-readonly-browserAndProtocol52-20261028.log.gz",
+      "sha256": "53f4b4e01838c1516f89bf2fc5314c00ab313b9e16a7f725b3c175e3d4348ac8"
+    },
+    {
+      "label": "sourceAndRealBrowser53",
+      "job": "7b06c15a-2291-4093-bb85-308f084ebe7a",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/browser-readonly-sourceAndRealBrowser53-20261028.log.gz",
+      "sha256": "57fc24fc29e2b4160de9897d5550d97ab50babf5c7857d336ce3499a6f2dbb36"
+    },
+    {
+      "label": "proxyInheritanceAndChildWorker3",
+      "job": "a4b5b2a7-96c0-46d4-9cfa-71f0f7208637",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/browser-readonly-proxyInheritanceAndChildWorker3-20261028.log.gz",
+      "sha256": "2cf34aec6f3c73731f32a9a7ffd845a07916a0c1c716241af9128eaecb528ff7"
+    }
+  ],
+  "reproducedDefects": [
+    "An unmarked page-script POST bypassed the claimed read-only browser surface.",
+    "BrowserContext WebSocket routing alone did not cover sockets created in a dedicated worker. The real Chromium negative received one worker socket connection."
+  ],
+  "correction": "Retain the existing public read-only capability and rejection of supplied writeGrant. Before sending bodies, deny all HTTP methods except GET/HEAD/OPTIONS. Route page WebSockets without connecting to the server and terminate with existing nonretryable RESULT_OUT_OF_SCOPE classification. Intersect each navigation response with worker-src none CSP, preserving the original CSP and ordinary page JavaScript. This denies unadmitted Dedicated/Shared/Blob worker creation, while the existing serviceWorkers block stays unchanged. Fetching the document uses the context proxy, maxRedirects0, maxRetries0, deadline, bounded response, cancellation checks, sanitized errors and immediate response disposal. Real local Chromium on a controlled HTTP proxy verifies ordinary reads, denied POST, page sockets and dedicated-worker sockets. No network request goes to an external provider.",
+  "references": [
+    "https://playwright.dev/docs/api/class-browsercontext#browser-context-route-web-socket",
+    "https://playwright.dev/docs/api/class-route#route-fetch",
+    "https://playwright.dev/docs/api/class-websocketroute"
+  ],
+  "limitations": [
+    "This is read-only public browsing, not a new native consequential browser approval adapter. Consequential public plans remain disabled and serialized grants remain rejected.",
+    "Pages that require their own worker processes or opaque sockets are outside this read-only capability. No approved browser write functionality is claimed.",
+    "The controlled browser/proxy proves request behavior locally. It is not a new Google host-isolation attestation or a deployed image receipt.",
+    "The browser runtime image must include this exact source before Phase4 production activation. The accepted Google API and Batch1.5/2 activation are untouched."
+  ],
+  "productionChanged": false,
+  "spend": 0,
+  "phase4Accepted": false,
+  "originalRequirementsChanged": false
+}

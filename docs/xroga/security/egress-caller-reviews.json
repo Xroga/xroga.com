@@ -2201,9 +2201,15 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
       ],
-      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "610040b13d22a92ecb61",
@@ -2227,9 +2233,15 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
       ],
-      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "3d480934beb958cf18f6",
@@ -2253,9 +2265,15 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
       ],
-      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "11b26537e94dfd007bdc",
@@ -2279,9 +2297,15 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
       ],
-      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "944a5617b246ddcc7a6f",
@@ -2305,9 +2329,15 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
       ],
-      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "33adb167ae3aa360df14",
@@ -2331,9 +2361,15 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
       ],
-      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "f48e5f4e537c7e879b0a",
@@ -2357,9 +2393,15 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
       ],
-      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "591d7b98b10cd9a63e53",
@@ -3394,8 +3436,14 @@
           "path": "backend/src/workers/containerOrphanCleanup.security.test.ts",
           "marker": "orphan cleanup never force-removes another live job",
           "sha256": "c0ce13690fdab872fa9851d342cc7fb8697b691db2b72142dd52553790dc4ab1"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "marker": "ORIGINAL_COMMAND010_UNMARKED_BROWSER_SIDE_EFFECT_GAP_ONLY",
+          "sha256": "ba3610f00ee105b70fac54e2d327a56fefe2f23880a67bad56fed81fae59051b"
         }
-      ]
+      ],
+      "readOnlyRuntimeContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
     },
     {
       "id": "07a46a7b451eaf4dc307",

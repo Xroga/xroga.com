@@ -761,6 +761,10 @@
     {
       "path": "backend/src/ai/builderAttempt.ts",
       "sha256": "8a31b2354b50b32fe202939ce967cc55d9264427de982256e752c82ef4e4a833"
+    },
+    {
+      "path": "deploy/browser-worker/runJob.mjs",
+      "sha256": "f0f63e2da95ff25ba8bb166a1f60fd9efb847298e4823a22dfbb33662ee9ebe3"
     }
   ],
   "previousCallerCounts": {
@@ -852,5 +856,6 @@
   "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
   "supabaseCreateContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json",
   "desktopWorkflowContinuation": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
-  "githubPublicationContinuation": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
+  "githubPublicationContinuation": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+  "browserReadOnlyContinuation": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
 }
