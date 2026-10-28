@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6d10503fb6aafd2d9da628c886042b466d9ecb27",
+  "source_sha": "c855b541f4803c656ece900f6e1648c23e321c3e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1441,6 +1441,7 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/githubSourceRead.ts",
+        "backend/src/services/publish/desktopWorkflow.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
       ],
@@ -1483,6 +1484,7 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/githubSourceRead.ts",
+        "backend/src/services/publish/desktopWorkflow.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
       ],
@@ -4067,6 +4069,7 @@
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/githubRepoCreation.ts",
         "backend/src/services/memory/buildProjectStore.ts",
+        "backend/src/services/publish/desktopWorkflow.ts",
         "backend/src/services/publish/nativeReleaseAdmission.ts",
         "backend/src/services/publish/nonWebShip.ts",
         "frontend/src/app/changelog/page.tsx",
@@ -4126,6 +4129,7 @@
         "backend/src/services/integrations/githubDeploy.ts",
         "backend/src/services/integrations/githubRepoCreation.ts",
         "backend/src/services/memory/buildProjectStore.ts",
+        "backend/src/services/publish/desktopWorkflow.ts",
         "backend/src/services/publish/nativeReleaseAdmission.ts",
         "backend/src/services/publish/nonWebShip.ts",
         "frontend/src/app/changelog/page.tsx",
@@ -15085,7 +15089,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d"
+      "sha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16593,7 +16597,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "14f3ace2ef9dba5065a6f5387e9040887228efd110cc62adce9c3abaddf17736"
+      "sha256": "b0e8cacbae9d3821132fa1e16ee664aa045787fa628dcd6c91ba69d5d19d101f"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16800,6 +16804,10 @@
       "sha256": "6a80d057c4e6421065848b10a6e88179da89bedf2ddc855c85cab81025b157ce"
     },
     {
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "sha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6"
+    },
+    {
       "path": "backend/src/services/publish/easCredentials.ts",
       "sha256": "4d943522bba020a8eaf5268a8da948f814a3ca4c6e4359a6004185c5b59b9e5e"
     },
@@ -16841,7 +16849,7 @@
     },
     {
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "sha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e"
+      "sha256": "f895fbc0e39f85a742a19318b315609ae606f2292cdf04266f428505dd5f05e9"
     },
     {
       "path": "backend/src/services/publish/userOwnedPublish.ts",
@@ -24556,6 +24564,41 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 53,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 53,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 56,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 64,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 64,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.expo.dev",
       "protocol": "https:",
       "path": "backend/src/services/publish/easCredentials.ts",
@@ -24706,42 +24749,49 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 31,
+      "line": 36,
       "credentialsInUrl": false
     },
     {
       "hostname": "uploads.github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 58,
+      "line": 71,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 60,
+      "line": 73,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 65,
+      "line": 78,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 451,
+      "line": 473,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 452,
+      "line": 480,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "line": 484,
       "credentialsInUrl": false
     },
     {
@@ -29011,7 +29061,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4738,
+      "line": 4740,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31461,7 +31511,7 @@
     },
     {
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 71,
+      "line": 84,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

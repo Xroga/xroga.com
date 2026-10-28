@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "25ab9d6e6c40150d220dbfd99382896ef8d1e013e99423a77c6329ff703b4db0",
+  "sourceTreeDigest": "567169661deed517d4082f50482fddfc67024577853bce8cd37561f5dee0b50e",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2620,23 +2620,39 @@
     {
       "id": "99ec2dc4769b5eced6a5",
       "file": "backend/src/services/publish/nonWebShip.ts",
-      "line": 31,
+      "line": 36,
       "entryPoint": "ghFetch",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "bb486d6481e92c5bfd6801363bc415b6418f93e9383000e6086cc18f90141a94",
       "destination": "https://api.github.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_GITHUB_RELEASE_TRANSPORT_ALL_REACHABLE_ZIP_AND_DESKTOP_CALLERS_INDIVIDUALLY_ADMITTED_NO_LATEST_OR_WORKFLOW_FALLBACK",
+      "tenantAuthority": "ORIGINAL_CONTEXT_OWNED_PROJECT_AND_REPOSITORY_CURRENT_CREDENTIAL_EPOCH_IMMUTABLE_SOURCE_CANONICAL_EGRESS_ONE_USE_APPROVAL_TERMINAL_DENIAL_NO_FALSE_INSTALLER_RECEIPT",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
+          "marker": "99ec2dc4769b5eced6a5",
+          "sha256": "8f885ebc7fc143d8e9bf23edc1b7decdee22ac6a678baa33e989aac4f0183926"
+        },
+        {
+          "path": "backend/src/services/publish/desktopWorkflow.security.test.ts",
+          "marker": "desktop exact workflow admission:",
+          "sha256": "6d49df7f38f39dfd6605b50202f7f881cf61b57f9ab11f9c54ab66800c5fa52e"
+        },
+        {
+          "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+          "marker": "native artifact preparation cannot publish or delete before exact durable approval",
+          "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
+        }
+      ]
     },
     {
       "id": "094a251245ce9b6ab659",
       "file": "backend/src/services/publish/nonWebShip.ts",
-      "line": 231,
+      "line": 244,
       "entryPoint": "shipChromeExtensionZip",
       "transport": "fetch",
       "callee": "fetch",
@@ -2663,7 +2679,7 @@
     {
       "id": "07ca232e98dcc1720801",
       "file": "backend/src/services/publish/nonWebShip.ts",
-      "line": 387,
+      "line": 400,
       "entryPoint": "shipElectronPortableZip",
       "transport": "fetch",
       "callee": "fetch",
@@ -4487,8 +4503,8 @@
   ],
   "counts": {
     "total": 137,
-    "reviewed": 135,
-    "pending": 2,
+    "reviewed": 136,
+    "pending": 1,
     "unresolvedHighRiskBypasses": 0
   }
 }

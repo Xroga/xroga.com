@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "79601f9a34af66275d3cba185e60452e0a178582e06ffdb2b83e97b6fff6dab7",
+  "reviewRegistrySha256": "aa24f6b074dc0a4c9ec9207d565b3ba02859e7404e10636681535e338cd2ac95",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 210,
-    "persistenceCandidates": 863,
-    "ownerPredicateCandidates": 235,
+    "privilegedFactorySites": 211,
+    "persistenceCandidates": 870,
+    "ownerPredicateCandidates": 237,
     "reviewRequired": 126,
-    "reviewedCandidates": 737,
+    "reviewedCandidates": 744,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 490,
+    "SCOPED_BOUNDARY": 492,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 174,
+    "NOT_PERSISTENCE": 179,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 84,
-    "unresolvedCandidateBoundaries": 779,
+    "unresolvedCandidateBoundaries": 786,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4892,6 +4892,30 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "d5b9cdacd80ba866ec8d"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "39a724a31413441a518d"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1390c8a5fd594b60eb4e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2a653cb5bc6216aa2539"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b4101835336d34fefbff"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9be4d923b1a937e0ef9a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "df81e330b32d3d3874d6"
       },
       {
@@ -4984,7 +5008,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4c3e8f42ba6315b93466"
+        "id": "a79db4e249cf462214f2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b77ce3df623207009b26"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -8112,6 +8140,30 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d5b9cdacd80ba866ec8d"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "39a724a31413441a518d"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "1390c8a5fd594b60eb4e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2a653cb5bc6216aa2539"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b4101835336d34fefbff"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "9be4d923b1a937e0ef9a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "df81e330b32d3d3874d6"
       },
       {
@@ -8204,7 +8256,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4c3e8f42ba6315b93466"
+        "id": "a79db4e249cf462214f2"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b77ce3df623207009b26"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8589,11 +8645,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 863,
+    "currentCallers": 870,
     "structuredVerified": 84,
-    "structuredUnproven": 779,
+    "structuredUnproven": 786,
     "manualUnresolved": 159,
-    "manualUnsupported": 620,
+    "manualUnsupported": 627,
     "agreedVerified": 84,
     "proofAwaitingManualReconciliation": 0
   },
@@ -9273,7 +9329,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
+      "sourceSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9294,7 +9350,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
+      "sourceSha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -22587,6 +22643,140 @@
       }
     },
     {
+      "id": "d5b9cdacd80ba866ec8d",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 31,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6",
+      "semanticReview": {
+        "authority": "These exact Buffer.from expressions decode and compare bounded already-authorized immutable workflow bytes and held credential encodings. They never select a table, bucket, RPC, owner or authority context.",
+        "reason": "The conservative AST finder treats any .from method as a persistence candidate. All four of these calls are native Buffer decoding/comparison only. Native exact-source positive and negative tests retain malformed encoding and credential-denial behavior. They grant no persistence, credential or egress capability.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.ts",
+            "marker": "Buffer.from(encoded,'base64')"
+          }
+        ]
+      }
+    },
+    {
+      "id": "39a724a31413441a518d",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 32,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6",
+      "semanticReview": {
+        "authority": "These exact Buffer.from expressions decode and compare bounded already-authorized immutable workflow bytes and held credential encodings. They never select a table, bucket, RPC, owner or authority context.",
+        "reason": "The conservative AST finder treats any .from method as a persistence candidate. All four of these calls are native Buffer decoding/comparison only. Native exact-source positive and negative tests retain malformed encoding and credential-denial behavior. They grant no persistence, credential or egress capability.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.ts",
+            "marker": "Buffer.from(encoded,'base64')"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1390c8a5fd594b60eb4e",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 32,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6",
+      "semanticReview": {
+        "authority": "These exact Buffer.from expressions decode and compare bounded already-authorized immutable workflow bytes and held credential encodings. They never select a table, bucket, RPC, owner or authority context.",
+        "reason": "The conservative AST finder treats any .from method as a persistence candidate. All four of these calls are native Buffer decoding/comparison only. Native exact-source positive and negative tests retain malformed encoding and credential-denial behavior. They grant no persistence, credential or egress capability.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.ts",
+            "marker": "Buffer.from(encoded,'base64')"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2a653cb5bc6216aa2539",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 32,
+      "enclosing": "workflowSource",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6",
+      "semanticReview": {
+        "authority": "These exact Buffer.from expressions decode and compare bounded already-authorized immutable workflow bytes and held credential encodings. They never select a table, bucket, RPC, owner or authority context.",
+        "reason": "The conservative AST finder treats any .from method as a persistence candidate. All four of these calls are native Buffer decoding/comparison only. Native exact-source positive and negative tests retain malformed encoding and credential-denial behavior. They grant no persistence, credential or egress capability.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.ts",
+            "marker": "Buffer.from(encoded,'base64')"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b4101835336d34fefbff",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 41,
+      "enclosing": "requestDesktopWorkflow",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6",
+      "semanticReview": {
+        "authority": "Only the original actor recovered from the canonical native permit can read its executing grant. Owner, immutable plan digest, expiry, claim and effect marker are rechecked across metadata and mutation waits. Current private project ownership, exact associated repository and full canonical GitHub credential epoch remain required.",
+        "reason": "Actual canonical vault and confirmation tests bind an immutable commit and workflow bytes to one exact tag. Approval never authorizes alternate branches, annotated tags or workflow-dispatch fallbacks. Cancellation, revocation, source changes, malformed receipts, provider denial and replay fail closed. Tag creation is reported only as a request, never as completed installers or verified third-party billing.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.ts",
+            "marker": ".eq('user_id',context.userId)"
+          },
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.security.test.ts",
+            "marker": "desktop exact workflow admission:"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9be4d923b1a937e0ef9a",
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "line": 41,
+      "enclosing": "requestDesktopWorkflow",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6",
+      "semanticReview": {
+        "authority": "Only the original actor recovered from the canonical native permit can read its executing grant. Owner, immutable plan digest, expiry, claim and effect marker are rechecked across metadata and mutation waits. Current private project ownership, exact associated repository and full canonical GitHub credential epoch remain required.",
+        "reason": "Actual canonical vault and confirmation tests bind an immutable commit and workflow bytes to one exact tag. Approval never authorizes alternate branches, annotated tags or workflow-dispatch fallbacks. Cancellation, revocation, source changes, malformed receipts, provider denial and replay fail closed. Tag creation is reported only as a request, never as completed installers or verified third-party billing.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.ts",
+            "marker": ".eq('user_id',context.userId)"
+          },
+          {
+            "path": "backend/src/services/publish/desktopWorkflow.security.test.ts",
+            "marker": "desktop exact workflow admission:"
+          }
+        ]
+      }
+    },
+    {
       "id": "df81e330b32d3d3874d6",
       "path": "backend/src/services/publish/electronSecrets.ts",
       "line": 25,
@@ -23158,15 +23348,15 @@
       }
     },
     {
-      "id": "4c3e8f42ba6315b93466",
+      "id": "a79db4e249cf462214f2",
       "path": "backend/src/services/publish/nonWebShip.ts",
-      "line": 90,
+      "line": 103,
       "enclosing": "nativeReleaseLifetime",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+      "sourceSha256": "f895fbc0e39f85a742a19318b315609ae606f2292cdf04266f428505dd5f05e9",
       "semanticReview": {
         "authority": "These exact built-in Buffer.from expressions inspect already-held credential encodings locally. They are not database or storage operations.",
         "reason": "Only these explicit expressions and native upload admission are reviewed. No shared publishing caller, general tenant audit or Phase4 acceptance is certified.",
@@ -23178,6 +23368,27 @@
           {
             "path": "backend/src/services/publish/nonWebShip.ts",
             "marker": "async function nativeReleaseLifetime"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b77ce3df623207009b26",
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "line": 477,
+      "enclosing": "waitForDesktopReleaseZip",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "f895fbc0e39f85a742a19318b315609ae606f2292cdf04266f428505dd5f05e9",
+      "semanticReview": {
+        "authority": "This native Buffer.from expression encodes an already-held credential solely to reject its accidental appearance in provider asset metadata. It never reads a table, bucket or RPC and cannot grant tenant or dispatch authority.",
+        "reason": "The conservative .from AST candidate is a byte conversion used by the selected-credential denial floor. The actual credential-bearing-asset negative test prevents publication. The original actor, current ownership and native approval remain independent mandatory checks.",
+        "evidence": [
+          {
+            "path": "backend/src/services/publish/nonWebShip.ts",
+            "marker": "const selectedCredential=access.token"
           }
         ]
       }

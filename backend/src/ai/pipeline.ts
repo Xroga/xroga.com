@@ -4377,7 +4377,8 @@ publicationReason:
       swarmTodos: todos('push'),
     });
     try {
-      if(nativePublicationPending)throw Object.assign(new Error(electronReleaseError || 'Approve the prepared publication before starting a separate installer release.'),{code:'PUBLICATION_APPROVAL_REQUIRED'});
+      // Preparing a separate tag approval borrows no portable-upload authority.
+      // Neither action can dispatch until its own exact approval is consumed.
       const signing = await syncElectronSigningSecretsToGitHub({
         userId: opts.userId,
         repoFullName: githubRepoName,
@@ -4390,18 +4391,19 @@ publicationReason:
         signal:opts.signal,
         userId: opts.userId,
         repoFullName: githubRepoName,
-        commitSha,
+        commitSha,projectId:opts.projectId,
       });
       desktopReleaseTag = released.tag || desktopReleaseTag;
       desktopActionsUrl = released.actionsUrl;
       if (released.releasesUrl) desktopReleasesUrl = released.releasesUrl;
+      if(released.needsConfirmation&&released.reviewUrl){nativePublicationPending=true;emit({agent:'deploy',status:'confirmation_required',message:`Review the exact immutable desktop release: [Review action](${released.reviewUrl}). No tag or Actions run has been requested.`,swarmStatusLabel:'Approval required'});}
       if (released.ok) {
         const waited = await waitForDesktopReleaseZip({
           tenantContext,
           signal:opts.signal,
           userId: opts.userId,
           repoFullName: githubRepoName,
-          tag: released.tag,
+          tag: released.tag,commitSha,projectId:opts.projectId,
           timeoutMs: 10 * 60 * 1000,
           intervalMs: 20_000,
           onProgress: (msg) => {
@@ -4439,7 +4441,7 @@ publicationReason:
             waited.error ||
             'Installers still building on Actions — portable desktop.zip is ready above';
         }
-      } else if (!electronZipOk) {
+      } else if (!released.needsConfirmation&&!electronZipOk) {
         electronReleaseError = released.error || 'Could not start desktop release';
       }
     } catch (err) {

@@ -1,3 +1,8 @@
+import {setTimeout as wait} from 'node:timers/promises';
+import {requestDesktopWorkflow,type DesktopWorkflowInput} from './desktopWorkflow.js';
+import {requireNativeArtifactProject} from './nativeArtifact.js';
+import {publicHttpsUrl} from '../../security/egress/urlPolicy.js';
+import {containsCredentialSecretText} from '../../security/egress/dataClassification.js';
 /**
  * Free-path ship helpers for Chrome / Electron (not store automation).
  * Uses the user's GitHub token after sticky push.
@@ -23,12 +28,12 @@ async function ghFetch(token: string, path: string, init?: RequestInit): Promise
   const method=(init?.method??'GET').toUpperCase();
   const prefix='^/repos/[A-Za-z0-9-]{1,39}/[A-Za-z0-9_.-]{1,100}/';
   const routes:Record<string,RegExp>={
-    GET:new RegExp(prefix+'(?:releases/(?:tags/[A-Za-z0-9_.-]{1,100}|latest|[1-9][0-9]*/assets)|git/ref/heads/(?:main|master))$'),
-    POST:new RegExp(prefix+'(?:releases|git/(?:tags|refs)|actions/workflows/release\\.yml/dispatches)$'),
+    GET:new RegExp(prefix+'(?:releases/(?:tags/[A-Za-z0-9_.-]{1,100}|[1-9][0-9]*/assets)|git/ref/tags/[A-Za-z0-9_.-]{1,100})$'),
+    POST:new RegExp(prefix+'(?:releases|git/refs)$'),
     DELETE:new RegExp(prefix+'releases/assets/[1-9][0-9]*$'),
   };
   if(!routes[method]?.test(path)||path.includes('..'))throw new EgressDenied('UNSAFE_DESTINATION');
-  return readReleaseResponse(await fetch(`https://api.github.com${path}`, {
+  try{return await readReleaseResponse(await fetch(`https://api.github.com${path}`, {
     ...init,
     redirect:'manual',
     signal:AbortSignal.any([AbortSignal.timeout(30000),...(init?.signal?[init.signal]:[])]),
@@ -39,8 +44,14 @@ async function ghFetch(token: string, path: string, init?: RequestInit): Promise
       'X-GitHub-Api-Version': '2022-11-28',
       'Content-Type':'application/json',
     },
-  }));
+  }));}catch(error){
+    if(error instanceof AuthorityError||error instanceof EgressDenied)throw error;
+    if(init?.signal?.aborted)throw new DOMException('Release request cancelled.','AbortError');
+    throw new Error('GitHub release provider is unavailable. No automatic retry was made.');
+  }
 }
+
+async function releaseJson(response:Response):Promise<unknown>{try{return await response.json();}catch{throw new AuthorityError('GITHUB_RELEASE_RECEIPT_DENIED');}}
 
 /** Response metadata never grants a new upload origin or action authority.
  * Account ownership, exact consequential approval and source provenance remain
@@ -52,7 +63,9 @@ async function readReleaseResponse(response:Response):Promise<Response>{
   const chunks:Uint8Array[]=[];let size=0;const reader=response.body?.getReader();
   try{if(reader)for(;;){const item=await reader.read();if(item.done)break;size+=item.value.length;if(size>256*1024)throw new EgressDenied('INVALID_EGRESS_INPUT');chunks.push(item.value);}}
   finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
-  return new Response([204,205].includes(response.status)?null:Buffer.concat(chunks),{status:response.status,headers:{'Content-Type':'application/json'}});
+  const body=Buffer.concat(chunks);
+  if(![204,205].includes(response.status))try{JSON.parse(body.toString('utf8'));}catch{throw new AuthorityError('GITHUB_RELEASE_RECEIPT_DENIED');}
+  return new Response([204,205].includes(response.status)?null:body,{status:response.status,headers:{'Content-Type':'application/json'}});
 }
 function releaseTarget(uploadUrl:string,releaseId:number,htmlUrl:string|undefined,owner:string,repo:string,tag:string,name:string):string{
   const base=`https://uploads.github.com/repos/${owner}/${repo}/releases/${releaseId}/assets`;
@@ -96,7 +109,7 @@ async function nativeReleaseLifetime(opts:{userId:string;tenantContext?:TenantCo
   const credential=await createGitHubSourceReader(context.userId,token,`${repo.owner}/${repo.repo}`,context);
   const check=async()=>{signal?.throwIfAborted();await credential.assertCurrent();signal?.throwIfAborted();};
   const request=async(path:string,init?:RequestInit)=>{await check();const response=await ghFetch(token,path,{...init,signal});await check();return response;};
-  await check();return{token,request,check};
+  await check();return{token,request,check,sourceRequest:credential.request};
 }
 
 export type ChromeZipShipResult = {
@@ -419,6 +432,10 @@ export async function shipElectronPortableZip(opts: {
 }
 
 export type DesktopReleaseResult = {
+  needsConfirmation?:boolean;
+  reviewUrl?:string;
+  requested?:boolean;
+  commitSha?:string;
   ok: boolean;
   tag?: string;
   actionsUrl?: string;
@@ -429,185 +446,46 @@ export type DesktopReleaseResult = {
 };
 
 /**
- * Create a v* tag (triggers Desktop release workflow) or workflow_dispatch fallback.
- * Free path: unsigned zip on GitHub Releases when Actions finishes.
+ * Prepare exact consent for one immutable release tag. The canonical executor
+ * creates it only after approval. Tag creation is not an installer receipt.
  */
-export async function triggerElectronDesktopRelease(opts: {
-  userId: string;
-  tenantContext?: TenantContext;
-  signal?: AbortSignal;
-  repoFullName: string;
-  commitSha?: string;
-  version?: string;
-}): Promise<DesktopReleaseResult> {
-  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
-  opts={...opts};
-  const parsed = splitRepo(opts.repoFullName);
-  if (!parsed) return { ok: false, error: 'Invalid repo name' };
-  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
-  const { owner, repo } = parsed;
-
-  const tag = opts.version?.startsWith('v') ? opts.version : `v${opts.version || '1.0.0'}`;
-  const releasesUrl = `https://github.com/${owner}/${repo}/releases`;
-  const actionsUrl = `https://github.com/${owner}/${repo}/actions`;
-
-  // Resolve SHA for the tag
-  let sha = opts.commitSha;
-  if (!sha) {
-    const ref = await request(`/repos/${owner}/${repo}/git/ref/heads/main`);
-    if (ref.ok) {
-      const data = (await ref.json()) as { object?: { sha?: string } };
-      sha = data.object?.sha;
-    }
-    if (!sha) {
-      const master = await request(`/repos/${owner}/${repo}/git/ref/heads/master`);
-      if (master.ok) {
-        const data = (await master.json()) as { object?: { sha?: string } };
-        sha = data.object?.sha;
-      }
-    }
-  }
-  if (!sha) return { ok: false, error: 'No commit SHA to tag', actionsUrl, releasesUrl };
-
-  // Create annotated tag object + ref (idempotent-ish: if tag exists, try dispatch)
-  const tagObj = await request(`/repos/${owner}/${repo}/git/tags`, {
-    method: 'POST',
-    body: JSON.stringify({
-      tag,
-      message: `Xroga desktop release ${tag}`,
-      object: sha,
-      type: 'commit',
-    }),
-  });
-
-  let tagged = false;
-  if (tagObj.ok) {
-    const tagData = (await tagObj.json()) as { sha?: string };
-    const refRes = await request(`/repos/${owner}/${repo}/git/refs`, {
-      method: 'POST',
-      body: JSON.stringify({
-        ref: `refs/tags/${tag}`,
-        sha: tagData.sha || sha,
-      }),
-    });
-    if (refRes.ok || refRes.status === 422) {
-      tagged = true;
-    }
-  }
-
-  if (!tagged) {
-    // Fallback: workflow_dispatch on release.yml
-    const dispatch = await request(`/repos/${owner}/${repo}/actions/workflows/release.yml/dispatches`, {
-      method: 'POST',
-      body: JSON.stringify({ ref: 'main' }),
-    });
-    if (!(dispatch.status === 204 || dispatch.ok)) {
-      const dispatchMaster = await request(
-        `/repos/${owner}/${repo}/actions/workflows/release.yml/dispatches`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ ref: 'master' }),
-        },
-      );
-      if (!(dispatchMaster.status === 204 || dispatchMaster.ok)) {
-        const err = await dispatch.text().catch(() => '');
-        return {
-          ok: false,
-          tag,
-          actionsUrl,
-          releasesUrl,
-          error: `Could not tag or dispatch release: ${err.slice(0, 180) || 'check Actions permissions'}`,
-        };
-      }
-    }
-  }
-
-  return { ok: true, tag, actionsUrl, releasesUrl };
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
+export async function triggerElectronDesktopRelease(opts:DesktopWorkflowInput):Promise<DesktopReleaseResult>{
+ const parsed=splitRepo(opts.repoFullName);if(!parsed)throw new AuthorityError('DESKTOP_RELEASE_TARGET_REQUIRED');
+ return requestDesktopWorkflow({...opts,repoFullName:`${parsed.owner}/${parsed.repo}`},input=>nativeReleaseLifetime(input,parsed));
 }
 
 /**
  * Poll GitHub Releases until an installer asset appears (exe/AppImage/dmg/msi/zip).
  */
-export async function waitForDesktopReleaseZip(opts: {
-  userId: string;
-  tenantContext?: TenantContext;
-  signal?: AbortSignal;
-  repoFullName: string;
-  tag?: string;
-  /** Default 12 minutes — multi-OS matrix needs longer than linux-only */
-  timeoutMs?: number;
-  intervalMs?: number;
-  onProgress?: (msg: string) => void;
-}): Promise<{
-  ok: boolean;
-  zipDownloadUrl?: string;
-  installerUrls?: string[];
-  releaseUrl?: string;
-  error?: string;
-}> {
-  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
-  opts={...opts};
-  const parsed = splitRepo(opts.repoFullName);
-  if (!parsed) return { ok: false, error: 'Invalid repo name' };
-  const {token,request,check}=await nativeReleaseLifetime(opts,parsed);
-  const { owner, repo } = parsed;
-  const timeoutMs = opts.timeoutMs ?? 12 * 60 * 1000;
-  const intervalMs = opts.intervalMs ?? 20_000;
-  const started = Date.now();
-  let attempt = 0;
-
-  const installerRe = /\.(zip|AppImage|exe|dmg|msi|blockmap)$/i;
-
-  while (Date.now() - started < timeoutMs) {
-    attempt += 1;
-    opts.onProgress?.(
-      `Waiting for desktop installers on GitHub Releases (check ${attempt}, ~${Math.round((Date.now() - started) / 1000)}s)…`,
-    );
-
-    const paths = opts.tag
-      ? [`/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(opts.tag)}`]
-      : [];
-    paths.push(`/repos/${owner}/${repo}/releases/latest`);
-
-    for (const path of paths) {
-      const res = await request(path);
-      if (!res.ok) continue;
-      const data = (await res.json()) as {
-        html_url?: string;
-        assets?: Array<{ name?: string; browser_download_url?: string; state?: string }>;
-      };
-      const ready = (data.assets || []).filter(
-        (a) =>
-          a.browser_download_url &&
-          installerRe.test(a.name || '') &&
-          !/\.blockmap$/i.test(a.name || '') &&
-          (!a.state || a.state === 'uploaded'),
-      );
-      // Prefer real installers over source zip
-      const preferred =
-        ready.find((a) => /\.(exe|AppImage|dmg|msi)$/i.test(a.name || '')) || ready[0];
-      if (preferred?.browser_download_url) {
-        return {
-          ok: true,
-          zipDownloadUrl: preferred.browser_download_url,
-          installerUrls: ready.map((a) => a.browser_download_url!).filter(Boolean),
-          releaseUrl: data.html_url,
-        };
-      }
-    }
-
-    await sleep(intervalMs);
-  }
-
-  return {
-    ok: false,
-    error:
-      'Desktop installers not ready yet — GitHub Actions is still building. Open Actions/Releases when green.',
-  };
+export async function waitForDesktopReleaseZip(opts:{userId:string;tenantContext?:TenantContext;signal?:AbortSignal;repoFullName:string;tag?:string;commitSha?:string;projectId?:string;timeoutMs?:number;intervalMs?:number;onProgress?:(message:string)=>void}):Promise<{ok:boolean;zipDownloadUrl?:string;installerUrls?:string[];releaseUrl?:string;error?:string}>{
+ const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);opts={...opts};
+ const parsed=splitRepo(opts.repoFullName),tag=opts.tag,commit=opts.commitSha,timeoutMs=opts.timeoutMs??12*60000,intervalMs=opts.intervalMs??20000;
+ if(!parsed||typeof tag!=='string'||!/^v[0-9]{1,8}\.[0-9]{1,8}\.[0-9]{1,8}(?:-[A-Za-z0-9][A-Za-z0-9.-]{0,40})?$/.test(tag)||typeof commit!=='string'||!/^[a-f0-9]{40}$/.test(commit)||!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>12*60000||!Number.isSafeInteger(intervalMs)||intervalMs<1000||intervalMs>20000)throw new AuthorityError('DESKTOP_RELEASE_EXACT_SOURCE_REQUIRED');
+ const repository=`${parsed.owner}/${parsed.repo}`,project=await requireNativeArtifactProject(context,repository,opts.projectId),signal=AbortSignal.any([AbortSignal.timeout(timeoutMs),...(opts.signal?[opts.signal]:[])]),access=await nativeReleaseLifetime({...opts,signal},parsed);
+ const check=async()=>{signal.throwIfAborted();await access.check();await requireNativeArtifactProject(context,repository,project);signal.throwIfAborted();};
+ const pinnedTag=async()=>{await check();const response=await access.request(`/repos/${repository}/git/ref/tags/${tag}`);await check();if(!response.ok)throw new AuthorityError('DESKTOP_RELEASE_TAG_NOT_VERIFIED');const ref=await releaseJson(response) as{ref?:unknown;object?:{sha?:unknown;type?:unknown}};if(ref.ref!=='refs/tags/'+tag||ref.object?.sha!==commit||ref.object.type!=='commit')throw new AuthorityError('DESKTOP_RELEASE_TAG_CHANGED');};
+ const started=Date.now();let attempt=0;
+ while(Date.now()-started<timeoutMs){
+  await pinnedTag();opts.onProgress?.(`Checking the exact desktop release ${tag}, attempt ${++attempt}.`);
+  const response=await access.request(`/repos/${repository}/releases/tags/${tag}`);await check();
+  if(response.ok){
+   const data=await releaseJson(response) as{tag_name?:unknown;html_url?:unknown;draft?:unknown;assets?:Array<{id?:unknown;name?:unknown;state?:unknown;size?:unknown;browser_download_url?:unknown}>};
+   if(data.tag_name!==tag||data.html_url!==`https://github.com/${repository}/releases/tag/${tag}`||data.draft!==false||!Array.isArray(data.assets)||data.assets.length>100)throw new AuthorityError('DESKTOP_RELEASE_RECEIPT_DENIED');
+   const ready:Array<{name:string;url:string}>=[];
+   for(const asset of data.assets){
+    if(!asset||!Number.isSafeInteger(asset.id)||Number(asset.id)<1||typeof asset.name!=='string'||!asset.name||asset.name.length>200||/[\\/\x00-\x1f\x7f?#]/.test(asset.name)||asset.name==='.'||asset.name==='..'||typeof asset.browser_download_url!=='string'||containsCredentialSecretText(asset.name+asset.browser_download_url))throw new AuthorityError('DESKTOP_RELEASE_ASSET_DENIED');
+    const selectedCredential=access.token,encoded=Buffer.from(selectedCredential),projection=asset.name+asset.browser_download_url;
+    if(selectedCredential.length>=8&&[selectedCredential,encodeURIComponent(selectedCredential),encoded.toString('base64'),encoded.toString('base64url')].some(value=>projection.includes(value)))throw new AuthorityError('DESKTOP_RELEASE_ASSET_DENIED');
+    let url:string;try{url=publicHttpsUrl(asset.browser_download_url).href;}catch{throw new AuthorityError('DESKTOP_RELEASE_ASSET_DENIED');}
+    if(url!==`https://github.com/${repository}/releases/download/${tag}/${encodeURIComponent(asset.name)}`)throw new AuthorityError('DESKTOP_RELEASE_ASSET_DENIED');
+    if(asset.state==='uploaded'&&Number.isSafeInteger(asset.size)&&Number(asset.size)>0&&/\.(zip|AppImage|exe|dmg|msi)$/i.test(asset.name))ready.push({name:asset.name,url});
+   }
+   const preferred=ready.find(asset=>/\.(exe|AppImage|dmg|msi)$/i.test(asset.name))??ready[0];
+   if(preferred){await pinnedTag();await check();return{ok:true,zipDownloadUrl:preferred.url,installerUrls:ready.map(asset=>asset.url),releaseUrl:`https://github.com/${repository}/releases/tag/${tag}`};}
+  }else if(response.status!==404)throw new Error('The exact desktop release is unavailable. No other tag was substituted.');
+  await wait(Math.min(intervalMs,Math.max(1,timeoutMs-(Date.now()-started))),undefined,{signal});
+ }
+ return{ok:false,error:'The exact desktop release has no verified installer yet. Check its Actions run. No latest-release fallback was used.'};
 }
 
 /** Only the existing durable business-action executor supplies this permit. */

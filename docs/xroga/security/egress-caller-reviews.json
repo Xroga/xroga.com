@@ -3659,7 +3659,7 @@
     {
       "id": "094a251245ce9b6ab659",
       "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
-      "sourceFileSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+      "sourceFileSha256": "f895fbc0e39f85a742a19318b315609ae606f2292cdf04266f428505dd5f05e9",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_GITHUB_NATIVE_ARTIFACT_ORIGINAL_ACTOR_PRIVATE_SOURCE_AND_EXACT_CANONICAL_PUBLICATION_PERMIT",
       "tenantAuthority": "OWNED_PROJECT_FILE_EPOCH_FULL_CONNECTION_REVISION_ONE_USE_DURABLE_CLAIM_AND_CURRENT_REVOCATION",
@@ -3674,12 +3674,18 @@
           "marker": "native artifact preparation cannot publish or delete",
           "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
         }
-      ]
+      ],
+      "beforeDesktopWorkflow": {
+        "ref": "c855b541f4803c656ece900f6e1648c23e321c3e",
+        "id": "094a251245ce9b6ab659",
+        "sourceSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+        "proof": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json"
+      }
     },
     {
       "id": "07ca232e98dcc1720801",
       "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
-      "sourceFileSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+      "sourceFileSha256": "f895fbc0e39f85a742a19318b315609ae606f2292cdf04266f428505dd5f05e9",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_GITHUB_NATIVE_ARTIFACT_ORIGINAL_ACTOR_PRIVATE_SOURCE_AND_EXACT_CANONICAL_PUBLICATION_PERMIT",
       "tenantAuthority": "OWNED_PROJECT_FILE_EPOCH_FULL_CONNECTION_REVISION_ONE_USE_DURABLE_CLAIM_AND_CURRENT_REVOCATION",
@@ -3694,7 +3700,13 @@
           "marker": "native artifact preparation cannot publish or delete",
           "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
         }
-      ]
+      ],
+      "beforeDesktopWorkflow": {
+        "ref": "c855b541f4803c656ece900f6e1648c23e321c3e",
+        "id": "07ca232e98dcc1720801",
+        "sourceSha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e",
+        "proof": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json"
+      }
     },
     {
       "id": "d9708e60456bb2d7e538",
@@ -3870,6 +3882,31 @@
           "path": "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
           "marker": "Supabase exact project creation:",
           "sha256": "93c15f049c4cce01a1c09fbbc6a1a2b6d4150a1c7f3588953eba7b06e0170a27"
+        }
+      ]
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "callSha256": "bb486d6481e92c5bfd6801363bc415b6418f93e9383000e6086cc18f90141a94",
+      "sourceFileSha256": "f895fbc0e39f85a742a19318b315609ae606f2292cdf04266f428505dd5f05e9",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_GITHUB_RELEASE_TRANSPORT_ALL_REACHABLE_ZIP_AND_DESKTOP_CALLERS_INDIVIDUALLY_ADMITTED_NO_LATEST_OR_WORKFLOW_FALLBACK",
+      "tenantAuthority": "ORIGINAL_CONTEXT_OWNED_PROJECT_AND_REPOSITORY_CURRENT_CREDENTIAL_EPOCH_IMMUTABLE_SOURCE_CANONICAL_EGRESS_ONE_USE_APPROVAL_TERMINAL_DENIAL_NO_FALSE_INSTALLER_RECEIPT",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
+          "marker": "99ec2dc4769b5eced6a5",
+          "sha256": "8f885ebc7fc143d8e9bf23edc1b7decdee22ac6a678baa33e989aac4f0183926"
+        },
+        {
+          "path": "backend/src/services/publish/desktopWorkflow.security.test.ts",
+          "marker": "desktop exact workflow admission:",
+          "sha256": "6d49df7f38f39dfd6605b50202f7f881cf61b57f9ab11f9c54ab66800c5fa52e"
+        },
+        {
+          "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+          "marker": "native artifact preparation cannot publish or delete before exact durable approval",
+          "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
         }
       ]
     }
