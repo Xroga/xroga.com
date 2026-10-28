@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d394fba5e9478b18dc31563dbf4b478e285b70cf",
+  "source_sha": "a8ec34f724d1e380216df4734050a32da054ac20",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17140,7 +17140,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "588a39ee5848b8a176de7db733df4c8268a4adaffc6271c9048c03e885d7fced"
+      "sha256": "b152c62ee7be63efbd05766c2028491be0a53bceed6fce7de4ff110d43802420"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -24569,42 +24569,42 @@
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 876,
+      "line": 879,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 934,
+      "line": 937,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1621,
+      "line": 1624,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1639,
+      "line": 1642,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1647,
+      "line": 1650,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1651,
+      "line": 1654,
       "credentialsInUrl": false
     },
     {
@@ -32059,14 +32059,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1120,
+      "line": 1123,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1457,
+      "line": 1460,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
