@@ -3504,6 +3504,8 @@
         "backend/src/ai/executionRuntime.test.ts:3",
         "backend/src/ai/pipeline.ts:239",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
+        "backend/src/existingSource/change/canonical.ts:49",
+        "backend/src/existingSource/change/canonical.ts:65",
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/sandbox/google/executionBinding.test.ts:5",
         "backend/src/sandbox/google/executionBinding.ts:3",
@@ -3554,6 +3556,7 @@
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts",
         "backend/src/ai/executionRuntime.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
         "backend/src/sandbox/google/executionBinding.test.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -7322,8 +7325,12 @@
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:5",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.ts:1",
         "backend/src/builder/swarmBridge.ts:2",
+        "backend/src/existingSource/change/canonical.ts:65",
+        "backend/src/existingSource/change/canonicalJob.ts:30",
         "backend/src/index.ts:61",
         "backend/src/routes/dashboard.ts:6",
+        "backend/src/routes/existingSource.ts:208",
+        "backend/src/routes/existingSource.ts:88",
         "backend/src/routes/swarm.notificationAuthority.test.ts:6",
         "backend/src/routes/swarm.ts:17",
         "backend/src/sandbox/google/executionBinding.test.ts:4",
@@ -7397,6 +7404,7 @@
         "backend/src/ai/runTrace.attempt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts",
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/routes/swarm.notificationAuthority.test.ts",
         "backend/src/sandbox/google/executionBinding.test.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -7869,6 +7877,7 @@
       "testCoverage": [
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
@@ -15846,7 +15855,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/existingSource.ts:28",
+        "backend/src/routes/existingSource.ts:29",
         "backend/src/routes/existingSourceArchive.test.ts:7"
       ],
       "reachable": true,
@@ -16152,6 +16161,136 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:97f8ac201492b3298727",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/canonical.ts",
+      "sha256": "e9f328d704c6d85806e77b3690fede1b255162ae5e68262c72ac97e8ac9146d9",
+      "symbols": [
+        "CanonicalChangeRun",
+        "CanonicalPortDeps",
+        "TASK_ID",
+        "attempt",
+        "canonicalExecutionPort",
+        "canonicalRunFor",
+        "canonicalStateFor",
+        "changeTask",
+        "deps",
+        "files",
+        "fingerprint",
+        "key",
+        "productionCanonicalDeps",
+        "repository",
+        "synced"
+      ],
+      "imports": [
+        "../../ai/executionRuntime.js",
+        "../../ai/runStore.js",
+        "../../sandbox/google/executionBinding.js",
+        "../../sandbox/sandboxRuntime.js",
+        "../../sandbox/sandboxTypes.js",
+        "../types.js",
+        "./testRunner.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/executionRuntime.ts",
+        "backend/src/ai/runStore.ts",
+        "backend/src/existingSource/types.ts",
+        "backend/src/sandbox/sandboxRuntime.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:16",
+        "backend/src/existingSource/change/canonicalJob.ts:11"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f0547d20f7b44117b9a2",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/canonicalJob.ts",
+      "sha256": "22df915a778757300cab3d8d47fea963ca9d572d5fb6c8128d2c74c24c234d12",
+      "symbols": [
+        "ChangeJobDeps",
+        "changes",
+        "deps",
+        "finished",
+        "onAbort",
+        "productionDeps",
+        "run",
+        "runExistingSourceChangeJob",
+        "source",
+        "task",
+        "userId"
+      ],
+      "imports": [
+        "../../ai/runStore.js",
+        "../../ai/softwareAgent/AgentSoftwareExecutor.js",
+        "../../routes/existingSource.js",
+        "../../security/tenantContext.js",
+        "../../workers/googleDeliveryStore.js",
+        "../intelligence/service.js",
+        "../service.js",
+        "../types.js",
+        "./canonical.js",
+        "./production.js",
+        "./service.js",
+        "./store.js",
+        "./testRunner.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/runStore.ts",
+        "backend/src/existingSource/change/canonical.ts",
+        "backend/src/existingSource/change/production.ts",
+        "backend/src/existingSource/change/service.ts",
+        "backend/src/existingSource/change/store.ts",
+        "backend/src/existingSource/change/types.ts",
+        "backend/src/existingSource/types.ts",
+        "backend/src/routes/existingSource.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:17",
+        "backend/src/scripts/runCanonicalWorker.ts:48"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:aed2206854e9c8ec1c96",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/delivery.ts",
@@ -16234,7 +16373,7 @@
       "callers": [
         "backend/src/existingSource/change/delivery.test.ts:14",
         "backend/src/existingSource/change/golden.test.ts:21",
-        "backend/src/routes/existingSource.ts:23",
+        "backend/src/routes/existingSource.ts:24",
         "backend/src/routes/existingSourceChanges.test.ts:7"
       ],
       "reachable": true,
@@ -16355,6 +16494,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:18",
         "backend/src/existingSource/change/change.test.ts:11",
         "backend/src/existingSource/change/golden.test.ts:23",
         "backend/src/routes/existingSourceChanges.test.ts:9"
@@ -16373,6 +16513,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
@@ -16428,7 +16569,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/existingSource.ts:24"
+        "backend/src/existingSource/change/canonicalJob.ts:30",
+        "backend/src/routes/existingSource.ts:25"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16450,7 +16592,7 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "56cd711dd2755eb5b7043a720719f532efde4b162ee372e8f913cba803b6e99e",
+      "sha256": "96a2ce75394fac69546500f4b8c794ba02aefbbf89ccb0b672021872b647b2a7",
       "symbols": [
         "ALWAYS_ALLOWED",
         "AgentRunner",
@@ -16461,6 +16603,7 @@
         "ChangeService",
         "DENIED_PATHS",
         "agentResult",
+        "aliveElsewhere",
         "at",
         "attempt",
         "baseWithTests",
@@ -16553,9 +16696,11 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:19",
+        "backend/src/existingSource/change/canonicalJob.ts:12",
         "backend/src/existingSource/change/change.test.ts:12",
         "backend/src/existingSource/change/golden.test.ts:24",
-        "backend/src/routes/existingSource.ts:25",
+        "backend/src/routes/existingSource.ts:26",
         "backend/src/routes/existingSourceChanges.test.ts:10"
       ],
       "reachable": true,
@@ -16576,6 +16721,7 @@
         "backend/src/existingSource/change/service.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
@@ -16691,10 +16837,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:20",
+        "backend/src/existingSource/change/canonicalJob.ts:30",
         "backend/src/existingSource/change/change.test.ts:13",
         "backend/src/existingSource/change/delivery.test.ts:16",
         "backend/src/existingSource/change/golden.test.ts:25",
-        "backend/src/routes/existingSource.ts:26",
+        "backend/src/routes/existingSource.ts:27",
         "backend/src/routes/existingSourceChanges.test.ts:11"
       ],
       "reachable": true,
@@ -16708,6 +16856,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
@@ -16881,6 +17030,7 @@
         "backend/src/existingSource/change/toolHost.ts#SoftwarePreviewEvidence"
       ],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
@@ -16896,7 +17046,7 @@
       "id": "surface:ca4dcefda54f6049e3d0",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/types.ts",
-      "sha256": "e43f425e12a1101c20ad91cb179465b140c6e418551c7120eb5f3396c82c4d65",
+      "sha256": "a48e828e48a4e0b1ffd1c75f6c70dc5d74d19d6138d330c92d2c6ee75ecd767b",
       "symbols": [
         "ChangeEvent",
         "ChangeRevision",
@@ -16920,6 +17070,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonicalJob.ts:15",
         "backend/src/existingSource/change/service.ts:26"
       ],
       "reachable": true,
@@ -17169,6 +17320,7 @@
       ],
       "entryPoints": [],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:10",
         "backend/src/existingSource/change/change.test.ts:5",
         "backend/src/existingSource/change/delivery.test.ts:10",
         "backend/src/existingSource/change/golden.test.ts:14",
@@ -17191,6 +17343,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
@@ -17363,11 +17516,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:11",
         "backend/src/existingSource/change/change.test.ts:6",
         "backend/src/existingSource/change/golden.test.ts:15",
         "backend/src/existingSource/intelligence/polyglot.test.ts:7",
         "backend/src/existingSource/intelligence/service.test.ts:9",
-        "backend/src/routes/existingSource.ts:29",
+        "backend/src/routes/existingSource.ts:30",
         "backend/src/routes/existingSourceArchive.test.ts:9",
         "backend/src/routes/existingSourceChanges.test.ts:15",
         "backend/src/routes/existingSourceIntelligence.test.ts:7"
@@ -17383,6 +17537,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
@@ -17988,11 +18143,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:12",
         "backend/src/existingSource/change/change.test.ts:7",
         "backend/src/existingSource/change/golden.test.ts:17",
         "backend/src/existingSource/intelligence/polyglot.test.ts:8",
         "backend/src/existingSource/intelligence/service.test.ts:10",
-        "backend/src/routes/existingSource.ts:30",
+        "backend/src/routes/existingSource.ts:31",
         "backend/src/routes/existingSourceArchive.test.ts:10",
         "backend/src/routes/existingSourceChanges.test.ts:16",
         "backend/src/routes/existingSourceIntelligence.test.ts:9"
@@ -18008,6 +18164,7 @@
         "backend/src/existingSource/intelligence/service.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
@@ -18122,7 +18279,7 @@
       "callers": [
         "backend/src/existingSource/provider.test.ts:4",
         "backend/src/existingSource/service.ts:18",
-        "backend/src/routes/existingSource.ts:32"
+        "backend/src/routes/existingSource.ts:33"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18280,6 +18437,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:13",
         "backend/src/existingSource/change/change.test.ts:8",
         "backend/src/existingSource/change/delivery.test.ts:11",
         "backend/src/existingSource/change/golden.test.ts:18",
@@ -18287,7 +18445,7 @@
         "backend/src/existingSource/intelligence/service.test.ts:6",
         "backend/src/existingSource/service.test.ts:5",
         "backend/src/routes/existingSource.test.ts:7",
-        "backend/src/routes/existingSource.ts:31",
+        "backend/src/routes/existingSource.ts:32",
         "backend/src/routes/existingSourceArchive.test.ts:11",
         "backend/src/routes/existingSourceChanges.test.ts:17",
         "backend/src/routes/existingSourceIntelligence.test.ts:10"
@@ -18306,6 +18464,7 @@
         "backend/src/existingSource/service.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
@@ -18368,6 +18527,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:14",
         "backend/src/existingSource/change/change.test.ts:9",
         "backend/src/existingSource/change/delivery.test.ts:12",
         "backend/src/existingSource/change/golden.test.ts:19",
@@ -18375,7 +18535,7 @@
         "backend/src/existingSource/intelligence/service.test.ts:7",
         "backend/src/existingSource/service.test.ts:6",
         "backend/src/routes/existingSource.test.ts:8",
-        "backend/src/routes/existingSource.ts:33",
+        "backend/src/routes/existingSource.ts:34",
         "backend/src/routes/existingSourceArchive.test.ts:12",
         "backend/src/routes/existingSourceChanges.test.ts:18",
         "backend/src/routes/existingSourceIntelligence.test.ts:11"
@@ -18397,6 +18557,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
@@ -18493,6 +18654,9 @@
         "backend/src/existingSource/archive/importer.ts:7",
         "backend/src/existingSource/archive/zipReader.test.ts:4",
         "backend/src/existingSource/archive/zipReader.ts:11",
+        "backend/src/existingSource/change/canonical.test.ts:15",
+        "backend/src/existingSource/change/canonical.ts:15",
+        "backend/src/existingSource/change/canonicalJob.ts:6",
         "backend/src/existingSource/change/change.test.ts:10",
         "backend/src/existingSource/change/delivery.test.ts:13",
         "backend/src/existingSource/change/delivery.ts:23",
@@ -18512,7 +18676,7 @@
         "backend/src/existingSource/service.test.ts:7",
         "backend/src/existingSource/service.ts:22",
         "backend/src/existingSource/store.ts:9",
-        "backend/src/routes/existingSource.ts:34"
+        "backend/src/routes/existingSource.ts:35"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18528,6 +18692,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/existingSource/archive/zipReader.test.ts",
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
@@ -25543,13 +25708,14 @@
       "id": "surface:9de73948fcfe2a99b724",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "sha256": "f749749a79544759c3e406aa8e8f140091da3b654b8224e9bc6421ec51662fb7",
+      "sha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
       "symbols": [
         "ARCHIVE_UPLOAD_LIMIT",
         "ExistingSourceChanges",
         "ExistingSourceChangesFactory",
         "ExistingSourceIntelligenceFactory",
         "ExistingSourceServiceFactory",
+        "admitGoogleRun",
         "archiveQuery",
         "archives",
         "b",
@@ -25557,9 +25723,11 @@
         "changeBody",
         "changeId",
         "changeStore",
+        "code",
         "codeIndexes",
         "context",
         "createExistingSourceRouter",
+        "current",
         "db",
         "defaultExistingSourceChanges",
         "defaultExistingSourceIntelligence",
@@ -25575,7 +25743,10 @@
         "handle",
         "id",
         "indexBody",
+        "launchChange",
+        "launched",
         "link",
+        "loaded",
         "locateBody",
         "neighborhoodQuery",
         "outcome",
@@ -25585,8 +25756,11 @@
         "projectFor",
         "publicChange",
         "q",
+        "queued",
+        "reason",
         "result",
         "router",
+        "runId",
         "saved",
         "searchQuery",
         "store",
@@ -25597,6 +25771,7 @@
         "z"
       ],
       "imports": [
+        "../ai/runStore.js",
         "../existingSource/archive/archiveStore.js",
         "../existingSource/change/delivery.js",
         "../existingSource/change/production.js",
@@ -25614,10 +25789,13 @@
         "../security/tenantContext.js",
         "../security/tenantErrors.js",
         "../services/integrations/githubAuth.js",
+        "../workers/googleSwarmQueue.js",
         "express",
+        "node:crypto",
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/ai/runStore.ts",
         "backend/src/existingSource/archive/archiveStore.ts",
         "backend/src/existingSource/change/delivery.ts",
         "backend/src/existingSource/change/production.ts",
@@ -25632,15 +25810,20 @@
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/security/tenantErrors.ts",
-        "backend/src/services/integrations/githubAuth.ts"
+        "backend/src/services/integrations/githubAuth.ts",
+        "backend/src/workers/googleSwarmQueue.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/canonicalJob.ts:30",
         "backend/src/index.ts:23",
         "backend/src/routes/existingSource.test.ts:10",
         "backend/src/routes/existingSourceArchive.test.ts:14",
+        "backend/src/routes/existingSourceChanges.test.ts:176",
+        "backend/src/routes/existingSourceChanges.test.ts:185",
+        "backend/src/routes/existingSourceChanges.test.ts:193",
         "backend/src/routes/existingSourceChanges.test.ts:20",
         "backend/src/routes/existingSourceIntelligence.test.ts:13",
         "backend/src/routes/github.ts:7"
@@ -25651,13 +25834,14 @@
       ],
       "externalProviderDependencies": [
         "express",
+        "node:crypto",
         "zod"
       ],
       "authBoundary": [
         "backend/src/routes/existingSource.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/existingSource.ts:47 (user_id)"
+        "backend/src/routes/existingSource.ts:48 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -28242,6 +28426,7 @@
         "backend/src/sandbox/google/executionBinding.ts#workingFilesFromCheckpoint"
       ],
       "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/sandbox/google/executionBinding.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -28833,6 +29018,7 @@
         "backend/src/ai/compileValidate.ts:21",
         "backend/src/ai/p0Regressions.test.ts:32",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:20",
+        "backend/src/existingSource/change/canonical.ts:65",
         "backend/src/existingSource/change/production.ts:21",
         "backend/src/index.ts:72",
         "backend/src/sandbox/googleSelection.test.ts:4",
@@ -28949,11 +29135,12 @@
       "id": "surface:7bc8939729d3985b5f35",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/scripts/runCanonicalWorker.ts",
-      "sha256": "7e8a8b5abbc6aab694ff22b76c1c5620e86f93a1fd3c29e71e7bfaef87510b83",
+      "sha256": "5f2fdd3d0f4b7d27dff4a52e5dd7915f85362b42aa2e085720bbf09bc69fad30",
       "symbols": [
         "assistantMessageId",
         "builderRun",
         "cancellationCheck",
+        "changeStatus",
         "checking",
         "claim",
         "code",
@@ -28962,6 +29149,7 @@
         "deadline",
         "deliveryStore",
         "error",
+        "outcome",
         "output",
         "ownerId",
         "result",
@@ -28975,6 +29163,7 @@
         "../ai/runStore.js",
         "../builder/service.js",
         "../builder/swarmBridge.js",
+        "../existingSource/change/canonicalJob.js",
         "../loadPlatformEnvironment.js",
         "../runtime/installSafeLogging.js",
         "../services/integrations/credentialVaultStartup.js",
@@ -28987,6 +29176,7 @@
         "backend/src/ai/runReconciler.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/builder/swarmBridge.ts",
+        "backend/src/existingSource/change/canonicalJob.ts",
         "backend/src/loadPlatformEnvironment.ts",
         "backend/src/runtime/installSafeLogging.ts",
         "backend/src/services/integrations/credentialVaultStartup.ts",
@@ -29749,7 +29939,7 @@
         "backend/src/middleware/admin.ts:2",
         "backend/src/routes/admin.ts:2",
         "backend/src/routes/billingWebhook.ts:4",
-        "backend/src/routes/existingSource.ts:36",
+        "backend/src/routes/existingSource.ts:37",
         "backend/src/routes/messageShares.ts:4",
         "backend/src/routes/notifications.ts:2",
         "backend/src/routes/operations.ts:4",
@@ -29850,6 +30040,7 @@
         "backend/src/builder/swarmBridge.ts:1",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
         "backend/src/existingSource/archive/archiveStore.ts:6",
+        "backend/src/existingSource/change/canonical.test.ts:8",
         "backend/src/existingSource/change/store.ts:3",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:7",
         "backend/src/existingSource/store.ts:7",
@@ -29870,7 +30061,7 @@
         "backend/src/routes/builderPhase3.ts:7",
         "backend/src/routes/drive.test.ts:2",
         "backend/src/routes/existingSource.test.ts:9",
-        "backend/src/routes/existingSource.ts:38",
+        "backend/src/routes/existingSource.ts:39",
         "backend/src/routes/existingSourceArchive.test.ts:13",
         "backend/src/routes/existingSourceChanges.test.ts:19",
         "backend/src/routes/existingSourceIntelligence.test.ts:12",
@@ -30019,6 +30210,7 @@
         "backend/src/builder/cancel.test.ts",
         "backend/src/builder/conversation.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/middleware/admin.test.ts",
         "backend/src/middleware/auth.tenantContext.remote.test.ts",
         "backend/src/middleware/auth.tenantContext.test.ts",
@@ -30134,7 +30326,7 @@
         "backend/src/routes/builderPhase2.ts:9",
         "backend/src/routes/builderPhase3.ts:6",
         "backend/src/routes/drive.ts:8",
-        "backend/src/routes/existingSource.ts:37",
+        "backend/src/routes/existingSource.ts:38",
         "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
         "backend/src/routes/terminalSessions.ts:18",
@@ -32261,7 +32453,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
         "backend/src/builder/phase2Bridge.ts:4",
         "backend/src/existingSource/change/production.ts:44",
-        "backend/src/routes/existingSource.ts:35",
+        "backend/src/routes/existingSource.ts:36",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
@@ -47244,7 +47436,7 @@
       "id": "surface:97528249b6af89789095",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/workers/googleDeliveryStore.ts",
-      "sha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76",
+      "sha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d",
       "symbols": [
         "CanonicalDeliveryClaim",
         "CanonicalQueuedInput",
@@ -47305,7 +47497,7 @@
         "backend/src/workers/googleDeliveryStore.ts#verifyAttachedGoogleIdentity"
       ],
       "tenantBoundary": [
-        "backend/src/workers/googleDeliveryStore.ts:95 (user_id)"
+        "backend/src/workers/googleDeliveryStore.ts:100 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -47314,6 +47506,7 @@
       ],
       "testCoverage": [
         "backend/src/ai/runStore.queuedAdmission.test.ts",
+        "backend/src/existingSource/change/canonical.test.ts",
         "backend/src/workers/googleDeliveryStore.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -47459,9 +47652,10 @@
       "id": "surface:68fa32c6e5ad38155265",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/workers/googleSwarmQueue.ts",
-      "sha256": "b86b0f51575cc3be197c3fa1a7c9f7f8d4f3eaf25847c4c1ea5f52679af9cd3a",
+      "sha256": "b294d79638b59b9b67421082593be8e0cead65bb20b314a0ba5ea618004d5689",
       "symbols": [
         "QueueDependencies",
+        "admitGoogleRun",
         "c",
         "connected",
         "deadline",
@@ -47506,6 +47700,7 @@
       "callers": [
         "backend/src/index.ts:11",
         "backend/src/routes/businessAutomationScheduler.ts:4",
+        "backend/src/routes/existingSource.ts:98",
         "backend/src/routes/swarm.ts:9",
         "backend/src/workers/googleSwarmQueue.test.ts:8"
       ],
@@ -113297,9 +113492,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d77600733ad7adf78de8",
+      "id": "registration:2fd2812713e065c35fc8",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 121,
+      "line": 144,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -113309,9 +113504,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:82189f0cb9852a9ee8e7",
+      "id": "registration:2cbb9d1ddd6604f80632",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 122,
+      "line": 145,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -113321,9 +113516,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:59f23cd63dd2b73d1c07",
+      "id": "registration:f8bc4a6301e524cd7612",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 141,
+      "line": 164,
       "receiver": "router",
       "method": "get",
       "path": "/repositories",
@@ -113335,9 +113530,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c7b26fd8f0d8a4e4f3ee",
+      "id": "registration:8b4f4652a2addd59cc4d",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 142,
+      "line": 165,
       "receiver": "router",
       "method": "post",
       "path": "/links",
@@ -113349,9 +113544,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:31e277053fb7987e0810",
+      "id": "registration:21282e61147e2882147b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 147,
+      "line": 170,
       "receiver": "router",
       "method": "get",
       "path": "/links",
@@ -113363,9 +113558,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3e31f0368ddba79e8320",
+      "id": "registration:67dffcc066adf40d1184",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 148,
+      "line": 171,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id",
@@ -113377,9 +113572,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:10db54fcfcf66cdfabff",
+      "id": "registration:9355ada377ee26a2aeb1",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 149,
+      "line": 172,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/refresh",
@@ -113391,9 +113586,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2de9f02b74f636bc4e4e",
+      "id": "registration:7fe2432c4877a1a4e40b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 150,
+      "line": 173,
       "receiver": "router",
       "method": "delete",
       "path": "/links/:id",
@@ -113405,9 +113600,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:908d06bdd6479e653e9a",
+      "id": "registration:bafc5fced3e8d2ecc87d",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 151,
+      "line": 174,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/directory",
@@ -113419,9 +113614,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:432a15b9ba0ed18c403e",
+      "id": "registration:c3ce0e8bf241a7018222",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 154,
+      "line": 177,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/index",
@@ -113433,9 +113628,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5b73605ca0993dabf879",
+      "id": "registration:80ddaa6827cea94c633c",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 155,
+      "line": 178,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/index",
@@ -113447,9 +113642,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9772fbe5524a80e33b5e",
+      "id": "registration:1489167e9b4ccd5c11f5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 160,
+      "line": 183,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/search",
@@ -113461,9 +113656,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d20738cbf255b87d3350",
+      "id": "registration:4c92f35e8dbdf87ca44f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 161,
+      "line": 184,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/locate",
@@ -113475,9 +113670,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a2fc53d2f8edd899ee97",
+      "id": "registration:7f5f2bf7d3bb4736ea24",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 162,
+      "line": 185,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/neighborhood",
@@ -113489,9 +113684,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ba9ed8cdb2b8721818b2",
+      "id": "registration:1ab81bb5acb6dbbfe8d7",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 163,
+      "line": 186,
       "receiver": "router",
       "method": "post",
       "path": "/archives",
@@ -113504,9 +113699,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:547c2c4bc3d2e0703437",
+      "id": "registration:d63ca983b67a4de25d56",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 172,
+      "line": 195,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/changes",
@@ -113518,9 +113713,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:10b198a0ab8d271c4c4e",
+      "id": "registration:b52c9591ed5bbf9a189f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 178,
+      "line": 201,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/changes",
@@ -113532,9 +113727,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4b166d3d2459bd9e27c6",
+      "id": "registration:bb0bd324d6605639fca4",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 179,
+      "line": 202,
       "receiver": "router",
       "method": "get",
       "path": "/changes/:changeId",
@@ -113546,9 +113741,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:812ae09b2f132522a210",
+      "id": "registration:a07c2a0463e95960e15c",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 180,
+      "line": 203,
       "receiver": "router",
       "method": "post",
       "path": "/changes/:changeId/cancel",
@@ -113560,9 +113755,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:afc2118228937231334c",
+      "id": "registration:e99d58263f3b9a7e2fa6",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 181,
+      "line": 213,
       "receiver": "router",
       "method": "post",
       "path": "/changes/:changeId/resume",
@@ -113574,9 +113769,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d18b17c4ea6ab40f65c0",
+      "id": "registration:27fe89dbffb39c0ccd15",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 187,
+      "line": 219,
       "receiver": "router",
       "method": "post",
       "path": "/changes/:changeId/deliver",
@@ -113588,9 +113783,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1e0f4b61a3b9fa5ae03f",
+      "id": "registration:611af240bbb52dfa50a2",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 193,
+      "line": 225,
       "receiver": "router",
       "method": "get",
       "path": "/changes/:changeId/export",
@@ -113602,9 +113797,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:af007552fa1e0a8ec90d",
+      "id": "registration:158451acb15f3e48c1c3",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 200,
+      "line": 232,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/file",
@@ -113616,9 +113811,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:f5602c642721e51adc94",
+      "id": "registration:cac03120f3f0ac074b7f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 201,
+      "line": 233,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -118770,10 +118965,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:78205a5286e95124d8b4",
-      "registrationId": "registration:59f23cd63dd2b73d1c07",
+      "id": "route:72240146fb49e60382aa",
+      "registrationId": "registration:f8bc4a6301e524cd7612",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 141,
+      "line": 164,
       "method": "GET",
       "path": "/api/existing-source/repositories",
       "mountChain": [
@@ -118787,10 +118982,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ece83f31450bf8869bf9",
-      "registrationId": "registration:c7b26fd8f0d8a4e4f3ee",
+      "id": "route:1bb8eeb0e736cd4aab88",
+      "registrationId": "registration:8b4f4652a2addd59cc4d",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 142,
+      "line": 165,
       "method": "POST",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -118804,10 +118999,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:b84638540bd5c5c2a55d",
-      "registrationId": "registration:31e277053fb7987e0810",
+      "id": "route:489c39837bee7b88069a",
+      "registrationId": "registration:21282e61147e2882147b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 147,
+      "line": 170,
       "method": "GET",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -118821,10 +119016,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:a45ab4a093e1eb7fe01a",
-      "registrationId": "registration:3e31f0368ddba79e8320",
+      "id": "route:068d323ce74776eb42b2",
+      "registrationId": "registration:67dffcc066adf40d1184",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 148,
+      "line": 171,
       "method": "GET",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -118838,10 +119033,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:55f82cbee442eeb717f3",
-      "registrationId": "registration:10db54fcfcf66cdfabff",
+      "id": "route:d8b7caf316c271d242d9",
+      "registrationId": "registration:9355ada377ee26a2aeb1",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 149,
+      "line": 172,
       "method": "POST",
       "path": "/api/existing-source/links/:id/refresh",
       "mountChain": [
@@ -118855,10 +119050,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:3f93e678aaf0d1eec052",
-      "registrationId": "registration:2de9f02b74f636bc4e4e",
+      "id": "route:3c03ba6ee01e4b3e87b6",
+      "registrationId": "registration:7fe2432c4877a1a4e40b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 150,
+      "line": 173,
       "method": "DELETE",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -118872,10 +119067,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:07d091ca1086dbc14114",
-      "registrationId": "registration:908d06bdd6479e653e9a",
+      "id": "route:dfacaf4be79831726534",
+      "registrationId": "registration:bafc5fced3e8d2ecc87d",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 151,
+      "line": 174,
       "method": "GET",
       "path": "/api/existing-source/links/:id/directory",
       "mountChain": [
@@ -118889,10 +119084,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:3d0f633a8d15c11170e6",
-      "registrationId": "registration:432a15b9ba0ed18c403e",
+      "id": "route:7b53d10cdb993cf47b80",
+      "registrationId": "registration:c3ce0e8bf241a7018222",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 154,
+      "line": 177,
       "method": "GET",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -118906,10 +119101,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:e59ff313810a0fec801e",
-      "registrationId": "registration:5b73605ca0993dabf879",
+      "id": "route:10dc34bb5b8b2d16338d",
+      "registrationId": "registration:80ddaa6827cea94c633c",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 155,
+      "line": 178,
       "method": "POST",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -118923,10 +119118,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:8dd1eeef5145008bfb46",
-      "registrationId": "registration:9772fbe5524a80e33b5e",
+      "id": "route:ed96db49236bb2c97f45",
+      "registrationId": "registration:1489167e9b4ccd5c11f5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 160,
+      "line": 183,
       "method": "GET",
       "path": "/api/existing-source/links/:id/search",
       "mountChain": [
@@ -118940,10 +119135,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ec42795b41f9ef4454d5",
-      "registrationId": "registration:d20738cbf255b87d3350",
+      "id": "route:295bdde5aa1cdf69c123",
+      "registrationId": "registration:4c92f35e8dbdf87ca44f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 161,
+      "line": 184,
       "method": "POST",
       "path": "/api/existing-source/links/:id/locate",
       "mountChain": [
@@ -118957,10 +119152,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:c04815dfbeac2789691d",
-      "registrationId": "registration:a2fc53d2f8edd899ee97",
+      "id": "route:9724b8ef413f2de32f4a",
+      "registrationId": "registration:7f5f2bf7d3bb4736ea24",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 162,
+      "line": 185,
       "method": "GET",
       "path": "/api/existing-source/links/:id/neighborhood",
       "mountChain": [
@@ -118974,10 +119169,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:5dd8e3f71278b21f4fa6",
-      "registrationId": "registration:ba9ed8cdb2b8721818b2",
+      "id": "route:4e63e4bd509487f04e28",
+      "registrationId": "registration:1ab81bb5acb6dbbfe8d7",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 163,
+      "line": 186,
       "method": "POST",
       "path": "/api/existing-source/archives",
       "mountChain": [
@@ -118991,10 +119186,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:d447ff0fc8f5ad39fbd8",
-      "registrationId": "registration:547c2c4bc3d2e0703437",
+      "id": "route:ffae099b9837909f31ef",
+      "registrationId": "registration:d63ca983b67a4de25d56",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 172,
+      "line": 195,
       "method": "POST",
       "path": "/api/existing-source/links/:id/changes",
       "mountChain": [
@@ -119008,10 +119203,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:ea4aba7f2a91d5183c7e",
-      "registrationId": "registration:10b198a0ab8d271c4c4e",
+      "id": "route:62e6adff736fc2a2152b",
+      "registrationId": "registration:b52c9591ed5bbf9a189f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 178,
+      "line": 201,
       "method": "GET",
       "path": "/api/existing-source/links/:id/changes",
       "mountChain": [
@@ -119025,10 +119220,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:88e27aa3a53c50de7a90",
-      "registrationId": "registration:4b166d3d2459bd9e27c6",
+      "id": "route:fd34c6ab108a28f01f9a",
+      "registrationId": "registration:bb0bd324d6605639fca4",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 179,
+      "line": 202,
       "method": "GET",
       "path": "/api/existing-source/changes/:changeId",
       "mountChain": [
@@ -119042,10 +119237,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:7e9323f5e21614800bc8",
-      "registrationId": "registration:812ae09b2f132522a210",
+      "id": "route:5eb96c2be1433bd78381",
+      "registrationId": "registration:a07c2a0463e95960e15c",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 180,
+      "line": 203,
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/cancel",
       "mountChain": [
@@ -119059,10 +119254,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:d02840d90b57a5a698a7",
-      "registrationId": "registration:afc2118228937231334c",
+      "id": "route:a97faa30c41eb44a26cf",
+      "registrationId": "registration:e99d58263f3b9a7e2fa6",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 181,
+      "line": 213,
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/resume",
       "mountChain": [
@@ -119076,10 +119271,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:694c02ae14836f26fc5d",
-      "registrationId": "registration:d18b17c4ea6ab40f65c0",
+      "id": "route:4be09f23a612b617a8d9",
+      "registrationId": "registration:27fe89dbffb39c0ccd15",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 187,
+      "line": 219,
       "method": "POST",
       "path": "/api/existing-source/changes/:changeId/deliver",
       "mountChain": [
@@ -119093,10 +119288,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:e3528d708ecf982970e0",
-      "registrationId": "registration:1e0f4b61a3b9fa5ae03f",
+      "id": "route:9ac9fb7d89a837fdaf8b",
+      "registrationId": "registration:611af240bbb52dfa50a2",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 193,
+      "line": 225,
       "method": "GET",
       "path": "/api/existing-source/changes/:changeId/export",
       "mountChain": [
@@ -119110,10 +119305,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:d8708e40ee4a5d8e300e",
-      "registrationId": "registration:af007552fa1e0a8ec90d",
+      "id": "route:d764308ac889cbe4538b",
+      "registrationId": "registration:158451acb15f3e48c1c3",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 200,
+      "line": 232,
       "method": "GET",
       "path": "/api/existing-source/links/:id/file",
       "mountChain": [
@@ -121013,7 +121208,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:6eca2670c22993abd04a",
+      "id": "schedule:a45f6d3f48eb7e4b2065",
       "sourcePath": "backend/src/scripts/runCanonicalWorker.ts",
       "line": 36,
       "kind": "setInterval",
@@ -130637,6 +130832,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:4d3e17cafc59593cb5cb",
+      "sourcePath": "backend/src/existingSource/change/canonical.test.ts",
+      "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b0a17c19a50086bf9d9a",
       "sourcePath": "backend/src/existingSource/change/change.test.ts",
       "declaredTests": 25,
@@ -131376,7 +131578,7 @@
     {
       "id": "test-suite:c93d59dcc7ca4d1fd32c",
       "sourcePath": "backend/src/routes/existingSourceChanges.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -133584,7 +133786,7 @@
     {
       "id": "test-suite:2132596885b429e3fb45",
       "sourcePath": "backend/src/workers/googleDeliveryStore.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

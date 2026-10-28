@@ -37,6 +37,8 @@ export interface ChangeDeps {
   readonly runAgent: AgentRunner;
   /** The model route Xroga selects for this change (provider health, quota and billing stay with Xroga). */
   readonly modelRouteFor: (userId: string, changeId: string) => Promise<AgentSoftwareExecutorInput['model']>;
+  /** For a change executing on the durable path: whether its canonical run is still alive. Without it, only this process's runs count as running. */
+  readonly canonicalRunAlive?: (userId: string, runId: string) => Promise<boolean>;
   readonly newId?: () => string;
   readonly now?: () => number;
   readonly maxAttempts?: number;
@@ -90,7 +92,8 @@ export class ChangeService {
     if (!task) throw new ExistingSourceError('CHANGE_NOT_FOUND', 'Change not found.');
     // a change that was just created and has not been picked up yet is waiting, not interrupted; only a long-stale queued one is
     const staleQueued = task.status === 'queued' && this.now() - Date.parse(task.updatedAt) > 60_000;
-    if (!TERMINAL.includes(task.status) && task.status !== 'interrupted' && (task.status !== 'queued' || staleQueued) && !running.has(task.id)) {
+    const aliveElsewhere = task.canonicalRunId && this.deps.canonicalRunAlive ? await this.deps.canonicalRunAlive(userId, task.canonicalRunId).catch(() => true) : false;
+    if (!TERMINAL.includes(task.status) && task.status !== 'interrupted' && (task.status !== 'queued' || staleQueued) && !running.has(task.id) && !aliveElsewhere) {
       const next = this.touch(task, { status: 'interrupted', statusReason: 'The run stopped before it finished. Resume it to continue from the saved work.' }, { type: 'change.interrupted', message: 'The run was interrupted.' });
       await this.deps.store.save(userId, next);
       return next;
@@ -103,6 +106,24 @@ export class ChangeService {
     if (!(await this.deps.source.list(userId)).some((b) => b.id === bindingId)) throw new ExistingSourceError('BINDING_NOT_FOUND', 'Linked repository not found.');
     const rows = await this.deps.store.list(userId, bindingId);
     return Promise.all(rows.map((r) => this.get(userId, r.id)));
+  }
+
+  /** Records which canonical run will execute this change, so progress, cancellation and recovery follow that run. */
+  async attachRun(userId: string, changeId: string, runId: string): Promise<ChangeTask> {
+    const task = await this.get(userId, changeId);
+    if (TERMINAL.includes(task.status)) return task;
+    const next = this.touch(task, { canonicalRunId: runId, status: 'queued', statusReason: 'Waiting for an isolated worker.' }, { type: 'change.queued', message: 'Queued for isolated execution.' });
+    await this.deps.store.save(userId, next);
+    return next;
+  }
+
+  /** Ends a queued change that could not be handed to a worker, so it never looks like it is still waiting. */
+  async abandon(userId: string, changeId: string, reason: string): Promise<ChangeTask> {
+    const task = await this.get(userId, changeId);
+    if (TERMINAL.includes(task.status)) return task;
+    const next = this.touch(task, { status: 'failed', statusReason: reason.slice(0, 300) }, { type: 'change.failed', message: reason.slice(0, 300) });
+    await this.deps.store.save(userId, next);
+    return next;
   }
 
   /** Starts the run in the background; the durable record is the source of truth for progress. */

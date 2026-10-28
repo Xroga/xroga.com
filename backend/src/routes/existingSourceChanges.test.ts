@@ -162,3 +162,36 @@ describe('change routes', () => {
     assert.equal((await call(`/changes/${id}/export?format=patch`, ALICE)).status, 409, 'a cancelled change has nothing to export');
   });
 });
+
+describe('launching a change on the durable Google path', () => {
+  const task = { id: '66666666-6666-4666-8666-666666666666', status: 'queued' } as never;
+  const tenant = { userId: '11111111-1111-4111-8111-111111111111' } as never;
+  it('queues a canonical run for the change and returns the queued change, without starting it in this process', async () => {
+    const calls: string[] = []; let admitted: { runId: string; input: Record<string, unknown> } | null = null;
+    const c = { changes: {
+      start: () => { calls.push('start'); },
+      attachRun: async (_u: string, _id: string, runId: string) => { calls.push('attach'); return { id: 'x', canonicalRunId: runId }; },
+      abandon: async () => { calls.push('abandon'); },
+    } } as never;
+    const { launchChange } = await import('./existingSource.js');
+    const result = await launchChange(tenant, c, task, { selected: () => true, admit: (async (_ctx: unknown, runId: string, input: Record<string, unknown>) => { admitted = { runId, input }; return { runId, dispatched: true }; }) as never });
+    assert.deepEqual(calls, ['attach']);
+    assert.equal((result as unknown as { canonicalRunId: string }).canonicalRunId, admitted!.runId);
+    assert.deepEqual(admitted!.input, { prompt: 'Existing project change', existingSourceChangeId: (task as unknown as { id: string }).id });
+  });
+  it('ends the change with a reason when it cannot be handed to a worker', async () => {
+    const calls: string[] = [];
+    const c = { changes: { attachRun: async () => ({}), abandon: async (_u: string, _id: string, reason: string) => { calls.push(reason); } } } as never;
+    const { launchChange } = await import('./existingSource.js');
+    await assert.rejects(() => launchChange(tenant, c, task, { selected: () => true, admit: (async () => { throw Object.assign(new Error('x'), { code: 'OUT_OF_TOKENS' }); }) as never }),
+      (e: unknown) => (e as { code?: string }).code === 'EXECUTION_UNAVAILABLE');
+    assert.match(calls[0]!, /AI capacity/);
+  });
+  it('runs in this process when the durable path is not selected', async () => {
+    const calls: string[] = [];
+    const c = { changes: { start: () => { calls.push('start'); } } } as never;
+    const { launchChange } = await import('./existingSource.js');
+    await launchChange(tenant, c, task, { selected: () => false, admit: (async () => { throw new Error('not expected'); }) as never });
+    assert.deepEqual(calls, ['start']);
+  });
+});

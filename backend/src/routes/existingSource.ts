@@ -18,6 +18,7 @@
  * connected-account token; the response never contains a token.
  */
 import express, { Router, type Response } from 'express';
+import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
 import { ChangeDelivery } from '../existingSource/change/delivery.js';
@@ -83,10 +84,32 @@ export type ExistingSourceChangesFactory = (tenant: TenantContext, service: Exis
 export const defaultExistingSourceChanges: ExistingSourceChangesFactory = (tenant, service, intel) => {
   const store = new SupabaseChangeStore(requireTenantContext(tenant));
   return {
-    changes: new ChangeService({ source: service, intel, store, execution: productionExecutionPort, runAgent: productionAgentRunner, modelRouteFor: selectCodingModelRoute }),
+    changes: new ChangeService({ source: service, intel, store, execution: productionExecutionPort, runAgent: productionAgentRunner, modelRouteFor: selectCodingModelRoute,
+      canonicalRunAlive: async (userId, runId) => { const { getRunAsync } = await import('../ai/runStore.js'); return (await getRunAsync(runId, userId, true))?.status === 'running'; } }),
     delivery: new ChangeDelivery({ source: service, store, apiFor: githubDeliveryApi }),
   };
 };
+
+/**
+ * Starts a change. On the durable Google path the change is queued as a canonical run and executes in the Cloud Run Job; otherwise it
+ * runs in this process as before. A change that cannot be handed to a worker is ended with the reason, never left looking queued.
+ */
+export async function launchChange(tenant: TenantContext, c: ExistingSourceChanges, task: ChangeTask, queue?: { selected: () => boolean; admit: typeof import('../workers/googleSwarmQueue.js').admitGoogleRun }): Promise<ChangeTask> {
+  const loaded = queue ?? await import('../workers/googleSwarmQueue.js').then((m) => ({ selected: () => m.googleBackgroundSelected(), admit: m.admitGoogleRun }));
+  const admitGoogleRun = loaded.admit;
+  if (!loaded.selected()) { c.changes.start(tenant.userId, task.id); return task; }
+  const runId = randomUUID();
+  const queued = await c.changes.attachRun(tenant.userId, task.id, runId);
+  try {
+    await admitGoogleRun(tenant, runId, { prompt: 'Existing project change', existingSourceChangeId: task.id });
+    return queued;
+  } catch (e) {
+    const code = (e as { code?: string })?.code;
+    const reason = code === 'OUT_OF_TOKENS' || code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE' ? 'There is not enough AI capacity to start this change right now.' : 'The change could not be handed to an isolated worker.';
+    await c.changes.abandon(tenant.userId, task.id, reason).catch(() => undefined);
+    throw new ExistingSourceError('EXECUTION_UNAVAILABLE', reason);
+  }
+}
 
 const id = z.string().uuid();
 const changeBody = z.object({ instruction: z.string().min(3).max(8_000), maxAttempts: z.number().int().min(1).max(5).optional(), continueFrom: z.string().uuid().optional() }).strict();
@@ -172,17 +195,26 @@ export function createExistingSourceRouter(
   router.post('/links/:id/changes', withChanges(async (t, c, req, res) => {
     const body = changeBody.parse(req.body);
     const task = await c.changes.create(t.userId, id.parse(req.params.id), body.instruction, { maxAttempts: body.maxAttempts, continueFrom: body.continueFrom });
-    c.changes.start(t.userId, task.id);
-    res.status(202).json({ change: publicChange(task) });
+    const launched = await launchChange(t, c, task);
+    res.status(202).json({ change: publicChange(launched) });
   }));
   router.get('/links/:id/changes', withChanges(async (t, c, req, res) => { res.json({ changes: (await c.changes.list(t.userId, id.parse(req.params.id))).map(publicChange) }); }));
   router.get('/changes/:changeId', withChanges(async (t, c, req, res) => { res.json({ change: publicChange(await c.changes.get(t.userId, id.parse(req.params.changeId))) }); }));
-  router.post('/changes/:changeId/cancel', withChanges(async (t, c, req, res) => { res.json({ change: publicChange(await c.changes.cancel(t.userId, id.parse(req.params.changeId))) }); }));
+  router.post('/changes/:changeId/cancel', withChanges(async (t, c, req, res) => {
+    const changeId = id.parse(req.params.changeId);
+    const current = await c.changes.get(t.userId, changeId);
+    // a change executing in a worker is stopped through its canonical run, which the Job polls; the owner check is the run's own
+    if (current.canonicalRunId && !['verified', 'unverified', 'failed', 'cancelled', 'delivered'].includes(current.status)) {
+      const { requestRunCancellation } = await import('../ai/runStore.js');
+      await requestRunCancellation(current.canonicalRunId, t.userId).catch(() => undefined);
+    }
+    res.json({ change: publicChange(await c.changes.cancel(t.userId, changeId)) });
+  }));
   router.post('/changes/:changeId/resume', withChanges(async (t, c, req, res) => {
     const task = await c.changes.get(t.userId, id.parse(req.params.changeId));
     if (task.status !== 'interrupted') throw new ExistingSourceError('CHANGE_CONFLICT', 'Only an interrupted change can be resumed.');
-    c.changes.start(t.userId, task.id);
-    res.status(202).json({ change: publicChange(task) });
+    const launched = await launchChange(t, c, task);
+    res.status(202).json({ change: publicChange(launched) });
   }));
   router.post('/changes/:changeId/deliver', withChanges(async (t, c, req, res) => {
     const body = deliverBody.parse(req.body ?? {});

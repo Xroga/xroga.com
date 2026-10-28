@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "a8fbbba9ed5fc2ca617ff1539935702816b75a3b488d748bd2d451cbafe9ca74",
+  "reviewRegistrySha256": "2fb164b1d940ed21d5ba41ed7855f9161bb31bcc3dcdb66b036825ccf5a3afb5",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3704,15 +3704,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d529a1021bc746415e9e"
+        "id": "b47c7f06fd6eddc81b06"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8aaa1848fd3162d7c7a4"
+        "id": "680d1974f975fa18e128"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "57cb416ebf53e89b0ba5"
+        "id": "6d67b19621a65c7e4d1a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4716,43 +4716,43 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "36ed7e1b9551637b0613"
+        "id": "757022edf79edb581ee3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8996a990316e1b922ef0"
+        "id": "3451f92cc91e00fddf58"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "73addace3397114a53fb"
+        "id": "f1c8a4ec6e668a1aeb75"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bc1fc57357395948616d"
+        "id": "6fca5877a639753e5ff2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "28d057dc3dff40387fb2"
+        "id": "128098cc4371813d91e9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "91b8ab4a89c6f405b5b1"
+        "id": "eef429e3beab068ac58e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2dd63a79a2b8ae28a214"
+        "id": "07356b00542114422c3b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7737b93da7b3c060dde6"
+        "id": "3e9efc28b05da2634ec4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c3cb8644636736d32e96"
+        "id": "dc5ed305f98588f482da"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1e382ef778124bb18ed1"
+        "id": "c56134edcefe82ae5741"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5412,43 +5412,43 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "36ed7e1b9551637b0613"
+        "id": "757022edf79edb581ee3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8996a990316e1b922ef0"
+        "id": "3451f92cc91e00fddf58"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "73addace3397114a53fb"
+        "id": "f1c8a4ec6e668a1aeb75"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "bc1fc57357395948616d"
+        "id": "6fca5877a639753e5ff2"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "28d057dc3dff40387fb2"
+        "id": "128098cc4371813d91e9"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "91b8ab4a89c6f405b5b1"
+        "id": "eef429e3beab068ac58e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2dd63a79a2b8ae28a214"
+        "id": "07356b00542114422c3b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7737b93da7b3c060dde6"
+        "id": "3e9efc28b05da2634ec4"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c3cb8644636736d32e96"
+        "id": "dc5ed305f98588f482da"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1e382ef778124bb18ed1"
+        "id": "c56134edcefe82ae5741"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6716,15 +6716,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d529a1021bc746415e9e"
+        "id": "b47c7f06fd6eddc81b06"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8aaa1848fd3162d7c7a4"
+        "id": "680d1974f975fa18e128"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "57cb416ebf53e89b0ba5"
+        "id": "6d67b19621a65c7e4d1a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -16009,15 +16009,15 @@
       }
     },
     {
-      "id": "d529a1021bc746415e9e",
+      "id": "b47c7f06fd6eddc81b06",
       "path": "backend/src/routes/existingSource.ts",
-      "line": 46,
+      "line": 47,
       "enclosing": "projectFor",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f749749a79544759c3e406aa8e8f140091da3b654b8224e9bc6421ec51662fb7",
+      "sourceSha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
@@ -16030,15 +16030,15 @@
       }
     },
     {
-      "id": "8aaa1848fd3162d7c7a4",
+      "id": "680d1974f975fa18e128",
       "path": "backend/src/routes/existingSource.ts",
-      "line": 47,
+      "line": 48,
       "enclosing": "projectFor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f749749a79544759c3e406aa8e8f140091da3b654b8224e9bc6421ec51662fb7",
+      "sourceSha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
@@ -16051,15 +16051,15 @@
       }
     },
     {
-      "id": "57cb416ebf53e89b0ba5",
+      "id": "6d67b19621a65c7e4d1a",
       "path": "backend/src/routes/existingSource.ts",
-      "line": 51,
+      "line": 52,
       "enclosing": "projectFor",
       "kind": "RPC_CANDIDATE",
       "target": "save_owned_project_atomic",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f749749a79544759c3e406aa8e8f140091da3b654b8224e9bc6421ec51662fb7",
+      "sourceSha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
@@ -25324,114 +25324,114 @@
       "sourceSha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
     },
     {
-      "id": "36ed7e1b9551637b0613",
+      "id": "757022edf79edb581ee3",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 34,
+      "line": 36,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "8996a990316e1b922ef0",
+      "id": "3451f92cc91e00fddf58",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 38,
+      "line": 41,
       "enclosing": "enqueue",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "73addace3397114a53fb",
+      "id": "f1c8a4ec6e668a1aeb75",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 45,
+      "line": 48,
       "enclosing": "enqueue",
       "kind": "RPC_CANDIDATE",
       "target": "enqueue_google_canonical_run",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "bc1fc57357395948616d",
+      "id": "6fca5877a639753e5ff2",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 52,
+      "line": 55,
       "enclosing": "reserve",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_google_canonical_launch",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "28d057dc3dff40387fb2",
+      "id": "128098cc4371813d91e9",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 60,
+      "line": 63,
       "enclosing": "recordLaunch",
       "kind": "RPC_CANDIDATE",
       "target": "record_google_canonical_launch",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "91b8ab4a89c6f405b5b1",
+      "id": "eef429e3beab068ac58e",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 64,
+      "line": 67,
       "enclosing": "pendingDeliveryIds",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "google_canonical_deliveries",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "2dd63a79a2b8ae28a214",
+      "id": "07356b00542114422c3b",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 75,
+      "line": 78,
       "enclosing": "claim",
       "kind": "RPC_CANDIDATE",
       "target": "claim_google_canonical_run",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "7737b93da7b3c060dde6",
+      "id": "3e9efc28b05da2634ec4",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 89,
+      "line": 94,
       "enclosing": "recordResult",
       "kind": "RPC_CANDIDATE",
       "target": "record_google_canonical_result",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "c3cb8644636736d32e96",
+      "id": "dc5ed305f98588f482da",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 95,
+      "line": 100,
       "enclosing": "loadResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "google_canonical_deliveries",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
-      "id": "1e382ef778124bb18ed1",
+      "id": "c56134edcefe82ae5741",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 95,
+      "line": 100,
       "enclosing": "loadResult",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sourceSha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
       "id": "886265e1adfa87aa93e7",

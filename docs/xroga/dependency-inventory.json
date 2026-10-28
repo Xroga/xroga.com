@@ -15993,6 +15993,14 @@
       "sha256": "43137374d904a31719b385f7facc0cb97cf4138dc229cac764e447323e0f694a"
     },
     {
+      "path": "backend/src/existingSource/change/canonical.ts",
+      "sha256": "e9f328d704c6d85806e77b3690fede1b255162ae5e68262c72ac97e8ac9146d9"
+    },
+    {
+      "path": "backend/src/existingSource/change/canonicalJob.ts",
+      "sha256": "22df915a778757300cab3d8d47fea963ca9d572d5fb6c8128d2c74c24c234d12"
+    },
+    {
       "path": "backend/src/existingSource/change/delivery.ts",
       "sha256": "5d27d5c5f0f77dc05b095f14ff6749c5ac79d8c5932c121006a9190152e2eb1e"
     },
@@ -16010,7 +16018,7 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "sha256": "56cd711dd2755eb5b7043a720719f532efde4b162ee372e8f913cba803b6e99e"
+      "sha256": "96a2ce75394fac69546500f4b8c794ba02aefbbf89ccb0b672021872b647b2a7"
     },
     {
       "path": "backend/src/existingSource/change/snapshot.ts",
@@ -16030,7 +16038,7 @@
     },
     {
       "path": "backend/src/existingSource/change/types.ts",
-      "sha256": "e43f425e12a1101c20ad91cb179465b140c6e418551c7120eb5f3396c82c4d65"
+      "sha256": "a48e828e48a4e0b1ffd1c75f6c70dc5d74d19d6138d330c92d2c6ee75ecd767b"
     },
     {
       "path": "backend/src/existingSource/change/unifiedDiff.ts",
@@ -16646,7 +16654,7 @@
     },
     {
       "path": "backend/src/routes/existingSource.ts",
-      "sha256": "f749749a79544759c3e406aa8e8f140091da3b654b8224e9bc6421ec51662fb7"
+      "sha256": "7f8f0c4a714e74681f80eb9a70bab8b9838f8e9223106f192ddb52a33280ffaf"
     },
     {
       "path": "backend/src/routes/github.ts",
@@ -16826,7 +16834,7 @@
     },
     {
       "path": "backend/src/scripts/runCanonicalWorker.ts",
-      "sha256": "7e8a8b5abbc6aab694ff22b76c1c5620e86f93a1fd3c29e71e7bfaef87510b83"
+      "sha256": "5f2fdd3d0f4b7d27dff4a52e5dd7915f85362b42aa2e085720bbf09bc69fad30"
     },
     {
       "path": "backend/src/scripts/verifyFlySandboxBrowser.ts",
@@ -17954,7 +17962,7 @@
     },
     {
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "sha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
+      "sha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
     },
     {
       "path": "backend/src/workers/googleDispatch.ts",
@@ -17966,7 +17974,7 @@
     },
     {
       "path": "backend/src/workers/googleSwarmQueue.ts",
-      "sha256": "b86b0f51575cc3be197c3fa1a7c9f7f8d4f3eaf25847c4c1ea5f52679af9cd3a"
+      "sha256": "b294d79638b59b9b67421082593be8e0cead65bb20b314a0ba5ea618004d5689"
     },
     {
       "path": "backend/src/workers/imagePins.ts",
@@ -30436,35 +30444,35 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 48,
+      "line": 50,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 49,
+      "line": 51,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 220,
+      "line": 241,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 247,
+      "line": 268,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 284,
+      "line": 305,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

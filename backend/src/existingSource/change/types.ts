@@ -86,6 +86,8 @@ export interface ChangeTask {
   readonly reproduction: 'reproduced' | 'not_reproduced' | 'not_applicable' | 'unavailable';
   readonly regressionTestAdded: boolean;
   readonly deliveries: readonly DeliveryReceipt[];
+  /** The canonical run executing this change on the durable Google path. Absent when the change runs in the API process. */
+  readonly canonicalRunId?: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
