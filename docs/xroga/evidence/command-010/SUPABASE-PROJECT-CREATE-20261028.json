@@ -1,0 +1,127 @@
+{
+  "scope": "ONLY_SUPABASE_PROJECT_CREATE_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "6d10503fb6aafd2d9da628c886042b466d9ecb27",
+  "originalCandidate": {
+    "id": "807c2948cdfa16e19b84",
+    "file": "backend/src/routes/supabaseOAuth.ts",
+    "callSha256": "c9782d325dd0653c601af2dd7236f7c2050563431e6427f7843a37fbd39bbdb5"
+  },
+  "replacementCandidate": {
+    "id": "0b86177865b1789b9b67",
+    "file": "backend/src/services/integrations/supabaseProjectCreation.ts",
+    "callSha256": "95a945adeca0b065cb4375762590995bf1f2aebed2c387d0f4d4c130ca4b4145"
+  },
+  "ordinalIdentityNote": "Removing the raw POST shifts the already-reviewed organizations GET from 96fbfea42a399a233486 to the reused ordinal ID807c2948cdfa16e19b84. Its byte-identical call/block retains only that prior GET disposition. The actual create is separately reviewed at 0b86177865b1789b9b67. IDs alone are never used to relabel the old unapproved POST as safe.",
+  "sourceBindings": [
+    {
+      "path": "backend/src/routes/supabaseOAuth.ts",
+      "sha256": "4c82126fb549f870a0ede9f6453ade5ff78d8597a10686d94a74c56629fe4e72"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "14f3ace2ef9dba5065a6f5387e9040887228efd110cc62adce9c3abaddf17736"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "sha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b"
+    },
+    {
+      "path": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
+      "sha256": "5ac2eb18f648911032209cafcb102307d478ec05b9c43a1acf6458235bf57986"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3"
+    }
+  ],
+  "receipts": [
+    {
+      "label": "unapprovedCreateRed",
+      "id": "88a19cb6-1ed9-4783-9eeb-6dc27f45c079",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-unapprovedCreateRed-20261028.log.gz",
+      "sha256": "5333a8beefa5404f1cd04d7b70ab8eddb284a661eae9e921e02288355ea84b02",
+      "logSha256": "ae52f964fd817eb984a54a2b4790cfa8beb1ed4194f3be37d56dc20632d9b13f"
+    },
+    {
+      "label": "uncertainErrorLeakRed",
+      "id": "ec0fb98e-c230-4290-b42a-4d3ce4b28c85",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-uncertainErrorLeakRed-20261028.log.gz",
+      "sha256": "95816bbe7d340013947ca62878cea2054466b1a0d58ab4bcc492816c34dd24d9",
+      "logSha256": "6c1ff5b6e9f221177c8dc0fa92af56770f208358f146063b60851f6b9dc1a4b6"
+    },
+    {
+      "label": "focused25",
+      "id": "00aa258e-6ebd-4fdd-a02b-189f49f83289",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-focused25-20261028.log.gz",
+      "sha256": "39d32ca739a3f651cf763bafaf606a14485a03f8acf10d70d2d60191b51e177a",
+      "logSha256": "f5125dadcd564809bcab2a0df5bf4d9c69702b6b7cdddfacd8e571aa16d9aca1"
+    },
+    {
+      "label": "backendTypes",
+      "id": "a14a2479-9da3-427a-91d0-e9acc323eeed",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-backendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "frontendTypes",
+      "id": "3bf0586c-4994-4805-aca0-b0e5b253b524",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-frontendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "frontendLint",
+      "id": "616a1310-a835-495b-914b-a5c6e07b8661",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-frontendLint-20261028.log.gz",
+      "sha256": "7d45779267af51f0a13a3119d0a8679fbe9bf207d373f784ddab4269a8fde770",
+      "logSha256": "65393dcd4438f40f67eab8542ffdb7f127d92044e3ee1f8312f9330f7c626fe0"
+    }
+  ],
+  "persistenceRemaps": [],
+  "unchangedExistingEgressRemaps": [
+    {
+      "beforeId": "96fbfea42a399a233486",
+      "afterId": "807c2948cdfa16e19b84",
+      "path": "backend/src/routes/supabaseOAuth.ts",
+      "callSha256": "7f108f6d651966ee8abf288336bb1df93ea2c6816a08806155667c76608f8b8c",
+      "nearestBlockUnchanged": true
+    },
+    {
+      "beforeId": "c09bb8607fa4d00f23b7",
+      "afterId": "c09bb8607fa4d00f23b7",
+      "path": "frontend/src/lib/api.ts",
+      "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+      "nearestBlockUnchanged": true
+    }
+  ],
+  "defects": [
+    "A raw request could create a provider project without canonical exact consequential approval.",
+    "Organization ownership/current billing plan, redirects, output limits and project receipt were not fully constrained.",
+    "Generated database authentication material could be lost after an uncertain create, and creation implied downstream setup."
+  ],
+  "correction": "Original issued context, fresh original OAuth connection, producer-attested native plan, exact organization/name/region, current Free-plan checks, explicit $0 scope, canonical audit and one-use permit precede the sole POST. A separate readback confirms the actual project. No authorization denial, quota error or uncertain result is replayed. A fresh approval can recover from an ordinary provider outage. Generated database password is sealed durably into the original managed-vault proposal, never the generic tool/egress payload or user result. Creation leaves current credentials intact. Project connection and schema/private-storage setup use their existing separate approvals.",
+  "limitations": [
+    "Only current Free-plan organizations are supported by this native $0 action. Quota rejection cannot trigger upgrade or another organization.",
+    "No real provider resource, customer data, SQL, IAM or paid operation was used in these tests.",
+    "Creation is verified separately from connection and provisioning. A user selects the created project afterward.",
+    "Encrypted password escrow is retained in the durable original confirmation for an authorized server-side recovery. It is never returned to a model or client.",
+    "This proof does not promote the two remaining shared GitHub callers or whole Phase4 acceptance."
+  ],
+  "officialReferences": [
+    "https://supabase.com/docs/reference/api/v1-create-a-project",
+    "https://supabase.com/docs/reference/api/v1-get-an-organization",
+    "https://supabase.com/docs/guides/platform/billing-on-supabase"
+  ],
+  "strictRulesChanged": false,
+  "frozenCriteriaChanged": false,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spend": 0
+}

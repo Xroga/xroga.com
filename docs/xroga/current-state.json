@@ -5010,7 +5010,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelDispatch.ts:6",
-        "backend/src/services/integrations/businessAction.ts:1474"
+        "backend/src/services/integrations/businessAction.ts:1479"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -6954,12 +6954,14 @@
         "backend/src/lib/resilience/retry.test.ts:3",
         "backend/src/routes/guestChat.ts:19",
         "backend/src/routes/phase1.ts:1",
+        "backend/src/routes/phase1BusinessPreflight.ts:1",
         "backend/src/routes/voice.ts:8",
         "backend/src/services/BillingService.checkoutAdmission.security.test.ts:6",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:7",
         "backend/src/services/integrations/businessAction.ts:19",
         "backend/src/services/integrations/businessRead.ts:10",
         "backend/src/services/integrations/composioClient.security.test.ts:6",
+        "backend/src/services/integrations/composioConsentConsumers.security.test.ts:6",
         "backend/src/services/integrations/githubDeploy.ts:67",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:9",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts:4",
@@ -7000,6 +7002,7 @@
         "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
         "backend/src/services/integrations/businessAccounting.failure.test.ts",
         "backend/src/services/integrations/composioClient.security.test.ts",
+        "backend/src/services/integrations/composioConsentConsumers.security.test.ts",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
         "backend/src/services/publish/expoStoreReadiness.security.test.ts",
         "backend/src/services/publish/expoWorkflowDenial.security.test.ts",
@@ -7214,7 +7217,7 @@
         "backend/src/ai/tenantModelDispatch.ts:12",
         "backend/src/ai/universal/semanticRequestPlanner.ts:25",
         "backend/src/routes/phase1.ts:19",
-        "backend/src/routes/phase1BusinessPreflight.ts:4",
+        "backend/src/routes/phase1BusinessPreflight.ts:5",
         "backend/src/security/budgetOwner.local.integration.ts:6",
         "backend/src/security/quotaEvidence.local.integration.ts:6",
         "backend/src/services/BillingService.budget.test.ts:4",
@@ -10918,7 +10921,7 @@
         "backend/src/ai/universal/universalContracts.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
         "backend/src/routes/phase1.ts:41",
-        "backend/src/routes/phase1BusinessPreflight.ts:5",
+        "backend/src/routes/phase1BusinessPreflight.ts:6",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:5",
         "backend/src/synthesis/canonicalFoundation.test.ts:4",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:8",
@@ -16746,6 +16749,7 @@
         "backend/src/security/profileDeletion.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/publish/easPublish.routeScope.test.ts",
         "backend/src/services/publish/expoStoreRoutes.security.test.ts"
       ],
@@ -21175,7 +21179,7 @@
       "id": "surface:5bfcb6484e4868156948",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "sha256": "3c7575cc189c581be5f16f26ec4b9820b82b12d00eff6edb0a9d79b2d3191606",
+      "sha256": "4ccfe63df5c66aba86d83c2816411c8c23a0179a452d7423557189c9ead64a7d",
       "symbols": [
         "actor",
         "candidates",
@@ -21185,6 +21189,7 @@
         "connectionStatusResponse",
         "connectionStatusTarget",
         "displayToolkitName",
+        "error",
         "exact",
         "explicitConfirmationIntent",
         "goalContract",
@@ -21208,6 +21213,7 @@
         "userId"
       ],
       "imports": [
+        "../ai/providerRuntime.js",
         "../ai/quota.js",
         "../ai/universal/goalContract.js",
         "../middleware/auth.js",
@@ -21218,6 +21224,7 @@
         "express"
       ],
       "runtimeImports": [
+        "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/quota.ts",
         "backend/src/ai/universal/goalContract.ts",
         "backend/src/security/tenantContext.ts",
@@ -21793,7 +21800,7 @@
       "id": "surface:02d224e67cfed441bb6e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df",
+      "sha256": "4c82126fb549f870a0ede9f6453ade5ff78d8597a10686d94a74c56629fe4e72",
       "symbols": [
         "abort",
         "accessToken",
@@ -21801,21 +21808,17 @@
         "built",
         "chunks",
         "context",
-        "createRes",
-        "created",
         "current",
-        "dbPass",
         "envSync",
         "err",
         "error",
         "failed",
-        "i",
         "item",
-        "keys",
         "lifetime",
         "maybeSyncVaultToVercel",
         "p",
         "parsed",
+        "pending",
         "projects",
         "projectsError",
         "provision",
@@ -21823,7 +21826,6 @@
         "raw",
         "reader",
         "redirectUri",
-        "ref",
         "requested",
         "result",
         "router",
@@ -21832,7 +21834,6 @@
         "selected",
         "size",
         "slug",
-        "source",
         "stateInfo",
         "status",
         "value",
@@ -21848,10 +21849,10 @@
         "../services/integrations/oauthPkceStore.js",
         "../services/integrations/supabaseAccess.js",
         "../services/integrations/supabaseAuth.js",
+        "../services/integrations/supabaseProjectCreation.js",
         "../services/integrations/supabaseProvision.js",
         "../services/integrations/userProviderKeys.js",
         "../services/integrations/vercelAuth.js",
-        "crypto",
         "express",
         "zod"
       ],
@@ -21863,6 +21864,7 @@
         "backend/src/services/integrations/oauthPkceStore.ts",
         "backend/src/services/integrations/supabaseAccess.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.ts",
         "backend/src/services/integrations/supabaseProvision.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/services/integrations/vercelAuth.ts"
@@ -21874,12 +21876,12 @@
         "backend/src/index.ts:25",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:6",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts:5",
-        "backend/src/routes/supabaseOrganizations.security.test.ts:6"
+        "backend/src/routes/supabaseOrganizations.security.test.ts:6",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "crypto",
         "declared-host:api.supabase.com",
         "express",
         "zod"
@@ -21905,7 +21907,8 @@
       "testCoverage": [
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
-        "backend/src/routes/supabaseOrganizations.security.test.ts"
+        "backend/src/routes/supabaseOrganizations.security.test.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23836,6 +23839,8 @@
         "backend/src/services/integrations/credentialVault.ts:3",
         "backend/src/services/integrations/supabaseAccess.ts:1",
         "backend/src/services/integrations/supabaseApproval.ts:3",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:3",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:8",
         "backend/src/services/publish/cwsAdmission.ts:3",
         "backend/src/services/publish/electronSecrets.ts:8",
         "backend/src/services/publish/expoAccess.ts:1",
@@ -23867,6 +23872,7 @@
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23946,9 +23952,11 @@
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6",
+        "backend/src/services/integrations/composioConsentConsumers.security.test.ts:5",
         "backend/src/services/integrations/composioControl.ts:5",
         "backend/src/services/integrations/supabaseAccess.ts:2",
         "backend/src/services/integrations/supabaseApproval.ts:4",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:6",
         "backend/src/services/integrations/supabaseProvision.ts:11",
         "backend/src/services/publish/chromeWebStore.ts:13",
         "backend/src/services/publish/cwsAdmission.ts:4",
@@ -24000,6 +24008,7 @@
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/services/integrations/composioConsentConsumers.security.test.ts",
         "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -24263,6 +24272,7 @@
         "backend/src/services/integrations/composioControl.ts:7",
         "backend/src/services/integrations/githubSourceRead.ts:4",
         "backend/src/services/integrations/supabaseApproval.ts:9",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:9",
         "backend/src/services/publish/expoApproval.ts:8",
         "backend/src/services/publish/expoCredentialMaterial.ts:2",
         "backend/src/services/publish/expoWorkflow.ts:3",
@@ -24358,6 +24368,7 @@
         "backend/src/services/integrations/composioClient.ts:10",
         "backend/src/services/integrations/composioControl.ts:8",
         "backend/src/services/integrations/supabaseApproval.ts:8",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:10",
         "backend/src/services/publish/chromeWebStore.ts:15",
         "backend/src/services/publish/cwsAdmission.ts:8",
         "backend/src/services/publish/easCredentials.ts:5",
@@ -24501,6 +24512,7 @@
         "backend/src/services/integrations/composioClient.ts:11",
         "backend/src/services/integrations/composioControl.ts:9",
         "backend/src/services/integrations/supabaseApproval.ts:10",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:11",
         "backend/src/services/publish/cwsAdmission.ts:9",
         "backend/src/services/publish/electronSecrets.ts:14",
         "backend/src/services/publish/expoApproval.ts:9",
@@ -25001,6 +25013,7 @@
         "backend/src/services/integrations/oauthPkceStore.ts:9",
         "backend/src/services/integrations/supabaseAccess.ts:5",
         "backend/src/services/integrations/supabaseApproval.ts:7",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:5",
         "backend/src/services/integrations/userProviderKeys.ts:12",
         "backend/src/services/integrations/vercelAuth.ts:9",
         "backend/src/services/publish/cwsAdmission.ts:6",
@@ -25127,7 +25140,7 @@
         "backend/src/routes/messageShares.ts:5",
         "backend/src/routes/notifications.ts:3",
         "backend/src/routes/phase1.ts:2",
-        "backend/src/routes/phase1BusinessPreflight.ts:7",
+        "backend/src/routes/phase1BusinessPreflight.ts:8",
         "backend/src/routes/profile.deletionIdentity.test.ts:7",
         "backend/src/routes/profile.ts:4",
         "backend/src/routes/projectRuntime.ts:8",
@@ -25227,6 +25240,8 @@
         "backend/src/services/integrations/supabaseActorBoundary.security.test.ts:4",
         "backend/src/services/integrations/supabaseAuth.ts:8",
         "backend/src/services/integrations/supabaseManagement.security.test.ts:7",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:2",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:4",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:5",
         "backend/src/services/integrations/supabaseProvision.test.ts:4",
@@ -25414,6 +25429,7 @@
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
         "backend/src/services/integrations/supabaseActorBoundary.security.test.ts",
         "backend/src/services/integrations/supabaseManagement.security.test.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
         "backend/src/services/integrations/supabaseProvision.test.ts",
@@ -25964,7 +25980,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b742f5d59011e26e413eaeb2c858308e9490229b12ec5fd011a86d21b3a9ac3d",
+      "sha256": "14f3ace2ef9dba5065a6f5387e9040887228efd110cc62adce9c3abaddf17736",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -26078,6 +26094,7 @@
         "./composioControl.js",
         "./composioSkillGuidance.js",
         "./pluginPermissionPolicy.js",
+        "./supabaseProjectCreation.js",
         "./supabaseProvision.js",
         "node:crypto"
       ],
@@ -26097,6 +26114,7 @@
         "backend/src/services/integrations/composioControl.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.ts",
         "backend/src/services/integrations/supabaseProvision.ts",
         "backend/src/services/publish/chromeWebStore.ts",
         "backend/src/services/publish/easPublish.ts",
@@ -26128,6 +26146,7 @@
         "backend/src/services/integrations/composioClient.ts:2648",
         "backend/src/services/integrations/composioControl.ts:13",
         "backend/src/services/integrations/supabaseApproval.ts:12",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:15",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:8",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:9",
         "backend/src/services/publish/cwsAdmission.ts:11",
@@ -26284,6 +26303,8 @@
         "backend/src/services/integrations/composioControl.ts:12",
         "backend/src/services/integrations/composioProvenance.security.test.ts:5",
         "backend/src/services/integrations/supabaseApproval.ts:13",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:5",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:16",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:9",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:8",
@@ -26347,6 +26368,7 @@
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/composioProvenance.security.test.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
         "backend/src/services/publish/expoWorkflow.authority.test.ts",
@@ -26492,7 +26514,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1BusinessPreflight.ts:9",
+        "backend/src/routes/phase1BusinessPreflight.ts:10",
         "backend/src/services/integrations/businessConnectionIntent.test.ts:3"
       ],
       "reachable": true,
@@ -26534,7 +26556,7 @@
       ],
       "callers": [
         "backend/src/routes/phase1.ts:76",
-        "backend/src/routes/phase1BusinessPreflight.ts:10"
+        "backend/src/routes/phase1BusinessPreflight.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -27107,7 +27129,7 @@
         "backend/src/routes/businessAutomations.ts:4",
         "backend/src/routes/integrations.ts:43",
         "backend/src/routes/phase1.ts:88",
-        "backend/src/routes/phase1BusinessPreflight.ts:8",
+        "backend/src/routes/phase1BusinessPreflight.ts:9",
         "backend/src/services/integrations/businessAction.ts:30",
         "backend/src/services/integrations/businessActionConfirmations.ts:11",
         "backend/src/services/integrations/businessAutomations.ts:4",
@@ -27242,7 +27264,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:1479",
+        "backend/src/services/integrations/businessAction.ts:1484",
         "backend/src/services/integrations/businessAutomations.ts:5",
         "backend/src/services/integrations/composioClient.ts:14"
       ],
@@ -27637,6 +27659,8 @@
         "backend/src/services/integrations/oauthPkceStore.ts:10",
         "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts:5",
         "backend/src/services/integrations/supabaseApproval.ts:11",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:6",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:14",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:11",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:76",
         "backend/src/services/integrations/userProviderKeys.ts:16",
@@ -27684,6 +27708,7 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts",
@@ -29535,6 +29560,7 @@
       "callers": [
         "backend/src/routes/supabaseOAuth.ts:44",
         "backend/src/services/integrations/supabaseApproval.ts:15",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:12",
         "backend/src/services/integrations/supabaseProvision.ts:12",
         "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts:5"
       ],
@@ -29741,6 +29767,7 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:13",
         "backend/src/services/integrations/supabaseProvision.ts:477",
         "backend/src/services/integrations/supabaseProvision.ts:528",
         "backend/src/services/integrations/supabaseProvision.ts:613",
@@ -29786,6 +29813,140 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:8f4c12b1a6ee6cc21f13",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "sha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b",
+      "symbols": [
+        "Input",
+        "access",
+        "bytes",
+        "checkClaim",
+        "chunks",
+        "confirmation",
+        "consumed",
+        "context",
+        "created",
+        "current",
+        "denied",
+        "digest",
+        "dispatched",
+        "error",
+        "executeSupabaseProjectCreation",
+        "identity",
+        "input",
+        "issuedAt",
+        "matches",
+        "nativeCreateProof",
+        "nonce",
+        "operation",
+        "organization",
+        "orgs",
+        "ownedFreeOrganization",
+        "part",
+        "password",
+        "prepareSupabaseProjectCreation",
+        "projectRequest",
+        "proof",
+        "readback",
+        "reader",
+        "receipt",
+        "response",
+        "selected",
+        "signal",
+        "supabaseProjectCreationInput",
+        "token",
+        "toolkit",
+        "unsigned",
+        "useCase",
+        "value",
+        "write"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
+        "../../security/egress/dataClassification.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/securityDecision.js",
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../publish/nativeReleaseAdmission.js",
+        "./businessAction.js",
+        "./businessActionConfirmations.js",
+        "./credentialVaultRuntime.js",
+        "./supabaseAccess.js",
+        "./supabaseAuth.js",
+        "node:crypto",
+        "node:util",
+        "zod"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/services/integrations/supabaseAccess.ts",
+        "backend/src/services/integrations/supabaseAuth.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/routes/supabaseOAuth.ts:1",
+        "backend/src/services/integrations/businessAction.ts:1468",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "business_action_confirmations"
+      ],
+      "externalProviderDependencies": [
+        "declared-host:api.supabase.com",
+        "node:crypto",
+        "node:util",
+        "zod"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/supabaseProjectCreation.ts#AuthorityError",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#AuthorityPermit",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#consumeAuthorityPermit",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#getSupabaseOAuthAccessToken",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#identity"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/integrations/supabaseProjectCreation.ts:78 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/services/integrations/supabaseProjectCreation.ts#actionPlanDigest",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#confirmation",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#createBusinessActionConfirmation",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#digest",
+        "backend/src/services/integrations/supabaseProjectCreation.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/integrations/supabaseProjectCreation.ts#receipt"
+      ],
+      "testCoverage": [
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -29976,7 +30137,7 @@
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:56",
-        "backend/src/services/integrations/businessAction.ts:1468",
+        "backend/src/services/integrations/businessAction.ts:1473",
         "backend/src/services/integrations/supabaseActorBoundary.security.test.ts:5",
         "backend/src/services/integrations/supabaseManagement.security.test.ts:13",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:5",
@@ -30940,6 +31101,7 @@
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioControl.security.test.ts:7",
         "backend/src/services/integrations/composioProvenance.security.test.ts:4",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:10",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:6",
@@ -30970,6 +31132,7 @@
         "backend/src/services/integrations/businessModelEgress.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
         "backend/src/services/integrations/composioProvenance.security.test.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
@@ -31458,7 +31621,7 @@
         "backend/src/ai/pipeline.ts:175",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
-        "backend/src/services/integrations/businessAction.ts:1484",
+        "backend/src/services/integrations/businessAction.ts:1489",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:4",
         "backend/src/services/publish/expoWorkflow.authority.test.ts:3",
@@ -32326,6 +32489,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:14",
         "backend/src/services/integrations/composioControl.ts:14",
+        "backend/src/services/integrations/supabaseProjectCreation.ts:17",
         "backend/src/services/integrations/supabaseProvision.ts:26",
         "backend/src/services/publish/chromeWebStore.ts:18",
         "backend/src/services/publish/expoWorkflow.ts:6",
@@ -69040,7 +69204,7 @@
       "id": "surface:bfad1424863ed15d3203",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "sha256": "4913a0968355cf83ea8cb5e3338760beab95c48c126b537b8039bc3ae7825e6c",
+      "sha256": "5ac2eb18f648911032209cafcb102307d478ec05b9c43a1acf6458235bf57986",
       "symbols": [
         "ListedOrg",
         "ListedProject",
@@ -86209,7 +86373,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600",
+      "sha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -110521,9 +110685,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6a9d48e2ca13fea99f60",
+      "id": "registration:d54b5a505a743a5c1210",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 198,
+      "line": 201,
       "receiver": "router",
       "method": "post",
       "path": "/plan",
@@ -110533,9 +110697,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:72c78bd1512784695fb1",
+      "id": "registration:23126c37335fb8375249",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 228,
+      "line": 231,
       "receiver": "router",
       "method": "post",
       "path": "/plan",
@@ -111013,7 +111177,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6b50ee0a0dae69ea9939",
+      "id": "registration:bedeadb4c7ed505ef13c",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 67,
       "receiver": "router",
@@ -111025,7 +111189,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:288a96b4a7b189d4def3",
+      "id": "registration:3f0baf0248dc1633f7d9",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 89,
       "receiver": "router",
@@ -111037,7 +111201,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bc7360f4d3345518c93d",
+      "id": "registration:0916f2df800f32301e65",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 127,
       "receiver": "router",
@@ -111049,7 +111213,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:37d8ac23cb83a54dd994",
+      "id": "registration:571df7d4584e0ae7d55a",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 244,
       "receiver": "router",
@@ -111061,7 +111225,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:32f1adb9c93c3ae10fe8",
+      "id": "registration:3c8f289b6a7ea6bae066",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 263,
       "receiver": "router",
@@ -111073,7 +111237,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e9874dc32060f584216d",
+      "id": "registration:a4d172a4d667e0a6d90a",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 316,
       "receiver": "router",
@@ -111085,9 +111249,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:52caecffe418c6d91a6d",
+      "id": "registration:2dbd211ceef22416f428",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 422,
+      "line": 330,
       "receiver": "router",
       "method": "get",
       "path": "/organizations",
@@ -111097,9 +111261,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:90ea15f7c12cf7b60037",
+      "id": "registration:6d466c8286c7616e25c4",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 466,
+      "line": 374,
       "receiver": "router",
       "method": "delete",
       "path": "/disconnect",
@@ -111838,10 +112002,10 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:1f707248d7064bffac03",
-      "registrationId": "registration:6a9d48e2ca13fea99f60",
+      "id": "route:99a9914457640bbb1022",
+      "registrationId": "registration:d54b5a505a743a5c1210",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 198,
+      "line": 201,
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
@@ -111855,10 +112019,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1ec5efdedc40fbaadcf4",
-      "registrationId": "registration:72c78bd1512784695fb1",
+      "id": "route:11ee69a6db9c0963556a",
+      "registrationId": "registration:23126c37335fb8375249",
       "sourcePath": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 228,
+      "line": 231,
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
@@ -114877,8 +115041,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:292557826215eccaef3f",
-      "registrationId": "registration:6b50ee0a0dae69ea9939",
+      "id": "route:b26ec0d8ad26ecf89cd8",
+      "registrationId": "registration:bedeadb4c7ed505ef13c",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 67,
       "method": "GET",
@@ -114895,8 +115059,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:794a96e1433f7b2b7b19",
-      "registrationId": "registration:288a96b4a7b189d4def3",
+      "id": "route:268f1661367cf9927490",
+      "registrationId": "registration:3f0baf0248dc1633f7d9",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 89,
       "method": "GET",
@@ -114913,8 +115077,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0ba706b93a15109351ec",
-      "registrationId": "registration:bc7360f4d3345518c93d",
+      "id": "route:b52af935a2a0fce2f5e9",
+      "registrationId": "registration:0916f2df800f32301e65",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 127,
       "method": "POST",
@@ -114931,8 +115095,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5004b7cdc4ab4c07dc6f",
-      "registrationId": "registration:37d8ac23cb83a54dd994",
+      "id": "route:247bc12c25749b8f6398",
+      "registrationId": "registration:571df7d4584e0ae7d55a",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 244,
       "method": "GET",
@@ -114949,8 +115113,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:43197b555f15f49d6f16",
-      "registrationId": "registration:32f1adb9c93c3ae10fe8",
+      "id": "route:80adfefd1fc590248e64",
+      "registrationId": "registration:3c8f289b6a7ea6bae066",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 263,
       "method": "POST",
@@ -114967,8 +115131,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a137dbd2ba844fc0896a",
-      "registrationId": "registration:e9874dc32060f584216d",
+      "id": "route:8024f62899fdb867af17",
+      "registrationId": "registration:a4d172a4d667e0a6d90a",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
       "line": 316,
       "method": "POST",
@@ -114985,10 +115149,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:24434633006dd4924713",
-      "registrationId": "registration:52caecffe418c6d91a6d",
+      "id": "route:62f6f43faba8f2ad44be",
+      "registrationId": "registration:2dbd211ceef22416f428",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 422,
+      "line": 330,
       "method": "GET",
       "path": "/api/supabase/organizations",
       "mountChain": [
@@ -115003,10 +115167,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ed0428406c9e2a2ec2de",
-      "registrationId": "registration:90ea15f7c12cf7b60037",
+      "id": "route:c1e09f50cac1b9af5728",
+      "registrationId": "registration:6d466c8286c7616e25c4",
       "sourcePath": "backend/src/routes/supabaseOAuth.ts",
-      "line": 466,
+      "line": 374,
       "method": "DELETE",
       "path": "/api/supabase/disconnect",
       "mountChain": [
@@ -122253,44 +122417,44 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:0dfd03d619df0d9f6bdb",
+      "id": "frontend-call:16bf08b70b6be33dadaf",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 221,
+      "line": 225,
       "callee": "api.supabase.projects",
       "reachable": false
     },
     {
-      "id": "frontend-call:b3b8a59c22c64c318c9f",
+      "id": "frontend-call:385865be6188477e24d3",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 224,
+      "line": 228,
       "callee": "api.supabase.organizations",
       "reachable": false
     },
     {
-      "id": "frontend-call:6e4ebff6b9e281248362",
+      "id": "frontend-call:0948900ccaa7c8f4c35b",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 280,
+      "line": 284,
       "callee": "api.supabase.disconnect().then().catch().finally",
       "reachable": false
     },
     {
-      "id": "frontend-call:56de61f462e58df6a6d6",
+      "id": "frontend-call:7b7e2036d38e4590fbf1",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 280,
+      "line": 284,
       "callee": "api.supabase.disconnect().then().catch",
       "reachable": false
     },
     {
-      "id": "frontend-call:18254c5e0f4c38de0c9d",
+      "id": "frontend-call:1c97a0c2561ce69dfffc",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 280,
+      "line": 284,
       "callee": "api.supabase.disconnect().then",
       "reachable": false
     },
     {
-      "id": "frontend-call:8504c7f9beaa3fe2fca4",
+      "id": "frontend-call:6b6a39ba278ad37cbf29",
       "sourcePath": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "line": 280,
+      "line": 284,
       "callee": "api.supabase.disconnect",
       "reachable": false
     },
@@ -126984,7 +127148,7 @@
     {
       "id": "test-suite:8b7975677adc81e07f57",
       "sourcePath": "backend/src/services/integrations/composioConsentConsumers.security.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -127265,6 +127429,13 @@
       "id": "test-suite:ddbcb66172f59b3284fd",
       "sourcePath": "backend/src/services/integrations/supabaseManagement.security.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cb378c3c681bc6f562c5",
+      "sourcePath": "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

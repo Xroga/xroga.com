@@ -121,8 +121,8 @@
   ],
   "counts": {
     "total": 137,
-    "reviewed": 134,
-    "pending": 3,
+    "reviewed": 135,
+    "pending": 2,
     "unresolvedHighRiskReviewCandidates": 0
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
@@ -651,7 +651,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b742f5d59011e26e413eaeb2c858308e9490229b12ec5fd011a86d21b3a9ac3d",
+      "sha256": "14f3ace2ef9dba5065a6f5387e9040887228efd110cc62adce9c3abaddf17736",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -849,5 +849,6 @@
   "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
   "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json",
   "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
-  "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json"
+  "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+  "supabaseCreateContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json"
 }

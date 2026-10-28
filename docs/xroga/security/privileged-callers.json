@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "db3d18b1b0d7f2db3c7fcefe32f41fbe99a1d7f384a7ddf39ca6e4ea0ae1b9ff",
+  "reviewRegistrySha256": "79601f9a34af66275d3cba185e60452e0a178582e06ffdb2b83e97b6fff6dab7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 209,
-    "persistenceCandidates": 861,
-    "ownerPredicateCandidates": 233,
+    "privilegedFactorySites": 210,
+    "persistenceCandidates": 863,
+    "ownerPredicateCandidates": 235,
     "reviewRequired": 126,
-    "reviewedCandidates": 735,
+    "reviewedCandidates": 737,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 488,
+    "SCOPED_BOUNDARY": 490,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 174,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 84,
-    "unresolvedCandidateBoundaries": 777,
+    "unresolvedCandidateBoundaries": 779,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4648,6 +4648,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "8c576db25366db648005"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d8ab250784c7244f5cc8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "c411916d520cbe22dc2d"
       },
       {
@@ -7828,6 +7836,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8c576db25366db648005"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d8ab250784c7244f5cc8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "c411916d520cbe22dc2d"
       },
       {
@@ -8573,11 +8589,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 861,
+    "currentCallers": 863,
     "structuredVerified": 84,
-    "structuredUnproven": 777,
+    "structuredUnproven": 779,
     "manualUnresolved": 159,
-    "manualUnsupported": 618,
+    "manualUnsupported": 620,
     "agreedVerified": 84,
     "proofAwaitingManualReconciliation": 0
   },
@@ -20700,6 +20716,56 @@
           {
             "path": "backend/src/routes/supabaseOAuth.ts",
             "marker": "stateInfo.userId !== req.userId"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8c576db25366db648005",
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "line": 78,
+      "enclosing": "executeSupabaseProjectCreation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b",
+      "semanticReview": {
+        "authority": "The original actor is recovered only from its canonical native permit. Exact owner, plan digest, current credential fingerprint, expiry, claim and effect marker scope the executing confirmation read before and after provider waits. Both organization membership and current Free plan are verified without changing IAM or subscriptions.",
+        "reason": "Actual canonical vault, confirmation and HTTP-route tests verify one exact project, zero-cost scope, nonredirecting bounded provider dispatch, independent project readback, denial/cancellation, no replay and encrypted database-password escrow. Creation does not overwrite the existing user connection, run SQL or export keys. No historical tenant or whole-source production acceptance is promoted.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+            "marker": ".eq('user_id',userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
+            "marker": "actual Supabase creation HTTP route returns pending review"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d8ab250784c7244f5cc8",
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "line": 78,
+      "enclosing": "executeSupabaseProjectCreation",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b",
+      "semanticReview": {
+        "authority": "The original actor is recovered only from its canonical native permit. Exact owner, plan digest, current credential fingerprint, expiry, claim and effect marker scope the executing confirmation read before and after provider waits. Both organization membership and current Free plan are verified without changing IAM or subscriptions.",
+        "reason": "Actual canonical vault, confirmation and HTTP-route tests verify one exact project, zero-cost scope, nonredirecting bounded provider dispatch, independent project readback, denial/cancellation, no replay and encrypted database-password escrow. Creation does not overwrite the existing user connection, run SQL or export keys. No historical tenant or whole-source production acceptance is promoted.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+            "marker": ".eq('user_id',userId)"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
+            "marker": "actual Supabase creation HTTP route returns pending review"
           }
         ]
       }

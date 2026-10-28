@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "4a23cce4a55be28253486af436a729d261c88822fe8c5a319eff4f40d8ef873f",
+      "currentSha256": "f7ad2c81ad867c5852191e1dec1850fe98f913bc417f9286f5d9c7132feafc2f",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",

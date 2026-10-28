@@ -2704,7 +2704,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600",
+      "sourceFileSha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -2831,6 +2831,12 @@
         "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
         "sourceSha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8",
         "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      },
+      "beforeSupabaseCreate": {
+        "ref": "6d10503fb6aafd2d9da628c886042b466d9ecb27",
+        "id": "c09bb8607fa4d00f23b7",
+        "sourceSha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json"
       }
     },
     {
@@ -3480,9 +3486,9 @@
       }
     },
     {
-      "id": "96fbfea42a399a233486",
+      "id": "807c2948cdfa16e19b84",
       "callSha256": "7f108f6d651966ee8abf288336bb1df93ea2c6816a08806155667c76608f8b8c",
-      "sourceFileSha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df",
+      "sourceFileSha256": "4c82126fb549f870a0ede9f6453ade5ff78d8597a10686d94a74c56629fe4e72",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_OFFICIAL_ISSUER_OWNER_ORGANIZATIONS_READ_ONLY",
       "tenantAuthority": "ORIGINAL_ISSUED_OWNER_AND_CANONICAL_TOKEN_REVISION_BEFORE_AND_AFTER_BOUNDED_READ",
@@ -3502,6 +3508,12 @@
         "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
         "sourceSha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675",
         "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      },
+      "beforeSupabaseCreate": {
+        "ref": "6d10503fb6aafd2d9da628c886042b466d9ecb27",
+        "id": "96fbfea42a399a233486",
+        "sourceSha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json"
       }
     },
     {
@@ -3838,6 +3850,26 @@
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
           "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+        }
+      ]
+    },
+    {
+      "id": "0b86177865b1789b9b67",
+      "callSha256": "95a945adeca0b065cb4375762590995bf1f2aebed2c387d0f4d4c130ca4b4145",
+      "sourceFileSha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_SUPABASE_NATIVE_EXACT_FREE_PROJECT_CREATION_WITH_CURRENT_OWNED_ORGANIZATION_AND_ENCRYPTED_PASSWORD_ESCROW",
+      "tenantAuthority": "ISSUED_ACTOR_CANONICAL_ONE_USE_CLAIM_CURRENT_CONNECTION_BILLING_SCOPE_SECRET_FLOOR_NO_DENIAL_RETRY_VERIFIED_PROJECT_READBACK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json",
+          "marker": "0b86177865b1789b9b67",
+          "sha256": "ea0bdf5988af419c2fc7870fdf688a39f49ff6033f79527a4faf69b594082d22"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
+          "marker": "Supabase exact project creation:",
+          "sha256": "93c15f049c4cce01a1c09fbbc6a1a2b6d4150a1c7f3588953eba7b06e0170a27"
         }
       ]
     }

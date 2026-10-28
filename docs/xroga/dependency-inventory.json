@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b450dd28d26964cfaefe85abbfb2cd9bdc8cf793",
+  "source_sha": "6d10503fb6aafd2d9da628c886042b466d9ecb27",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1907,6 +1907,7 @@
       "config_sources": [
         "backend/src/routes/supabaseOAuth.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.ts",
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "hostnames": [
@@ -1935,6 +1936,7 @@
       "observability_source": [
         "backend/src/routes/supabaseOAuth.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
+        "backend/src/services/integrations/supabaseProjectCreation.ts",
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -16119,7 +16121,7 @@
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "sha256": "3c7575cc189c581be5f16f26ec4b9820b82b12d00eff6edb0a9d79b2d3191606"
+      "sha256": "4ccfe63df5c66aba86d83c2816411c8c23a0179a452d7423557189c9ead64a7d"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -16155,7 +16157,7 @@
     },
     {
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "sha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df"
+      "sha256": "4c82126fb549f870a0ede9f6453ade5ff78d8597a10686d94a74c56629fe4e72"
     },
     {
       "path": "backend/src/routes/swarm.ts",
@@ -16591,7 +16593,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b742f5d59011e26e413eaeb2c858308e9490229b12ec5fd011a86d21b3a9ac3d"
+      "sha256": "14f3ace2ef9dba5065a6f5387e9040887228efd110cc62adce9c3abaddf17736"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16744,6 +16746,10 @@
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "sha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "sha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b"
     },
     {
       "path": "backend/src/services/integrations/supabaseProjectUrl.ts",
@@ -19323,7 +19329,7 @@
     },
     {
       "path": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
-      "sha256": "4913a0968355cf83ea8cb5e3338760beab95c48c126b537b8039bc3ae7825e6c"
+      "sha256": "5ac2eb18f648911032209cafcb102307d478ec05b9c43a1acf6458235bf57986"
     },
     {
       "path": "frontend/src/components/integrations/XrogaConnectPanel.tsx",
@@ -20395,7 +20401,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600"
+      "sha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -23062,14 +23068,7 @@
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 344,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "api.supabase.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/supabaseOAuth.ts",
-      "line": 443,
+      "line": 351,
       "credentialsInUrl": false
     },
     {
@@ -24232,6 +24231,20 @@
       "protocol": "http:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
       "line": 47,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.supabase.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "line": 34,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.supabase.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "line": 87,
       "credentialsInUrl": false
     },
     {
@@ -30650,7 +30663,7 @@
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 99,
+      "line": 100,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

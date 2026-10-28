@@ -188,13 +188,17 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
         organizationId: orgId,
         region,
       });
+      if(res.needsConfirmation){
+        const link=reviewLink(res.reviewUrl);if(!link)throw new Error('The creation review link is unavailable.');
+        setReviewUrl(link);setProvisioned(false);setMessage(res.message||'Review exact project creation. Connection and schema setup are separate.');return;
+      }
       if(res.provision?.needsConfirmation){
         const link=reviewLink(res.provision.reviewUrl);if(!link)throw new Error('The action review link is unavailable.');
         setReviewUrl(link);setProvisioned(false);setMessage(res.provision.message||'Review schema and storage setup.');return;
       }
       if (res.ok) {
         toast.success(res.message || 'Project created. Schema and private storage require separate verification.');
-        setProvisioned(true);
+        setProvisioned(false);
         onConnected?.();
         void refresh();
         const envSync = (res as { envSync?: { ok?: boolean; error?: string; skipped?: string[] } })

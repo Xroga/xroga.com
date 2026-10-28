@@ -3336,6 +3336,9 @@ export const api = {
           ok:
             boolean;
 
+          needsConfirmation?: boolean;
+          reviewUrl?: string;
+
           projectRef?:
             string;
 

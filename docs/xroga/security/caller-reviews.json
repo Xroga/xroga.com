@@ -24289,6 +24289,27 @@
           "marker": "native Composio control:"
         }
       ]
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "sourceSha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b",
+      "callIds": [
+        "8c576db25366db648005",
+        "d8ab250784c7244f5cc8"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The original actor is recovered only from its canonical native permit. Exact owner, plan digest, current credential fingerprint, expiry, claim and effect marker scope the executing confirmation read before and after provider waits. Both organization membership and current Free plan are verified without changing IAM or subscriptions.",
+      "reason": "Actual canonical vault, confirmation and HTTP-route tests verify one exact project, zero-cost scope, nonredirecting bounded provider dispatch, independent project readback, denial/cancellation, no replay and encrypted database-password escrow. Creation does not overwrite the existing user connection, run SQL or export keys. No historical tenant or whole-source production acceptance is promoted.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+          "marker": ".eq('user_id',userId)"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseProjectCreation.security.test.ts",
+          "marker": "actual Supabase creation HTTP route returns pending review"
+        }
+      ]
     }
   ],
   "retiredSourceReviews": [
