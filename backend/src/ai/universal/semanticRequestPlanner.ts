@@ -338,19 +338,31 @@ export function enforceExplicitConnectedAppReadControls(
   plan: SemanticRequestPlan,
   message: string,
 ): SemanticRequestPlan {
+  // A semantic model can mistake a request to search a connected spreadsheet
+  // for a project build. Recover only a standalone account read: an explicit
+  // software deliverable or Preview must keep the software execution route.
+  const misplacedBuild =
+    plan.dispatch === 'build' &&
+    isExplicitConnectedAppReadRequest(message) &&
+    explicitExecutionControls(message).previewRequirement !== 'REQUIRED' &&
+    !/\b(?:build|develop|implement|deploy|ship)\s+(?:(?:a|an|the|my|our)\s+)?(?:website|web app|app|application|dashboard|software|site|page|api|project|repository)\b/i.test(message) &&
+    !splitExplicitBusinessWorkflow(message);
   if (
-    plan.dispatch !== 'chat' ||
+    (plan.dispatch !== 'chat' && !misplacedBuild) ||
     !isExplicitConnectedAppReadRequest(message) ||
-    (plan.capabilityIds.includes('business.read') && plan.goalContract.requiredCapabilities.includes('business.read')) ||
-    [...plan.capabilityIds, ...plan.goalContract.requiredCapabilities].some(
+    (!misplacedBuild && plan.capabilityIds.includes('business.read') && plan.goalContract.requiredCapabilities.includes('business.read')) ||
+    (!misplacedBuild && [...plan.capabilityIds, ...plan.goalContract.requiredCapabilities].some(
       (id) => id === 'software.implement' || id === 'repository.read' || id === 'repository.write',
-    )
+    ))
   ) return plan;
 
   const explicitPublicSearch = /\b(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
   const capabilityIds = [
     ...new Set([
-      ...plan.capabilityIds.filter((id) => id !== 'research.public-web' || explicitPublicSearch),
+      ...plan.capabilityIds.filter((id) =>
+        (id !== 'research.public-web' || explicitPublicSearch) &&
+        (!misplacedBuild || id === 'conversation.respond' || (id === 'research.public-web' && explicitPublicSearch))
+      ),
       'business.read',
     ]),
   ];
@@ -358,7 +370,12 @@ export function enforceExplicitConnectedAppReadControls(
   const blockers = available ? [] : ['Connected-app reads are unavailable because Xroga Connect is not configured.'];
   const goalContract = goalContractSchema.parse({
     ...plan.goalContract,
-    semanticIntent: plan.capabilityIds.includes('business.action') ? 'MIXED' : 'INVESTIGATE',
+    semanticIntent: !misplacedBuild && plan.capabilityIds.includes('business.action') ? 'MIXED' : 'INVESTIGATE',
+    ...(misplacedBuild ? {
+      previewRequirement: 'NONE',
+      publicationRequirement: 'NONE',
+      deploymentRequirement: 'NONE',
+    } : {}),
     requiredCapabilities: capabilityIds,
     requiredAuthorities: [
       ...new Set(capabilityIds.flatMap((id) => universalCapabilityRegistry.get(id)?.requiredAuthorities ?? [])),

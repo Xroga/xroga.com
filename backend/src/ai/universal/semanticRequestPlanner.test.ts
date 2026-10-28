@@ -72,6 +72,40 @@ describe('semantic request dispatch', () => {
     }
   });
 
+  it('recovers a connected Sheets search misclassified as a software build', () => {
+    const previousKey = process.env.COMPOSIO_API_KEY;
+    process.env.COMPOSIO_API_KEY = 'test-key';
+    try {
+      const misrouted = {
+        goalContract: goal({
+          semanticIntent: 'MODIFY',
+          requiredCapabilities: ['software.implement', 'validation.run', 'business.action'],
+          previewRequirement: 'PREFERRED',
+        }),
+        dispatch: 'build' as const,
+        capabilityIds: ['software.implement', 'validation.run', 'business.action'],
+        rationale: 'model mistook spreadsheet search for a build',
+        blockers: [],
+        usage: {} as never,
+      };
+      const corrected = enforceExplicitConnectedAppReadControls(
+        misrouted,
+        'Using my connected Google Sheets account, search for a spreadsheet titled Xroga synthetic automation test. Read-only.',
+      );
+      assert.equal(corrected.dispatch, 'chat');
+      assert.deepEqual(corrected.capabilityIds, ['business.read']);
+      assert.equal(corrected.goalContract.previewRequirement, 'NONE');
+      assert.equal(corrected.goalContract.semanticIntent, 'INVESTIGATE');
+      assert.equal(enforceExplicitConnectedAppReadControls(
+        misrouted,
+        'Using my connected Google Sheets, build a dashboard from its rows and show a Preview.',
+      ), misrouted);
+    } finally {
+      if (previousKey === undefined) delete process.env.COMPOSIO_API_KEY;
+      else process.env.COMPOSIO_API_KEY = previousKey;
+    }
+  });
+
   it('does not read a connected account for an ordinary how-to question or negated read', () => {
     for (const message of [
       'Explain how to count unread messages in my connected Gmail.',

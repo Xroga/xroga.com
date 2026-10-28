@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-universal-connected-apps",
-    "sha": "8ca7fb6e842aca56da709509e3e9ae11e92a72f9",
-    "sourceTimestampUtc": "2026-10-28T14:52:50+05:00",
-    "auditStartedUtc": "2026-10-28T09:58:44.424Z",
+    "sha": "053938d92b1618e53ae446c43cba3b9e52996328",
+    "sourceTimestampUtc": "2026-10-28T15:05:02+05:00",
+    "auditStartedUtc": "2026-10-28T10:24:37.724Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -10588,7 +10588,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2d642367d5d34781d40b1d08e13a12074d88130004c26ee6b4d917ad2ecb71ea",
+      "sha256": "8ff70da27991acf17ab5573579cb376808238b1af3cc3afb8b852cf6d3bf9f55",
       "symbols": [
         "PlannerRouteOutcome",
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
@@ -10654,6 +10654,7 @@
         "lastStructuredFailure",
         "maximumOutputTokens",
         "messages",
+        "misplacedBuild",
         "models",
         "negatedSearch",
         "normalized",
@@ -118104,7 +118105,7 @@
     {
       "id": "test-suite:4c7f0731a324fb7d047d",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.test.ts",
-      "declaredTests": 42,
+      "declaredTests": 43,
       "skipLocations": [],
       "focusLocations": []
     },
