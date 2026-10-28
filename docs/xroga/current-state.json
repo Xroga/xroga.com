@@ -7758,15 +7758,17 @@
       "id": "surface:859601f52733d9613957",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts",
-      "sha256": "c99fc2ca9f656441ec206e2a26b43996c1bca4b16b70073ee07118b942600a0e",
+      "sha256": "69b946133ee663ea56585c75bbc61bf6459e9270f2b1de437504a774c9d90b54",
       "symbols": [
         "AgentSoftwareExecutionStatus",
         "AgentSoftwareExecutor",
         "AgentSoftwareExecutorInput",
         "AgentSoftwareExecutorResult",
+        "SOFTWARE_AGENT_MAX_ITERATIONS",
         "abortForCheckpointFailure",
         "abortFromCaller",
         "agent",
+        "arg",
         "blocker",
         "buildInitialGoal",
         "buildSoftwareContinuation",
@@ -7783,6 +7785,7 @@
         "failedResult",
         "invalidateVerificationAfterMutation",
         "isMutationEvent",
+        "keys",
         "nonConvergenceBlocker",
         "observation",
         "outputText",
@@ -7790,9 +7793,11 @@
         "registeredTools",
         "restoredCompletion",
         "result",
+        "run",
         "shouldCheckpointAfter",
         "successfulStatus",
         "systemPrompt",
+        "toolStep",
         "totalIterations",
         "usage"
       ],
@@ -8154,7 +8159,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:23",
+        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:26",
         "backend/src/ai/softwareAgent/index.ts:8"
       ],
       "reachable": true,
@@ -8205,7 +8210,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:39",
+        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:42",
         "backend/src/ai/softwareAgent/completionGate.test.ts:12",
         "backend/src/ai/softwareAgent/index.ts:4",
         "backend/src/ai/softwareAgent/xrogaTools.ts:16",
@@ -8314,7 +8319,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:31",
+        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:34",
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:35",
         "backend/src/ai/softwareAgent/index.ts:10",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts:7",
@@ -9041,7 +9046,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:27",
+        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:30",
         "backend/src/ai/softwareAgent/index.ts:11"
       ],
       "reachable": true,
@@ -9223,7 +9228,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:43",
+        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:46",
         "backend/src/ai/softwareAgent/verificationContinuationPolicy.test.ts:16"
       ],
       "reachable": true,
@@ -9546,7 +9551,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:35",
+        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:38",
         "backend/src/ai/softwareAgent/index.ts:12"
       ],
       "reachable": true,
@@ -125894,6 +125899,13 @@
     {
       "id": "test-suite:c8b3fe7eed3845dc89c2",
       "sourcePath": "backend/src/ai/softwareAgent/SoftwareAgentWorkspace.checkpoint.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9ef400b606425f3c80e4",
+      "sourcePath": "backend/src/ai/softwareAgent/agentIterationCap.test.ts",
       "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []

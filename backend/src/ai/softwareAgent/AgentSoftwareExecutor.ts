@@ -2,6 +2,9 @@ import {
   Agent,
 } from '@cline/sdk';
 
+/** The SDK default is unbounded; a looping model must hit a ceiling instead of spending without limit. */
+const SOFTWARE_AGENT_MAX_ITERATIONS = 60;
+
 import type {
   SoftwareExecutionContract,
   SoftwareRunEvidence,
@@ -440,10 +443,26 @@ export class AgentSoftwareExecutor {
         contract,
       );
 
+    let toolStep = 0;
     const registeredTools = [
       ...tools,
       completionTool,
-    ];
+    ].map((tool: any) => {
+      const run = tool?.execute;
+      if (typeof run !== 'function') return tool;
+      return {
+        ...tool,
+        execute: async (...args: unknown[]) => {
+          toolStep += 1;
+          const arg = args[0];
+          const keys = arg && typeof arg === 'object' ? Object.keys(arg as object).slice(0, 8) : [];
+          console.log(
+            `[software-agent-step] ${JSON.stringify({ step: toolStep, tool: String(tool?.name ?? 'unknown'), argKeys: keys })}`,
+          );
+          return run.apply(tool, args);
+        },
+      };
+    });
 
     const agent =
       model.model
@@ -455,6 +474,9 @@ export class AgentSoftwareExecutor {
 
             tools:
               registeredTools,
+
+            maxIterations:
+              SOFTWARE_AGENT_MAX_ITERATIONS,
           })
         : new Agent({
             providerId:
@@ -494,6 +516,9 @@ export class AgentSoftwareExecutor {
 
             tools:
               registeredTools,
+
+            maxIterations:
+              SOFTWARE_AGENT_MAX_ITERATIONS,
           });
 
     let externallyAborted =

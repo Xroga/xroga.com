@@ -15378,7 +15378,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts",
-      "sha256": "c99fc2ca9f656441ec206e2a26b43996c1bca4b16b70073ee07118b942600a0e"
+      "sha256": "69b946133ee663ea56585c75bbc61bf6459e9270f2b1de437504a774c9d90b54"
     },
     {
       "path": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
