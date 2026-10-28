@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "89ac512a84ce61a2ff86d10107cf521c38e54e71",
+  "source_sha": "2ae8481277a5faf808428f52bed2d13bc553bb0d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7248,6 +7248,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
+        "backend/src/services/integrations/composioCallback.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
         "backend/src/storage/migration/cliContext.ts",
@@ -7368,6 +7369,7 @@
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
+        "XROGA_COMPOSIO_CALLBACK_ORIGINS",
         "XROGA_CREDENTIAL_KMS_PROVIDER",
         "XROGA_DEEPSEEK_V4_FLASH_MAX_INPUT_USD_PER_1M",
         "XROGA_DEEPSEEK_V4_FLASH_MAX_OUTPUT_USD_PER_1M",
@@ -7443,6 +7445,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
+        "backend/src/services/integrations/composioCallback.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
         "backend/src/storage/migration/cliContext.ts",
@@ -8545,8 +8548,7 @@
         "backend/src/index.ts",
         "backend/src/lib/platformReady.ts",
         "backend/src/routes/github.ts",
-        "backend/src/routes/integrations.ts",
-        "backend/src/routes/phase1.ts",
+        "backend/src/services/integrations/composioCallback.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
@@ -12197,6 +12199,25 @@
       ]
     },
     {
+      "name": "XROGA_COMPOSIO_CALLBACK_ORIGINS",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioCallback.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_CREDENTIAL_KMS_PROVIDER",
       "consuming_sources": [
         "backend/src/runtime/readiness.ts"
@@ -14148,7 +14169,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2eb800214c0870ac92974ab1df42608b2cae7ec7bb0af2483086002cb5d1f642"
+      "sha256": "8ff70da27991acf17ab5573579cb376808238b1af3cc3afb8b852cf6d3bf9f55"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -14840,7 +14861,7 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "eeefed3d188f0880eac39d78ab305ca6d8eec94dd0c43cc7d39322c0835c1b7e"
+      "sha256": "40f09c5f1d9ff348d3ffced70187ee671bebf1c48da1c32184ae0057688a34ef"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -14864,7 +14885,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "7b06621b69ac97ba6f1b6fe56dec83a759dc0f941abfc8cf518c4a74daa7f08e"
+      "sha256": "8d59d1a4f048c8856faa39485c190d13bf45d499a899c3193d742dedd4ee1ca9"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -15264,7 +15285,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "b8c0ac8ff79fb95d268c8cdd4407706ad62fb3789d93755955645962dcb1c4b8"
+      "sha256": "3c921fe9072bffd0608b7b6346c07eda92721911d6c7357ead35bc0fe6b12c75"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -15272,7 +15293,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "sha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
@@ -15288,15 +15309,23 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "a1aeb614b3b6e3214b2eec5994f61c42d3cbd75e121a7327898eec1237629a86"
+      "sha256": "3a706dc3d6f196e75fc1cddc420995b8e1a79edaf477f6fb348aeba573c7dcd2"
+    },
+    {
+      "path": "backend/src/services/integrations/businessWorkflowPlanner.ts",
+      "sha256": "6490895ac8c1a28f86d58d7871e1ed6345987ed1aaf7be3811e632e00adc1693"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sha256": "5eb4d37bbf115241d92787f2988e91a0d8db3bb35d200966b2fbe30641cdb302"
+    },
+    {
+      "path": "backend/src/services/integrations/composioCallback.ts",
+      "sha256": "685ec90e2a0781a457ca53bf3ab502aa858c6096ab8a9b54347be031e3768d1f"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "ea60f949492f5f5b5c56aed798b88e07e2f5d4a7ae19b16572d610fd868bb27d"
+      "sha256": "3687d96b59fa19c6f6fe7170d501bb1283859cc4c2af40b9126d39b62143e510"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -16172,7 +16201,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/integrations/connect/callback/page.tsx",
-      "sha256": "76b8d7a5fded5989082e85355fe30362e13635acdfad7796c07f3cb978c056fa"
+      "sha256": "e99b80b3ea8d0e06b7c0818ccfbd5bde201839e418471a98521be5d7881bc38e"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/integrations/github/callback/page.tsx",
@@ -16248,7 +16277,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
-      "sha256": "9436bc0dc5393a6ae1458e8b44d5e703e58f1d8e34c41084626e8815879f55c4"
+      "sha256": "464359c21cb118abec1126f9013de08119b86ac1a8616c6266f84998c95126d8"
     },
     {
       "path": "frontend/src/app/(shell)/error.tsx",
@@ -17876,7 +17905,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "ad57d88aa22acba8b0bd746bc1f4ceeb5a0e0e64d0db1ec8dc57a829dc26dcdc"
+      "sha256": "1b853813ae44ac6e657369c27cbb87f431c5bd938e8a47cd7a4df9e11ae20284"
     },
     {
       "path": "frontend/src/components/integrations/PluginMarketplace.tsx",
@@ -18616,7 +18645,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860"
+      "sha256": "f966a9ac92a7ad2719f186ae4979efc959765e268f5ef4fc2a50d68ef6ab94ba"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -19356,7 +19385,7 @@
     },
     {
       "path": "frontend/src/lib/phase1Routing.ts",
-      "sha256": "2a93a9606b7b5bd48510813ac333c0f2f0e7149b92437f3636bbb48d0db88f02"
+      "sha256": "7d498b520f5f07a28e22dabd2ecbb3c9a8b919a1fed280ac92e5a78b9317b8ee"
     },
     {
       "path": "frontend/src/lib/plainAiText.tsx",
@@ -19461,6 +19490,10 @@
     {
       "path": "frontend/src/lib/repoWorkspaceGate.ts",
       "sha256": "43476886c17dbb478a63e82acc039910e096afaceca1c8fb6dd9d06a37b40dbe"
+    },
+    {
+      "path": "frontend/src/lib/requiresRepoWorkspaceForPrompt.ts",
+      "sha256": "d38f5dd62fb6483b610af098fb227db37a8916921e8068807c587fe16808ad58"
     },
     {
       "path": "frontend/src/lib/researchWait.ts",
@@ -21384,20 +21417,6 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/integrations.ts",
-      "line": 2023,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/phase1.ts",
-      "line": 175,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
@@ -22277,6 +22296,13 @@
       "protocol": "https:",
       "path": "backend/src/services/billingRoutes.local.integration.ts",
       "line": 40,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/composioCallback.ts",
+      "line": 10,
       "credentialsInUrl": false
     },
     {
@@ -27526,70 +27552,112 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 233,
+      "line": 222,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 250,
+      "line": 236,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 293,
+      "line": 246,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 306,
+      "line": 260,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 353,
+      "line": 280,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 443,
+      "line": 297,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 462,
+      "line": 361,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1550,
+      "line": 381,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1648,
+      "line": 414,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1941,
+      "line": 427,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "line": 474,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "line": 564,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "line": 583,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "line": 1671,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "line": 1769,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "line": 2062,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28645,6 +28713,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/phase1.ts",
+      "line": 798,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
       "line": 104,
       "scope": "FUNCTION_LOCAL",
@@ -28814,14 +28889,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1186,
+      "line": 1187,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1212,
+      "line": 1213,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAutomations.ts",
+      "line": 44,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28878,6 +28960,27 @@
     {
       "path": "backend/src/services/integrations/businessRead.ts",
       "line": 1023,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
+      "line": 179,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
+      "line": 182,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioCallback.ts",
+      "line": 13,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30900,28 +31003,28 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 384,
+      "line": 385,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 625,
+      "line": 626,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 642,
+      "line": 643,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 851,
+      "line": 852,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

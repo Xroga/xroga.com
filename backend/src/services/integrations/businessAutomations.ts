@@ -2,6 +2,7 @@ import { createTenantContext } from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { isComposioConfigured, upsertComposioTriggerForUser } from './composioClient.js';
 import { splitExplicitBusinessWorkflow, type BusinessWorkflowStep } from './businessWorkflow.js';
+import { planBusinessWorkflow } from './businessWorkflowPlanner.js';
 import { createBusinessWorkflowRun } from './businessWorkflowRuns.js';
 
 export interface BusinessAutomationRule {
@@ -36,9 +37,15 @@ function validRule(value: unknown): value is BusinessAutomationRule {
     && (row.schedule_kind === 'interval' || row.schedule_kind === 'trigger');
 }
 
-function explicitSteps(request: string): BusinessWorkflowStep[] {
-  const steps = splitExplicitBusinessWorkflow(request);
-  if (!steps) throw new Error('Automations need two to four explicit connected-app steps, including an action.');
+async function plannedSteps(userId: string, request: string): Promise<BusinessWorkflowStep[]> {
+  const steps = splitExplicitBusinessWorkflow(request) ?? await planBusinessWorkflow({
+    userId,
+    message: request,
+    allowedKinds: new Set(['read', 'action']),
+  });
+  if (!steps || !steps.some((step) => step.kind === 'action')) {
+    throw new Error('Automations need two to six clear connected-app steps, including an explicit action. Nothing was enabled.');
+  }
   return steps;
 }
 
@@ -51,7 +58,7 @@ export async function createBusinessAutomationRule(userId: string, input: {
   const request = input.request.trim();
   if (name.length < 3 || name.length > 120 || request.length < 8 || request.length > 1_500) throw new Error('Provide a short name and an explicit workflow request.');
   if (!isComposioConfigured()) throw new Error('Composio must be configured before creating an app automation.');
-  const steps = explicitSteps(request);
+  const steps = await plannedSteps(userId, request);
   let triggerId: string | null = null;
   let intervalSeconds: number | null = null;
   if (input.schedule.kind === 'interval') {

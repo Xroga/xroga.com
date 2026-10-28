@@ -14,6 +14,7 @@ import {
 import {
   publishOAuthResult,
 } from '@/lib/oauthPopupResult';
+import { xrogaConnect } from '@/lib/xrogaConnect';
 
 function CallbackHandler() {
   const router =
@@ -31,6 +32,9 @@ function CallbackHandler() {
     );
 
   useEffect(() => {
+    let cancelled = false;
+    const toolkit = searchParams.get('toolkit')?.toLowerCase() ?? '';
+    const accountId = searchParams.get('connected_account_id') ?? '';
     const error =
       searchParams.get(
         'error_description',
@@ -44,88 +48,44 @@ function CallbackHandler() {
         'status',
       );
 
-    const failed =
-      Boolean(error) ||
-      status === 'failed' ||
-      status === 'error';
-
-    if (failed) {
-      const text =
-        error ||
-        'App authorization failed.';
-
+    const finish = (success: boolean, text: string) => {
+      if (cancelled) return;
       setMessage(text);
-
-      publishOAuthResult({
-        type:
-          'xroga-composio-error',
-
-        message: text,
-      });
-
+      publishOAuthResult({ type: success ? 'xroga-composio-connected' : 'xroga-composio-error', message: text });
       setTimeout(() => {
-        try {
-          window.close();
-        } catch {
-          // Ignore.
-        }
+        if (cancelled) return;
+        if (window.opener && !window.opener.closed) window.close();
+        else router.replace(success && toolkit
+          ? `/dashboard/integrations/${encodeURIComponent(toolkit)}?connected=1`
+          : `/dashboard/integrations?plugin=error&message=${encodeURIComponent(text.slice(0, 180))}`);
+      }, 700);
+    };
 
-        if (
-          !window.opener ||
-          window.opener.closed
-        ) {
-          const query =
-            new URLSearchParams({
-              plugin:
-                'error',
-
-              message:
-                text.slice(
-                  0,
-                  180,
-                ),
-            });
-
-          router.replace(
-            `/dashboard/integrations?${query.toString()}`,
-          );
-        }
-      }, 800);
-
-      return;
+    if (error || status !== 'success' || !/^[a-z0-9][a-z0-9_-]{1,79}$/.test(toolkit)) {
+      finish(false, error || 'App authorization did not return a verifiable success status.');
+      return () => { cancelled = true; };
     }
 
-    const successMessage =
-      'App connected to Xroga';
-
-    setMessage(
-      successMessage,
-    );
-
-    publishOAuthResult({
-      type:
-        'xroga-composio-connected',
-
-      message:
-        successMessage,
-    });
-
-    setTimeout(() => {
+    const verify = async () => {
+      setMessage('Checking the app connection…');
       try {
-        window.close();
+        const session = await xrogaConnect.session();
+        for (let attempt = 0; attempt < 6 && !cancelled; attempt += 1) {
+          const response = await xrogaConnect.toolkits(session.sessionId, { toolkits: [toolkit] });
+          const connected = response.toolkits.find((item) => item.toolkit === toolkit && item.connected);
+          if (connected && (!accountId || connected.connectedAccountId === accountId)) {
+            finish(true, 'App connected to Xroga');
+            return;
+          }
+          if (attempt < 5) await new Promise((resolve) => setTimeout(resolve, 1_000));
+        }
+        finish(false, 'Authorization returned, but the app is not ACTIVE in this Xroga account. Check the app connection and try again.');
       } catch {
-        // Ignore.
+        finish(false, 'Xroga could not verify the app connection. Refresh its plugin page before using it.');
       }
-
-      if (
-        !window.opener ||
-        window.opener.closed
-      ) {
-        router.replace(
-          '/dashboard/integrations?plugin=connected',
-        );
-      }
-    }, 600);
+    };
+    void verify();
+    return () => { cancelled = true; };
   }, [
     router,
     searchParams,

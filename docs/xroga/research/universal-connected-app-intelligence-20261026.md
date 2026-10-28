@@ -1,0 +1,18 @@
+# Universal Connected-App Intelligence: source-to-Xroga mapping
+
+Research checked 2026-10-26. These are architectural references, not copied vendor code or evidence that every provider action succeeds.
+
+| Primary source | Pattern used in Xroga | Boundary retained |
+| --- | --- | --- |
+| [Composio harness integration](https://docs.composio.dev/examples/harness-integration) and [Composio SDK](https://github.com/ComposioHQ/composio) | Keep Xroga's planner; search a user-scoped live catalog, inspect tool schemas and skill hints, execute by exact discovered slug. | Xroga owns identity, permission, approval, budget, checkpoint and verification. Composio meta/proxy tools are not handed arbitrary execution authority. |
+| [Composio toolkit and session guidance](https://docs.composio.dev/docs/toolkits) | Resolve connection status per session user and toolkit, including newly active connections. | An enabled toolkit is not proof of an ACTIVE authorized account. |
+| [StackOne search/execute example](https://github.com/StackOneHQ/stackone-adk-plugin) | Search only the tools needed for the current task instead of loading thousands of schemas into a model prompt. | The model cannot invent tool slugs; selected tools must be in Xroga's freshly discovered allowlist. |
+| [Arcade MCP](https://github.com/ArcadeAI/arcade-mcp) | Keep authentication and tokens outside the model/tool-call argument surface. | No app credentials, connected-account IDs, or destination IDs are invented by a model. |
+| [LangGraph JS](https://github.com/langchain-ai/langgraphjs) | Checkpoint before approval and resume from a persisted effect receipt. | Xroga's existing Supabase workflow and action-confirmation path remains the only connected-app orchestrator. |
+| [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol) | Treat tool descriptions and returned resources as untrusted data. | Provider text cannot authorize another app action. |
+
+Current Xroga architecture already had a live Composio catalog, per-task search, schema-constrained read/action selection, skill-plan hints, connection cards, and a durable workflow runner. This change extends the narrow workflow segmentation point: a bounded model call proposes exact substrings of the user's own multi-task request; Xroga validates ordering, kind, allowed capability, negation and omitted tasks, then persists the approved plan. Each step still goes through the existing Composio discovery, tenant, budget and confirmation gates. Public-web evidence uses the existing research action and remains untrusted input to later app selection.
+
+The authorization callback now returns to an exact configured frontend origin and verifies an ACTIVE Composio account before claiming success. A preview origin must be explicitly added to `XROGA_COMPOSIO_CALLBACK_ORIGINS` on the backend; allowing arbitrary `*.vercel.app` callbacks would be an open redirect. `FRONTEND_URL` remains the production fallback. The browser should send its Origin header; an unlisted preview fails visibly instead of silently connecting a different environment.
+
+This is not universal API omniscience. Xroga can discover and execute only tools that Composio exposes for that toolkit, current OAuth scopes, and account role. A matching skill playbook is optional, not guaranteed. Proxy Execute remains disabled because unrestricted endpoint/method selection would cross the reviewed tool and approval boundary. Never install or copy research agents into production without license and security review. No real user email, deletion, refund, or other external mutation is part of the local tests.

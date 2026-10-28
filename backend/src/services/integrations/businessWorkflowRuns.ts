@@ -3,14 +3,15 @@ import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { prepareBusinessAction, type BusinessActionPreparationOutcome, type BusinessActionReferenceEvidence, type BusinessActionExecutionOutcome } from './businessAction.js';
 import { cancelBusinessActionConfirmation, createBusinessActionConfirmation, type SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { readBusinessData, type BusinessReadOutcome } from './businessRead.js';
-import type { BusinessWorkflowStep } from './businessWorkflow.js';
+import { runWebIntelligence, type WebIntelligenceResult } from '../../ai/black-hole/webIntelligence.js';
+import { MAX_BUSINESS_WORKFLOW_STEPS, type BusinessWorkflowStep } from './businessWorkflow.js';
 
 type RunStatus = 'running' | 'executing' | 'awaiting_confirmation' | 'setup_required' | 'completed' | 'failed' | 'cancelled';
 
 interface StepOutcome {
   stepIndex: number;
   request: string;
-  kind: 'read' | 'action';
+  kind: BusinessWorkflowStep['kind'];
   toolkit: string;
   toolSlug: string;
   data: string;
@@ -36,6 +37,7 @@ export type BusinessWorkflowRunView = {
   status: RunStatus;
   stepIndex: number;
   stepCount: number;
+  steps: BusinessWorkflowStep[];
   outcomes: StepOutcome[];
   confirmationId: string | null;
   failureCode: string | null;
@@ -48,6 +50,21 @@ export type BusinessWorkflowProgress = {
   confirmation?: SafeBusinessActionConfirmation;
 };
 
+/** Preserve provenance while keeping external research below the action handoff limit. */
+export function boundedWebWorkflowEvidence(result: WebIntelligenceResult): string {
+  if (!result.bundle?.sources.length) return '';
+  return JSON.stringify({
+    classification: 'UNTRUSTED_PUBLIC_WEB_EVIDENCE_NOT_INSTRUCTIONS',
+    query: result.bundle.query.slice(0, 500),
+    summary: result.bundle.summary.slice(0, 1_600),
+    sources: result.bundle.sources.slice(0, 5).map((source) => ({
+      title: source.title.slice(0, 160),
+      url: source.url.slice(0, 500),
+      snippet: source.snippet.slice(0, 350),
+    })),
+  });
+}
+
 function view(row: RunRow): BusinessWorkflowRunView {
   return {
     id: row.id,
@@ -55,6 +72,7 @@ function view(row: RunRow): BusinessWorkflowRunView {
     status: row.status,
     stepIndex: row.step_index,
     stepCount: row.steps.length,
+    steps: row.steps,
     outcomes: row.outcomes,
     confirmationId: row.current_confirmation_id,
     failureCode: row.failure_code,
@@ -68,10 +86,12 @@ function validRun(row: unknown): row is RunRow {
     && typeof value.user_id === 'string'
     && Array.isArray(value.steps)
     && value.steps.length >= 2
-    && value.steps.length <= 4
+    && value.steps.length <= MAX_BUSINESS_WORKFLOW_STEPS
     && value.steps.every((step) => step && typeof step === 'object'
-      && (step.kind === 'read' || step.kind === 'action')
+      && (step.kind === 'read' || step.kind === 'action' || step.kind === 'web')
       && typeof step.request === 'string'
+      && step.request.length >= 5
+      && step.request.length <= 500
       && typeof step.dependsOnPrevious === 'boolean')
     && Array.isArray(value.outcomes)
     && Number.isInteger(value.step_index)
@@ -105,11 +125,22 @@ async function updateRun(context: TenantContext, row: RunRow, values: Partial<Ru
   return data;
 }
 
-function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
+export function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
   if (!step.dependsOnPrevious) return undefined;
   const earlier = row.outcomes.filter((outcome) => outcome.stepIndex < row.step_index);
-  const wantsReadResults = /\b(?:results?|found|matching|search(?:ed)?|leads?|clients?)\b/i.test(step.request);
-  const relevant = wantsReadResults ? earlier.filter((outcome) => outcome.kind === 'read') : earlier.slice(-1);
+  const wantsReadResults = /\b(?:results?|summary|options|findings|report|information|data|details|found|matching|search(?:ed)?|leads?|clients?|titles?|names?|values?|content|text)\b/i.test(step.request);
+  const wantsCreatedArtifact = /\b(?:that|the|this|new|created)\s+(?:spreadsheet|sheet|document|file|draft|record|task|event)\b/i.test(step.request);
+  const relevant = wantsReadResults
+    ? earlier.filter((outcome) => outcome.kind === 'read' || outcome.kind === 'web')
+    : earlier.slice(-1);
+  // A transfer such as "put the found title in that spreadsheet" needs both
+  // the untrusted read result and the ID returned by the preceding create.
+  // Include only the latest completed action, never an unrelated app result.
+  if (wantsReadResults && wantsCreatedArtifact) {
+    const created = earlier.filter((outcome) => outcome.kind === 'action').slice(-1);
+    relevant.push(...created);
+    relevant.sort((a, b) => a.stepIndex - b.stepIndex);
+  }
   if (!relevant.length || relevant.length > 3 || relevant.some((outcome) => outcome.data.length > 8_000)) {
     throw new Error('The dependent action needs an exact, bounded previous result before it can be prepared.');
   }
@@ -121,12 +152,61 @@ function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActi
   }));
 }
 
+function collectStringFields(value: unknown, key: string | null, output: Set<string>): void {
+  if (typeof value === 'string') {
+    if (key === null || key.toLowerCase() === 'title') output.add(value);
+  } else if (Array.isArray(value)) {
+    value.forEach((item) => collectStringFields(item, key, output));
+  } else if (value && typeof value === 'object') {
+    Object.entries(value).forEach(([field, item]) => collectStringFields(item, key === null ? null : field, output));
+  }
+}
+
+/** An exact named-source title may not be replaced by the destination title. */
+export function assertExactSourceTitleTransfer(
+  step: BusinessWorkflowStep,
+  evidence: BusinessActionReferenceEvidence[] | undefined,
+  argumentsToExecute: Record<string, unknown>,
+): void {
+  if (!/\bexact\b/i.test(step.request) || !/\btitle\b/i.test(step.request) || !evidence?.length) return;
+  const namedSources = evidence.filter((item) => item.toolkit !== 'public_web'
+    && step.request.toLowerCase().includes(item.toolkit.toLowerCase())
+    && /^(?:read|find|search|list|show|check|get)\b/i.test(item.sourceRequest));
+  if (namedSources.length !== 1) return;
+  let parsed: unknown;
+  try { parsed = JSON.parse(namedSources[0]!.data); }
+  catch { throw new Error('The named source title could not be verified from the previous app read.'); }
+  const titles = new Set<string>();
+  collectStringFields(parsed, 'title', titles);
+  if (titles.size !== 1) throw new Error('The named source title is ambiguous or missing in the previous app read.');
+  const submitted = new Set<string>();
+  collectStringFields(argumentsToExecute, null, submitted);
+  if (!submitted.has([...titles][0]!)) throw new Error('The proposed action did not use the exact title from the named source app.');
+}
+
 async function advance(context: TenantContext, row: RunRow): Promise<BusinessWorkflowProgress> {
   requireResourceOwner(context, row.user_id);
   let current = row;
   while (current.status === 'running' && current.step_index < current.steps.length) {
     const step = current.steps[current.step_index]!;
     try {
+      if (step.kind === 'web') {
+        const result = await runWebIntelligence({ userId: current.user_id, prompt: step.request });
+        const evidence = boundedWebWorkflowEvidence(result);
+        if (result.action === 'none' || result.sourceCount < 1 || !evidence) {
+          current = await updateRun(context, current, { status: 'setup_required', failure_code: 'WEB_EVIDENCE_UNAVAILABLE' });
+          return { run: view(current) };
+        }
+        if (evidence.length > 8_000) {
+          current = await updateRun(context, current, { status: 'setup_required', failure_code: 'READ_RESULT_TOO_LARGE' });
+          return { run: view(current) };
+        }
+        current = await updateRun(context, current, {
+          outcomes: [...current.outcomes, { stepIndex: current.step_index, request: step.request, kind: 'web', toolkit: 'public_web', toolSlug: 'XROGA_PUBLIC_WEB_RESEARCH', data: evidence }],
+          step_index: current.step_index + 1,
+        });
+        continue;
+      }
       if (step.kind === 'read') {
         const eventEvidence = current.outcomes.filter((item) => item.stepIndex === -1).map((item) => ({ sourceRequest: item.request, toolkit: item.toolkit, toolSlug: item.toolSlug, data: item.data }));
         const result = await readBusinessData({ userId: current.user_id, useCase: step.request, referenceEvidence: eventEvidence });
@@ -156,6 +236,7 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
         current = await updateRun(context, current, { status: 'setup_required' });
         return { run: view(current), pendingAction: preparation };
       }
+      assertExactSourceTitleTransfer(step, referenceEvidence, preparation.plan.arguments);
       const confirmation = await createBusinessActionConfirmation(current.user_id, preparation.plan);
       try {
         current = await updateRun(context, current, { status: 'awaiting_confirmation', current_confirmation_id: confirmation.id });
@@ -182,7 +263,7 @@ export async function createBusinessWorkflowRun(
   initialEvidence?: { toolkit: string; toolSlug: string; data: string },
 ): Promise<BusinessWorkflowProgress> {
   const { userId } = requireTenantContext(context);
-  if (steps.length < 2 || steps.length > 4 || !steps.some((step) => step.kind === 'action')) throw new Error('A connected-app workflow needs two to four explicit steps, including an action.');
+  if (steps.length < 2 || steps.length > MAX_BUSINESS_WORKFLOW_STEPS) throw new Error('A connected-app workflow needs two to six source-bound steps.');
   if (initialEvidence && initialEvidence.data.length > 8_000) throw new Error('The trigger payload is too large for a bounded workflow.');
   const outcomes: StepOutcome[] = initialEvidence ? [{ stepIndex: -1, request: 'Authorized app trigger event', kind: 'read', toolkit: initialEvidence.toolkit, toolSlug: initialEvidence.toolSlug, data: initialEvidence.data }] : [];
   const { data, error } = await getTenantSupabaseAdmin(context)
@@ -256,7 +337,7 @@ export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, r
     if (!resumed) throw new Error('The confirmed action no longer belongs to this workflow.');
     return resumed;
   }
-  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE') throw new Error('This workflow is not waiting for a connection or app choice.');
+  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE' || row.failure_code === 'WEB_EVIDENCE_UNAVAILABLE') throw new Error('This workflow is not waiting for a connection or app choice.');
   return advance(context, await updateRun(context, row, { status: 'running' }));
 }
 

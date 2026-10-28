@@ -1912,8 +1912,10 @@ async function listSessionComposioToolkits(
           name: item.name,
           description: item.meta?.description,
           logo: item.meta?.logo,
+          // A pending or failed OAuth record is not an executable connection.
+          // Composio only permits app tools for ACTIVE connected accounts.
           connected:
-            item.is_no_auth === true || Boolean(item.connected_account),
+            item.is_no_auth === true || item.connected_account?.status === 'ACTIVE',
           ...(item.connected_account?.id
             ? {
                 connectedAccountId: item.connected_account.id,

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { listConnectedComposioToolkits } from './composioClient.js';
+import { listComposioToolkits, listConnectedComposioToolkits } from './composioClient.js';
 
 test('connected toolkit lookup stays within Composio session page limit', async (t) => {
   const previousFetch = globalThis.fetch;
@@ -44,4 +44,29 @@ test('connected toolkit lookup stays within Composio session page limit', async 
   assert.equal(listing.searchParams.get('limit'), '50');
   assert.equal(listing.searchParams.get('toolkits'), 'gmail');
   assert.equal(listing.searchParams.get('is_connected'), 'true');
+});
+
+test('pending and failed authorizations are not presented as usable app connections', async (t) => {
+  const previousFetch = globalThis.fetch;
+  const previousKey = process.env.COMPOSIO_API_KEY;
+  process.env.COMPOSIO_API_KEY = 'test-key';
+  globalThis.fetch = (async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname.endsWith('/toolkits')) return Response.json({ items: [
+      { slug: 'gmail', connected_account: { id: 'ca_pending', status: 'INITIATED' } },
+      { slug: 'canva', connected_account: { id: 'ca_failed', status: 'FAILED' } },
+      { slug: 'sheets', connected_account: { id: 'ca_active', status: 'ACTIVE' } },
+      { slug: 'public_search', is_no_auth: true },
+    ] });
+    return Response.json({ session_id: 'trs_test', config: { user_id: 'xroga:test-user', tags: ['readOnlyHint'], workbench: { enable: false, enable_proxy_execution: false }, execute: { enable_multi_execute: false } } });
+  }) as typeof fetch;
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+    if (previousKey === undefined) delete process.env.COMPOSIO_API_KEY;
+    else process.env.COMPOSIO_API_KEY = previousKey;
+  });
+  const items = await listComposioToolkits('test-user', { sessionId: 'trs_test' });
+  assert.deepEqual(items.map((item) => [item.toolkit, item.connected]), [
+    ['gmail', false], ['canva', false], ['sheets', true], ['public_search', true],
+  ]);
 });

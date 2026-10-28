@@ -4671,9 +4671,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "sourceSha256": "f966a9ac92a7ad2719f186ae4979efc959765e268f5ef4fc2a50d68ef6ab94ba",
       "callIds": [
-        "18f7c2043f2ceb0ebac3"
+        "406c8c64df398852c20d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
@@ -9815,9 +9815,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "7b06621b69ac97ba6f1b6fe56dec83a759dc0f941abfc8cf518c4a74daa7f08e",
+      "sourceSha256": "8d59d1a4f048c8856faa39485c190d13bf45d499a899c3193d742dedd4ee1ca9",
       "callIds": [
-        "29043e1b2d0f9c86568b"
+        "832192939f82e5dc650d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
