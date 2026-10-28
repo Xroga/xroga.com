@@ -9,7 +9,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. All three phases (Work Packages A to G): existing GitHub repository or ZIP connection, commit-keyed code map, safe AI change execution with isolated real tests, bounded repair, durable revisions and stacked follow-ups, draft-PR delivery and export, the Existing project workspace tab, and certification (Golden A to L, negative matrix). Extends the existing SoftwareAgent tool-host contract, sandbox runtime and atomic GitHub writer; adds no scheduler or runtime. Integration milestone 2026-10-29: main merged; each change now runs as a canonical durable run (same outbox, Cloud Run Job claim, run attempt, cancellation and terminal authority). Commands execute only through the existing canonical sandbox seam, and the run's own attempt-bound execution state holds the exact working files, so no authority is manufactured. Live Google execution is not yet exercised.",
+  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. All three phases (Work Packages A to G): existing GitHub repository or ZIP connection, commit-keyed code map, safe AI change execution with isolated real tests, bounded repair, durable revisions and stacked follow-ups, draft-PR delivery and export, the Existing project workspace tab, and certification (Golden A to L, negative matrix). Extends the existing SoftwareAgent tool-host contract, sandbox runtime and atomic GitHub writer; adds no scheduler or runtime. Integration milestone 2026-10-29: main merged; each change now runs as a canonical durable run (same outbox, Cloud Run Job claim, run attempt, cancellation and terminal authority). Commands execute only through the existing canonical sandbox seam, and the run's own attempt-bound execution state holds the exact working files, so no authority is manufactured. Live Google execution is not yet exercised. Browser verification of visual changes is wired through the canonical seam; a styles or markup change is verified only when a browser observed the page.",
   "changedFiles": [
     "backend/scripts/benchmarkCodeMap.ts",
     "backend/src/existingSource/archive/archivePort.ts",
@@ -222,6 +222,12 @@
     {
       "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/canonical.test.ts backend/src/workers/googleDeliveryStore.test.ts backend/src/routes/existingSourceChanges.test.ts",
       "scope": "Canonical port keeps the run state in step with the working files, picks the right sandbox caller, refuses another attempt or owner and ignores a supplied binding; the Job refuses a change not queued for its run and records cancellation; the queued change id is validated; launching queues a canonical run or ends the change with a reason. All PASS with fakes; no live Google run.",
+      "negative": true,
+      "reference": "backend/src/existingSource/change/canonical.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/canonical.test.ts frontend/src/components/existing-source/changeView.test.ts",
+      "scope": "A visual change is verified only when tests passed (or none apply) and the browser observed the page; no verifier, a not-run check or an error is unverified; a broken page fails with evidence; a project a browser cannot serve owes no browser. Fakes only; no live browser run.",
       "negative": true,
       "reference": "backend/src/existingSource/change/canonical.test.ts"
     }

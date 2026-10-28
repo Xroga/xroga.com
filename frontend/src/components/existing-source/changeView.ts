@@ -88,6 +88,14 @@ export function testHeadline(tests: NonNullable<ChangeView['revisions'][number][
   }
 }
 
+/** One honest sentence about the browser check of a visual change, or null when none was owed. A check that did not run is never a pass. */
+export function previewHeadline(preview: ChangeView['revisions'][number]['preview']): string | null {
+  if (!preview) return null;
+  if (preview.status === 'passed') return 'The page was observed in a browser and behaved as required.';
+  if (preview.status === 'failed') return 'A browser check found a problem with the page.';
+  return `No browser check ran for this visual change.${preview.reason ? ` ${preview.reason}` : ''}`;
+}
+
 export const reproductionNote = (r: ChangeView['reproduction'], addedTest: boolean): string | null =>
   r === 'reproduced' ? 'The new test fails on the original code and passes with the change.'
     : r === 'not_reproduced' ? 'The new test also passes on the original code, so it does not prove the bug is fixed.'

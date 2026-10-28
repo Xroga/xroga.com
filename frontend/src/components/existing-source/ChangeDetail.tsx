@@ -2,7 +2,7 @@ import { AlertTriangle, CheckCircle2, Download, GitPullRequest, Loader2, RotateC
 
 import type { ChangeView, DeliveryConflict, SourceBinding } from '@/lib/existingSourceApi';
 import { cn } from '@/lib/utils';
-import { STATUS_LABEL, classifyDiff, deliveryState, isActive, progressSteps, reproductionNote, statusTone, testHeadline } from './changeView';
+import { STATUS_LABEL, classifyDiff, deliveryState, isActive, progressSteps, reproductionNote, statusTone, previewHeadline, testHeadline } from './changeView';
 
 const TONE: Record<ReturnType<typeof statusTone>, string> = {
   good: 'text-emerald-400 border-emerald-400/30',
@@ -90,6 +90,7 @@ export function ChangeDetail(p: ChangeDetailProps) {
       {current ? (
         <section aria-label="Changed files and tests" className="space-y-2">
           <p className="text-[11px]" data-testid="test-headline"><strong>{testHeadline(current.tests)}</strong> {current.tests?.summary && current.tests.status !== 'unsupported' && current.tests.status !== 'unavailable' ? current.tests.summary : ''}</p>
+          {previewHeadline(current.preview) ? <p className="text-[11px]" data-testid="preview-headline"><strong>{previewHeadline(current.preview)}</strong></p> : null}
           {repro ? <p className="text-[11px] text-[var(--muted)]">{repro}</p> : null}
           <ul aria-label="Changed files" className="divide-y divide-[var(--card-border)]/30 rounded border border-[var(--card-border)]/60 text-[11px]">
             {current.files.map((f) => (

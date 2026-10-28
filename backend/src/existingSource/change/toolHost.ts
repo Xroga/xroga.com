@@ -15,11 +15,14 @@ import { planTests, runTests, type ExecutionPort } from './testRunner.js';
 import type { ChangeWorkspace } from './workspace.js';
 import { WorkspaceRefusal } from './workspace.js';
 
+/** Observes the running change in a browser inside the isolated runtime. Receives whether the project's own build and tests passed. */
+export type PreviewVerifier = (files: readonly { path: string; content: string }[], context: { buildPassed: boolean; testsPassed: boolean | null }) => Promise<SoftwarePreviewEvidence>;
+
 export interface HostOptions {
   readonly workspace: ChangeWorkspace;
   readonly execution: ExecutionPort;
   readonly signal?: AbortSignal;
-  readonly previewVerifier?: (files: readonly { path: string; content: string }[]) => Promise<SoftwarePreviewEvidence>;
+  readonly previewVerifier?: PreviewVerifier;
   /** Present only when review-branch delivery was authorised for this change. */
   readonly createReviewBranch?: (contract: SoftwareExecutionContract) => Promise<ReviewBranchResult>;
   readonly onCheck?: (checks: SoftwareCheckResult[]) => void;
@@ -61,6 +64,7 @@ export function checkCommand(line: string): { program: string; args: string[]; n
 
 export class ExistingSourceToolHost implements SoftwareAgentToolHost {
   constructor(private readonly options: HostOptions) {}
+  private lastChecks: SoftwareCheckResult[] = [];
   private get ws() { return this.options.workspace; }
   private deny(what: string): void { try { this.options.onDenied?.(what.slice(0, 200)); } catch { /* a receipt failure must not change the refusal */ } }
   private guarded<T>(action: string, path: string, fn: () => T): T {
@@ -129,6 +133,7 @@ export class ExistingSourceToolHost implements SoftwareAgentToolHost {
       ? [{ id: 'tests', name: 'Project tests', status: 'skipped', summary: result.summary }]
       : result.stages.map((s) => ({ id: s.id, name: s.label, status: s.timedOut || s.exitCode !== 0 ? 'failed' as const : 'passed' as const, exitCode: s.exitCode ?? undefined, durationMs: s.durationMs, summary: s.exitCode === 0 && !s.timedOut ? 'passed' : result.evidence.slice(0, 1_500) }));
     this.options.onCheck?.(checks);
+    this.lastChecks = checks;
     return checks;
   }
 
@@ -138,7 +143,14 @@ export class ExistingSourceToolHost implements SoftwareAgentToolHost {
   }
 
   async verifyPreview(): Promise<SoftwarePreviewEvidence> {
-    if (this.options.previewVerifier) return this.options.previewVerifier(this.ws.files());
+    if (this.options.previewVerifier) {
+      const tests = this.lastChecks.filter((c) => /test/i.test(c.id));
+      const build = this.lastChecks.filter((c) => !/test/i.test(c.id) && c.status !== 'skipped');
+      return this.options.previewVerifier(this.ws.files(), {
+        buildPassed: build.every((c) => c.status === 'passed'),
+        testsPassed: tests.length === 0 || tests.every((c) => c.status === 'skipped') ? null : tests.every((c) => c.status === 'passed'),
+      });
+    }
     return { status: 'not_checked', attempted: false, url: null, notCheckedReason: 'sandbox_unavailable', blocker: 'No browser verifier is connected to this change.', criteriaNotChecked: [], screenshots: [] };
   }
 

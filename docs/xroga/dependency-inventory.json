@@ -15994,11 +15994,11 @@
     },
     {
       "path": "backend/src/existingSource/change/canonical.ts",
-      "sha256": "e9f328d704c6d85806e77b3690fede1b255162ae5e68262c72ac97e8ac9146d9"
+      "sha256": "d08ac8c627251adcc4251e9e01b1a4d4721ee0f4c7507aa5bdf7362ec14e022d"
     },
     {
       "path": "backend/src/existingSource/change/canonicalJob.ts",
-      "sha256": "22df915a778757300cab3d8d47fea963ca9d572d5fb6c8128d2c74c24c234d12"
+      "sha256": "233c79385e21611246d6e83e1b992242c27b325d3412789ab4a353a549bf3299"
     },
     {
       "path": "backend/src/existingSource/change/delivery.ts",
@@ -16018,7 +16018,7 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "sha256": "96a2ce75394fac69546500f4b8c794ba02aefbbf89ccb0b672021872b647b2a7"
+      "sha256": "0dfa4e9e24f6271c16cd87d06a4761c6504d5394c345439ccf3a2f3523c376f5"
     },
     {
       "path": "backend/src/existingSource/change/snapshot.ts",
@@ -16034,11 +16034,11 @@
     },
     {
       "path": "backend/src/existingSource/change/toolHost.ts",
-      "sha256": "46fd2cab419b6ebc2b243614edfc12c60f82744e47258ad1c69976fe006d24f1"
+      "sha256": "6e213510bb4da4718e8ce2eb977a80d1d648353b14293caf93706183cdaf6598"
     },
     {
       "path": "backend/src/existingSource/change/types.ts",
-      "sha256": "a48e828e48a4e0b1ffd1c75f6c70dc5d74d19d6138d330c92d2c6ee75ecd767b"
+      "sha256": "01ea647fdc5f75a8897e3776fa16b2e1bf19e861027ae204b017deffdc8da237"
     },
     {
       "path": "backend/src/existingSource/change/unifiedDiff.ts",
@@ -18974,7 +18974,7 @@
     },
     {
       "path": "frontend/src/components/existing-source/ChangeDetail.tsx",
-      "sha256": "3f283867032589e1d98aacadb70ae6c403f682019a08fd7f120dbe8a3a169d00"
+      "sha256": "72f34886355dbca7ea617471fd6d1901cb07d2597a85f625b35d6ef69cf78982"
     },
     {
       "path": "frontend/src/components/existing-source/ChangeWorkbench.tsx",
@@ -18986,7 +18986,7 @@
     },
     {
       "path": "frontend/src/components/existing-source/changeView.ts",
-      "sha256": "7b103a2344f200b1beca4fff0174ff1fdbb57d636bec635178261ee796144c29"
+      "sha256": "46d480f9f99a4dab5fbb7c7075a34748ed78691760d0485081dc14e4548a828e"
     },
     {
       "path": "frontend/src/components/existing-source/reactGlobal.testsupport.ts",
@@ -21118,7 +21118,7 @@
     },
     {
       "path": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "385b36c721e257bccb0f84c8c01ba496708051c7f178bb8abaf5734ec3eeec3b"
+      "sha256": "d7e0c2723a259e04494f64c66de8d05c9dc9f8d2d6ea5072381869e99e10d19d"
     },
     {
       "path": "frontend/src/lib/exportUserData.ts",
@@ -30444,35 +30444,35 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 50,
+      "line": 53,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 51,
+      "line": 54,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 241,
+      "line": 254,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 268,
+      "line": 281,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 305,
+      "line": 337,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30507,7 +30507,7 @@
     },
     {
       "path": "backend/src/existingSource/change/toolHost.ts",
-      "line": 90,
+      "line": 94,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

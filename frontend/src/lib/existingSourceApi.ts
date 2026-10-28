@@ -138,6 +138,7 @@ export interface ChangeRevision {
   n: number; at: string; digest: string; additions: number; deletions: number; warnings: string[]; diff: string; diffTruncated: boolean; note: string;
   files: { path: string; kind: 'created' | 'modified' | 'deleted'; additions: number; deletions: number; warnings: string[] }[];
   tests: { status: string; summary: string; runtime: string | null; evidence: string; stages: { label: string; kind: string; exitCode: number | null; timedOut: boolean; durationMs: number }[] } | null;
+  preview?: { status: 'passed' | 'failed' | 'not_checked'; attempted: boolean; url: string | null; reason: string | null; screenshots: number } | null;
 }
 
 export interface DeliveryReceipt {

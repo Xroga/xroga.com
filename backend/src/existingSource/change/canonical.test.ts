@@ -13,7 +13,7 @@ import { ExistingSourceIntelligence, IndexCoordinator } from '../intelligence/se
 import { ExistingSourceService } from '../service.js';
 import { InMemorySourceBindingStore } from '../store.js';
 import { ExistingSourceError } from '../types.js';
-import { canonicalExecutionPort, canonicalRunFor, type CanonicalChangeRun, type CanonicalPortDeps } from './canonical.js';
+import { canonicalChangeRuntime, canonicalExecutionPort, canonicalRunFor, type CanonicalChangeRun, type CanonicalPortDeps } from './canonical.js';
 import { runExistingSourceChangeJob, type ChangeJobDeps } from './canonicalJob.js';
 import { LocalProcessPort } from './localProcessPort.testsupport.js';
 import { ChangeService, type AgentRunner } from './service.js';
@@ -109,7 +109,7 @@ function jobSetup(options: { runAgent?: AgentRunner } = {}) {
   recorded.deps = { ...recorded.deps, sandbox: async (caller, request) => { recorded.callers.push(caller); return local.execute(request as never); } };
   const deps: ChangeJobDeps = {
     source, intel, store, runAgent: options.runAgent ?? fixAgent, modelRouteFor: async () => ({}) as never, adoptRun: async () => undefined,
-    executionFor: (r) => canonicalExecutionPort(r, async () => recorded.deps),
+    runtimeFor: (r) => canonicalChangeRuntime(r, async () => recorded.deps),
   };
   const planner = new ChangeService({ source, intel, store, execution: local, runAgent: fixAgent, modelRouteFor: async () => ({}) as never });
   const claim = Object.freeze({ deliveryId: '99999999-9999-4999-8999-999999999999', runId: RUN, userId: ALICE, workerId: WORKER, generation: '55555555-5555-4555-8555-555555555555' }) as CanonicalDeliveryClaim;
@@ -157,5 +157,85 @@ describe('a change running as a canonical Job', () => {
     assert.equal(outcome.status, 'cancelled');
     assert.equal(outcome.success, false);
     assert.equal(t.recorded.callers.length, 0);
+  });
+});
+
+describe('browser verification of a visual change', () => {
+  const PAGE: FakeFile[] = [...PROJECT, { path: 'public/nav.css', content: '.nav { display: none; }\n' }, { path: 'public/index.html', content: '<nav class="nav">Home</nav>\n' }];
+  const cssAgent: AgentRunner = async (input: AgentSoftwareExecutorInput) => {
+    await (input.host as ExistingSourceToolHost).writeFile(input.contract, 'public/nav.css', '.nav { display: flex; }\n', 'modify');
+    return { status: 'implemented', evidence: { changedFiles: [], checks: [] }, blockers: [], outputText: 'done', iterations: 1 } as AgentSoftwareExecutorResult;
+  };
+  type Preview = import('../../ai/softwareAgent/contracts.js').SoftwarePreviewEvidence;
+  const evidence = (over: Partial<Preview>): Preview => ({ status: 'passed', attempted: true, url: 'http://127.0.0.1:3000/', criteriaNotChecked: [], screenshots: ['a.png'], ...over });
+
+  async function harness(previewVerifierFor: ConstructorParameters<typeof ChangeService>[0]['previewVerifierFor'], maxAttempts = 1, runAgent: AgentRunner = cssAgent, instruction = 'Fix the mobile navigation in nav.css') {
+    const gh = new FakeGitHub();
+    gh.addAccount('tok-alice', '501', 'alice');
+    const repo = gh.addRepo({ fullName: 'acme/page', ownerId: '501', files: PAGE, access: { '501': { pull: true, push: true } } });
+    const source = new ExistingSourceService({ store: new InMemorySourceBindingStore(), tokenFor: async () => 'tok-alice', portFor: (t) => gh.port(t), treeCache: new Map() } as never);
+    const intel = new ExistingSourceIntelligence({ source, store: new InMemoryCodeIndexStore(), coordinator: new IndexCoordinator() });
+    const changes = new ChangeService({ source, intel, store: new InMemoryChangeStore(), execution: new LocalProcessPort(), runAgent, modelRouteFor: async () => ({}) as never, previewVerifierFor, maxAttempts });
+    const binding = (await source.link(ALICE, { repositoryId: repo })).binding;
+    const task = await changes.create(ALICE, binding.id, instruction);
+    return changes.run(ALICE, task.id);
+  }
+
+  it('is verified only when the tests passed and the browser observed the page', async () => {
+    const seen: unknown[] = [];
+    const done = await harness(() => async (_files, context) => { seen.push(context); return evidence({}); });
+    assert.equal(done.status, 'verified', done.statusReason + ' ' + JSON.stringify(done.revisions.at(-1)?.tests));
+    assert.equal(done.revisions.at(-1)!.preview?.status, 'passed');
+    assert.deepEqual(seen, [{ buildPassed: true, testsPassed: null }]);
+  });
+
+  it('is unverified, never verified, when no browser verification is connected or it did not run', async () => {
+    const none = await harness(undefined);
+    assert.equal(none.status, 'unverified');
+    assert.match(none.statusReason, /no browser check ran/i);
+    assert.equal(none.revisions.at(-1)!.preview?.status, 'not_checked');
+    const unavailable = await harness(() => async () => evidence({ status: 'not_checked', attempted: false, url: null, notCheckedReason: 'browser_unavailable', blocker: 'No browser image.' }));
+    assert.equal(unavailable.status, 'unverified');
+    const broken = await harness(() => async () => { throw new Error('boom'); });
+    assert.equal(broken.status, 'unverified');
+  });
+
+  it('fails the change when the browser saw a broken page, handing the agent the evidence to repair from', async () => {
+    const done = await harness(() => async () => evidence({ status: 'failed', evidenceForRepair: 'The navigation link is not visible at 375px.' }), 2);
+    assert.equal(done.status, 'failed');
+    assert.equal(done.attempts, 2);
+    assert.equal(done.revisions.at(-1)!.preview?.status, 'failed');
+  });
+
+  it('does not require a browser for a project a browser cannot serve', async () => {
+    const both: AgentRunner = async (input: AgentSoftwareExecutorInput) => {
+      const host = input.host as ExistingSourceToolHost;
+      await host.writeFile(input.contract, 'public/nav.css', '.nav { display: flex; }\n', 'modify');
+      await host.writeFile(input.contract, 'src/math.js', FIX, 'modify');
+      return { status: 'implemented', evidence: { changedFiles: [], checks: [] }, blockers: [], outputText: 'done', iterations: 1 } as AgentSoftwareExecutorResult;
+    };
+    const done = await harness(() => async () => evidence({ status: 'not_checked', attempted: false, url: null, notCheckedReason: 'not_a_web_project', blocker: 'A library.' }), 1, both, 'Fix the mobile navigation in nav.css and fix double in src/math.js');
+    assert.equal(done.status, 'verified', done.statusReason);
+    const withBrowserMissing = await harness(undefined, 1, both, 'Fix the mobile navigation in nav.css and fix double in src/math.js');
+    assert.equal(withBrowserMissing.status, 'unverified');
+    assert.match(withBrowserMissing.statusReason, /Tests passed, but the change affects what a browser shows/);
+  });
+
+  it('runs the real verifier through the canonical seam as browser verification, after syncing the run\'s state', async () => {
+    const r = recordingDeps();
+    const files = [{ path: 'index.html', content: '<p>hi</p>' }];
+    const runtime = canonicalChangeRuntime(run(), async () => r.deps, async () => (() => async (input: { files: readonly { path: string; content: string }[]; buildPassed: boolean; testsPassed: boolean | null }) => ({
+      status: 'passed', attempted: true, url: 'http://127.0.0.1:3000/', criteriaNotChecked: [], screenshots: [], notCheckedReason: null, blocker: null, evidenceForRepair: undefined, verdict: { rungReached: 'rendered' }, seen: input.buildPassed,
+    })) as never);
+    const out = await runtime.previewVerifier(['nav is visible'])(files, { buildPassed: true, testsPassed: null });
+    assert.equal(out.status, 'passed');
+    assert.equal(out.rungReached, 'rendered');
+    const adapter = canonicalChangeRuntime(run(), async () => r.deps, async () => ((options: { execute: (request: never) => Promise<unknown> }) => async () => {
+      await options.execute({ files, sourceFiles: files, command: 'node', args: ['collect.js'], timeoutMs: 1000, networkPolicy: 'none', environment: {} } as never);
+      return { status: 'not_checked', attempted: false, url: null, criteriaNotChecked: [], screenshots: [] };
+    }) as never);
+    await adapter.previewVerifier([])(files, { buildPassed: true, testsPassed: null });
+    assert.deepEqual(r.callers, ['browser-verification']);
+    assert.deepEqual(r.states.at(-1)!.currentWorkingSnapshot, files);
   });
 });

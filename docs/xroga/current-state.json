@@ -3504,8 +3504,8 @@
         "backend/src/ai/executionRuntime.test.ts:3",
         "backend/src/ai/pipeline.ts:239",
         "backend/src/ai/universal/resumeProjectContext.test.ts:5",
-        "backend/src/existingSource/change/canonical.ts:49",
-        "backend/src/existingSource/change/canonical.ts:65",
+        "backend/src/existingSource/change/canonical.ts:51",
+        "backend/src/existingSource/change/canonical.ts:67",
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/sandbox/google/executionBinding.test.ts:5",
         "backend/src/sandbox/google/executionBinding.ts:3",
@@ -7325,8 +7325,8 @@
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts:5",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.ts:1",
         "backend/src/builder/swarmBridge.ts:2",
-        "backend/src/existingSource/change/canonical.ts:65",
-        "backend/src/existingSource/change/canonicalJob.ts:30",
+        "backend/src/existingSource/change/canonical.ts:67",
+        "backend/src/existingSource/change/canonicalJob.ts:29",
         "backend/src/index.ts:61",
         "backend/src/routes/dashboard.ts:6",
         "backend/src/routes/existingSource.ts:208",
@@ -16164,39 +16164,52 @@
       "id": "surface:97f8ac201492b3298727",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/canonical.ts",
-      "sha256": "e9f328d704c6d85806e77b3690fede1b255162ae5e68262c72ac97e8ac9146d9",
+      "sha256": "d08ac8c627251adcc4251e9e01b1a4d4721ee0f4c7507aa5bdf7362ec14e022d",
       "symbols": [
         "CanonicalChangeRun",
+        "CanonicalChangeRuntime",
         "CanonicalPortDeps",
         "TASK_ID",
+        "WebGate",
+        "adapter",
         "attempt",
+        "canonicalChangeRuntime",
         "canonicalExecutionPort",
         "canonicalRunFor",
         "canonicalStateFor",
         "changeTask",
         "deps",
-        "files",
         "fingerprint",
         "key",
+        "plain",
+        "port",
+        "prepare",
+        "previewEvidenceFromGate",
         "productionCanonicalDeps",
+        "r",
         "repository",
-        "synced"
+        "synced",
+        "verify"
       ],
       "imports": [
         "../../ai/executionRuntime.js",
         "../../ai/runStore.js",
+        "../../ai/softwareAgent/contracts.js",
         "../../sandbox/google/executionBinding.js",
         "../../sandbox/sandboxRuntime.js",
         "../../sandbox/sandboxTypes.js",
+        "../../synthesis/browserVerificationAdapter.js",
         "../types.js",
         "./testRunner.js",
+        "./toolHost.js",
         "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/ai/executionRuntime.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/existingSource/types.ts",
-        "backend/src/sandbox/sandboxRuntime.ts"
+        "backend/src/sandbox/sandboxRuntime.ts",
+        "backend/src/synthesis/browserVerificationAdapter.ts"
       ],
       "entryPoints": [],
       "callers": [
@@ -16212,7 +16225,12 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/canonical.ts#PreviewVerifier",
+        "backend/src/existingSource/change/canonical.ts#SoftwarePreviewEvidence",
+        "backend/src/existingSource/change/canonical.ts#previewEvidenceFromGate",
+        "backend/src/existingSource/change/canonical.ts#verify"
+      ],
       "testCoverage": [
         "backend/src/existingSource/change/canonical.test.ts"
       ],
@@ -16227,7 +16245,7 @@
       "id": "surface:f0547d20f7b44117b9a2",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/canonicalJob.ts",
-      "sha256": "22df915a778757300cab3d8d47fea963ca9d572d5fb6c8128d2c74c24c234d12",
+      "sha256": "233c79385e21611246d6e83e1b992242c27b325d3412789ab4a353a549bf3299",
       "symbols": [
         "ChangeJobDeps",
         "changes",
@@ -16237,6 +16255,7 @@
         "productionDeps",
         "run",
         "runExistingSourceChangeJob",
+        "runtime",
         "source",
         "task",
         "userId"
@@ -16254,7 +16273,6 @@
         "./production.js",
         "./service.js",
         "./store.js",
-        "./testRunner.js",
         "./types.js"
       ],
       "runtimeImports": [
@@ -16569,7 +16587,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/canonicalJob.ts:30",
+        "backend/src/existingSource/change/canonicalJob.ts:29",
         "backend/src/routes/existingSource.ts:25"
       ],
       "reachable": true,
@@ -16592,7 +16610,7 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "96a2ce75394fac69546500f4b8c794ba02aefbbf89ccb0b672021872b647b2a7",
+      "sha256": "0dfa4e9e24f6271c16cd87d06a4761c6504d5394c345439ccf3a2f3523c376f5",
       "symbols": [
         "ALWAYS_ALLOWED",
         "AgentRunner",
@@ -16602,6 +16620,7 @@
         "ChangeDeps",
         "ChangeService",
         "DENIED_PATHS",
+        "VISUAL_PATH",
         "agentResult",
         "aliveElsewhere",
         "at",
@@ -16628,7 +16647,9 @@
         "files",
         "host",
         "incomplete",
+        "isVisualChange",
         "last",
+        "lead",
         "limit",
         "limits",
         "list",
@@ -16638,12 +16659,15 @@
         "message",
         "narrow",
         "next",
+        "notChecked",
         "note",
         "out",
         "outcome",
+        "owesBrowser",
         "p",
         "parent",
         "parentChangeId",
+        "preview",
         "r",
         "reproduction",
         "result",
@@ -16714,6 +16738,7 @@
       "costBoundary": [],
       "evidenceBoundary": [
         "backend/src/existingSource/change/service.ts#MAX_EVENTS",
+        "backend/src/existingSource/change/service.ts#SoftwarePreviewEvidence",
         "backend/src/existingSource/change/service.ts#SoftwareRunEvent",
         "backend/src/existingSource/change/service.ts#SoftwareRunEventSink",
         "backend/src/existingSource/change/service.ts#events",
@@ -16838,7 +16863,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/canonical.test.ts:20",
-        "backend/src/existingSource/change/canonicalJob.ts:30",
+        "backend/src/existingSource/change/canonicalJob.ts:29",
         "backend/src/existingSource/change/change.test.ts:13",
         "backend/src/existingSource/change/delivery.test.ts:16",
         "backend/src/existingSource/change/golden.test.ts:25",
@@ -16974,13 +16999,15 @@
       "id": "surface:fef4ab59435c864f5975",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/toolHost.ts",
-      "sha256": "46fd2cab419b6ebc2b243614edfc12c60f82744e47258ad1c69976fe006d24f1",
+      "sha256": "6e213510bb4da4718e8ce2eb977a80d1d648353b14293caf93706183cdaf6598",
       "symbols": [
         "ExistingSourceToolHost",
         "HostOptions",
+        "PreviewVerifier",
         "SAFE_ARG",
         "SCRIPT",
         "SHELL_SYNTAX",
+        "build",
         "changed",
         "checkCommand",
         "checked",
@@ -16993,6 +17020,7 @@
         "result",
         "set",
         "started",
+        "tests",
         "text",
         "unavailable"
       ],
@@ -17027,6 +17055,7 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
+        "backend/src/existingSource/change/toolHost.ts#PreviewVerifier",
         "backend/src/existingSource/change/toolHost.ts#SoftwarePreviewEvidence"
       ],
       "testCoverage": [
@@ -17046,7 +17075,7 @@
       "id": "surface:ca4dcefda54f6049e3d0",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/types.ts",
-      "sha256": "a48e828e48a4e0b1ffd1c75f6c70dc5d74d19d6138d330c92d2c6ee75ecd767b",
+      "sha256": "01ea647fdc5f75a8897e3776fa16b2e1bf19e861027ae204b017deffdc8da237",
       "symbols": [
         "ChangeEvent",
         "ChangeRevision",
@@ -17058,6 +17087,7 @@
         "MAX_RESULT_BYTES",
         "MAX_REVISIONS",
         "MAX_STORED_DIFF",
+        "PreviewEvidence",
         "ResultFile",
         "TERMINAL",
         "TestEvidence"
@@ -17070,8 +17100,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/canonicalJob.ts:15",
-        "backend/src/existingSource/change/service.ts:26"
+        "backend/src/existingSource/change/canonicalJob.ts:14",
+        "backend/src/existingSource/change/service.ts:27"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -17084,6 +17114,7 @@
         "backend/src/existingSource/change/types.ts#ChangeEvent",
         "backend/src/existingSource/change/types.ts#DeliveryReceipt",
         "backend/src/existingSource/change/types.ts#MAX_EVENTS",
+        "backend/src/existingSource/change/types.ts#PreviewEvidence",
         "backend/src/existingSource/change/types.ts#TestEvidence"
       ],
       "testCoverage": [
@@ -17239,7 +17270,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:18",
-        "backend/src/existingSource/change/service.ts:27",
+        "backend/src/existingSource/change/service.ts:28",
         "backend/src/existingSource/change/toolHost.ts:16"
       ],
       "reachable": true,
@@ -25817,7 +25848,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/canonicalJob.ts:30",
+        "backend/src/existingSource/change/canonicalJob.ts:29",
         "backend/src/index.ts:23",
         "backend/src/routes/existingSource.test.ts:10",
         "backend/src/routes/existingSourceArchive.test.ts:14",
@@ -29018,7 +29049,7 @@
         "backend/src/ai/compileValidate.ts:21",
         "backend/src/ai/p0Regressions.test.ts:32",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:20",
-        "backend/src/existingSource/change/canonical.ts:65",
+        "backend/src/existingSource/change/canonical.ts:67",
         "backend/src/existingSource/change/production.ts:21",
         "backend/src/index.ts:72",
         "backend/src/sandbox/googleSelection.test.ts:4",
@@ -39282,6 +39313,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:28",
+        "backend/src/existingSource/change/canonical.ts:125",
         "backend/src/scripts/verifyFlySandboxBrowser.ts:29",
         "backend/src/synthesis/browserVerificationAdapter.test.ts:5",
         "backend/src/synthesis/inSandboxBrowser.integration.test.ts:31",
@@ -59658,7 +59690,7 @@
       "id": "surface:77e7d990f5da249eb762",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/existing-source/ChangeDetail.tsx",
-      "sha256": "3f283867032589e1d98aacadb70ae6c403f682019a08fd7f120dbe8a3a169d00",
+      "sha256": "72f34886355dbca7ea617471fd6d1901cb07d2597a85f625b35d6ef69cf78982",
       "symbols": [
         "ChangeDetail",
         "ChangeDetailProps",
@@ -59860,7 +59892,7 @@
       "id": "surface:62607affd5d6d68de69a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/existing-source/changeView.ts",
-      "sha256": "7b103a2344f200b1beca4fff0174ff1fdbb57d636bec635178261ee796144c29",
+      "sha256": "46d480f9f99a4dab5fbb7c7075a34748ed78691760d0485081dc14e4548a828e",
       "symbols": [
         "ACTIVE",
         "DeliveryState",
@@ -59877,6 +59909,7 @@
         "isActive",
         "isFinished",
         "out",
+        "previewHeadline",
         "progressSteps",
         "raw",
         "reproductionNote",
@@ -92663,7 +92696,7 @@
       "id": "surface:0581b211a5fccaf8c38e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "385b36c721e257bccb0f84c8c01ba496708051c7f178bb8abaf5734ec3eeec3b",
+      "sha256": "d7e0c2723a259e04494f64c66de8d05c9dc9f8d2d6ea5072381869e99e10d19d",
       "symbols": [
         "ArchiveImport",
         "BindingState",
@@ -130834,7 +130867,7 @@
     {
       "id": "test-suite:4d3e17cafc59593cb5cb",
       "sourcePath": "backend/src/existingSource/change/canonical.test.ts",
-      "declaredTests": 9,
+      "declaredTests": 15,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -134075,7 +134108,7 @@
     {
       "id": "test-suite:bbc37a283e5cf34ff5e7",
       "sourcePath": "frontend/src/components/existing-source/changeView.test.ts",
-      "declaredTests": 11,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },

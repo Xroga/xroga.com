@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import type { ChangeRevision, ChangeView, DeliveryReceipt, SourceBinding } from '@/lib/existingSourceApi';
 import { ChangeDetail, type ChangeDetailProps } from './ChangeDetail';
-import { classifyDiff, deliveryState, isActive, progressSteps, reproductionNote, statusTone, testHeadline } from './changeView';
+import { classifyDiff, deliveryState, isActive, previewHeadline, progressSteps, reproductionNote, statusTone, testHeadline } from './changeView';
 
 const DIFF = ['diff --git a/src/a.js b/src/a.js', '--- a/src/a.js', '+++ b/src/a.js', '@@ -1,2 +1,2 @@', ' keep', '-old <b>x</b>', '+new', '+++ not a header', '--- not a header either', '\\ No newline at end of file', ''].join('\n');
 
@@ -116,5 +116,18 @@ describe('the change screen renders what the server recorded', () => {
     const zip = html({ binding: { ...github, originKind: 'archive' } });
     assert.match(zip, /never pushed anywhere/); assert.match(zip, />Patch</); assert.match(zip, /ZIP of changed files/);
     assert.match(html({ binding: { ...github, permissions: { pull: true, push: false, admin: false } } }), /cannot push/);
+  });
+});
+
+describe('previewHeadline', () => {
+  it('is silent when no browser check was owed, never calls an unrun check a pass, and says what was found', () => {
+    assert.equal(previewHeadline(null), null);
+    assert.equal(previewHeadline(undefined), null);
+    assert.match(previewHeadline({ status: 'passed', attempted: true, url: null, reason: null, screenshots: 1 })!, /observed in a browser/);
+    assert.match(previewHeadline({ status: 'failed', attempted: true, url: null, reason: null, screenshots: 0 })!, /found a problem/);
+    const none = previewHeadline({ status: 'not_checked', attempted: false, url: null, reason: 'No browser image.', screenshots: 0 })!;
+    assert.match(none, /No browser check ran/);
+    assert.match(none, /No browser image/);
+    assert.doesNotMatch(none, /passed|behaved/);
   });
 });

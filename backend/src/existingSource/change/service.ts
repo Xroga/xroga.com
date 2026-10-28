@@ -22,7 +22,8 @@ import { ExistingSourceError, type SourceBinding } from '../types.js';
 import { DEFAULT_SNAPSHOT_LIMITS, loadBaseSnapshot, type SnapshotLimits } from './snapshot.js';
 import type { ChangeStore } from './store.js';
 import { planTests, runTests, type ExecutionPort, type TestRunResult } from './testRunner.js';
-import { ExistingSourceToolHost } from './toolHost.js';
+import { ExistingSourceToolHost, type PreviewVerifier } from './toolHost.js';
+import type { SoftwarePreviewEvidence } from '../../ai/softwareAgent/contracts.js';
 import { MAX_EVENTS, MAX_RESULT_BYTES, MAX_REVISIONS, MAX_STORED_DIFF, TERMINAL, type ChangeEvent, type ChangeRevision, type ChangeScope, type ChangeStatus, type ChangeTask, type ResultFile, type TestEvidence } from './types.js';
 import { ChangeWorkspace, DEFAULT_MAX_CHANGED_BYTES, DEFAULT_MAX_CHANGED_FILES, type BaseSnapshot, type ChangePolicy } from './workspace.js';
 import { randomUUID } from 'node:crypto';
@@ -37,6 +38,8 @@ export interface ChangeDeps {
   readonly runAgent: AgentRunner;
   /** The model route Xroga selects for this change (provider health, quota and billing stay with Xroga). */
   readonly modelRouteFor: (userId: string, changeId: string) => Promise<AgentSoftwareExecutorInput['model']>;
+  /** Observes a visual change in a browser inside the isolated runtime. Without it a visual change can never be verified. */
+  readonly previewVerifierFor?: (input: { task: ChangeTask; binding: SourceBinding; criteria: readonly string[] }) => PreviewVerifier;
   /** For a change executing on the durable path: whether its canonical run is still alive. Without it, only this process's runs count as running. */
   readonly canonicalRunAlive?: (userId: string, runId: string) => Promise<boolean>;
   readonly newId?: () => string;
@@ -53,6 +56,9 @@ const BUG_WORDS = /\b(bug|fix|broken|breaks?|error|crash(?:es)?|fail(?:s|ing|ed)
 const DENIED_PATHS = ['.github/workflows/**', '.git/**', '.gitmodules'];
 /** Where a legitimate change also needs to write regardless of the located code: manifests, tests, and source-controlled migrations (never applied by Xroga). */
 const ALWAYS_ALLOWED = ['package.json', 'pyproject.toml', 'go.mod', 'go.sum', 'requirements.txt', 'test/**', 'tests/**', 'spec/**', '__tests__/**', 'migrations/**', 'db/migrate/**', 'supabase/migrations/**', 'prisma/migrations/**'];
+/** Styles and markup: a change to these is judged by what a browser shows, not only by unit tests. */
+const VISUAL_PATH = /\.(css|scss|sass|less|html?|jsx|tsx|vue|svelte)$/i;
+export const isVisualChange = (paths: readonly string[]): boolean => paths.some((p) => VISUAL_PATH.test(p));
 const dirOf = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '');
 
 const fileOf = (path: string, content: string | null, kind: ResultFile['kind']): ResultFile => ({ path, kind, content });
@@ -177,7 +183,7 @@ export class ChangeService {
       const startFrom = task.result.length ? task.result : parent?.result ?? [];
       const workspace = new ChangeWorkspace(snapshot, this.policy(scope), startFrom.length ? this.restoredFiles(snapshot, startFrom) : undefined);
 
-      let last: TestRunResult | null = null; let note = '';
+      let last: TestRunResult | null = null; let note = ''; let preview: SoftwarePreviewEvidence | null = null;
       for (let attempt = task.attempts + 1; attempt <= task.maxAttempts; attempt++) {
         if (controller.signal.aborted) throw new CancelledError();
         task = await save({ attempts: attempt, status: attempt === 1 ? 'working' : 'repairing', statusReason: attempt === 1 ? 'The agent is making the change.' : `Repair attempt ${attempt - 1} from the failing test output.` }, { type: attempt === 1 ? 'agent.started' : 'repair.started', message: attempt === 1 ? 'The agent started.' : 'Repairing from failing tests.' });
@@ -193,8 +199,15 @@ export class ChangeService {
         const changedPaths = set.files.filter((f) => f.kind !== 'deleted').map((f) => f.path);
         last = await runTests({ port: this.deps.execution, files: workspace.files(), changedPaths, signal: controller.signal });
         if (controller.signal.aborted || last.status === 'cancelled') throw new CancelledError();
+        preview = null;
+        if (isVisualChange(changedPaths) && last.status !== 'failed') {
+          preview = await this.observePreview(task, binding, criteria, workspace, last);
+          if (controller.signal.aborted) throw new CancelledError();
+          // a browser that observed a broken page is a failure with evidence the agent can repair from, exactly like a failing test
+          if (preview.status === 'failed') last = { ...last, status: 'failed', summary: 'Browser verification failed.', evidence: String(preview.evidenceForRepair ?? preview.blocker ?? 'The page did not behave as required.').slice(0, 4_000) };
+        }
         const incomplete = !snapshot.complete;
-        const revision = this.revision(task, set, last, incomplete ? `Working copy incomplete (${snapshot.incompleteReason}).` : '');
+        const revision = this.revision(task, set, last, incomplete ? `Working copy incomplete (${snapshot.incompleteReason}).` : '', preview);
         task = await save({ revisions: [...task.revisions, revision].slice(-MAX_REVISIONS), regressionTestAdded: set.files.some((f) => f.kind !== 'deleted' && isTestPath(f.path)) },
           { type: 'verification.completed', message: last.summary, data: { status: last.status, attempt, files: set.files.length } });
         if (last.status === 'passed') break;
@@ -202,7 +215,7 @@ export class ChangeService {
       }
 
       const set = workspace.changeSet();
-      const outcome = this.outcome(last, snapshot);
+      const outcome = this.outcome(last, snapshot, preview);
       let reproduction: ChangeTask['reproduction'] = 'not_applicable';
       if (bug && task.regressionTestAdded && outcome.status === 'verified') {
         reproduction = await this.reproduce(workspace, controller.signal);
@@ -281,13 +294,32 @@ export class ChangeService {
     return out;
   }
 
-  private revision(task: ChangeTask, set: ReturnType<ChangeWorkspace['changeSet']>, tests: TestRunResult, note: string): ChangeRevision {
-    const evidence: TestEvidence = { status: tests.status, summary: tests.summary, runtime: tests.plan.runtime, stages: tests.stages.map((s) => ({ label: s.label, kind: s.kind, exitCode: s.exitCode, timedOut: s.timedOut, durationMs: s.durationMs })), evidence: tests.evidence };
-    return { n: task.revisions.length + 1, at: this.iso(), digest: set.digest, baseCommitSha: set.baseCommitSha, files: set.files, additions: set.additions, deletions: set.deletions, warnings: set.warnings, diff: set.diff.slice(0, MAX_STORED_DIFF), diffTruncated: set.diff.length > MAX_STORED_DIFF, tests: evidence, note };
+  /** Runs the browser verifier for a visual change. No verifier, or one that errors, is a not-checked result with the reason, never a pass. */
+  private async observePreview(task: ChangeTask, binding: SourceBinding, criteria: readonly string[], workspace: ChangeWorkspace, tests: TestRunResult): Promise<SoftwarePreviewEvidence> {
+    const notChecked = (blocker: string): SoftwarePreviewEvidence => ({ status: 'not_checked', attempted: false, url: null, notCheckedReason: 'sandbox_unavailable', blocker, criteriaNotChecked: [...criteria], screenshots: [] });
+    if (!this.deps.previewVerifierFor) return notChecked('Browser and viewport verification is not connected for this change.');
+    try {
+      return await this.deps.previewVerifierFor({ task, binding, criteria })(workspace.files(), { buildPassed: tests.status !== 'failed', testsPassed: tests.status === 'passed' ? true : tests.status === 'unsupported' ? null : false });
+    } catch {
+      return notChecked('The browser verification could not be run.');
+    }
   }
 
-  private outcome(last: TestRunResult | null, snapshot: BaseSnapshot): { status: ChangeStatus; reason: string } {
+  private revision(task: ChangeTask, set: ReturnType<ChangeWorkspace['changeSet']>, tests: TestRunResult, note: string, preview: SoftwarePreviewEvidence | null = null): ChangeRevision {
+    const evidence: TestEvidence = { status: tests.status, summary: tests.summary, runtime: tests.plan.runtime, stages: tests.stages.map((s) => ({ label: s.label, kind: s.kind, exitCode: s.exitCode, timedOut: s.timedOut, durationMs: s.durationMs })), evidence: tests.evidence };
+    return { n: task.revisions.length + 1, at: this.iso(), digest: set.digest, baseCommitSha: set.baseCommitSha, files: set.files, additions: set.additions, deletions: set.deletions, warnings: set.warnings, diff: set.diff.slice(0, MAX_STORED_DIFF), diffTruncated: set.diff.length > MAX_STORED_DIFF, tests: evidence, preview: preview ? { status: preview.status, attempted: preview.attempted, url: preview.url, reason: preview.status === 'passed' ? null : (preview.blocker ?? null), screenshots: preview.screenshots.length } : null, note };
+  }
+
+  private outcome(last: TestRunResult | null, snapshot: BaseSnapshot, preview: SoftwarePreviewEvidence | null = null): { status: ChangeStatus; reason: string } {
     if (!last) return { status: 'failed', reason: 'The change was not verified.' };
+    // a visual change owes a browser observation, unless the project is not something a browser can serve
+    const owesBrowser = preview !== null && preview.notCheckedReason !== 'not_a_web_project';
+    if (owesBrowser && (last.status === 'passed' || last.status === 'unsupported')) {
+      const lead = last.status === 'passed' ? 'Tests passed' : 'No project test applies to these files';
+      if (preview.status !== 'passed') return { status: 'unverified', reason: `${lead}, but the change affects what a browser shows and no browser check ran. ${preview.blocker ?? 'Browser verification did not complete.'}` };
+      if (!snapshot.complete) return { status: 'unverified', reason: `The page was observed in a browser, but the working copy was incomplete (${snapshot.incompleteReason}).` };
+      return { status: 'verified', reason: last.status === 'passed' ? `${last.summary} The page was also observed in a browser inside the isolated runtime.` : 'The page was observed in a browser inside the isolated runtime; no project test applies to these files.' };
+    }
     switch (last.status) {
       case 'passed': return snapshot.complete ? { status: 'verified', reason: `${last.summary} The project's own tests ran in isolation against the final change.` } : { status: 'unverified', reason: `Tests passed, but the working copy was incomplete (${snapshot.incompleteReason}), so the result is not fully verified.` };
       case 'failed': return { status: 'failed', reason: `The tests still fail after the repair attempts. ${last.summary}` };
@@ -332,7 +364,7 @@ export class ChangeService {
         ...(scope.targets.length ? [`Start from: ${scope.targets.slice(0, 6).join(', ')}.`] : []),
       ],
     };
-    const host = new ExistingSourceToolHost({ workspace, execution: this.deps.execution, signal, onDenied: (what) => { void input.emit({ type: 'tool.denied', message: what }); } });
+    const host = new ExistingSourceToolHost({ workspace, execution: this.deps.execution, signal, previewVerifier: this.deps.previewVerifierFor?.({ task, binding, criteria }), onDenied: (what) => { void input.emit({ type: 'tool.denied', message: what }); } });
     const sink: SoftwareRunEventSink = { emit: async (e: SoftwareRunEvent) => { if (e.type.startsWith('file.') || e.type === 'check.completed' || e.type === 'command.completed') await input.emit({ type: e.type, message: `${e.title}${e.evidence?.filePath ? `: ${e.evidence.filePath}` : ''}` }); } };
     const failing: SoftwareCheckResult[] = evidence && evidence.status === 'failed' ? [{ id: 'tests', name: 'Project tests', status: 'failed', summary: evidence.evidence }] : [];
     return this.deps.runAgent({

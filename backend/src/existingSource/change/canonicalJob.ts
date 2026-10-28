@@ -8,10 +8,9 @@ import type { ExistingSourceIntelligence } from '../intelligence/service.js';
 import type { ExistingSourceService } from '../service.js';
 import type { CanonicalDeliveryClaim } from '../../workers/googleDeliveryStore.js';
 import type { TenantContext } from '../../security/tenantContext.js';
-import { canonicalExecutionPort, canonicalRunFor } from './canonical.js';
+import { canonicalChangeRuntime, canonicalRunFor } from './canonical.js';
 import { ChangeService, type AgentRunner } from './service.js';
 import type { ChangeStore } from './store.js';
-import type { ExecutionPort } from './testRunner.js';
 import { TERMINAL, type ChangeStatus } from './types.js';
 
 export interface ChangeJobDeps {
@@ -22,7 +21,7 @@ export interface ChangeJobDeps {
   readonly modelRouteFor: (userId: string, runId: string) => Promise<AgentSoftwareExecutorInput['model']>;
   /** Makes the claim's run attempt the current one. The Job entrypoint's duplicate and cancelled deliveries never reach here. */
   readonly adoptRun: (claim: CanonicalDeliveryClaim) => Promise<unknown>;
-  readonly executionFor?: (run: ReturnType<typeof canonicalRunFor>) => ExecutionPort;
+  readonly runtimeFor?: (run: ReturnType<typeof canonicalRunFor>) => ReturnType<typeof canonicalChangeRuntime>;
 }
 
 async function productionDeps(context: TenantContext): Promise<ChangeJobDeps> {
@@ -60,9 +59,10 @@ export async function runExistingSourceChangeJob(input: {
   await deps.adoptRun(claim);
 
   const run = canonicalRunFor(userId, claim.runId, changeId, binding);
+  const runtime = deps.runtimeFor?.(run) ?? canonicalChangeRuntime(run);
   const changes = new ChangeService({
     source: deps.source, intel: deps.intel, store: deps.store, runAgent: deps.runAgent, maxRunningPerOwner: 1,
-    execution: deps.executionFor?.(run) ?? canonicalExecutionPort(run),
+    execution: runtime.port, previewVerifierFor: ({ criteria }) => runtime.previewVerifier(criteria),
     modelRouteFor: (owner) => deps.modelRouteFor(owner, claim.runId),
   });
   const onAbort = () => { void changes.cancel(userId, changeId).catch(() => undefined); };

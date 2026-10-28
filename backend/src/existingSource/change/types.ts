@@ -21,6 +21,15 @@ export interface TestEvidence {
   readonly evidence: string;
 }
 
+/** What the browser verifier observed for a visual change. A not-checked result is never a pass. */
+export interface PreviewEvidence {
+  readonly status: 'passed' | 'failed' | 'not_checked';
+  readonly attempted: boolean;
+  readonly url: string | null;
+  readonly reason: string | null;
+  readonly screenshots: number;
+}
+
 export interface ChangeRevision {
   readonly n: number;
   readonly at: string;
@@ -34,6 +43,8 @@ export interface ChangeRevision {
   readonly diff: string;
   readonly diffTruncated: boolean;
   readonly tests: TestEvidence | null;
+  /** Present only for a visual change (styles or markup); absent means no browser check was owed. */
+  readonly preview?: PreviewEvidence | null;
   readonly note: string;
 }
 

@@ -169,7 +169,7 @@ describe('Golden D: Go CLI feature  [not run: no Go toolchain here; contract onl
   });
 });
 
-describe('Golden E: existing frontend visual fix  [not run: preview and browser verification are not connected]', () => {
+describe('Golden E: existing frontend visual fix  [no browser verifier connected here; with one connected, see canonical.test.ts]', () => {
   it('produces a minimal diff but labels the missing browser and viewport verification, never claiming a passing preview', async () => {
     const WEB: FakeFile[] = [
       { path: 'package.json', content: '{"name":"site","scripts":{"test":"node --test"}}\n' },
