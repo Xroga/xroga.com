@@ -3485,6 +3485,26 @@
           "sha256": "cf9c63c5defd08c4ca0cfe5b1ecd48a1cb9c6fbecbad31a1974c60590c4ccafb"
         }
       ]
+    },
+    {
+      "id": "805931ff0dc022677403",
+      "callSha256": "f660c35501df18572d929209216348f8089e282855492e1851a01fae74869efe",
+      "sourceFileSha256": "33d4a40bb972d7ddf02fe2565581f94097fa0e73a3f8e68341a907a11a5e3970",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_GROQ_PUBLIC_MANUAL_GUEST_TEXT_ONLY_BOUNDED_NO_TOOLS_OR_TENANT_DATA",
+      "tenantAuthority": "CANONICAL_DURABLE_GUEST_QUOTA_RESERVATION_AND_ORIGINAL_LEASE_ONLY_NEVER_SIGNED_IN_TENANT_AUTHORITY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json",
+          "marker": "ONLY_AURA_PUBLIC_MANUAL_GUEST_BOUNDARY_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "3d187ec0977cbc6396679700babb2425e5c7f2aa6b9d7ce227d99325fa97ec8f"
+        },
+        {
+          "path": "frontend/src/lib/showcase/auraGroq.security.test.ts",
+          "marker": "actual Aura provider and Next route use the existing durable guest boundary",
+          "sha256": "0cf30d52719560b66043306c53bd5f5be0bd825e82000289fabae0dddb1f1f71"
+        }
+      ]
     }
   ]
 }

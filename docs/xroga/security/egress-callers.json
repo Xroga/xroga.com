@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "434d0487a79a33ea50038563bbf74b44eaada938d32a8098e7b68aa5bf7812fb",
+  "sourceTreeDigest": "6d79b5d4b13c9b518cd44660c6b4ef4b628eb559ac468ecbcec0084c96842541",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4020,18 +4020,29 @@
     {
       "id": "805931ff0dc022677403",
       "file": "frontend/src/lib/showcase/auraGroq.ts",
-      "line": 67,
+      "line": 164,
       "entryPoint": "requestGroqStream",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "fd53f6a24ff3004e998eaebd33be5334cb114cd74d36a4611557932868ff0ebd",
+      "callSha256": "f660c35501df18572d929209216348f8089e282855492e1851a01fae74869efe",
       "destination": "https://api.groq.com",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_GROQ_PUBLIC_MANUAL_GUEST_TEXT_ONLY_BOUNDED_NO_TOOLS_OR_TENANT_DATA",
+      "tenantAuthority": "CANONICAL_DURABLE_GUEST_QUOTA_RESERVATION_AND_ORIGINAL_LEASE_ONLY_NEVER_SIGNED_IN_TENANT_AUTHORITY",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json",
+          "marker": "ONLY_AURA_PUBLIC_MANUAL_GUEST_BOUNDARY_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "3d187ec0977cbc6396679700babb2425e5c7f2aa6b9d7ce227d99325fa97ec8f"
+        },
+        {
+          "path": "frontend/src/lib/showcase/auraGroq.security.test.ts",
+          "marker": "actual Aura provider and Next route use the existing durable guest boundary",
+          "sha256": "0cf30d52719560b66043306c53bd5f5be0bd825e82000289fabae0dddb1f1f71"
+        }
+      ]
     },
     {
       "id": "68df836263d1eff0010b",
@@ -4313,8 +4324,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 123,
-    "pending": 13,
+    "reviewed": 124,
+    "pending": 12,
     "unresolvedHighRiskBypasses": 8
   }
 }

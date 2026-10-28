@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `3b94979a0411db4137678d23332900d496e889a9`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `c154f6c06ca4148dd1b62920124618d5946bb371`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -187,6 +187,7 @@ Values are forbidden. Source SHA: `3b94979a0411db4137678d23332900d496e889a9`. Na
 | UPSTASH_VECTOR_REST_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | USERPROFILE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | USER_SECRETS_ENCRYPTION_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | credential-store, endpoint-127-0-0-1 |
+| VERCEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | VERCEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-vercel-com, endpoint-github-com |
 | VERCEL_CLIENT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
 | VERCEL_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
@@ -197,8 +198,10 @@ Values are forbidden. Source SHA: `3b94979a0411db4137678d23332900d496e889a9`. Na
 | VERCEL_OAUTH_CLIENT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
 | VERCEL_OAUTH_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
 | VERCEL_OAUTH_SCOPES | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-vercel-com, endpoint-localhost, endpoint-vercel-com |
+| VERCEL_PROJECT_PRODUCTION_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | VERCEL_TEAM_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-vercel-com |
 | VERCEL_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| VERCEL_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | WHOP_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
 | WHOP_COMPANY_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
 | WHOP_PLAN_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |

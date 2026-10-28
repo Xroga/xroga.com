@@ -121,8 +121,8 @@
   ],
   "counts": {
     "total": 136,
-    "reviewed": 123,
-    "pending": 13,
+    "reviewed": 124,
+    "pending": 12,
     "unresolvedHighRiskReviewCandidates": 8
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
@@ -392,11 +392,13 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "260a5f28139ce66b174efbf9f17d6a03045ff0738a56dd07685e6f0fd8306d36",
+      "sha256": "00dd98d8b24bdcd52c2f36e77315037ad4a196aa414f0239529be7656d421941",
       "previousGenericSdkBinding": {
         "sha256": "a4f476f3e93800fc3d0ce72e88b30484bee3f20dcb8f67233ce213442d2b0b8d",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
-      }
+      },
+      "beforeCanonicalGuestBudgetExtractionSha256": "260a5f28139ce66b174efbf9f17d6a03045ff0738a56dd07685e6f0fd8306d36",
+      "continuityEvidence": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -562,5 +564,6 @@
     ],
     "localVerificationScope": "The3179test historical suite and starting-source CI above retain their original source. New focused groups have separate trace/receipt files. Full current exact-source CI and all original12criteria remain required.",
     "currentCheckpoint": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/checkpoint.json"
-  }
+  },
+  "auraPublicGuestContinuation": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json"
 }

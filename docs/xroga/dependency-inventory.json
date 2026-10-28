@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3b94979a0411db4137678d23332900d496e889a9",
+  "source_sha": "c154f6c06ca4148dd1b62920124618d5946bb371",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7550,7 +7550,8 @@
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
         "backend/src/workers/googleSwarmQueue.ts",
-        "backend/src/workers/proxySidecar.ts"
+        "backend/src/workers/proxySidecar.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
       ],
       "hostnames": [],
       "resource_id": null,
@@ -7662,7 +7663,10 @@
         "UPSTASH_REDIS_REST_URL",
         "UPSTASH_VECTOR_REST_URL",
         "USERPROFILE",
+        "VERCEL",
+        "VERCEL_PROJECT_PRODUCTION_URL",
         "VERCEL_TOKEN",
+        "VERCEL_URL",
         "XROGA_ALLOWED_MODELS",
         "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
         "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
@@ -7752,7 +7756,8 @@
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
         "backend/src/workers/googleSwarmQueue.ts",
-        "backend/src/workers/proxySidecar.ts"
+        "backend/src/workers/proxySidecar.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -8857,7 +8862,7 @@
     {
       "name": "FLY_APP_NAME",
       "consuming_sources": [
-        "backend/src/routes/guestChat.ts",
+        "backend/src/ai/guestBudget.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/sandbox/google/gceMachineControl.ts",
@@ -10476,11 +10481,11 @@
     {
       "name": "NODE_ENV",
       "consuming_sources": [
+        "backend/src/ai/guestBudget.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
-        "backend/src/routes/guestChat.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
@@ -10494,6 +10499,8 @@
         "backend/src/services/publish/chromeWebStore.ts",
         "backend/src/synthesis/livePreview/signing.ts",
         "backend/src/synthesis/projectRuntime/secretManager.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts",
+        "frontend/src/app/api/showcase/aura/health/route.ts",
         "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
         "frontend/src/components/homepage-next/phase1/useOrchestration.ts",
         "frontend/src/components/homepage-next/s04/useScene.ts",
@@ -10787,7 +10794,8 @@
       "consuming_sources": [
         "backend/src/config/jobQueues.ts",
         "backend/src/config/redis.ts",
-        "backend/src/middleware/metricsMiddleware.ts"
+        "backend/src/middleware/metricsMiddleware.ts",
+        "frontend/src/app/api/showcase/aura/health/route.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -11959,6 +11967,25 @@
       ]
     },
     {
+      "name": "VERCEL",
+      "consuming_sources": [
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "VERCEL_API_KEY",
       "consuming_sources": [
         "backend/src/config/envSecrets.ts",
@@ -12188,6 +12215,25 @@
       ]
     },
     {
+      "name": "VERCEL_PROJECT_PRODUCTION_URL",
+      "consuming_sources": [
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "VERCEL_TEAM_ID",
       "consuming_sources": [
         "backend/src/lib/vercel.ts"
@@ -12222,6 +12268,25 @@
       "mechanisms": [
         "DECLARED_SECRET_ALIAS",
         "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "VERCEL_URL",
+      "consuming_sources": [
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -14859,6 +14924,14 @@
       "sha256": "d7b3f43854713015f53852233aff7551cff0ef9103566694ed9c37a2f9799a11"
     },
     {
+      "path": "backend/src/ai/guestBudget.ts",
+      "sha256": "6358b705a38c305f9602c6e67eca9b31e13f0ab2df5bbab8c3853f40691c55d9"
+    },
+    {
+      "path": "backend/src/ai/guestProviderBudget.ts",
+      "sha256": "1bf3f8e211dc202fab78b5f4703ccb790dbc9ace7ee1f0c1e56031486440f416"
+    },
+    {
       "path": "backend/src/ai/htmlTruncation.ts",
       "sha256": "bae3b0eba2d0e25131a09c1051fe065ed7f8e3736f242e4962767a07af616c4e"
     },
@@ -15924,7 +15997,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "260a5f28139ce66b174efbf9f17d6a03045ff0738a56dd07685e6f0fd8306d36"
+      "sha256": "00dd98d8b24bdcd52c2f36e77315037ad4a196aa414f0239529be7656d421941"
     },
     {
       "path": "backend/src/routes/influencer.ts",
@@ -17556,11 +17629,11 @@
     },
     {
       "path": "frontend/src/app/api/showcase/aura/chat/route.ts",
-      "sha256": "02166b764d7567e8671334fee404bc9e31f1b4635e23d1fd710a29be9d435ebd"
+      "sha256": "ba680aed2e0ab15f8793578cd68cf993d10fae1a925728edcadc17ad2729783b"
     },
     {
       "path": "frontend/src/app/api/showcase/aura/health/route.ts",
-      "sha256": "16cc07da41f6c1249c8a09f3e4a08da4b12fffdd002c140e7f23ea33997aefeb"
+      "sha256": "c1bd409fd77f9002cffeb2b45cef8419452cdb38ba80e939a1d6f3dc483c57ed"
     },
     {
       "path": "frontend/src/app/auth/callback/route.ts",
@@ -20764,7 +20837,7 @@
     },
     {
       "path": "frontend/src/lib/showcase/auraGroq.ts",
-      "sha256": "275872c286446c5cc9a7f04ab779b7feb59226549b53e8aa6a485e3df049ff1c"
+      "sha256": "33d4a40bb972d7ddf02fe2565581f94097fa0e73a3f8e68341a907a11a5e3970"
     },
     {
       "path": "frontend/src/lib/showcase/buildCommand.ts",
@@ -27806,7 +27879,7 @@
       "hostname": "api.groq.com",
       "protocol": "https:",
       "path": "frontend/src/lib/showcase/auraGroq.ts",
-      "line": 1,
+      "line": 3,
       "credentialsInUrl": false
     },
     {
@@ -28270,6 +28343,41 @@
       "path": "backend/src/ai/fileSelector.ts",
       "line": 62,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/guestBudget.ts",
+      "line": 29,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/guestBudget.ts",
+      "line": 30,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/guestBudget.ts",
+      "line": 31,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/guestBudget.ts",
+      "line": 32,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/guestBudget.ts",
+      "line": 33,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -30214,42 +30322,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 50,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/routes/guestChat.ts",
-      "line": 51,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/routes/guestChat.ts",
-      "line": 52,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/routes/guestChat.ts",
-      "line": 53,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/routes/guestChat.ts",
-      "line": 54,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/routes/guestChat.ts",
-      "line": 473,
+      "line": 63,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32449,13 +32522,6 @@
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
       "line": 133,
       "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/app/api/showcase/aura/chat/route.ts",
-      "line": 7,
-      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

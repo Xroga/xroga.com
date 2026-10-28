@@ -3699,6 +3699,164 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:9823a86d36baa101a186",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/guestBudget.ts",
+      "sha256": "6358b705a38c305f9602c6e67eca9b31e13f0ab2df5bbab8c3853f40691c55d9",
+      "symbols": [
+        "GUEST_CHAT_CLAIM_TTL_MS",
+        "GUEST_CHAT_CONCURRENCY_TTL_MS",
+        "GUEST_CHAT_IP_LIMIT",
+        "GUEST_CHAT_IP_WINDOW_MS",
+        "GUEST_CHAT_PROMPT_LIMIT",
+        "GUEST_CHAT_TOKEN_BUDGET",
+        "GUEST_CHAT_WINDOW_MS",
+        "GuestLease",
+        "RateBucket",
+        "acquireGuestLease",
+        "activeSessions",
+        "beginGuestConcurrencyForTest",
+        "bucket",
+        "claimedSessions",
+        "cleanExpired",
+        "consumeBucket",
+        "consumeGuestAllowance",
+        "consumeGuestAllowanceDistributed",
+        "consumeGuestTokenBudget",
+        "consumeGuestTokenBudgetDistributed",
+        "consumeTokenBucket",
+        "count",
+        "current",
+        "endGuestConcurrencyForTest",
+        "error",
+        "existing",
+        "fixedWindow",
+        "guestAccountingDenied",
+        "ip",
+        "ipBuckets",
+        "ipCount",
+        "ipKey",
+        "ipWindow",
+        "isGuestSessionClaimed",
+        "issueGuestLease",
+        "issuedLeases",
+        "key",
+        "markGuestSessionClaimed",
+        "productionGuest",
+        "receipt",
+        "redis",
+        "redisIncrement",
+        "redisKey",
+        "releaseGuestLease",
+        "requireCurrentGuestLease",
+        "requireGuestRedis",
+        "resetGuestChatRateLimitsForTest",
+        "result",
+        "session",
+        "sessionBuckets",
+        "sessionCount",
+        "sessionKey",
+        "sessionWindow",
+        "stableAddressKey",
+        "start",
+        "token",
+        "tokenBuckets",
+        "used",
+        "window"
+      ],
+      "imports": [
+        "../config/redis.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/config/redis.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
+      ],
+      "callers": [
+        "backend/src/ai/guestProviderBudget.ts:2",
+        "backend/src/routes/guestChat.ts:2",
+        "backend/src/routes/guestChat.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/guestBudget.ts#GUEST_CHAT_TOKEN_BUDGET",
+        "backend/src/ai/guestBudget.ts#consumeGuestTokenBudget",
+        "backend/src/ai/guestBudget.ts#consumeGuestTokenBudgetDistributed"
+      ],
+      "evidenceBoundary": [
+        "backend/src/ai/guestBudget.ts#receipt"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:9c83bc0ba3e0d14f4ef0",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/guestProviderBudget.ts",
+      "sha256": "1bf3f8e211dc202fab78b5f4703ccb790dbc9ace7ee1f0c1e56031486440f416",
+      "symbols": [
+        "active",
+        "check",
+        "checkSignal",
+        "completed",
+        "denied",
+        "lease",
+        "result",
+        "row",
+        "used",
+        "valid",
+        "withGuestProviderBudget"
+      ],
+      "imports": [
+        "./guestBudget.js",
+        "node:net"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/guestBudget.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
+      ],
+      "callers": [
+        "frontend/src/lib/showcase/auraGroq.ts:1"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:net"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/guestProviderBudget.ts#consumeGuestTokenBudgetDistributed",
+        "backend/src/ai/guestProviderBudget.ts#withGuestProviderBudget"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:74b1711021f856a07464",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/htmlTruncation.ts",
@@ -4435,7 +4593,7 @@
         "backend/src/ai/openaiCompat.ts:15",
         "backend/src/ai/providerBudget.ts:9",
         "backend/src/ai/tenantModelDispatch.ts:15",
-        "backend/src/routes/guestChat.ts:3",
+        "backend/src/routes/guestChat.ts:5",
         "backend/src/workers/browserModelDispatch.ts:2"
       ],
       "reachable": true,
@@ -4534,7 +4692,7 @@
         "backend/src/hardening/launchHardening.test.ts:18",
         "backend/src/lib/adaptiveOrchestrator.ts:1",
         "backend/src/operations/benchmarkAdapter.ts:20",
-        "backend/src/routes/guestChat.ts:12",
+        "backend/src/routes/guestChat.ts:14",
         "backend/src/routes/phase1.ts:25",
         "backend/src/synthesis/coherentImplementation.ts:8",
         "backend/src/synthesis/universalEntrypoint.ts:98",
@@ -4706,7 +4864,7 @@
         "backend/src/hardening/launchHardening.test.ts:19",
         "backend/src/index.ts:63",
         "backend/src/operations/benchmarkAdapter.ts:35",
-        "backend/src/routes/guestChat.ts:7",
+        "backend/src/routes/guestChat.ts:9",
         "backend/src/security/genericSdk.local.integration.ts:7",
         "backend/src/services/integrations/businessAction.ts:10",
         "backend/src/services/integrations/businessRead.ts:1",
@@ -6108,7 +6266,7 @@
         "backend/src/ai/pipeline.ts:46",
         "backend/src/ai/prompts.test.ts:4",
         "backend/src/ai/richResponsePrompt.test.ts:4",
-        "backend/src/routes/guestChat.ts:18"
+        "backend/src/routes/guestChat.ts:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6644,7 +6802,7 @@
         "backend/src/index.ts:62",
         "backend/src/lib/resilience/callWithFallback.ts:4",
         "backend/src/lib/resilience/retry.test.ts:3",
-        "backend/src/routes/guestChat.ts:17",
+        "backend/src/routes/guestChat.ts:19",
         "backend/src/routes/phase1.ts:1",
         "backend/src/services/BillingService.checkoutAdmission.security.test.ts:6",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:7",
@@ -12576,13 +12734,15 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
       ],
       "callers": [
+        "backend/src/ai/guestBudget.ts:2",
         "backend/src/config/jobQueues.ts:2",
         "backend/src/middleware/cacheMiddleware.ts:2",
         "backend/src/routes/guestChat.egress.test.ts:6",
-        "backend/src/routes/guestChat.ts:19"
+        "frontend/src/lib/showcase/auraGroq.security.test.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12596,7 +12756,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/routes/guestChat.egress.test.ts"
+        "backend/src/routes/guestChat.egress.test.ts",
+        "frontend/src/lib/showcase/auraGroq.security.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -16193,7 +16354,7 @@
         "backend/src/middleware/auth.tenantContext.test.ts:37",
         "backend/src/middleware/phase1Auth.ts:6",
         "backend/src/routes/community.ts:4",
-        "backend/src/routes/guestChat.ts:20",
+        "backend/src/routes/guestChat.ts:21",
         "backend/src/routes/messageShares.ts:6",
         "backend/src/security/connectedAccountRoutes.local.integration.ts:5",
         "backend/src/security/githubConsumer.local.integration.ts:7",
@@ -19988,52 +20149,25 @@
       "id": "surface:8dc86af82ef49ffa5017",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/guestChat.ts",
-      "sha256": "260a5f28139ce66b174efbf9f17d6a03045ff0738a56dd07685e6f0fd8306d36",
+      "sha256": "00dd98d8b24bdcd52c2f36e77315037ad4a196aa414f0239529be7656d421941",
       "symbols": [
-        "GUEST_CHAT_CLAIM_TTL_MS",
-        "GUEST_CHAT_CONCURRENCY_TTL_MS",
-        "GUEST_CHAT_IP_LIMIT",
-        "GUEST_CHAT_IP_WINDOW_MS",
-        "GUEST_CHAT_PROMPT_LIMIT",
-        "GUEST_CHAT_TOKEN_BUDGET",
-        "GUEST_CHAT_WINDOW_MS",
         "GUEST_SYSTEM",
-        "GuestLease",
-        "RateBucket",
-        "acquireGuestLease",
         "active",
-        "activeSessions",
         "admitted",
         "allowance",
         "apiModel",
         "beforeDispatch",
-        "beginGuestConcurrencyForTest",
-        "bucket",
         "callable",
         "cancel",
         "candidates",
-        "claimedSessions",
-        "cleanExpired",
         "clientAddress",
         "close",
         "completion",
-        "consumeBucket",
-        "consumeGuestAllowance",
-        "consumeGuestAllowanceDistributed",
-        "consumeGuestTokenBudget",
-        "consumeGuestTokenBudgetDistributed",
-        "consumeTokenBucket",
         "controller",
-        "count",
-        "current",
-        "endGuestConcurrencyForTest",
         "error",
         "estimatedInputTokens",
-        "existing",
         "failure",
-        "fixedWindow",
         "flyClientIp",
-        "guestAccountingDenied",
         "guestChatSchema",
         "guestClaimSchema",
         "guestClientAddress",
@@ -20041,56 +20175,26 @@
         "guestRoute",
         "guestSessionId",
         "history",
-        "ip",
-        "ipBuckets",
-        "ipCount",
-        "ipKey",
-        "ipWindow",
-        "isGuestSessionClaimed",
-        "issueGuestLease",
-        "issuedLeases",
-        "key",
         "lastError",
         "lease",
-        "markGuestSessionClaimed",
         "maximumInput",
         "maximumOutput",
         "messages",
         "modelId",
         "parsed",
-        "productionGuest",
-        "receipt",
-        "redis",
-        "redisIncrement",
-        "redisKey",
-        "releaseGuestLease",
-        "requireCurrentGuestLease",
-        "requireGuestRedis",
-        "resetGuestChatRateLimitsForTest",
         "result",
         "router",
-        "session",
-        "sessionBuckets",
-        "sessionCount",
-        "sessionKey",
-        "sessionWindow",
-        "stableAddressKey",
-        "start",
-        "token",
-        "tokenBuckets",
         "tokenBudget",
-        "used",
-        "window",
         "wire",
         "wires"
       ],
       "imports": [
+        "../ai/guestBudget.js",
         "../ai/modelSdkAdmission.js",
         "../ai/models.js",
         "../ai/openaiCompat.js",
         "../ai/prompts.js",
         "../ai/providerRuntime.js",
-        "../config/redis.js",
         "../middleware/auth.js",
         "express",
         "node:crypto",
@@ -20098,12 +20202,12 @@
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/ai/guestBudget.ts",
         "backend/src/ai/modelSdkAdmission.ts",
         "backend/src/ai/models.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/prompts.ts",
         "backend/src/ai/providerRuntime.ts",
-        "backend/src/config/redis.ts",
         "backend/src/middleware/auth.ts"
       ],
       "entryPoints": [
@@ -20128,14 +20232,10 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
-        "backend/src/routes/guestChat.ts#GUEST_CHAT_TOKEN_BUDGET",
-        "backend/src/routes/guestChat.ts#consumeGuestTokenBudget",
         "backend/src/routes/guestChat.ts#consumeGuestTokenBudgetDistributed",
         "backend/src/routes/guestChat.ts#tokenBudget"
       ],
-      "evidenceBoundary": [
-        "backend/src/routes/guestChat.ts#receipt"
-      ],
+      "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/guestChat.egress.test.ts",
         "backend/src/routes/guestChat.test.ts"
@@ -23309,6 +23409,7 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -23702,7 +23803,8 @@
         "backend/src/security/egress/types.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
       ],
       "callers": [
         "backend/src/ai/openaiCompat.ts:13",
@@ -23715,7 +23817,8 @@
         "backend/src/services/integrations/composioClient.ts:12",
         "backend/src/services/integrations/githubSourceRead.ts:4",
         "backend/src/workers/browserCoordinator.ts:25",
-        "backend/src/workers/browserModelDispatch.ts:8"
+        "backend/src/workers/browserModelDispatch.ts:8",
+        "frontend/src/lib/showcase/auraGroq.ts:2"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24005,7 +24108,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "frontend/src/app/api/showcase/aura/chat/route.ts"
       ],
       "callers": [
         "backend/src/security/egress/dataClassification.ts:3",
@@ -43050,7 +43154,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "9714db285f158d809a1e6d1bbd5e908987924903d1e53e6c4ad8e1944749c689",
+      "sha256": "2cad7878da6a56b4fd08d781e3dd9832535629fe43497ec588398c109e931135",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -45852,30 +45956,31 @@
       "id": "surface:392a3be5a8c2ea6e751b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/showcase/aura/chat/route.ts",
-      "sha256": "02166b764d7567e8671334fee404bc9e31f1b4635e23d1fd710a29be9d435ebd",
+      "sha256": "ba680aed2e0ab15f8793578cd68cf993d10fae1a925728edcadc17ad2729783b",
       "symbols": [
+        "COOKIE",
         "POST",
+        "address",
         "clientAddress",
-        "current",
+        "deadline",
         "dynamic",
-        "error",
-        "forwardedHost",
+        "headers",
+        "hosts",
         "input",
-        "isRateLimited",
-        "length",
-        "now",
         "origin",
-        "originHost",
-        "payload",
-        "requestHost",
+        "rawCookie",
         "result",
         "runtime",
         "sameOrigin",
-        "windows"
+        "sessionId",
+        "text",
+        "url"
       ],
       "imports": [
         "@/lib/showcase/auraGroq",
-        "next/server"
+        "next/server",
+        "node:crypto",
+        "node:net"
       ],
       "runtimeImports": [
         "frontend/src/lib/showcase/auraGroq.ts"
@@ -45883,18 +45988,24 @@
       "entryPoints": [
         "frontend/src/app/api/showcase/aura/chat/route.ts"
       ],
-      "callers": [],
+      "callers": [
+        "frontend/src/lib/showcase/auraGroq.security.test.ts:10"
+      ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "next/server"
+        "next/server",
+        "node:crypto",
+        "node:net"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/showcase/auraGroq.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -45906,7 +46017,7 @@
       "id": "surface:5e6b155a394927f0928a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/showcase/aura/health/route.ts",
-      "sha256": "16cc07da41f6c1249c8a09f3e4a08da4b12fffdd002c140e7f23ea33997aefeb",
+      "sha256": "c1bd409fd77f9002cffeb2b45cef8419452cdb38ba80e939a1d6f3dc483c57ed",
       "symbols": [
         "GET",
         "configured",
@@ -92244,7 +92355,7 @@
       "id": "surface:2d594f3a160c13055fc8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/showcase/auraGroq.ts",
-      "sha256": "275872c286446c5cc9a7f04ab779b7feb59226549b53e8aa6a485e3df049ff1c",
+      "sha256": "33d4a40bb972d7ddf02fe2565581f94097fa0e73a3f8e68341a907a11a5e3970",
       "symbols": [
         "AURA_MODELS",
         "AuraChatInput",
@@ -92253,26 +92364,61 @@
         "AuraRole",
         "GROQ_CHAT_URL",
         "PERSONAS",
+        "abort",
+        "admitted",
         "apiKey",
+        "auraAbortable",
         "body",
+        "bytes",
+        "checkedGroqResult",
+        "choice",
+        "chunk",
+        "combined",
         "content",
+        "current",
+        "data",
+        "done",
+        "finished",
+        "frame",
+        "frames",
+        "id",
         "item",
+        "lines",
         "maxTokens",
         "messages",
         "model",
+        "offset",
         "parseAuraInput",
+        "parsed",
+        "part",
+        "parts",
         "persona",
+        "readAuraBoundedText",
+        "reader",
+        "rejectResponse",
         "requestGroqStream",
         "response",
-        "temperature"
+        "result",
+        "signal",
+        "temperature",
+        "unavailable",
+        "usage",
+        "wire"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "../../../../backend/src/ai/guestProviderBudget.js",
+        "../../../../backend/src/security/egress/dataClassification.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/guestProviderBudget.ts",
+        "backend/src/security/egress/dataClassification.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/api/showcase/aura/chat/route.ts"
       ],
       "callers": [
-        "frontend/src/app/api/showcase/aura/chat/route.ts:2",
+        "frontend/src/app/api/showcase/aura/chat/route.ts:4",
+        "frontend/src/lib/showcase/auraGroq.security.test.ts:3",
         "frontend/src/lib/showcase/auraGroq.test.ts:3"
       ],
       "reachable": true,
@@ -92283,9 +92429,12 @@
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
-      "costBoundary": [],
+      "costBoundary": [
+        "frontend/src/lib/showcase/auraGroq.ts#withGuestProviderBudget"
+      ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/lib/showcase/auraGroq.security.test.ts",
         "frontend/src/lib/showcase/auraGroq.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -107231,9 +107380,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:4456c46b03da76af7539",
+      "id": "registration:efa3e432bb308a39373b",
       "sourcePath": "backend/src/routes/guestChat.ts",
-      "line": 527,
+      "line": 117,
       "receiver": "router",
       "method": "post",
       "path": "/claim",
@@ -107246,9 +107395,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a5a47d72ce298f0217e6",
+      "id": "registration:dfebe09def58f66a5d5e",
       "sourcePath": "backend/src/routes/guestChat.ts",
-      "line": 542,
+      "line": 132,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -109053,10 +109202,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3c95490adf24e0fa5edd",
-      "registrationId": "registration:4456c46b03da76af7539",
+      "id": "route:39d4e5151a5fa219d34c",
+      "registrationId": "registration:efa3e432bb308a39373b",
       "sourcePath": "backend/src/routes/guestChat.ts",
-      "line": 527,
+      "line": 117,
       "method": "POST",
       "path": "/api/guest/claim",
       "mountChain": [
@@ -109070,10 +109219,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3e406f1e6996783bd6a3",
-      "registrationId": "registration:a5a47d72ce298f0217e6",
+      "id": "route:9829a9db3350ce0a0c24",
+      "registrationId": "registration:dfebe09def58f66a5d5e",
       "sourcePath": "backend/src/routes/guestChat.ts",
-      "line": 542,
+      "line": 132,
       "method": "POST",
       "path": "/api/guest/chat",
       "mountChain": [
@@ -121418,9 +121567,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:8f7ba1d275e316c0a88b",
+      "id": "frontend-call:9f51260c48b1a5c7750a",
       "sourcePath": "frontend/src/lib/showcase/auraGroq.ts",
-      "line": 67,
+      "line": 164,
       "callee": "fetch",
       "reachable": true
     },
@@ -126939,6 +127088,13 @@
       "id": "test-suite:25857af00e070eddec8d",
       "sourcePath": "frontend/src/lib/settingsSections.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4bf25cbac878b459f0f8",
+      "sourcePath": "frontend/src/lib/showcase/auraGroq.security.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
