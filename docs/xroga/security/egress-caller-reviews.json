@@ -3815,6 +3815,31 @@
           "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
         }
       ]
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
+      "sourceFileSha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_COMPOSIO_TRANSPORT_ORIGINAL_CONTEXT_CURRENT_OWNED_SESSION_FINITE_PUBLIC_DISCOVERY_EXACT_PRIVATE_EGRESS_AND_NATIVE_CONFIGURATION_CONFIRMATION",
+      "tenantAuthority": "ISSUED_ACTOR_OWNER_SOURCE_CREDENTIAL_EPOCH_LIVE_ACCOUNT_ONE_USE_CLAIM_SECRET_FLOOR_TERMINAL_DENIAL_AND_VERIFIED_COMPLETION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+          "marker": "7b6e1f490ce974fc3971",
+          "sha256": "e96b43ea77ab48b0c3631f8a1f1d2299b062a096222da1315d5c57d934abd89a"
+        },
+        {
+          "path": "backend/src/services/integrations/composioControl.security.test.ts",
+          "marker": "native Composio control:",
+          "sha256": "01e14c837f7e216a3be14b4b27fab68383cfab31c25fdc242366d4e7c982427d"
+        },
+        {
+          "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
+          "marker": "private connected-app read uses exact existing consent",
+          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+        }
+      ]
     }
   ]
 }

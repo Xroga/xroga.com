@@ -116,6 +116,7 @@ export interface BusinessAppConnectionCandidate {
 }
 
 export type BusinessReadOutcome =
+  | {status:'confirmation_required';confirmation:import('./businessActionConfirmations.js').SafeBusinessActionConfirmation;reviewUrl:string}
   | {
       status: 'success';
 
@@ -952,7 +953,7 @@ export async function readBusinessData(
           useCase,
 
         mode: 'read',
-      },
+      },input.tenantContext
     );
 
   const safeTools =
@@ -1007,7 +1008,7 @@ export async function readBusinessData(
 
         toolkits:
           candidateToolkits,
-      },
+      },input.tenantContext
     );
 
   const connectedSet =
@@ -1133,6 +1134,11 @@ export async function readBusinessData(
           selection.arguments,
       },
     );
+
+  if(execution.needsConfirmation){
+    if(!execution.confirmation||!execution.reviewUrl)throw new ComposioClientError('The exact read consent was not saved.',{status:503,code:'COMPOSIO_READ_CONSENT_UNAVAILABLE'});
+    return{status:'confirmation_required',confirmation:execution.confirmation,reviewUrl:execution.reviewUrl};
+  }
 
   if (
     execution.error

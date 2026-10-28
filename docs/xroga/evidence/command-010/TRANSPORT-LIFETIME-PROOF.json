@@ -121,9 +121,9 @@
   ],
   "counts": {
     "total": 137,
-    "reviewed": 133,
-    "pending": 4,
-    "unresolvedHighRiskReviewCandidates": 1
+    "reviewed": 134,
+    "pending": 3,
+    "unresolvedHighRiskReviewCandidates": 0
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
@@ -651,7 +651,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "d556ca3ca87428bdd9f91c8ffef869fafd28efb1b0dc8a2dc88c02996134e35a",
+      "sha256": "b742f5d59011e26e413eaeb2c858308e9490229b12ec5fd011a86d21b3a9ac3d",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -700,7 +700,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "a9753cb3398b882089c9eb443f53a52100be6d55638dbec6e6289bf0a5ac785f",
+      "sha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessRead.ts",
         "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
@@ -848,5 +848,6 @@
   "expoReadinessContinuation": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
   "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
   "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json",
-  "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
+  "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+  "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json"
 }

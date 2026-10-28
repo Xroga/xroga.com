@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { test, type TestContext } from 'node:test';
+import {nativeReleaseFixture} from '../services/publish/__tests__/nativeReleaseFixture.js';
+import {confirmBusinessAction} from '../services/integrations/businessActionConfirmations.js';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { EventEmitter } from 'node:events';
@@ -26,7 +28,7 @@ const TOOL = 'SLACK_DELETE_MESSAGE';
 type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'incomplete' | 'malformed';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string}) {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL,events?:{onSearch?:()=>void;onAudit?:()=>void;sessionOwner?:()=>string;fixture?:ReturnType<typeof nativeReleaseFixture>}) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   process.env.SUPABASE_URL='http://127.0.0.1:54321';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-offline-service-role';delete process.env.SUPABASE_JWT_SECRET;
@@ -46,6 +48,7 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false,
         assert.doesNotMatch(JSON.stringify(row),/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|fixture-account-A|fixture-message/);
         return new Response(JSON.stringify(row),{headers:{'Content-Type':'application/json'}});
       }
+      const receipt=await events?.fixture?.database(url,init);if(receipt)return receipt;
       assert.fail('Unexpected local security receipt request');
     }
     assert.equal(url.origin,'https://backend.composio.dev','No unexpected provider/production traffic is allowed');
@@ -96,7 +99,7 @@ test('GJ action egress retains the original issued actor context rather than reb
   const claim={id:'fixture-original-context',userId:OWNER,scopeDigest:preparedActionDigest(scope),expiresAt:scope.expiresAt,claimedAt:new Date().toISOString()};
   await executeAuthorizedAction({context,scope,claim,revalidateBeforeEffect:async()=>claim},authorityPermit=>
     executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit}));
-  assert.deepEqual(paths.auditCorrelations,[context.correlationId]);
+  assert.deepEqual(paths.auditCorrelations,[context.correlationId,context.correlationId]);
 });
 
 test('GJ raw-user-ID connected read cannot dispatch without the original issued context',async t=>{
@@ -183,13 +186,15 @@ test('GJ changed or disconnected account blocks the real action adapter before d
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
 });
 
-test('GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result',async t=>{
-  const slug='SLACK_GET_MESSAGE',paths=providerStub(t,'success',true,slug);
-  const result=await executeComposioReadTool(OWNER,{tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),sessionId:SESSION,useCase:'Read the isolated fixture message',toolSlug:slug,arguments:{message_id:'fixture-message'}});
-  assert.equal(result.error,undefined);assert.match(JSON.stringify(result.data),/fixture-deletion-1/);
-  assert.doesNotMatch(JSON.stringify(result),/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|SYNTHETIC_NESTED_CREDENTIAL/);
-  assert.match(JSON.stringify(result.data),/https:\/\/example.invalid\/fixture-result/);
-  assert.match(result.resultDigest!,/^[a-f0-9]{64}$/);assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
+test('GJ legitimate private read waits for exact consent and strips provider credentials before publication',async t=>{
+  const slug='SLACK_GET_MESSAGE',fixture=nativeReleaseFixture(OWNER),paths=providerStub(t,'success',true,slug,{fixture}),actor=createTenantContext({userId:OWNER,via:'remote_getuser'});
+  const result=await executeComposioReadTool(OWNER,{tenantContext:actor,sessionId:SESSION,useCase:'Read the isolated fixture message',toolSlug:slug,arguments:{message_id:'fixture-message'}});
+  assert.equal(result.needsConfirmation,true);assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);assert.ok(fixture.row);
+  const accepted=(await confirmBusinessAction(actor,fixture.row.id)).execution;
+  assert.match(accepted.resultText,/fixture-deletion-1/);
+  assert.doesNotMatch(accepted.resultText,/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|SYNTHETIC_NESTED_CREDENTIAL/);
+  assert.match(accepted.resultText,/https:\/\/example.invalid\/fixture-result/);
+  assert.match(accepted.resultDigest!,/^[a-f0-9]{64}$/);assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
 });
 
 test('GJ a forged permit fails before provider metadata or execution',async t=>{
@@ -199,7 +204,7 @@ test('GJ a forged permit fails before provider metadata or execution',async t=>{
 });
 test('GJ anonymous identity and unconfirmed direct provider action are rejected',async t=>{
   const paths=providerStub(t);
-  await assert.rejects(createActionComposioSession(''),code('XROGA_USER_REQUIRED'));
+  await assert.rejects(createActionComposioSession(''),code('TENANT_AUTH_REQUIRED'));
   await assert.rejects(executeComposioActionTool(OWNER,{sessionId:SESSION,useCase:'Delete fixture',toolSlug:TOOL,arguments:{},authorization:{confirmed:false as unknown as true}}),code('COMPOSIO_ACTION_CONFIRMATION_REQUIRED'));
   assert.equal(paths.length,0);
 });

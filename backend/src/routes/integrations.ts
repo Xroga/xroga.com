@@ -1,3 +1,5 @@
+import {AuthorityError} from '../security/authority/enforce.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
 import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
 import {
   Router,
@@ -1032,6 +1034,7 @@ function sendComposioError(
   res: Response,
   error: unknown,
 ): void {
+  if(error instanceof AuthorityError||error instanceof EgressDenied){res.status(403).json({ok:false,error:'Connection access or approved scope was denied.',code:'COMPOSIO_SECURITY_DENIED'});return;}
   if (
     error instanceof
     ComposioClientError
@@ -1278,14 +1281,14 @@ router.get(
             group: parsed.data.group,
             limit: parsed.data.limit,
             ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
-          })
+          },requireTenantContext(req.tenantContext))
         : await listComposioCatalog({
             sortBy: parsed.data.sortBy,
             limit: parsed.data.limit,
             ...(parsed.data.search ? { search: parsed.data.search } : {}),
             ...(parsed.data.category ? { category: parsed.data.category } : {}),
             ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
-          });
+          },requireTenantContext(req.tenantContext));
 
       res.json({
         ok: true,
@@ -1368,7 +1371,7 @@ router.get(
                 cursor: parsed.data.cursor,
               }
             : {}),
-        },
+        },requireTenantContext(req.tenantContext)
       );
 
       res.json({
@@ -1429,7 +1432,7 @@ router.get(
                 cursor: parsed.data.cursor,
               }
             : {}),
-        },
+        },requireTenantContext(req.tenantContext)
       );
 
       res.json({
@@ -1478,7 +1481,7 @@ router.get(
         return;
       }
 
-      const toolkit = await getComposioCatalogToolkit(parsed.data.toolkit);
+      const toolkit = await getComposioCatalogToolkit(parsed.data.toolkit,requireTenantContext(req.tenantContext));
 
       if (!canUserAccessComposioToolkit(req.userId!, toolkit.slug)) {
         res.status(404).json({
@@ -1570,7 +1573,7 @@ router.post(
     try {
       const session =
         await createReadOnlyComposioSession(
-          req.userId!,
+          req.userId!,requireTenantContext(req.tenantContext)
         );
 
       res.json({
@@ -1641,7 +1644,7 @@ router.post(
       const result =
         await searchComposioTools(
           req.userId!,
-          parsed.data,
+          parsed.data,requireTenantContext(req.tenantContext)
         );
 
       res.json({
@@ -1712,7 +1715,7 @@ router.post(
     try {
       const result = await searchComposioActionTools(
         req.userId!,
-        parsed.data,
+        parsed.data,requireTenantContext(req.tenantContext)
       );
 
       res.json({
@@ -1796,8 +1799,8 @@ router.post(
       };
 
       const toolkits = parsed.data.connectedOnly
-        ? await listConnectedComposioToolkits(req.userId!, input)
-        : await listComposioToolkits(req.userId!, input);
+        ? await listConnectedComposioToolkits(req.userId!, input,requireTenantContext(req.tenantContext))
+        : await listComposioToolkits(req.userId!, input,requireTenantContext(req.tenantContext));
 
       res.json({
         ok: true,
@@ -1824,7 +1827,7 @@ router.get(
     res,
   ) => {
     try {
-      const items = await listUserCustomMcpToolkits(req.userId!);
+      const items = await listUserCustomMcpToolkits(req.userId!,requireTenantContext(req.tenantContext));
 
       res.json({
         ok: true,
@@ -1864,7 +1867,7 @@ router.post(
     try {
       const result = await createUserCustomMcpToolkit(
         req.userId!,
-        parsed.data,
+        parsed.data,requireTenantContext(req.tenantContext)
       );
 
       res.json({
@@ -1919,7 +1922,7 @@ router.post(
           ...(parsed.data.connectedAccountId
             ? { connectedAccountId: parsed.data.connectedAccountId }
             : {}),
-        },
+        },requireTenantContext(req.tenantContext)
       );
 
       res.json({
@@ -1962,7 +1965,7 @@ router.delete(
     try {
       const result = await deleteUserCustomMcpToolkit(
         req.userId!,
-        parsed.data.toolkit,
+        parsed.data.toolkit,requireTenantContext(req.tenantContext)
       );
 
       res.json({
@@ -2054,7 +2057,7 @@ router.post(
                 .toolkit,
 
             callbackUrl,
-          },
+          },requireTenantContext(req.tenantContext)
         );
 
       res.json({

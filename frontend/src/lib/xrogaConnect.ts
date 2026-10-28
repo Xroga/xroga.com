@@ -1,3 +1,5 @@
+export interface XrogaConnectPending {needsConfirmation:true;reviewUrl:string;message:string}
+export function connectReviewUrl(value:XrogaConnectPending):string{if(!/^\/dashboard\/actions\/confirm\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value.reviewUrl))throw new Error('Invalid connection review link.');return value.reviewUrl;}
 import { apiFetch } from '@/lib/api';
 
 export interface XrogaConnectTool {
@@ -441,7 +443,7 @@ export const xrogaConnect = {
       }>('/api/integrations/xroga-connect/custom-mcp'),
 
     create: (input: XrogaCustomMcpCreateInput) =>
-      apiFetch<{
+      apiFetch<XrogaConnectPending|{
         ok: boolean;
         slug: string;
         toolkit?: XrogaConnectCatalogToolkit;
@@ -459,7 +461,7 @@ export const xrogaConnect = {
       toolkit: string,
       connectedAccountId?: string,
     ) =>
-      apiFetch<XrogaCustomMcpSyncResult>(
+      apiFetch<XrogaConnectPending|XrogaCustomMcpSyncResult>(
         `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(
           toolkit,
         )}/sync`,
@@ -476,7 +478,7 @@ export const xrogaConnect = {
       ),
 
     remove: (toolkit: string) =>
-      apiFetch<{
+      apiFetch<XrogaConnectPending|{
         ok: boolean;
         slug: string;
         deleted: boolean;

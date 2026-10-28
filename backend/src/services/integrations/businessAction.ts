@@ -4,7 +4,7 @@ import {
 } from 'node:crypto';
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
 import { businessActionClass } from '../../security/authority/risk.js';
-import { assertAuthorityPermit,AuthorityError } from '../../security/authority/enforce.js';
+import { assertAuthorityPermit,authorityContextForPermit,AuthorityError } from '../../security/authority/enforce.js';
 import type { AuthorityPermit, PreparedAuthorityScope } from '../../security/authority/types.js';
 
 import {
@@ -1126,7 +1126,7 @@ export async function prepareBusinessAction(
       {
         query:
           useCase,
-      },
+      },input.tenantContext
     );
 
   /*
@@ -1186,7 +1186,7 @@ export async function prepareBusinessAction(
 
         toolkits:
           candidateToolkits,
-      },
+      },input.tenantContext
     );
 
   const connectedSet =
@@ -1296,7 +1296,7 @@ export async function prepareBusinessAction(
 
   const details =
     await getComposioToolDetails(
-      selected.slug,
+      selected.slug,input.tenantContext,
     );
 
   if (
@@ -1475,17 +1475,24 @@ export async function executePreparedBusinessAction(
     const result=await executeParallelNativeAction(input.userId,input.plan,input.authorityPermit);
     return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
   }
+  if(input.plan.toolkit==='xroga-native-connect-control'){
+    const {executeComposioControl}=await import('./composioControl.js');
+    const result=await executeComposioControl(input.userId,input.plan,input.authorityPermit);
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
   if(input.plan.toolkit==='xroga-native-expo'){
     const{executeExpoNativeAction}=await import('../publish/easPublish.js');
     const result=await executeExpoNativeAction(input.userId,input.plan,input.authorityPermit);
     if(result.ok!==true)throw new AuthorityError('EXPO_NATIVE_ACTION_NOT_VERIFIED');
     return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
   }
+  let metadataContext:TenantContext|undefined;
   if (input.authorityPermit) {
     const admitted = businessActionAuthorityScope(input.plan);
     assertAuthorityPermit(input.authorityPermit, { userId: input.userId, provider: admitted.provider,
       connectedAccountId: admitted.connectedAccountId, operation: admitted.operation,
       targetDigest: admitted.targetDigest, planDigest: admitted.planDigest });
+    metadataContext=authorityContextForPermit(input.authorityPermit,{userId:input.userId,provider:admitted.provider,connectedAccountId:admitted.connectedAccountId,operation:admitted.operation,targetDigest:admitted.targetDigest,planDigest:admitted.planDigest});
   }
 
   /*
@@ -1497,7 +1504,7 @@ export async function executePreparedBusinessAction(
    */
   const details =
     await getComposioToolDetails(
-      input.plan.toolSlug,
+      input.plan.toolSlug,metadataContext,
     );
 
   if (
@@ -1539,7 +1546,7 @@ export async function executePreparedBusinessAction(
       input.plan.toolkit,
     );
 
-  if (permissionMode === 'read_only') {
+  if (permissionMode === 'read_only' && details.risk!=='read') {
     throw new ComposioClientError('This connected application is read-only.', { status: 403, code: 'BUSINESS_ACTION_READ_ONLY' });
   }
 

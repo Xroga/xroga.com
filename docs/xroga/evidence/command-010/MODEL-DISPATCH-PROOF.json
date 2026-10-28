@@ -536,7 +536,7 @@
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5",
+      "currentSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -635,7 +635,112 @@
           ],
           "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof."
         }
-      }
+      },
+      "beforeComposioBoundary": {
+        "path": "backend/src/routes/phase1.ts",
+        "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+        "currentSha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5",
+        "businessModelContinuationBinding": {
+          "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
+          "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
+          "unchangedToolUiLinkFunctionSha256": "fddbc236a5255bcff25c878a747c44abb719d201b9bbfece0ec3f9b1d1df58cb",
+          "scope": "UNCHANGED_LOCAL_BUFFER_CONVERSION_NOT_NEW_CALLER_CERTIFICATION"
+        },
+        "previousCurrentBinding": {
+          "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+          "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+          "scope": "HISTORICAL_PREPARATION_NOT_NEW_SOURCE_ACCEPTANCE"
+        },
+        "beforeIds": [
+          "ebede146c851a085d2b8"
+        ],
+        "afterIds": [
+          "fb2bffffc91cc072976a"
+        ],
+        "unchangedNearestBlockSha256": [
+          "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
+        ],
+        "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof.",
+        "beforeCurrentMetadataReconciliation": {
+          "path": "backend/src/routes/phase1.ts",
+          "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+          "currentSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+          "businessModelContinuationBinding": {
+            "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
+            "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
+            "unchangedToolUiLinkFunctionSha256": "fddbc236a5255bcff25c878a747c44abb719d201b9bbfece0ec3f9b1d1df58cb",
+            "scope": "UNCHANGED_LOCAL_BUFFER_CONVERSION_NOT_NEW_CALLER_CERTIFICATION"
+          },
+          "previousCurrentBinding": {
+            "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+            "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+            "scope": "HISTORICAL_PREPARATION_NOT_NEW_SOURCE_ACCEPTANCE"
+          },
+          "beforeIds": [
+            "ebede146c851a085d2b8"
+          ],
+          "afterIds": [
+            "ebede146c851a085d2b8"
+          ],
+          "unchangedNearestBlockSha256": [
+            "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
+          ],
+          "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof."
+        },
+        "beforeGithubActorContinuation": {
+          "path": "backend/src/routes/phase1.ts",
+          "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+          "currentSha256": "c39b7e3b3c17442c56c575628bbcf6fdcb56e11453a67190f449da09c5e2e3be",
+          "businessModelContinuationBinding": {
+            "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
+            "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
+            "unchangedToolUiLinkFunctionSha256": "fddbc236a5255bcff25c878a747c44abb719d201b9bbfece0ec3f9b1d1df58cb",
+            "scope": "UNCHANGED_LOCAL_BUFFER_CONVERSION_NOT_NEW_CALLER_CERTIFICATION"
+          },
+          "previousCurrentBinding": {
+            "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+            "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+            "scope": "HISTORICAL_PREPARATION_NOT_NEW_SOURCE_ACCEPTANCE"
+          },
+          "beforeIds": [
+            "ebede146c851a085d2b8"
+          ],
+          "afterIds": [
+            "29043e1b2d0f9c86568b"
+          ],
+          "unchangedNearestBlockSha256": [
+            "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
+          ],
+          "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof.",
+          "beforeCurrentMetadataReconciliation": {
+            "path": "backend/src/routes/phase1.ts",
+            "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+            "currentSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+            "businessModelContinuationBinding": {
+              "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
+              "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
+              "unchangedToolUiLinkFunctionSha256": "fddbc236a5255bcff25c878a747c44abb719d201b9bbfece0ec3f9b1d1df58cb",
+              "scope": "UNCHANGED_LOCAL_BUFFER_CONVERSION_NOT_NEW_CALLER_CERTIFICATION"
+            },
+            "previousCurrentBinding": {
+              "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+              "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+              "scope": "HISTORICAL_PREPARATION_NOT_NEW_SOURCE_ACCEPTANCE"
+            },
+            "beforeIds": [
+              "ebede146c851a085d2b8"
+            ],
+            "afterIds": [
+              "ebede146c851a085d2b8"
+            ],
+            "unchangedNearestBlockSha256": [
+              "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
+            ],
+            "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof."
+          }
+        }
+      },
+      "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json"
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",

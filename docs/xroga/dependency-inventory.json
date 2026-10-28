@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "de91389d184738b4e4237d61b95ee0d163621f43",
+  "source_sha": "b450dd28d26964cfaefe85abbfb2cd9bdc8cf793",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2218,7 +2218,8 @@
       "config_sources": [
         "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
-        "backend/src/services/integrations/composioClient.ts"
+        "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/composioControl.ts"
       ],
       "hostnames": [
         "backend.composio.dev"
@@ -2229,6 +2230,8 @@
       "secret_names": [
         "CI",
         "COMPOSIO_API_KEY",
+        "FRONTEND_URL",
+        "NODE_ENV",
         "SUPABASE_ANON_KEY",
         "SUPABASE_URL",
         "XB01_DISPOSABLE_SUPABASE",
@@ -2248,7 +2251,8 @@
       "observability_source": [
         "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
-        "backend/src/services/integrations/composioClient.ts"
+        "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/composioControl.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -8989,6 +8993,7 @@
         "backend/src/routes/github.ts",
         "backend/src/routes/integrations.ts",
         "backend/src/routes/phase1.ts",
+        "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
@@ -9014,6 +9019,7 @@
         "endpoint-api-github-com",
         "endpoint-api-supabase-com",
         "endpoint-api-vercel-com",
+        "endpoint-backend-composio-dev",
         "endpoint-chrome-google-com",
         "endpoint-chromewebstore-googleapis-com",
         "endpoint-github-com",
@@ -10551,6 +10557,7 @@
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/fixtures/checkoutApproval.ts",
+        "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
@@ -10583,6 +10590,7 @@
         "endpoint-accounts-google-com",
         "endpoint-api-github-com",
         "endpoint-api-vercel-com",
+        "endpoint-backend-composio-dev",
         "endpoint-chrome-google-com",
         "endpoint-chromewebstore-googleapis-com",
         "endpoint-github-com",
@@ -16035,7 +16043,7 @@
     },
     {
       "path": "backend/src/routes/businessAutomations.ts",
-      "sha256": "32496bf9cf506e551a51c0136f55290ce9be48529232ebdb8d8d25fc216aefd5"
+      "sha256": "13aff7d36510abf33943aecc6176cb6d70ed10a438b2e4c0c698414ffc7a7c7a"
     },
     {
       "path": "backend/src/routes/capabilities.ts",
@@ -16083,7 +16091,7 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "28db7d3d2e13a4194ebbe5a846f884145f42bf1f6b86d0d470e7e79d13e462fa"
+      "sha256": "e6aab8dfd7f534aeb38932151f6ef807eb71447e4bc2b538e6d01b0585905a21"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -16107,11 +16115,11 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5"
+      "sha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "sha256": "6b5aed371ac33564837c5595a035098cd030bfcfb5557e607baa1c0ca45a680b"
+      "sha256": "3c7575cc189c581be5f16f26ec4b9820b82b12d00eff6edb0a9d79b2d3191606"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -16583,7 +16591,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "d556ca3ca87428bdd9f91c8ffef869fafd28efb1b0dc8a2dc88c02996134e35a"
+      "sha256": "b742f5d59011e26e413eaeb2c858308e9490229b12ec5fd011a86d21b3a9ac3d"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -16591,7 +16599,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "sha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sha256": "4be929bbebe757032e053312b5477c735fa7e68e06099c1157875aad770f43a0"
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
@@ -16603,7 +16611,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "a9753cb3398b882089c9eb443f53a52100be6d55638dbec6e6289bf0a5ac785f"
+      "sha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
@@ -16611,11 +16619,15 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "c41ed5f503c3141fc40f9af20567fa3432957731813cc995a0cb67b5f6c48bef"
+      "sha256": "9dd08269a9ec339afdd6b6dee0c46837a2887213fa84355e7a7417bf69aaad4c"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "46ae27a7e2e80a4a0f8f7d574ff183527b860d84eee93f0dfd408a252f9b18f4"
+      "sha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac"
+    },
+    {
+      "path": "backend/src/services/integrations/composioControl.ts",
+      "sha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -18175,7 +18187,7 @@
     },
     {
       "path": "frontend/src/components/automations/ConnectedAppAutomations.tsx",
-      "sha256": "b3fc7aa2561edee7b60b7d4958ac3916dc44dc9cffcd732adbad5f459cb90dc4"
+      "sha256": "69acb06d9c52e3b695a5e383847393799dacc2a40a77753ea2ccc685c3de9f92"
     },
     {
       "path": "frontend/src/components/automations/Connections.tsx",
@@ -19267,7 +19279,7 @@
     },
     {
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "sha256": "9dbbb07ceeb7bc2054f66a762073d3cf34959ec5219e13fd13313c79febd45a3"
+      "sha256": "47340753ec6349b09b1da846fe02628fee0af5f8b37eebfaa59cd9bc585f76a7"
     },
     {
       "path": "frontend/src/components/integrations/FreeApiOptionsPanel.tsx",
@@ -21215,7 +21227,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
-      "sha256": "319972849e4f186d88aca4e21df858aaf7c03cb524cd393a8ecdf8ec3f19cae2"
+      "sha256": "f21dc8a91d626123ecda91340d33738b9b95f3a6aa0df80fa231c7a1540c835b"
     },
     {
       "path": "frontend/src/lib/xrogaCsv.ts",
@@ -23036,7 +23048,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/integrations.ts",
-      "line": 2035,
+      "line": 2038,
       "credentialsInUrl": false
     },
     {
@@ -24016,7 +24028,28 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 14,
+      "line": 16,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 1379,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "backend.composio.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 1402,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "backend.composio.dev",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/composioControl.ts",
+      "line": 46,
       "credentialsInUrl": false
     },
     {
@@ -26214,14 +26247,14 @@
       "hostname": "mcp.example.com",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 174,
+      "line": 178,
       "credentialsInUrl": false
     },
     {
       "hostname": "mcp.example.com",
       "protocol": "https:",
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
-      "line": 221,
+      "line": 225,
       "credentialsInUrl": false
     },
     {
@@ -30617,7 +30650,7 @@
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 98,
+      "line": 99,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30897,56 +30930,63 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 518,
+      "line": 519,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 989,
+      "line": 990,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 1014,
+      "line": 1015,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 684,
+      "line": 701,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1222,
+      "line": 1275,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1251,
+      "line": 1304,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1282,
+      "line": 1335,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1874,
+      "line": 1841,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "line": 1967,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

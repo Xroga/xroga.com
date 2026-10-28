@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "420f862f485f096b181bf563d19c101c608ea44604c98f3d0552c5d08de7d65e",
+  "sourceTreeDigest": "857374195403194bfcea63620faf8c48aff9ebe1cbbc89ba439d3cfd5c7580cc",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2207,18 +2207,34 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1357,
+      "line": 1417,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "1f06964e3595fc899b121df8315d0b3f5046c94882584add4563084a4a970881",
+      "callSha256": "9bdd54f164230d27aca5d0bdf34fc470042478bcc9bd0f1037b146d00f035cd4",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_COMPOSIO_TRANSPORT_ORIGINAL_CONTEXT_CURRENT_OWNED_SESSION_FINITE_PUBLIC_DISCOVERY_EXACT_PRIVATE_EGRESS_AND_NATIVE_CONFIGURATION_CONFIRMATION",
+      "tenantAuthority": "ISSUED_ACTOR_OWNER_SOURCE_CREDENTIAL_EPOCH_LIVE_ACCOUNT_ONE_USE_CLAIM_SECRET_FLOOR_TERMINAL_DENIAL_AND_VERIFIED_COMPLETION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+          "marker": "7b6e1f490ce974fc3971",
+          "sha256": "e96b43ea77ab48b0c3631f8a1f1d2299b062a096222da1315d5c57d934abd89a"
+        },
+        {
+          "path": "backend/src/services/integrations/composioControl.security.test.ts",
+          "marker": "native Composio control:",
+          "sha256": "01e14c837f7e216a3be14b4b27fab68383cfab31c25fdc242366d4e7c982427d"
+        },
+        {
+          "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
+          "marker": "private connected-app read uses exact existing consent",
+          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+        }
+      ]
     },
     {
       "id": "90eeada0337da120131f",
@@ -4460,8 +4476,8 @@
   ],
   "counts": {
     "total": 137,
-    "reviewed": 133,
-    "pending": 4,
-    "unresolvedHighRiskBypasses": 1
+    "reviewed": 134,
+    "pending": 3,
+    "unresolvedHighRiskBypasses": 0
   }
 }

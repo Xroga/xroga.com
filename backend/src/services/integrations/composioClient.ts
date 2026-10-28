@@ -1,15 +1,17 @@
 import { xrogaCustomUserToken, xrogaCustomToolkitPrefix, canUserAccessComposioToolkit, canUserAccessComposioToolSlug } from './composioNamespace.js';
-import { createHash } from 'node:crypto';
+import { createHash,randomUUID } from 'node:crypto';
 import { redactOperationsValue } from '../../operations/operationsEngine.js';
 export { xrogaCustomToolkitPrefix, canUserAccessComposioToolkit, canUserAccessComposioToolSlug } from './composioNamespace.js';
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
-import { assertAuthorityPermit, consumeAuthorityPermit,authorityContextForPermit } from '../../security/authority/enforce.js';
+import { AuthorityError,assertAuthorityPermit, consumeAuthorityPermit,authorityContextForPermit } from '../../security/authority/enforce.js';
 import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
 import { businessActionClass } from '../../security/authority/risk.js';
 import { requireTenantContext,requireResourceOwner,type TenantContext } from '../../security/tenantContext.js';
 import { enforceEgress,EgressDenied } from '../../security/egress/egressPolicy.js';
 import { persistSecurityDecision } from '../../security/egress/securityDecision.js';
 import {classifyOutboundData} from '../../security/egress/dataClassification.js';
+import {publicHttpsUrl} from '../../security/egress/urlPolicy.js';
+import {prepareComposioControl,requireComposioControl,type ComposioControlAdmission,type ComposioControlPending} from './composioControl.js';
 
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
@@ -26,6 +28,18 @@ const MAX_COMPOSIO_CACHE_ENTRIES = 60;
 
 const READ_ONLY_TAG = 'readOnlyHint';
 const DESTRUCTIVE_TAG = 'destructiveHint';
+const actorCredentialEpochs=new WeakMap<object,string>();
+function currentComposioCredential(context?:TenantContext):string{
+  let key:string;try{key=getComposioApiKey();}catch(error){if(context&&actorCredentialEpochs.has(context))throw new AuthorityError('COMPOSIO_CREDENTIAL_CHANGED');throw error;}
+  if(context){requireTenantContext(context);const digest=createHash('sha256').update(key).digest('hex'),prior=actorCredentialEpochs.get(context);if(prior&&prior!==digest)throw new AuthorityError('COMPOSIO_CREDENTIAL_CHANGED');actorCredentialEpochs.set(context,digest);}return key;
+}
+
+function requireComposioActor(userId:string,supplied?:TenantContext):TenantContext{
+  const context=requireTenantContext(supplied);requireResourceOwner(context,userId);currentComposioCredential(context);return context;
+}
+export function composioControlSource(context:TenantContext):string{
+  requireComposioActor(context.userId,context);return actorCredentialEpochs.get(context)!;
+}
 
 export type XrogaConnectMode = 'read' | 'action';
 
@@ -291,6 +305,9 @@ interface ComposioToolDetailsResponse {
 }
 
 export interface ComposioExecuteResponse {
+  needsConfirmation?:boolean;
+  reviewUrl?:string;
+  confirmation?:import('./businessActionConfirmations.js').SafeBusinessActionConfirmation;
   result_type?: string;
   data?: unknown;
   error?: string;
@@ -692,7 +709,10 @@ const catalogCache = new Map<
 async function cachedComposioValue<T>(
   key: string,
   load: () => Promise<T>,
+  fresh=false,
 ): Promise<T> {
+  if(fresh)return load();
+  key=createHash('sha256').update(currentComposioCredential()).digest('hex')+':'+key;
   const now = Date.now();
   const cached = catalogCache.get(key);
 
@@ -769,18 +789,14 @@ function validateCustomMcpUrl(value: string, field: string): string {
     });
   }
 
-  const localHttp =
-    url.protocol === 'http:' &&
-    (url.hostname === 'localhost' || url.hostname === '127.0.0.1');
-
-  if (url.protocol !== 'https:' && !localHttp) {
+  try{publicHttpsUrl(value);}catch{
     throw new ComposioClientError(`${field} must use HTTPS.`, {
       status: 400,
       code: 'UNSAFE_CUSTOM_MCP_URL',
     });
   }
 
-  return url.toString();
+  return publicHttpsUrl(value).href;
 }
 
 function xrogaCustomToolkitRegistrationSlug(
@@ -805,7 +821,9 @@ function clearComposioCatalogCache(): void {
 
 export async function listUserCustomMcpToolkits(
   userId: string,
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectCatalogToolkit[]> {
+  const actor=requireComposioActor(userId,tenantContext);
   const prefix = xrogaCustomToolkitPrefix(userId);
   const collected: XrogaConnectCatalogToolkit[] = [];
   let cursor: string | undefined;
@@ -816,7 +834,8 @@ export async function listUserCustomMcpToolkits(
       sortBy: 'alphabetically',
       limit: MAX_CATALOG_PAGE_SIZE,
       ...(cursor ? { cursor } : {}),
-    });
+      fresh:true,
+    },actor);
 
     for (const item of page.items) {
       if (
@@ -837,11 +856,16 @@ export async function listUserCustomMcpToolkits(
 export async function createUserCustomMcpToolkit(
   userId: string,
   input: XrogaCustomMcpCreateInput,
-): Promise<{
+  tenantContext?: TenantContext,
+  admission?:ComposioControlAdmission,
+): Promise<ComposioControlPending|{
   slug: string;
   toolkit?: XrogaConnectCatalogToolkit;
   initialSync?: XrogaCustomMcpSyncResult;
 }> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
+  if(!['none','api_key','dcr_oauth'].includes(input.authMode)||classifyOutboundData(input,'USER_PRIVATE').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   const name = input.name.trim().slice(0, 80);
   if (name.length < 2) {
     throw new ComposioClientError('Custom MCP name is too short.', {
@@ -854,7 +878,7 @@ export async function createUserCustomMcpToolkit(
   const registrationSlug = xrogaCustomToolkitRegistrationSlug(userId, name);
   const expectedSlug = `CUSTOM_${registrationSlug}`.toLowerCase();
 
-  const existing = await listUserCustomMcpToolkits(userId);
+  const existing = await listUserCustomMcpToolkits(userId,actor);
   if (existing.some((item) => item.slug.toLowerCase() === expectedSlug)) {
     throw new ComposioClientError(
       'A Custom MCP with this name already exists. Remove it before changing its server or authentication mode.',
@@ -911,11 +935,16 @@ export async function createUserCustomMcpToolkit(
     };
   }
 
+  const parameters={resource:expectedSlug,connection:composioControlSource(actor),input};
+  if(!admission)return prepareComposioControl(actor,'CREATE_CUSTOM_MCP',parameters,`Register the exact remote MCP ${name} at ${serverUrl}, using ${input.authMode}. Its tool metadata remains untrusted. Registration does not authorize tool execution.`);
+  const {beforeDispatch}=requireComposioControl(admission,actor,'CREATE_CUSTOM_MCP',parameters);
+
   const response =
     await composioRequest<ComposioCustomToolkitUpsertResponse>(
       '/custom/toolkits/upsert',
       {
         method: 'POST',
+        beforeDispatch,
         body: {
           slug: registrationSlug,
           toolkit_config: {
@@ -924,11 +953,11 @@ export async function createUserCustomMcpToolkit(
             auth_schemes: [authScheme],
           },
         },
-      },
+      },actor
     );
 
   const slug = response.slug?.trim().toLowerCase();
-  if (!slug || !canUserAccessComposioToolkit(userId, slug)) {
+  if (slug!==expectedSlug) {
     throw new ComposioClientError(
       'Custom MCP registration returned an invalid toolkit identifier.',
       {
@@ -939,8 +968,9 @@ export async function createUserCustomMcpToolkit(
   }
 
   if (input.authMode !== 'none') {
-    await composioRequest('/auth_configs', {
+    const auth=await composioRequest<{toolkit?:{slug?:string};auth_config?:{id?:string;auth_scheme?:string;is_composio_managed?:boolean}}>('/auth_configs', {
       method: 'POST',
+      beforeDispatch,
       body: {
         toolkit: {
           slug,
@@ -955,37 +985,21 @@ export async function createUserCustomMcpToolkit(
           is_enabled_for_tool_router: true,
         },
       },
-    });
+    },actor);
+    if(auth.toolkit?.slug?.toLowerCase()!==slug||!/^ac_[A-Za-z0-9_-]{1,190}$/.test(auth.auth_config?.id??'')||auth.auth_config?.is_composio_managed!==false||auth.auth_config.auth_scheme!==(input.authMode==='api_key'?'API_KEY':'DCR_OAUTH'))throw new AuthorityError('COMPOSIO_CUSTOM_AUTH_CONFIG_NOT_VERIFIED');
   }
 
   clearComposioCatalogCache();
 
-  let initialSync: XrogaCustomMcpSyncResult | undefined;
-  if (input.authMode === 'none') {
-    try {
-      initialSync = await syncUserCustomMcpToolkit(userId, {
-        toolkit: slug,
-      });
-    } catch {
-      // Registration already starts the initial no-auth sync. A manual sync
-      // failure here must not discard a successfully registered server.
-    }
-  }
+  // Composio starts initial synchronization on registration. A separate sync
+  // remains an independently reviewed action, never an automatic denial retry.
 
-  let toolkit: XrogaConnectCatalogToolkit | undefined;
-  try {
-    const resolved = await getComposioCatalogToolkit(slug);
-    if (canUserAccessComposioToolkit(userId, resolved.slug)) {
-      toolkit = resolved;
-    }
-  } catch {
-    // Upstream indexing can lag briefly after registration.
-  }
+  const toolkit=await getComposioCatalogToolkit(slug,actor);
+  if(toolkit.slug!==expectedSlug||toolkit.appUrl!==serverUrl)throw new AuthorityError('COMPOSIO_CUSTOM_MCP_READBACK_REQUIRED');
 
   return {
     slug,
-    ...(toolkit ? { toolkit } : {}),
-    ...(initialSync ? { initialSync } : {}),
+    toolkit,
   };
 }
 
@@ -995,21 +1009,42 @@ export async function syncUserCustomMcpToolkit(
     toolkit: string;
     connectedAccountId?: string;
   },
-): Promise<XrogaCustomMcpSyncResult> {
+  tenantContext?: TenantContext,
+  admission?:ComposioControlAdmission,
+): Promise<ComposioControlPending|XrogaCustomMcpSyncResult> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
   const toolkit = cleanToolkit(input.toolkit);
 
-  if (!canUserAccessComposioToolkit(userId, toolkit)) {
+  if (!toolkit.startsWith(xrogaCustomToolkitPrefix(userId))) {
     throw new ComposioClientError('Custom MCP was not found.', {
       status: 404,
       code: 'CUSTOM_MCP_NOT_FOUND',
     });
   }
 
+  const metadata=await getComposioCatalogToolkit(toolkit,actor);
+  if(!metadata.appUrl)throw new AuthorityError('COMPOSIO_CUSTOM_MCP_SOURCE_UNAVAILABLE');
+  publicHttpsUrl(metadata.appUrl);
+  if(input.connectedAccountId||!metadata.noAuth){
+    const session=await createReadOnlyComposioSession(userId,actor),accounts=await listConnectedComposioToolkits(userId,{sessionId:session.session_id,toolkits:[toolkit]},actor);
+    if(!input.connectedAccountId||!accounts.some(item=>item.connected&&item.toolkit===toolkit&&item.connectedAccountId===input.connectedAccountId))throw new AuthorityError('COMPOSIO_CUSTOM_MCP_ACCOUNT_DENIED');
+  }
+  const parameters={resource:toolkit,connection:composioControlSource(actor),source:{appUrl:metadata.appUrl,authSchemes:metadata.authSchemes,noAuth:metadata.noAuth},input};
+  if(!admission)return prepareComposioControl(actor,'SYNC_CUSTOM_MCP',parameters,`Re-fetch untrusted tool definitions from ${metadata.appUrl} for ${toolkit}, using only the displayed owned connection. This does not authorize tool execution.`);
+  const approval=requireComposioControl(admission,actor,'SYNC_CUSTOM_MCP',parameters),beforeDispatch=async()=>{
+    await approval.beforeDispatch();const current=await getComposioCatalogToolkit(toolkit,actor);
+    if(preparedActionDigest({appUrl:current.appUrl,authSchemes:current.authSchemes,noAuth:current.noAuth})!==preparedActionDigest(parameters.source))throw new AuthorityError('COMPOSIO_CUSTOM_MCP_SOURCE_CHANGED');
+    if(input.connectedAccountId){const session=await createReadOnlyComposioSession(userId,actor),accounts=await listConnectedComposioToolkits(userId,{sessionId:session.session_id,toolkits:[toolkit]},actor);if(!accounts.some(item=>item.connected&&item.connectedAccountId===input.connectedAccountId))throw new AuthorityError('COMPOSIO_CUSTOM_MCP_ACCOUNT_DENIED');}
+    await approval.check();
+  };
+
   const response =
     await composioRequest<ComposioCustomToolkitSyncResponse>(
       '/custom/toolkits/sync',
       {
         method: 'POST',
+        beforeDispatch,
         body: {
           slug: toolkit,
           ...(input.connectedAccountId
@@ -1020,10 +1055,12 @@ export async function syncUserCustomMcpToolkit(
             : {}),
         },
         timeoutMs: EXECUTE_TIMEOUT_MS,
-      },
+      },actor
     );
 
   clearComposioCatalogCache();
+
+  if(response.slug?.toLowerCase()!==toolkit||typeof response.version!=='string'||!response.version||response.version.length>100||!Number.isSafeInteger(response.synced_count)||Number(response.synced_count)<0)throw new AuthorityError('COMPOSIO_CUSTOM_MCP_SYNC_NOT_VERIFIED');
 
   return {
     slug: response.slug?.trim().toLowerCase() || toolkit,
@@ -1043,28 +1080,41 @@ export async function syncUserCustomMcpToolkit(
 export async function deleteUserCustomMcpToolkit(
   userId: string,
   toolkitSlug: string,
-): Promise<{
+  tenantContext?: TenantContext,
+  admission?:ComposioControlAdmission,
+): Promise<ComposioControlPending|{
   slug: string;
   deleted: boolean;
 }> {
+  const actor=requireComposioActor(userId,tenantContext);
   const toolkit = cleanToolkit(toolkitSlug);
 
-  if (!canUserAccessComposioToolkit(userId, toolkit)) {
+  if (!toolkit.startsWith(xrogaCustomToolkitPrefix(userId))) {
     throw new ComposioClientError('Custom MCP was not found.', {
       status: 404,
       code: 'CUSTOM_MCP_NOT_FOUND',
     });
   }
 
+  const metadata=await getComposioCatalogToolkit(toolkit,actor),parameters={resource:toolkit,connection:composioControlSource(actor),source:{appUrl:metadata.appUrl??null,authSchemes:metadata.authSchemes,noAuth:metadata.noAuth},input:{toolkit}};
+  if(!admission)return prepareComposioControl(actor,'DELETE_CUSTOM_MCP',parameters,`Delete only ${toolkit} and its associated custom authentication configurations and connected accounts. This revokes access to that registered MCP.`);
+  const approval=requireComposioControl(admission,actor,'DELETE_CUSTOM_MCP',parameters),beforeDispatch=async()=>{
+    await approval.beforeDispatch();const current=await getComposioCatalogToolkit(toolkit,actor);
+    if(preparedActionDigest({appUrl:current.appUrl??null,authSchemes:current.authSchemes,noAuth:current.noAuth})!==preparedActionDigest(parameters.source))throw new AuthorityError('COMPOSIO_CUSTOM_MCP_SOURCE_CHANGED');await approval.check();
+  };
+
   const response =
     await composioRequest<ComposioCustomToolkitDeleteResponse>(
       `/custom/toolkits/${encodeURIComponent(toolkit)}`,
       {
         method: 'DELETE',
-      },
+        beforeDispatch,
+      },actor
     );
 
   clearComposioCatalogCache();
+
+  if(response.slug?.toLowerCase()!==toolkit||response.deleted!==true)throw new AuthorityError('COMPOSIO_CUSTOM_MCP_DELETE_NOT_VERIFIED');
 
   return {
     slug: response.slug?.trim().toLowerCase() || toolkit,
@@ -1103,6 +1153,7 @@ function composioUserId(userId: string): string {
 }
 
 function cleanSessionId(sessionId: string): string {
+  if(classifyOutboundData({value:sessionId},'PUBLIC').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   const clean = sessionId.trim();
 
   if (!/^trs_[A-Za-z0-9_-]+$/.test(clean)) {
@@ -1116,6 +1167,7 @@ function cleanSessionId(sessionId: string): string {
 }
 
 function cleanToolkit(toolkit: string): string {
+  if(classifyOutboundData({value:toolkit},'PUBLIC').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   const clean = toolkit.trim().toLowerCase();
 
   if (!/^[a-z0-9][a-z0-9_-]{1,79}$/.test(clean)) {
@@ -1129,6 +1181,7 @@ function cleanToolkit(toolkit: string): string {
 }
 
 function cleanToolSlug(toolSlug: string): string {
+  if(classifyOutboundData({value:toolSlug},'PUBLIC').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   const clean = toolSlug.trim();
 
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]{2,199}$/.test(clean)) {
@@ -1323,15 +1376,10 @@ function validateCallbackUrl(value: string): string {
     });
   }
 
-  const localHttp =
-    url.protocol === 'http:' &&
-    (url.hostname === 'localhost' || url.hostname === '127.0.0.1');
-
-  if (url.protocol !== 'https:' && !localHttp) {
-    throw new ComposioClientError('Unsafe integration callback URL.', {
-      status: 500,
-      code: 'UNSAFE_COMPOSIO_CALLBACK',
-    });
+  const expected=new URL('/dashboard/integrations/connect/callback',(process.env.FRONTEND_URL?.trim()||'https://xroga.com').replace(/\/$/, '')+'/');
+  const localHttp=process.env.NODE_ENV!=='production'&&expected.protocol==='http:'&&['localhost','127.0.0.1'].includes(expected.hostname);
+  if((expected.protocol!=='https:'&&!localHttp)||url.href!==expected.href||url.username||url.password||url.search||url.hash){
+    throw new ComposioClientError('Unsafe integration callback URL.',{status:400,code:'UNSAFE_COMPOSIO_CALLBACK'});
   }
 
   return url.toString();
@@ -1344,30 +1392,41 @@ async function composioRequest<T>(
     body?: unknown;
     timeoutMs?: number;
     signal?: AbortSignal;
+    beforeDispatch?:()=>Promise<void>;
   } = {},
+  tenantContext?: TenantContext,
 ): Promise<T> {
+  const method=options.method??'GET',context=tenantContext===undefined?undefined:requireTenantContext(tenantContext);
+  if(typeof path!=='string'||!path.startsWith('/')||path.startsWith('//')||/[\\\x00-\x20\x7f#]/.test(path)||/%(?:2e|2f|5c)/i.test(path.split('?')[0]))throw new EgressDenied('UNSAFE_DESTINATION');
+  const url=new URL(COMPOSIO_API_BASE+path),relative=url.pathname.slice('/api/v3.1'.length);
+  if(url.origin!=='https://backend.composio.dev'||!url.pathname.startsWith('/api/v3.1/')||!['GET','POST','DELETE'].includes(method))throw new EgressDenied('UNSAFE_DESTINATION');
+  const publicMetadata=method==='GET'&&/^\/(?:toolkits(?:\/[A-Za-z0-9_-]+(?:\/tools)?)?|tools(?:\/[A-Za-z0-9_-]+)?|triggers_types(?:\/[A-Za-z0-9_-]+)?)$/.test(relative);
+  if(!publicMetadata)requireTenantContext(context);
+  const credential=currentComposioCredential(context),body=options.body===undefined?undefined:JSON.stringify(options.body),signal=options.signal,timeout=options.timeoutMs??DEFAULT_TIMEOUT_MS;
+  if(!Number.isSafeInteger(timeout)||timeout<1||timeout>EXECUTE_TIMEOUT_MS||body!==undefined&&Buffer.byteLength(body)>128000)throw new EgressDenied('INVALID_EGRESS_INPUT');
+  const check=()=>{signal?.throwIfAborted();if(context)requireTenantContext(context);if(currentComposioCredential(context)!==credential)throw new AuthorityError('COMPOSIO_CREDENTIAL_CHANGED');};
   const controller = new AbortController();
   const timer = setTimeout(
     () => controller.abort(),
-    options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
+    timeout,
   );
 
   try {
-    options.signal?.throwIfAborted();
-    const response = await fetch(`${COMPOSIO_API_BASE}${path}`, {
-      method: options.method ?? 'GET',
+    if(options.beforeDispatch)await options.beforeDispatch();
+    controller.signal.throwIfAborted();check();
+    const response = await fetch(url.href, {
+      method,
       redirect:'manual',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'x-api-key': getComposioApiKey(),
+        'x-api-key': credential,
       },
-      body:
-        options.body === undefined
-          ? undefined
-          : JSON.stringify(options.body),
-      signal: AbortSignal.any([controller.signal,...(options.signal?[options.signal]:[])]),
+      body,
+      signal: AbortSignal.any([controller.signal,...(signal?[signal]:[])]),
     });
+    check();
+    if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('COMPOSIO_PROVIDER_AUTHORIZATION_DENIED');}
 
     if(response.redirected||response.status>=300&&response.status<400){
       await response.body?.cancel().catch(()=>undefined);
@@ -1400,6 +1459,7 @@ async function composioRequest<T>(
       }
     }finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
     const text=Buffer.concat(chunks).toString('utf8');
+    check();
 
     let payload: unknown = {};
 
@@ -1447,8 +1507,8 @@ async function composioRequest<T>(
     return payload as T;
   } catch (error) {
     // Caller cancellation is terminal, not a provider timeout or retry signal.
-    options.signal?.throwIfAborted();
-    if (error instanceof ComposioClientError || error instanceof EgressDenied) {
+    signal?.throwIfAborted();
+    if (error instanceof ComposioClientError || error instanceof EgressDenied ||error instanceof AuthorityError) {
       throw error;
     }
 
@@ -1490,7 +1550,9 @@ async function getCurrentSessionConfig(
   sessionId: string,
   session: ComposioSession,
   requireTags: boolean,
+  tenantContext?: TenantContext,
 ): Promise<ComposioSessionConfig | undefined> {
+  const actor=requireTenantContext(tenantContext);
   if (
     session.config?.user_id &&
     (!requireTags || enabledSessionTags(session.config).length > 0)
@@ -1501,14 +1563,12 @@ async function getCurrentSessionConfig(
   const history = await composioRequest<ComposioConfigHistoryResponse>(
     `/tool_router/session/${encodeURIComponent(
       sessionId,
-    )}/config_history?limit=1`,
+    )}/config_history?limit=1`,{},actor
   );
 
-  const current =
-    history.items?.find((item) => item.is_current === true) ??
-    history.items?.[0];
-
-  return current?.config ?? session.config;
+  const current=history.items?.filter(item=>item.is_current===true);
+  if(current?.length!==1||!current[0].config)throw new AuthorityError('COMPOSIO_CURRENT_CONFIG_UNAVAILABLE');
+  return current[0].config;
 }
 
 function validateSafeRuntimeConfig(
@@ -1579,7 +1639,9 @@ function validateReadOnlyConfig(
 async function createComposioSession(
   userId: string,
   mode: XrogaConnectMode,
+  tenantContext?: TenantContext,
 ): Promise<ComposioSession> {
+  const actor=requireComposioActor(userId,tenantContext);
   const body: Record<string, unknown> = {
     user_id: composioUserId(userId),
     workbench: {
@@ -1608,7 +1670,7 @@ async function createComposioSession(
     {
       method: 'POST',
       body,
-    },
+    },actor
   );
 
   if (!session.session_id || !session.session_id.startsWith('trs_')) {
@@ -1621,42 +1683,55 @@ async function createComposioSession(
     );
   }
 
-  return session;
+  // Session creation is a provider receipt, never ownership proof by itself.
+  return assertComposioSession(userId,session.session_id,mode,actor);
 }
 
 export async function createReadOnlyComposioSession(
   userId: string,
+  tenantContext?: TenantContext,
 ): Promise<ComposioSession> {
-  return createComposioSession(userId, 'read');
+  const actor=requireComposioActor(userId,tenantContext);
+  return createComposioSession(userId, 'read',actor);
 }
 
 export async function createActionComposioSession(
   userId: string,
+  tenantContext?: TenantContext,
 ): Promise<ComposioSession> {
-  return createComposioSession(userId, 'action');
+  const actor=requireComposioActor(userId,tenantContext);
+  return createComposioSession(userId, 'action',actor);
 }
 
 export async function getComposioSession(
   sessionId: string,
+  tenantContext?: TenantContext,
 ): Promise<ComposioSession> {
+  const actor=requireTenantContext(tenantContext);
   const clean = cleanSessionId(sessionId);
 
-  return composioRequest<ComposioSession>(
-    `/tool_router/session/${encodeURIComponent(clean)}`,
+  const session=await composioRequest<ComposioSession>(
+    `/tool_router/session/${encodeURIComponent(clean)}`,{},actor
   );
+  if(session.session_id!==clean)throw new AuthorityError('COMPOSIO_SESSION_CHANGED');
+  const config=await getCurrentSessionConfig(clean,session,false,actor),owners=[session.config?.user_id,config?.user_id].filter(value=>typeof value==='string'&&value.length>0);
+  if(!owners.length||owners.some(owner=>owner!==composioUserId(actor.userId)))throw new AuthorityError('COMPOSIO_SESSION_FORBIDDEN');
+  validateSafeRuntimeConfig(config);return{...session,config};
 }
 
 export async function assertComposioSession(
   userId: string,
   sessionId: string,
   mode: XrogaConnectMode,
+  tenantContext?: TenantContext,
 ): Promise<ComposioSession> {
+  const actor=requireComposioActor(userId,tenantContext);
   const clean = cleanSessionId(sessionId);
-  const session = await getComposioSession(clean);
+  const session = await getComposioSession(clean,actor);
   const currentConfig = await getCurrentSessionConfig(
     clean,
     session,
-    mode === 'read',
+    mode === 'read',actor
   );
   const expectedUserId = composioUserId(userId);
 
@@ -1700,8 +1775,10 @@ export async function assertComposioSession(
 export async function assertReadOnlyComposioSession(
   userId: string,
   sessionId: string,
+  tenantContext?: TenantContext,
 ): Promise<ComposioSession> {
-  return assertComposioSession(userId, sessionId, 'read');
+  const actor=requireComposioActor(userId,tenantContext);
+  return assertComposioSession(userId, sessionId, 'read',actor);
 }
 
 function mapSearchTool(
@@ -1733,8 +1810,12 @@ export async function searchComposioTools(
     sessionId?: string;
     mode?: XrogaConnectMode;
   },
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectSearchResult> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
   const query = input.query.trim();
+  if(classifyOutboundData({query},'USER_PRIVATE').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
 
   if (query.length < 2 || query.length > 500) {
     throw new ComposioClientError(
@@ -1748,22 +1829,28 @@ export async function searchComposioTools(
 
   const mode = input.mode ?? 'read';
   const session = input.sessionId
-    ? await assertComposioSession(userId, input.sessionId, mode)
-    : await createComposioSession(userId, mode);
+    ? await assertComposioSession(userId, input.sessionId, mode,actor)
+    : await createComposioSession(userId, mode,actor);
+
+  // Discovery receives a finite server vocabulary and provider-owned app IDs.
+  // Names, recipients, private project text and query values stay local for the
+  // existing selector. Metadata never supplies execution authority.
+  const connected=await listSessionComposioToolkits(userId,{sessionId:session.session_id,mode,connectedOnly:true},actor);
+  const apps=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).map(item=>item.toolkit.toLowerCase()).slice(0,20);
+  const vocabulary=['get','list','find','search','read','send','create','update','delete','archive','upload','download','publish','message','email','task','issue','file','event','contact','row','record','invoice','calendar','channel','document','spreadsheet'];
+  const words=new Set(query.toLowerCase().match(/[a-z]+/g)??[]),terms=vocabulary.filter(word=>words.has(word));
+  const publicQuery=`Find ${mode} tools for ${apps.join(', ')||'available applications'}: ${terms.join(' ')||'available operations'}.`;
+  const payload={queries:[{use_case:publicQuery}],search_strategy:'tool_search'};
+  const digest=preparedActionDigest(payload);
+  await enforceEgress({context:actor,actionClass:'READ',destination:COMPOSIO_API_BASE,recipient:'composio-owned-session-metadata',purpose:'finite-tool-discovery',payload,declaredClass:'PUBLIC',toolTrust:'SERVER_REGISTERED',binding:{userId,provider:'composio',connectedAccountId:'catalog',operation:'DISCOVER_TOOL_METADATA',targetDigest:digest,planDigest:digest}},receipt=>persistSecurityDecision(actor,receipt));
+  await assertComposioSession(userId,session.session_id,mode,actor);
 
   const response = await composioRequest<ComposioSearchResponse>(
     `/tool_router/session/${encodeURIComponent(session.session_id)}/search`,
     {
       method: 'POST',
-      body: {
-        queries: [
-          {
-            use_case: query,
-          },
-        ],
-        search_strategy: 'tool_search',
-      },
-    },
+      body: payload,
+    },actor
   );
 
   const tools = Object.values(response.tool_schemas ?? {})
@@ -1849,11 +1936,14 @@ export async function searchComposioActionTools(
     query: string;
     sessionId?: string;
   },
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectSearchResult> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
   return searchComposioTools(userId, {
     ...input,
     mode: 'action',
-  });
+  },actor);
 }
 
 async function listSessionComposioToolkits(
@@ -1864,11 +1954,14 @@ async function listSessionComposioToolkits(
     toolkits?: string[];
     connectedOnly?: boolean;
   },
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectToolkit[]> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
   const mode = input.mode ?? 'read';
   const sessionId = cleanSessionId(input.sessionId);
 
-  await assertComposioSession(userId, sessionId, mode);
+  await assertComposioSession(userId, sessionId, mode,actor);
 
   const toolkits = input.toolkits?.length
     ? [...new Set(input.toolkits.map(cleanToolkit))]
@@ -1897,9 +1990,10 @@ async function listSessionComposioToolkits(
     const response = await composioRequest<ComposioSessionToolkitResponse>(
       `/tool_router/session/${encodeURIComponent(
         sessionId,
-      )}/toolkits?${params.toString()}`,
+      )}/toolkits?${params.toString()}`,{},actor
     );
 
+    if((response.items??[]).some(item=>item.connected_account?.user_id&&item.connected_account.user_id!==composioUserId(userId)))throw new AuthorityError('COMPOSIO_CONNECTED_ACCOUNT_OWNER_CHANGED');
     collected.push(
       ...(response.items ?? [])
         .filter(
@@ -1915,7 +2009,7 @@ async function listSessionComposioToolkits(
           description: item.meta?.description,
           logo: item.meta?.logo,
           connected:
-            item.is_no_auth === true || Boolean(item.connected_account),
+            item.is_no_auth === true || item.meta?.isNoAuth===true || Boolean(item.connected_account?.id&&item.connected_account.status?.toUpperCase()==='ACTIVE'),
           ...(item.connected_account?.id
             ? {
                 connectedAccountId: item.connected_account.id,
@@ -1951,11 +2045,14 @@ export async function listComposioToolkits(
     mode?: XrogaConnectMode;
     toolkits?: string[];
   },
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectToolkit[]> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
   return listSessionComposioToolkits(userId, {
     ...input,
     connectedOnly: false,
-  });
+  },actor);
 }
 
 export async function listConnectedComposioToolkits(
@@ -1965,11 +2062,14 @@ export async function listConnectedComposioToolkits(
     mode?: XrogaConnectMode;
     toolkits?: string[];
   },
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectToolkit[]> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
   return listSessionComposioToolkits(userId, {
     ...input,
     connectedOnly: true,
-  });
+  },actor);
 }
 
 export async function listComposioCatalog(
@@ -1979,22 +2079,38 @@ export async function listComposioCatalog(
     sortBy?: 'usage' | 'alphabetically';
     limit?: number;
     cursor?: string;
+    fresh?:boolean;
   } = {},
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectCatalogPage> {
+  const actor=tenantContext===undefined?undefined:requireTenantContext(tenantContext);if(actor)requireComposioActor(actor.userId,actor);
+  input=structuredClone(input);
   const params = new URLSearchParams();
   const limit = Math.min(
     Math.max(Math.trunc(input.limit ?? 120), 1),
     MAX_CATALOG_PAGE_SIZE,
   );
 
+  if(classifyOutboundData({search:input.search??'',category:input.category??'',cursor:input.cursor??''},'USER_PRIVATE').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
+  if(input.search?.trim()){
+    const query=input.search.trim().toLowerCase();if(query.length>120)throw new ComposioClientError('Catalog search is too long.',{status:400,code:'INVALID_CATALOG_SEARCH'});
+    const offsetMatch=input.cursor?.match(/^xroga-search-(\d+)$/);if(input.cursor&&!offsetMatch)throw new ComposioClientError('Restart this catalog search.',{status:400,code:'INVALID_CATALOG_CURSOR'});
+    const offset=offsetMatch?Number(offsetMatch[1]):0;if(!Number.isSafeInteger(offset)||offset>10000)throw new ComposioClientError('Invalid catalog position.',{status:400,code:'INVALID_CATALOG_CURSOR'});
+    const matches:XrogaConnectCatalogToolkit[]=[];let cursor:string|undefined,pages=0;
+    do{
+      const page=await listComposioCatalog({sortBy:input.sortBy,limit:MAX_CATALOG_PAGE_SIZE,...(input.category?{category:input.category}:{}),...(cursor?{cursor}:{}),fresh:input.fresh},actor);
+      matches.push(...page.items.filter(item=>`${item.slug} ${item.name} ${item.description??''}`.toLowerCase().includes(query)));
+      cursor=page.nextCursor;pages++;
+    }while(cursor&&pages<20);
+    if(cursor)throw new ComposioClientError('Catalog search exceeded its safe page limit. Narrow the app category.',{status:422,code:'CATALOG_SEARCH_LIMIT'});
+    const items=matches.slice(offset,offset+limit),next=offset+items.length;
+    return{items,totalItems:matches.length,currentPage:Math.floor(offset/limit)+1,totalPages:Math.max(1,Math.ceil(matches.length/limit)),...(next<matches.length?{nextCursor:`xroga-search-${next}`}:{})};
+  }
+
   params.set('limit', String(limit));
   params.set('sort_by', input.sortBy ?? 'usage');
   params.set('managed_by', 'all');
   params.set('include_deprecated', 'false');
-
-  if (input.search?.trim()) {
-    params.set('search', input.search.trim());
-  }
 
   if (input.category?.trim()) {
     params.set('category', input.category.trim());
@@ -2004,18 +2120,18 @@ export async function listComposioCatalog(
     params.set('cursor', input.cursor.trim());
   }
 
-  const cacheKey = `catalog:${params.toString()}`;
+  const cacheKey = `catalog:${actor?.userId??'public'}:${params.toString()}`;
 
   return cachedComposioValue(cacheKey, async () => {
     const response = await composioRequest<ComposioCatalogToolkitListResponse>(
-      `/toolkits?${params.toString()}`,
+      `/toolkits?${params.toString()}`,{},actor
     );
 
     const items = (response.items ?? [])
       .map(mapCatalogToolkit)
       .filter(
         (item): item is XrogaConnectCatalogToolkit => Boolean(item),
-      );
+      ).filter(item=>actor?canUserAccessComposioToolkit(actor.userId,item.slug):!item.slug.startsWith('custom_')&&canUserAccessComposioToolkit('',item.slug));
 
     return {
       items,
@@ -2031,7 +2147,7 @@ export async function listComposioCatalog(
           ? response.total_items
           : items.length,
     };
-  });
+  },input.fresh===true);
 }
 
 
@@ -2041,7 +2157,10 @@ export async function listComposioCatalogGroup(
     limit?: number;
     cursor?: string;
   },
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectCatalogPage> {
+  const actor=tenantContext===undefined?undefined:requireTenantContext(tenantContext);if(actor)requireComposioActor(actor.userId,actor);
+  input=structuredClone(input);
   const limit = Math.min(
     Math.max(Math.trunc(input.limit ?? 120), 1),
     MAX_CATALOG_PAGE_SIZE,
@@ -2050,7 +2169,7 @@ export async function listComposioCatalogGroup(
   const offset = offsetMatch ? Number(offsetMatch[1]) : 0;
 
   return cachedComposioValue(
-    `catalog:group:${input.group}:all`,
+    `catalog:group:${actor?.userId??'public'}:${input.group}:all`,
     async () => {
       const items: XrogaConnectCatalogToolkit[] = [];
       let cursor: string | undefined;
@@ -2061,7 +2180,7 @@ export async function listComposioCatalogGroup(
           sortBy: 'usage',
           limit: MAX_CATALOG_PAGE_SIZE,
           ...(cursor ? { cursor } : {}),
-        });
+        },actor);
 
         items.push(
           ...page.items.filter(
@@ -2123,17 +2242,20 @@ export async function listComposioCatalogCategories(): Promise<
 
 export async function getComposioCatalogToolkit(
   toolkitSlug: string,
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectCatalogToolkit> {
+  const actor=tenantContext===undefined?undefined:requireTenantContext(tenantContext);if(actor)requireComposioActor(actor.userId,actor);
   const slug = cleanToolkit(toolkitSlug);
+  if(slug.startsWith('custom_')&&(!actor||!slug.startsWith(xrogaCustomToolkitPrefix(actor.userId))))throw new AuthorityError('COMPOSIO_CUSTOM_METADATA_FORBIDDEN');
 
   return cachedComposioValue(`catalog:toolkit:${slug}`, async () => {
     const response = await composioRequest<ComposioCatalogToolkitResponse>(
-      `/toolkits/${encodeURIComponent(slug)}?version=latest`,
+      `/toolkits/${encodeURIComponent(slug)}?version=latest`,{},actor
     );
 
     const toolkit = mapCatalogToolkit(response);
 
-    if (!toolkit) {
+    if (!toolkit||toolkit.slug!==slug) {
       throw new ComposioClientError('Plugin metadata was not found.', {
         status: 404,
         code: 'COMPOSIO_TOOLKIT_NOT_FOUND',
@@ -2141,7 +2263,7 @@ export async function getComposioCatalogToolkit(
     }
 
     return toolkit;
-  });
+  },slug.startsWith('custom_'));
 }
 
 export async function listComposioCatalogTools(
@@ -2150,8 +2272,12 @@ export async function listComposioCatalogTools(
     limit?: number;
     cursor?: string;
   } = {},
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectCatalogToolPage> {
+  const actor=tenantContext===undefined?undefined:requireTenantContext(tenantContext);if(actor)requireComposioActor(actor.userId,actor);
+  input=structuredClone(input);
   const toolkit = cleanToolkit(toolkitSlug);
+  if(toolkit.startsWith('custom_')&&(!actor||!toolkit.startsWith(xrogaCustomToolkitPrefix(actor.userId))))throw new AuthorityError('COMPOSIO_CUSTOM_METADATA_FORBIDDEN');
   const limit = Math.min(
     Math.max(Math.trunc(input.limit ?? 250), 1),
     MAX_CATALOG_PAGE_SIZE,
@@ -2171,7 +2297,7 @@ export async function listComposioCatalogTools(
 
   return cachedComposioValue(cacheKey, async () => {
     const response = await composioRequest<ComposioCatalogToolListResponse>(
-      `/tools?${params.toString()}`,
+      `/tools?${params.toString()}`,{},actor
     );
 
     const items = (response.items ?? [])
@@ -2225,8 +2351,12 @@ export async function listComposioTriggerTypes(
     limit?: number;
     cursor?: string;
   } = {},
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectTriggerPage> {
+  const actor=tenantContext===undefined?undefined:requireTenantContext(tenantContext);if(actor)requireComposioActor(actor.userId,actor);
+  input=structuredClone(input);
   const toolkit = cleanToolkit(toolkitSlug);
+  if(toolkit.startsWith('custom_')&&(!actor||!toolkit.startsWith(xrogaCustomToolkitPrefix(actor.userId))))throw new AuthorityError('COMPOSIO_CUSTOM_METADATA_FORBIDDEN');
   const limit = Math.min(
     Math.max(Math.trunc(input.limit ?? MAX_TRIGGER_PAGE_SIZE), 1),
     MAX_TRIGGER_PAGE_SIZE,
@@ -2245,7 +2375,7 @@ export async function listComposioTriggerTypes(
 
   return cachedComposioValue(cacheKey, async () => {
     const response = await composioRequest<ComposioTriggerTypeListResponse>(
-      `/triggers_types?${params.toString()}`,
+      `/triggers_types?${params.toString()}`,{},actor
     );
 
     const items = (response.items ?? [])
@@ -2279,11 +2409,8 @@ export async function listComposioTriggerTypes(
   });
 }
 
-/** Register an event only for a connected, allowed toolkit owned by this user. */
-export async function upsertComposioTriggerForUser(
-  userId: string,
-  input: { toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown> },
-): Promise<string> {
+export async function resolveComposioTriggerTarget(actor:TenantContext,input:{toolkit:string;triggerSlug:string;triggerConfig:Record<string,unknown>}){
+  actor=requireComposioActor(actor.userId,actor);const userId=actor.userId;
   const toolkit = cleanToolkit(input.toolkit);
   const triggerSlug = input.triggerSlug.trim().toUpperCase();
   if (!/^[A-Z][A-Z0-9_]{2,119}$/.test(triggerSlug)
@@ -2291,30 +2418,54 @@ export async function upsertComposioTriggerForUser(
     || JSON.stringify(input.triggerConfig).length > 8_000) {
     throw new ComposioClientError('This trigger is not available for your connected apps.', { status: 403, code: 'COMPOSIO_TRIGGER_NOT_ALLOWED' });
   }
-  const type = await composioRequest<ComposioTriggerTypeResponse>(`/triggers_types/${encodeURIComponent(triggerSlug)}`);
+  if(toolkit.startsWith('custom_'))throw new EgressDenied('UNTRUSTED_TOOL_REQUIRES_SANDBOX');
+  if(classifyOutboundData(input.triggerConfig,'USER_PRIVATE').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
+  const type = await composioRequest<ComposioTriggerTypeResponse>(`/triggers_types/${encodeURIComponent(triggerSlug)}`,{},actor);
   if (type.toolkit?.slug?.trim().toLowerCase() !== toolkit) {
     throw new ComposioClientError('The selected trigger does not belong to that app.', { status: 422, code: 'COMPOSIO_TRIGGER_TOOLKIT_MISMATCH' });
   }
-  const session = await createReadOnlyComposioSession(userId);
-  const connected = await listConnectedComposioToolkits(userId, { sessionId: session.session_id, toolkits: [toolkit] });
-  if (!connected.some((item) => item.connected && item.toolkit.trim().toLowerCase() === toolkit)) {
+  const session = await createReadOnlyComposioSession(userId,actor);
+  const connected = await listConnectedComposioToolkits(userId, { sessionId: session.session_id, toolkits: [toolkit] },actor);
+  const account=connected.find(item=>item.connected&&item.toolkit.toLowerCase()===toolkit&&!item.noAuth&&item.connectedAccountId);
+  if (!account?.connectedAccountId) {
     throw new ComposioClientError('Connect this app before enabling its trigger.', { status: 409, code: 'COMPOSIO_TRIGGER_CONNECTION_REQUIRED' });
   }
+  return{toolkit,triggerSlug,connectedAccountId:account.connectedAccountId};
+}
+
+/** Called only inside the existing exact native configuration confirmation. */
+export async function upsertComposioTriggerForUser(
+  userId:string,
+  input:{toolkit:string;triggerSlug:string;triggerConfig:Record<string,unknown>},
+  tenantContext?:TenantContext,
+  control?:{admission:ComposioControlAdmission;parameters:Record<string,unknown>;expectedAccount:string},
+):Promise<string>{
+  const actor=requireComposioActor(userId,tenantContext);input=structuredClone(input);
+  if(!control)throw new AuthorityError('COMPOSIO_TRIGGER_APPROVAL_REQUIRED');
+  const approval=requireComposioControl(control.admission,actor,'CREATE_AUTOMATION_TRIGGER',control.parameters),target=await resolveComposioTriggerTarget(actor,input);
+  const schedule=(control.parameters.input as{schedule?:{kind?:string;toolkit?:string;triggerSlug?:string;triggerConfig?:unknown}})?.schedule;
+  if(target.connectedAccountId!==control.expectedAccount||control.parameters.account!==target.connectedAccountId||control.parameters.resource!==`${target.toolkit}:${target.triggerSlug}:${target.connectedAccountId}`||control.parameters.connection!==composioControlSource(actor)||schedule?.kind!=='trigger'||preparedActionDigest({toolkit:schedule.toolkit,triggerSlug:schedule.triggerSlug,triggerConfig:schedule.triggerConfig})!==preparedActionDigest(input))throw new AuthorityError('COMPOSIO_TRIGGER_SCOPE_CHANGED');
+  const{triggerSlug}=target;
   const result = await composioRequest<{ trigger_id?: string }>(`/trigger_instances/${encodeURIComponent(triggerSlug)}/upsert`, {
     method: 'POST',
-    body: { user_id: composioUserId(userId), trigger_config: input.triggerConfig },
-  });
+    beforeDispatch:async()=>{await approval.beforeDispatch();const current=await resolveComposioTriggerTarget(actor,input);if(current.connectedAccountId!==control.expectedAccount)throw new AuthorityError('COMPOSIO_TRIGGER_ACCOUNT_CHANGED');await approval.check();},
+    body: { user_id: composioUserId(userId), connected_account_id:control.expectedAccount,trigger_config: input.triggerConfig },
+  },actor);
   if (!result.trigger_id?.startsWith('ti_')) throw new ComposioClientError('Composio did not return a trigger instance.', { status: 502, code: 'COMPOSIO_TRIGGER_CREATE_FAILED' });
   return result.trigger_id;
 }
 
 export async function getComposioToolDetails(
   toolSlug: string,
+  tenantContext?: TenantContext,
 ): Promise<XrogaConnectToolDetails> {
+  const actor=tenantContext===undefined?undefined:requireTenantContext(tenantContext);if(actor)requireComposioActor(actor.userId,actor);
   const clean = cleanToolSlug(toolSlug);
+  if(classifyOutboundData({toolSlug:clean},'PUBLIC').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
+  if(clean.toLowerCase().startsWith('custom_')&&(!actor||!clean.toLowerCase().startsWith(xrogaCustomToolkitPrefix(actor.userId))))throw new AuthorityError('COMPOSIO_CUSTOM_METADATA_FORBIDDEN');
 
   const details = await composioRequest<ComposioToolDetailsResponse>(
-    `/tools/${encodeURIComponent(clean)}?toolkit_versions=latest`,
+    `/tools/${encodeURIComponent(clean)}?toolkit_versions=latest`,{},actor
   );
 
   const resolvedSlug = details.slug ?? clean;
@@ -2374,21 +2525,25 @@ export async function createComposioConnectionLink(
     callbackUrl: string;
     mode?: XrogaConnectMode;
   },
+  tenantContext?: TenantContext,
 ): Promise<{
   toolkit: string;
   redirectUrl: string;
   connectedAccountId?: string;
 }> {
+  const actor=requireComposioActor(userId,tenantContext);
+  input=structuredClone(input);
   const sessionId = cleanSessionId(input.sessionId);
+  const toolkit = cleanToolkit(input.toolkit);
+  const callbackUrl = validateCallbackUrl(input.callbackUrl);
+  if(!canUserAccessComposioToolkit(userId,toolkit))throw new AuthorityError('COMPOSIO_TOOLKIT_FORBIDDEN');
+
 
   await assertComposioSession(
     userId,
     sessionId,
-    input.mode ?? 'read',
+    input.mode ?? 'read',actor
   );
-
-  const toolkit = cleanToolkit(input.toolkit);
-  const callbackUrl = validateCallbackUrl(input.callbackUrl);
 
   const response = await composioRequest<ComposioLinkResponse>(
     `/tool_router/session/${encodeURIComponent(sessionId)}/link`,
@@ -2398,7 +2553,7 @@ export async function createComposioConnectionLink(
         toolkit,
         callback_url: callbackUrl,
       },
-    },
+    },actor
   );
 
   if (!response.redirect_url) {
@@ -2450,7 +2605,7 @@ async function executeDiscoveredComposioTool(
   if(classifyOutboundData({useCase:input.useCase,arguments:input.arguments}).classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   const sessionId = cleanSessionId(input.sessionId);
 
-  await assertComposioSession(userId, sessionId, input.mode);
+  await assertComposioSession(userId, sessionId, input.mode,context);
   signal?.throwIfAborted();
 
   const toolSlug = cleanToolSlug(input.toolSlug);
@@ -2459,7 +2614,7 @@ async function executeDiscoveredComposioTool(
     sessionId,
     query: input.useCase,
     mode: input.mode,
-  });
+  },context);
   signal?.throwIfAborted();
 
   const allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
@@ -2481,6 +2636,21 @@ async function executeDiscoveredComposioTool(
   }
 
   let account: string | undefined;
+  if(input.mode==='read'){
+    const toolkit=allowedTool!.toolkit.trim().toLowerCase(),payload={sessionId,useCase:input.useCase,toolSlug,arguments:input.arguments},digest=preparedActionDigest(payload);
+    if(toolkit.startsWith('custom_')){
+      await enforceEgress({context,actionClass:'READ',destination:COMPOSIO_API_BASE,recipient:'untrusted-custom-mcp',purpose:'custom-mcp-read-admission',payload,declaredClass:'USER_PRIVATE',toolTrust:'UNTRUSTED_CAPABILITY_METADATA',binding:{userId,provider:toolkit,connectedAccountId:'untrusted-custom-mcp',operation:toolSlug,targetDigest:digest,planDigest:digest}},receipt=>persistSecurityDecision(context,receipt));
+      throw new EgressDenied('UNTRUSTED_TOOL_REQUIRES_SANDBOX');
+    }
+    const accounts=await listComposioToolkits(userId,{sessionId,mode:'read',toolkits:[toolkit]},context),current=accounts.find(item=>item.toolkit.toLowerCase()===toolkit),connectedAccountId=current?.noAuth?`no-auth:${toolkit}`:current?.connectedAccountId;
+    if(!current?.connected||!connectedAccountId)throw new AuthorityError('COMPOSIO_READ_ACCOUNT_UNAVAILABLE');
+    signal?.throwIfAborted();
+    const {actionPlanDigest}=await import('./businessAction.js'),{createBusinessActionConfirmation,cancelBusinessActionConfirmation}=await import('./businessActionConfirmations.js'),issuedAt=new Date().toISOString();
+    const value:Omit<import('./businessAction.js').BusinessActionPlan,'planDigest'>={version:'1.0',sessionId,useCase:input.useCase,toolkit,toolSlug,arguments:input.arguments,risk:'read',requiresConfirmation:true,forceConfirmation:true,summary:`Read using ${toolSlug} in ${toolkit}, sending only the displayed arguments to the connected account. This consent covers this exact private-data request.`,requiredScopes:[],authority:{version:'1',userId,tenantId:context.tenantId,connectedAccountId,actionClass:businessActionClass(toolSlug),projectId:null,runId:null,issuedAt,expiresAt:new Date(Date.parse(issuedAt)+15*60000).toISOString(),nonce:randomUUID(),maxSpendMicroUsd:null,currency:null}};
+    const confirmation=await createBusinessActionConfirmation(userId,{...value,planDigest:actionPlanDigest(value)});
+    if(signal?.aborted){await cancelBusinessActionConfirmation(userId,confirmation.id);signal.throwIfAborted();}
+    return{needsConfirmation:true,confirmation,reviewUrl:`/dashboard/actions/confirm/${confirmation.id}`};
+  }
   if (input.mode === 'action') {
     const binding = input.authorityBinding;
     if (!binding || !allowedTool || toolSlug.startsWith('COMPOSIO_')) {
@@ -2490,7 +2660,7 @@ async function executeDiscoveredComposioTool(
     const actualBinding: AuthorityDispatchBinding = { ...binding, userId, provider: toolkit, operation: toolSlug,
       targetDigest: preparedActionDigest({ sessionId, useCase: input.useCase, toolSlug, arguments: input.arguments }) };
     assertAuthorityPermit(input.authorityPermit, actualBinding);
-    const accounts = await listComposioToolkits(userId, { sessionId, mode: 'action', toolkits: [toolkit] });
+    const accounts = await listComposioToolkits(userId, { sessionId, mode: 'action', toolkits: [toolkit] },context);
     signal?.throwIfAborted();
     const current = accounts.find(item => item.toolkit.trim().toLowerCase() === toolkit);
     const accountId = current?.noAuth ? `no-auth:${toolkit}` : current?.connectedAccountId;
@@ -2513,7 +2683,7 @@ async function executeDiscoveredComposioTool(
     signal?.throwIfAborted();
     // Egress receipt persistence and durable claim consumption can wait. A
     // session/account reassigned during either wait cannot inherit this permit.
-    const finalAccounts=await listComposioToolkits(userId,{sessionId,mode:'action',toolkits:[toolkit]});
+    const finalAccounts=await listComposioToolkits(userId,{sessionId,mode:'action',toolkits:[toolkit]},context);
     signal?.throwIfAborted();
     const final=finalAccounts.find(item=>item.toolkit.trim().toLowerCase()===toolkit);
     const finalAccountId=final?.noAuth?`no-auth:${toolkit}`:final?.connectedAccountId;
@@ -2534,7 +2704,7 @@ async function executeDiscoveredComposioTool(
       },
       timeoutMs: EXECUTE_TIMEOUT_MS,
       signal,
-    },
+    },context
   );
   // v3.1 can report input_required or failed with HTTP 200. Neither is a
   // completed effect. Never answer a provider approval request automatically.

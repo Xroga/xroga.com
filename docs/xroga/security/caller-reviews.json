@@ -14853,7 +14853,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5",
+      "sourceSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
       "callIds": [
         "fb2bffffc91cc072976a"
       ],
@@ -14972,7 +14972,16 @@
         },
         "googleIntegrationReviewProof": "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json"
       },
-      "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json"
+      "actorContinuationSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ACTOR-PERSISTENCE-REBINDING-20261028.json",
+      "beforeComposioBoundary": {
+        "ref": "b450dd28d26964cfaefe85abbfb2cd9bdc8cf793",
+        "sourceSha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5",
+        "callIds": [
+          "fb2bffffc91cc072976a"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -24257,6 +24266,27 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "fabricated admission, changed producer plan and foreign confirmation cannot dispatch"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/composioControl.ts",
+      "sourceSha256": "f8ad0d65a5f8e70a636a57161db93e25ce68e77a9fa873980e593ccbd8dc1e74",
+      "callIds": [
+        "81d01fa98445cfc7e929",
+        "2df8cd7fa411b818081c"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Only the original context recovered from the canonical permit can inspect its exact owned executing confirmation. User, immutable plan digest, expiry, durable claim and effect marker are checked before and after every provider mutation. WeakMap admission cannot be fabricated, replayed, serialized or transferred across actors.",
+      "reason": "Actual canonical vault and confirmation tests pass for all three supported registration modes, sync, deletion and paused trigger registration. Cancellation, source and credential changes, account substitution, provider authorization denial, malformed receipt and replay fail closed. This adapter creates no scheduler, principal or ledger and does not certify unrelated Phase2 or production acceptance.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioControl.ts",
+          "marker": ".eq('user_id',userId)"
+        },
+        {
+          "path": "backend/src/services/integrations/composioControl.security.test.ts",
+          "marker": "native Composio control:"
         }
       ]
     }

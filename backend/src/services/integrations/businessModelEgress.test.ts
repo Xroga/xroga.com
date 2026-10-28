@@ -2,12 +2,13 @@ import test, { type TestContext } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { createTenantContext } from '../../security/tenantContext.js';
+import {nativeReleaseFixture} from '../publish/__tests__/nativeReleaseFixture.js';
 import { readBusinessData } from './businessRead.js';
 import { prepareBusinessAction } from './businessAction.js';
 
 function fixture(t: TestContext) {
   const owner='11111111-1111-4111-8111-111111111111',foreign='22222222-2222-4222-8222-222222222222';
-  const context=createTenantContext({userId:owner,via:'remote_getuser'});
+  const context=createTenantContext({userId:owner,via:'remote_getuser'}),consent=nativeReleaseFixture(owner);
   const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-business-db-only',
     OPENROUTER_API_KEY:'synthetic-business-platform-credential',GLM_API_KEY:'synthetic-business-glm-credential',
     COMPOSIO_API_KEY:'synthetic-business-composio-credential'};
@@ -46,6 +47,7 @@ function fixture(t: TestContext) {
       assert.fail('Unexpected Composio operation: '+url.pathname);
     }
     assert.equal(url.origin,env.SUPABASE_URL,'No actual provider or production request is allowed');
+    if(/\/(?:production_audit_log|business_action_confirmations)$/.test(url.pathname)){const controlReceipt=await consent.database(url,init);assert.ok(controlReceipt);return controlReceipt;}
     if(url.pathname==='/rest/v1/user_token_usage'){assert.equal(url.searchParams.get('user_id'),'eq.'+owner);return Response.json(usage);}
     if(url.pathname==='/rest/v1/model_provider_health')return Response.json(null);
     if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
@@ -104,7 +106,7 @@ test('actual business model callers bind issued owner and immutable input throug
   const f=fixture(t);
   for(const lane of ['read','action']){
     f.state.lane=lane;f.state.mode='ok';let before={...f.state};
-    const result=await f.call();assert.equal(result.status,lane==='read'?'success':'ready');
+    const result=await f.call();assert.equal(result.status,lane==='read'?'confirmation_required':'ready');
     assert.equal(f.state.effects,before.effects+1);assert.equal(f.state.reservations,before.reservations+1);
     assert.equal(f.state.settlements,before.settlements+1);assert.equal(f.state.receipts,before.receipts+1);
     if(result.status==='ready'){assert.equal(result.plan.requiresConfirmation,true);assert.equal(result.plan.authority?.userId,f.owner);}
@@ -113,7 +115,7 @@ test('actual business model callers bind issued owner and immutable input throug
     await assert.rejects(f.call({...f.request(),userId:f.foreign}),{code:'RESOURCE_NOT_FOUND'});
     assert.equal(f.state.composio,before.composio);assert.equal(f.state.effects,before.effects);
     const mutable=f.request();f.state.mutate=()=>{mutable.userId=f.foreign;mutable.useCase='Foreign replacement must not enter the model';};
-    assert.equal((await f.call(mutable)).status,lane==='read'?'success':'ready');
+    assert.equal((await f.call(mutable)).status,lane==='read'?'confirmation_required':'ready');
     f.state.mode='descriptor';before={...f.state};
     await assert.rejects(f.call(),{code:'MODEL_CREDENTIAL_EGRESS_DENIED'});
     assert.equal(f.state.effects,before.effects);assert.equal(f.state.reservations,before.reservations+1);assert.equal(f.state.releases,before.releases+1);
@@ -130,10 +132,10 @@ test('business model selectors still recover from an ordinary provider outage wi
   const f=fixture(t);
   for(const lane of ['read','action']){
     f.state.lane=lane;f.state.mode='outage';const before={...f.state};
-    const result=await f.call();assert.equal(result.status,lane==='read'?'success':'ready');
+    const result=await f.call();assert.equal(result.status,lane==='read'?'confirmation_required':'ready');
     assert.ok(f.state.effects>=before.effects+2,'A real provider outage may use the bounded alternate model');
     assert.equal(f.state.reservations,before.reservations+2);assert.equal(f.state.settlements,before.settlements+1);
     assert.equal(f.state.receipts,before.receipts+1);assert.equal(f.state.releases,before.releases+1);
-    assert.equal(f.state.readExecutions,before.readExecutions+(lane==='read'?1:0));
+    assert.equal(f.state.readExecutions,before.readExecutions);
   }
 });
