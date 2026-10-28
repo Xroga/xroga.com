@@ -4464,43 +4464,43 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ea9002a455a6e4220eb4"
+        "id": "36ed7e1b9551637b0613"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1f38f47308a5cb80e197"
+        "id": "8996a990316e1b922ef0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d8550ebbd5bdb27af6a2"
+        "id": "73addace3397114a53fb"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "da383110b05de629f959"
+        "id": "bc1fc57357395948616d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "47d3e561e8e017e71b8f"
+        "id": "28d057dc3dff40387fb2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "30d234e24cf832c73d30"
+        "id": "91b8ab4a89c6f405b5b1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "dc84149eab01b6edbb36"
+        "id": "2dd63a79a2b8ae28a214"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "97edab68c2db4fbab9eb"
+        "id": "7737b93da7b3c060dde6"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "afb2254ecf7195fd62b2"
+        "id": "c3cb8644636736d32e96"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5c0fce9bf2111565a8d5"
+        "id": "1e382ef778124bb18ed1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5104,43 +5104,43 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ea9002a455a6e4220eb4"
+        "id": "36ed7e1b9551637b0613"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1f38f47308a5cb80e197"
+        "id": "8996a990316e1b922ef0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d8550ebbd5bdb27af6a2"
+        "id": "73addace3397114a53fb"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "da383110b05de629f959"
+        "id": "bc1fc57357395948616d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "47d3e561e8e017e71b8f"
+        "id": "28d057dc3dff40387fb2"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "30d234e24cf832c73d30"
+        "id": "91b8ab4a89c6f405b5b1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "dc84149eab01b6edbb36"
+        "id": "2dd63a79a2b8ae28a214"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "97edab68c2db4fbab9eb"
+        "id": "7737b93da7b3c060dde6"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "afb2254ecf7195fd62b2"
+        "id": "c3cb8644636736d32e96"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5c0fce9bf2111565a8d5"
+        "id": "1e382ef778124bb18ed1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -24079,114 +24079,114 @@
       "sourceSha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
     },
     {
-      "id": "ea9002a455a6e4220eb4",
+      "id": "36ed7e1b9551637b0613",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 32,
+      "line": 34,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "1f38f47308a5cb80e197",
+      "id": "8996a990316e1b922ef0",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 35,
+      "line": 38,
       "enclosing": "enqueue",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "d8550ebbd5bdb27af6a2",
+      "id": "73addace3397114a53fb",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 41,
+      "line": 45,
       "enclosing": "enqueue",
       "kind": "RPC_CANDIDATE",
       "target": "enqueue_google_canonical_run",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "da383110b05de629f959",
+      "id": "bc1fc57357395948616d",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 48,
+      "line": 52,
       "enclosing": "reserve",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_google_canonical_launch",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "47d3e561e8e017e71b8f",
+      "id": "28d057dc3dff40387fb2",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 56,
+      "line": 60,
       "enclosing": "recordLaunch",
       "kind": "RPC_CANDIDATE",
       "target": "record_google_canonical_launch",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "30d234e24cf832c73d30",
+      "id": "91b8ab4a89c6f405b5b1",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 60,
+      "line": 64,
       "enclosing": "pendingDeliveryIds",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "google_canonical_deliveries",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "dc84149eab01b6edbb36",
+      "id": "2dd63a79a2b8ae28a214",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 71,
+      "line": 75,
       "enclosing": "claim",
       "kind": "RPC_CANDIDATE",
       "target": "claim_google_canonical_run",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "97edab68c2db4fbab9eb",
+      "id": "7737b93da7b3c060dde6",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 84,
+      "line": 89,
       "enclosing": "recordResult",
       "kind": "RPC_CANDIDATE",
       "target": "record_google_canonical_result",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "afb2254ecf7195fd62b2",
+      "id": "c3cb8644636736d32e96",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 90,
+      "line": 95,
       "enclosing": "loadResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "google_canonical_deliveries",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
-      "id": "5c0fce9bf2111565a8d5",
+      "id": "1e382ef778124bb18ed1",
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "line": 90,
+      "line": 95,
       "enclosing": "loadResult",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+      "sourceSha256": "872bb2a3f31c2ade91f3a2d38704dcecf9347329546a8c8fdf901942e6533d76"
     },
     {
       "id": "886265e1adfa87aa93e7",
