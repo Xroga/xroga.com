@@ -60,6 +60,8 @@ export interface WebIntelligenceResult {
   sourceCount: number;
   injectionAttempts: number;
   reason: string;
+  needsConfirmation?:boolean;
+  reviewUrl?:string;
 }
 
 const ACTIONS: readonly WebAction[] = [
@@ -476,6 +478,9 @@ function toUiSources(
  *
  * No provider fallback waterfall.
  */
+function pendingResearch(decision:WebDecision,reviewUrl:string):WebIntelligenceResult{
+  return{action:decision.action,evidence:`Research is pending exact external-data approval: ${reviewUrl}. No research provider has been dispatched.`,bundle:null,sourceCount:0,injectionAttempts:0,reason:'EXACT_RESEARCH_APPROVAL_REQUIRED',needsConfirmation:true,reviewUrl};
+}
 export async function runWebIntelligence(
   input: {
     userId: string;
@@ -532,6 +537,8 @@ export async function runWebIntelligence(
         signal: input.signal,
       });
 
+    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
+
     rawResults =
       toRawResults(
         result.sources,
@@ -567,6 +574,8 @@ export async function runWebIntelligence(
         signal: input.signal,
       });
 
+    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
+
     rawResults =
       toRawResults(
         result.sources,
@@ -596,6 +605,8 @@ export async function runWebIntelligence(
 
         signal: input.signal,
       });
+
+    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
 
     answer = result.answer;
 

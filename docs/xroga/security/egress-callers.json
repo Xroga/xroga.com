@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "efa67048db9480181bc5347611c932f428fa60a5d14ac374ec0aa846aa22cc81",
+  "sourceTreeDigest": "420f862f485f096b181bf563d19c101c608ea44604c98f3d0552c5d08de7d65e",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -26,12 +26,12 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -157,20 +157,58 @@
       ]
     },
     {
+      "id": "90c62dd04b83e45e1c68",
+      "file": "backend/src/ai/parallelApproval.ts",
+      "line": 81,
+      "entryPoint": "executeParallelNativeAction",
+      "transport": "boundedPublicGet",
+      "callee": "boundedPublicGet",
+      "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
+      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+      "currentProtection": "CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+          "marker": "90c62dd04b83e45e1c68",
+          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
+        },
+        {
+          "path": "backend/src/ai/parallelWeb.security.test.ts",
+          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
+          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+        }
+      ]
+    },
+    {
       "id": "5baa649b7c2c9b6b6f30",
       "file": "backend/src/ai/parallelDispatch.ts",
-      "line": 98,
+      "line": 97,
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
+      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+          "marker": "5baa649b7c2c9b6b6f30",
+          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
+        },
+        {
+          "path": "backend/src/ai/parallelWeb.security.test.ts",
+          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
+          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+        }
+      ]
     },
     {
       "id": "4c899876b9e3850af11b",
@@ -561,12 +599,12 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -1050,12 +1088,12 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -1077,12 +1115,12 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -1770,12 +1808,12 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -2044,19 +2082,19 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
     {
       "id": "73bf2c76c1358dacf6a0",
       "file": "backend/src/security/boundedPublicGet.ts",
-      "line": 161,
+      "line": 165,
       "entryPoint": "<module-or-callback>",
       "transport": "transport:request",
       "callee": "request",
@@ -2071,7 +2109,7 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/egress/publicPost.test.ts",
@@ -3726,12 +3764,12 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -3753,12 +3791,12 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
       ]
     },
@@ -4209,6 +4247,7 @@
       "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
       "callerIds": [
         "0e0e3527ad05d7405c68",
+        "90c62dd04b83e45e1c68",
         "eae67182cbfc4c6f9091",
         "cd9013aa3fb869fdac91",
         "83834d34bdcfc0b016bb",
@@ -4420,9 +4459,9 @@
     }
   ],
   "counts": {
-    "total": 136,
-    "reviewed": 131,
-    "pending": 5,
-    "unresolvedHighRiskBypasses": 2
+    "total": 137,
+    "reviewed": 133,
+    "pending": 4,
+    "unresolvedHighRiskBypasses": 1
   }
 }

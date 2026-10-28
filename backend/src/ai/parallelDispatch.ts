@@ -2,9 +2,8 @@ import {randomUUID} from 'node:crypto';
 import {getSecret} from '../config/envSecrets.js';
 import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
 import {getTenantSupabaseAdmin} from '../security/serviceRoleGuard.js';
-import {preparedActionDigest} from '../security/authority/digest.js';
-import {enforceEgress,EgressDenied} from '../security/egress/egressPolicy.js';
-import {persistSecurityDecision} from '../security/egress/securityDecision.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
+import {prepareParallelApproval,requireParallelAdmission,type ParallelAdmission} from './parallelApproval.js';
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
 import {requireAdmittedRunAttempt} from './runStore.js';
@@ -24,14 +23,15 @@ const exact=(a:unknown,b:number)=>(typeof a==='number'||typeof a==='string'&&/^\
  * Shared caller provenance and provider-internal URL fetching remain separate
  * review obligations, never certified by this low-level transport alone.
  */
-export async function executeParallelRequest(input:{scope:TenantModelScope|undefined;userId:string;operation:Operation;body:Record<string,unknown>;signal?:AbortSignal}):Promise<Response>{
+export async function executeParallelRequest(input:{scope:TenantModelScope|undefined;userId:string;operation:Operation;body:Record<string,unknown>;signal?:AbortSignal;admission?:ParallelAdmission}):Promise<Response>{
   const context=requireTenantContext(input.scope?.context);requireResourceOwner(context,input.userId);
   const scope={...input.scope!,context},body=structuredClone(input.body),operation=input.operation,signal=input.signal;
   const attempt=scope.runAttempt?requireAdmittedRunAttempt(scope.runAttempt):undefined;
+  const admission=input.admission?requireParallelAdmission(input.admission,scope,operation,body):undefined;
   // One dispatch remains bound to the platform credential present at admission.
   // Rotation or removal cannot silently substitute a different credential after
   // ownership, audit, reservation or provider-response waits.
-  const credential=getSecret('PARALLEL_API_KEY');
+  const credential=operation==='extract'?'native-credential-free':getSecret('PARALLEL_API_KEY');
   if(!credential)throw denied();
   const check=async()=>{
     signal?.throwIfAborted();requireResourceOwner(context,scope.userId);
@@ -44,7 +44,8 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
       if(error||!data||data.id!==attempt.runId||data.user_id!==context.userId||data.project_id!==(scope.projectId??null)
         ||data.status!=='running'||data.worker_id!==attempt.workerId||data.lease_generation!==attempt.generation)throw denied();
     }
-    if(!credential||getSecret('PARALLEL_API_KEY')!==credential)throw denied();
+    if(operation!=='extract'&&(!credential||getSecret('PARALLEL_API_KEY')!==credential))throw denied();
+    await admission?.check();
     signal?.throwIfAborted();
   };
   let amount:number,units=1,route:string;
@@ -57,7 +58,7 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     if(!Array.isArray(body.urls)||!body.urls.length||body.urls.length>4||body.urls.some(u=>typeof u!=='string')
       ||typeof body.objective!=='string'||body.objective.length>4000||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
     for(const url of body.urls as string[])publicHttpsUrl(url);
-    units=body.urls.length;amount=1000*units;route='parallel_extract';
+    units=body.urls.length;amount=0;route='native_public_extract';
   }else if(operation==='responses'){
     const effort=(body.reasoning as {effort?:unknown})?.effort;
     if(body.model!=='parallel'||typeof body.input!=='string'||body.input.length>10000||!['low','medium'].includes(String(effort))
@@ -65,14 +66,12 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     amount=effort==='medium'?50000:10000;route=effort==='medium'?'parallel_responses_medium':'parallel_responses_low';
   }else throw denied();
   await check();
-  const destination=`https://api.parallel.ai/v1/${operation}`,digest=preparedActionDigest(body);
-  try{
-    await enforceEgress({context,actionClass:'READ',destination,recipient:'parallel-public-research',purpose:route,payload:body,declaredClass:'PUBLIC',toolTrust:'SERVER_REGISTERED',
-      binding:{userId:context.userId,provider:'parallel',connectedAccountId:'platform',operation:route,targetDigest:digest,planDigest:digest}},r=>persistSecurityDecision(context,r));
-  }catch(error){
-    if((error as {name?:string})?.name==='EgressDenied'||(error as {reason?:unknown})?.reason)throw error;
-    throw denied();
-  }
+  const destination=`https://api.parallel.ai/v1/${operation}`;
+  if(!admission)return Response.json(await prepareParallelApproval(scope,operation,body,signal),{status:202});
+  // Known URLs are fetched only by the credential-free DNS-pinned native path.
+  if(operation==='extract')throw denied();
+  if(admission.maximumMicroUsd!==amount)throw denied();
+  await admission.begin();
   await check();
   // Production always needs the durable canonical store. There is no local
   // user-ID fallback, memory budget or telemetry-as-accounting path here.
@@ -104,7 +103,11 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
     const reader=response.body?.getReader();let size=0;const chunks:Uint8Array[]=[];
     try{if(!reader)throw new Error('Missing provider receipt');for(;;){const next=await reader.read();if(next.done)break;size+=next.value.length;if(size>2*1024*1024)throw new Error('Provider receipt too large');chunks.push(next.value);}}
     finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
-    const text=Buffer.concat(chunks).toString('utf8'),data=JSON.parse(text),requestId=data?.[operation==='search'?'search_id':operation==='extract'?'extract_id':'id'];
+    const text=Buffer.concat(chunks).toString('utf8'),data=JSON.parse(text),requestId=data?.[operation==='search'?'search_id':'id'];
+    if(operation==='search'&&(!Array.isArray(data.results)||data.results.some((r:unknown)=>!r||typeof r!=='object'||typeof (r as {url?:unknown}).url!=='string'
+      ||(r as {title?:unknown}).title!==undefined&&typeof (r as {title?:unknown}).title!=='string'
+      ||(r as {excerpts?:unknown}).excerpts!==undefined&&(!Array.isArray((r as {excerpts?:unknown}).excerpts)||((r as {excerpts:unknown[]}).excerpts).some(v=>typeof v!=='string')))))throw new Error('Malformed provider result');
+    if(operation==='responses'&&(data.output_text!==undefined&&typeof data.output_text!=='string'||data.output!==undefined&&!Array.isArray(data.output)))throw new Error('Malformed provider result');
     if(typeof requestId!=='string'||!requestId.trim()||requestId!==requestId.trim()||requestId.length>500
       ||/[\x00-\x20\x7f]/.test(requestId)||containsCredentialSecretText(requestId))throw new Error('Missing or unsafe provider request identity');
     const {data:settled,error}=await db.rpc('settle_xroga_provider_budget',{p_user_id:context.userId,p_reservation_id:reservation.id,p_actual_micro_usd:amount,p_provider_request_id:requestId,

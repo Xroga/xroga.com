@@ -6697,7 +6697,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+          "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6824,7 +6824,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+          "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8355,7 +8355,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+            "sha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
             "historicalBinding": {
               "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
               "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"

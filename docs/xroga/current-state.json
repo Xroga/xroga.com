@@ -1925,7 +1925,7 @@
       "id": "surface:0e78a2534aef2dadd6c0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79",
+      "sha256": "caa40dd466ffccf48080888702e0de482301dbfcec9ecb9d13ffe82536e19c8e",
       "symbols": [
         "ACTIONS",
         "WebAction",
@@ -1949,6 +1949,7 @@
         "normalized",
         "officialDomains",
         "parseDecision",
+        "pendingResearch",
         "provider",
         "rawResults",
         "requiresResearch",
@@ -4916,12 +4917,147 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:7d07dd00cd58533729b5",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/parallelApproval.ts",
+      "sha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "symbols": [
+        "Operation",
+        "ParallelAdmission",
+        "State",
+        "actor",
+        "admission",
+        "admitted",
+        "amount",
+        "args",
+        "attempt",
+        "body",
+        "check",
+        "confirmation",
+        "consumed",
+        "context",
+        "db",
+        "denied",
+        "digest",
+        "executeParallelNativeAction",
+        "extractUrls",
+        "identity",
+        "issuedAt",
+        "modelScope",
+        "nonce",
+        "operation",
+        "page",
+        "parsed",
+        "pdfParse",
+        "prepareParallelApproval",
+        "proof",
+        "requireParallelAdmission",
+        "response",
+        "results",
+        "started",
+        "state",
+        "text",
+        "toolkit",
+        "unsigned",
+        "url",
+        "urls",
+        "useCase",
+        "value"
+      ],
+      "imports": [
+        "../lib/truthfulExecution.js",
+        "../security/authority/digest.js",
+        "../security/authority/enforce.js",
+        "../security/authority/types.js",
+        "../security/egress/dataClassification.js",
+        "../security/egress/egressPolicy.js",
+        "../security/egress/securityDecision.js",
+        "../security/egress/urlPolicy.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
+        "../services/integrations/businessAction.js",
+        "../services/integrations/businessActionConfirmations.js",
+        "../services/integrations/credentialVaultRuntime.js",
+        "../services/publish/nativeReleaseAdmission.js",
+        "./parallelDispatch.js",
+        "./runStore.js",
+        "./tenantModelDispatch.js",
+        "node:crypto",
+        "node:module",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/parallelDispatch.ts",
+        "backend/src/ai/runStore.ts",
+        "backend/src/ai/tenantModelDispatch.ts",
+        "backend/src/lib/truthfulExecution.ts",
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/egress/urlPolicy.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/services/publish/nativeReleaseAdmission.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/parallelDispatch.ts:6",
+        "backend/src/services/integrations/businessAction.ts:1474"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "business_action_confirmations",
+        "swarm_runs"
+      ],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:module",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/ai/parallelApproval.ts#AuthorityError",
+        "backend/src/ai/parallelApproval.ts#AuthorityPermit",
+        "backend/src/ai/parallelApproval.ts#consumeAuthorityPermit",
+        "backend/src/ai/parallelApproval.ts#identity"
+      ],
+      "tenantBoundary": [
+        "backend/src/ai/parallelApproval.ts:66 (user_id)",
+        "backend/src/ai/parallelApproval.ts:69 (user_id)"
+      ],
+      "approvalBoundary": [
+        "backend/src/ai/parallelApproval.ts#actionPlanDigest",
+        "backend/src/ai/parallelApproval.ts#confirmation",
+        "backend/src/ai/parallelApproval.ts#createBusinessActionConfirmation",
+        "backend/src/ai/parallelApproval.ts#digest",
+        "backend/src/ai/parallelApproval.ts#prepareParallelApproval",
+        "backend/src/ai/parallelApproval.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:78d9ec4b29ef687ea76d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "symbols": [
         "Operation",
+        "admission",
         "amount",
         "attempt",
         "body",
@@ -4934,7 +5070,6 @@
         "db",
         "denied",
         "destination",
-        "digest",
         "effort",
         "error",
         "exact",
@@ -4962,14 +5097,13 @@
       ],
       "imports": [
         "../config/envSecrets.js",
-        "../security/authority/digest.js",
         "../security/authority/enforce.js",
         "../security/egress/dataClassification.js",
         "../security/egress/egressPolicy.js",
-        "../security/egress/securityDecision.js",
         "../security/egress/urlPolicy.js",
         "../security/serviceRoleGuard.js",
         "../security/tenantContext.js",
+        "./parallelApproval.js",
         "./postCompletionAccounting.js",
         "./providerBudget.js",
         "./runStore.js",
@@ -4978,25 +5112,27 @@
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/ai/parallelApproval.ts",
         "backend/src/ai/postCompletionAccounting.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/ai/webBudget.ts",
         "backend/src/config/envSecrets.ts",
-        "backend/src/security/authority/digest.ts",
         "backend/src/security/authority/enforce.ts",
         "backend/src/security/egress/dataClassification.ts",
         "backend/src/security/egress/egressPolicy.ts",
-        "backend/src/security/egress/securityDecision.ts",
         "backend/src/security/egress/urlPolicy.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/parallelApproval.ts:92",
+        "backend/src/ai/parallelWeb.security.test.ts:13",
         "backend/src/ai/parallelWeb.ts:1"
       ],
       "reachable": true,
@@ -5013,8 +5149,7 @@
         "backend/src/ai/parallelDispatch.ts:42 (user_id)"
       ],
       "approvalBoundary": [
-        "backend/src/ai/parallelDispatch.ts#digest",
-        "backend/src/ai/parallelDispatch.ts#preparedActionDigest"
+        "backend/src/ai/parallelDispatch.ts#prepareParallelApproval"
       ],
       "costBoundary": [
         "backend/src/ai/parallelDispatch.ts#finishFailedProviderReservation",
@@ -5023,7 +5158,9 @@
       "evidenceBoundary": [
         "backend/src/ai/parallelDispatch.ts#settledVerified"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/parallelWeb.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -5035,7 +5172,7 @@
       "id": "surface:29af688b2fe1eb19f9b0",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelWeb.ts",
-      "sha256": "15593cfb952d6e7697b53fa25b866e6a635d9fb0730d02cd1662a90e9cad0828",
+      "sha256": "3e5487425cda5bb757853899353f17bc10e27e1d6f6abba7ea5a4d7cf599836b",
       "symbols": [
         "ParallelResult",
         "ParallelSource",
@@ -5048,17 +5185,22 @@
         "parallelExtract",
         "parallelResponses",
         "parallelSearch",
+        "pending",
+        "pendingApproval",
         "queries",
         "response",
         "safePublicUrl",
         "safeText",
         "seen",
         "sources",
-        "urls"
+        "urls",
+        "value"
       ],
       "imports": [
         "../lib/truthfulExecution.js",
-        "../synthesis/research/researchEngine.js",
+        "../security/egress/dataClassification.js",
+        "../security/egress/egressPolicy.js",
+        "../security/egress/urlPolicy.js",
         "./parallelDispatch.js",
         "./tenantModelDispatch.js",
         "./webBudget.js"
@@ -5067,14 +5209,16 @@
         "backend/src/ai/parallelDispatch.ts",
         "backend/src/ai/webBudget.ts",
         "backend/src/lib/truthfulExecution.ts",
-        "backend/src/synthesis/research/researchEngine.ts"
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:18",
-        "backend/src/ai/parallelWeb.security.test.ts:3",
+        "backend/src/ai/parallelWeb.security.test.ts:8",
         "backend/src/ai/research.ts:7"
       ],
       "reachable": true,
@@ -5082,7 +5226,9 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/ai/parallelWeb.ts#pendingApproval"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
@@ -5390,7 +5536,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+      "sha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6034,7 +6180,7 @@
       "callers": [
         "backend/src/ai/black-hole/gateway.test.ts:15",
         "backend/src/ai/executionRuntime.test.ts:17",
-        "backend/src/ai/parallelDispatch.ts:13",
+        "backend/src/ai/parallelDispatch.ts:12",
         "backend/src/ai/postCompletionAccounting.persistence.test.ts:4",
         "backend/src/ai/postCompletionAccounting.test.ts:3",
         "backend/src/ai/providerBudget.ts:8",
@@ -6408,7 +6554,7 @@
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:6",
         "backend/src/ai/operationsSdkAdmission.test.ts:4",
-        "backend/src/ai/parallelDispatch.ts:12",
+        "backend/src/ai/parallelDispatch.ts:11",
         "backend/src/ai/providerBudget.evidence.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:4",
         "backend/src/ai/providerBudget.test.ts:4",
@@ -6787,7 +6933,7 @@
         "backend/src/ai/modelCapabilityRegistry.ts:4",
         "backend/src/ai/modelRedirectFallback.security.test.ts:8",
         "backend/src/ai/openaiCompat.ts:10",
-        "backend/src/ai/parallelWeb.security.test.ts:5",
+        "backend/src/ai/parallelWeb.security.test.ts:10",
         "backend/src/ai/pipeline.ts:224",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
@@ -7769,8 +7915,9 @@
         "backend/src/ai/executionRuntime.attempt.test.ts:5",
         "backend/src/ai/executionRuntime.ts:9",
         "backend/src/ai/failRun.test.ts:4",
-        "backend/src/ai/parallelDispatch.ts:10",
-        "backend/src/ai/parallelWeb.security.test.ts:8",
+        "backend/src/ai/parallelApproval.ts:16",
+        "backend/src/ai/parallelDispatch.ts:9",
+        "backend/src/ai/parallelWeb.security.test.ts:18",
         "backend/src/ai/pipeline.ts:86",
         "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
@@ -10479,7 +10626,8 @@
         "backend/src/ai/modelContext.security.test.ts:5",
         "backend/src/ai/modelRedirectFallback.security.test.ts:6",
         "backend/src/ai/openaiCompat.egress.test.ts:8",
-        "backend/src/ai/parallelDispatch.ts:11",
+        "backend/src/ai/parallelApproval.ts:15",
+        "backend/src/ai/parallelDispatch.ts:10",
         "backend/src/ai/pipeline.ts:6",
         "backend/src/ai/qa.ts:2",
         "backend/src/ai/repoSummarize.ts:18",
@@ -11763,11 +11911,12 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelDispatch.ts:14",
-        "backend/src/ai/parallelWeb.security.test.ts:6",
+        "backend/src/ai/parallelDispatch.ts:13",
+        "backend/src/ai/parallelWeb.security.test.ts:11",
         "backend/src/ai/parallelWeb.ts:5",
         "backend/src/security/webAccounting.local.integration.ts:7"
       ],
@@ -15943,11 +16092,13 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:5",
         "backend/src/ai/executionRuntime.ts:2",
+        "backend/src/ai/parallelApproval.ts:18",
         "backend/src/ai/parallelWeb.ts:3",
         "backend/src/ai/pipeline.ts:214",
         "backend/src/ai/research.ts:5",
@@ -23658,7 +23809,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelDispatch.ts:5",
+        "backend/src/ai/parallelApproval.ts:7",
         "backend/src/ai/tenantModelDispatch.test.ts:14",
         "backend/src/ai/tenantModelDispatch.ts:9",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:12",
@@ -23763,7 +23914,8 @@
       "callers": [
         "backend/src/ai/executionRuntime.test.ts:16",
         "backend/src/ai/expoStoreDenial.security.test.ts:6",
-        "backend/src/ai/parallelDispatch.ts:15",
+        "backend/src/ai/parallelApproval.ts:5",
+        "backend/src/ai/parallelDispatch.ts:14",
         "backend/src/ai/pipeline.ts:1",
         "backend/src/ai/providerRuntime.ts:4",
         "backend/src/ai/supabaseApprovalPipeline.security.test.ts:6",
@@ -23946,7 +24098,7 @@
       "id": "surface:a4155784ae7c0ed40bf5",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/boundedPublicGet.ts",
-      "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94",
       "symbols": [
         "EgressPolicyError",
         "PublicAddress",
@@ -23963,6 +24115,7 @@
         "boundedPublicGet",
         "boundedPublicPost",
         "bytes",
+        "cancel",
         "cancellation",
         "checked",
         "chosen",
@@ -24086,7 +24239,9 @@
       ],
       "callers": [
         "backend/src/ai/openaiCompat.ts:13",
-        "backend/src/ai/parallelDispatch.ts:9",
+        "backend/src/ai/parallelApproval.ts:8",
+        "backend/src/ai/parallelDispatch.ts:8",
+        "backend/src/ai/parallelWeb.ts:6",
         "backend/src/ai/voiceBudget.ts:5",
         "backend/src/lib/publishingProviderRequest.ts:3",
         "backend/src/routes/voice.ts:4",
@@ -24173,7 +24328,9 @@
       ],
       "callers": [
         "backend/src/ai/executionRuntime.test.ts:15",
-        "backend/src/ai/parallelDispatch.ts:6",
+        "backend/src/ai/parallelApproval.ts:9",
+        "backend/src/ai/parallelDispatch.ts:5",
+        "backend/src/ai/parallelWeb.ts:7",
         "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/providerRuntime.ts:5",
         "backend/src/ai/supabaseApprovalPipeline.security.test.ts:7",
@@ -24325,7 +24482,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelDispatch.ts:7",
+        "backend/src/ai/parallelApproval.ts:10",
         "backend/src/security/egress/egress.integration.test.ts:10",
         "backend/src/services/BillingService.ts:23",
         "backend/src/services/integrations/composioClient.ts:11",
@@ -24494,7 +24651,9 @@
       "callers": [
         "backend/src/ai/attachments.ts:7",
         "backend/src/ai/openaiCompat.ts:14",
-        "backend/src/ai/parallelDispatch.ts:8",
+        "backend/src/ai/parallelApproval.ts:17",
+        "backend/src/ai/parallelDispatch.ts:7",
+        "backend/src/ai/parallelWeb.ts:4",
         "backend/src/lib/deployVerify.ts:1",
         "backend/src/lib/publishingProviderRequest.ts:1",
         "backend/src/lib/shipVerify.ts:6",
@@ -24795,6 +24954,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:1",
         "backend/src/ai/executionRuntime.ts:7",
         "backend/src/ai/measuredEvidence.ts:33",
+        "backend/src/ai/parallelApproval.ts:4",
         "backend/src/ai/parallelDispatch.ts:4",
         "backend/src/ai/providerHealthStore.ts:29",
         "backend/src/ai/routingOutcomes.ts:2",
@@ -24904,8 +25064,9 @@
         "backend/src/ai/executionRuntime.ts:6",
         "backend/src/ai/modelContext.security.test.ts:8",
         "backend/src/ai/openaiCompat.egress.test.ts:7",
+        "backend/src/ai/parallelApproval.ts:3",
         "backend/src/ai/parallelDispatch.ts:3",
-        "backend/src/ai/parallelWeb.security.test.ts:4",
+        "backend/src/ai/parallelWeb.security.test.ts:9",
         "backend/src/ai/pipeline.ts:4",
         "backend/src/ai/postCompletionAccounting.ts:5",
         "backend/src/ai/providerBudget.test.ts:3",
@@ -25774,7 +25935,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "6bcf22c4861902cc3825e64b0863f5e6cb4346599d5a2cfac813d4cbd11e0dbd",
+      "sha256": "d556ca3ca87428bdd9f91c8ffef869fafd28efb1b0dc8a2dc88c02996134e35a",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -25869,6 +26030,7 @@
       "imports": [
         "../../ai/black-hole/structuredOutput.js",
         "../../ai/openaiCompat.js",
+        "../../ai/parallelApproval.js",
         "../../ai/providerRuntime.js",
         "../../ai/tenantModelDispatch.js",
         "../../ai/universal/semanticRequestPlanner.js",
@@ -25891,6 +26053,7 @@
       "runtimeImports": [
         "backend/src/ai/black-hole/structuredOutput.ts",
         "backend/src/ai/openaiCompat.ts",
+        "backend/src/ai/parallelApproval.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
@@ -25913,6 +26076,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/parallelApproval.ts:13",
+        "backend/src/ai/parallelWeb.security.test.ts:14",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
         "backend/src/routes/billingCheckout.security.test.ts:5",
         "backend/src/routes/electronSigning.security.test.ts:3",
@@ -25975,6 +26140,7 @@
         "backend/src/services/integrations/businessAction.ts#verifyPlanDigest"
       ],
       "testCoverage": [
+        "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/routes/electronSigning.security.test.ts",
@@ -26064,6 +26230,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/parallelApproval.ts:12",
+        "backend/src/ai/parallelWeb.security.test.ts:16",
         "backend/src/routes/billing.ts:6",
         "backend/src/routes/billingCheckout.security.test.ts:4",
         "backend/src/routes/electronSigning.security.test.ts:3",
@@ -26128,6 +26296,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts#verifyPlanDigest"
       ],
       "testCoverage": [
+        "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/routes/billingCheckout.security.test.ts",
         "backend/src/routes/electronSigning.security.test.ts",
         "backend/src/security/businessAuthority.local.integration.ts",
@@ -27212,7 +27381,10 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/black-hole/webIntelligence.test.ts:9",
         "backend/src/ai/modelContext.security.test.ts:9",
+        "backend/src/ai/parallelApproval.ts:11",
+        "backend/src/ai/parallelWeb.security.test.ts:17",
         "backend/src/ai/repoSummarize.security.test.ts:7",
         "backend/src/ai/tenantModelDispatch.test.ts:5",
         "backend/src/routes/cwsCredentialAdmission.security.test.ts:3",
@@ -27261,7 +27433,9 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/black-hole/webIntelligence.test.ts",
         "backend/src/ai/modelContext.security.test.ts",
+        "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/routes/cwsCredentialAdmission.security.test.ts",
@@ -29557,8 +29731,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3787",
-        "backend/src/ai/pipeline.ts:3790",
+        "backend/src/ai/pipeline.ts:3794",
+        "backend/src/ai/pipeline.ts:3797",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/routes/integrations.ts:229",
@@ -29830,7 +30004,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:120",
-        "backend/src/ai/pipeline.ts:3786",
+        "backend/src/ai/pipeline.ts:3793",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:17",
@@ -30528,6 +30702,8 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/ai/black-hole/webIntelligence.test.ts:8",
+        "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts:10",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
         "backend/src/services/publish/chromeWebStore.authority.test.ts:6",
@@ -30552,6 +30728,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/black-hole/webIntelligence.test.ts",
+        "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/services/integrations/supabaseProvision.authority.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/publish/chromeWebStore.authority.test.ts",
@@ -31040,7 +31218,7 @@
         "backend/src/ai/pipeline.ts:175",
         "backend/src/routes/publish.ts:12",
         "backend/src/routes/publish.ts:70",
-        "backend/src/services/integrations/businessAction.ts:1474",
+        "backend/src/services/integrations/businessAction.ts:1479",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:9",
         "backend/src/services/publish/expoCanonicalAdmission.security.test.ts:4",
         "backend/src/services/publish/expoWorkflow.authority.test.ts:3",
@@ -31906,6 +32084,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/parallelApproval.ts:14",
         "backend/src/services/integrations/supabaseProvision.ts:26",
         "backend/src/services/publish/chromeWebStore.ts:18",
         "backend/src/services/publish/expoWorkflow.ts:6",
@@ -40575,16 +40754,13 @@
       "runtimeImports": [
         "backend/src/lib/truthfulExecution.ts"
       ],
-      "entryPoints": [
-        "backend/src/index.ts"
-      ],
+      "entryPoints": [],
       "callers": [
-        "backend/src/ai/parallelWeb.ts:4",
         "backend/src/ai/research.ts:6",
         "backend/src/synthesis/hackathon/hackathonRuntime.ts:3",
         "backend/src/synthesis/research/researchEngine.test.ts:3"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "crypto"
@@ -40607,11 +40783,11 @@
         "backend/src/synthesis/hackathon/hackathonRuntime.test.ts",
         "backend/src/synthesis/research/researchEngine.test.ts"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -124064,6 +124240,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:5c8582627088fb398bd7",
+      "sourcePath": "backend/src/ai/parallelApprovalPipeline.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:6cc0181313b3006d0679",
       "sourcePath": "backend/src/ai/parallelWeb.security.test.ts",
       "declaredTests": 2,
@@ -125839,7 +126022,7 @@
     {
       "id": "test-suite:a81f16421b56a04b9ee6",
       "sourcePath": "backend/src/security/boundedPublicGet.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },

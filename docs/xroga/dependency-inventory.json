@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+  "source_sha": "de91389d184738b4e4237d61b95ee0d163621f43",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1791,6 +1791,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/ai/parallelApproval.ts",
         "backend/src/ai/parallelDispatch.ts"
       ],
       "hostnames": [
@@ -1815,6 +1816,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/ai/parallelApproval.ts",
         "backend/src/ai/parallelDispatch.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -14897,7 +14899,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79"
+      "sha256": "caa40dd466ffccf48080888702e0de482301dbfcec9ecb9d13ffe82536e19c8e"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -15048,12 +15050,16 @@
       "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
     },
     {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "sha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8"
+    },
+    {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47"
+      "sha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
-      "sha256": "15593cfb952d6e7697b53fa25b866e6a635d9fb0730d02cd1662a90e9cad0828"
+      "sha256": "3e5487425cda5bb757853899353f17bc10e27e1d6f6abba7ea5a4d7cf599836b"
     },
     {
       "path": "backend/src/ai/patchSafety.ts",
@@ -15069,7 +15075,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18"
+      "sha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16269,7 +16275,7 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+      "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
     },
     {
       "path": "backend/src/security/browserMaintain.local.integration.ts",
@@ -16577,7 +16583,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "6bcf22c4861902cc3825e64b0863f5e6cb4346599d5a2cfac813d4cbd11e0dbd"
+      "sha256": "d556ca3ca87428bdd9f91c8ffef869fafd28efb1b0dc8a2dc88c02996134e35a"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -22294,15 +22300,22 @@
     {
       "hostname": "api.parallel.ai",
       "protocol": "https:",
+      "path": "backend/src/ai/parallelApproval.ts",
+      "line": 73,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.parallel.ai",
+      "protocol": "https:",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 68,
+      "line": 69,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4010,
+      "line": 4017,
       "credentialsInUrl": false
     },
     {
@@ -28378,7 +28391,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 78,
+      "line": 80,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28749,7 +28762,7 @@
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
-      "line": 262,
+      "line": 277,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28917,42 +28930,42 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1107,
+      "line": 1111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1477,
+      "line": 1481,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2220,
+      "line": 2224,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3776,
+      "line": 3783,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3960,
+      "line": 3967,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4731,
+      "line": 4738,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

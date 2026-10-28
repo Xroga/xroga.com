@@ -1052,6 +1052,10 @@ export async function runChatPipeline(opts: {
 
       research = web.bundle;
       researchBlock = web.evidence;
+      if(web.needsConfirmation)return{
+        response:`Review the exact research request before it is sent: [Review action](${web.reviewUrl}). No live evidence has been retrieved.`,
+        intent:'confirmation_required',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route,
+      };
     } catch (error) {
       if(isTerminalModelFailure(error))throw error;
       console.warn(
@@ -2576,7 +2580,10 @@ publicationReason:
       research = web.bundle;
       researchBlock = web.evidence;
 
-      if (web.action === 'none') {
+      if(web.needsConfirmation){
+        research=null;researchBlock='';researchState='pending';
+        emit({agent:'research',status:'confirmation_required',message:`Review the exact external research request: [Review action](${web.reviewUrl}). No live evidence has been retrieved.`,swarmStatusLabel:'Research approval required',swarmActivity:'External research has not run',swarmTodos:todos('convert')});
+      } else if (web.action === 'none') {
         research = null;
         researchState = 'skipped';
 

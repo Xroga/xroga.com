@@ -5,6 +5,8 @@ import { applyRequestedSourcePolicy, runWebIntelligence, webDecisionFromGoalCont
 import { normalizeResearch } from './researchRouter.js';
 import { goalContractSchema } from '../universal/goalContract.js';
 import {createTenantContext} from '../../security/tenantContext.js';
+import {nativeReleaseFixture} from '../../services/publish/__tests__/nativeReleaseFixture.js';
+import {resetCredentialVaultRuntimeForTests} from '../../services/integrations/credentialVaultRuntime.js';
 import {randomUUID} from 'node:crypto';
 
 test('a validated freshness contract deterministically selects evidence without a second model decision', () => {
@@ -57,7 +59,8 @@ test('official-only evidence excludes secondary sources before synthesis and UI'
   assert.equal(unavailable.unavailable, true);
 });
 
-test('production web intelligence retains admitted Parallel reads and explicitly denies unaccounted X research', async () => {
+test('production web intelligence preserves pending research approval and explicitly denies unaccounted X research', async () => {
+  const vaultEnv={NODE_ENV:process.env.NODE_ENV,XROGA_TEST_CREDENTIAL_KEK:process.env.XROGA_TEST_CREDENTIAL_KEK};process.env.NODE_ENV='test';process.env.XROGA_TEST_CREDENTIAL_KEK=Buffer.alloc(32,27).toString('base64url');resetCredentialVaultRuntimeForTests();
   const priorFetch = globalThis.fetch;
   const priorParallel = process.env.PARALLEL_API_KEY;
   const priorXai = process.env.XAI_API_KEY;
@@ -65,6 +68,7 @@ test('production web intelligence retains admitted Parallel reads and explicitly
   process.env.SUPABASE_URL='http://127.0.0.1:55439';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';
   const owner='11111111-1111-4111-8111-111111111111';
   const dispatchScope={userId:owner,context:createTenantContext({userId:owner,via:'remote_getuser'})};
+  const confirmations=nativeReleaseFixture(owner);
   let reservation:Record<string,unknown>|undefined;
   const urls: string[] = [];
   const bodies: Array<Record<string, unknown>> = [];
@@ -76,6 +80,7 @@ test('production web intelligence retains admitted Parallel reads and explicitly
     const requestUrl = String(url);
     const local=new URL(requestUrl),row=init?.body?JSON.parse(String(init.body)):{};
     if(local.origin===process.env.SUPABASE_URL){
+      if(local.pathname.endsWith('/business_action_confirmations'))return(await confirmations.database(local,init))!;
       if(local.pathname==='/rest/v1/production_audit_log')return Response.json(row);
       if(local.pathname==='/rest/v1/rpc/reserve_xroga_provider_budget'){
         reservation={id:randomUUID(),user_id:owner,idempotency_key:row.p_idempotency_key,internal_route:row.p_internal_route,price_version:row.p_price_version,purpose:row.p_purpose,status:'reserved',estimated_input_tokens:0,maximum_output_tokens:0,reserved_micro_usd:row.p_reservation_micro_usd};
@@ -124,11 +129,11 @@ test('production web intelligence retains admitted Parallel reads and explicitly
     await assert.rejects(runWebIntelligence({
       userId:owner,dispatchScope,prompt:'Read https://x.com/example/status/1',
     }),{code:'PROVIDER_RESERVATION_DENIED',reason:'X_SEARCH_ACCOUNTING_UNAVAILABLE'});
-    assert.equal(web.bundle?.provider,'parallel');
-    assert.equal(urls.length,1);
-    assert.equal(urls[0],'https://api.parallel.ai/v1/extract');
+    assert.equal(web.bundle,null);assert.equal(web.needsConfirmation,true);assert.equal(web.sourceCount,0);assert.match(web.reviewUrl!,/^\/dashboard\/actions\/confirm\/[a-f0-9-]{36}$/);
+    assert.equal(urls.length,0);assert.equal(reservation,undefined);assert.match(web.evidence,/pending exact external-data approval/);
     assert.equal(urls.some((url) => /tavily|searx/i.test(url)), false);
   } finally {
+    resetCredentialVaultRuntimeForTests();for(const[k,v]of Object.entries(vaultEnv))if(v===undefined)delete process.env[k];else process.env[k]=v;
     globalThis.fetch = priorFetch;
     if(priorUrl===undefined)delete process.env.SUPABASE_URL;else process.env.SUPABASE_URL=priorUrl;
     if(priorService===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=priorService;

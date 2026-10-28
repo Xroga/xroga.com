@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+      "currentSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "98eff4c73564a22cc1f0",
-        "08f0ea46f9ffcabdaff0"
+        "6545d561a6182d0234a1",
+        "c700ca8f9a68a62068f4"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -526,6 +526,11 @@
         "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
         "currentSha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577",
         "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      },
+      "beforeParallelApproval": {
+        "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+        "currentSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+        "proof": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
       }
     },
     {

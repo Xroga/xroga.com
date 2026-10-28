@@ -82,7 +82,7 @@ export async function admitPublicTarget(url: URL, resolve: PublicResolver, signa
   }) as LookupFunction;
 }
 
-export interface PublicGetOptions { maxBytes: number; timeoutMs: number; maxRedirects?: number; allowHttpErrors?: boolean }
+export interface PublicGetOptions { maxBytes: number; timeoutMs: number; maxRedirects?: number; allowHttpErrors?: boolean; signal?:AbortSignal; beforeRequest?:()=>Promise<void> }
 export interface PublicGetResult { bytes: Buffer; contentType: string; finalUrl: string; statusCode: number; retryAfterSeconds?: number }
 export interface PublicGetTransport {
   resolve: PublicResolver;
@@ -108,14 +108,18 @@ export async function boundedPublicGet(raw: string, options: PublicGetOptions,
   if (!Number.isSafeInteger(options.maxBytes) || options.maxBytes < 1 || options.maxBytes > 32 * 1024 * 1024
     || !Number.isSafeInteger(options.timeoutMs) || options.timeoutMs < 1 || options.timeoutMs > 60_000
     || !Number.isSafeInteger(maxRedirects) || maxRedirects < 0 || maxRedirects > 5
-    || (options.allowHttpErrors!==undefined&&typeof options.allowHttpErrors!=='boolean')) throw new EgressPolicyError('Invalid egress limits');
+    || (options.allowHttpErrors!==undefined&&typeof options.allowHttpErrors!=='boolean')
+    || (options.beforeRequest!==undefined&&typeof options.beforeRequest!=='function')) throw new EgressPolicyError('Invalid egress limits');
   const controller = new AbortController();
+  const cancel=()=>controller.abort();options.signal?.addEventListener('abort',cancel,{once:true});if(options.signal?.aborted)controller.abort();
   const timer = setTimeout(() => controller.abort(), options.timeoutMs);
   let response: IncomingMessage | undefined;
   try {
     let url = publicHttpsUrl(raw);
     for (let redirects = 0; ; redirects++) {
       const pinnedLookup = await admitPublicTarget(url, io.resolve, controller.signal);
+      if(options.beforeRequest)await beforeAbort(options.beforeRequest(),controller.signal);
+      if(controller.signal.aborted)throw aborted();
       response = await beforeAbort(io.open(url, pinnedLookup, controller.signal), controller.signal);
       const status = response.statusCode ?? 0;
       if ([301, 302, 303, 307, 308].includes(status)) {
@@ -150,7 +154,7 @@ export async function boundedPublicGet(raw: string, options: PublicGetOptions,
     if (error instanceof EgressPolicyError) throw error;
     if (controller.signal.aborted || (error instanceof Error && error.name==='AbortError')) throw aborted();
     throw new Error('Egress request unavailable');
-  } finally { clearTimeout(timer); response?.destroy(); controller.abort(); }
+  } finally { clearTimeout(timer);options.signal?.removeEventListener('abort',cancel);response?.destroy();controller.abort(); }
 }
 
 export interface PublicPostTransport {

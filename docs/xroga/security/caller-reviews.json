@@ -258,11 +258,11 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "sourceSha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94",
       "callIds": [
-        "397bc5f68faa782a225a",
-        "4666625d956886af8791",
-        "35dad2a7210ffe5b9e49"
+        "6af2b06e38df82949534",
+        "a41efc8d393a9b9579ac",
+        "4f182ef8e1a36d664b5c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
@@ -273,7 +273,19 @@
           "marker": "const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"
         }
       ],
-      "priorReviewReference": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
+      "priorReviewReference": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json",
+      "beforeParallelApproval": {
+        "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+        "registrySha256": "e95c44f26f0d1100a1fb51ee4eb93472c2edd6799f9b277c0d0c11991198290d",
+        "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+        "callIds": [
+          "397bc5f68faa782a225a",
+          "4666625d956886af8791",
+          "35dad2a7210ffe5b9e49"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "path": "backend/src/ai/benchmarkRunner.ts",
@@ -4025,9 +4037,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+      "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
       "callIds": [
-        "98eff4c73564a22cc1f0"
+        "6545d561a6182d0234a1"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -5465,13 +5477,23 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json",
+      "beforeParallelApproval": {
+        "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+        "registrySha256": "e95c44f26f0d1100a1fb51ee4eb93472c2edd6799f9b277c0d0c11991198290d",
+        "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+        "callIds": [
+          "98eff4c73564a22cc1f0"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+      "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
       "callIds": [
-        "08f0ea46f9ffcabdaff0"
+        "c700ca8f9a68a62068f4"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -6909,7 +6931,17 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      "supabaseProvisionContinuation": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json",
+      "beforeParallelApproval": {
+        "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+        "registrySha256": "e95c44f26f0d1100a1fb51ee4eb93472c2edd6799f9b277c0d0c11991198290d",
+        "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+        "callIds": [
+          "08f0ea46f9ffcabdaff0"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -23724,14 +23756,14 @@
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
-      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "callIds": [
-        "6c99f563cb991fc4b6b9",
-        "42ee937494dc19f5f8a8",
-        "ceb185c7249df748e570",
-        "c1e349666641c6258a7f",
-        "5a3c93b2ea16190402db",
-        "170612bbffde0e9ba826"
+        "45b3d2d19b57580957f7",
+        "143402b49edb820c5168",
+        "9ef0b2228cd77febbf7c",
+        "a1e8df4a00affe8b85d4",
+        "6a4aaeb29c94369cd778",
+        "316e1774bccfc8148739"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
@@ -23783,7 +23815,22 @@
           "df8252f381f17dee4349",
           "2fef898f25273817dd83"
         ]
-      }
+      },
+      "beforeParallelApproval": {
+        "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+        "registrySha256": "e95c44f26f0d1100a1fb51ee4eb93472c2edd6799f9b277c0d0c11991198290d",
+        "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+        "callIds": [
+          "6c99f563cb991fc4b6b9",
+          "42ee937494dc19f5f8a8",
+          "ceb185c7249df748e570",
+          "c1e349666641c6258a7f",
+          "5a3c93b2ea16190402db",
+          "170612bbffde0e9ba826"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "parallelApprovalContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "path": "backend/src/routes/github.ts",
@@ -24188,6 +24235,28 @@
         {
           "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
           "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/parallelApproval.ts",
+      "sourceSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "callIds": [
+        "e083a05a80e8dc902042",
+        "55516bb57f1a233bf481",
+        "8c17e0596e9108831a35"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
+      "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/parallelApproval.ts",
+          "marker": ".eq('user_id',userId)"
+        },
+        {
+          "path": "backend/src/ai/parallelWeb.security.test.ts",
+          "marker": "fabricated admission, changed producer plan and foreign confirmation cannot dispatch"
         }
       ]
     }

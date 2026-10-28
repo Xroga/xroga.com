@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "e95c44f26f0d1100a1fb51ee4eb93472c2edd6799f9b277c0d0c11991198290d",
+  "reviewRegistrySha256": "5265e9d486c9c967412888a8da3e826ee2b4c37ff600903b941a7e171b929ec1",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 207,
-    "persistenceCandidates": 856,
-    "ownerPredicateCandidates": 229,
+    "privilegedFactorySites": 208,
+    "persistenceCandidates": 859,
+    "ownerPredicateCandidates": 231,
     "reviewRequired": 126,
-    "reviewedCandidates": 730,
+    "reviewedCandidates": 733,
     "unresolvedSafetyCandidates": 159,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 126,
-    "SCOPED_BOUNDARY": 483,
+    "SCOPED_BOUNDARY": 486,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 174,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 84,
-    "unresolvedCandidateBoundaries": 772,
+    "unresolvedCandidateBoundaries": 775,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3428,35 +3428,47 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6c99f563cb991fc4b6b9"
+        "id": "e083a05a80e8dc902042"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "42ee937494dc19f5f8a8"
+        "id": "55516bb57f1a233bf481"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ceb185c7249df748e570"
+        "id": "8c17e0596e9108831a35"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c1e349666641c6258a7f"
+        "id": "45b3d2d19b57580957f7"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5a3c93b2ea16190402db"
+        "id": "143402b49edb820c5168"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "170612bbffde0e9ba826"
+        "id": "9ef0b2228cd77febbf7c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "98eff4c73564a22cc1f0"
+        "id": "a1e8df4a00affe8b85d4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "08f0ea46f9ffcabdaff0"
+        "id": "6a4aaeb29c94369cd778"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "316e1774bccfc8148739"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6545d561a6182d0234a1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "c700ca8f9a68a62068f4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3980,15 +3992,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "397bc5f68faa782a225a"
+        "id": "6af2b06e38df82949534"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4666625d956886af8791"
+        "id": "a41efc8d393a9b9579ac"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "35dad2a7210ffe5b9e49"
+        "id": "4f182ef8e1a36d664b5c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5444,27 +5456,27 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6c99f563cb991fc4b6b9"
+        "id": "45b3d2d19b57580957f7"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "42ee937494dc19f5f8a8"
+        "id": "143402b49edb820c5168"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ceb185c7249df748e570"
+        "id": "9ef0b2228cd77febbf7c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c1e349666641c6258a7f"
+        "id": "a1e8df4a00affe8b85d4"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5a3c93b2ea16190402db"
+        "id": "6a4aaeb29c94369cd778"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "170612bbffde0e9ba826"
+        "id": "316e1774bccfc8148739"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6156,11 +6168,23 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "98eff4c73564a22cc1f0"
+        "id": "e083a05a80e8dc902042"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "08f0ea46f9ffcabdaff0"
+        "id": "55516bb57f1a233bf481"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8c17e0596e9108831a35"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6545d561a6182d0234a1"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c700ca8f9a68a62068f4"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7268,15 +7292,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "397bc5f68faa782a225a"
+        "id": "6af2b06e38df82949534"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4666625d956886af8791"
+        "id": "a41efc8d393a9b9579ac"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "35dad2a7210ffe5b9e49"
+        "id": "4f182ef8e1a36d664b5c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8533,11 +8557,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 856,
+    "currentCallers": 859,
     "structuredVerified": 84,
-    "structuredUnproven": 772,
+    "structuredUnproven": 775,
     "manualUnresolved": 159,
-    "manualUnsupported": 613,
+    "manualUnsupported": 616,
     "agreedVerified": 84,
     "proofAwaitingManualReconciliation": 0
   },
@@ -8963,7 +8987,82 @@
       }
     },
     {
-      "id": "6c99f563cb991fc4b6b9",
+      "id": "e083a05a80e8dc902042",
+      "path": "backend/src/ai/parallelApproval.ts",
+      "line": 66,
+      "enclosing": "executeParallelNativeAction",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "semanticReview": {
+        "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
+        "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/parallelApproval.ts",
+            "marker": ".eq('user_id',userId)"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "fabricated admission, changed producer plan and foreign confirmation cannot dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "55516bb57f1a233bf481",
+      "path": "backend/src/ai/parallelApproval.ts",
+      "line": 66,
+      "enclosing": "executeParallelNativeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "business_action_confirmations",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "semanticReview": {
+        "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
+        "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/parallelApproval.ts",
+            "marker": ".eq('user_id',userId)"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "fabricated admission, changed producer plan and foreign confirmation cannot dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8c17e0596e9108831a35",
+      "path": "backend/src/ai/parallelApproval.ts",
+      "line": 69,
+      "enclosing": "executeParallelNativeAction",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "swarm_runs",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "semanticReview": {
+        "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
+        "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/parallelApproval.ts",
+            "marker": ".eq('user_id',userId)"
+          },
+          {
+            "path": "backend/src/ai/parallelWeb.security.test.ts",
+            "marker": "fabricated admission, changed producer plan and foreign confirmation cannot dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "45b3d2d19b57580957f7",
       "path": "backend/src/ai/parallelDispatch.ts",
       "line": 42,
       "enclosing": "executeParallelRequest",
@@ -8971,7 +9070,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -8988,7 +9087,7 @@
       }
     },
     {
-      "id": "42ee937494dc19f5f8a8",
+      "id": "143402b49edb820c5168",
       "path": "backend/src/ai/parallelDispatch.ts",
       "line": 42,
       "enclosing": "executeParallelRequest",
@@ -8996,7 +9095,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -9013,15 +9112,15 @@
       }
     },
     {
-      "id": "ceb185c7249df748e570",
+      "id": "9ef0b2228cd77febbf7c",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 80,
+      "line": 79,
       "enclosing": "executeParallelRequest",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -9038,15 +9137,15 @@
       }
     },
     {
-      "id": "c1e349666641c6258a7f",
+      "id": "a1e8df4a00affe8b85d4",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 81,
+      "line": 80,
       "enclosing": "executeParallelRequest",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -9063,15 +9162,15 @@
       }
     },
     {
-      "id": "5a3c93b2ea16190402db",
+      "id": "6a4aaeb29c94369cd778",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 87,
+      "line": 86,
       "enclosing": "executeParallelRequest",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -9088,15 +9187,15 @@
       }
     },
     {
-      "id": "170612bbffde0e9ba826",
+      "id": "316e1774bccfc8148739",
       "path": "backend/src/ai/parallelDispatch.ts",
-      "line": 110,
+      "line": 113,
       "enclosing": "executeParallelRequest",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47",
+      "sourceSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
       "semanticReview": {
         "authority": "Original issued TenantContext fixes actor/user, current project ownership and optional issued worker generation are rechecked. The exact owner and operation enter the existing reserve_xroga_provider_budget and settle_xroga_provider_budget RPCs, with complete reservation/settlement receipts checked. The same canonical billing cycles, policy, holds and reconciliation are used. No alternate ledger or user-ID context fallback is introduced.",
         "reason": "Focused actual SDK/REST-transport fixtures pass actor clone/foreign owner, cancelled/replaced generation, reservation/receipt denial, secret canaries, pending accounting and normal authorized provider recovery. Current-source real disposable SQL and full source-bound CI are still required. Upstream query provenance, externally fetched URL redirect/DNS behavior and the separate xAI path remain unresolved. This honest reviewed gap still blocks security acceptance.",
@@ -9134,15 +9233,15 @@
       }
     },
     {
-      "id": "98eff4c73564a22cc1f0",
+      "id": "6545d561a6182d0234a1",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3778,
+      "line": 3785,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+      "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9155,15 +9254,15 @@
       }
     },
     {
-      "id": "08f0ea46f9ffcabdaff0",
+      "id": "c700ca8f9a68a62068f4",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3962,
+      "line": 3969,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18",
+      "sourceSha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -16702,15 +16801,15 @@
       }
     },
     {
-      "id": "397bc5f68faa782a225a",
+      "id": "6af2b06e38df82949534",
       "path": "backend/src/security/boundedPublicGet.ts",
-      "line": 139,
+      "line": 143,
       "enclosing": "boundedPublicGet",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "sourceSha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94",
       "semanticReview": {
         "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
         "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
@@ -16723,15 +16822,15 @@
       }
     },
     {
-      "id": "4666625d956886af8791",
+      "id": "a41efc8d393a9b9579ac",
       "path": "backend/src/security/boundedPublicGet.ts",
-      "line": 169,
+      "line": 173,
       "enclosing": "boundedPublicPost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "sourceSha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94",
       "semanticReview": {
         "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
         "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
@@ -16744,15 +16843,15 @@
       }
     },
     {
-      "id": "35dad2a7210ffe5b9e49",
+      "id": "4f182ef8e1a36d664b5c",
       "path": "backend/src/security/boundedPublicGet.ts",
-      "line": 180,
+      "line": 184,
       "enclosing": "boundedPublicPost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "sourceSha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94",
       "semanticReview": {
         "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
         "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",

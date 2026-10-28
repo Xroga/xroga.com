@@ -287,14 +287,15 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "eae67182cbfc4c6f9091",
@@ -307,14 +308,15 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "cd9013aa3fb869fdac91",
@@ -327,14 +329,15 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "83834d34bdcfc0b016bb",
@@ -347,14 +350,15 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "7415b9c13ced3db60b0a",
@@ -367,19 +371,20 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "d5061137673f9bba1398",
       "callSha256": "92cbd751d9f7418596a52898fe4f7afc4532e6d2a82678650962cd461c406822",
-      "sourceFileSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "sourceFileSha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94",
       "disposition": "VERIFIED_GUARD",
       "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
       "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
@@ -387,19 +392,25 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "beforeParallelApproval": {
+        "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+        "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+        "proof": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
+      },
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "73bf2c76c1358dacf6a0",
       "callSha256": "e0582bb3493b1402c331c06ae96b729e681215194f1129938e5edc8bc6b52f4e",
-      "sourceFileSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "sourceFileSha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94",
       "disposition": "VERIFIED_GUARD",
       "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
       "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
@@ -407,14 +418,20 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/egress/publicPost.test.ts",
           "marker": "upload pins the admitted address",
           "sha256": "ad473aabd5f6df2b4eb0732949f09215e92e584a9a19b8b900755c6cbf479d18"
         }
-      ]
+      ],
+      "beforeParallelApproval": {
+        "ref": "de91389d184738b4e4237d61b95ee0d163621f43",
+        "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+        "proof": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
+      },
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "be1e785f2ee1037bb1c0",
@@ -427,14 +444,15 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "651ba21f8a976701efbf",
@@ -447,14 +465,15 @@
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "admitPublicTarget",
-          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
         },
         {
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
-          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
         }
-      ]
+      ],
+      "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
     },
     {
       "id": "4c899876b9e3850af11b",
@@ -3754,6 +3773,46 @@
           "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
           "marker": "Supabase schema and storage preparation requires exact durable confirmation before any write",
           "sha256": "2e9c1276e2c2b1da54289cb5cc273b2480a92f54bb6f1a37a4f09b45743c1ce7"
+        }
+      ]
+    },
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "callSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
+      "sourceFileSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
+      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+          "marker": "5baa649b7c2c9b6b6f30",
+          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
+        },
+        {
+          "path": "backend/src/ai/parallelWeb.security.test.ts",
+          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
+          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+        }
+      ]
+    },
+    {
+      "id": "90c62dd04b83e45e1c68",
+      "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
+      "sourceFileSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
+      "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+          "marker": "90c62dd04b83e45e1c68",
+          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
+        },
+        {
+          "path": "backend/src/ai/parallelWeb.security.test.ts",
+          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
+          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
         }
       ]
     }

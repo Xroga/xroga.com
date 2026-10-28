@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-28T13:39:16.199Z",
+  "atUtc": "2026-10-28T14:10:18.393Z",
   "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
   "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
   "formalAcceptedCriteria": 0,
@@ -92,23 +92,23 @@
     }
   ],
   "strictAudit": {
-    "total": 136,
-    "reviewed": 131,
-    "pending": 5,
-    "unresolvedHighRiskBypasses": 2
+    "total": 137,
+    "reviewed": 133,
+    "pending": 4,
+    "unresolvedHighRiskBypasses": 1
   },
-  "ci": "PREVIOUS_CACE633A_SEVEN_PASS_FINAL_CI_REQUIRED_AFTER_REMAINING_CALLER_CORRECTIONS",
+  "ci": "PREVIOUS_CACE633A_SEVEN_PASS_FINAL_CI_REQUIRED_AFTER_REMAINING_FOUR_CALLERS",
   "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
   "batch1": "NOT_CLOSED",
   "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
-  "externalBlocker": "NONE_IDENTIFIED_REMAINING_FIVE_CALLERS_REQUIRE_SECURITY_ENGINEERING",
+  "externalBlocker": "NONE_IDENTIFIED_REMAINING_FOUR_CALLERS_REQUIRE_SECURITY_ENGINEERING",
   "remainingBrowserObligations": [
     "Full browser consequential-action approval and side-effect admission, including unmarked page effects. Public supplied/planner write grants now fail closed"
   ],
   "publishingObligations": "Exact native Expo creation/workflow and store-readiness callers are source-bound with individual tests. Shared GitHub/Actions, Supabase and Composio remain unpromoted. Final exact-source integration and all original12 criteria remain required.",
   "backendTypes": "PASS_CURRENT_LOCAL_SOURCE",
   "frontendTypes": "PASS_CURRENT_LOCAL_SOURCE",
-  "currentCheckpoint": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-CHECKPOINT-20261028.json",
+  "currentCheckpoint": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-CHECKPOINT-20261028.json",
   "xResearchAccountingAvailability": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED",
   "orphanCleanupStatus": "Bounded stopped-only cleanup verified locally. Running leftovers retained for lease-aware operator review. No global force cleanup or live host mutation.",
   "ciFailureEvidence": "docs/xroga/evidence/command-010/CI-1F0761DA-20261028.json",
@@ -122,5 +122,6 @@
   "expoReadinessEvidence": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
   "expoWorkflowEvidence": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
   "supabaseManagementTransportEvidence": "docs/xroga/evidence/command-010/SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json",
-  "supabaseProvisionEvidence": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-AUTHORITY-20261028.json"
+  "supabaseProvisionEvidence": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-AUTHORITY-20261028.json",
+  "parallelApprovalEvidence": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
 }
