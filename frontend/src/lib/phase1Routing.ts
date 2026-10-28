@@ -25,7 +25,7 @@ const BROWSER_AUTOMATION =
 // Explicitly connected apps own their tasks even when the output is an image
 // or a browser-like workflow. The backend still checks the real app session.
 const EXPLICIT_CONNECTED_APP =
-  /\b(?:using|with|via)\s+(?:my|our|the)\s+connected\b/i;
+  /\b(?:using|with|via)\s+(?:my|our|the)\s+connected\b|\bconnected\s+(?:app|apps|account|accounts)\b/i;
 
 /** Extra guard — catch product builds that slip past isWebsiteBuildPrompt into Phase 1 essays. */
 function looksLikeProductBuild(prompt: string): boolean {
