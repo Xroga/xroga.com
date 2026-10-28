@@ -78,7 +78,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
   if(googleBackgroundSelected()){
     const runId=isValidClientRunId(req.body?.runId)?req.body.runId:randomUUID();
     try{return await enqueueGoogleSwarm(req,res,requireTenantContext(req.tenantContext),runId,
-      {prompt:prompt.trim(),history,projectId,clientMeta,attachments},wantStream);}
+      {prompt:prompt.trim(),history,projectId,clientMeta,attachments,builderProjectId},wantStream);}
     catch(error){
       if(error instanceof TenantAccessError)return res.status(error.status).json({error:error.message,code:error.code});
       if((error as {code?:string})?.code==='OUT_OF_TOKENS')return res.status(402).json({error:publicAiText((error as Error).message),code:'OUT_OF_ACTIONS',paymentLink:'/pricing'});

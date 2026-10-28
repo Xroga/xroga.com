@@ -13,6 +13,8 @@ export interface CanonicalQueuedInput {
   projectId?:string;
   clientMeta?:Record<string,unknown>;
   attachments?:ChatAttachment[];
+  /** AI Product Builder project this run builds into. Ownership is re-verified by the worker before any run opens. */
+  builderProjectId?:string;
 }
 export interface CanonicalDeliveryClaim {readonly deliveryId:string;readonly runId:string;readonly userId:string;readonly workerId:string;readonly generation:string;}
 const issuedClaims=new WeakMap<object,{input:CanonicalQueuedInput;context:TenantContext}>();
@@ -32,9 +34,11 @@ export class GoogleDeliveryStore {
     private readonly service:()=>SupabaseClient=()=>getGlobalSupabaseAdmin('canonical_delivery_dispatch')){validateGoogleDispatchConfiguration(c);}
   async enqueue(context:TenantContext,runId:string,value:CanonicalQueuedInput):Promise<string>{
     const actor=requireTenantContext(context);if(!uuid.test(runId)||!value.prompt.trim())return denied();
+    if(value.builderProjectId!==undefined&&!uuid.test(value.builderProjectId))return denied();
     const client=getTenantSupabaseAdmin(actor);
     const projectId=await requireOptionalOwnedDatabaseProject(actor,value.projectId,client);
-    const input:CanonicalQueuedInput=structuredClone({prompt:value.prompt,history:value.history,projectId,clientMeta:value.clientMeta,attachments:value.attachments});
+    const input:CanonicalQueuedInput=structuredClone({prompt:value.prompt,history:value.history,projectId,clientMeta:value.clientMeta,attachments:value.attachments,
+      builderProjectId:value.builderProjectId});
     // Canonical JSON omits undefined values before comparing durable requests.
     const payload=JSON.parse(JSON.stringify(input));
     if(Buffer.byteLength(JSON.stringify(payload))>500000)return denied();
@@ -74,8 +78,9 @@ export class GoogleDeliveryStore {
       ||!uuid.test(data.runId)||!uuid.test(data.userId)||typeof data.freshStart!=='boolean'||!data.input||typeof data.input.prompt!=='string')return denied();
     const claim=Object.freeze({deliveryId,runId:data.runId,userId:data.userId,workerId,generation});
     const context=createTenantContext({userId:data.userId,via:'persisted_owner'});
+    if(data.input.builderProjectId!==undefined&&(typeof data.input.builderProjectId!=='string'||!uuid.test(data.input.builderProjectId)))return denied();
     const input:CanonicalQueuedInput=structuredClone({prompt:data.input.prompt,history:data.input.history,projectId:data.input.projectId,
-      clientMeta:data.input.clientMeta,attachments:data.input.attachments});
+      clientMeta:data.input.clientMeta,attachments:data.input.attachments,builderProjectId:data.input.builderProjectId});
     if(data.freshStart&&input.clientMeta?.resumeRun===true)input.clientMeta={...input.clientMeta,resumeRun:false};
     issuedClaims.set(claim,{context,input});return claim;
   }

@@ -1,0 +1,115 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-BUILDER-GOOGLE-DURABLE-20261028",
+  "baseSha": "a966d04c98f8821e6d34b6cfce33f4ec1f9f054c",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Found during production Batch 2 activation: with the Google durable execution provider selected, POST /api/swarm/execute enqueued only prompt, history, projectId, clientMeta and attachments, so a chat build into an AI Product Builder project lost its builderProjectId. The worker then ran an ordinary build with no run binding and no saved revision. Carry the already ownership-checked builderProjectId through the existing durable delivery and have the existing canonical worker open and close the Builder run. No new orchestrator, queue, table or route.",
+  "changedFiles": [
+    "backend/src/workers/googleDeliveryStore.ts",
+    "backend/src/workers/googleDeliveryStore.test.ts",
+    "backend/src/workers/builderDurableWiring.test.ts",
+    "backend/src/routes/swarm.ts",
+    "backend/src/scripts/runCanonicalWorker.ts",
+    "docs/xroga/missions/builder-google-durable-20261028.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/security/privileged-callers.json"
+  ],
+  "decisions": {
+    "keep": [
+      "The single canonical Swarm to pipeline path and the Google durable delivery",
+      "Builder ownership verification before any run, and the per-project run slot",
+      "The delivery SQL functions (p_input is already an open JSON object)"
+    ],
+    "extend": [
+      "CanonicalQueuedInput gains an optional UUID-validated builderProjectId",
+      "The canonical worker opens and closes the Builder run around the existing pipeline call"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change; enqueue_google_canonical_run already accepts any JSON object input.",
+    "rollback": "Revert the commit and redeploy the previous image. Queued deliveries without a builderProjectId are unaffected."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No authentication change. The id is accepted only after the verified owner matches the durable project."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant boundary change. The worker re-verifies the project against the persisted owner when it opens the run; a body id never establishes ownership."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No approval boundary change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential handling change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress change."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No new spend path. Builds use the existing provider budget reservation."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing path change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/workers/googleDeliveryStore.test.ts backend/src/workers/googleSwarmQueue.test.ts backend/src/workers/builderDurableWiring.test.ts",
+      "scope": "Valid builderProjectId round-trips enqueue claim; malformed values are refused before any database call; the route forwards it after the ownership check; the worker opens the run before the pipeline and closes it after, with blocked/cancelled mapping. 11 PASS.",
+      "negative": true,
+      "reference": "backend/src/workers/googleDeliveryStore.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends the existing Google durable delivery input and the existing canonical worker. No second orchestrator, scheduler or control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks, build a source-bound release image, then update the API service and the canonical worker Job together at 0% traffic. Verify /ready, then run one authenticated build on the allowlisted test project before any traffic increase.",
+  "rollback": "Send traffic back to the previous revision and restore the previous Job image. Builder projects, revisions and receipts stay.",
+  "knownGaps": [
+    "Live end-to-end build proof is recorded only after deployment",
+    "Preview, QA and external delivery remain separate gates"
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch 2 building is not accepted until a live authenticated build saves a revision"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and merge",
+      "Release image build, Job and service update",
+      "Live authenticated Batch 2 build evidence"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "backend/src/workers/googleDeliveryStore.test.ts",
+    "backend/src/workers/builderDurableWiring.test.ts"
+  ]
+}
