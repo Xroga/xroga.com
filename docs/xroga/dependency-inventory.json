@@ -15274,7 +15274,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0"
+      "sha256": "20c99b7e906791e2c93922adf9cdaf3ab7d8162bed38f4acce83bf15d8cf1d0c"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -17642,7 +17642,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
+      "sha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24"
     },
     {
       "path": "backend/src/synthesis/universalExecution.ts",
@@ -32849,7 +32849,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 707,
+      "line": 714,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

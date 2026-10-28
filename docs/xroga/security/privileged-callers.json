@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "6acb34a7b6dd7cde77682629b7e3f928e171115ba51bec53087504cde5d2fb00",
+  "reviewRegistrySha256": "2c9f0fa5d0f07d32de432a4e397b98507e819c13c909ab0001d4c2212d6fc42f",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -277,6 +277,14 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-47ed76ce09cbb18f"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-4a588dd074761414"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-4a588dd074761414"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -2928,11 +2936,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e43c0c026554038ec87c"
+        "id": "037ef4654f945ec3ce4e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b816c75c093ae03d4826"
+        "id": "f115f80c17cc9b59a8bc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4428,6 +4436,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "d3320fe4985648eb0de7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "2729f713267978277ba6"
       },
       {
@@ -5324,11 +5336,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e43c0c026554038ec87c"
+        "id": "037ef4654f945ec3ce4e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b816c75c093ae03d4826"
+        "id": "f115f80c17cc9b59a8bc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7464,7 +7476,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "10b5e279dd241e2f40ec"
+        "id": "d3320fe4985648eb0de7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8057,7 +8069,7 @@
       }
     },
     {
-      "id": "e43c0c026554038ec87c",
+      "id": "037ef4654f945ec3ce4e",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3812,
       "enclosing": "runBuildPipeline",
@@ -8065,7 +8077,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
+      "sourceSha256": "20c99b7e906791e2c93922adf9cdaf3ab7d8162bed38f4acce83bf15d8cf1d0c",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8078,7 +8090,7 @@
       }
     },
     {
-      "id": "b816c75c093ae03d4826",
+      "id": "f115f80c17cc9b59a8bc",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3992,
       "enclosing": "runBuildPipeline",
@@ -8086,7 +8098,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
+      "sourceSha256": "20c99b7e906791e2c93922adf9cdaf3ab7d8162bed38f4acce83bf15d8cf1d0c",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -23772,15 +23784,15 @@
       }
     },
     {
-      "id": "10b5e279dd241e2f40ec",
+      "id": "d3320fe4985648eb0de7",
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 1068,
+      "line": 1075,
       "enclosing": "tryUniversalBuild",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "sourceSha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
       "semanticReview": {
         "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
         "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",

@@ -5009,7 +5009,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
+      "sha256": "20c99b7e906791e2c93922adf9cdaf3ab7d8162bed38f4acce83bf15d8cf1d0c",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -42011,7 +42011,7 @@
       "id": "surface:ba88158d592a18f99ff9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "sha256": "3cc3c6e32deb2ff40136b4429f2fdc210c369083a46b32d961ad5914398f9c24",
       "symbols": [
         "IMPLEMENT_SYSTEM",
         "UniversalBuildOutcome",
@@ -128589,6 +128589,13 @@
       "id": "test-suite:180fd82f39a08a2d15f5",
       "sourcePath": "backend/src/synthesis/browserVerificationAdapter.test.ts",
       "declaredTests": 14,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:334da1a3063b25f978a6",
+      "sourcePath": "backend/src/synthesis/builderUniversalAuthority.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
