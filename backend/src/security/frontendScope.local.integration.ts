@@ -28,7 +28,7 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
   const complete={status:'completed',currentStep:'complete'},pending={status:'in_progress',currentStep:'build_type'};
   for(let i=0;i<2;i++){
    const email=i===1?'hello@xroga.com':`server-scope-${randomUUID()}@example.invalid`,label=`SSR_SCOPE_${i}_${randomUUID().replaceAll('-','')}`;
-   const created=await admin.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{role:'owner'}});assert.equal(created.error,null);assert.ok(created.data.user);
+   const created=await admin.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{role:'owner',contact_phone:'+14125550123'}});assert.equal(created.error,null);assert.ok(created.data.user);
    actors.push({id:created.data.user.id,email,label});assert.equal((await admin.from('profiles').update({role:i===0?'owner':'member',display_name:label,onboarding:i===0?complete:pending}).eq('id',created.data.user.id)).error,null);
   }
   const [owner,member]=actors;
@@ -39,7 +39,7 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
    if([302,303,307,308].includes(response.status)){assert.equal(new URL(response.headers.get('location')!,'http://127.0.0.1:3000').pathname,target);return;}
    // Next's installed make-get-server-inserted-html emits this exact marker
    // when a server component redirects after streaming began. A plain200 fails.
-   assert.equal(response.status,200);const body=await response.text();assert.ok(body.includes('id="__next-page-redirect"'));assert.ok(body.includes(`content="1;url=${target}"`)||body.includes(`content="0;url=${target}"`));assert.ok(!body.includes(foreignLabel));
+   assert.equal(response.status,200);const body=await response.text();assert.ok(body.includes('id="__next-page-redirect"'));assert.ok(body.includes(`content="1;url=${target}"`)||body.includes(`content="0;url=${target}"`)||(target==='/auth/contact'&&/content="[01];url=\/auth\/contact\?/.test(body)));assert.ok(!body.includes(foreignLabel));
   };
   const role=async(expected:string)=>{const r=await client.rpc('current_community_role');assert.equal(r.error,null);assert.equal(r.data,expected);};
   const setup=async(actor:typeof owner,state:typeof complete)=>{
@@ -48,8 +48,12 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
    const forged=await client.rpc('read_current_profile_setup',{p_user_id:actors.find(a=>a.id!==actor.id)!.id});assert.ok(forged.error);assert.equal(forged.data,null);
   };
   const anonymousClient=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});assert.ok((await anonymousClient.rpc('read_current_profile_setup')).error);
+  assert.ok((await anonymousClient.rpc('has_current_contact_phone')).error);
+  assert.ok((await anonymousClient.rpc('save_current_contact_phone',{p_contact_phone:'+14125550123'})).error);
   const anonymous=await page('/onboarding');assert.ok([302,303,307,308].includes(anonymous.status));assert.match(anonymous.headers.get('location')??'',/\/auth\/login/);
   assert.equal((await client.auth.signInWithPassword({email:owner.email,password})).error,null);assert.equal((await client.auth.getUser()).data.user?.id,owner.id);await role('owner');
+  assert.equal((await client.rpc('has_current_contact_phone')).data,true);
+  assert.equal((await client.from('profiles').select('contact_phone').eq('id',member.id)).error?.code,'42501');
   await setup(owner,complete);assert.ok(cookies.size>0);
   for(const path of ['/dashboard','/workspace']){
    const response=await page(`${path}?userId=${member.id}&tenantId=${member.id}`);assert.equal(response.status,200);const body=await response.text();assert.ok(body.includes(owner.label),`${path} must render its exact verified profile label`);assert.ok(!body.includes(member.label));
@@ -73,6 +77,19 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
   assert.equal((await client.auth.mfa.verify({factorId:enrolled.data.id,challengeId:challenge.data.id,code})).error,null);
   const founder=await page(`/os-preview/founder?userId=${owner.id}`);assert.equal(founder.status,200);assert.ok((await founder.text()).includes('Private interactive example'));
   assert.equal((await admin.from('profiles').update({role:'member'}).eq('id',member.id)).error,null);await role('member');await uiRedirect(await page('/admin'),'/dashboard');assert.equal((await page('/os-preview/founder')).status,403);
+  // A fresh OAuth-style account has no phone until it completes the contact step.
+  const noPhoneEmail=`contact-scope-${randomUUID()}@example.invalid`;
+  const noPhone=await admin.auth.admin.createUser({email:noPhoneEmail,password,email_confirm:true});assert.equal(noPhone.error,null);assert.ok(noPhone.data.user);
+  actors.push({id:noPhone.data.user.id,email:noPhoneEmail,label:'Contact fixture'});
+  assert.equal((await client.auth.signOut()).error,null);
+  assert.equal((await client.auth.signInWithPassword({email:noPhoneEmail,password})).error,null);
+  assert.equal((await client.rpc('has_current_contact_phone')).data,false);
+  await uiRedirect(await page('/workspace'),'/auth/contact');
+  assert.ok((await client.rpc('save_current_contact_phone',{p_contact_phone:'555-0123'})).error);
+  const saved=await client.rpc('save_current_contact_phone',{p_contact_phone:'+14125550124'});assert.equal(saved.error,null);assert.equal(saved.data,true);
+  assert.equal((await client.rpc('has_current_contact_phone')).data,true);
+  assert.equal((await admin.from('profiles').select('contact_phone').eq('id',owner.id).single()).data?.contact_phone,'+14125550123');
+  await uiRedirect(await page('/workspace'),'/onboarding');
   const retained=await admin.from('profiles').select('display_name,onboarding,role').eq('id',owner.id).single();assert.equal(retained.error,null);assert.equal(retained.data?.display_name,owner.label);assert.deepEqual(retained.data?.onboarding,complete);assert.equal(retained.data?.role,'owner');
  });
 }

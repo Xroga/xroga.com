@@ -308,17 +308,20 @@ type AuthSocialButtonProps =
     'type' | 'children'
   > & {
     children: ReactNode;
+    provider?: 'github' | 'google';
   };
 
 export function AuthSocialButton({
   children,
   className,
+  provider = 'github',
   ...props
 }: AuthSocialButtonProps) {
   return (
     <button
       type="button"
-      data-auth-github
+      data-auth-github={provider === 'github' ? '' : undefined}
+      data-auth-google={provider === 'google' ? '' : undefined}
       className={cn(
         'flex',
 

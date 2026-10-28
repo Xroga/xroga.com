@@ -1,6 +1,6 @@
 import { getSupabasePublicConfig } from './config';
 
-export async function requireGitHubProvider(): Promise<void> {
+export async function requireOAuthProvider(provider: 'github' | 'google'): Promise<void> {
   const config = getSupabasePublicConfig();
   const response = await fetch(`${config.url}/auth/v1/settings`, {
     headers: { apikey: config.publishableKey },
@@ -9,8 +9,10 @@ export async function requireGitHubProvider(): Promise<void> {
   });
   if (!response.ok) throw new Error('Authentication provider status unavailable');
 
-  const settings = await response.json() as { external?: { github?: boolean } };
-  if (settings.external?.github !== true) {
-    throw new Error('GitHub provider is not enabled');
+  const settings = await response.json() as { external?: { github?: boolean; google?: boolean } };
+  if (settings.external?.[provider] !== true) {
+    throw new Error(`${provider === 'google' ? 'Google' : 'GitHub'} provider is not enabled`);
   }
 }
+
+export const requireGitHubProvider = () => requireOAuthProvider('github');

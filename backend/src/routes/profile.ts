@@ -79,6 +79,8 @@ export const onboardingSchema = z.object({
   completed_at: z.string().datetime().nullable(),
 });
 
+export const contactPhoneSchema = z.string().regex(/^\+[1-9]\d{7,14}$/);
+
 router.get('/', async (req: AuthRequest, res) => {
   const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const { data, error } = await supabase
@@ -100,6 +102,7 @@ router.patch('/', async (req: AuthRequest, res) => {
     avatar_url: z.union([z.string().url(), z.literal('')]).optional(),
     timezone: z.string().max(64).optional(),
     language: z.string().max(16).optional(),
+    contact_phone: contactPhoneSchema.optional(),
     companion_preferences: companionPreferencesSchema.optional(),
     onboarding: onboardingSchema.optional(),
   }).strict();
@@ -119,6 +122,7 @@ router.patch('/', async (req: AuthRequest, res) => {
   }
   if (parsed.data.timezone !== undefined) patch.timezone = parsed.data.timezone;
   if (parsed.data.language !== undefined) patch.language = parsed.data.language;
+  if (parsed.data.contact_phone !== undefined) patch.contact_phone = parsed.data.contact_phone;
   if (parsed.data.companion_preferences !== undefined) {
     patch.companion_preferences = parsed.data.companion_preferences;
   }

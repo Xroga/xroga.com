@@ -39,7 +39,7 @@ export default function PrivacyPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">2. Data we collect</h2>
         <ul className="list-disc pl-5 space-y-1 text-[var(--muted)]">
-          <li>Account: email, display name, auth identifiers (via Supabase Auth).</li>
+          <li>Account: email, display name, authentication identifiers (via Supabase Auth), and a required, unverified contact phone number.</li>
           <li>Product usage: prompts, project files, and privacy-safe capacity accounting needed for billing fairness.</li>
           <li>Integrations you connect: GitHub / Vercel tokens stored to push and deploy on your behalf.</li>
           <li>Payments: processed by Whop — we do not store full card numbers.</li>
@@ -50,8 +50,9 @@ export default function PrivacyPage() {
         <h2 className="text-lg font-semibold">3. How we use data</h2>
         <p className="text-[var(--muted)]">
           To provide the service (builds, deploys, quota), secure accounts, prevent abuse, improve
-          reliability, and communicate about billing or critical product changes. We do not sell
-          personal data.
+          reliability, and communicate about your account, billing or critical product changes.
+          We do not use the contact number for phone sign-in or marketing without separate consent.
+          We do not sell personal data.
         </p>
       </section>
 

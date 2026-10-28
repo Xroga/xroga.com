@@ -13,6 +13,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
+import { normalizeContactPhone } from '@/lib/contactPhone';
 
 const TIMEZONES = [
   { value: 'UTC', label: 'UTC' },
@@ -62,12 +63,18 @@ export function GeneralSettingsPanel({ email }: { email: string }) {
   async function handleSaveProfile(e: FormEvent) {
     e.preventDefault();
     if (!profile || saving) return;
+    const contactPhone = normalizeContactPhone(profile.contact_phone ?? '');
+    if (!contactPhone) {
+      toast.error('Enter a contact number with country code, such as +1 412 555 0123');
+      return;
+    }
     setSaving(true);
     try {
       const updated = await api.profile.update({
         display_name: profile.display_name ?? '',
         timezone: profile.timezone || 'UTC',
         language: profile.language || 'en',
+        contact_phone: contactPhone,
         ...(profile.avatar_url ? { avatar_url: profile.avatar_url } : {}),
       });
       setProfile(updated);
@@ -129,6 +136,19 @@ export function GeneralSettingsPanel({ email }: { email: string }) {
               aria-readonly="true"
               className="w-full cursor-not-allowed rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 py-2 text-sm text-[var(--text-muted)]"
             />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm sm:col-span-2">
+            <span className="text-xs font-medium text-[var(--text-secondary)]">Contact phone number</span>
+            <input
+              type="tel"
+              required
+              autoComplete="tel"
+              value={profile.contact_phone ?? ''}
+              onChange={(e) => update({ contact_phone: e.target.value })}
+              placeholder="+1 412 555 0123"
+              className="w-full rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 py-2 text-sm text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            />
+            <span className="text-xs text-[var(--text-muted)]">For account contact only. Unverified; no SMS verification or phone sign-in.</span>
           </label>
           <Select
             label="Timezone"

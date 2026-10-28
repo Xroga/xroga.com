@@ -10,6 +10,7 @@ export type SwarmStatus = 'pending' | 'planning' | 'building' | 'reviewing' | 't
 
 export interface Profile {
   id: string;
+  contact_phone?: string | null;
   display_name: string | null;
   avatar_url: string | null;
   timezone: string;
