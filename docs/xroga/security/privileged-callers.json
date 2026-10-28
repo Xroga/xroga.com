@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "a9a5b4a25c248641df8847d4d7ab8b23000e04dfffdcb404dea49503175de5f1",
+  "reviewRegistrySha256": "1c885992e543195d190bf646e2e82b25188916a58bab14531471db1a59734077",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 194,
-    "persistenceCandidates": 879,
+    "persistenceCandidates": 880,
     "ownerPredicateCandidates": 216,
     "reviewRequired": 134,
-    "reviewedCandidates": 745,
+    "reviewedCandidates": 746,
     "unresolvedSafetyCandidates": 161,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 134,
-    "SCOPED_BOUNDARY": 508,
+    "SCOPED_BOUNDARY": 509,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 170,
     "REVIEWED_GAP": 27
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 104,
-    "unresolvedCandidateBoundaries": 775,
+    "unresolvedCandidateBoundaries": 776,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3344,23 +3344,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9637092680f5e153ff83"
+        "id": "b0dbcb75753fb9d65c5b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ebd1ba43e6e803461d05"
+        "id": "19774c325aa3230ea039"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "23fe4bcc08652fe7bd5a"
+        "id": "9c35c0f60839730421db"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "92abca7ddd92b63dba03"
+        "id": "8eabc1940817029a96e2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b49471879960e3772176"
+        "id": "a0b9db21cdddbaaf6534"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3387aeca365e93669543"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6140,23 +6144,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9637092680f5e153ff83"
+        "id": "b0dbcb75753fb9d65c5b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ebd1ba43e6e803461d05"
+        "id": "19774c325aa3230ea039"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "23fe4bcc08652fe7bd5a"
+        "id": "9c35c0f60839730421db"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "92abca7ddd92b63dba03"
+        "id": "8eabc1940817029a96e2"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b49471879960e3772176"
+        "id": "a0b9db21cdddbaaf6534"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3387aeca365e93669543"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8025,11 +8033,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 879,
+    "currentCallers": 880,
     "structuredVerified": 104,
-    "structuredUnproven": 775,
+    "structuredUnproven": 776,
     "manualUnresolved": 161,
-    "manualUnsupported": 614,
+    "manualUnsupported": 615,
     "agreedVerified": 104,
     "proofAwaitingManualReconciliation": 0
   },
@@ -12084,15 +12092,15 @@
       "sourceSha256": "f3a29b15d2637773d5ba43094b32f8a71c5aa88de071eb30804d580aba4899b1"
     },
     {
-      "id": "9637092680f5e153ff83",
+      "id": "b0dbcb75753fb9d65c5b",
       "path": "backend/src/existingSource/change/store.ts",
-      "line": 41,
+      "line": 44,
       "enclosing": "db",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "sourceSha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0",
       "semanticReview": {
         "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
         "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the change records are removed with their binding on unlink.",
@@ -12105,15 +12113,15 @@
       }
     },
     {
-      "id": "ebd1ba43e6e803461d05",
+      "id": "19774c325aa3230ea039",
       "path": "backend/src/existingSource/change/store.ts",
-      "line": 52,
+      "line": 55,
       "enclosing": "save",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_changes",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "sourceSha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0",
       "semanticReview": {
         "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
         "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the change records are removed with their binding on unlink.",
@@ -12126,15 +12134,15 @@
       }
     },
     {
-      "id": "23fe4bcc08652fe7bd5a",
+      "id": "9c35c0f60839730421db",
       "path": "backend/src/existingSource/change/store.ts",
-      "line": 59,
+      "line": 62,
       "enclosing": "get",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_changes",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "sourceSha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0",
       "semanticReview": {
         "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
         "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the change records are removed with their binding on unlink.",
@@ -12147,15 +12155,15 @@
       }
     },
     {
-      "id": "92abca7ddd92b63dba03",
+      "id": "8eabc1940817029a96e2",
       "path": "backend/src/existingSource/change/store.ts",
-      "line": 66,
+      "line": 69,
       "enclosing": "list",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_changes",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "sourceSha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0",
       "semanticReview": {
         "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
         "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the change records are removed with their binding on unlink.",
@@ -12168,15 +12176,36 @@
       }
     },
     {
-      "id": "b49471879960e3772176",
+      "id": "a0b9db21cdddbaaf6534",
       "path": "backend/src/existingSource/change/store.ts",
-      "line": 73,
+      "line": 77,
+      "enclosing": "delete",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "existing_source_changes",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0",
+      "semanticReview": {
+        "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the change records are removed with their binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/change/store.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('CHANGE_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3387aeca365e93669543",
+      "path": "backend/src/existingSource/change/store.ts",
+      "line": 83,
       "enclosing": "deleteForBinding",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_changes",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "sourceSha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0",
       "semanticReview": {
         "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
         "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the change records are removed with their binding on unlink.",

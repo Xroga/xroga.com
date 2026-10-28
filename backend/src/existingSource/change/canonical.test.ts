@@ -239,3 +239,47 @@ describe('browser verification of a visual change', () => {
     assert.deepEqual(r.states.at(-1)!.currentWorkingSnapshot, files);
   });
 });
+
+describe('retention of finished changes', () => {
+  async function seeded(options: { retentionDays?: number; maxFinishedPerBinding?: number } = {}) {
+    const gh = new FakeGitHub();
+    gh.addAccount('tok-alice', '501', 'alice');
+    const repo = gh.addRepo({ fullName: 'acme/math', ownerId: '501', files: PROJECT, access: { '501': { pull: true, push: true } } });
+    const source = new ExistingSourceService({ store: new InMemorySourceBindingStore(), tokenFor: async () => 'tok-alice', portFor: (t: string) => gh.port(t), treeCache: new Map() } as never);
+    const intel = new ExistingSourceIntelligence({ source, store: new InMemoryCodeIndexStore(), coordinator: new IndexCoordinator() });
+    const store = new InMemoryChangeStore();
+    let clock = Date.parse('2026-10-29T00:00:00Z');
+    const changes = new ChangeService({ source, intel, store, execution: new LocalProcessPort(), runAgent: (async () => ({ status: 'implemented', evidence: { changedFiles: [], checks: [] }, blockers: [], outputText: '', iterations: 0 })) as AgentRunner,
+      modelRouteFor: async () => ({}) as never, now: () => clock, ...options });
+    const binding = (await source.link(ALICE, { repositoryId: repo })).binding;
+    return { changes, store, binding, advance: (days: number) => { clock += days * 86_400_000; } };
+  }
+
+  it('removes finished changes past the retention period when another change is requested, and keeps recent and unfinished ones', async () => {
+    const t = await seeded({ retentionDays: 30 });
+    const old = await t.changes.create(ALICE, t.binding.id, 'old finished change');
+    await t.changes.cancel(ALICE, old.id);
+    const waiting = await t.changes.create(ALICE, t.binding.id, 'old but still queued');
+    t.advance(31);
+    const fresh = await t.changes.create(ALICE, t.binding.id, 'a new change');
+    assert.equal(await t.store.get(ALICE, old.id), null);
+    assert.ok(await t.store.get(ALICE, fresh.id));
+    assert.ok(await t.store.get(ALICE, waiting.id), 'an unfinished change is never removed');
+  });
+
+  it('keeps only the newest finished changes per project and never one an unfinished change builds on', async () => {
+    const t = await seeded({ maxFinishedPerBinding: 2 });
+    const ids: string[] = [];
+    for (const text of ['one', 'two', 'three', 'four']) { const c = await t.changes.create(ALICE, t.binding.id, `${text} change`); await t.changes.cancel(ALICE, c.id); ids.push(c.id); t.advance(1); }
+    await t.changes.prune(ALICE, t.binding.id);
+    const left = await t.store.list(ALICE, t.binding.id, 50);
+    assert.deepEqual(left.map((c) => c.id).sort(), ids.slice(2).sort());
+  });
+
+  it('never removes another owner\'s changes', async () => {
+    const t = await seeded();
+    const mine = await t.changes.create(ALICE, t.binding.id, 'my change');
+    await t.store.delete(BOB, mine.id);
+    assert.ok(await t.store.get(ALICE, mine.id));
+  });
+});

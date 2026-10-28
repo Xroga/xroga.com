@@ -46,6 +46,10 @@ export interface ChangeDeps {
   readonly now?: () => number;
   readonly maxAttempts?: number;
   readonly maxRunningPerOwner?: number;
+  /** Finished changes older than this are removed when the owner starts another change on the same project. Default 90 days. */
+  readonly retentionDays?: number;
+  /** Most finished changes kept per linked project; the oldest go first. Default 50. */
+  readonly maxFinishedPerBinding?: number;
   readonly snapshotLimits?: SnapshotLimits;
   readonly changeLimits?: { readonly maxChangedFiles: number; readonly maxChangedBytes: number };
 }
@@ -82,6 +86,7 @@ export class ChangeService {
       if (parent.baseCommitSha !== binding.baseCommitSha) throw new ExistingSourceError('CHANGE_CONFLICT', 'The linked commit moved since that change was made. Start a new change from the new commit.');
       parentChangeId = parent.id;
     }
+    await this.prune(userId, binding.id).catch(() => undefined);
     const at = this.iso();
     const task: ChangeTask = {
       id: this.deps.newId?.() ?? randomUUID(), ownerUserId: userId, bindingId: binding.id, instruction: text, parentChangeId, status: 'queued', statusReason: 'Waiting to start.', baseCommitSha: binding.baseCommitSha,
@@ -90,6 +95,21 @@ export class ChangeService {
     };
     await this.deps.store.save(userId, task);
     return task;
+  }
+
+  /**
+   * Time-based and count-based retention for one linked project. Only finished changes are ever removed, never one that a running or
+   * queued change still builds on, and never another owner's. Returns how many were removed.
+   */
+  async prune(userId: string, bindingId: string): Promise<number> {
+    const retentionMs = Math.max(1, this.deps.retentionDays ?? 90) * 86_400_000;
+    const keep = Math.max(1, this.deps.maxFinishedPerBinding ?? 50);
+    const all = await this.deps.store.list(userId, bindingId, 500);
+    const needed = new Set(all.filter((t) => !TERMINAL.includes(t.status)).map((t) => t.parentChangeId).filter((p): p is string => Boolean(p)));
+    const finished = all.filter((t) => TERMINAL.includes(t.status) && !needed.has(t.id)).sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
+    const doomed = finished.filter((t, i) => i >= keep || this.now() - Date.parse(t.updatedAt) > retentionMs);
+    for (const t of doomed) await this.deps.store.delete(userId, t.id);
+    return doomed.length;
   }
 
   /** Reads a change, reporting one that was running when the process stopped as interrupted rather than pretending it still runs. */

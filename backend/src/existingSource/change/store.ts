@@ -10,6 +10,8 @@ export interface ChangeStore {
   get(userId: string, changeId: string): Promise<ChangeTask | null>;
   list(userId: string, bindingId: string, limit?: number): Promise<ChangeTask[]>;
   deleteForBinding(userId: string, bindingId: string): Promise<void>;
+  /** Removes one change. Another owner's change reads as absent and is never touched. */
+  delete(userId: string, changeId: string): Promise<void>;
 }
 
 const failed = (what: string): never => { throw new ExistingSourceError('STORAGE_FAILED', `Could not ${what}. Retry shortly.`); };
@@ -28,6 +30,7 @@ export class InMemoryChangeStore implements ChangeStore {
     return [...this.rows.values()].filter((r) => r.ownerUserId === userId && r.bindingId === bindingId).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)).slice(0, limit).map((r) => structuredClone(r));
   }
   async deleteForBinding(userId: string, bindingId: string) { for (const [k, r] of this.rows) if (r.ownerUserId === userId && r.bindingId === bindingId) this.rows.delete(k); }
+  async delete(userId: string, changeId: string) { const r = this.rows.get(changeId); if (r && r.ownerUserId === userId) this.rows.delete(changeId); }
   count(userId: string): number { return [...this.rows.values()].filter((r) => r.ownerUserId === userId).length; }
 }
 
@@ -66,6 +69,13 @@ export class SupabaseChangeStore implements ChangeStore {
     const { data, error } = await this.db().from('existing_source_changes').select(COLUMNS).eq('owner_user_id', owner).eq('binding_id', bindingId).order('created_at', { ascending: false }).limit(Math.min(50, Math.max(1, limit)));
     if (error) failed('list changes');
     return ((data ?? []) as Row[]).map(toTask);
+  }
+
+  async delete(userId: string, changeId: string) {
+    const owner = this.owner(userId);
+    if (!UUID.test(changeId)) return;
+    const { error } = await this.db().from('existing_source_changes').delete().eq('owner_user_id', owner).eq('id', changeId);
+    if (error) failed('remove the change');
   }
 
   async deleteForBinding(userId: string, bindingId: string) {

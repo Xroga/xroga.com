@@ -16018,7 +16018,7 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "sha256": "0dfa4e9e24f6271c16cd87d06a4761c6504d5394c345439ccf3a2f3523c376f5"
+      "sha256": "1cc7db85701ff8a2eaaf9add0e8384278244c42213f233ea4c7f1a678a05740c"
     },
     {
       "path": "backend/src/existingSource/change/snapshot.ts",
@@ -16026,7 +16026,7 @@
     },
     {
       "path": "backend/src/existingSource/change/store.ts",
-      "sha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e"
+      "sha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0"
     },
     {
       "path": "backend/src/existingSource/change/testRunner.ts",
@@ -30444,35 +30444,42 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 53,
+      "line": 57,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 54,
+      "line": 58,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 254,
+      "line": 108,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 281,
+      "line": 274,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 337,
+      "line": 301,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 357,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30486,7 +30493,7 @@
     },
     {
       "path": "backend/src/existingSource/change/store.ts",
-      "line": 19,
+      "line": 21,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

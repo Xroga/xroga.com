@@ -16095,13 +16095,14 @@
     },
     {
       "path": "backend/src/existingSource/change/store.ts",
-      "sourceSha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "sourceSha256": "c73e4f8ba3047278c5220aede12035c7e6880b695cf964633f25a1536dfbfea0",
       "callIds": [
-        "9637092680f5e153ff83",
-        "ebd1ba43e6e803461d05",
-        "23fe4bcc08652fe7bd5a",
-        "92abca7ddd92b63dba03",
-        "b49471879960e3772176"
+        "b0dbcb75753fb9d65c5b",
+        "19774c325aa3230ea039",
+        "9c35c0f60839730421db",
+        "8eabc1940817029a96e2",
+        "a0b9db21cdddbaaf6534",
+        "3387aeca365e93669543"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "SupabaseChangeStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
