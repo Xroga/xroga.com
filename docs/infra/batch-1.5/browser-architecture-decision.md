@@ -1,3 +1,6 @@
+> **SUPERSEDED as a target architecture (2026-10-27).** Google Cloud Run is now the canonical backend compute and execution platform: the Fly.io to Google Cloud migration is accepted and merged (#856, #864). Oracle Cloud is **not** used for hosting or execution, and Fly.io is retired. The browser stack decision below (Oracle-hosted Chromium) is therefore historical; the Playwright + local Stagehand + Xroga BrowserWorker + private R2 evidence + canonical scheduler principles remain, hosted on the Google runtime.
+> This file is kept unchanged below as the historical record of the 2026-10-22 decision. Current runtime facts: `docs/operations/google-production-migration.md`; Batch 1.5 Phase 2 (Google workers, scheduler, browser host): `docs/infra/batch-1.5/phase-2/`.
+
 # Browser automation hosting — final architecture decision (2026-10-22)
 
 **Decision owner: founder. Supersedes every earlier suggestion to host browsers on Cloudflare Browser Run, Cloudflare Browser Rendering or Browserbase.**
