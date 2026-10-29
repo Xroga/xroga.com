@@ -197,9 +197,7 @@ export const COPY = {
     workforce: 'Give an AI Employee a responsibility. Stay in the conversation while it works and brings back updates.',
   },
   modes: { browser: 'Browser Automation', workforce: 'AI Employees' },
-  disclosure: 'Illustrative examples · sample data',
   conceptTag: 'Concept preview',
-  cta: 'Start in Xroga',
   inspect: 'Inspect steps',
 };
 
