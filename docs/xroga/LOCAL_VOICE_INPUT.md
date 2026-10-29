@@ -14,7 +14,7 @@ The homepage, workspace and incognito controls use the same component. Conversat
 
 `MediaRecorder` captures a bounded recording and awaits its final chunk and stop event. The browser decodes and resamples to mono 16 kHz. A dedicated disposable worker runs pinned Transformers.js 3.8.1 and quantized multilingual Whisper. Executable JS/WASM is built locally with the frontend. Only pinned public weights are downloaded from Hugging Face.
 
-Transformers.js 3 silently defaults to English when language is omitted. The adapter instead runs Whisper's first-token language detection and masks selection to the model's declared language tokens, then requests transcription in the detected language. It does not choose from the browser locale or translate into English. Decoder token exhaustion fails instead of reporting a truncated transcript as complete. Overlapping audio chunks use the library's ASR merger. The draft layer does not remove repeated words heuristically.
+Transformers.js 3 silently defaults to English when language is omitted. The adapter instead runs Whisper's first-token language detection and masks selection to the model's declared language tokens, then requests transcription in the detected language. It does not choose from the browser locale or translate into English. Decoder token exhaustion fails instead of reporting a truncated transcript as complete. Long recordings are split at quiet frames near model-window boundaries. Every sample belongs to exactly one contiguous segment. Each segment detects its language and is transcribed independently, then appended without text deduplication. The draft layer does not remove repeated words heuristically.
 
 Raw recordings are not uploaded or retained by this feature. The recognized text follows the existing composer draft-saving and manual Send behavior. Model weights can be cached by the browser. Worker termination releases the model and recording on completion, cancellation, timeout and failure. Backend voice authorization and accounting remain intact for existing clients, but these microphone controls do not call that paid route.
 
@@ -44,7 +44,7 @@ Measured single-fixture word-error rates after automatic detection:
 | Model | Urdu | Arabic | Disposition |
 | --- | --- | --- | --- |
 | Base q8 | 34.1% | 66.7% | Rejected for quality |
-| Small q8 | 100%, Hindi script | 33.3% | Provisional code candidate, quality gate blocked |
+| Small q8 | 100%, Hindi script | 33.3% | Provisional code candidate, founder accepted script ambiguity; live verification pending |
 | Medium q8 | Runtime failure | Not reached | Not selected |
 
 These scores remove punctuation and use word-level edit distance. They do not establish performance on other speakers, dialects or tasks. They should not be read as a benchmark. The wrong-script Urdu result is an explicit unresolved failure.
@@ -70,3 +70,5 @@ For rollback, revert this bounded change before deployment or restore the previo
 ## Voice-only release scope
 
 Live frontend baseline is d7ce7def4ab94a72587907cb4f60690d7f288838, deployment 9MEC7muKc5udcQqPn7oFJ3Z6rDEQ. Release branch codex/voice-only-production-20261030 applies only the microphone changes to that source. It must not replace production with unrelated current-main Batch 3 changes. Preserve the existing deployment as rollback. No backend deployment, production SQL, new service or paid speech request is included.
+
+The first extended public-fixture test observed 12 of 13 repeated phrases under overlap merging. The replacement partitions audio without overlap, preserving all sample ranges and intentional repetitions. The same strict real-speech check must pass before release. Thirty-minute recording is a declared safety ceiling, not a claim of a physically tested thirty-minute dictation session.

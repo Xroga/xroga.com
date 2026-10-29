@@ -6,6 +6,26 @@ export const VOICE_SAMPLE_RATE = 16000;
 export const VOICE_RECORDING_MS = 30 * 60 * 1000;
 export const VOICE_MAX_BYTES = 64 * 1024 * 1024;
 export const VOICE_MAX_SECONDS = VOICE_RECORDING_MS / 1000 + 5;
+/** Partition every sample exactly once, preferring a quiet frame near each model window end. */
+export function voiceSegments(samples: Float32Array): Array<[number, number]> {
+  const result: Array<[number, number]> = [];
+  const window = 25 * VOICE_SAMPLE_RATE, frame = VOICE_SAMPLE_RATE / 20;
+  let start = 0;
+  while (start < samples.length) {
+    let end = Math.min(start + window, samples.length);
+    if (end < samples.length) {
+      let best = Infinity, quietEnd = end;
+      for (let at = start + 20 * VOICE_SAMPLE_RATE; at + frame <= end; at += frame) {
+        let energy = 0;
+        for (let i = at; i < at + frame; i++) energy += samples[i] * samples[i];
+        if (energy < best) { best = energy; quietEnd = at + frame / 2; }
+      }
+      if (best / frame < 0.0001) end = quietEnd;
+    }
+    result.push([start, end]); start = end;
+  }
+  return result;
+}
 export type VoiceWorkerReply =
   | { type: 'progress'; stage: 'loading' | 'transcribing' }
   | { type: 'complete'; text: string }
