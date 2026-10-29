@@ -15477,7 +15477,7 @@
         "backend/src/synthesis/projectRuntime/projectHistory.ts:1",
         "backend/src/synthesis/projectRuntime/store.ts:6",
         "backend/src/synthesis/universalEntrypoint.ts:52",
-        "scripts/batch3/live-github-check.ts:16",
+        "scripts/batch3/live-github-check.ts:18",
         "scripts/batch3/local-supabase-check.ts:14"
       ],
       "reachable": true,
@@ -15859,7 +15859,7 @@
       "callers": [
         "backend/src/routes/existingSource.ts:29",
         "backend/src/routes/existingSourceArchive.test.ts:7",
-        "scripts/batch3/live-github-check.ts:18",
+        "scripts/batch3/live-github-check.ts:20",
         "scripts/batch3/local-supabase-check.ts:16"
       ],
       "reachable": true,
@@ -16397,7 +16397,7 @@
         "backend/src/existingSource/change/golden.test.ts:21",
         "backend/src/routes/existingSource.ts:24",
         "backend/src/routes/existingSourceChanges.test.ts:7",
-        "scripts/batch3/live-github-check.ts:19"
+        "scripts/batch3/live-github-check.ts:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16521,7 +16521,7 @@
         "backend/src/existingSource/change/change.test.ts:11",
         "backend/src/existingSource/change/golden.test.ts:23",
         "backend/src/routes/existingSourceChanges.test.ts:9",
-        "scripts/batch3/live-github-check.ts:20",
+        "scripts/batch3/live-github-check.ts:22",
         "scripts/batch3/local-supabase-check.ts:17"
       ],
       "reachable": false,
@@ -16595,7 +16595,8 @@
       ],
       "callers": [
         "backend/src/existingSource/change/canonicalJob.ts:29",
-        "backend/src/routes/existingSource.ts:25"
+        "backend/src/routes/existingSource.ts:25",
+        "scripts/batch3/live-github-check.ts:94"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16741,7 +16742,7 @@
         "backend/src/existingSource/change/golden.test.ts:24",
         "backend/src/routes/existingSource.ts:26",
         "backend/src/routes/existingSourceChanges.test.ts:10",
-        "scripts/batch3/live-github-check.ts:21",
+        "scripts/batch3/live-github-check.ts:23",
         "scripts/batch3/local-supabase-check.ts:18"
       ],
       "reachable": true,
@@ -16886,7 +16887,7 @@
         "backend/src/existingSource/change/golden.test.ts:25",
         "backend/src/routes/existingSource.ts:27",
         "backend/src/routes/existingSourceChanges.test.ts:11",
-        "scripts/batch3/live-github-check.ts:22",
+        "scripts/batch3/live-github-check.ts:24",
         "scripts/batch3/local-supabase-check.ts:19"
       ],
       "reachable": true,
@@ -17576,7 +17577,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:9",
         "backend/src/routes/existingSourceChanges.test.ts:15",
         "backend/src/routes/existingSourceIntelligence.test.ts:7",
-        "scripts/batch3/live-github-check.ts:24",
+        "scripts/batch3/live-github-check.ts:26",
         "scripts/batch3/local-supabase-check.ts:22"
       ],
       "reachable": true,
@@ -18205,7 +18206,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:10",
         "backend/src/routes/existingSourceChanges.test.ts:16",
         "backend/src/routes/existingSourceIntelligence.test.ts:9",
-        "scripts/batch3/live-github-check.ts:25",
+        "scripts/batch3/live-github-check.ts:27",
         "scripts/batch3/local-supabase-check.ts:23"
       ],
       "reachable": true,
@@ -18335,7 +18336,7 @@
         "backend/src/existingSource/provider.test.ts:4",
         "backend/src/existingSource/service.ts:18",
         "backend/src/routes/existingSource.ts:33",
-        "scripts/batch3/live-github-check.ts:26"
+        "scripts/batch3/live-github-check.ts:28"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18505,7 +18506,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:11",
         "backend/src/routes/existingSourceChanges.test.ts:17",
         "backend/src/routes/existingSourceIntelligence.test.ts:10",
-        "scripts/batch3/live-github-check.ts:27",
+        "scripts/batch3/live-github-check.ts:29",
         "scripts/batch3/local-supabase-check.ts:24"
       ],
       "reachable": true,
@@ -18597,7 +18598,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:12",
         "backend/src/routes/existingSourceChanges.test.ts:18",
         "backend/src/routes/existingSourceIntelligence.test.ts:11",
-        "scripts/batch3/live-github-check.ts:28",
+        "scripts/batch3/live-github-check.ts:30",
         "scripts/batch3/local-supabase-check.ts:25"
       ],
       "reachable": true,
@@ -30245,7 +30246,7 @@
         "backend/src/workers/googleDeliveryStore.ts:3",
         "backend/src/workers/googleSwarmQueue.test.ts:7",
         "backend/src/workers/googleSwarmQueue.ts:2",
-        "scripts/batch3/live-github-check.ts:17",
+        "scripts/batch3/live-github-check.ts:19",
         "scripts/batch3/local-supabase-check.ts:15",
         "scripts/browser/run-workflows.mts:18",
         "scripts/security/verify-oci-kms.ts:8"
@@ -32354,7 +32355,7 @@
         "backend/src/services/integrations/githubAtomicTransport.test.ts:3",
         "backend/src/services/integrations/githubDeploy.ts:41",
         "backend/src/synthesis/universalCommit.ts:30",
-        "scripts/batch3/live-github-check.ts:29"
+        "scripts/batch3/live-github-check.ts:31"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104401,9 +104402,11 @@
       "id": "surface:a4e5d41b622c6da4997b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/batch3/live-github-check.ts",
-      "sha256": "06a8b836ef2364d659ecfd5cca6adce597d16aaa943feda78ad4a1c084ecfbe2",
+      "sha256": "de017edeb0574ed343a1608f2bda523fe0e30aaffdb06e64b2482ec15948dea9",
       "symbols": [
         "ALLOWED_WRITE",
+        "LIVE_MODEL",
+        "MAX_USD",
         "REPO",
         "admin",
         "again",
@@ -104411,6 +104414,7 @@
         "archives",
         "before",
         "binding",
+        "ceilingHit",
         "changeStore",
         "changes",
         "choice",
@@ -104418,8 +104422,10 @@
         "ctx",
         "delivery",
         "done",
+        "envFile",
         "files",
         "gh",
+        "guard",
         "guardedFetch",
         "guardedGh",
         "guardedPath",
@@ -104427,7 +104433,9 @@
         "indexed",
         "indexes",
         "intel",
+        "key",
         "left",
+        "line",
         "listed",
         "main",
         "open",
@@ -104435,12 +104443,16 @@
         "page",
         "pass",
         "pr",
+        "production",
         "receipt",
         "results",
         "source",
+        "spent",
+        "startedAt",
         "task",
         "token",
         "u",
+        "usd",
         "userId"
       ],
       "imports": [
@@ -104449,6 +104461,7 @@
         "../../backend/src/existingSource/archive/archiveStore.js",
         "../../backend/src/existingSource/change/delivery.js",
         "../../backend/src/existingSource/change/localProcessPort.testsupport.js",
+        "../../backend/src/existingSource/change/production.js",
         "../../backend/src/existingSource/change/service.js",
         "../../backend/src/existingSource/change/store.js",
         "../../backend/src/existingSource/change/toolHost.js",
@@ -104460,13 +104473,16 @@
         "../../backend/src/security/tenantContext.js",
         "../../backend/src/services/integrations/githubAtomicTransport.js",
         "node:assert/strict",
-        "node:child_process"
+        "node:child_process",
+        "node:fs",
+        "node:path"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/existingSource/archive/archiveStore.ts",
         "backend/src/existingSource/change/delivery.ts",
         "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+        "backend/src/existingSource/change/production.ts",
         "backend/src/existingSource/change/service.ts",
         "backend/src/existingSource/change/store.ts",
         "backend/src/existingSource/intelligence/codeIndexStore.ts",
@@ -104480,13 +104496,20 @@
       "entryPoints": [],
       "callers": [],
       "reachable": false,
-      "persistenceDependencies": [],
+      "persistenceDependencies": [
+        "ai_usage_ledger"
+      ],
       "externalProviderDependencies": [
         "node:assert/strict",
-        "node:child_process"
+        "node:child_process",
+        "node:fs",
+        "node:path"
       ],
       "authBoundary": [],
-      "tenantBoundary": [],
+      "tenantBoundary": [
+        "scripts/batch3/live-github-check.ts:115 (user_id)",
+        "scripts/batch3/live-github-check.ts:119 (user_id)"
+      ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
@@ -121668,6 +121691,15 @@
       "line": 106,
       "kind": "setInterval",
       "symbol": "useBuildCompletionAlerts",
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE"
+    },
+    {
+      "id": "schedule:4535ac244647e9dc24a2",
+      "sourcePath": "scripts/batch3/live-github-check.ts",
+      "line": 117,
+      "kind": "setInterval",
+      "symbol": "main",
       "reachable": false,
       "state": "DEAD_OR_UNREACHABLE"
     },

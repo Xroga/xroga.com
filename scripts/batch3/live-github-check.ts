@@ -5,7 +5,9 @@
  *   GITHUB_TEST_REPO=Xroga/blogsite SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY=<local key> npx tsx scripts/batch3/live-github-check.ts
  *
  * Real: the GitHub REST reads of the repository, the exact-commit binding, the code map, the Batch 3 stores, and the review branch and
- * DRAFT pull request written by the atomic writer. Scripted: the coding model (a deterministic edit through the real tool host).
+ * DRAFT pull request written by the atomic writer. The coding model is scripted (a deterministic edit through the real tool host) unless
+ * LIVE_MODEL=1, in which case the real Xroga coding route and agent run, using OPENROUTER_API_KEY from backend/.env.local (never printed),
+ * with a hard spend ceiling (LIVE_MODEL_MAX_USD, default 0.25) enforced from the local usage ledger: the run is cancelled when it is reached.
  * Safety: every GitHub request goes through a guard that allows reads anywhere but writes ONLY under /repos/<GITHUB_TEST_REPO>/, and the
  * script refuses any repository other than the one named, any non-loopback Supabase URL, and cleans up the branch and PR it created.
  */
@@ -28,6 +30,18 @@ import { ExistingSourceService } from '../../backend/src/existingSource/service.
 import { SupabaseSourceBindingStore } from '../../backend/src/existingSource/store.js';
 import { makeAtomicWriteApi } from '../../backend/src/services/integrations/githubAtomicTransport.js';
 
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+const LIVE_MODEL = process.env.LIVE_MODEL === '1';
+const MAX_USD = Number(process.env.LIVE_MODEL_MAX_USD ?? '0.25');
+if (LIVE_MODEL) {
+  const envFile = resolve(dirname(process.argv[1] ?? '.'), '../../backend/.env.local');
+  const line = existsSync(envFile) ? readFileSync(envFile, 'utf8').split(/\r?\n/).find((l) => l.startsWith('OPENROUTER_API_KEY=')) : undefined;
+  const key = line?.slice('OPENROUTER_API_KEY='.length).trim();
+  if (!key) throw new Error('LIVE_MODEL=1 needs OPENROUTER_API_KEY=<key> in backend/.env.local.');
+  process.env.OPENROUTER_API_KEY = key;
+  if (!(MAX_USD > 0 && MAX_USD <= 0.3)) throw new Error('LIVE_MODEL_MAX_USD must be between 0 and 0.30.');
+}
 const REPO = process.env.GITHUB_TEST_REPO ?? '';
 if (!/^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/.test(REPO)) throw new Error('Set GITHUB_TEST_REPO=owner/name.');
 if (!/^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(process.env.SUPABASE_URL ?? '')) throw new Error('Refusing to run: SUPABASE_URL must be a local loopback address.');
@@ -77,7 +91,9 @@ async function main() {
     await host.writeFile(input.contract, 'styles.css', `${css.content.replace(/\s*$/, '\n')}.about { margin: 2rem 0; }\n`, 'modify');
     return { status: 'implemented', evidence: { changedFiles: [], checks: [] }, blockers: [], outputText: 'done', iterations: 1 } as AgentSoftwareExecutorResult;
   };
-  const changes = new ChangeService({ source, intel, store: changeStore, execution: new LocalProcessPort(), runAgent: agent, modelRouteFor: async () => ({}) as never });
+  const production = LIVE_MODEL ? await import('../../backend/src/existingSource/change/production.js') : null;
+  const changes = new ChangeService({ source, intel, store: changeStore, execution: new LocalProcessPort(), runAgent: production ? production.productionAgentRunner : agent,
+    modelRouteFor: production ? production.selectCodingModelRoute : async () => ({}) as never, maxAttempts: LIVE_MODEL ? 1 : undefined });
   const delivery = new ChangeDelivery({ source, store: changeStore, apiFor: async (_u, binding) => makeAtomicWriteApi(guardedGh as never, token, OWNER, NAME) as DeliveryApi & { binding?: unknown } });
 
   // 1. pick the test repository by name and link it (real GitHub reads)
@@ -95,8 +111,14 @@ async function main() {
 
   // 3. a change is made through the real tool host against the real files; the result is honest about verification
   const task = await changes.create(userId, binding.id, 'Add a short About this site section to `index.html` and style it in `styles.css`');
-  const done = await changes.run(userId, task.id);
-  assert.deepEqual(done.result.map((r) => r.path).sort(), ['index.html', 'styles.css'], done.status + ': ' + done.statusReason + ' ' + done.events.slice(-4).map((e) => e.message).join(' | '));
+  const startedAt = new Date().toISOString();
+  const spent = async (): Promise<number> => { const { data } = await admin.from('ai_usage_ledger').select('cost_usd').eq('user_id', userId).gte('created_at', startedAt); return (data ?? []).reduce((n, r) => n + Number(r.cost_usd ?? 0), 0); };
+  let ceilingHit = false;
+  const guard = LIVE_MODEL ? setInterval(() => { void spent().then((usd) => { if (usd >= MAX_USD && !ceilingHit) { ceilingHit = true; console.log('SPEND CEILING REACHED: cancelling the change'); void changes.cancel(userId, task.id).catch(() => undefined); } }); }, 2000) : null;
+  const done = await changes.run(userId, task.id).finally(() => { if (guard) clearInterval(guard); });
+  if (LIVE_MODEL) { const usd = await spent(); const { data } = await admin.from('ai_usage_ledger').select('model_id,input_tokens,output_tokens,cost_usd').eq('user_id', userId).gte('created_at', startedAt); console.log('MODEL SPEND', JSON.stringify({ usd: Number(usd.toFixed(4)), calls: data?.length ?? 0, models: [...new Set((data ?? []).map((r) => r.model_id))] })); assert.ok(usd <= MAX_USD + 0.05, 'spend exceeded the ceiling by more than one call'); }
+  assert.ok(done.result.length > 0 && done.result.every((r) => ['index.html', 'styles.css', 'script.js', 'public/index.html'].includes(r.path)), 'unexpected files: ' + done.result.map((r) => r.path).join(', ') + ' / ' + done.status + ': ' + done.statusReason);
+  if (!LIVE_MODEL) assert.deepEqual(done.result.map((r) => r.path).sort(), ['index.html', 'styles.css'], done.status + ': ' + done.statusReason + ' ' + done.events.slice(-4).map((e) => e.message).join(' | '));
   assert.notEqual(done.status, 'verified', 'a static site with no tests and no browser check must not be called verified');
   pass(`change produced exactly index.html and styles.css and ended "${done.status}" (no project tests, no browser check ran)`);
 
@@ -108,7 +130,7 @@ async function main() {
   const pr = JSON.parse(gh('api', `repos/${REPO}/pulls/${receipt.pullRequestNumber}`));
   assert.equal(pr.draft, true); assert.equal(pr.base.ref, binding.baseBranch); assert.match(pr.head.ref, /^xroga\//);
   const files = (JSON.parse(gh('api', `repos/${REPO}/pulls/${receipt.pullRequestNumber}/files`)) as { filename: string }[]).map((f) => f.filename).sort();
-  assert.deepEqual(files, ['index.html', 'styles.css']);
+  assert.deepEqual(files, done.result.map((r) => r.path).sort());
   assert.equal(JSON.parse(gh('api', `repos/${REPO}/git/ref/heads/${binding.baseBranch}`)).object.sha, before);
   pass(`real draft pull request #${receipt.pullRequestNumber} on branch ${pr.head.ref} changes only index.html and styles.css; the base branch is untouched`);
 
