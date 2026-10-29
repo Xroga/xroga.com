@@ -20661,7 +20661,7 @@
       "id": "surface:bd41a7e2f60985200cff",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+      "sha256": "e1d2fda6b417aee092e86f40ed141822b54a9e46e83ca5594e9ac15f2557ec5f",
       "symbols": [
         "HOP_BY_HOP",
         "PREVIEW_REQUEST_HEADERS",
@@ -133576,7 +133576,7 @@
     {
       "id": "test-suite:149b4388584149f359e1",
       "sourcePath": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
