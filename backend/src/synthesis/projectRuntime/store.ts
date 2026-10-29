@@ -1162,6 +1162,13 @@ export function restoreOwnerBoundProjectRevision(row: unknown, userId: string, p
   if (!contract || typeof contract !== 'object' || Array.isArray(contract)) return null;
   const identity = contract as Record<string, unknown>;
   if (snapshot.projectId !== projectId || snapshot.runId !== record.run_id || identity.projectId !== projectId || identity.runId !== record.run_id) return null;
+  const workspace = snapshot.workspace;
+  if (!workspace || typeof workspace !== 'object' || Array.isArray(workspace)) return null;
+  const files = (workspace as Record<string, unknown>).files;
+  if (!Array.isArray(files) || files.some(file => !file || typeof file !== 'object' || Array.isArray(file)
+    || typeof file.path !== 'string' || typeof file.content !== 'string')) return null;
+  if (typeof record.workspace_fingerprint !== 'string' || !/^[a-f0-9]{64}$/.test(record.workspace_fingerprint)
+    || projectWorkspaceFingerprint(project as SoftwareProject) !== record.workspace_fingerprint) return null;
   return {
     revisionId: String(record.revision_id), userId, projectId, runId: record.run_id,
     revisionNumber: Number(record.revision_number), workspaceFingerprint: String(record.workspace_fingerprint),
