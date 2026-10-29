@@ -7,6 +7,10 @@ import {verifyAttachedGoogleIdentity} from '../synthesis/projectRuntime/googleFa
 import {type GoogleDispatchConfiguration,GoogleDispatchError,validateGoogleDispatchConfiguration} from './googleDispatch.js';
 import type {ChatAttachment} from '../ai/attachments.js';
 import {QUEUED_RUN_TTL_MS} from '../ai/runReconciler.js';
+import {selectFairly} from './fairSelection.js';
+
+/** Deliveries offered to the dispatcher per tick, and how many eligible rows are read to choose them from. */
+const DISPATCH_BATCH=10,DISCOVERY_WINDOW=100;
 
 export interface CanonicalQueuedInput {
   prompt:string;
@@ -66,15 +70,16 @@ export class GoogleDeliveryStore {
   }
   async pendingDeliveryIds():Promise<string[]>{
     const nowMs=Date.now();
-    const {data,error}=await this.service().from('google_canonical_deliveries').select('id')
+    const {data,error}=await this.service().from('google_canonical_deliveries').select('id,user_id,created_at')
       .eq('source_sha',this.c.sourceSha)
       // Keep the bounded selection aligned with the reconciler's queued-run wait. A launch whose lease expired with an unknown outcome is
       // retried under the database's own five-attempt ceiling. The dispatcher still requires the database reservation and native identity.
       .gte('created_at',new Date(nowMs-QUEUED_RUN_TTL_MS).toISOString()).lt('launch_attempts',5)
       .or(`state.eq.pending,and(state.eq.launching,launch_lease_until.lt.${new Date(nowMs).toISOString()})`)
-      .order('created_at',{ascending:true}).limit(10);
+      .order('created_at',{ascending:true}).limit(DISCOVERY_WINDOW);
     if(error||!Array.isArray(data)||data.some(row=>!uuid.test(row.id)))return denied();
-    return data.map(row=>row.id);
+    // Offer a bounded set that interleaves tenants, so one tenant's backlog cannot take every dispatch tick.
+    return selectFairly(data as Array<{id:string;user_id?:string|null;created_at?:string}>,DISPATCH_BATCH).map(row=>row.id);
   }
   async claim(deliveryId:string,workerId:string):Promise<CanonicalDeliveryClaim|null>{
     if(!uuid.test(deliveryId)||!uuid.test(workerId)||this.env.CLOUD_RUN_JOB!==this.c.job
