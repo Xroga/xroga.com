@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a8ec34f724d1e380216df4734050a32da054ac20",
+  "source_sha": "9cf6ce1ec89d37a83afce1fe762a3eeb889fe38a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7665,6 +7665,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/guestChat.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
@@ -7840,6 +7841,7 @@
         "XROGA_QA_HOST_ALLOWED_SUFFIXES",
         "XROGA_QA_HOST_MAX_CONCURRENT",
         "XROGA_QA_HOST_SECRET",
+        "XROGA_RELEASE_CANDIDATE",
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
         "XROGA_REQUIRE_MANAGED_CUSTODY",
         "XROGA_ROUTING_MODE",
@@ -7888,6 +7890,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/guestChat.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/containerCancellation.local.integration.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
@@ -14499,6 +14502,25 @@
       ]
     },
     {
+      "name": "XROGA_RELEASE_CANDIDATE",
+      "consuming_sources": [
+        "backend/src/runtime/startupPolicy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_RELEASE_SHA",
       "consuming_sources": [
         "backend/src/lib/safeHealth.ts",
@@ -16104,7 +16126,7 @@
     },
     {
       "path": "backend/src/config/platformEnvironment.ts",
-      "sha256": "918b907a312d82416df6584ab2ae9f495761c2f7e41e2add750c50d5749ac638"
+      "sha256": "f363cda540f180b30da07e030c2a1a928eb25147ff2318a8144eeabf89161a83"
     },
     {
       "path": "backend/src/config/redis.ts",
@@ -16188,7 +16210,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "e582d8b8e4f35fe24b7e8239c4ea97f342b299dd3beaeef63c1c66ffc14b8521"
+      "sha256": "29ed8c185fa7f40346f35b5f362ca3e4696c0925ea4ee8994b22b9d67f2fdcdb"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -16816,7 +16838,7 @@
     },
     {
       "path": "backend/src/runtime/startupPolicy.ts",
-      "sha256": "23523e0d510950be13498e5ca959159a0a75df81d7cf3eab1ca6e83e48c8bf4b"
+      "sha256": "eac9ca2b4ea7f6af3de801e4c083fbeb33ab3edd75e4de2900518e9511a88ebf"
     },
     {
       "path": "backend/src/sandbox/containerCancellation.local.integration.ts",
@@ -22036,7 +22058,7 @@
     },
     {
       "path": "scripts/infrastructure/cloud-run-release-gate.mjs",
-      "sha256": "99ddc8ac1c07261fc209c079af59d228a1851630602ef6bb7c0632163ecfc1b0"
+      "sha256": "427070043af6520e625fd3c5be534a4ed9dd17d591645ad7ba689a1a561c86cc"
     },
     {
       "path": "scripts/xroga/check-runtime-config.mjs",
@@ -23267,42 +23289,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 112,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 113,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 114,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 115,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 116,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 117,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 211,
+      "line": 212,
       "credentialsInUrl": false
     },
     {
