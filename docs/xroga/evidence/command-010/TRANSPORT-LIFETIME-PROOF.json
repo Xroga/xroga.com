@@ -793,7 +793,7 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "5d75d311b49b606b3116dcc84e1284c30ce556a7f0f4a5ae530c406d0631aefa",
+      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511",
       "beforeCurrentMainIntegration": {
         "sha256": "2b28ecd8b77c60677931c7303ea23e56a345fbb91f589ecfc5f6cce7cb3a4a28",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
