@@ -229,10 +229,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(composerInput).toBeVisible();
 
   // Voice is intentionally one icon with no settings pill or product permission modal.
-  // After the browser has granted mic access once, the same icon can also arm the
-  // lightweight Xroga wake listener while manual click-to-dictate remains available.
+  // Dictation starts only on an explicit click. There is no wake listener.
   const voiceToggle = terminalDock.getByRole('button', { name: 'Start voice typing' });
   await expect(voiceToggle).toBeVisible();
+  await expect(voiceToggle).toBeEnabled();
   await expect(terminalDock.getByText('Voice off', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('dialog', { name: /voice/i })).toHaveCount(0);
 
@@ -835,7 +835,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const canonicalComposer = page.locator('.xv-terminal-dock');
   // The current voice controls use accessible names from XrogaVoiceControl.
   await expect(canonicalComposer.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
-  await expect(canonicalComposer.getByRole('button', { name: 'Voice options' })).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Start voice typing' })).toHaveCount(1);
+  await expect(canonicalComposer.getByRole('button', { name: 'Voice options' })).toHaveCount(0);
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
   }
@@ -1111,5 +1112,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await mkdir('test-results', { recursive: true });
   expect(productionTelemetryRequests).toBe(0);
   await writeFile('test-results/batch01-private-delivery-evidence.json',JSON.stringify({expectedRelease,privateCookieDelivery:privateDelivery.own,crossTenantDenial:privateDelivery.foreign,signedOwnerAccess:200,anonymousSignedAccess:401,revokedLinkAccess:404,renderedCopyAndRevoke:'PASS',productionTelemetryRequests,realR2:'NOT_EXECUTED',observedAt:new Date().toISOString()},null,2));
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'wake_word_icon_verified', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'manual_dictation_control_verified_speech_accuracy_not_tested', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
