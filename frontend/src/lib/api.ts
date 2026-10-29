@@ -5793,6 +5793,12 @@ export interface SwarmRunSummary {
 
   lastSequence?:
     number;
+
+  /** Oldest event the server still retains; absent on older servers. */
+  firstRetainedSequence?: number | null;
+
+  /** True when events between the requested cursor and the oldest retained event are no longer available. */
+  eventsTruncated?: boolean;
 }
 
 export interface DashboardSummary {
