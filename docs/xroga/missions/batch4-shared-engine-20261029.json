@@ -179,6 +179,12 @@
       "scope": "Resource ledger on a real disposable PostgreSQL: idempotent reserve, atomic cap under a concurrent race, settle once, release, cross-owner denial, sweep, privileges.",
       "negative": true,
       "reference": "backend/tests/engineeringResourceLedger.local.integration.ts"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_LEDGER_TEST_DATABASE_URL=<loopback disposable> node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+      "scope": "Real OS processes: six workers racing a cap, SIGKILL while holding a reservation (hold stays visible, blocks capacity, swept and charged in full), redelivery after death is the same reservation.",
+      "negative": true,
+      "reference": "backend/tests/engineeringResourceLedger.processes.local.integration.ts"
     }
   ],
   "architecture": {
