@@ -4879,7 +4879,7 @@
       "id": "B1-P2-aca46b7ed6cc0fa7",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
       "baselineCallerIds": [
         "8fc7cf5dd562db7dcd3a",
         "ed5cdf592a4a0494dc20",
@@ -4896,15 +4896,15 @@
       "currentCallerIds": [
         "a7a1747d2192d62b505b",
         "4623023af1a7fe9573f6",
-        "dfd2b022b39413db1561",
-        "6da2a4d0d15144e0aad0",
-        "2a0d2f322b23c157502d",
-        "e49e4b26ba7d2860dc41",
-        "a2f0c39a047770542a8b",
-        "492e2a6c5aee7adbc460",
-        "7f42805766f9e4a7622d",
-        "32701c89f04a3536291d",
-        "18ace9b81c3f92c7fa17"
+        "28dfd8245286c04b697b",
+        "45874c3043d8516c9e20",
+        "b1922cb9ec459f4186c2",
+        "3027098ec062496251e3",
+        "d51ac26872d000030145",
+        "9f445fdb22b362ba675a",
+        "f9c86e5e58481551703f",
+        "bbbbeadcb9be36006874",
+        "c870b0981e8435dd6a08"
       ],
       "mapping": [
         {
@@ -4924,63 +4924,63 @@
         {
           "baselineCallerId": "530ec12058ab9d32794b",
           "currentCallerIds": [
-            "dfd2b022b39413db1561"
+            "28dfd8245286c04b697b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "419bf279075e606b8b1f",
           "currentCallerIds": [
-            "6da2a4d0d15144e0aad0"
+            "45874c3043d8516c9e20"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8da826b4f1382152e9e9",
           "currentCallerIds": [
-            "2a0d2f322b23c157502d"
+            "b1922cb9ec459f4186c2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "05696d559ec8d6305a1f",
           "currentCallerIds": [
-            "e49e4b26ba7d2860dc41"
+            "3027098ec062496251e3"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fbff43474088305493a",
           "currentCallerIds": [
-            "a2f0c39a047770542a8b"
+            "d51ac26872d000030145"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7abc56c35732ad79279a",
           "currentCallerIds": [
-            "492e2a6c5aee7adbc460"
+            "9f445fdb22b362ba675a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b9522163f553d5a418ed",
           "currentCallerIds": [
-            "7f42805766f9e4a7622d"
+            "f9c86e5e58481551703f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1d714d1647e2c5f6a436",
           "currentCallerIds": [
-            "32701c89f04a3536291d"
+            "bbbbeadcb9be36006874"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2a229397c50f1425b1b5",
           "currentCallerIds": [
-            "18ace9b81c3f92c7fa17"
+            "c870b0981e8435dd6a08"
           ],
           "change": "RETAINED"
         }
@@ -4990,7 +4990,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-aca46b7ed6cc0fa7",
-        "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+        "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
         "executionStatus": "IN_PROGRESS",
         "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
@@ -5052,15 +5052,15 @@
           "verifiedCurrentCallerIds": [
             "a7a1747d2192d62b505b",
             "4623023af1a7fe9573f6",
-            "dfd2b022b39413db1561",
-            "6da2a4d0d15144e0aad0",
-            "2a0d2f322b23c157502d",
-            "e49e4b26ba7d2860dc41",
-            "a2f0c39a047770542a8b",
-            "492e2a6c5aee7adbc460",
-            "7f42805766f9e4a7622d",
-            "32701c89f04a3536291d",
-            "18ace9b81c3f92c7fa17"
+            "28dfd8245286c04b697b",
+            "45874c3043d8516c9e20",
+            "b1922cb9ec459f4186c2",
+            "3027098ec062496251e3",
+            "d51ac26872d000030145",
+            "9f445fdb22b362ba675a",
+            "f9c86e5e58481551703f",
+            "bbbbeadcb9be36006874",
+            "c870b0981e8435dd6a08"
           ],
           "remainingCurrentCallerIds": [],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",

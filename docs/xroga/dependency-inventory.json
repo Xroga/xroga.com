@@ -15617,7 +15617,7 @@
     },
     {
       "path": "backend/src/ai/runReconciler.ts",
-      "sha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55"
+      "sha256": "748ba493598f0a99ab4dc9a404743514032fe8fd8835d08734aa3ab2077e313f"
     },
     {
       "path": "backend/src/ai/runStore.ts",
@@ -15846,6 +15846,10 @@
     {
       "path": "backend/src/ai/validationVerdict.ts",
       "sha256": "860e41831c61d26d9742c64b71cda0ee88764cc6abd5f78636a3eebf811250a8"
+    },
+    {
+      "path": "backend/src/ai/verificationGate.ts",
+      "sha256": "c459ce31598b7d0837a350d8993d92c72561450e8ba18476d2624618a18d686b"
     },
     {
       "path": "backend/src/ai/verificationLifecycle.ts",
@@ -17041,7 +17045,7 @@
     },
     {
       "path": "backend/src/sandbox/google/googleSandbox.ts",
-      "sha256": "d5b72b4e7d5bb17a189a623d24f2523a3dda238a914b7597e6f6f287aefbc821"
+      "sha256": "390693285ca32b5738d25ce4e5602e20a3a6602defd29dd20ef25acf3578c2ec"
     },
     {
       "path": "backend/src/sandbox/remoteSandbox.ts",
@@ -18121,7 +18125,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3"
+      "sha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
@@ -18256,12 +18260,16 @@
       "sha256": "38b7acfeef14671c49714336ee8bea15c3b9458cabf56f7019b975c306e263b7"
     },
     {
+      "path": "backend/src/workers/__tests__/postgrestFilter.ts",
+      "sha256": "de22eb72fe5ffea30139d8e6c7ce5c6273acf4a01247d566b587547c2ec64a3f"
+    },
+    {
       "path": "backend/src/workers/admission.ts",
       "sha256": "9679143c7b92982db8f9ec4830185c13f781b136cfbce5b0d618cf31e57cbfa2"
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "5d75d311b49b606b3116dcc84e1284c30ce556a7f0f4a5ae530c406d0631aefa"
+      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
@@ -18297,7 +18305,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "sha256": "59976a8c9023dbf82995c97721fbb60959ff6e764770c310bd9a4a44868693f4"
+      "sha256": "75054d2fd6ba5b567ea9f49a7c08027ed48c5149f00cc48b1b79eca32d935f86"
     },
     {
       "path": "backend/src/workers/browserTaskHandler.ts",
@@ -18325,7 +18333,7 @@
     },
     {
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "sha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
+      "sha256": "8f511532bdf2f3db92cf4b20ab6c87548fecb34fab8d84f5594c5813cc85ce36"
     },
     {
       "path": "backend/src/workers/googleDispatch.ts",
@@ -35116,7 +35124,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "line": 74,
+      "line": 75,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

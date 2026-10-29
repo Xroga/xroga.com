@@ -107,7 +107,7 @@
       "enclosing": "saveEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
-      "currentCallerId": "e49e4b26ba7d2860dc41",
+      "currentCallerId": "3027098ec062496251e3",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -117,7 +117,7 @@
       "enclosing": "saveEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "a2f0c39a047770542a8b",
+      "currentCallerId": "d51ac26872d000030145",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -127,7 +127,7 @@
       "enclosing": "loadEncryptedSecrets",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
-      "currentCallerId": "492e2a6c5aee7adbc460",
+      "currentCallerId": "9f445fdb22b362ba675a",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -137,7 +137,7 @@
       "enclosing": "loadEncryptedSecrets",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "7f42805766f9e4a7622d",
+      "currentCallerId": "f9c86e5e58481551703f",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -147,7 +147,7 @@
       "enclosing": "deleteEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
-      "currentCallerId": "32701c89f04a3536291d",
+      "currentCallerId": "bbbbeadcb9be36006874",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -157,7 +157,7 @@
       "enclosing": "deleteEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "18ace9b81c3f92c7fa17",
+      "currentCallerId": "c870b0981e8435dd6a08",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -1378,7 +1378,7 @@
     },
     {
       "packetId": "B1-P2-aca46b7ed6cc0fa7",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
       "executionStatus": "IN_PROGRESS",
       "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
@@ -1440,15 +1440,15 @@
         "verifiedCurrentCallerIds": [
           "a7a1747d2192d62b505b",
           "4623023af1a7fe9573f6",
-          "dfd2b022b39413db1561",
-          "6da2a4d0d15144e0aad0",
-          "2a0d2f322b23c157502d",
-          "e49e4b26ba7d2860dc41",
-          "a2f0c39a047770542a8b",
-          "492e2a6c5aee7adbc460",
-          "7f42805766f9e4a7622d",
-          "32701c89f04a3536291d",
-          "18ace9b81c3f92c7fa17"
+          "28dfd8245286c04b697b",
+          "45874c3043d8516c9e20",
+          "b1922cb9ec459f4186c2",
+          "3027098ec062496251e3",
+          "d51ac26872d000030145",
+          "9f445fdb22b362ba675a",
+          "f9c86e5e58481551703f",
+          "bbbbeadcb9be36006874",
+          "c870b0981e8435dd6a08"
         ],
         "remainingCurrentCallerIds": [],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",

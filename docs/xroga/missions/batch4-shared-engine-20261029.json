@@ -1,0 +1,155 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH4-SHARED-ENGINE-20261029",
+  "baseSha": "63b8c44429256530a67c95d8874e76d5672bcc3f",
+  "requirementIds": [
+    "XR-MISSION-034",
+    "XR-MISSION-037",
+    "XR-HIST-c7b62da288a8e42e"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Batch 4 (shared engineering engine), development only, continuing Codex checkpoints A-C from e1db3eb2. This increment: durable saved-revision read-back, queued-run wait and delivery rediscovery, and a shared source-bound verification gate. Phases 1-3 are not complete.",
+  "changedFiles": [
+    "BATCH-4-HANDOFF.md",
+    "backend/src/ai/runReconciler.queue.test.ts",
+    "backend/src/ai/runReconciler.ts",
+    "backend/src/ai/verificationGate.test.ts",
+    "backend/src/ai/verificationGate.ts",
+    "backend/src/sandbox/google/googleSandbox.test.ts",
+    "backend/src/sandbox/google/googleSandbox.ts",
+    "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
+    "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+    "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
+    "backend/src/synthesis/projectRuntime/store.ts",
+    "backend/src/synthesis/projectRuntime/store.worker.test.ts",
+    "backend/src/workers/__tests__/postgrestFilter.ts",
+    "backend/src/workers/browserCapability.ts",
+    "backend/src/workers/browserRunStore.integration.test.ts",
+    "backend/src/workers/browserRunStore.ts",
+    "backend/src/workers/googleDeliveryStore.test.ts",
+    "backend/src/workers/googleDeliveryStore.ts",
+    "backend/src/workers/postgresLeaseStore.integration.test.ts",
+    "docs/infra/batch-4/ORIGINAL-SPECIFICATION.md",
+    "docs/infra/batch-4/STATUS.md",
+    "docs/infra/batch-4/THREE-PHASE-ORDER.md",
+    "docs/infra/batch-4/phase1-checkpoint-01.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/missions/batch4-shared-engine-20261029.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, Google delivery and worker path, SoftwareAgent, project runtime store, live preview coordinator",
+      "Batch 1/1.5/2/3 behaviour and security controls",
+      "Codex Batch 4 checkpoints"
+    ],
+    "extend": [
+      "Saved revisions are read back by their own id under the same owner before they are reported durable",
+      "Queued runs get a bounded wait (heartbeat from admission or resume) and end as never_started instead of worker_restarted",
+      "A verification gate binds test evidence to the exact delivered source, run, project and attempt"
+    ]
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No migration in this increment.",
+    "rollback": "Not applicable."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New /api/existing-source routes require the issued tenant context and are off unless XROGA_EXISTING_SOURCE=1."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Every binding query carries the verified owner; another owner's binding id is indistinguishable from one that does not exist; the same repository linked by two owners stays two bindings. Code maps are stored per owner and binding, service-role only with RLS, cascade on unlink, purged on revocation, transfer, account change and removed connection; another owner's map is indistinguishable from a missing one."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Delivery writes a NEW review branch and opens a draft PR only after the binding is re-verified at the provider, the account can push, the remote head is re-read, credentials and workflow paths are scanned out, and the change is verified (or explicitly confirmed unverified). It never writes the base or a protected branch and never force-pushes. An unverified change needs an explicit acknowledgement before a draft PR."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "The connected account token is resolved server-side and never returned; .env, key and credential files are never fetched; secrets inside ordinary files are redacted by the existing tool session."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; blob fetches for the map skip sensitive, vendored, generated, binary and oversize files. No repository content reaches a model in these phases; the passport carries signatures and paths, not bodies. A ZIP import is read only from the owner's own upload; entries are validated (no traversal, symlink, encrypted, bomb), and credentials and binaries are never stored. Change execution and tests run only through the isolation runtime port (never on the API host); with no runtime the change ends unverified."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Map builds are bounded (1500 blob fetches, 24 MB, one build at a time per owner, shared in-flight builds); persisted map capped at 8 MB. No model spend."
+    },
+    "billing": {
+      "changed": false,
+      "description": "None."
+    }
+  },
+  "tests": [
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/verificationGate.test.ts",
+      "scope": "Verification gate: genuine receipts only, exact source/run/project/attempt, failure and unavailable semantics, cancelled and stale attempts, durable source, provider receipt.",
+      "negative": true,
+      "reference": "backend/src/ai/verificationGate.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/runReconciler.queue.test.ts backend/src/ai/runReconciler.test.ts",
+      "scope": "Queued-run wait versus worker-held orphan rule, with real filter semantics.",
+      "negative": true,
+      "reference": "backend/src/ai/runReconciler.queue.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/workers/googleDeliveryStore.test.ts",
+      "scope": "Delivery rediscovery window, expired-launch retry, attempt ceiling, source match, and the existingSourceChangeId contract.",
+      "negative": true,
+      "reference": "backend/src/workers/googleDeliveryStore.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/synthesis/projectRuntime/store.persistence.test.ts backend/src/synthesis/projectRuntime/store.worker.test.ts",
+      "scope": "Saved revision read-back: tampered, missing and unreadable rows refuse the receipt.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/store.persistence.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends the existing reconciler, delivery store, runtime store and verification vocabulary. No scheduler, agent loop, runtime or control plane is added.",
+    "rfc": null
+  },
+  "rollout": "Development only. Merge and activation need the founder authorisation after all three phases and acceptance gates.",
+  "rollback": "Revert the branch. The reconciler change only alters when an unclaimed run is ended and which reason it records; the read-back only adds a verification read after an insert.",
+  "knownGaps": [
+    "Phase 1 real canonical-process crash tests, allocation-cleanup proof and R2 read-back are not done",
+    "Phase 2 shared repair controller and generic preview source binding are not done; the verification gate is not yet adopted by Batch 2 or 3",
+    "Phase 3 resource metering is missing and the Golden A-V matrix is not run",
+    "All real-model, real-provider, staging and production verification is DEFERRED BY FOUNDER"
+  ],
+  "placeholderClaimsRemaining": [
+    "PostgREST and PostgreSQL behaviour is exercised through loopback or evaluator fixtures here"
+  ],
+  "evidenceRefs": [
+    "docs/infra/batch-4/STATUS.md",
+    "BATCH-4-HANDOFF.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Batch 4 is development only and not accepted",
+      "Production hold",
+      "Phases 1-3 incomplete"
+    ],
+    "authenticatedE2e": "BLOCKED"
+  }
+}
