@@ -6,6 +6,19 @@ Development only. The production hold stays in place. No model call, deployment,
 Statuses: VERIFIED_LOCAL (deterministic local test, named below), PARTIAL, MISSING, DEFERRED BY FOUNDER (needs a model, deployed infrastructure or a live provider, so it is
 not PASS). Nothing here is a production or live-provider result.
 
+## Update (second increment)
+
+Added since the first checkpoint, all development only and covered by CI on the exact commit:
+
+- Shared bounded repair controller, `ai/repairController.ts` (scripted-agent tests, no model). Not yet the loop Batch 2 or Batch 3 call; both keep their own tested loops.
+- Verification gate adopted by Batch 2 QA and Batch 3 outcomes as an independent second check that can only downgrade.
+- Engineering resource ledger (`docs/infra/batch-4/RESOURCE-LEDGER.md`): local migration, tenant-bound client, real-database and real-process tests. Not applied anywhere, not yet fed real provider usage, caps not configured.
+- Event replay now reports a truncated history to a reconnecting client (`ai/eventReplay.ts`).
+- Redaction of every run event fixed for seven credential shapes found by canary tests.
+- Golden A–V classified in `docs/infra/batch-4/GOLDEN-MATRIX.md`: 1 PASS (contract level), 20 PARTIAL, 1 NOT_RUN.
+
+The tables below describe the first checkpoint; where they disagree with the update above, the update and the golden matrix are current.
+
 ## Reconciliation with main and Batch 3
 
 | Item | Result |

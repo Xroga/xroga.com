@@ -13,6 +13,8 @@
   "changedFiles": [
     ".github/workflows/xroga-tenant-security.yml",
     "BATCH-4-HANDOFF.md",
+    "backend/src/ai/eventReplay.test.ts",
+    "backend/src/ai/eventReplay.ts",
     "backend/src/ai/repairController.test.ts",
     "backend/src/ai/repairController.ts",
     "backend/src/ai/resourceLedger.test.ts",
@@ -27,6 +29,9 @@
     "backend/src/existingSource/change/service.ts",
     "backend/src/existingSource/change/verificationEvidence.test.ts",
     "backend/src/existingSource/change/verificationEvidence.ts",
+    "backend/src/operations/operationsEngine.ts",
+    "backend/src/operations/redactionCanary.test.ts",
+    "backend/src/routes/swarm.ts",
     "backend/src/sandbox/google/googleSandbox.test.ts",
     "backend/src/sandbox/google/googleSandbox.ts",
     "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
@@ -63,9 +68,11 @@
     "docs/xroga/security/caller-reviews.json",
     "docs/xroga/security/credential-usage-audit.json",
     "docs/xroga/security/current-migration-additions.json",
+    "docs/xroga/security/egress-callers.json",
     "docs/xroga/security/phase-three-authority-delta.json",
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
+    "frontend/src/lib/api.ts",
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
     "supabase/migrations/20261029100000_engineering_resource_ledger.sql"
@@ -176,6 +183,12 @@
       "scope": "Real OS processes: six workers racing a cap, SIGKILL while holding a reservation (hold stays visible, blocks capacity, swept and charged in full), redelivery after death is the same reservation.",
       "negative": true,
       "reference": "backend/tests/engineeringResourceLedger.processes.local.integration.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/eventReplay.test.ts backend/src/operations/redactionCanary.test.ts",
+      "scope": "Event replay, gap reporting and merge; canary secrets through the shared redaction.",
+      "negative": true,
+      "reference": "backend/src/ai/eventReplay.test.ts"
     }
   ],
   "architecture": {

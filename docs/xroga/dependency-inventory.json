@@ -15470,6 +15470,10 @@
       "sha256": "0f72350a0dcb893fc903dd098a484236d0a1ec3c5d862d0c40f1fd92fe79862e"
     },
     {
+      "path": "backend/src/ai/eventReplay.ts",
+      "sha256": "0ca59a487d010e939fbdd93f6ea0baaea0b9cc8b5ea19b51645a887b02340be4"
+    },
+    {
       "path": "backend/src/ai/executionRuntime.ts",
       "sha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc"
     },
@@ -16731,7 +16735,7 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "sha256": "874eccd05ce00b093c38f1c5b84c434430eb6ed1cdaefac945ea70e330c471c4"
+      "sha256": "02137cde1069831d1c62174a0bfa4d2fccbad9978baf034d9954ffb626c32958"
     },
     {
       "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
@@ -17015,7 +17019,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622"
+      "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -21347,7 +21351,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "e13495ad6aad22831dee79af5884940d3920f080c909b7d3941f475bc55dd60a"
+      "sha256": "65078c12e4c89537a5178aac6d59d1c6253a955b4242775d2dbe0f706925d793"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -29743,6 +29747,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/ai/eventReplay.ts",
+      "line": 29,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/eventReplay.ts",
+      "line": 41,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/ai/executionRuntime.ts",
       "line": 158,
       "scope": "INSTANCE_LIFETIME",
@@ -32201,21 +32219,21 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 137,
+      "line": 145,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 138,
+      "line": 146,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 171,
+      "line": 179,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32950,7 +32968,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "line": 35,
+      "line": 36,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
