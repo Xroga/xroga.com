@@ -1,0 +1,34 @@
+{
+  "scope": "ACTUAL_LOCAL_WASM_RECOGNITION_PUBLIC_FIXTURES_NOT_BROAD_LANGUAGE_CERTIFICATION",
+  "model": "onnx-community/whisper-small",
+  "revision": "36050c46d777d46dc4b5f43f6d90574fc38f8732",
+  "browser": "156.0.4314.50",
+  "results": [
+    {
+      "language": "ur_pk",
+      "fixtureUrl": "https://huggingface.co/datasets/google/fleurs/viewer/ur_pk/test?row=0",
+      "fixtureSha256": "5e5bd3f594a86ab334f10c4878e748227c9ba344f058de8efce69eac7d7a0d20",
+      "reference": "ان کے دور میں خفیف تلوُّث ایزا مسئلہ نہیں تھا جیسا کہ وہ آج ہے ان کی سکونت ایسے شہروں یا حوزات میں ہے جہا ں تک بآسانی پہنچا جا سکتا ہے بہ نسبت ان مقامات کے جو ماڈرن زمانے میں تعمیر کئے گئے",
+      "transcript": "इनके दोर में खफीट लोवस अजा मस्ला नहीं ता जैसागे वो आजे इनकी सकूनत आसे शेरो यो रहुजात में है जोहातक बासानी पहुट जा सकता है बनिस्पतीन मकमात के जो मडरन जमाने में तामीर के गै.",
+      "wordErrorRate": 1,
+      "durationMs": 171381
+    },
+    {
+      "language": "ar_eg",
+      "fixtureUrl": "https://huggingface.co/datasets/google/fleurs/viewer/ar_eg/test?row=0",
+      "fixtureSha256": "40d979a6239fc08951f387c671fb5fc46fffdc5df823ed1dbdb809bc75e26620",
+      "reference": "تشكلت في المحيط الأطلسي اليوم عاشر عاصفة مُسماة لموسم الأعاصير الأطلسية العاصفة شبه الاستوائية جيري",
+      "transcript": "تشكلت في المحيط الأطلسي اليوم عايش رعاصفة مسمال موسيقى الأعاصير الأطلسية العاصفة شبه الاستوائية جري",
+      "wordErrorRate": 0.3333333333333333,
+      "durationMs": 36077
+    }
+  ],
+  "unavailableFixtures": [],
+  "audioUploads": 0,
+  "paidRequests": 0,
+  "requestOrigins": [
+    "http://127.0.0.1:58452",
+    "https://huggingface.co",
+    "https://us.aws.cdn.hf.co"
+  ]
+}

@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3ff48e76cd0bca110c678980514ab81f4078e7fa77c134fa398aff5cef2ce617",
+  "reviewRegistrySha256": "6750c22adfbad64292b81413194df02a4c8c593ee61ac2660eab325c9e94cb6f",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 917,
+    "persistenceCandidates": 915,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 120,
-    "reviewedCandidates": 797,
+    "reviewedCandidates": 795,
     "unresolvedSafetyCandidates": 153,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 120,
     "SCOPED_BOUNDARY": 520,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 202,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 83,
-    "unresolvedCandidateBoundaries": 834,
+    "verifiedCandidateBoundaries": 82,
+    "unresolvedCandidateBoundaries": 833,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -1429,6 +1429,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-fc10f05d3f3b6a53"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-154dee0c03517ddb"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-154dee0c03517ddb"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-154dee0c03517ddb"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -5620,7 +5632,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "18f7c2043f2ceb0ebac3"
+        "id": "01fce3ee8703d9146072"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5629,10 +5641,6 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "8e9b157c7d4fd26ad135"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
-        "id": "19d3d07d6723c7afb8b6"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9028,15 +9036,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "18f7c2043f2ceb0ebac3"
+        "id": "01fce3ee8703d9146072"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "8e9b157c7d4fd26ad135"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "19d3d07d6723c7afb8b6"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9065,12 +9069,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 917,
-    "structuredVerified": 83,
-    "structuredUnproven": 834,
+    "currentCallers": 915,
+    "structuredVerified": 82,
+    "structuredUnproven": 833,
     "manualUnresolved": 153,
-    "manualUnsupported": 681,
-    "agreedVerified": 83,
+    "manualUnsupported": 680,
+    "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -28842,15 +28846,15 @@
       "sourceSha256": "ad90f5eb688b6cb0cc72fa129cd1c2a27a2fc1d9caaadef64cfc7a26577acfb9"
     },
     {
-      "id": "18f7c2043f2ceb0ebac3",
+      "id": "01fce3ee8703d9146072",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 426,
+      "line": 413,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -28890,27 +28894,6 @@
           {
             "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
             "marker": "const metricKeys = useMemo(() => Array.from(new Set(block.options.flatMap((option) => Object.keys(option.metrics)))), [block.options]);"
-          }
-        ]
-      }
-    },
-    {
-      "id": "19d3d07d6723c7afb8b6",
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 162,
-      "enclosing": "VoiceWave",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-            "marker": "{Array.from({ length: bars }, (_, index) => {"
           }
         ]
       }
@@ -29552,27 +29535,6 @@
           {
             "path": "supabase/migrations/20260729192159_community_platform.sql",
             "marker": "where id = (select auth.uid())"
-          }
-        ]
-      }
-    },
-    {
-      "id": "f69fd1fcf672d0451697",
-      "path": "frontend/src/lib/terminal/voiceConversation.ts",
-      "line": 31,
-      "enclosing": "acceptMicStream",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in acceptMicStream, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/lib/terminal/voiceConversation.ts",
-            "marker": "Array.from(tracks).forEach((track) => track.stop());"
           }
         ]
       }

@@ -9378,9 +9378,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
       "callIds": [
-        "18f7c2043f2ceb0ebac3"
+        "01fce3ee8703d9146072"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
@@ -9399,7 +9399,8 @@
         ],
         "disposition": "NOT_PERSISTENCE"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "voiceDictationReview": "docs/xroga/evidence/local-voice-20261030/caller-reconciliation.json"
     },
     {
       "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
@@ -9421,38 +9422,6 @@
         "sourceSha256": "456bcddeced123a22c4655c4f3837357c7092158f6b5af677414daa32bdc92fa",
         "callIds": [
           "8e9b157c7d4fd26ad135"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
-      "callIds": [
-        "19d3d07d6723c7afb8b6"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-          "marker": "{Array.from({ length: bars }, (_, index) => {"
-        }
-      ],
-      "beforeVoiceSecurityCorrection": {
-        "sourceSha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad",
-        "callIds": [
-          "8f3c7995974f0b7357a6"
-        ]
-      },
-      "unchangedFunctionSha256": "bcaf1eb379e7bdaaaf780bef2cd4b979f53defaf835730db0744a1e011bde5de",
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
-        "callIds": [
-          "19d3d07d6723c7afb8b6"
         ],
         "disposition": "NOT_PERSISTENCE"
       },
@@ -9828,31 +9797,6 @@
         "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a",
         "callIds": [
           "3f35d7a99738940921d7"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
-      "path": "frontend/src/lib/terminal/voiceConversation.ts",
-      "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
-      "callIds": [
-        "f69fd1fcf672d0451697"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in acceptMicStream, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/lib/terminal/voiceConversation.ts",
-          "marker": "Array.from(tracks).forEach((track) => track.stop());"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
-        "callIds": [
-          "f69fd1fcf672d0451697"
         ],
         "disposition": "NOT_PERSISTENCE"
       },
