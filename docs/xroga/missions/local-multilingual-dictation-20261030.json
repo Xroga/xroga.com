@@ -5,7 +5,7 @@
   "requirementIds": [
     "XR-ORIGINAL-F076"
   ],
-  "state": "PARTIAL",
+  "state": "IN_PROGRESS",
   "risk": "medium",
   "scope": "Replace automatic-send and browser-locale dictation with one manual on-device multilingual microphone flow. No paid speech API, no production deployment, no new scheduler.",
   "changedFiles": [
