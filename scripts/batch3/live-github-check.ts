@@ -74,6 +74,8 @@ async function main() {
   if (!userId) userId = (await admin.auth.admin.listUsers({ perPage: 200 })).data.users.find((u) => u.email === 'b3-gh-live@example.test')?.id;
   if (!userId) throw new Error('no local test user');
   const ctx = createTenantContext({ userId, via: 'persisted_owner' });
+  // a normal account gets its usage row at signup; the local test user needs the same free-plan row before any model call
+  if (LIVE_MODEL) { const { getApiBudgetUsd } = await import('../../backend/src/config/plans.js'); const r = await admin.rpc('set_user_ai_plan_budget', { p_user_id: userId, p_plan_tier: 'free', p_plan_budget_usd: getApiBudgetUsd('free') }); if (r.error) throw new Error('could not create the local test usage row'); }
 
   const indexes = new SupabaseCodeIndexStore(ctx); const archives = new SupabaseArchiveStore(ctx); const changeStore = new SupabaseChangeStore(ctx);
   const source = new ExistingSourceService({
@@ -92,7 +94,7 @@ async function main() {
     return { status: 'implemented', evidence: { changedFiles: [], checks: [] }, blockers: [], outputText: 'done', iterations: 1 } as AgentSoftwareExecutorResult;
   };
   const production = LIVE_MODEL ? await import('../../backend/src/existingSource/change/production.js') : null;
-  const changes = new ChangeService({ source, intel, store: changeStore, execution: new LocalProcessPort(), runAgent: production ? production.productionAgentRunner : agent,
+  const changes = new ChangeService({ source, intel, store: changeStore, execution: new LocalProcessPort(), runAgent: production ? (async (input: AgentSoftwareExecutorInput) => { const r = await production.productionAgentRunner(input); console.log('AGENT RESULT', JSON.stringify({ status: r.status, failureCode: r.failureCode, failureMessage: String(r.failureMessage ?? '').replace(/sk-[A-Za-z0-9_-]+/g, 'sk-***').slice(0, 300), blockers: r.blockers.slice(0, 3), iterations: r.iterations })); return r; }) as AgentRunner : agent,
     modelRouteFor: production ? production.selectCodingModelRoute : async () => ({}) as never, maxAttempts: LIVE_MODEL ? 1 : undefined });
   const delivery = new ChangeDelivery({ source, store: changeStore, apiFor: async (_u, binding) => makeAtomicWriteApi(guardedGh as never, token, OWNER, NAME) as DeliveryApi & { binding?: unknown } });
 
@@ -117,7 +119,7 @@ async function main() {
   const guard = LIVE_MODEL ? setInterval(() => { void spent().then((usd) => { if (usd >= MAX_USD && !ceilingHit) { ceilingHit = true; console.log('SPEND CEILING REACHED: cancelling the change'); void changes.cancel(userId, task.id).catch(() => undefined); } }); }, 2000) : null;
   const done = await changes.run(userId, task.id).finally(() => { if (guard) clearInterval(guard); });
   if (LIVE_MODEL) { const usd = await spent(); const { data } = await admin.from('ai_usage_ledger').select('model_id,input_tokens,output_tokens,cost_usd').eq('user_id', userId).gte('created_at', startedAt); console.log('MODEL SPEND', JSON.stringify({ usd: Number(usd.toFixed(4)), calls: data?.length ?? 0, models: [...new Set((data ?? []).map((r) => r.model_id))] })); assert.ok(usd <= MAX_USD + 0.05, 'spend exceeded the ceiling by more than one call'); }
-  assert.ok(done.result.length > 0 && done.result.every((r) => ['index.html', 'styles.css', 'script.js', 'public/index.html'].includes(r.path)), 'unexpected files: ' + done.result.map((r) => r.path).join(', ') + ' / ' + done.status + ': ' + done.statusReason);
+  assert.ok(done.result.length > 0 && done.result.every((r) => ['index.html', 'styles.css', 'script.js', 'public/index.html'].includes(r.path)), 'unexpected files: ' + done.result.map((r) => r.path).join(', ') + ' / ' + done.status + ': ' + done.statusReason + ' | events: ' + done.events.slice(-6).map((e) => `${e.type}: ${e.message}`).join(' ; '));
   if (!LIVE_MODEL) assert.deepEqual(done.result.map((r) => r.path).sort(), ['index.html', 'styles.css'], done.status + ': ' + done.statusReason + ' ' + done.events.slice(-4).map((e) => e.message).join(' | '));
   assert.notEqual(done.status, 'verified', 'a static site with no tests and no browser check must not be called verified');
   pass(`change produced exactly index.html and styles.css and ended "${done.status}" (no project tests, no browser check ran)`);

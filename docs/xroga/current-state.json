@@ -9333,7 +9333,7 @@
       "id": "surface:6b3219ea2bb7bf7d7c7c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "96a7c930b828b49332d3eb5e6fd8304452ca59bad007cc3319cba771ca72202e",
+      "sha256": "073905561b2d6d01cb330d96026347c6d898134994224dccbb8bb486ac87d574",
       "symbols": [
         "AgentMessage",
         "AgentMessagePart",
@@ -9358,6 +9358,7 @@
         "chunk",
         "client",
         "content",
+        "createToolCallDeltaMapper",
         "createXrogaAgentModel",
         "createXrogaAgentModelRoute",
         "credentialOverride",
@@ -9373,7 +9374,9 @@
         "finalReason",
         "finishReason",
         "health",
+        "idByIndex",
         "inputTokens",
+        "mapToolCallDelta",
         "maximumOutputTokens",
         "message",
         "messages",
@@ -9400,6 +9403,7 @@
         "toOpenAiMessages",
         "toOpenAiTools",
         "toolCall",
+        "toolCallId",
         "toolCallIds",
         "toolCalls",
         "toolResultMessages",
@@ -9428,6 +9432,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:25",
+        "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts:248",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts:7",
         "backend/src/existingSource/change/production.ts:34",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:37"
@@ -15296,7 +15301,8 @@
         "backend/src/ai/quota.test.ts:11",
         "backend/src/ai/quota.ts:10",
         "backend/src/services/BillingService.ts:9",
-        "backend/src/services/ensureUserRecords.ts:1"
+        "backend/src/services/ensureUserRecords.ts:1",
+        "scripts/batch3/live-github-check.ts:78"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16596,7 +16602,7 @@
       "callers": [
         "backend/src/existingSource/change/canonicalJob.ts:29",
         "backend/src/routes/existingSource.ts:25",
-        "scripts/batch3/live-github-check.ts:94"
+        "scripts/batch3/live-github-check.ts:96"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104402,7 +104408,7 @@
       "id": "surface:a4e5d41b622c6da4997b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/batch3/live-github-check.ts",
-      "sha256": "de017edeb0574ed343a1608f2bda523fe0e30aaffdb06e64b2482ec15948dea9",
+      "sha256": "2807e8c9d5a957fa94f8b65dc47ad8932a49fbe6f2f46d64efb85b6ef17fac3d",
       "symbols": [
         "ALLOWED_WRITE",
         "LIVE_MODEL",
@@ -104444,6 +104450,7 @@
         "pass",
         "pr",
         "production",
+        "r",
         "receipt",
         "results",
         "source",
@@ -104457,6 +104464,7 @@
       ],
       "imports": [
         "../../backend/src/ai/softwareAgent/AgentSoftwareExecutor.js",
+        "../../backend/src/config/plans.js",
         "../../backend/src/config/supabase.js",
         "../../backend/src/existingSource/archive/archiveStore.js",
         "../../backend/src/existingSource/change/delivery.js",
@@ -104478,6 +104486,7 @@
         "node:path"
       ],
       "runtimeImports": [
+        "backend/src/config/plans.ts",
         "backend/src/config/supabase.ts",
         "backend/src/existingSource/archive/archiveStore.ts",
         "backend/src/existingSource/change/delivery.ts",
@@ -104507,8 +104516,8 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "scripts/batch3/live-github-check.ts:115 (user_id)",
-        "scripts/batch3/live-github-check.ts:119 (user_id)"
+        "scripts/batch3/live-github-check.ts:117 (user_id)",
+        "scripts/batch3/live-github-check.ts:121 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -121695,9 +121704,9 @@
       "state": "DEAD_OR_UNREACHABLE"
     },
     {
-      "id": "schedule:4535ac244647e9dc24a2",
+      "id": "schedule:4dbef073f46fea7b8df0",
       "sourcePath": "scripts/batch3/live-github-check.ts",
-      "line": 117,
+      "line": 119,
       "kind": "setInterval",
       "symbol": "main",
       "reachable": false,
@@ -130698,7 +130707,7 @@
     {
       "id": "test-suite:ee3245d3271d3e9eaf0e",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
