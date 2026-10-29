@@ -11,7 +11,6 @@
  * nothing leaves the page.
  */
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { COPY, MISSIONS, missionOf, stepsOf, type Mode, type TrackId } from './script';
@@ -36,7 +35,7 @@ const Theater = dynamic(() => import('./Theater').then((m) => m.Theater), { ssr:
 const TITLE_EM = 'AI Employee';
 const TITLE = COPY.title.split(TITLE_EM) as [string, string];
 
-export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
+export function S02Work(_props: { loggedIn?: boolean }) {
   const root = useRef<HTMLElement>(null);
   const prefersReduced = useReducedMotion();
   const [reduced, setReduced] = useState(false);
@@ -225,16 +224,6 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
             {mode === 'browser' ? live1 : wf.view === 'chat' ? `${sel.role}: ${stateLabel(sel.id, selThread)}.` : ''}
           </p>
         </div>
-
-        <footer className={s.foot}>
-          <span className={s.disclosure}>{COPY.disclosure}</span>
-          <Link href={loggedIn ? '/workspace' : '/auth/signup'} className={s.cta}>
-            {COPY.cta}
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" />
-            </svg>
-          </Link>
-        </footer>
       </div>
     </section>
   );
