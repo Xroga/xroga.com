@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "8dae4b2e5d13206a53e898f63f50a5606ed720288305b0e8ec250e59631c8bfa",
+      "currentSha256": "cb3356160d988e7e2b3eb9284276a7c869ba1df4cb4d9093b0c32470238115d6",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
@@ -18,13 +18,15 @@
       "beforeExpoWorkflowSha256": "b4a287fd6e96f3f53300da469e30d39fa3a6501e1ff233d509ca5a707356f110",
       "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
       "beforeCurrentMainIntegrationSha256": "15178493c4f89cdd9b1b1fc4b8c214d554974ed1ecd97ddef08ad544ca9e0331",
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforePreviewAdmissionDeadlineSha256": "8dae4b2e5d13206a53e898f63f50a5606ed720288305b0e8ec250e59631c8bfa"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/SOURCE-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "e34b675dfe7fc24eba51e8c5e06a02ac15495f126c0a58c432207f0592bc0b48",
-      "currentSha256": "33634a689a7fbc5bce2a9965c6db6e6e91231ef4c0cedfce5ab245da7f2f525c"
+      "currentSha256": "939b91557476943b0d7a5d59d6faf4b53b305ca7cc4c9a28caa9b5d6fa844011",
+      "beforePreviewAdmissionDeadlineSha256": "33634a689a7fbc5bce2a9965c6db6e6e91231ef4c0cedfce5ab245da7f2f525c"
     },
     {
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
