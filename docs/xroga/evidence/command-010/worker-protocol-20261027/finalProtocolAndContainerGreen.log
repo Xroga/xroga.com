@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: untrusted coordinator job IDs cannot select signed follow-up paths
+ok 1 - untrusted coordinator job IDs cannot select signed follow-up paths
+  ---
+  duration_ms: 12.108
+  type: 'test'
+  ...
+# Subtest: oversized coordinator records are cancelled and cannot become retryable failures
+ok 2 - oversized coordinator records are cancelled and cannot become retryable failures
+  ---
+  duration_ms: 23.8971
+  type: 'test'
+  ...
+# Subtest: held platform credentials cannot ride in a browser plan to the worker
+ok 3 - held platform credentials cannot ride in a browser plan to the worker
+  ---
+  duration_ms: 0.8463
+  type: 'test'
+  ...
+# Subtest: malformed coordinator records are terminal protocol denials
+ok 4 - malformed coordinator records are terminal protocol denials
+  ---
+  duration_ms: 6.5343
+  type: 'test'
+  ...
+# Subtest: coordinator redirect rejection stays terminal through signed transport
+ok 5 - coordinator redirect rejection stays terminal through signed transport
+  ---
+  duration_ms: 0.9398
+  type: 'test'
+  ...
+# Subtest: coordinator authentication refusal cannot trigger another attempt
+ok 6 - coordinator authentication refusal cannot trigger another attempt
+  ---
+  duration_ms: 0.8417
+  type: 'test'
+  ...
+# Subtest: configured coordinator origins cannot carry userinfo, paths, query strings or fragments
+ok 7 - configured coordinator origins cannot carry userinfo, paths, query strings or fragments
+  ---
+  duration_ms: 0.5316
+  type: 'test'
+  ...
+# Subtest: a cancelled coordinator cannot publish a late successful result
+ok 8 - a cancelled coordinator cannot publish a late successful result
+  ---
+  duration_ms: 1.5214
+  type: 'test'
+  ...
+# Subtest: settled calls use the new remainder, ordinary provider failures can recover, and worker claims cannot change spend
+ok 9 - settled calls use the new remainder, ordinary provider failures can recover, and worker claims cannot change spend
+  ---
+  duration_ms: 6.7262
+  type: 'test'
+  ...
+# Subtest: model lifetime stops after MODEL_DISPATCH_BINDING_DENIED
+ok 10 - model lifetime stops after MODEL_DISPATCH_BINDING_DENIED
+  ---
+  duration_ms: 1.7412
+  type: 'test'
+  ...
+# Subtest: model lifetime stops after MODEL_USAGE_UNMEASURED
+ok 11 - model lifetime stops after MODEL_USAGE_UNMEASURED
+  ---
+  duration_ms: 1.955
+  type: 'test'
+  ...
+# Subtest: model lifetime stops after unconfirmed settlement
+ok 12 - model lifetime stops after unconfirmed settlement
+  ---
+  duration_ms: 0.5609
+  type: 'test'
+  ...
+# Subtest: cancellation prevents further dispatch and output even if a provider ignores abort
+ok 13 - cancellation prevents further dispatch and output even if a provider ignores abort
+  ---
+  duration_ms: 1.2073
+  type: 'test'
+  ...
+# Subtest: container: untrusted worker failure text cannot enter persisted failure evidence
+ok 14 - container: untrusted worker failure text cannot enter persisted failure evidence
+  ---
+  duration_ms: 8.2627
+  type: 'test'
+  ...
+# Subtest: container: overlapping model requests cannot reuse an unspent allowance
+ok 15 - container: overlapping model requests cannot reuse an unspent allowance
+  ---
+  duration_ms: 9.9542
+  type: 'test'
+  ...
+# Subtest: container: a result cannot succeed before model accounting completes and revokes the call lifetime
+ok 16 - container: a result cannot succeed before model accounting completes and revokes the call lifetime
+  ---
+  duration_ms: 3.8753
+  type: 'test'
+  ...
+# Subtest: remote: untrusted worker failure text cannot enter persisted failure evidence
+ok 17 - remote: untrusted worker failure text cannot enter persisted failure evidence
+  ---
+  duration_ms: 16.0179
+  type: 'test'
+  ...
+# Subtest: remote: overlapping model requests cannot reuse an unspent allowance
+ok 18 - remote: overlapping model requests cannot reuse an unspent allowance
+  ---
+  duration_ms: 11.5535
+  type: 'test'
+  ...
+# Subtest: remote: a result cannot succeed before model accounting completes and revokes the call lifetime
+ok 19 - remote: a result cannot succeed before model accounting completes and revokes the call lifetime
+  ---
+  duration_ms: 1.995
+  type: 'test'
+  ...
+# Subtest: container worker output is bounded before accepting an untrusted result
+ok 20 - container worker output is bounded before accepting an untrusted result
+  ---
+  duration_ms: 22.9811
+  type: 'test'
+  ...
+# Subtest: malformed container records cannot be skipped to accept a later result
+ok 21 - malformed container records cannot be skipped to accept a later result
+  ---
+  duration_ms: 2.9326
+  type: 'test'
+  ...
+# Subtest: cancellation before cannot start browser or proxy containers
+ok 22 - cancellation before cannot start browser or proxy containers
+  ---
+  duration_ms: 2.1036
+  type: 'test'
+  ...
+# Subtest: cancellation during-network cannot start browser or proxy containers
+ok 23 - cancellation during-network cannot start browser or proxy containers
+  ---
+  duration_ms: 1.6266
+  type: 'test'
+  ...
+# Subtest: actual container adapter keeps commands shell-free, passes no tenant authority, and cleans only its own resources
+ok 24 - actual container adapter keeps commands shell-free, passes no tenant authority, and cleans only its own resources
+  ---
+  duration_ms: 6.7468
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1310.0248

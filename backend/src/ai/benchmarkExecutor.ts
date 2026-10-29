@@ -172,7 +172,7 @@ export type BenchmarkCompletionAuthority = (input: {
   messages: ChatMessage[];
   maximumOutputTokens: number;
   sequence: number;
-  execute: () => Promise<ChatResult>;
+  execute: (dispatch?: import('./tenantModelDispatch.js').BoundModelDispatch) => Promise<ChatResult>;
 }) => Promise<ChatResult>;
 
 export function singleModelImplementation(authorize?: BenchmarkCompletionAuthority): BenchmarkExecutorDeps['implement'] {
@@ -191,7 +191,9 @@ export function singleModelImplementation(authorize?: BenchmarkCompletionAuthori
           `benchmark case is pinned to ${modelId} but the implementation attempted ${candidateId}`,
         );
       }
-      const execute = () => chatCompletion(candidateId as ModelId, messages, { ...opts, signal });
+      const execute = (dispatch?: import('./tenantModelDispatch.js').BoundModelDispatch) => chatCompletion(candidateId as ModelId,
+        dispatch?dispatch.payload.messages as ChatMessage[]:messages,
+        { ...opts, signal,credentialOverride:dispatch?.credentialOverride,beforeDispatch:dispatch?.beforeDispatch });
       const reply = authorize
         ? await authorize({ modelId, messages, maximumOutputTokens: opts.maxTokens,
           sequence: sequence++, execute })

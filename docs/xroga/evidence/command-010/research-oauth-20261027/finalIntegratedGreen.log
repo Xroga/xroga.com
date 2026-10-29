@@ -1,0 +1,126 @@
+TAP version 13
+# Subtest: a validated freshness contract deterministically selects evidence without a second model decision
+ok 1 - a validated freshness contract deterministically selects evidence without a second model decision
+  ---
+  duration_ms: 9.5234
+  type: 'test'
+  ...
+# Subtest: the canonical X capability can only produce an x_search decision
+ok 2 - the canonical X capability can only produce an x_search decision
+  ---
+  duration_ms: 1.3178
+  type: 'test'
+  ...
+# Subtest: official-only evidence excludes secondary sources before synthesis and UI
+ok 3 - official-only evidence excludes secondary sources before synthesis and UI
+  ---
+  duration_ms: 8.3798
+  type: 'test'
+  ...
+# Subtest: production web intelligence retains admitted Parallel reads and explicitly denies unaccounted X research
+ok 4 - production web intelligence retains admitted Parallel reads and explicitly denies unaccounted X research
+  ---
+  duration_ms: 91.4586
+  type: 'test'
+  ...
+# Subtest: X research cannot publish unreserved, unaccounted provider output or dispatch on a raw user ID
+ok 5 - X research cannot publish unreserved, unaccounted provider output or dispatch on a raw user ID
+  ---
+  duration_ms: 8.0274
+  type: 'test'
+  ...
+# Subtest: Supabase callback cannot resurrect derived keys after disconnect during project discovery
+ok 6 - Supabase callback cannot resurrect derived keys after disconnect during project discovery
+  ---
+  duration_ms: 5033.4016
+  type: 'test'
+  ...
+# Subtest: OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch
+ok 7 - OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch
+  ---
+  duration_ms: 121.2684
+  type: 'test'
+  ...
+# Subtest: CWS carries the consumed epoch through encrypted BYOK admission and denies lost epochs before or after exchange
+ok 8 - CWS carries the consumed epoch through encrypted BYOK admission and denies lost epochs before or after exchange
+  ---
+  duration_ms: 42.8044
+  type: 'test'
+  ...
+# Subtest: Supabase refresh captures revision before exchange and absent authority cannot revive a mirror
+ok 9 - Supabase refresh captures revision before exchange and absent authority cannot revive a mirror
+  ---
+  duration_ms: 9.6391
+  type: 'test'
+  ...
+# Subtest: one-use OAuth admission fails closed on unavailable or malformed receipts and never uses Storage
+ok 10 - one-use OAuth admission fails closed on unavailable or malformed receipts and never uses Storage
+  ---
+  duration_ms: 282.8817
+  type: 'test'
+  ...
+# Subtest: all OAuth callback entry points reject invalid one-use state before external exchange
+ok 11 - all OAuth callback entry points reject invalid one-use state before external exchange
+  ---
+  duration_ms: 12.6996
+  type: 'test'
+  ...
+# Subtest: session persistence and consumption reject raw, cloned or fabricated tenant authority before I/O
+ok 12 - session persistence and consumption reject raw, cloned or fabricated tenant authority before I/O
+  ---
+  duration_ms: 8.0617
+  type: 'test'
+  ...
+# Subtest: actual Supabase token exchange and refresh reject real HTTP redirects before token storage
+    # Subtest: exchange
+    ok 1 - exchange
+      ---
+      duration_ms: 329.3399
+      type: 'test'
+      ...
+# [supabaseAuth] refresh failed
+    # Subtest: refresh
+    ok 2 - refresh
+      ---
+      duration_ms: 76.3983
+      type: 'test'
+      ...
+    1..2
+ok 13 - actual Supabase token exchange and refresh reject real HTTP redirects before token storage
+  ---
+  duration_ms: 510.9873
+  type: 'test'
+  ...
+# Subtest: Supabase token transport rejects oversized and malformed receipts without saving or using a stale-token fallback
+ok 14 - Supabase token transport rejects oversized and malformed receipts without saving or using a stale-token fallback
+  ---
+  duration_ms: 321.9518
+  type: 'test'
+  ...
+# Subtest: normal authorized Supabase refresh retains the fixed issuer, bounded request, safe returned fields and revision-bound save
+ok 15 - normal authorized Supabase refresh retains the fixed issuer, bounded request, safe returned fields and revision-bound save
+  ---
+  duration_ms: 55.8388
+  type: 'test'
+  ...
+# Subtest: Supabase provider error descriptions cannot echo credentials into user-visible failure evidence
+ok 16 - Supabase provider error descriptions cannot echo credentials into user-visible failure evidence
+  ---
+  duration_ms: 38.1035
+  type: 'test'
+  ...
+# Subtest: Supabase refresh authorization denial stays terminal while ordinary provider unavailability retains recovery semantics
+ok 17 - Supabase refresh authorization denial stays terminal while ordinary provider unavailability retains recovery semantics
+  ---
+  duration_ms: 105.3469
+  type: 'test'
+  ...
+1..17
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9742.2508

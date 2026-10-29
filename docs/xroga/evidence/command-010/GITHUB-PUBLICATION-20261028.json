@@ -1,0 +1,306 @@
+{
+  "scope": "ONLY_EXACT_SHARED_GITHUB_TRANSPORT_AND_REACHABLE_NATIVE_PUBLICATION_CALLERS_NOT_WHOLE_PHASE_ACCEPTANCE",
+  "parent": "197637d2cfc360295e750cad6100ea71fcddc6df",
+  "resolvedCandidate": "90eeada0337da120131f",
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b"
+    },
+    {
+      "path": "backend/src/routes/delivery.ts",
+      "sha256": "0a509d555ca21bb95acc86b180b659917ce5578cbdcf8617caf35950bde63172"
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "sha256": "278f0d4b4cad1059774cfed637ec52e0dae4a8781b66eb77b82f606fab77c34b"
+    },
+    {
+      "path": "backend/src/routes/showcase.ts",
+      "sha256": "a81f35306678f64b6c36294d34bc0926e1e58fd464ccbe06998b94712347e986"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
+    },
+    {
+      "path": "backend/src/services/integrations/githubApproval.ts",
+      "sha256": "50bd566b12896f2c4c6ab290e2107e1d633db348c642b6843ddfa7bae45beb08"
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "sha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d"
+    },
+    {
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "sha256": "8089f58f7f4452c44e44328de23be97e1361bc9e0cb4d917ab5718f9aad3064d"
+    },
+    {
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "sha256": "aa0259f7dbaafafa423920884fc69e3d9ecc18b8c575eb075d53a253af1130f0"
+    },
+    {
+      "path": "backend/src/services/scaffolds/nextjsScaffold.ts",
+      "sha256": "4831097c15a43339f15273aa0db9bd5ba0df50d10ce8ab756498f305622c1bb6"
+    },
+    {
+      "path": "backend/src/services/showcase/templateExport.ts",
+      "sha256": "90032352847fb16dc35c8769b440dd05edaf1f06c1fbf3cad899de9c338f0b62"
+    },
+    {
+      "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
+      "sha256": "d40f54be043f2aa8414ea62f948c4ec0b916ab6214ceae3f932ed8533d8fab7c"
+    },
+    {
+      "path": "frontend/src/components/showcase/ShowcaseDialogs.tsx",
+      "sha256": "2455f68fd4669cf64aec8fc37af872645e9b152f4da932869f30931f18b06444"
+    },
+    {
+      "path": "frontend/src/components/terminal/ProjectDeliveryPanel.tsx",
+      "sha256": "df49e5c7038384e0d5fc168cdbc4337d58c4f993420decf6b05ffced38f7f870"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "f3edcd5a2e7c3c21a3ab7ba3fbb4b9396cfd07e502f2c48cb910d7e54076e639"
+    },
+    {
+      "path": "frontend/src/lib/projectDeliveryApi.ts",
+      "sha256": "3f12838c9c6fbf583be45ea1db5a30c035430b2a60ddb5ace31425fb01f67f00"
+    },
+    {
+      "path": "frontend/src/lib/rollbackProjectUpdate.ts",
+      "sha256": "930c5fcb414a588c1238afd53e6ad6f64f8223ba037f3d9afea4297a49d0f0ab"
+    }
+  ],
+  "receipts": [
+    {
+      "label": "nativeUiPending",
+      "id": "40e3d4d8-cfb5-474c-8995-f9d95fc9f781",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-nativeUiPending-20261028.log.gz",
+      "sha256": "842e30c5a1f22747e2f88700b93cfd3b5cf30bfd3ac20b63893f3bb08dee207e",
+      "logSha256": "d70c137a03ea2c6c456fc5bdcf6fbb0a7015e4413b05c333c55e4617aac658e2"
+    },
+    {
+      "label": "frontendTypes",
+      "id": "59483f52-5869-4152-a2fc-baea1c6b6a21",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-frontendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "rawTokenWriteRed",
+      "id": "2f964061-3890-4ef7-a937-5083f6ef2a42",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/github-rawTokenWriteRed-20261028.log.gz",
+      "sha256": "ecc1be8f434d67ad13e1d1fec8fac98f9fb2c2bf4bffdebe0b990432a26596fb",
+      "logSha256": "93e4d02be51653da92fd76018d254597fd714f2b69ea906ea939e475dcf6154b"
+    },
+    {
+      "label": "originalReadScope",
+      "id": "d52b3508-e145-47ef-854c-fdd11bf15a50",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-originalReadScope-20261028.log.gz",
+      "sha256": "7e5130c7e5ee590bb46929b4399366cc6fa45b90f3c2b0565ce88961ac519e01",
+      "logSha256": "632f078c1a8893be8d1401b9eb5d9dc05d87bf82270a5b9f77fc7e53d74600c2"
+    },
+    {
+      "label": "nativePush16",
+      "id": "16253d62-e385-41df-ba5e-fa4818dc2729",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-nativePush16-20261028.log.gz",
+      "sha256": "d4c057180bf0d08d23cf791f5a609137771b40ce472305287e7df8a944dc005a",
+      "logSha256": "3c1301b0a579f56fae0a38294cc2aee8396fc564a6a969f96cd6994d25cc42a9"
+    },
+    {
+      "label": "atomicRegression147of148",
+      "id": "dd6acfea-cd0e-401b-8953-f66e83bd0ed7",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/github-atomicRegression147of148-20261028.log.gz",
+      "sha256": "e724fc30181a6f94b188a080531cf88f0a401b983b323d9d5574bcfcd764174e",
+      "logSha256": "f5c5b3b203d4b3fa95b02b06fe2c55d3b41f7328cdd29bccd8ca64a9ccf2bfc9"
+    },
+    {
+      "label": "templateAndNative17",
+      "id": "f9a7db75-6af7-417f-862a-83469881d230",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-templateAndNative17-20261028.log.gz",
+      "sha256": "562855d836edb7981273fbba7328746b303693344804655de3ba69492092c465",
+      "logSha256": "706c558aaff10af2a4adb074e07e581c8e5b7ef83e7bc6b5373282b65dfd4f37"
+    },
+    {
+      "label": "callerRegression",
+      "id": "c28d680c-9d68-45eb-a84c-10b5416fbaec",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-callerRegression-20261028.log.gz",
+      "sha256": "a773d6ae75834792748d4a4d9ba5e6b5d45a3a555f61d87fa7ec9d0aaa9900ae",
+      "logSha256": "ee0a8c5607f63c002280d9b81f32ca57e69a822ac4a4d5556c0e9b8331372955"
+    },
+    {
+      "label": "nativeAndHttpPending",
+      "id": "e73c2936-dedd-4403-8d24-51f0ee27729a",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-nativeAndHttpPending-20261028.log.gz",
+      "sha256": "e551b6072cdda13aa6f3472b8a38ad0a7ab7894b331107064a0a93ec139bd443",
+      "logSha256": "f419c2f0ac0e256991c417d9d3ede4244d4ead15320aecd57e4f4fe6b20bf4fc"
+    },
+    {
+      "label": "backendTypes",
+      "id": "5c272a9b-1ddd-4ca7-9eb3-6af5a08cc6c7",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/github-backendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "persistenceRemaps": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "6545d561a6182d0234a1",
+      "afterId": "6545d561a6182d0234a1",
+      "expressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "c700ca8f9a68a62068f4",
+      "afterId": "c700ca8f9a68a62068f4",
+      "expressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "beforeId": "fa85a7affe57fe8615c1",
+      "afterId": "fa85a7affe57fe8615c1",
+      "expressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "beforeId": "0b8393ef789df9e76d18",
+      "afterId": "0b8393ef789df9e76d18",
+      "expressionSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "beforeId": "9ccaf29d98b973526d7b",
+      "afterId": "9ccaf29d98b973526d7b",
+      "expressionSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "beforeId": "105bf445742d0d40d7cc",
+      "afterId": "105bf445742d0d40d7cc",
+      "expressionSha256": "dec9e2d45abac3ac1512b290f782b991529f22a2e2efe3cebce1e9f00ce055e1",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "beforeId": "126af63b441c91019028",
+      "afterId": "126af63b441c91019028",
+      "expressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "beforeId": "16e9bd43351094b6a7fb",
+      "afterId": "6517de08d7faf2996d41",
+      "expressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "beforeId": "51b0a88f73c6d7dbf811",
+      "afterId": "d1dae1934b42415b2c82",
+      "expressionSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "beforeId": "30bbc8593d36230fdfe9",
+      "afterId": "6cfb4e499c560cba0365",
+      "expressionSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "beforeId": "d86fc4994d93219933ff",
+      "afterId": "0dff22209e876c03310f",
+      "expressionSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
+      "beforeId": "371f13126c4ab7aab2dc",
+      "afterId": "e2f7ae31e252ffce2559",
+      "expressionSha256": "ab3bcf5d87db77cb43ba3fc5540621cf814816ca419b3fd8d9b2da7cac425874",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    },
+    {
+      "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
+      "beforeId": "74cc6545383bea8e320f",
+      "afterId": "e880bdc44f676acfd89e",
+      "expressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "Original persistence expression retained. Native GitHub actor propagation and pending approval prevent provider writes and false publication evidence. Existing tenant disposition is preserved, not promoted."
+    }
+  ],
+  "retiredExactCalls": [
+    {
+      "path": "backend/src/services/showcase/templateExport.ts",
+      "id": "8716f40a420d9e72fd19",
+      "expression": "Buffer.from(file.content, 'utf8')",
+      "reason": "Exact historical private raw-token writer removed. Native canonical publication is separately tested and admitted."
+    }
+  ],
+  "existingEgressContinuations": [
+    {
+      "beforeId": "35923d1b52d197c378e1",
+      "afterId": "35923d1b52d197c378e1",
+      "path": "backend/src/routes/github.ts",
+      "callSha256": "779bfe6876ecb8be86573c05dc446c92055d795563fdb81c0b4dbb061f7550ba",
+      "semanticContinuation": "Existing fixed provider operation is unchanged. GitHub publication now propagates original context, rejects security denial and exposes pending approval without deployment or successful commit evidence."
+    },
+    {
+      "beforeId": "c09bb8607fa4d00f23b7",
+      "afterId": "c09bb8607fa4d00f23b7",
+      "path": "frontend/src/lib/api.ts",
+      "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+      "semanticContinuation": "Existing fixed provider operation is unchanged. GitHub publication now propagates original context, rejects security denial and exposes pending approval without deployment or successful commit evidence."
+    }
+  ],
+  "defects": [
+    "Raw-token GitHub transport could dispatch source and writes without issued actor or exact durable approval.",
+    "Rollback force-reset a branch and could then deploy without its own admission.",
+    "Template export adopted existing feature branches, treated unavailable trees as empty and lacked exact source/commit receipt binding.",
+    "Publication callers could mislabel a pending approval as a completed commit and begin a separate deployment."
+  ],
+  "correction": "One original-context/current-credential scoped fixed GitHub transport, exact managed producer proof and canonical one-use durable claim gate every native mutation. Source is secret-checked and sealed or privately owner-scoped, templates rebuild deterministically with exact hash. Target repo, visibility, head, feature branch, deletes, source bytes and full credential epoch are immutable across approval. Existing atomic writer and compare-and-swap are retained, blob hashes and tree/commit/ref receipts verified, no force or alternate source/ref fallback. Restoration creates a new commit preserving history. Actual HTTP/pipeline/delivery/frontend callers expose pending review and never fabricate a commit or deploy from that state. Analysis cache is credential-epoch partitioned. Static generated request code builds the runtime Authorization header without embedding a credential-shaped literal. Real credential values remain denied by the unchanged floor.",
+  "limitations": [
+    "All provider/database protocols are synthetic local execution, not a live customer GitHub mutation. No repository, Actions run or provider charge was created.",
+    "Large arbitrary source requires an owned private project source snapshot. Templates use immutable server allowlisted reconstruction with full source digest.",
+    "Existing repository hooks/Actions can execute approved code under user GitHub billing. The exact native review states this effect. No third-party billing success is claimed.",
+    "Historical 147-of-148 suite failed only on a template static header example. That exact failure and later corrected positive/negative template execution are retained.",
+    "This proof does not certify browser consequential actions, other upstream callers, all12 criteria or production acceptance."
+  ],
+  "strictRulesChanged": false,
+  "frozenCriteriaChanged": false,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spend": 0
+}

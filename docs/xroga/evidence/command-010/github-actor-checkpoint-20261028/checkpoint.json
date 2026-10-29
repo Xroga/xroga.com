@@ -1,0 +1,244 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "atUtc": "2026-10-27T20:08:45.059384+00:00",
+  "parent": "d156218d5f2b10ff76a0ac93a98620c1f9c18ac1",
+  "resolvedThisGroup": [
+    "1d79a3dee4b57945a6d6",
+    "07a46a7b451eaf4dc307"
+  ],
+  "partialRepairStillPending": [
+    "151aa103d929fb10c020"
+  ],
+  "strictAudit": {
+    "total": 135,
+    "reviewed": 115,
+    "pending": 20,
+    "unresolvedHighRiskBypasses": 12
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "githubRead8",
+      "jobId": "d8d9013c-713f-4b31-91ee-cbecf5199076",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/githubRead8.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 547593
+      }
+    },
+    {
+      "name": "modelIntegration17",
+      "jobId": "27e4480e-f961-47e0-bbd7-d9d7a38034e6",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/modelIntegration17.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 3160987
+      }
+    },
+    {
+      "name": "container28",
+      "jobId": "dfe4c193-2375-40cb-8732-03f374eb258f",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/container28.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 658471
+      }
+    },
+    {
+      "name": "orphan27",
+      "jobId": "da9d12a9-059d-471d-956a-f04d0763ac66",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/orphan27.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 298519
+      }
+    },
+    {
+      "name": "frontendAssertions4",
+      "jobId": "0e2d3a84-bb8d-4f3b-ae14-75daa1e00d1b",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/frontendAssertions4.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 7263
+      }
+    },
+    {
+      "name": "backendTypes",
+      "jobId": "4040db72-a283-4813-85ea-66e0002636fc",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322068
+      }
+    },
+    {
+      "name": "strictIncomplete",
+      "jobId": "bc92f539-5cb0-4390-8e57-9f785378e058",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_OUTSIDE_ASSIGNMENT",
+  "lastRemoteCheckpoint": "d156218d5f2b10ff76a0ac93a98620c1f9c18ac1",
+  "lastCi": {
+    "run": 40571007962,
+    "result": "FAIL",
+    "featureFailure": "Inventory generated before staging newly added test, omitted that test from tracked-source inventory. Correct by staging source before generation, no rule change.",
+    "virtualMerge": "bdc70106df36c43f0e11d80d3ec9d74a876480db",
+    "integratedPassed": [
+      "3931backendtests",
+      "backend/frontendtypes",
+      "backend/frontendbuilds",
+      "lint"
+    ],
+    "integratedFailure": "Two frontend source assertions assumed old share page inline API origin and exact whitespace. Preserve canonical8080port and403privacy checks while asserting shared API helper delegation. Focused4tests now pass.",
+    "notFinalSourceAcceptance": true
+  },
+  "remainingSourceCandidates": [
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "file": "backend/src/ai/parallelDispatch.ts",
+      "entryPoint": "executeParallelRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "807c2948cdfa16e19b84",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "96fbfea42a399a233486",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "fcbe4c75dea0e59bcb3a",
+      "file": "backend/src/routes/voice.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "151aa103d929fb10c020",
+      "file": "backend/src/sandbox/sandboxProviders.ts",
+      "entryPoint": "runIsolated",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "fcad57247cfb79779f95",
+      "file": "backend/src/services/BillingService.ts",
+      "entryPoint": "createCheckout",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "file": "backend/src/services/integrations/composioClient.ts",
+      "entryPoint": "composioRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "file": "backend/src/services/integrations/supabaseProvision.ts",
+      "entryPoint": "mgmtFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "d9708e60456bb2d7e538",
+      "file": "backend/src/services/publish/chromeWebStore.ts",
+      "entryPoint": "cwsFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "42cc7885da84d7295699",
+      "file": "backend/src/services/publish/easCredentials.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "602637659fcacb16c1ef",
+      "file": "backend/src/services/publish/easPublish.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "cf71505267ebcf357a5c",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "entryPoint": "putRepoSecret",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7cd9f7585381cfe94c57",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "entryPoint": "putRepoSecret",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "094a251245ce9b6ab659",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipChromeExtensionZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "07ca232e98dcc1720801",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipElectronPortableZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "fe9ce5d32d8c52cdd3c3",
+      "file": "frontend/src/components/showcase/products/AiSaas.tsx",
+      "entryPoint": "AiSaas",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "52851686fc818e0e4c5f",
+      "file": "frontend/src/components/showcase/products/AiSaas.tsx",
+      "entryPoint": "sendMessage",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "805931ff0dc022677403",
+      "file": "frontend/src/lib/showcase/auraGroq.ts",
+      "entryPoint": "requestGroqStream",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    }
+  ],
+  "next": "Continue original remaining20callers including12high-risk. Finish post-dispatch container cancellation/provenance and canonical native publishing/credential-transfer authority. Preserve fixed original12criteria, strict auditor and all historical receipts."
+}

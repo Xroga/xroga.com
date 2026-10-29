@@ -18,6 +18,7 @@
 import {
   DEFAULT_SANDBOX_LIMITS,
   SandboxUnavailableError,
+  requireEnforcedSandboxNetworkPolicy,
   type SandboxAvailability,
   type SandboxExecutionRequest,
   type SandboxExecutionResult,
@@ -102,6 +103,7 @@ export async function executeSandboxed(
     limits?: Partial<SandboxExecutionRequest['limits']>;
   },
 ): Promise<SandboxExecutionResult> {
+  requireEnforcedSandboxNetworkPolicy(request.networkPolicy, 'sandbox');
   const admitted={...request,limits:{...DEFAULT_SANDBOX_LIMITS,...request.limits}};
   if(googleProjectRuntimeSelected())await requireSandboxExecutionBinding(admitted);
   const { runtime, availability } = await selectSandboxProvider();

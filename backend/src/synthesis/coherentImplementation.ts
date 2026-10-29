@@ -7,7 +7,7 @@ import {
 import { runBuilderAttempt, classifyBuilderFailure, type BuilderAttemptFailure } from '../ai/builderAttempt.js';
 import { costUsdForTokens, MODELS, type ModelId } from '../ai/models.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
-import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { normalizeProviderError,isTerminalModelFailure } from '../ai/providerRuntime.js';
 import { extractJson } from '../ai/black-hole/structuredOutput.js';
 import { prepareFocusedContext } from '../ai/contextPreparation.js';
 import { scanProjectFiles } from '../ai/securityScan.js';
@@ -659,6 +659,7 @@ async function callWithTelemetry(input: {
       },
     };
   } catch (error) {
+    if(isTerminalModelFailure(error))throw error;
     const failure = classifyBuilderFailure(error);
     const record: BuilderModelCallTelemetry = {
       stage: input.stage, modelId: input.modelId, purpose: input.purpose,
@@ -734,6 +735,7 @@ export async function implementCoherently(input: {
     try {
       assertCodingModel(candidate.modelId, 'coherent universal implementation');
     } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       failures.push(`${candidate.modelId}: ${classifyBuilderFailure(error)}`);
       continue;
     }
@@ -796,6 +798,7 @@ export async function implementCoherently(input: {
             signal: input.signal,
           });
         } catch (error) {
+          if(isTerminalModelFailure(error))throw error;
           input.onTelemetry?.(withUsage(first.record, false, 'bounded continuation failed'));
           throw error;
         }
@@ -815,6 +818,7 @@ export async function implementCoherently(input: {
       failures.push(`${candidate.modelId}: ${parsed.reason}`);
       protocolCorrection = parsed.reason;
     } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       const telemetry = (error as { builderTelemetry?: BuilderModelCallTelemetry }).builderTelemetry;
       if (telemetry) input.onTelemetry?.(telemetry);
       const normalized = normalizeProviderError(error);

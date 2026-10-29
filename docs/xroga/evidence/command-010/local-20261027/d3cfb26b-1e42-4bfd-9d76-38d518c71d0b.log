@@ -1,0 +1,106 @@
+TAP version 13
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"glm_5_3_flash","requestedProvider":"zhipu","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"deepseek_v4_flash","requestedProvider":"openrouter","actualModelId":"deepseek_v4_flash","actualProvider":"openrouter","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"deepseek_v4_flash","requestedProvider":"openrouter","actualModelId":"deepseek_v4_flash","actualProvider":"openrouter","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"deepseek_v4_flash","requestedProvider":"openrouter","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":true,"fallbackReason":"transient:status=503","fallbackFailureCount":1}
+# [pipeline] deepseek_v4_flash stream failed (output_limit_exceeded): unknown provider failure
+# Subtest: actual pipeline, completion and SoftwareAgent calls bind tenant, account revision, payload and canonical reservation
+ok 1 - actual pipeline, completion and SoftwareAgent calls bind tenant, account revision, payload and canonical reservation
+  ---
+  duration_ms: 3016.9715
+  type: 'test'
+  ...
+# Subtest: local request security denial cannot fall through to a different provider or account
+ok 2 - local request security denial cannot fall through to a different provider or account
+  ---
+  duration_ms: 0.4717
+  type: 'test'
+  ...
+# Subtest: Step 3 project runtime platform
+    # Subtest: persists full canonical project revisions
+    ok 1 - persists full canonical project revisions
+      ---
+      duration_ms: 39.4072
+      type: 'test'
+      ...
+    # Subtest: encrypts project secrets and never stores plaintext
+    ok 2 - encrypts project secrets and never stores plaintext
+      ---
+      duration_ms: 13.2947
+      type: 'test'
+      ...
+    # Subtest: creates and restores a persistent interactive runtime
+    ok 3 - creates and restores a persistent interactive runtime
+      ---
+      duration_ms: 3.2846
+      type: 'test'
+      ...
+    # Subtest: tracks file revisions independently from the runtime provider
+    ok 4 - tracks file revisions independently from the runtime provider
+      ---
+      duration_ms: 3.0604
+      type: 'test'
+      ...
+    # Subtest: synchronizes the interactive runtime to the canonical full workspace
+    ok 5 - synchronizes the interactive runtime to the canonical full workspace
+      ---
+      duration_ms: 1.3908
+      type: 'test'
+      ...
+    # Subtest: tracks long-running processes and declared ports
+    ok 6 - tracks long-running processes and declared ports
+      ---
+      duration_ms: 2.386
+      type: 'test'
+      ...
+    # Subtest: derives dependency installation from runtime adapters instead of hard-coded pipeline commands
+    ok 7 - derives dependency installation from runtime adapters instead of hard-coded pipeline commands
+      ---
+      duration_ms: 3.2142
+      type: 'test'
+      ...
+    # Subtest: reports runtime capability truth instead of assuming Preview support
+    ok 8 - reports runtime capability truth instead of assuming Preview support
+      ---
+      duration_ms: 0.9518
+      type: 'test'
+      ...
+    # Subtest: makes verification runtimes disposable and non-restorable
+    ok 9 - makes verification runtimes disposable and non-restorable
+      ---
+      duration_ms: 2.0888
+      type: 'test'
+      ...
+    # Subtest: fails restricted runtime commands closed with no network namespace
+    ok 10 - fails restricted runtime commands closed with no network namespace
+      ---
+      duration_ms: 1.6636
+      type: 'test'
+      ...
+    # Subtest: cloning an old revision creates new canonical project state without reusing its runtime
+    ok 11 - cloning an old revision creates new canonical project state without reusing its runtime
+      ---
+      duration_ms: 1.5768
+      type: 'test'
+      ...
+    # Subtest: forking canonical project state changes project identity and detaches repository/runtime state
+    ok 12 - forking canonical project state changes project identity and detaches repository/runtime state
+      ---
+      duration_ms: 0.7038
+      type: 'test'
+      ...
+    1..12
+ok 3 - Step 3 project runtime platform
+  ---
+  duration_ms: 77.2186
+  type: 'suite'
+  ...
+1..3
+# tests 14
+# suites 1
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72857.024

@@ -1,0 +1,37 @@
+{
+  "scope": "EXACT_RAW_LOCAL_TEST_RECEIPTS_RETAINED_WITH_WHITESPACE_CLEAN_DISPLAY_COPIES",
+  "logs": [
+    {
+      "displayLog": "docs/xroga/evidence/command-010/container-dispatch-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/raw-local-logs-20261028/container-dispatch-red-20261028.log.gz",
+      "originalBytesSha256": "0977448bb338992b0b2a5beab018c7a0796a1c614fa8fd3705e2928c9c70f31a",
+      "displaySha256": "2b1950f672b969051f1ec1e8322800719b112dbe94466bd9c3fd3326ffa88c75",
+      "rawBytes": 4044,
+      "normalization": "Display only: CRLF to LF and trailing whitespace removed. Original uncompressed bytes retained exactly in deterministic gzip archive. Assertions, failure descriptions and test outcomes unchanged."
+    },
+    {
+      "displayLog": "docs/xroga/evidence/command-010/github-source-actor-credentialRed-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/raw-local-logs-20261028/github-source-actor-credentialRed-20261028.log.gz",
+      "originalBytesSha256": "c80b79af20855a5f9b9fcdb0f281d2ba5ed4f0a8df5f1b1584000d85c5f9e87a",
+      "displaySha256": "9169045552dfa5749b35574e198ade4c13410899a4aba88f4098db2923e6c254",
+      "rawBytes": 4064,
+      "normalization": "Display only: CRLF to LF and trailing whitespace removed. Original uncompressed bytes retained exactly in deterministic gzip archive. Assertions, failure descriptions and test outcomes unchanged."
+    },
+    {
+      "displayLog": "docs/xroga/evidence/command-010/github-source-transport-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/raw-local-logs-20261028/github-source-transport-red-20261028.log.gz",
+      "originalBytesSha256": "878448aef1c71ed77a88927affd7d8eca272c0cf1907a8b8eea2efd2aafe76f3",
+      "displaySha256": "5ff180d548a7ba0589111a3081fe62a8972938ecc2adb18699b0f0272fd76178",
+      "rawBytes": 4428,
+      "normalization": "Display only: CRLF to LF and trailing whitespace removed. Original uncompressed bytes retained exactly in deterministic gzip archive. Assertions, failure descriptions and test outcomes unchanged."
+    },
+    {
+      "displayLog": "docs/xroga/evidence/command-010/orphan-cleanup-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/raw-local-logs-20261028/orphan-cleanup-red-20261028.log.gz",
+      "originalBytesSha256": "d82557e5f0ccae9ee22878901e9c8a7cc6dec65a5f1ee2efc970035fb775e6e8",
+      "displaySha256": "d22e5a65819191517dd4738d29a4f394be4169147548d3d03cd2d48df02a3679",
+      "rawBytes": 3973,
+      "normalization": "Display only: CRLF to LF and trailing whitespace removed. Original uncompressed bytes retained exactly in deterministic gzip archive. Assertions, failure descriptions and test outcomes unchanged."
+    }
+  ]
+}

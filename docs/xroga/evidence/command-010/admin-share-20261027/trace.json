@@ -1,0 +1,197 @@
+{
+  "scope": "THREE_FIRST_PARTY_FRONTEND_API_CALLS_AND_EXISTING_PRIVATE_FILE_PROXY_NOT_NEW_BACKEND_AUTHORITY",
+  "originalCandidates": [
+    {
+      "id": "fea472b3a4bb6eb5babd",
+      "file": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
+      "line": 45,
+      "entryPoint": "AdminPageClient",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "1e8c9c24cd3c9e68f144c93a83d24e4f5ccbaac148812f8c57dcfb8ac923b2e7",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "d486083aa57ff293af6f",
+      "file": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
+      "line": 46,
+      "entryPoint": "AdminPageClient",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "7095c0ff5a347b3e664b1f6cdee485939975df1d590b6aae6348aac9c45051f4",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "9187c5480b950d1fad4d",
+      "file": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+      "line": 24,
+      "entryPoint": "GET",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "5dbf407454e7bfcc241a",
+      "file": "frontend/src/app/share/[token]/page.tsx",
+      "line": 42,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "a56cf739067e05366389be53391ed215229547a9dc32332bc624c1f2b3e62a1e",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "reusedGuard": {
+    "id": "c09bb8607fa4d00f23b7",
+    "file": "frontend/src/lib/api.ts",
+    "line": 1425,
+    "entryPoint": "fetchApiResponse",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "unchangedPrivateProxy": {
+    "id": "9187c5480b950d1fad4d",
+    "file": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+    "line": 24,
+    "entryPoint": "GET",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "Actual admin load followed two real HTTP307 requests and returned successful state",
+    "Shared-answer loader followed a real HTTP307 and accepted the redirected share"
+  ],
+  "corrections": [
+    "Admin and shared-answer calls reuse fetchApiResponse for configured-origin validation, manual redirect/opaque-redirect refusal, cancellation and no alternate destination",
+    "Both callers now have25s deadlines; shared-answer responses have1MiB actual-stream ceiling, matched requested token, enum/string bounds and disposed error bodies",
+    "Existing private proxy already rejects redirects, validates origin/path/link cardinality, requires remote verified user then session transport, uses no-store and an allowlist of delivery response headers. No production code change was needed for that candidate."
+  ],
+  "verification": {
+    "frontendPassed": 5,
+    "backendPassed": 3,
+    "skipped": 0,
+    "negative": "Actual TSX component callback and server loader/GET compiled with only React/Auth ports substituted, using real local HTTP.0redirectedrequests after fix. Wrong/oversized share rejected. Private proxy denied authentication and duplicate link before network, mapped403to safe503, did not forward Set-Cookie or arbitrary headers.",
+    "positive": "Normal admin errors/readiness, matched public share, authenticated private range206/body/content-range and private no-store headers pass. Existing backend message-share owner checks and private delivery revocation tests pass."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "abacadbe-81b3-4c95-9c8e-195af83e547d",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/admin-share-20261027/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "f0653c20-236c-4d1e-98b6-9bd5389791e5",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/admin-share-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "backendOwnershipRegression",
+      "jobId": "7e95ebc1-2ebf-4f17-8262-1cd8487175b4",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/admin-share-20261027/backendOwnershipRegression.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 103135
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
+      "sha256": "25e82c6c4867a397fc50f57ce2eb48510a8614126c55efc157435f0b34fbfb2d"
+    },
+    {
+      "path": "frontend/src/app/share/[token]/page.tsx",
+      "sha256": "3dbc690246e5ccedfe88365fe55c8a35d278820b5441e02c40d7b908658df2f7"
+    },
+    {
+      "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+      "sha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d"
+    },
+    {
+      "path": "frontend/e2e/phase4-admin-share.security.mjs",
+      "sha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+    },
+    {
+      "path": "backend/src/routes/messageShares.ts",
+      "sha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609"
+    },
+    {
+      "path": "backend/src/routes/messageShares.test.ts",
+      "sha256": "57fd143cde456c2309ab5f865ff6f3062f11983862322d329a49491e4feb85f7"
+    },
+    {
+      "path": "backend/src/services/storage/privateFileDelivery.revocation.test.ts",
+      "sha256": "7b300eb5c671763363886aeeddfdb66cb2aa1a3de2afa4946576a25955217777"
+    },
+    {
+      "path": ".github/workflows/command3-auth-browser.yml",
+      "sha256": "7a3557ac44fedcb975d4a3b55b3b51a4dd73852d10dd8cc208b5f25540786818"
+    }
+  ],
+  "limitations": [
+    "Three AST candidates consolidate into an existing guard. This does not certify unrelated admin operations or backend mutation authority.",
+    "Private file proxy transports the selected user session to the configured API only. Actual backend tenant, file-owner, link-expiry and revocation enforcement remains independently required and preserved.",
+    "Image and earlier API receipts remain valid for their exact earlier sources. The workflow adds one independent step and removes no prior test."
+  ],
+  "productionChanged": false,
+  "spending": 0
+}

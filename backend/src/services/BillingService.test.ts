@@ -1,3 +1,4 @@
+import {executeCheckoutWithFixtureClaim} from './fixtures/checkoutApproval.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import test, { type TestContext } from 'node:test';
@@ -17,12 +18,13 @@ const APPROVED_PLAN = {
 };
 
 function withWhopEnv(t: TestContext) {
-  const names = ['WHOP_API_KEY', 'WHOP_COMPANY_ID', 'WHOP_PLAN_ID', 'WHOP_REDIRECT_URL', 'WHOP_WEBHOOK_SECRET'] as const;
+  const names = ['WHOP_API_KEY', 'WHOP_COMPANY_ID', 'WHOP_PLAN_ID', 'WHOP_REDIRECT_URL', 'WHOP_WEBHOOK_SECRET','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY'] as const;
   const previous = Object.fromEntries(names.map((name) => [name, process.env[name]]));
   Object.assign(process.env, {
     WHOP_API_KEY: 'test_key', WHOP_COMPANY_ID: 'biz_qhYONL4RebGX96',
     WHOP_PLAN_ID: 'plan_hlV1A10I5QfSP', WHOP_REDIRECT_URL: 'https://xroga.com/workspace?billing=success',
     WHOP_WEBHOOK_SECRET: 'ws_test_signing_secret',
+    SUPABASE_URL:'http://127.0.0.1:1',SUPABASE_SERVICE_ROLE_KEY:'synthetic-unit-only',
   });
   t.after(() => {
     for (const name of names) previous[name] === undefined ? delete process.env[name] : process.env[name] = previous[name];
@@ -109,10 +111,10 @@ test('checkout uses the v1 API, pinned version, approved server values, metadata
   }) as typeof fetch;
   t.after(() => { globalThis.fetch = originalFetch; });
 
-  const result = await BillingService.createCheckout('00000000-0000-4000-8000-000000000123');
+  const result = await executeCheckoutWithFixtureClaim('00000000-0000-4000-8000-000000000123');
   assert.match(result.purchaseUrl, /^https:\/\/whop\.com\/checkout\//);
-  assert.equal(requests.length, 2);
-  const checkout = requests[1];
+  assert.equal(requests.length, 3);
+  const checkout = requests[2];
   assert.equal(checkout.url, 'https://api.whop.com/api/v1/checkout_configurations');
   const headers = checkout.init?.headers as Record<string, string>;
   assert.equal(headers['Api-Version-Date'], WHOP_API_VERSION_DATE);
@@ -145,9 +147,9 @@ test('checkout verifies ownership from the checkout contract when plan retrieval
   }) as typeof fetch;
   t.after(() => { globalThis.fetch = originalFetch; });
 
-  const result = await BillingService.createCheckout('00000000-0000-4000-8000-000000000456');
+  const result = await executeCheckoutWithFixtureClaim('00000000-0000-4000-8000-000000000456');
   assert.match(result.purchaseUrl, /^https:\/\/whop\.com\/checkout\//);
-  assert.equal(requests.length, 2);
+  assert.equal(requests.length, 3);
 });
 
 test('checkout rejects a checkout response for another company', async (t) => {
@@ -164,7 +166,7 @@ test('checkout rejects a checkout response for another company', async (t) => {
   t.after(() => { globalThis.fetch = originalFetch; });
 
   await assert.rejects(
-    BillingService.createCheckout('00000000-0000-4000-8000-000000000789'),
+    executeCheckoutWithFixtureClaim('00000000-0000-4000-8000-000000000789'),
     /account_id/,
   );
 });
@@ -173,7 +175,7 @@ test('checkout configuration fails closed when Whop secrets are absent', async (
   const previous = process.env.WHOP_API_KEY;
   delete process.env.WHOP_API_KEY;
   t.after(() => previous === undefined ? delete process.env.WHOP_API_KEY : process.env.WHOP_API_KEY = previous);
-  await assert.rejects(BillingService.createCheckout('00000000-0000-4000-8000-000000000123'), /not configured/);
+  await assert.rejects(executeCheckoutWithFixtureClaim('00000000-0000-4000-8000-000000000123'), /not configured/);
 });
 
 test('checkout idempotency is stable inside a bounded window and changes afterward', () => {

@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: AST audit sees executable transports, aliases, browser, MCP and process sinks, not generated strings
+ok 1 - AST audit sees executable transports, aliases, browser, MCP and process sinks, not generated strings
+  ---
+  duration_ms: 12.5651
+  type: 'test'
+  ...
+# Subtest: a constant origin or central import never silently certifies caller ownership
+ok 2 - a constant origin or central import never silently certifies caller ownership
+  ---
+  duration_ms: 1.0819
+  type: 'test'
+  ...
+# Subtest: aliased process execution and pinned uploads remain obligations, response sends and regex exec are excluded
+ok 3 - aliased process execution and pinned uploads remain obligations, response sends and regex exec are excluded
+  ---
+  duration_ms: 1.4893
+  type: 'test'
+  ...
+# Subtest: current transport proof binds every claimed source and keeps unresolved caller obligations visible
+ok 4 - current transport proof binds every claimed source and keeps unresolved caller obligations visible
+  ---
+  duration_ms: 22.683
+  type: 'test'
+  ...
+# Subtest: current metadata continuation preserves the exact historical proof files without promoting acceptance
+ok 5 - current metadata continuation preserves the exact historical proof files without promoting acceptance
+  ---
+  duration_ms: 187.5824
+  type: 'test'
+  ...
+# Subtest: source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+ok 6 - source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+  ---
+  duration_ms: 872.5281
+  type: 'test'
+  ...
+# Subtest: Phase2 retains all73 packets and371 historical identities without certifying reviews or later scope
+ok 7 - Phase2 retains all73 packets and371 historical identities without certifying reviews or later scope
+  ---
+  duration_ms: 479.8195
+  type: 'test'
+  ...
+# Subtest: Phase2 semantic progress rejects changed source, unknown or duplicate packets and self-certified status
+ok 8 - Phase2 semantic progress rejects changed source, unknown or duplicate packets and self-certified status
+  ---
+  duration_ms: 2582.8953
+  type: 'test'
+  ...
+# Subtest: shifted duplicate caller remapping requires a unique byte-identical method rather than matching syntax labels alone
+ok 9 - shifted duplicate caller remapping requires a unique byte-identical method rather than matching syntax labels alone
+  ---
+  duration_ms: 2.6274
+  type: 'test'
+  ...
+# Subtest: both baseline jobs reject stale Phase2 evidence hashes before browser installation and the unchanged full suites
+ok 10 - both baseline jobs reject stale Phase2 evidence hashes before browser installation and the unchanged full suites
+  ---
+  duration_ms: 0.9826
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3734.8075

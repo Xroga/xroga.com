@@ -1,0 +1,199 @@
+{
+  "atUtc": "2026-10-29T07:55:29.800990+00:00",
+  "scope": "ONLY_BATCH1_PHASE4_DEVELOPMENT_INTEGRATION_CLOSURE_PRODUCTION_HELD",
+  "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 12,
+  "criterionCount": 12,
+  "criteria": [
+    {
+      "id": "XB01-C010-AC01",
+      "originalText": "All arbitrary outbound URL callers are inventoried.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "docs/xroga/security/egress-callers.json"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC02",
+      "originalText": "High-risk URL callers use central URL policy.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "backend/src/security/boundedPublicGet.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC03",
+      "originalText": "All consequential external data egress passes egressPolicy.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+        "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC04",
+      "originalText": "businessAction integrates authority + egress before provider execution.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/services/integrations/composioProvenance.security.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC05",
+      "originalText": "Tool descriptions cannot create authority.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC06",
+      "originalText": "Malicious document/web/tool-output tests cannot override policy.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC07",
+      "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/boundedPublicGet.test.ts",
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC08",
+      "originalText": "Redirect-to-private test passes.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC09",
+      "originalText": "Cross-tenant external upload test passes.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/egress/fileEgress.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC10",
+      "originalText": "Credential-secret egress test passes.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/egress/heldCredentialFloor.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
+        "docs/xroga/evidence/command-010/BROWSER-INPUT-CREDENTIAL-FLOOR-20261028.json"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC11",
+      "originalText": "Security decision evidence contains no raw credential.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    },
+    {
+      "id": "XB01-C010-AC12",
+      "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
+      "localEvidenceState": "VERIFIED_LOCAL_SOURCE",
+      "finalCurrentSourceAcceptance": "PASS_DEVELOPMENT_AND_INTEGRATION",
+      "remaining": "Production activation and live verification remain held by the founder. No remaining development acceptance failure.",
+      "evidence": [
+        "docs/xroga/security/egress-callers.json"
+      ],
+      "integrationEvidence": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
+    }
+  ],
+  "strictAudit": {
+    "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
+    "total": 148,
+    "reviewed": 148,
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0
+  },
+  "ci": "PASS_EXACT_IMPLEMENTATION_AND_MERGED_MAIN",
+  "production": "HELD_UNCHANGED_NOT_ACTIVATED",
+  "batch1": "DEVELOPMENT_INTEGRATION_COMPLETE_PRODUCTION_HELD",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "externalBlocker": null,
+  "remainingBrowserObligations": [
+    "Coordinated release must build and verify immutable native Google API/Job and browser/QA images, retain compatible recovery and complete live production checks. No deployment is authorized."
+  ],
+  "publishingObligations": "All original caller reviews and the current-main transport integration are closed at the verified source. No remaining development publishing obligation. Production provider effects remain unclaimed.",
+  "backendTypes": "PASS_EXACT_MERGED_SOURCE_CI",
+  "frontendTypes": "PASS_EXACT_MERGED_SOURCE_CI",
+  "currentCheckpoint": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json",
+  "xResearchAccountingAvailability": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED",
+  "orphanCleanupStatus": "Bounded stopped-only cleanup verified locally. Running leftovers retained for lease-aware operator review. No global force cleanup or live host mutation.",
+  "ciFailureEvidence": "docs/xroga/evidence/command-010/CI-1F0761DA-20261028.json",
+  "nativeReleasePartialCorrection": "docs/xroga/evidence/command-010/NATIVE-RELEASE-TRANSPORT-CONTINUATION-20261028.json",
+  "nativeSigningEvidence": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+  "auraServerEvidence": "docs/xroga/evidence/command-010/AURA-SERVER-BOUNDARY-20261028.json",
+  "precedingCiEvidence": "docs/xroga/evidence/command-010/CI-D803F15E-20261028.json",
+  "voiceEvidence": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+  "nativeArtifactEvidence": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
+  "cwsEvidence": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+  "expoReadinessEvidence": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+  "expoWorkflowEvidence": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+  "supabaseManagementTransportEvidence": "docs/xroga/evidence/command-010/SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json",
+  "supabaseProvisionEvidence": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-AUTHORITY-20261028.json",
+  "parallelApprovalEvidence": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+  "composioBoundaryEvidence": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+  "supabaseProjectCreateEvidence": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json",
+  "desktopWorkflowEvidence": "docs/xroga/evidence/command-010/DESKTOP-WORKFLOW-20261028.json",
+  "githubPublicationEvidence": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+  "browserReadOnlyEvidence": "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+  "releaseGateHandoff": "docs/xroga/batch-1/BATCH-1-DEVELOPMENT-CLOSURE.md",
+  "developmentAcceptedCriteria": 12,
+  "productionAcceptedCriteria": 0,
+  "acceptanceCountMeaning": "Twelve original source/development criteria pass. Formal production acceptance is not claimed.",
+  "verifiedImplementationSource": "ff4032ca02c4b233c2598724caf44ab04b91fb0f",
+  "integrationPr": 878,
+  "historicalPr": {
+    "number": 844,
+    "state": "CLOSED_SUPERSEDED_BRANCH_PRESERVED"
+  },
+  "developmentBlockers": []
+}

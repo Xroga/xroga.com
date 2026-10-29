@@ -1,0 +1,31 @@
+{
+  "marker": "XROGA_LOCAL_DISPOSABLE_JOB_V1",
+  "id": "55a98efd-c63e-444d-819d-9b0b8f1a0ece",
+  "status": "passed",
+  "ownerPid": 41196,
+  "startedEpoch": 1793212777.7040749,
+  "cwd": "C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep",
+  "commandExecutable": "C:\\Users\\hp\\Documents\\Codex\\.toolchains\\node-v22.21.1-win-x64\\node.exe",
+  "argumentCount": 4,
+  "retain": true,
+  "dockerExpected": false,
+  "preserveRequested": [],
+  "evidencePreserved": true,
+  "freeBeforeBytes": 105180151808,
+  "timeoutSeconds": 180,
+  "memoryGiB": 4,
+  "childPid": 4064,
+  "preservedArtifacts": [],
+  "exitCode": 0,
+  "stopReason": null,
+  "endedEpoch": 1793212895.3167076,
+  "outputBytesProduced": 0,
+  "logBudgetBytes": 31457280,
+  "freeAfterBytes": 105172688896,
+  "freeSpaceChangeBytes": -7462912,
+  "significantStorageChange": false,
+  "temporaryCleanup": {
+    "status": "COMPLETE",
+    "logicalBytesRemoved": 1322084
+  }
+}

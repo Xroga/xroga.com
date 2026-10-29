@@ -1,13 +1,15 @@
+import {isBuilderSecurityDenial} from '../providerAuthority.js';
+import {AuthorityError} from '../../security/authority/enforce.js';
+import {EgressDenied} from '../../security/egress/egressPolicy.js';
 import { SUPABASE_REF, SupabasePortError, type SupabaseCatalog, type SupabasePort, type SupabaseProjectSummary, type SupabasePublicConfig } from './port.js';
 
 /** (token, path, init) => Response against the Supabase Management API. Injected in tests. */
 export type SupabaseTransport = (token: string, path: string, init?: RequestInit) => Promise<Response>;
 
-export const supabaseManagementFetch: SupabaseTransport = (token, path, init) =>
-  fetch(`https://api.supabase.com/v1${path}`, {
-    ...init,
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
-  });
+export const supabaseManagementFetch: SupabaseTransport = async () => { throw new AuthorityError('BUILDER_SUPABASE_ACTOR_REQUIRED'); };
+
+export const CATALOG_TABLES_SQL="select c.relname as name, c.relrowsecurity as rls, obj_description(c.oid, 'pg_class') as comment from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' order by c.relname";
+export const CATALOG_GRANTS_SQL="select distinct table_name from information_schema.role_table_grants where table_schema = 'public' and grantee in ('anon', 'PUBLIC')";
 
 function failure(response: Response, action: string, ambiguousOnServerError: boolean): SupabasePortError {
   const status = response.status;
@@ -33,7 +35,8 @@ export function createRestSupabasePort(transport: SupabaseTransport = supabaseMa
   const call = async (token: string, path: string, init: RequestInit | undefined, ambiguous = false): Promise<Response> => {
     try {
       return await transport(token, path, init);
-    } catch {
+    } catch (error) {
+      if(isBuilderSecurityDenial(error))throw error;
       throw new SupabasePortError('unavailable', 'Supabase could not be reached.', ambiguous);
     }
   };
@@ -75,13 +78,13 @@ export function createRestSupabasePort(transport: SupabaseTransport = supabaseMa
       const tables = await call(
         token,
         `/projects/${ref(projectRef)}/database/query`,
-        query("select c.relname as name, c.relrowsecurity as rls, obj_description(c.oid, 'pg_class') as comment from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' order by c.relname"),
+        query(CATALOG_TABLES_SQL),
       );
       if (!tables.ok) throw failure(tables, 'inspect schema', false);
       const grants = await call(
         token,
         `/projects/${ref(projectRef)}/database/query`,
-        query("select distinct table_name from information_schema.role_table_grants where table_schema = 'public' and grantee in ('anon', 'PUBLIC')"),
+        query(CATALOG_GRANTS_SQL),
       );
       if (!grants.ok) throw failure(grants, 'inspect grants', false);
       return {

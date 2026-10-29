@@ -1,0 +1,242 @@
+{
+  "scope": "PARTIAL_CORRECTION_ONLY_NO_PENDING_CALLER_PROMOTED",
+  "parent": "585d02c886e77e01407de8cb70e4342e8350140e",
+  "candidateIds": [
+    "5baa649b7c2c9b6b6f30",
+    "99ec2dc4769b5eced6a5",
+    "094a251245ce9b6ab659",
+    "07ca232e98dcc1720801"
+  ],
+  "defectsReproduced": [
+    "Parallel401authorization denial nonterminal",
+    "Parallel key substituted after reservation",
+    "Native release upload metadata selected foreign origin/release path",
+    "Native authorization denial fell through to later writes",
+    "Raw or fabricated actor accepted before vault reads",
+    "Native cancellation and credential rotation after metadata did not block later effects",
+    "Provider release tag mismatched the requested release",
+    "Opaque held GitHub credential could be embedded in source archive"
+  ],
+  "corrections": [
+    "Parallel platform credential snapshot and revalidation after admission waits and settlement.401/403 raise existing canonical terminal AuthorityError.",
+    "Exact fixed GitHub API paths/methods,manual redirects,30second deadline,256KiB receipt limit and static provider errors. Only404 lookup admits existing create behavior.",
+    "Archive destination binds uploads.github.com,exact repository/release ID,tag and returned download receipt. Deletion must acknowledge204 before upload.",
+    "Bound source snapshot rejects unsafe paths and known/held credential content before network.",
+    "All four actual pipeline native release calls carry original TenantContext and cancellation. Reuse existing credential-revision lifetime, without claiming it is write authority.",
+    "Require exact provider tag acknowledgement and deny raw or encoded forms of the already-held GitHub token before archive egress."
+  ],
+  "remaining": [
+    "Exact consequential authority and canonical egress for native release creation, replacement/deletion, source upload and Actions dispatch are unresolved.",
+    "Durable owned source provenance for publishing remains unresolved.",
+    "Parallel upstream public/private provenance and provider-internal URL/redirect/DNS fetching remain unresolved.",
+    "No live provider, UI approval or production acceptance claim for these partial corrections."
+  ],
+  "receipts": [
+    {
+      "name": "parallel-red",
+      "id": "7381fca7-78fe-46bf-af5f-cc2be5eeeb33",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-release-parallel-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-release-parallel-red-20261028.log.original.gz",
+      "originalSha256": "d912d30b238ca9f0ccf788867720080195d0b4f10973d9e68e888a0d9f3d04b8",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 629084
+      }
+    },
+    {
+      "name": "transport-red",
+      "id": "bd1bda1c-ea98-403c-9917-08c91b331d44",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-release-transport-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-release-transport-red-20261028.log.original.gz",
+      "originalSha256": "aa0d79d0b73e9d2196ae128051f2ba098a441b167684797a8237a4f64fe9a3c3",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 214787
+      }
+    },
+    {
+      "name": "actor-lifetime-red",
+      "id": "08471ccc-ee86-46ae-8a71-fa48773de70e",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-release-actor-lifetime-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-release-actor-lifetime-red-20261028.log.original.gz",
+      "originalSha256": "a0a5b1c67928ddc68e0df2e13e3cbdc1e7a2636e8642f0e9de7333f83a443508",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 233559
+      }
+    },
+    {
+      "name": "focused-green",
+      "id": "e4651155-a551-4010-ace7-db772c7b844b",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-release-focused-green-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-release-focused-green-20261028.log.original.gz",
+      "originalSha256": "baf9444c1f9cbd36c3abe43d6b5000242ea671291dd061e13b0b7899c9fce6f0",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 726791
+      }
+    },
+    {
+      "name": "tag-held-credential-red",
+      "id": "53816e15-b09a-414d-8145-3bc216ef53bd",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-release-tag-held-credential-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-release-tag-held-credential-red-20261028.log.original.gz",
+      "originalSha256": "3ce8f072eeca7fa7ae34c2fbdb4d99b2aaf8a4717262178136906882967cca04",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 246017
+      }
+    },
+    {
+      "name": "final-focused-green",
+      "id": "e0367b89-f85d-4f02-8d61-425f8a605656",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-release-final-focused-green-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-release-final-focused-green-20261028.log.original.gz",
+      "originalSha256": "26535a1dcb566de704cc7e18c174b60478a0901afcdf06a8c232a198e2422290",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 728763
+      }
+    }
+  ],
+  "verification": {
+    "tests": 34,
+    "pass": 34,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Actual adapters and actual Supabase client with synthetic HTTP fixtures only. Zero model/provider spending."
+  },
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "3f2e75c0e727555aeceadc652970e9134e9d776680905cef42f3e1be1f437c22"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "sha256": "9e4ddf324d7329e9a06428f5fa8a69c0ff28a8c58d7dbc52ffdaf94533e64c47"
+    },
+    {
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "sha256": "415bfc28e7d178b901bd7ce2d078d46d75302bf65806a7a8f027ff99aef932dd"
+    },
+    {
+      "path": "backend/src/ai/parallelWeb.security.test.ts",
+      "sha256": "92cdcc365ee285b669c6d79e5ad01195accddd712f086cbb4696fae40412c8ba"
+    },
+    {
+      "path": "backend/src/services/publish/nonWebShip.security.test.ts",
+      "sha256": "ccde0cced208a298d091b64ebee64619a9ae14fecc1785e26d33ba8b60798f7e"
+    }
+  ],
+  "unchangedPersistenceExpressions": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "previousId": "acfbdb182d9e682cce3f",
+      "currentId": "acfbdb182d9e682cce3f",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "previousId": "8c2f244d2269c3ff06ae",
+      "currentId": "8c2f244d2269c3ff06ae",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "previousId": "7f21a82745cdb3340773",
+      "currentId": "6c99f563cb991fc4b6b9",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "swarm_runs",
+      "callSha256": "f70d97b5cc5e783018cc426f7f85defdb7a8c2d0bced325bc1b590be5dd584ad"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "previousId": "2bd8300b0463880a6e3c",
+      "currentId": "42ee937494dc19f5f8a8",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "previousId": "4980ad45b150a99c9693",
+      "currentId": "ceb185c7249df748e570",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "previousId": "8e7c51dd4e34d2f73d6c",
+      "currentId": "c1e349666641c6258a7f",
+      "kind": "RPC_CANDIDATE",
+      "target": "reserve_xroga_provider_budget",
+      "callSha256": "c006ad8788e0eb459b0bc6532e33fefbcd61367b5a0fae8dc88ee5c364bb1d45"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "previousId": "df8252f381f17dee4349",
+      "currentId": "5a3c93b2ea16190402db",
+      "kind": "RPC_CANDIDATE",
+      "target": "ensure_xroga_free_cycle",
+      "callSha256": "96a3860a9b0922c86af4fdff5dda20e6c5db29c75f18944e6abcbd45377fb7f5"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "previousId": "2fef898f25273817dd83",
+      "currentId": "170612bbffde0e9ba826",
+      "kind": "RPC_CANDIDATE",
+      "target": "settle_xroga_provider_budget",
+      "callSha256": "a49eb9443dc73b17028f158d0f56d9620e25f810ae50e01cca0adf1a063054dd"
+    }
+  ],
+  "strictAuditChanged": false,
+  "frozenCriteriaChanged": false,
+  "resolvedCandidateIds": [],
+  "productionChanged": false,
+  "spending": 0,
+  "finalChecks": [
+    {
+      "name": "backendTypes",
+      "job": "2571cb70-9909-4768-b7c4-ee9afc60459e",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322092
+      }
+    },
+    {
+      "name": "continuityGatesAndStrictIncomplete",
+      "job": "6a48bc24-266a-43d9-93d1-c9b5a2c0dc38",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      },
+      "log": "docs/xroga/evidence/command-010/native-release-final-local-gates-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/native-release-final-local-gates-20261028.log.original.gz",
+      "originalSha256": "a2444ed95b03c47c2922674f483c31b495caa459a667cac0321f52da9efbe92d",
+      "strictAuditExitCode": 1,
+      "strictAuditResult": "INCOMPLETE_NOT_ACCEPTED"
+    }
+  ],
+  "precedingSourceCI": "docs/xroga/evidence/command-010/CI-585D02C8-20261028.json"
+}

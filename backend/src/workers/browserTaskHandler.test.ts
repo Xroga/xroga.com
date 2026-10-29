@@ -5,7 +5,8 @@ import { createCanonicalExecutionState, ExecutionScheduler, InMemoryExecutionSta
 import { harness, type Harness } from '../storage/testing/harness.js';
 import { StorageError, type StorageActor } from '../storage/types.js';
 import type { BrowserJob } from './browserJob.js';
-import { createBrowserTaskHandler, type BrowserHandlerDeps, type BrowserWorkerPort, type BrowserWorkerResult } from './browserTaskHandler.js';
+import { createBrowserTaskHandler, BrowserTaskError, type BrowserHandlerDeps, type BrowserWorkerPort, type BrowserWorkerResult } from './browserTaskHandler.js';
+import { PostCompletionAccountingError } from '../ai/postCompletionAccounting.js';
 import { AdmissionController } from './admission.js';
 import { MemoryLeaseStore, type Lease } from './leaseStore.js';
 
@@ -56,6 +57,15 @@ const failureCode = (t: ExecutableTaskNode) => ((t.output as { failure?: { code:
 const objectCount = (h: Harness) => h.repo.objects.size;
 
 describe('browser task handler on the canonical scheduler', () => {
+  it('security denials and uncertain completed accounting cannot retry a browser task',async()=>{
+    for(const error of [new BrowserTaskError('PERMISSION_REVOKED','synthetic ownership denial'),new PostCompletionAccountingError()]){
+      const r=rig(async()=>{throw error;});
+      const node=task();node.retryPolicy.maximumAttempts=3;
+      const state=createCanonicalExecutionState({projectId:r.h.aliceProject,runId:r.runId,tasks:[node]});
+      await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state,{browser_automation:createBrowserTaskHandler(r.deps)});
+      assert.equal(r.calls.length,1);assert.equal(state.tasks[0].status,'failed');assert.equal(objectCount(r.h),0);
+    }
+  });
   it('runs through ExecutionScheduler, stores verified private evidence, and releases the lease', async () => {
     const r = rig(async () => okResult());
     const { task: t } = await r.run();
@@ -97,6 +107,14 @@ describe('browser task handler on the canonical scheduler', () => {
   });
 
   describe('authority', () => {
+    it('ownership revoked during lease acquisition denies deterministic dispatch',async()=>{
+      let owned=true;const leases=new MemoryLeaseStore();const acquire=leases.acquire.bind(leases);
+      leases.acquire=async(...args)=>{const result=await acquire(...args);owned=false;return result;};
+      const r=rig(async()=>okResult(),{leases,authorise:async()=>owned});
+      const {task:t}=await r.run();
+      assert.equal(r.calls.length,0,'The original ownership check cannot survive an asynchronous lease wait');
+      assert.equal(failureCode(t),'PERMISSION_REVOKED');assert.equal(objectCount(r.h),0);
+    });
     it('another tenant cannot write into a project it does not own, even if the authorise hook is wrong (Drive itself refuses)', async () => {
       const r = rig(async () => okResult(), {}, (h) => h.bob);
       const { task: t } = await r.run({ projectId: r.h.aliceProject });
@@ -125,7 +143,7 @@ describe('browser task handler on the canonical scheduler', () => {
 
     it('permission revoked between two artifact writes: the second is not written', async () => {
       let checks = 0;
-      const r = rig(async () => okResult(), { authorise: async () => ++checks <= 2 }); // before dispatch, before artifact 1, then revoked
+      const r = rig(async () => okResult(), { authorise: async () => ++checks <= 3 }); // initial admission, post-lease dispatch, artifact 1, then revoked
       const { task: t } = await r.run();
       assert.equal(failureCode(t), 'PERMISSION_REVOKED');
       assert.equal(objectCount(r.h), 1, 'only the write made while authorised exists');

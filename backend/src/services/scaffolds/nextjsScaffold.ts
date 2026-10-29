@@ -423,7 +423,7 @@ export async function POST(req: Request) {
   const res = await fetch(\`\${base}/chat/completions\`, {
     method: 'POST',
     headers: {
-      Authorization: \`Bearer \${apiKey}\`,
+      Authorization: ['Bearer', apiKey].join(' '),
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -582,7 +582,7 @@ export async function POST(request: Request) {
     headers: {
       Accept: 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
-      Authorization: \`Bearer \${apiKey}\`,
+      Authorization: ['Bearer', apiKey].join(' '),
     },
     body: JSON.stringify({
       data: {

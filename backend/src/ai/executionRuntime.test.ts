@@ -12,6 +12,9 @@ import {
 } from './executionRuntime.js';
 import { createIntelligentRoutePlan } from './intelligentRouter.js';
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
+import {AuthorityError} from '../security/authority/enforce.js';
+import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 
 function node(id: string, operationType: string, dependencies: string[] = [], allowedFiles: string[] = []): ExecutableTaskNode {
   return {
@@ -25,6 +28,26 @@ function node(id: string, operationType: string, dependencies: string[] = [], al
 }
 
 const evidence = (kind: string): ExecutionEvidence[] => [{ id: `${kind}-evidence`, kind, summary: `${kind} executed`, timestamp: new Date().toISOString() }];
+
+test('canonical scheduler never retries terminal policy or completed-accounting denials without a retryable flag',async()=>{
+  for(const error of [Object.assign(Error('synthetic SDK denial'),{code:'MODEL_DESTINATION_DENIED'}),new EgressDenied('UNSAFE_DESTINATION'),
+    new AuthorityError('AUTHORITY_REVOKED'),new PostCompletionAccountingError()]){
+    let calls=0;const task=node('guarded','inspect');task.retryPolicy.maximumAttempts=3;
+    const state=createCanonicalExecutionState({projectId:'p',tasks:[task]});
+    await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state,{inspect:async()=>{calls++;throw error;}});
+    assert.equal(calls,1);assert.equal(state.tasks[0].status,'failed');
+  }
+});
+
+test('canonical scheduler retains ordinary provider-outage recovery',async()=>{
+  let calls=0;const task=node('recover','inspect');
+  const state=createCanonicalExecutionState({projectId:'p',tasks:[task]});
+  await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state,{inspect:async()=>{
+    if(++calls===1)throw Object.assign(Error('synthetic provider outage'),{status:503});
+    return{output:{recovered:true},evidence:evidence('read'),validated:true};
+  }});
+  assert.equal(calls,2);assert.equal(state.tasks[0].status,'completed');
+});
 
 test('route plans become persisted executable nodes with all control metadata', () => {
   const registry = getRuntimeModelRegistry().map((model) => ({ ...model, configured: true, enabled: true }));

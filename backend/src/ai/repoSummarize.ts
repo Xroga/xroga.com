@@ -15,9 +15,9 @@ import type {
   ModelId,
 } from './models.js';
 
-import {
-  withProviderReservation,
-} from './providerBudget.js';
+import {withTenantModelReservation,type TenantModelScope} from './tenantModelDispatch.js';
+import {requireResourceOwner} from '../security/tenantContext.js';
+import {isTerminalModelFailure} from './providerRuntime.js';
 
 import type {
   ProjectFile,
@@ -30,6 +30,7 @@ import {
 export async function summarizeRepoForUpdates(
   opts: {
     userId: string;
+    dispatchScope: TenantModelScope;
 
     prompt: string;
 
@@ -54,6 +55,8 @@ export async function summarizeRepoForUpdates(
     }
   | null
 > {
+  requireResourceOwner(opts.dispatchScope.context,opts.userId);
+  requireResourceOwner(opts.dispatchScope.context,opts.dispatchScope.userId);
   const needsSeniorContext =
     Boolean(
       opts.preferLongContext,
@@ -105,9 +108,9 @@ export async function summarizeRepoForUpdates(
     ];
 
     const result =
-      await withProviderReservation({
-        userId:
-          opts.userId,
+      await withTenantModelReservation({
+        scope:opts.dispatchScope,
+        payload:{messages},
 
         modelId,
 
@@ -122,11 +125,13 @@ export async function summarizeRepoForUpdates(
         purpose:
           'complexity',
 
-        execute: () =>
+        execute: dispatch =>
           chatCompletion(
             modelId,
-            messages,
+            dispatch.payload.messages as ChatMessage[],
             {
+              credentialOverride:dispatch.credentialOverride,
+              beforeDispatch:dispatch.beforeDispatch,
               maxTokens: 700,
               temperature:
                 0.2,
@@ -153,12 +158,10 @@ export async function summarizeRepoForUpdates(
         result.outputTokens,
     };
   } catch (error) {
-    console.warn(
-      '[repoSummarize] skipped:',
-      (
-        error as Error
-      ).message,
-    );
+    if(isTerminalModelFailure(error))throw error;
+    // An optional memo can be skipped on ordinary provider unavailability, but
+    // provider error bodies can contain request data and must not reach logs.
+    console.warn('[repoSummarize] skipped: unavailable');
 
     return null;
   }

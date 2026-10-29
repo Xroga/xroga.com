@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: seventeen legacy provider calls in nine unused adapters have no current production entry or importer
+ok 1 - seventeen legacy provider calls in nine unused adapters have no current production entry or importer
+  ---
+  duration_ms: 3505.8007
+  type: 'test'
+  ...
+# Subtest: the driver imports Playwright through a computed specifier, never a literal
+ok 2 - the driver imports Playwright through a computed specifier, never a literal
+  ---
+  duration_ms: 2.6811
+  type: 'test'
+  ...
+# Subtest: real browser: a healthy page passes every deterministic rung
+ok 3 - real browser: a healthy page passes every deterministic rung
+  ---
+  duration_ms: 1720.9036
+  type: 'test'
+  ...
+# Subtest: real browser: a page that throws is caught and blocks verification
+ok 4 - real browser: a page that throws is caught and blocks verification
+  ---
+  duration_ms: 979.5658
+  type: 'test'
+  ...
+# Subtest: real browser: a missing expected element is detected
+ok 5 - real browser: a missing expected element is detected
+  ---
+  duration_ms: 969.6984
+  type: 'test'
+  ...
+# Subtest: real browser: an interaction that works is confirmed
+ok 6 - real browser: an interaction that works is confirmed
+  ---
+  duration_ms: 1244.0925
+  type: 'test'
+  ...
+# Subtest: real browser: an unreachable URL fails rather than reporting a clean page
+ok 7 - real browser: an unreachable URL fails rather than reporting a clean page
+  ---
+  duration_ms: 218.7201
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6201.1416

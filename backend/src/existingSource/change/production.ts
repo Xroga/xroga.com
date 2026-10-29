@@ -3,6 +3,7 @@
  * the existing AgentSoftwareExecutor (Cline), execution is the existing isolation boundary, and GitHub writes are the existing
  * atomic writer with the connected account's own token.
  */
+import type { TenantContext } from '../../security/tenantContext.js';
 import type { AgentSoftwareExecutorInput } from '../../ai/softwareAgent/AgentSoftwareExecutor.js';
 import { ExistingSourceError, type SourceBinding } from '../types.js';
 import type { DeliveryApi } from './delivery.js';
@@ -35,13 +36,15 @@ export const productionAgentRunner: AgentRunner = async (input) => {
 };
 
 /** The coding model Xroga's router picks right now, with its ordered fallbacks. No selection means no run, never a guess. */
-export async function selectCodingModelRoute(userId: string, runId: string): Promise<AgentSoftwareExecutorInput['model']> {
-  const [{ routeByCapability }, { capabilityCandidates }, { createXrogaAgentModelRoute }] = await Promise.all([
-    import('../../ai/capabilityRouter.js'), import('../../synthesis/universalEntrypoint.js'), import('../../ai/softwareAgent/xrogaAgentModel.js'),
+export async function selectCodingModelRoute(userId: string, runId: string, context: TenantContext): Promise<AgentSoftwareExecutorInput['model']> {
+  const [{ routeByCapability }, { capabilityCandidates }, { createXrogaAgentModelRoute }, { captureCurrentRunAttempt }] = await Promise.all([
+    import('../../ai/capabilityRouter.js'), import('../../synthesis/universalEntrypoint.js'), import('../../ai/softwareAgent/xrogaAgentModel.js'), import('../../ai/runStore.js'),
   ]);
   const route = routeByCapability({ capability: 'coding', requiredContextTokens: 32_000, needsStructuredOutput: true }, capabilityCandidates());
   if (!route.selected) throw new ExistingSourceError('EXECUTION_UNAVAILABLE', 'No coding model is available right now. Try again shortly.');
-  return createXrogaAgentModelRoute({ userId, runId, modelId: route.selected.modelId as never, fallbackModelIds: route.fallbacks.map((m) => m.modelId) as never });
+  // the model call is dispatched under the caller's own tenant scope and the run attempt this change was admitted with
+  const dispatchScope = { context, userId, runAttempt: captureCurrentRunAttempt(), connectedAccountId: 'platform' };
+  return createXrogaAgentModelRoute({ dispatchScope, userId, runId, modelId: route.selected.modelId as never, fallbackModelIds: route.fallbacks.map((m) => m.modelId) as never });
 }
 
 /** The atomic GitHub write transport for one repository, using the connected account's own token. */

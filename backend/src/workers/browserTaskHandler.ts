@@ -28,6 +28,9 @@ import type { AdmissionController } from './admission.js';
 import { redactText } from '../runtime/safeLogging.js';
 import { LeaseError, type Lease, type LeaseStore } from './leaseStore.js';
 import { evaluatePostconditions, parseBrowserPlan, type BrowserPlan, type ExtractedValue, type PostconditionResult } from './browserPlan.js';
+import type { BrowserModelAuthority } from './browserModelDispatch.js';
+import type { TenantContext } from '../security/tenantContext.js';
+import { isTerminalModelFailure } from '../ai/providerRuntime.js';
 
 export type BrowserTaskFailureCode =
   | 'PERMISSION_REVOKED' | 'LEASE_HELD' | 'LEASE_LOST' | 'JOB_TIMEOUT' | 'CANCELLED'
@@ -37,7 +40,7 @@ export type BrowserTaskFailureCode =
 export class BrowserTaskError extends Error {
   readonly code: BrowserTaskFailureCode;
   readonly safeReasons: string[];
-  constructor(code: BrowserTaskFailureCode, reason: string) {
+  constructor(code: BrowserTaskFailureCode, reason: string, readonly retryable=code==='WORKER_FAILED'||code==='LEASE_HELD'||code==='STORAGE_FAILED') {
     super(reason);
     this.name = 'BrowserTaskError';
     this.code = code;
@@ -67,12 +70,13 @@ export interface BrowserWorkerResult {
 
 /** The seam to the isolated browser worker. A real implementation talks to the sandboxed container; tests substitute their own. */
 export interface BrowserWorkerPort {
-  run(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan }): Promise<BrowserWorkerResult>;
+  run(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan; modelAuthority?: BrowserModelAuthority }): Promise<BrowserWorkerResult>;
 }
 
 export interface BrowserHandlerDeps {
   /** issued by the trusted API from the authenticated session; never taken from a task or a worker */
   actor: StorageActor;
+  tenantContext?: TenantContext;
   drive: Pick<StorageService, 'putServerObject' | 'listObjects'>;
   leases: LeaseStore;
   worker: BrowserWorkerPort;
@@ -168,10 +172,19 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
     try {
       let result: BrowserWorkerResult;
       try {
-        result = await deps.worker.run(job, { signal: controller.signal, lease, ...(plan ? { plan } : {}) });
+        await guard();
+        if(!(await deps.authorise(deps.actor,job.projectId)))throw new BrowserTaskError('PERMISSION_REVOKED','the user no longer has access to this project');
+        await guard();
+        result = await deps.worker.run(job, { signal: controller.signal, lease, ...(plan ? { plan } : {}),
+          ...(deps.tenantContext?{modelAuthority:{context:deps.tenantContext,revalidate:async()=>{
+            await guard();
+            if(!(await deps.authorise(deps.actor,job.projectId)))throw new BrowserTaskError('PERMISSION_REVOKED','the user no longer has access to this project');
+            await guard();
+          }}}:{}) });
       } catch (e) {
         await guard(); // a lost lease, timeout or cancel is reported as itself, not as a worker error
         if (e instanceof BrowserTaskError) throw e;
+        if(isTerminalModelFailure(e))throw new BrowserTaskError('WORKER_FAILED','the browser model request was denied or could not be accounted for',false);
         throw new BrowserTaskError('WORKER_FAILED', 'the browser worker failed');
       }
       await guard();

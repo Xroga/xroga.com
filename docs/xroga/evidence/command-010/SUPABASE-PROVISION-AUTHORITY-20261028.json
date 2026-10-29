@@ -1,0 +1,314 @@
+{
+  "scope": "ONLY_SUPABASE_FIXED_ISSUER_OWNED_SOURCE_AND_EXACT_NATIVE_SCHEMA_STORAGE_ACTION_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+  "resolvedCandidateIds": [
+    "15dcdf4bce3cfa3abf94"
+  ],
+  "unpromotedCandidates": [
+    "807c2948cdfa16e19b84",
+    "5baa649b7c2c9b6b6f30",
+    "7b6e1f490ce974fc3971",
+    "90eeada0337da120131f",
+    "99ec2dc4769b5eced6a5"
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "d27b820453f7c06e63f5c64869e30728121db8fb64f3803ebf481172beabbb18"
+    },
+    {
+      "path": "backend/src/ai/supabaseApprovalPipeline.security.test.ts",
+      "sha256": "db9e8de9554127d26f8d5a5adf8b8610208378f91d60e2cc94709f62309ed5f2"
+    },
+    {
+      "path": "backend/src/ai/supabaseApprovalUi.security.test.ts",
+      "sha256": "1aaf08c1a8e4bd5641949425e10c4f2913ac48f548927b5987e31249abc8d44d"
+    },
+    {
+      "path": "backend/src/routes/integrations.ts",
+      "sha256": "28db7d3d2e13a4194ebbe5a846f884145f42bf1f6b86d0d470e7e79d13e462fa"
+    },
+    {
+      "path": "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
+      "sha256": "bb53fe9f3a94a9f4d15d40b7749cccddf4e24a9bd1a68b02252ca94af538d077"
+    },
+    {
+      "path": "backend/src/routes/supabaseOAuth.ts",
+      "sha256": "1f4facf17a041b2ac1148da2aeaf2375fa297204b8c0dae5ac5c5854429fb8df"
+    },
+    {
+      "path": "backend/src/security/egress/dataClassification.ts",
+      "sha256": "249ba3d92a9084e755ebb41ae332d1dc01412b0b6d4727ba5c3e6a4120bac55f"
+    },
+    {
+      "path": "backend/src/security/egress/heldCredentialFloor.test.ts",
+      "sha256": "355d96b06567c231aa1382d63976e5ebe2c90596dffc061a6aa2de1defc4ee12"
+    },
+    {
+      "path": "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts",
+      "sha256": "514a5a28cae8913af4f4d4c393903bd65a71d07a6a93746cc6306e2fef89a730"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "6bcf22c4861902cc3825e64b0863f5e6cb4346599d5a2cfac813d4cbd11e0dbd"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseAccess.ts",
+      "sha256": "d023f742926f86bf6dab0d254b45fa20ab7feff05cbb58bcaa9fed455ca7bba1"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseActorBoundary.security.test.ts",
+      "sha256": "4958d999861ff936ebf5caced3c5c6d5ebf01c716486f5f3d3965f0bf58610af"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseApproval.ts",
+      "sha256": "6a7e06a9eadd076a603cd8ff5c38ac643222c5eaba23afb202b6173998d952cc"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseBundle.test.ts",
+      "sha256": "f1c09c7b39076fd3c5073a2d715213a34b26c9340681772ea14e4b12de5465e7"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseManagement.security.test.ts",
+      "sha256": "9a3765396fc26d23ab4fe516f39c4ec9870624cbb375e785814f3d54d8386885"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.authority.test.ts",
+      "sha256": "2e9c1276e2c2b1da54289cb5cc273b2480a92f54bb6f1a37a4f09b45743c1ce7"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.test.ts",
+      "sha256": "dcfecd5bb89cf9f1b3f0e051141becd23516d2ab7990f51840f4706fea5a94b6"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "sha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseSourceLifetime.security.test.ts",
+      "sha256": "6ca47d7235b82a161b63d3ed07529837385cc1578c3bce7864576a021279ae47"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.connect.test.ts",
+      "sha256": "cbabf6bae1e7c8b0731b05a46c51015a733b40f9b867d71039fc612e82da23ea"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+      "sha256": "0f715b7c6195ba292f74a32444feebdf4b8557691da061e80041a2103408219c"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7"
+    },
+    {
+      "path": "frontend/src/app/(shell)/dashboard/integrations/supabase/callback/page.tsx",
+      "sha256": "f50239eb60286a6bb8d6b53e2ec198f6ff2c8e756877102886e37575fe3cc3c4"
+    },
+    {
+      "path": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
+      "sha256": "4913a0968355cf83ea8cb5e3338760beab95c48c126b537b8039bc3ae7825e6c"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600"
+    },
+    {
+      "path": "frontend/src/lib/oauthPopupResult.ts",
+      "sha256": "b7eee0d7d63a3f4b3ded1967d5e9deb3d95aae163a2d322e65f8c21974be51e7"
+    },
+    {
+      "path": "frontend/src/lib/supabaseConnect.ts",
+      "sha256": "cc2dc0c9ee88f9d644bc5f5d6c3628e135b3adc0f877e108e781b0e8633a9f49"
+    }
+  ],
+  "focusedSource": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-TESTED-SOURCE-20261028.json",
+  "focused": {
+    "pass": 137,
+    "fail": 0,
+    "skip": 0,
+    "sourceTreeDigest": "46927afcd60cb04c34e320b38018e191fc1ebd68b630a61d710d65b9587d3be2",
+    "sourceUnchangedDuringTests": true
+  },
+  "evidence": {
+    "missingActorRed": {
+      "job": "536ade24-f1d6-4d47-a2aa-7fe241d0295b",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-missingActorRed-20261028.log.gz",
+      "uncompressedSha256": "90aaa1464d714e556475e3c574adfc19ce161b336a154785cbf602775e20512a",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 222249
+      }
+    },
+    "sourceAndOwnershipRed": {
+      "job": "eb3809a0-5841-40b7-a2bb-54a37c5a7a69",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-sourceAndOwnershipRed-20261028.log.gz",
+      "uncompressedSha256": "5dc27cdbe446125e4171fdbf6821d6d49165dff8f810ed5a91ace90c7a5319e3",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 188696
+      }
+    },
+    "missingApprovalRed": {
+      "job": "a8d27f8e-6166-4485-9134-d87ee3b85bf1",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-missingApprovalRed-20261028.log.gz",
+      "uncompressedSha256": "185bd151bd295023518787838914c1d6d8a29164e5c12ca4a3fd48f0a9154877",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 213180
+      }
+    },
+    "publicSecretSelectionRed": {
+      "job": "fd103cd7-0350-412c-a0df-8ee74e42b433",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-publicSecretSelectionRed-20261028.log.gz",
+      "uncompressedSha256": "2f635b3f05c231a407e7fb3dd60a715eb94573f87417f9dafbbb0bcac6b7bcd9",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1025473
+      }
+    },
+    "publicSecretPersistenceRed": {
+      "job": "c9a00b69-fbd6-4972-8464-4a1c7bb8c5f3",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-publicSecretPersistenceRed-20261028.log.gz",
+      "uncompressedSha256": "a6a3b82449854fc35dad1ce09929968286580850d4c7847b98605433a238f8cb",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 161715
+      }
+    },
+    "secretFloorRed": {
+      "job": "dd883c9f-0c5c-4370-a1a1-0803d9a5d99f",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-secretFloorRed-20261028.log.gz",
+      "uncompressedSha256": "b72dde626b845d35f49b27c877873531953b8d319c114fc01c5f32790370b747",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 12988
+      }
+    },
+    "issuerDenialContinuationRed": {
+      "job": "d8e9395a-06d2-4756-a9a0-5eb02338d914",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-issuerDenialContinuationRed-20261028.log.gz",
+      "uncompressedSha256": "b06b9559a023a1482ca62f8ec28b46296298f550d290fa3e9f63c665c3dcaaeb",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 49443
+      }
+    },
+    "trailingOriginRed": {
+      "job": "cffb7984-1051-4b49-9129-36ec63d7d4a1",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-trailingOriginRed-20261028.log.gz",
+      "uncompressedSha256": "1993f63f17a583c96af1d4115e6f17f242b37456993d00f556e5fcc271c95e6c",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1060673
+      }
+    },
+    "precedingBroad448": {
+      "job": "21cdb7e4-1164-43e6-8acd-b59aff7766d3",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-precedingBroad448-20261028.log.gz",
+      "uncompressedSha256": "760737ddc7510551927554cad768534190495a78ef91e17d04206b2babbb2b3f",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 3099975
+      }
+    },
+    "finalFocused137": {
+      "job": "24bca5e0-092b-48e8-aa10-bbe8c0764970",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-finalFocused137-20261028.log.gz",
+      "uncompressedSha256": "2d2c5d3cf4d6fb1a39b25cdd5004db446b9464f168044b1cd15d9733f57a2bd6",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 2658322
+      }
+    },
+    "backendTypes": {
+      "job": "ac06044c-790f-4120-90c4-add21f4d106b",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-backendTypes-20261028.log.gz",
+      "uncompressedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322044
+      }
+    },
+    "frontendTypes": {
+      "job": "2ae34228-ca3e-45a9-a640-e75661e4fde3",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-frontendTypes-20261028.log.gz",
+      "uncompressedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322052
+      }
+    },
+    "frontendLint": {
+      "job": "981a4686-974b-4af5-b0fd-4aabc107450e",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/logs/supabase-provision-frontendLint-20261028.log.gz",
+      "uncompressedSha256": "65393dcd4438f40f67eab8542ffdb7f127d92044e3ee1f8312f9330f7c626fe0",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  },
+  "priorBroadScope": "448 passing publication, egress, action and Supabase tests. Precedes final route/issuer terminal-denial additions and final test type annotation. Current137-test receipt and follow-ups, not that earlier broad run, bind the final Supabase correction. Final whole-source CI remains required.",
+  "defects": [
+    "Raw/fabricated actors reached credential and provider paths. All exported provisioning operations now require the original actor, with exact owner checks before user-selectable canonical reads or writes.",
+    "Source revisions/tombstones and full metadata were not retained across provider waits. The original owner-scoped six-component source epoch now gates every management/storage read and native write.",
+    "Private-key discovery did not verify selected provider-project membership. It now requires the exact ref on the original token-owned provider account.",
+    "Schema and bucket writes ran on connection alone. They now require the existing durable confirmation, managed-vault producer attestation, exact one-use permit, central egress decision and persisted audit before effects.",
+    "Native direct SQL disabled peer verification, used a wrong direct host and retried authentication/query failures. TLS peer verification is required, hosts are fixed issuer destinations, only pre-query connectivity failures can recover, and authorization/certificate/query denial stops the sequence.",
+    "Failed or uncertain management dispatch previously fell through to password SQL/storage. Approved execution now uses one selected method with no security or uncertain-outcome fallback.",
+    "Provider key name anon could override an explicit secret type. Explicit type wins, private/public prefixes cannot swap roles, and old malformed public bundles are denied without deleting credentials.",
+    "The generic credential floor missed Supabase secret-key prefixes under neutral fields. It now raises those values to CREDENTIAL_SECRET. Publishable values remain public. No policy exception was added.",
+    "Pipeline and OAuth catches hid issuer, source or ownership denial. Those denials now stop the relevant caller instead of continuing fallback or unrelated env export."
+  ],
+  "authority": "Existing businessAction confirmation, claim/consume/finish and authority kernel only. This is a native adapter extension, not a new scheduler, ledger, issuer or security framework.",
+  "data": "Only fixed owned-provider metadata and canonical static SQL. Credentials stay in existing server vault/auth channels. No customer records, raw keys, plan proof or provider errors enter model/client/audit output. SQL and exact private bucket definitions are visible in the confirmation.",
+  "verification": "Provider/PG protocols and original confirmation/vault code run against synthetic fixtures. SQL completion requires a separate four-table/RLS metadata query and private storage readback. Positive PG scenarios assert actual client TLS configuration, not a live Supabase handshake. No live provisioning, SQL, credentials or account resources were accessed.",
+  "quota": "No model or paid provider execution, no extra infrastructure. Existing control-plane operations are finite: one selected static SQL sequence, one schema metadata probe and at most two private empty bucket creates. Native action authority and one-use receipts are required.",
+  "upstream": "Actual authenticated OAuth/manual routes, original pipeline actor/signal, one-click CAS and manual vault connections are traced and tested. Raw project-creation POST807 and shared GitHub/Composio/research callers remain independent unresolved obligations. No whole-file or upstream promotion.",
+  "testContractContinuation": "Legacy direct-write fixture cases now invoke real native confirmations or assert no write without them. The original 200/409 x private/public postcondition combinations and partial schema/RLS/storage failures remain in the canonical authority suite. No skips or frozen criteria changed.",
+  "phase3": "ACCEPTED_PRESERVED",
+  "phase4Accepted": false,
+  "frozenCriteriaChanged": false,
+  "strictAuditorChanged": false,
+  "productionChanged": false,
+  "additionalSpend": 0,
+  "docs": [
+    "https://supabase.com/docs/reference/api/v1-get-project-api-keys",
+    "https://supabase.com/docs/reference/api/v1-list-all-projects"
+  ],
+  "testFixtureContinuation": {
+    "path": "backend/src/services/integrations/__tests__/supabaseSourceFixture.ts",
+    "previousSha256": "c5a0f0a2f730ec298fa985f4db14d84d4804bb0056d807923cff4675c6445366",
+    "currentSha256": "514a5a28cae8913af4f4d4c393903bd65a71d07a6a93746cc6306e2fef89a730",
+    "scope": "Only replace dynamic environment cleanup with the two exact original variable restorations. Required runtime inventory gate passes without any rule exception.",
+    "focusedJob": "0840a49c-488f-499e-82f6-13e2ae15b24c",
+    "integrityJob": "99cc5e05-d4f0-4eca-830e-cd77ace910ba",
+    "original137ReceiptPreserved": true
+  }
+}

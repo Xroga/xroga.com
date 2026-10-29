@@ -1,0 +1,1177 @@
+{
+  "scope": "VERIFIED_IMPLEMENTATION_RECEIPT_NOT_NEW_DOCUMENT_SELF_SHA",
+  "verifiedImplementationSource": "ff4032ca02c4b233c2598724caf44ab04b91fb0f",
+  "verifiedTree": "acbfeb4fe5ba7e2acea71ab103e8e21e197a7636",
+  "observedAtUtc": "2026-10-29T00:25:43.138971+00:00",
+  "pr": {
+    "headRefOid": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+    "mergeCommit": {
+      "oid": "ff4032ca02c4b233c2598724caf44ab04b91fb0f"
+    },
+    "mergedAt": "2026-10-28T23:13:20Z",
+    "state": "MERGED",
+    "url": "https://github.com/Xroga/xroga.com/pull/878"
+  },
+  "prCi": {
+    "source": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+    "observedAtUtc": "2026-10-28T23:12:47.871975+00:00",
+    "runs": [
+      {
+        "id": 40783004869,
+        "name": "Xroga mission operating policy",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004869",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149129121,
+            "name": "structured-mission-policy",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm ci",
+                "conclusion": "success"
+              },
+              {
+                "name": "Actual structured mission policy and adversarial fixtures",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40783004760,
+        "name": "API Docker build check",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004760",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128441,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify Linux workspace filesystem protocol",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run docker/setup-buildx-action@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Build portable API image with exact source identity",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run docker/setup-buildx-action@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40783004648,
+        "name": "Xroga golden acceptance harness",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004648",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128312,
+            "name": "deterministic-golden",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm ci",
+                "conclusion": "success"
+              },
+              {
+                "name": "Contract and negative coverage",
+                "conclusion": "success"
+              },
+              {
+                "name": "Build existing frontend with public fixture configuration",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npx playwright install --with-deps chromium",
+                "conclusion": "success"
+              },
+              {
+                "name": "Existing Playwright guest and denied-founder boundaries",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve fictional-fixture diagnostics (no real users or credentials)",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40783004741,
+        "name": "Xroga tenant security fixtures",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004741",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128537,
+            "name": "disposable-policy-database",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Initialize containers",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm ci",
+                "conclusion": "success"
+              },
+              {
+                "name": "Bind audit inventory to the actual virtual merge",
+                "conclusion": "success"
+              },
+              {
+                "name": "Audit integrity and negative scanner fixtures",
+                "conclusion": "success"
+              },
+              {
+                "name": "Strict Phase 4 egress caller closure",
+                "conclusion": "success"
+              },
+              {
+                "name": "Credential source inventory and adversarial audit fixtures",
+                "conclusion": "success"
+              },
+              {
+                "name": "Actual PostgreSQL target-schema fresh and upgrade policy assertions",
+                "conclusion": "success"
+              },
+              {
+                "name": "Backend context and loopback boundary tests (not live Supabase evidence)",
+                "conclusion": "success"
+              },
+              {
+                "name": "Real immutable egress receipt and dispatch-race database tests",
+                "conclusion": "success"
+              },
+              {
+                "name": "Actual container offline install and kernel network denial",
+                "conclusion": "success"
+              },
+              {
+                "name": "Google queued handoff, cancellation and real database concurrency",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve exact integrated audit provenance",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Stop containers",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40783004790,
+        "name": "Isolated Supabase authenticated browser verification",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004790",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128786,
+            "name": "authenticated-browser",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install isolated workspace dependencies",
+                "conclusion": "success"
+              },
+              {
+                "name": "Test disposable environment admission",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify guarded proxy fixture with actual TLS and unchanged URL admission",
+                "conclusion": "success"
+              },
+              {
+                "name": "Start disposable Supabase with per-run keys",
+                "conclusion": "success"
+              },
+              {
+                "name": "Full migration history and sanitized upgrade compatibility",
+                "conclusion": "success"
+              },
+              {
+                "name": "Compile the browser specs",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm run build --prefix backend --workspaces=false",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm run build --prefix frontend --workspaces=false",
+                "conclusion": "success"
+              },
+              {
+                "name": "Restore Playwright browsers",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npx playwright install --with-deps chromium",
+                "conclusion": "success"
+              },
+              {
+                "name": "Save Playwright browsers",
+                "conclusion": "skipped"
+              },
+              {
+                "name": "Verify image client proxy admission",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify first-party API client destinations",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify admin, shared-answer and private-file API boundaries",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify fixed public Auth provider preflight",
+                "conclusion": "success"
+              },
+              {
+                "name": "Start isolated application",
+                "conclusion": "success"
+              },
+              {
+                "name": "Focused Library authentication and private-file scenario",
+                "conclusion": "skipped"
+              },
+              {
+                "name": "Affected Library components",
+                "conclusion": "skipped"
+              },
+              {
+                "name": "Authenticated browser and tenant isolation",
+                "conclusion": "success"
+              },
+              {
+                "name": "Real tenant authorization and concurrency integration",
+                "conclusion": "success"
+              },
+              {
+                "name": "Collect bounded redacted local application logs",
+                "conclusion": "success"
+              },
+              {
+                "name": "Upload redacted verification evidence",
+                "conclusion": "success"
+              },
+              {
+                "name": "Cleanup processes",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "id": 123149130644,
+            "name": "oci-managed-custody",
+            "status": "completed",
+            "conclusion": "skipped",
+            "steps": []
+          }
+        ]
+      },
+      {
+        "id": 40783004659,
+        "name": "Conversation dash guest browser verification",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004659",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128085,
+            "name": "browser",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install and build local frontend",
+                "conclusion": "success"
+              },
+              {
+                "name": "Restore Chromium cache",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install Chromium",
+                "conclusion": "success"
+              },
+              {
+                "name": "Start locally built Xroga",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify real rendered dash interaction with local guest fixtures",
+                "conclusion": "success"
+              },
+              {
+                "name": "Capture screenshots and trace on failure",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Restore Chromium cache",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40783004640,
+        "name": "Agent V2 dependency lock",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004640",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128463,
+            "name": "lock",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Checkout repository",
+                "conclusion": "success"
+              },
+              {
+                "name": "Use Node 22",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify committed lockfiles without rewriting them",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify Agent V2 dependency graph",
+                "conclusion": "success"
+              },
+              {
+                "name": "Prove workspace clean install and runtime resolution",
+                "conclusion": "success"
+              },
+              {
+                "name": "Prove standalone backend clean install and runtime resolution",
+                "conclusion": "success"
+              },
+              {
+                "name": "Upload verified committed lockfiles",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Use Node 22",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Checkout repository",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40783004644,
+        "name": "Growth technical publishing",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004644",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149127948,
+            "name": "static-contracts",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm ci",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm run test:growth:technical",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm run growth:technical:validate -- --json",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm run growth:changed-urls -- --since=HEAD^ --json",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm run growth:ship -- --since=HEAD^ --dry-run --json",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm run build --workspace=frontend",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "id": 123149130440,
+            "name": "production-discovery",
+            "status": "completed",
+            "conclusion": "skipped",
+            "steps": []
+          }
+        ]
+      },
+      {
+        "id": 40783004723,
+        "name": "Frontend production build check",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004723",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128182,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install and build frontend",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40783004647,
+        "name": "Unit tests",
+        "headSha": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40783004647",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "id": 123149128523,
+            "name": "unit",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm ci",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify frozen Phase 2 register before expensive regression",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install pinned browser for existing local browser integration tests",
+                "conclusion": "success"
+              },
+              {
+                "name": "Canonical build, test and security baseline",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve redacted build and test summaries",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "id": 123149128673,
+            "name": "integrated-candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run npm ci",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify and record the actual virtual merge inventory",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify integrated Phase 2 register before expensive regression",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install the same pinned browser for integrated regression",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete integrated baseline twice without source mutation",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve separately labelled candidate evidence (never committed automatically)",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 40780157732,
+        "name": "builder-phase1",
+        "headSha": "a8ec34f724d1e380216df4734050a32da054ac20",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40780157732",
+        "event": "workflow_dispatch",
+        "jobs": [
+          {
+            "id": 123139521556,
+            "name": "verify",
+            "status": "completed",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Initialize containers",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install dependencies",
+                "conclusion": "success"
+              },
+              {
+                "name": "Backend typecheck",
+                "conclusion": "success"
+              },
+              {
+                "name": "Real Chromium for the browser QA tests (disposable runner)",
+                "conclusion": "success"
+              },
+              {
+                "name": "Builder unit, integration, browser and API tests (real PostgreSQL for the SQL, real Chromium for QA)",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/setup-node@v6",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v5",
+                "conclusion": "success"
+              },
+              {
+                "name": "Stop containers",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "missingWorkflows": [],
+    "allRequiredPassing": true,
+    "productionActivation": false,
+    "builderSourceEquivalence": {
+      "testedSource": "a8ec34f724d1e380216df4734050a32da054ac20",
+      "integratedSource": "bc97ed42788ef7a7b1b88462fed0507b2e17cae0",
+      "onlyChangedFiles": [
+        "docs/xroga/dependency-inventory.json",
+        "docs/xroga/deployment-topology.md",
+        "docs/xroga/runtime-contract.md",
+        "docs/xroga/secret-inventory.md"
+      ],
+      "allApplicationTestAndBuildSourceIdentical": true,
+      "reason": "Only generated runtime inventory documentation changed after the passing353-test real PostgreSQL/Chromium workflow. No need to repeat unchanged Builder tests."
+    }
+  },
+  "mergedMainCi": {
+    "source": "ff4032ca02c4b233c2598724caf44ab04b91fb0f",
+    "observedAtUtc": "2026-10-29T00:24:18.368064+00:00",
+    "event": "AUTOMATIC_MAIN_PUSH_NO_MANUAL_RERUN",
+    "runs": [
+      {
+        "name": "Unit tests",
+        "id": 40785798557,
+        "headSha": "ff4032ca02c4b233c2598724caf44ab04b91fb0f",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40785798557"
+      },
+      {
+        "name": "Frontend production build check",
+        "id": 40785798706,
+        "headSha": "ff4032ca02c4b233c2598724caf44ab04b91fb0f",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40785798706"
+      },
+      {
+        "name": "Growth technical publishing",
+        "id": 40785798542,
+        "headSha": "ff4032ca02c4b233c2598724caf44ab04b91fb0f",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40785798542"
+      },
+      {
+        "name": "API Docker build check",
+        "id": 40785798569,
+        "headSha": "ff4032ca02c4b233c2598724caf44ab04b91fb0f",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40785798569"
+      }
+    ],
+    "allRequiredPassing": true,
+    "productionHold": [
+      {
+        "context": "Vercel",
+        "state": "success",
+        "description": "Canceled by Ignored Build Step",
+        "url": "https://vercel.com/xrogas-projects/xrogaai.com/AgAx1SpuZWFZQDMtBN4AGNXm32dR"
+      }
+    ]
+  },
+  "strictAudit": {
+    "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
+    "total": 148,
+    "reviewed": 148,
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0
+  },
+  "testCounts": [
+    {
+      "name": "backend-unit-tests",
+      "exitCode": 0,
+      "durationMs": 300297,
+      "tests": 4929,
+      "pass": 4923,
+      "fail": 0,
+      "skipped": 6
+    },
+    {
+      "name": "frontend-unit-tests",
+      "exitCode": 0,
+      "durationMs": 34455,
+      "tests": 1269,
+      "pass": 1269,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "baseline-negative-fixtures",
+      "exitCode": 0,
+      "durationMs": 2455,
+      "tests": 49,
+      "pass": 49,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "inventory-and-ledger-fixtures",
+      "exitCode": 0,
+      "durationMs": 21413,
+      "tests": 136,
+      "pass": 136,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "isolatedSuites": [
+    {
+      "run": 40783004790,
+      "step": "Real tenant authorization and concurrency integration",
+      "counts": {
+        "tests": 212,
+        "pass": 212,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "run": 40780157732,
+      "step": "Builder unit, integration, browser and API tests",
+      "counts": {
+        "tests": 353,
+        "pass": 353,
+        "fail": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "criteria": [
+    {
+      "id": "XB01-C010-AC01",
+      "originalText": "All arbitrary outbound URL callers are inventoried.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "docs/xroga/security/egress-callers.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC02",
+      "originalText": "High-risk URL callers use central URL policy.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "backend/src/security/boundedPublicGet.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC03",
+      "originalText": "All consequential external data egress passes egressPolicy.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+        "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC04",
+      "originalText": "businessAction integrates authority + egress before provider execution.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/services/integrations/composioProvenance.security.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC05",
+      "originalText": "Tool descriptions cannot create authority.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC06",
+      "originalText": "Malicious document/web/tool-output tests cannot override policy.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC07",
+      "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/boundedPublicGet.test.ts",
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC08",
+      "originalText": "Redirect-to-private test passes.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC09",
+      "originalText": "Cross-tenant external upload test passes.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/egress/fileEgress.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC10",
+      "originalText": "Credential-secret egress test passes.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/egress/heldCredentialFloor.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
+        "docs/xroga/evidence/command-010/BROWSER-INPUT-CREDENTIAL-FLOOR-20261028.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC11",
+      "originalText": "Security decision evidence contains no raw credential.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC12",
+      "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
+      "developmentSource": "PASS",
+      "originalEvidence": [
+        "docs/xroga/security/egress-callers.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "PASS",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    }
+  ],
+  "productionAcceptance": "NOT_CLAIMED_HELD",
+  "historicalSources": "Original proof archives and failed receipts remain unchanged."
+}

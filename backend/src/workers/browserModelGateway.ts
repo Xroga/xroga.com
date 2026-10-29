@@ -12,10 +12,9 @@
  * There is no fallback model, no second ledger and no paid hosted-browser path.
  */
 import { createHash } from 'node:crypto';
-import OpenAI from 'openai';
 import { MODELS, type ModelId } from '../ai/models.js';
-import { resolveEndpoint } from '../ai/openaiCompat.js';
-import { actualProviderCostMicroUsd, estimateProviderReservationMicroUsd, finishFailedProviderReservation, reserveProviderBudget, settleProviderBudget, type ProviderReservation } from '../ai/providerBudget.js';
+import { actualProviderCostMicroUsd, estimateProviderReservationMicroUsd } from '../ai/providerBudget.js';
+import { dispatchBrowserModel, requireBrowserModelAuthority, type BrowserModelClient } from './browserModelDispatch.js';
 import type { BrowserJob } from './browserJob.js';
 import type { BrowserModelGateway } from './containerBrowserWorker.js';
 
@@ -35,10 +34,8 @@ interface StagehandParams {
 
 export interface GatewayDeps {
   modelId: ModelId;
-  /** canonical ledger; injectable for tests */
-  reserve?: typeof reserveProviderBudget; settle?: typeof settleProviderBudget; release?: typeof finishFailedProviderReservation;
-  /** OpenAI-compatible client for the resolved endpoint; injectable for tests */
-  client?: () => { model: string; create: (body: Record<string, unknown>, opts: { signal: AbortSignal }) => Promise<any> };
+  /** Synthetic provider seam. Canonical identity, ownership and ledger checks still run. */
+  client?: () => BrowserModelClient;
   /** largest single answer, before the budget cap */
   maxOutputTokens?: number;
   /** how structured output is requested; default by provider (strict json_schema where supported, JSON mode plus the schema in the prompt otherwise) */
@@ -76,17 +73,12 @@ function toOpenAiMessages(p: StagehandParams): unknown[] {
 }
 
 export function createBrowserModelGateway(deps: GatewayDeps): BrowserModelGateway {
-  const reserve = deps.reserve ?? reserveProviderBudget; const settle = deps.settle ?? settleProviderBudget; const release = deps.release ?? finishFailedProviderReservation;
-  const makeClient = deps.client ?? (() => {
-    const e = resolveEndpoint(deps.modelId);
-    const c = new OpenAI({ apiKey: e.apiKey, baseURL: e.baseUrl, timeout: 120_000, maxRetries: 0, defaultHeaders: e.defaultHeaders });
-    return { model: e.apiModel, create: (body, opts) => c.chat.completions.create(body as never, { signal: opts.signal }) };
-  });
   const seq = new Map<string, number>();
   const structuredMode = deps.structuredMode ?? (JSON_OBJECT_PROVIDERS.has(String((MODELS[deps.modelId] as { provider?: string } | undefined)?.provider)) ? 'json_object' : 'json_schema');
 
   return {
-    async generate(raw, { job, remainingMicros, signal }) {
+    async generate(raw, { job, remainingMicros, signal, authority }) {
+      requireBrowserModelAuthority(job,authority);
       const p = raw as StagehandParams;
       if (!p || !Array.isArray(p.messages) || p.messages.length === 0) throw new BrowserModelError('MODEL_REQUEST_INVALID', 'no messages');
       const structuredFormat = p.responseFormat?.type === 'json_schema' ? p.responseFormat : undefined;
@@ -104,30 +96,15 @@ export function createBrowserModelGateway(deps: GatewayDeps): BrowserModelGatewa
 
       const jobKey = `${job.tenantId}|${job.runId}|${job.taskId}|${job.attempt}`;
       const n = (seq.get(jobKey) ?? 0) + 1; seq.set(jobKey, n);
-      const reservation: ProviderReservation = await reserve({ userId: job.userId, modelId: deps.modelId, estimatedInputTokens, maximumOutputTokens: maxOut, purpose: 'daily_work', idempotencyKey: deterministicUuid(['browser-ai', jobKey, n]) });
-
-      let completion: any;
-      const client = makeClient();
-      try {
-        const structured = p.responseFormat?.type === 'json_schema' ? p.responseFormat : undefined;
-        completion = await client.create({
-          model: client.model, messages, max_tokens: maxOut, ...(p.temperature !== undefined ? { temperature: p.temperature } : {}), ...(p.stopSequences?.length ? { stop: p.stopSequences } : {}),
-          ...(structured ? { response_format: structuredMode === 'json_object' ? { type: 'json_object' } : { type: 'json_schema', json_schema: { name: structured.name.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 64) || 'result', schema: structured.schema, strict: false } } } : {}),
-          ...(p.tools?.length ? { tools: p.tools.map((t) => ({ type: 'function', function: { name: t.name, description: t.description ?? '', parameters: t.inputSchema } })), ...(p.toolChoice?.mode ? { tool_choice: p.toolChoice.mode } : {}) } : {}),
-        }, { signal });
-      } catch (e) {
-        await release({ userId: job.userId, reservation, error: e }).catch(() => undefined);
-        throw new BrowserModelError('MODEL_FAILED', 'the model route failed');
-      }
-
-      const inputTokens = completion?.usage?.prompt_tokens; const outputTokens = completion?.usage?.completion_tokens;
-      if (!Number.isSafeInteger(inputTokens) || !Number.isSafeInteger(outputTokens)) {
-        await release({ userId: job.userId, reservation, error: new Error('usage not reported') }).catch(() => undefined);
-        throw new BrowserModelError('MODEL_USAGE_UNMEASURED', 'the provider did not report usage');
-      }
-      const reasoningTokens = completion?.usage?.completion_tokens_details?.reasoning_tokens ?? 0;
-      const costMicros = actualProviderCostMicroUsd({ modelId: deps.modelId, inputTokens, outputTokens: Math.max(0, outputTokens - reasoningTokens), reasoningTokens });
-      await settle({ userId: job.userId, modelId: deps.modelId, reservation, result: { inputTokens, outputTokens: Math.max(0, outputTokens - reasoningTokens), reasoningTokens, providerRequestId: completion?.id } });
+      const structured = p.responseFormat?.type === 'json_schema' ? p.responseFormat : undefined;
+      const completion = await dispatchBrowserModel({job,authority,signal,modelId:deps.modelId,
+        estimatedInputTokens,maximumOutputTokens:maxOut,idempotencyKey:deterministicUuid(['browser-ai',jobKey,n]),client:deps.client,
+        body:{messages,max_tokens:maxOut,...(p.temperature!==undefined?{temperature:p.temperature}:{}),...(p.stopSequences?.length?{stop:p.stopSequences}:{}),
+          ...(structured?{response_format:structuredMode==='json_object'?{type:'json_object'}:{type:'json_schema',json_schema:{name:structured.name.replace(/[^A-Za-z0-9_-]/g,'_').slice(0,64)||'result',schema:structured.schema,strict:false}}}:{}),
+          ...(p.tools?.length?{tools:p.tools.map(t=>({type:'function',function:{name:t.name,description:t.description??'',parameters:t.inputSchema}})),...(p.toolChoice?.mode?{tool_choice:p.toolChoice.mode}:{})}:{})}});
+      const inputTokens=completion.usage.prompt_tokens,outputTokens=completion.usage.completion_tokens;
+      const reasoningTokens=completion.usage.completion_tokens_details?.reasoning_tokens??0;
+      const costMicros=actualProviderCostMicroUsd({modelId:deps.modelId,inputTokens,outputTokens:outputTokens-reasoningTokens,reasoningTokens});
 
       const msg = completion?.choices?.[0]?.message ?? {};
       const usage = { inputTokens, outputTokens, totalTokens: inputTokens + outputTokens };

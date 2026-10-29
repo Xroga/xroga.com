@@ -1,0 +1,442 @@
+TAP version 13
+# Subtest: Vercel preview: preparation
+    # Subtest: lists only the accounts and teams Vercel says the user can act for
+    ok 1 - lists only the accounts and teams Vercel says the user can act for
+      ---
+      duration_ms: 32.6544
+      type: 'test'
+      ...
+    # Subtest: prepares an exact, preview-only plan and creates nothing yet
+    ok 2 - prepares an exact, preview-only plan and creates nothing yet
+      ---
+      duration_ms: 20.7727
+      type: 'test'
+      ...
+    # Subtest: refuses a team or account the connection cannot use (wrong Vercel team) and invalid names
+    ok 3 - refuses a team or account the connection cannot use (wrong Vercel team) and invalid names
+      ---
+      duration_ms: 4.3718
+      type: 'test'
+      ...
+    # Subtest: refuses a project that is linked to Git, because pushes would publish it to production
+    ok 4 - refuses a project that is linked to Git, because pushes would publish it to production
+      ---
+      duration_ms: 4.002
+      type: 'test'
+      ...
+    # Subtest: refuses to even prepare when the environment would carry a privileged credential
+    ok 5 - refuses to even prepare when the environment would carry a privileged credential
+      ---
+      duration_ms: 3.0597
+      type: 'test'
+      ...
+    # Subtest: is idempotent on the operation key and refuses the same key for a different plan
+    ok 6 - is idempotent on the operation key and refuses the same key for a different plan
+      ---
+      duration_ms: 6.8338
+      type: 'test'
+      ...
+    1..6
+ok 1 - Vercel preview: preparation
+  ---
+  duration_ms: 73.2871
+  type: 'suite'
+  ...
+# Subtest: Vercel preview: execution
+    # Subtest: creates an unlinked project, sets preview-only public configuration, deploys the exact revision as a preview and verifies it
+    ok 1 - creates an unlinked project, sets preview-only public configuration, deploys the exact revision as a preview and verifies it
+      ---
+      duration_ms: 5.8195
+      type: 'test'
+      ...
+    # Subtest: will not run without approval, with a wrong digest, or after the approval expired; a replay makes no provider call
+    ok 2 - will not run without approval, with a wrong digest, or after the approval expired; a replay makes no provider call
+      ---
+      duration_ms: 16.9799
+      type: 'test'
+      ...
+    # Subtest: a build error fails the operation with the build output, and nothing is called verified
+    ok 3 - a build error fails the operation with the build output, and nothing is called verified
+      ---
+      duration_ms: 4.3669
+      type: 'test'
+      ...
+    # Subtest: a deployment that never finishes is not verified
+    ok 4 - a deployment that never finishes is not verified
+      ---
+      duration_ms: 3.184
+      type: 'test'
+      ...
+    # Subtest: refuses a "preview" that Vercel reports as production, or that lost its revision identity
+    ok 5 - refuses a "preview" that Vercel reports as production, or that lost its revision identity
+      ---
+      duration_ms: 12.6848
+      type: 'test'
+      ...
+    # Subtest: never deploys into a project that turns out to be Git-linked
+    ok 6 - never deploys into a project that turns out to be Git-linked
+      ---
+      duration_ms: 4.8286
+      type: 'test'
+      ...
+    # Subtest: reconciles a lost project-creation response, and a retry after a lost request creates exactly one project
+    ok 7 - reconciles a lost project-creation response, and a retry after a lost request creates exactly one project
+      ---
+      duration_ms: 6.5275
+      type: 'test'
+      ...
+    # Subtest: does not adopt a project that appeared under that name after approval
+    ok 8 - does not adopt a project that appeared under that name after approval
+      ---
+      duration_ms: 2.8939
+      type: 'test'
+      ...
+    # Subtest: fails safely when the connected account changed or the connection was revoked
+    ok 9 - fails safely when the connected account changed or the connection was revoked
+      ---
+      duration_ms: 3.3645
+      type: 'test'
+      ...
+    # Subtest: reports remote tests as blocked, not passed, when Vercel protection answers instead of the app
+    ok 10 - reports remote tests as blocked, not passed, when Vercel protection answers instead of the app
+      ---
+      duration_ms: 3.6731
+      type: 'test'
+      ...
+    # Subtest: keeps tenants apart
+    ok 11 - keeps tenants apart
+      ---
+      duration_ms: 2.2818
+      type: 'test'
+      ...
+    1..11
+ok 2 - Vercel preview: execution
+  ---
+  duration_ms: 67.4322
+  type: 'suite'
+  ...
+# Subtest: Vercel production promotion
+    # Subtest: is blocked until remote browser tests actually passed on the preview
+    ok 1 - is blocked until remote browser tests actually passed on the preview
+      ---
+      duration_ms: 16.2504
+      type: 'test'
+      ...
+    # Subtest: needs a successful preview, and refuses another tenant's preview
+    ok 2 - needs a successful preview, and refuses another tenant's preview
+      ---
+      duration_ms: 3.4807
+      type: 'test'
+      ...
+    # Subtest: shows what publishing means, and requires a typed confirmation on top of the digest
+    ok 3 - shows what publishing means, and requires a typed confirmation on top of the digest
+      ---
+      duration_ms: 3.4308
+      type: 'test'
+      ...
+    # Subtest: nothing before the production approval can publish: preparing, approving the preview, or executing unapproved
+    ok 4 - nothing before the production approval can publish: preparing, approving the preview, or executing unapproved
+      ---
+      duration_ms: 3.946
+      type: 'test'
+      ...
+    # Subtest: promotes the verified deployment once, verifies production with read-only requests, and records the receipt
+    ok 5 - promotes the verified deployment once, verifies production with read-only requests, and records the receipt
+      ---
+      duration_ms: 4.7296
+      type: 'test'
+      ...
+    # Subtest: will not publish if the preview deployment is no longer ready, lost its identity, or the revision changed
+    ok 6 - will not publish if the preview deployment is no longer ready, lost its identity, or the revision changed
+      ---
+      duration_ms: 5.8522
+      type: 'test'
+      ...
+    # Subtest: reports a promoted deployment whose pages do not respond as NOT verified
+    ok 7 - reports a promoted deployment whose pages do not respond as NOT verified
+      ---
+      duration_ms: 5.2595
+      type: 'test'
+      ...
+    # Subtest: a lost promotion response ends ambiguous and a retry is safe
+    ok 8 - a lost promotion response ends ambiguous and a retry is safe
+      ---
+      duration_ms: 3.6405
+      type: 'test'
+      ...
+    # Subtest: refuses after the account changed or the connection was revoked, and between tenants
+    ok 9 - refuses after the account changed or the connection was revoked, and between tenants
+      ---
+      duration_ms: 4.6492
+      type: 'test'
+      ...
+    # Subtest: a stale approval cannot publish
+    ok 10 - a stale approval cannot publish
+      ---
+      duration_ms: 3.3749
+      type: 'test'
+      ...
+    1..10
+ok 3 - Vercel production promotion
+  ---
+  duration_ms: 55.1406
+  type: 'suite'
+  ...
+# Subtest: Vercel REST adapter
+    # Subtest: reads the account and its teams
+    ok 1 - reads the account and its teams
+      ---
+      duration_ms: 43.9122
+      type: 'test'
+      ...
+    # Subtest: reports whether a project is linked to Git
+    ok 2 - reports whether a project is linked to Git
+      ---
+      duration_ms: 2.3017
+      type: 'test'
+      ...
+    # Subtest: creates a project WITHOUT a Git repository, scoped to the team
+    ok 3 - creates a project WITHOUT a Git repository, scoped to the team
+      ---
+      duration_ms: 1.2843
+      type: 'test'
+      ...
+    # Subtest: writes environment variables only with the targets it was given
+    ok 4 - writes environment variables only with the targets it was given
+      ---
+      duration_ms: 1.1049
+      type: 'test'
+      ...
+    # Subtest: creates a PREVIEW deployment: files inline, identity in meta, and never a target
+    ok 5 - creates a PREVIEW deployment: files inline, identity in meta, and never a target
+      ---
+      duration_ms: 2.0027
+      type: 'test'
+      ...
+    # Subtest: reads deployment status, identity metadata and the target, and keeps only string metadata
+    ok 6 - reads deployment status, identity metadata and the target, and keeps only string metadata
+      ---
+      duration_ms: 2.8288
+      type: 'test'
+      ...
+    # Subtest: returns a bounded build-log tail for failures
+    ok 7 - returns a bounded build-log tail for failures
+      ---
+      duration_ms: 1.5921
+      type: 'test'
+      ...
+    # Subtest: promotes an existing deployment without rebuilding
+    ok 8 - promotes an existing deployment without rebuilding
+      ---
+      duration_ms: 0.5582
+      type: 'test'
+      ...
+    # Subtest: keeps the token in the authorization channel only
+    ok 9 - keeps the token in the authorization channel only
+      ---
+      duration_ms: 1.3163
+      type: 'test'
+      ...
+    # Subtest: maps failures to precise, safe errors and marks lost responses ambiguous
+    ok 10 - maps failures to precise, safe errors and marks lost responses ambiguous
+      ---
+      duration_ms: 2.7875
+      type: 'test'
+      ...
+    # Subtest: rejects malformed identifiers before any request is made
+    ok 11 - rejects malformed identifiers before any request is made
+      ---
+      duration_ms: 0.6184
+      type: 'test'
+      ...
+    1..11
+ok 4 - Vercel REST adapter
+  ---
+  duration_ms: 62.6136
+  type: 'suite'
+  ...
+# Subtest: Builder GitHub preserves terminal actor denial instead of provider-unavailable recovery
+ok 5 - Builder GitHub preserves terminal actor denial instead of provider-unavailable recovery
+  ---
+  duration_ms: 2.2797
+  type: 'test'
+  ...
+# Subtest: Builder Supabase refuses raw-token transport before any external request
+ok 6 - Builder Supabase refuses raw-token transport before any external request
+  ---
+  duration_ms: 0.5298
+  type: 'test'
+  ...
+# Subtest: newly integrated Builder Vercel transport cannot publish with only a raw token
+ok 7 - newly integrated Builder Vercel transport cannot publish with only a raw token
+  ---
+  duration_ms: 1.044
+  type: 'test'
+  ...
+# Subtest: production Builder wiring retains exact approved GitHub publication, readback, replay and organization targets
+ok 8 - production Builder wiring retains exact approved GitHub publication, readback, replay and organization targets
+  ---
+  duration_ms: 1111.7459
+  type: 'test'
+  ...
+# Subtest: production Builder Supabase selection and exact reviewed migration retain RLS and public-only configuration
+ok 9 - production Builder Supabase selection and exact reviewed migration retain RLS and public-only configuration
+  ---
+  duration_ms: 167.7408
+  type: 'test'
+  ...
+# Subtest: credential epoch replacement after approval fails before any GitHub write even with the same token
+ok 10 - credential epoch replacement after approval fails before any GitHub write even with the same token
+  ---
+  duration_ms: 21.8012
+  type: 'test'
+  ...
+# Subtest: durable cancellation, foreign ownership and a failed security receipt cannot reach provider writes
+ok 11 - durable cancellation, foreign ownership and a failed security receipt cannot reach provider writes
+  ---
+  duration_ms: 190.0434
+  type: 'test'
+  ...
+# Subtest: revocation during publication prevents all subsequent mutations and automatic retry
+ok 12 - revocation during publication prevents all subsequent mutations and automatic retry
+  ---
+  duration_ms: 158.444
+  type: 'test'
+  ...
+# Subtest: redirect and provider authorization denial are terminal while an ordinary read outage can recover
+ok 13 - redirect and provider authorization denial are terminal while an ordinary read outage can recover
+  ---
+  duration_ms: 24.8506
+  type: 'test'
+  ...
+# Subtest: new Builder hosting caller preserves separate preview and typed production approval under canonical egress
+ok 14 - new Builder hosting caller preserves separate preview and typed production approval under canonical egress
+  ---
+  duration_ms: 210.8976
+  type: 'test'
+  ...
+# Subtest: new Builder hosting transport denies changed credentials, substituted body and unapproved publication
+ok 15 - new Builder hosting transport denies changed credentials, substituted body and unapproved publication
+  ---
+  duration_ms: 9.9372
+  type: 'test'
+  ...
+# Subtest: browser run dispatch
+    # Subtest: Cloud Tasks: enqueues an authenticated HTTP task naming the run, signed as the execute service account
+    ok 1 - Cloud Tasks: enqueues an authenticated HTTP task naming the run, signed as the execute service account
+      ---
+      duration_ms: 32.0189
+      type: 'test'
+      ...
+    # Subtest: Cloud Tasks: an already-enqueued run is a success, a refusal is an error the caller can see
+    ok 2 - Cloud Tasks: an already-enqueued run is a success, a refusal is an error the caller can see
+      ---
+      duration_ms: 1.5062
+      type: 'test'
+      ...
+    # Subtest: Cloud Tasks: refuses a malformed queue, a non-https target and a missing identity before any call
+    ok 3 - Cloud Tasks: refuses a malformed queue, a non-https target and a missing identity before any call
+      ---
+      duration_ms: 0.4971
+      type: 'test'
+      ...
+    # Subtest: in-process: starts the run without waiting for it and reports a failure to the handler instead of throwing
+    ok 4 - in-process: starts the run without waiting for it and reports a failure to the handler instead of throwing
+      ---
+      duration_ms: 10.2236
+      type: 'test'
+      ...
+    # Subtest: the environment picks in-process by default and refuses a half-configured cloud setting instead of silently falling back
+    ok 5 - the environment picks in-process by default and refuses a half-configured cloud setting instead of silently falling back
+      ---
+      duration_ms: 0.7896
+      type: 'test'
+      ...
+    1..5
+ok 16 - browser run dispatch
+  ---
+  duration_ms: 46.5523
+  type: 'suite'
+  ...
+# Subtest: Cloud Tasks never follows a redirect carrying the runtime service token
+ok 17 - Cloud Tasks never follows a redirect carrying the runtime service token
+  ---
+  duration_ms: 1.3976
+  type: 'test'
+  ...
+# Subtest: Drive upload
+    # Subtest: single mode: one signed PUT with the signed headers, then complete; the recorded object is what comes back
+    ok 1 - single mode: one signed PUT with the signed headers, then complete; the recorded object is what comes back
+      ---
+      duration_ms: 24.7264
+      type: 'test'
+      ...
+    # Subtest: single mode: a storage refusal is an error and the object is never completed
+    ok 2 - single mode: a storage refusal is an error and the object is never completed
+      ---
+      duration_ms: 1.7082
+      type: 'test'
+      ...
+    # Subtest: multipart: signs in batches of at most 100 just before use, sends each slice, and completes with the ETags in part order
+    ok 3 - multipart: signs in batches of at most 100 just before use, sends each slice, and completes with the ETags in part order
+      ---
+      duration_ms: 1.3228
+      type: 'test'
+      ...
+    # Subtest: multipart: more than 100 parts are signed in more than one batch
+    ok 4 - multipart: more than 100 parts are signed in more than one batch
+      ---
+      duration_ms: 7.2361
+      type: 'test'
+      ...
+    # Subtest: multipart: a part that fails is retried on its own and the others are not resent
+    ok 5 - multipart: a part that fails is retried on its own and the others are not resent
+      ---
+      duration_ms: 2.3142
+      type: 'test'
+      ...
+    # Subtest: multipart: gives up after the attempt limit and never completes a partial upload
+    ok 6 - multipart: gives up after the attempt limit and never completes a partial upload
+      ---
+      duration_ms: 0.8616
+      type: 'test'
+      ...
+    # Subtest: multipart: a bucket that does not expose ETag is reported as a configuration problem, not retried forever
+    ok 7 - multipart: a bucket that does not expose ETag is reported as a configuration problem, not retried forever
+      ---
+      duration_ms: 0.7471
+      type: 'test'
+      ...
+    # Subtest: a cancelled upload sends nothing more and is reported as aborted
+    ok 8 - a cancelled upload sends nothing more and is reported as aborted
+      ---
+      duration_ms: 0.5158
+      type: 'test'
+      ...
+    # Subtest: sends no hash when the file is too large to hash in the browser, and a generic type when none is known
+    ok 9 - sends no hash when the file is too large to hash in the browser, and a generic type when none is known
+      ---
+      duration_ms: 0.6096
+      type: 'test'
+      ...
+    1..9
+ok 18 - Drive upload
+  ---
+  duration_ms: 41.8652
+  type: 'suite'
+  ...
+# Subtest: multipart authorization denial is terminal and does not retry or complete
+ok 19 - multipart authorization denial is terminal and does not retry or complete
+  ---
+  duration_ms: 0.4563
+  type: 'test'
+  ...
+1..19
+# tests 65
+# suites 6
+# pass 65
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4305.4751

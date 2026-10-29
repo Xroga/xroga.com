@@ -4,6 +4,7 @@ import {test} from 'node:test';
 import express from 'express';
 import {authMiddleware} from '../middleware/auth.js';
 import integrationsRouter from '../routes/integrations.js';
+import phase1Router from '../routes/phase1.js';
 
 /** Real disposable Auth and actual router. Every provider response is synthetic
  * and no provider request, connection or external action is forwarded. */
@@ -30,6 +31,7 @@ export function registerConnectedAccountRouteTests(getUsers:()=>readonly {id:str
         return Response.json({session_id:id,config:config(body.user_id.slice('xroga:'.length))});
       }
       if(path.endsWith('/config_history'))return Response.json({items:[]});
+      if(path.endsWith('/tools/'+tool))return Response.json({slug:tool,toolkit:{slug:'gmail'},tags:['readOnlyHint']});
       if(path.endsWith(`/${session}`)||path.endsWith(`/${otherSession}`)){
         sessionReads++;const user=path.endsWith(`/${otherSession}`)?other.id:mode==='changed'&&sessionReads>1?other.id:owner.id;
         return Response.json({session_id:path.split('/').at(-1),config:mode==='missing'?{}:config(user)});
@@ -42,7 +44,7 @@ export function registerConnectedAccountRouteTests(getUsers:()=>readonly {id:str
       }
       assert.fail(`Unexpected synthetic provider path ${path}`);
     };
-    const app=express();app.use(express.json());app.use('/api/integrations',authMiddleware,integrationsRouter);
+    const app=express();app.use(express.json());app.use('/api/integrations',authMiddleware,integrationsRouter);app.use('/api/phase1',authMiddleware,phase1Router);
     const server=app.listen(0,'127.0.0.1');await once(server,'listening');
     t.after(async()=>{server.close();server.closeAllConnections();await once(server,'close');});
     const address=server.address();assert.ok(address&&typeof address!=='string');
@@ -56,7 +58,12 @@ export function registerConnectedAccountRouteTests(getUsers:()=>readonly {id:str
     }
     assert.deepEqual(createdFor,[`xroga:${owner.id}`,`xroga:${other.id}`]);
     const intent={sessionId:session,useCase:'Fetch synthetic fixture messages',toolSlug:tool,arguments:{fixture:'only'},userId:other.id,tenantId:other.id};
-    const own=await request('/execute',owner.token,intent);assert.equal(own.status,200);assert.ok((await own.text()).includes('fixture-owner-read'));assert.equal(executions.length,1);
+    const own=await request('/execute',owner.token,intent);assert.equal(own.status,200);
+    const prepared=await own.json() as {result:{needsConfirmation:boolean;confirmation:{id:string}}};
+    assert.equal(prepared.result.needsConfirmation,true);assert.equal(executions.length,0,'Private read arguments require exact consent before dispatch');
+    const confirm=(token:string)=>fetch(`http://127.0.0.1:${address.port}/api/phase1/business-actions/confirmations/${prepared.result.confirmation.id}/confirm`,{method:'POST',headers:{'content-type':'application/json',authorization:`Bearer ${token}`},body:'{}'});
+    assert.equal((await confirm(other.token)).status,404);assert.equal(executions.length,0);
+    const confirmed=await confirm(owner.token);assert.equal(confirmed.status,200);assert.equal((await confirmed.json() as {confirmation:{id:string}}).confirmation.id,prepared.result.confirmation.id);assert.equal(executions.length,1);
     const foreign=await request('/execute',other.token,{...intent,userId:owner.id});assert.equal(foreign.status,403);assert.ok(!(await foreign.text()).includes('fixture-owner-read'));assert.equal(executions.length,1);
     for(mode of ['changed','missing']){
       sessionReads=0;const denied=await request('/execute',owner.token,intent);assert.equal(denied.status,403);assert.equal(executions.length,1,'Changed or unavailable account authority must stop before the provider effect');

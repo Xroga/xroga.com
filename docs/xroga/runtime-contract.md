@@ -1,27 +1,25 @@
-# Runtime/dependency contract
+# Runtime and dependency contract
 
-Source SHA: `e9a288ebf4168a81180a447e815b18805103683a`. Existing runtime semantics are preserved; this audit does not create another provider router, scheduler, vault or backend.
+Source SHA: `ff4032ca02c4b233c2598724caf44ab04b91fb0f`. Xroga retains its canonical scheduler, authority, budget ledger, vault and durable state. This inventory creates no competing execution system.
 
 ## Runtime classes
 
-- ACTIVE requires dated observed service/deployment evidence, not a manifest or key-name presence.
-- CONFIGURED_BUT_UNVERIFIED records code/configuration without current authoritative proof.
-- LEGACY is retained and not deleted or automatically activated.
-- LOCAL_ONLY must never silently claim durable production storage.
-- PROPOSED is design intent, not infrastructure permission.
+- ACTIVE requires dated observed service/deployment evidence.
+- CONFIGURED_BUT_UNVERIFIED records source/configuration without operational acceptance.
+- LEGACY is retained history, never automatically activated.
+- LOCAL_ONLY cannot claim durable production storage.
+- PROPOSED is design intent, never infrastructure permission.
 
-Canonical engineering runtime: Node 22.21.1/npm 10.9.4/TypeScript 5.9.3. Current API image uses that Node pin. Frontend project metadata is configured 24.x; exact running frontend binary is not inferred from that setting. Docker API emits dist/index.js; Vercel builds frontend with its existing standalone npm pipeline. The Fly host test job currently lacks explicit setup-node; document/fix this through normal review, never assume its runner default.
+Canonical engineering runtime is Node22.21.1, npm10.9.4 and TypeScript5.9.3. The immutable Google API image starts node dist/index.js and preserves both compatibility/security dependency checks. Vercel retains its separate frontend build. Exact deployed frontend binaries require deployment evidence. No Fly manifest is required to validate a Google API build.
 
-## Configuration and admission
+## Admission and configuration
 
-The existing source helpers remain canonical. Supabase server service-role access bypasses RLS and needs independent owner/tenant checks (Command 007). OAuth/PKCE/private storage and existing BYOK encryption need verified KMS and migration (009). Existing action authority/digest/approval/budget boundaries must be unified (008) before consequential calls. API/worker/tool egress and untrusted input need central guard coverage (010).
+Production frontend/API origins are xroga.com and api.xroga.com. Preview uses isolated owned workers under preview.xroga.com. Native Google service identity, scoped managed KMS and pinned Secret Manager versions replace Fly federation. Supabase tenant authorization, consequential-action confirmation, current credentials, reservation and accounting remain mandatory. Data from tools, models and websites cannot grant authority. Arbitrary external URLs need canonical SSRF/redirect policy and outbound data needs canonical egress admission.
 
-Frontend production Supabase remains pinned. Command 007 admits an explicit, validated non-production CI build realm; this does not grant roles or bypass founder/MFA authorization. Real authenticated E2E proof is still blocked pending the dedicated test configuration; never use production users. Missing isolated GitHub secrets/variable remain BLOCKED_PENDING_TEST_CONFIGURATION. Stage security/migration proof and KMS are release gates, not optional metadata.
+The accepted Google migration receipt is dated evidence for its exact source and immutable forward/recovery images. New Phase4 source and later batch activation are not accepted merely because that infrastructure passed. Hosted Auth cookie hardening requires fresh sign-in and new disposable/browser acceptance before rollout.
 
-## Mechanical check
+## Mechanical checks and release
 
-Run `node scripts/xroga/runtime-inventory.mjs` to regenerate after review, then `node scripts/xroga/check-runtime-config.mjs`. Zod/schema, exact source/config hashes, known dynamic bindings, named environment coverage, service IDs, canonical public hosts, credential-like inventory values and explicit high-risk fallback records are checked. Positive/negative tests use only fake canaries. Current high risks remain recorded and unwaived; validation is inventory consistency, not production security certification.
+Regenerate with node scripts/xroga/runtime-inventory.mjs, then run node scripts/xroga/check-runtime-config.mjs. Inventory consistency is separate from security and product acceptance. Original Command010 criteria, strict caller audit, authenticated/disposable tests, exact final-source CI, schema compatibility and reviewed release gates stay unchanged. No production change follows from generation.
 
-## Production rollout
-
-No deploy, key rotation, DNS edit or DB migration in Command 004. Future release must pass authenticated E2E, isolated fresh/upgrade DB and staging tests, credential/KMS verification, advisory review, final GO/NO-GO and ten command manifests. Only then use the existing authorized release workflow. Rollback is a normal revert of audit/tooling commits; no user data was changed.
+Use the verified compatible Google recovery image and documented protected restore path. Never roll v3-writing production back to a legacy-only image or blindly re-enable a held Fly/automatic deployment workflow. Preserve revisions, tombstones, encrypted data and recovery assets.

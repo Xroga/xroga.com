@@ -1,0 +1,107 @@
+{
+  "scope": "READ_ONLY_FIXED_PUBLIC_AUTH_SETTINGS_PREFLIGHT_NOT_AUTHENTICATION_OR_LINK_AUTHORITY",
+  "originalCandidate": {
+    "id": "68df836263d1eff0010b",
+    "file": "frontend/src/lib/supabase/authProviders.ts",
+    "line": 5,
+    "entryPoint": "requireGitHubProvider",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "a8fa05842d933a640eca6fae3f77ac1892a87fa716e49e992785def4e2297fbb",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "currentCandidate": {
+    "id": "68df836263d1eff0010b",
+    "file": "frontend/src/lib/supabase/authProviders.ts",
+    "line": 5,
+    "entryPoint": "requireGitHubProvider",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "f8d5cdd15b875114d405b5a83c70a3af178717ea835e8746c7eb91964f64bef8",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defect": "Actual preflight followed real307to another endpoint, and settings receipt bytes were unbounded.",
+  "correction": "Manual redirects, existing5s deadline,64KiB actual receipt and bounded reader disposal. Opaque/HTTP denial, malformed or excessive JSON cannot become an enabled-provider result. Only exact external.github===true permits continuing to the separate OAuth flow.",
+  "verification": {
+    "passed": 2,
+    "skipped": 0,
+    "negative": "Actual TS function compiled with only public-config import substituted and real local HTTP redirect/sink.0outside requests after correction. Oversized/malformed receipts and non-boolean flags deny. No cookie, user token, credential body or sign-in effect is created by this read.",
+    "positive": "Expected fixed settings URL, public apikey, no body, manual redirect and timeout verified. Valid boolean flag permits returning from preflight. Original actual OAuth remains separate."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "6cc4f9d2-d7e8-40d0-a2d0-d53e222bb0da",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/auth-provider-20261028/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "e1eb4138-6a32-440f-be0a-9539f68670fa",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/auth-provider-20261028/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "callerTrace": [
+    "LoginForm, SignupForm and WorkspaceAuthGate await this public preflight before their independent Supabase signInWithOAuth call",
+    "getSupabasePublicConfig pins the approved build realm/project and rejects secret/service-role browser keys. This code is unchanged."
+  ],
+  "sourceBindings": [
+    {
+      "path": "frontend/src/lib/supabase/authProviders.ts",
+      "sha256": "fc40e9ff3057a484626e2ebd6b284cb9ce37376f2dfea7be7c4effd11b8336ca"
+    },
+    {
+      "path": "frontend/e2e/phase4-auth-provider.security.mjs",
+      "sha256": "e9ee4fa95582e33f941c9ecd3a0c1477aa44f4a9a1a3184991db84aaf2735c88"
+    },
+    {
+      "path": "frontend/src/lib/supabase/config.ts",
+      "sha256": "073d70a7f30c1383943e1f4585e8651abf2f9bdd33c96622d244fe5c54b35598"
+    },
+    {
+      "path": "frontend/src/components/auth/LoginForm.tsx",
+      "sha256": "3b6050ef660ad10386ee56c9c2ee2823f9f410370d391e60bcf6eda992c73a60"
+    },
+    {
+      "path": "frontend/src/components/auth/SignupForm.tsx",
+      "sha256": "f73e91dd02b7428815f57c3b0d2b38d5379937d8d1c5bf6c785dc3796df6e490"
+    },
+    {
+      "path": "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
+      "sha256": "88eee388034976b13d211132a8523bd0c5bec1d94ded80dc3fcbb930a9e6128f"
+    },
+    {
+      "path": ".github/workflows/command3-auth-browser.yml",
+      "sha256": "80485bdce7a538581d903a747eecd604749f845113bab42dc24ee739b830e339"
+    }
+  ],
+  "limitations": [
+    "No provider account, login session, role, tenant or credential grant is issued here. Supabase PKCE/Auth/cookies retain independent original checks and preserved tests.",
+    "No live Auth configuration or login was changed. Earlier browser/API/image receipts remain evidence for their exact source; this workflow adds one bounded independent fixture and removes no prior step."
+  ],
+  "productionChanged": false,
+  "spending": 0
+}

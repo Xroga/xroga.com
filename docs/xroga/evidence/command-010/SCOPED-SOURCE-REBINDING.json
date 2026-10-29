@@ -1,0 +1,138 @@
+{
+  "scope": "FIVE_EXACT_EXISTING_REVIEW_RECORDS_NO_NEW_BOUNDARY_OR_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/ai/webBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+      "currentSourceSha256": "0970dd0edfcf52dfd97e0ce6b7397d8be00777491d2dcffb29a0baf864738d2d",
+      "semanticReview": "Only supplemental-analytics documentation changed. recordWebSpend and its three owner-bound persistence expressions are unchanged. New Parallel spend admission is separate and uses canonical reservations.",
+      "mapping": [
+        {
+          "previousId": "3a079bb3694a289488d7",
+          "currentId": "31295ac3c56f1f0e3ba7",
+          "enclosing": "recordWebSpend",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "cb5da87d32bfae7b42b8",
+          "currentId": "3c8e385b0938e532fbec",
+          "enclosing": "recordWebSpend",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "xroga_billing_cycles",
+          "unchangedExpressionSha256": "9569feafdc65696df95ecaff03c47782d7eca566fcc8df0429087c55448cd5ed"
+        },
+        {
+          "previousId": "b3cacfdb187f1405097d",
+          "currentId": "0066574fb806e32ec9ec",
+          "enclosing": "recordWebSpend",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "xroga_web_usage",
+          "unchangedExpressionSha256": "7b1dbba43c27a3385cc858d089f94ef5ca952bd8e9465ef186442fdc87f85045"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/supabase/middleware.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e",
+      "currentSourceSha256": "97122c2d487c2960d803b3b6e9d0fccab5b6f41164f6b5dc0bd97ff9017a3d91",
+      "semanticReview": "Shared host-prefixed secure Auth cookie policy is wired into the existing SSR client. getUser and current_community_role RPC remain unchanged, with no legacy cookie fallback or new authority. New synthetic browser/SDK tests pass. Fresh hosted sign-in required before release acceptance.",
+      "mapping": [
+        {
+          "previousId": "5c64aa680a603f460991",
+          "currentId": "58a4e78e527a34053c20",
+          "enclosing": "updateSession",
+          "kind": "RPC_CANDIDATE",
+          "target": "current_community_role",
+          "unchangedExpressionSha256": "e86b898afdea0aa16e557f0032c99054ce71182541cd7fdfabf0357dba67bce6"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "11a6d1a269461778e103b016c98f27c99256038ff57b2cc6bb1856b9070cf4d9",
+      "currentSourceSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+      "semanticReview": "Only the same native Buffer.from conversion is mapped. The separately reviewed Preview transport now uses its admitted callback, response cookie restrictions and one revocation watcher. No persistence or adjacent egress acceptance follows from this conversion.",
+      "mapping": [
+        {
+          "previousId": "a81c2e8a1a0fcd8b0d6b",
+          "currentId": "be5069f3467fad24f1c5",
+          "enclosing": "attachRuntimePreviewWebSocketGateway",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "f65e23f9000ea339366ea597789c04dae85885fb72400451daefb3845c968295"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+      "currentSourceSha256": "86846ff80cd83a6afd9d26cd768e1797e741bab0575552c4ec9608bd9aa3cf47",
+      "semanticReview": "Original owner-joined queries and revocation RPC remain unchanged. Download now repeats the same ownedFile read after object I/O, checks fingerprint and link lifetime, and zeros bytes on denial. Focused actual SDK mocked-transport tests reproduced and repaired owner/revision races. No live R2 or whole-phase acceptance claimed.",
+      "mapping": [
+        {
+          "previousId": "1592c394d8f566b6b5c6",
+          "currentId": "ccf4650f84e96b85761d",
+          "enclosing": "ownedFile",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "project_files",
+          "unchangedExpressionSha256": "cfc8837f41e546af9c2718a354a4ce3b05507841195990ec1c965650db17a4f3"
+        },
+        {
+          "previousId": "1dc21b8de955c5a67410",
+          "currentId": "a7c08fd36aa24b3b90b9",
+          "enclosing": "ownedFile",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "9f5ede598ac16dfd01f62053623e6986b708ae108adc2d752b436a83e651eb51"
+        },
+        {
+          "previousId": "a3fd57e400ae93dcf1bc",
+          "currentId": "2c697c1d1bf48f921843",
+          "enclosing": "revokePrivateFileLinks",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "9f5ede598ac16dfd01f62053623e6986b708ae108adc2d752b436a83e651eb51"
+        },
+        {
+          "previousId": "c0d01dcfb09596ce1894",
+          "currentId": "6824d62216fce2d409a3",
+          "enclosing": "revokePrivateFileLinks",
+          "kind": "RPC_CANDIDATE",
+          "target": "revoke_project_file_links",
+          "unchangedExpressionSha256": "ed732e10779dba38608f29c9d806da4dbae4f22fd38a75071deb813913c0d3ff"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399",
+      "currentSourceSha256": "86846ff80cd83a6afd9d26cd768e1797e741bab0575552c4ec9608bd9aa3cf47",
+      "semanticReview": "Original owner-joined queries and revocation RPC remain unchanged. Download now repeats the same ownedFile read after object I/O, checks fingerprint and link lifetime, and zeros bytes on denial. Focused actual SDK mocked-transport tests reproduced and repaired owner/revision races. No live R2 or whole-phase acceptance claimed.",
+      "mapping": [
+        {
+          "previousId": "fb08a2d7689ff8e64794",
+          "currentId": "212280eaba78bf80925c",
+          "enclosing": "readPrivateFile",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "8e2ed7c9dba69125f71584b60f7cf5665c481269389e0dcdc5662488678292ac"
+        },
+        {
+          "previousId": "0052e85ad523398c7685",
+          "currentId": "e0ed69e337d5095baf97",
+          "enclosing": "readPrivateFile",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "8e2ed7c9dba69125f71584b60f7cf5665c481269389e0dcdc5662488678292ac"
+        }
+      ]
+    }
+  ]
+}

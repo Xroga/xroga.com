@@ -111,6 +111,8 @@ const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|api/(?:browser-view|image-fetch)/?$
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Compile the shared canonical server-only guest budget from this monorepo.
+  experimental: {externalDir: true, extensionAlias: {'.js': ['.js', '.ts', '.tsx']}},
   // Next inlines this validated public issuer in both server and browser builds.
   // Runtime hosting URLs/body/query parameters cannot redirect credentials.
   env: { NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF: authBuildConfiguration.projectRef,NEXT_PUBLIC_XROGA_AUTH_BASE_URL:authBuildConfiguration.url },

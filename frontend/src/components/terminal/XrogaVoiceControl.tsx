@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { transcribeVoiceAudio } from '@/lib/voiceApi';
+import {isTerminalVoiceFailure} from '@/lib/voiceRequestPolicy';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { acceptMicStream, preferredSpeechLanguage, requiresVoiceReview, spokenReply } from '@/lib/terminal/voiceConversation';
 import { AudioLinesIcon } from './AudioLinesIcon';
@@ -217,6 +218,7 @@ export function XrogaVoiceControl({
   const recorderResolveRef = useRef<((audio: Blob | null) => void) | null>(null);
   const endingRef = useRef(false);
   const captureGenerationRef = useRef(0);
+  const transcriptionAbortRef = useRef<AbortController | null>(null);
   const finishVoiceRef = useRef<(send: boolean, automatic?: boolean) => Promise<void>>(async () => undefined);
   const pauseVoiceRef = useRef<() => void>(() => undefined);
   const resumeVoiceRef = useRef<() => void>(() => undefined);
@@ -562,6 +564,7 @@ export function XrogaVoiceControl({
   }, [setMode, startRecognition]);
 
   const cancelVoice = useCallback(async () => {
+    transcriptionAbortRef.current?.abort(); transcriptionAbortRef.current = null;
     endingRef.current = true;
     ++captureGenerationRef.current;
     clearRecordingTimeout();
@@ -589,16 +592,26 @@ export function XrogaVoiceControl({
       [seedTextRef.current, finalTextRef.current, interimTextRef.current].filter(Boolean).join(' '),
     );
     const audio = await stopRecorder();
+    if (generation !== captureGenerationRef.current) return;
     releaseMicrophone();
 
     let finalVoice = browserVoice;
     if (audio && audio.size >= 512) {
+      const transcription = new AbortController(); transcriptionAbortRef.current = transcription;
       try {
-        const authoritative = cleanSpeech(await transcribeVoiceAudio(audio));
+        const authoritative = cleanSpeech(await transcribeVoiceAudio(audio, transcription.signal));
         if (authoritative) finalVoice = mergeSeed(seedTextRef.current, authoritative);
-      } catch {
-        // Preserve the browser text already visible in the composer.
-      }
+      } catch (error) {
+        if (generation !== captureGenerationRef.current) return;
+        if (isTerminalVoiceFailure(error)) {
+          seedTextRef.current = ''; finalTextRef.current = ''; interimTextRef.current = '';
+          setPreviewText(''); setNeedsReview(false); setAwaitingReply(false);
+          conversationRef.current = false; setConversation(false);
+          setVoiceError('Voice transcription was not authorized or verified. Record again or type your request.');
+          endingRef.current = false; setMode('idle'); return;
+        }
+        // Only an explicit ordinary provider outage retains visible browser text.
+      } finally {if (transcriptionAbortRef.current === transcription) transcriptionAbortRef.current = null;}
     }
 
     if (generation !== captureGenerationRef.current) return;
@@ -744,6 +757,7 @@ export function XrogaVoiceControl({
     const captureGeneration = captureGenerationRef;
     const speechGeneration = speechGenerationRef;
     return () => {
+      transcriptionAbortRef.current?.abort(); transcriptionAbortRef.current = null;
       endingRef.current = true;
       ++captureGeneration.current;
       ++speechGeneration.current;

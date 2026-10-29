@@ -84,7 +84,7 @@ export type ExistingSourceChangesFactory = (tenant: TenantContext, service: Exis
 export const defaultExistingSourceChanges: ExistingSourceChangesFactory = (tenant, service, intel) => {
   const store = new SupabaseChangeStore(requireTenantContext(tenant));
   return {
-    changes: new ChangeService({ source: service, intel, store, execution: productionExecutionPort, runAgent: productionAgentRunner, modelRouteFor: selectCodingModelRoute,
+    changes: new ChangeService({ source: service, intel, store, execution: productionExecutionPort, runAgent: productionAgentRunner, modelRouteFor: (userId, changeId) => selectCodingModelRoute(userId, changeId, requireTenantContext(tenant)),
       canonicalRunAlive: async (userId, runId) => { const { getRunAsync } = await import('../ai/runStore.js'); return (await getRunAsync(runId, userId, true))?.status === 'running'; } }),
     delivery: new ChangeDelivery({ source: service, store, apiFor: githubDeliveryApi }),
   };

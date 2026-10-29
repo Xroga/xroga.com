@@ -1,6 +1,10 @@
+import {AuthorityError} from '../security/authority/enforce.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
 import { randomUUID } from 'crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
+import {withTenantModelReservation,requireModelProjectBinding,modelContextNamespace,type TenantModelScope,type BoundModelDispatch} from './tenantModelDispatch.js';
+import type {AdmittedRunAttempt} from './runStore.js';
 import { convertUserRequest } from './converter.js';
 import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
 import { readCutoverPlan } from './black-hole/cutover.js';
@@ -41,7 +45,6 @@ import {
   type BuilderAttemptFailure,
   type BuilderAttemptRecord,
 } from './builderAttempt.js';
-import { withProviderReservation } from './providerBudget.js';
 import {
   BUILDER_SYSTEM,
   CHAT_SYSTEM,
@@ -60,7 +63,7 @@ import {
 import {
   assertCanUseModel,
   assertHasQuota,
-  recordUsage,
+  getUsage,
   usageToTokenUsage,
   type UsageSnapshot,
 } from './quota.js';
@@ -177,14 +180,6 @@ import {
 } from '../services/publish/easPublish.js';
 import { publishChromeExtensionToStore } from '../services/publish/chromeWebStore.js';
 import { syncElectronSigningSecretsToGitHub } from '../services/publish/electronSecrets.js';
-import {
-  syncGooglePlayCredentialsToExpo,
-  syncAppleAscApiKeyToExpo,
-  waitForEasBuildArtifact,
-  listEasBuilds,
-  packageIdFromProjectName,
-} from '../services/publish/easCredentials.js';
-import { chromeExtensionZipFilter, packageBuildZip } from '../services/scaffolds/packageBuildZip.js';
 import { ensureScaffoldIntegrity } from '../services/scaffolds/scaffoldIntegrity.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
@@ -227,7 +222,7 @@ import {
   createIntelligentRoutePlan,
   selectRepairModel as legacySelectRepairModel,
 } from './intelligentRouter.js';
-import { normalizeProviderError, recordModelValidation } from './providerRuntime.js';
+import { normalizeProviderError, recordModelValidation,isModelSecurityDenial,isTerminalModelFailure } from './providerRuntime.js';
 import { classifyFailure } from '../lib/recoveryPlanner.js';
 import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
@@ -582,9 +577,10 @@ export function describeRepositoryReadFailure(error: unknown): string {
   return normalizeProviderError(error).safeMessage;
 }
 
-async function hydratePriorFiles(
+export async function hydratePriorFiles(
   userId: string,
-  meta?: BuildClientMeta,
+  meta: BuildClientMeta|undefined,
+  scope:TenantModelScope,
 ): Promise<{
   files: ProjectFile[];
   projectName?: string;
@@ -598,8 +594,11 @@ async function hydratePriorFiles(
     | 'local-browser'
     | 'none';
 }> {
+  requireResourceOwner(scope.context,userId);
   const branch = meta?.githubTargetBranch || 'main';
   const repo = meta?.githubTargetRepo ?? null;
+  await requireModelProjectBinding({...scope,repository:repo});
+  const memoryRepo=modelContextNamespace(scope.projectId,repo);
 
   // A selected GitHub repository is the authority for its own source tree. Project
   // memory can contain a validated snapshot from a run that stopped before push;
@@ -607,10 +606,10 @@ async function hydratePriorFiles(
   // appear to contain six files on the next terminal. Always reconcile the remote
   // first. A read failure stops the build instead of turning an unknown repository
   // into an empty one and risking a destructive "new" build.
-  const mem = await getProjectMemoryAsync(userId, repo, branch);
+  const mem = await getProjectMemoryAsync(userId, memoryRepo, branch);
   if (repo?.includes('/')) {
     try {
-      const remote = await inspectConnectedRepositoryState(userId, repo, branch);
+      const remote = await inspectConnectedRepositoryState(userId, repo, branch, scope.context);
       if (remote.status === 'empty') {
         return { files: [], fromMemory: false, source: 'github-empty' };
       }
@@ -630,10 +629,10 @@ async function hydratePriorFiles(
           source: 'github-cache',
         };
       }
-      const files = await fetchRepositoryTextFilesFromGitHub(userId, repo, branch);
+      const files = await fetchRepositoryTextFilesFromGitHub(userId, repo, branch, scope.context);
       setProjectMemory({
         userId,
-        repo,
+        repo:memoryRepo,
         branch,
         projectName: mem?.projectName || meta?.priorSite?.projectName,
         files,
@@ -649,6 +648,7 @@ async function hydratePriorFiles(
         source: 'github-api',
       };
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       const safe = describeRepositoryReadFailure(err);
       throw new Error(`Could not read the selected GitHub repository: ${safe}`);
     }
@@ -668,6 +668,9 @@ async function hydratePriorFiles(
 
   // Client priorSite is valid only for a local product. A selected repository must
   // never be shadowed by browser state.
+  if(scope.projectId&&(meta?.buildUpdate||meta?.resumeRun)&&!meta?.priorSite?.html?.trim()){
+    throw new SafeRepositoryReadError('Saved local context has no verified project binding. Reload the selected project before building.');
+  }
   if (meta?.priorSite?.html?.trim()) {
     const files = landingFilesFromOutput(
       meta.priorSite.html,
@@ -676,7 +679,7 @@ async function hydratePriorFiles(
     );
     setProjectMemory({
       userId,
-      repo,
+      repo:memoryRepo,
       branch,
       projectName: meta.priorSite.projectName,
       files,
@@ -693,7 +696,7 @@ async function hydratePriorFiles(
   return { files: [], fromMemory: false, source: 'none' };
 }
 
-async function callBuilderStream(
+export async function callBuilderStream(
   preferred: ModelId,
   messages: ChatMessage[],
   opts: {
@@ -701,6 +704,10 @@ async function callBuilderStream(
     temperature?: number;
     onDelta?: DeltaFn;
     userId?: string;
+    tenantContext?: TenantContext;
+    databaseProjectId?: string;
+    modelRunAttempt?:AdmittedRunAttempt;
+    modelRepository?:string|null;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
     credentialOverrides?: Partial<Record<ModelId, string>>;
@@ -728,6 +735,9 @@ async function callBuilderStream(
     onStreamDelta?: (delta: string) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
+  const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
+  messages=structuredClone(messages);
+  opts={...opts,credentialOverrides:opts.credentialOverrides?{...opts.credentialOverrides}:undefined};
   const healthAwareOrder = fallbackOrderForModel(preferred);
   const candidates = healthAwareOrder.length
     ? healthAwareOrder
@@ -751,53 +761,36 @@ async function callBuilderStream(
         opts.onModelFallback?.(preferred, modelId);
       }
       const provider = MODELS[modelId].provider;
-      const userCredential =
-        opts.credentialOverrides?.[modelId] ??
-        (opts.userId
-          ? await getUserProviderKey(
-              opts.userId,
-              provider,
-            ).catch(() => null)
-          : null);
-      const bufferedDeltas: string[] = [];
-      const execute = async () => {
+      const execute = async (dispatch:BoundModelDispatch) => {
         // Every attempt runs under a first-token and generation deadline. Without
         // them a provider that accepts the connection and then goes silent held the
         // whole run open until the socket timeout, once per model in the fallback
         // order — which is how a run could stay active for many minutes and still
         // deliver nothing.
         const attempt = await runBuilderAttempt(
-          async ({ signal, onToken }) => {
-            const completion = await chatCompletionStream(modelId, messages, {
+          async ({ signal, onActivity }) => {
+            const completion = await chatCompletionStream(modelId, dispatch.payload.messages as ChatMessage[], {
               maxTokens: opts.maxTokens,
               temperature: opts.temperature,
               onDelta: (delta) => {
-                onToken(delta);
                 opts.onStreamDelta?.(delta);
-                if (opts.validateResponse) bufferedDeltas.push(delta);
-                else opts.onDelta?.(delta);
+                opts.onDelta?.(delta);
               },
+              onActivity,
               signal,
-              credentialOverride: userCredential || undefined,
+              credentialOverride: dispatch.credentialOverride,
+              beforeDispatch:dispatch.beforeDispatch,
             });
-            opts.validateResponse?.(completion);
             return completion;
           },
           { budget: opts.budget, signal: opts.signal },
         );
-        if (bufferedDeltas.length) opts.onDelta?.(bufferedDeltas.join(''));
         return attempt.value;
       };
       const runAttempt = () =>
-        opts.userId
-          ? withProviderReservation({
-              userId: opts.userId,
-              modelId,
-              estimatedInputTokens: estimateMessageTokens(messages),
-              maximumOutputTokens: opts.maxTokens ?? 8192,
-              execute,
-            })
-          : execute();
+        withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
+              connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
+              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
       return opts.onWaiting
         ? await withProgressHeartbeat(
             {
@@ -810,6 +803,7 @@ async function callBuilderStream(
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
+      if(isTerminalModelFailure(lastErr))throw lastErr;
       const failure = classifyBuilderFailure(lastErr);
       opts.onAttemptFailure?.({
         // §30/§31: this field reached the client. Which model failed is recorded in the
@@ -948,6 +942,8 @@ function finalizeBuildTodos(
  */
 export async function runChatPipeline(opts: {
   userId: string;
+  tenantContext?: TenantContext;
+  modelScope?:TenantModelScope;
   prompt: string;
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   attachments?: ChatAttachment[];
@@ -955,6 +951,7 @@ export async function runChatPipeline(opts: {
   goalContract?: GoalContract;
   projectEvidence?: string;
 }): Promise<ChatPipelineResult> {
+  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
   const initialUsage = await assertHasQuota(opts.userId);
 
   const prepared = await prepareAttachments(opts.attachments);
@@ -992,17 +989,14 @@ export async function runChatPipeline(opts: {
       {
         userId: opts.userId,
         maxTokens: 6144,
+        tenantContext:opts.tenantContext,
+        databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
         temperature: 0.35,
         onDelta: opts.onDelta,
       },
     );
 
-    const usage = await recordUsage(
-      opts.userId,
-      result.modelId,
-      result.inputTokens,
-      result.outputTokens,
-    );
+    const usage = await getUsage(opts.userId);
 
     return {
       response: result.text,
@@ -1050,6 +1044,7 @@ export async function runChatPipeline(opts: {
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
+        dispatchScope:{...opts.modelScope!,context:requireTenantContext(opts.tenantContext),userId:opts.userId,connectedAccountId:'platform'},
         prompt: opts.prompt,
         ...(opts.goalContract
           ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
@@ -1058,7 +1053,12 @@ export async function runChatPipeline(opts: {
 
       research = web.bundle;
       researchBlock = web.evidence;
+      if(web.needsConfirmation)return{
+        response:`Review the exact research request before it is sent: [Review action](${web.reviewUrl}). No live evidence has been retrieved.`,
+        intent:'confirmation_required',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route,
+      };
     } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       console.warn(
         '[pipeline] web intelligence unavailable for chat:',
         normalizeProviderError(error).safeMessage,
@@ -1118,12 +1118,14 @@ export async function runChatPipeline(opts: {
     {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
+      tenantContext:opts.tenantContext,
+      databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
       temperature: 0.5,
       onDelta: opts.onDelta,
     },
   );
 
-  const usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
+  const usage = await getUsage(opts.userId);
 
   return {
     response: result.text,
@@ -1246,13 +1248,17 @@ if(opts.deliveryClaim){
     trace.bindAttempt(captureAdmittedRunAttempt(runId, opts.userId));
     executionStore = new SupabaseExecutionStateStore(opts.userId, captureAdmittedRunAttempt(runId, opts.userId));
   }
+  const admittedModelAttempt=process.env.SUPABASE_SERVICE_ROLE_KEY?captureAdmittedRunAttempt(runId,opts.userId):undefined;
+  const modelScope:TenantModelScope={context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,repository:meta?.githubTargetRepo??null};
+  const memoryRepo=modelContextNamespace(admittedDatabaseProjectId,meta?.githubTargetRepo);
   emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
 
   // Durable chat memory across sessions (DB + client history)
   emit({ ...startupProgress('history'), swarmTodos: todosForBuild('route', 'omit') });
-  const dbHistory = await loadSessionHistory(opts.userId, meta?.githubTargetRepo, 12);
+  await requireModelProjectBinding(modelScope);
+  const dbHistory = await loadSessionHistory(opts.userId, memoryRepo, 12);
   const history = mergeHistories(dbHistory, opts.history ?? []);
 
   // Attachments without a build intent → vision/doc analyze (not a site rebuild)
@@ -1275,6 +1281,8 @@ if(opts.deliveryClaim){
     });
     const chat = await runChatPipeline({
       userId: opts.userId,
+      tenantContext:opts.tenantContext,
+      modelScope,
       prompt: opts.prompt,
       history: opts.history,
       attachments: opts.attachments,
@@ -1346,7 +1354,7 @@ if(opts.deliveryClaim){
           swarmTodos: todosForBuild('route', 'omit'),
         }),
     },
-    () => hydratePriorFiles(opts.userId, meta),
+    () => hydratePriorFiles(opts.userId, meta, modelScope),
   );
   emit({
     ...startupProgress('hydrated', { fileCount: prior.files.length }),
@@ -1664,6 +1672,7 @@ const universalRequestPrompt =
       )
     : userFacingPrompt;
     const universal = await tryUniversalBuild({
+    tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
     runId,
 
     userId:
@@ -1727,20 +1736,22 @@ const universalRequestPrompt =
         const attemptMessages: ChatMessage[] = repairHint
           ? [...messages, { role: 'user', content: `Correct the previous planning output. ${repairHint}` }]
           : messages;
-        const completion = await withProviderReservation({
-          userId: opts.userId,
+        const completion = await withTenantModelReservation({
+          scope:{...modelScope,connectedAccountId:'platform'},
+          payload:{messages:attemptMessages},
+          purpose:'complexity',
           modelId,
           estimatedInputTokens: estimateMessageTokens(attemptMessages),
           maximumOutputTokens,
-          purpose: 'complexity',
-          execute: () => chatCompletion(modelId, attemptMessages, {
+          execute: dispatch => chatCompletion(modelId, dispatch.payload.messages as ChatMessage[], {
+            beforeDispatch:dispatch.beforeDispatch,
             maxTokens: maximumOutputTokens,
             temperature: 0,
             json: true,
             signal: opts.signal,
           }),
         });
-        await recordUsage(opts.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
+        /* Canonical dispatch already verified the atomic usage receipt. */
         return completion.text;
       });
     },
@@ -2368,7 +2379,7 @@ publicationReason:
     // any model call. Recording zero tokens returns the user's real quota state rather
     // than a hand-built object that would drift from the real shape.
     const universalUsage = usageToTokenUsage(
-      usage ?? (await recordUsage(opts.userId, route.builder, 0, 0)),
+      usage ?? (await getUsage(opts.userId)),
     );
 
     // Close the run record before returning.
@@ -2437,7 +2448,7 @@ publicationReason:
       output: { type: 'error', error: message, code: 'LEGACY_BUILDER_DISABLED' },
       // No model was called, so this reports the user's real quota state rather than a
       // hand-built zero object that would drift from the shape every other path returns.
-      tokenUsage: usageToTokenUsage(await recordUsage(opts.userId, route.builder, 0, 0)),
+      tokenUsage: usageToTokenUsage(await getUsage(opts.userId)),
       route,
     };
   }
@@ -2485,7 +2496,7 @@ publicationReason:
     isUpdate &&
     shouldGenerateAiSummary(
       userFacingPrompt,
-      getProjectMemory(opts.userId, meta?.githubTargetRepo, meta?.githubTargetBranch),
+      getProjectMemory(opts.userId, memoryRepo, meta?.githubTargetBranch),
       prior.files.length,
     )
   ) {
@@ -2505,6 +2516,7 @@ publicationReason:
     );
     const memo = await summarizeRepoForUpdates({
       userId: opts.userId,
+      dispatchScope:{...modelScope,connectedAccountId:'platform'},
       prompt: userFacingPrompt,
       projectName: prior.projectName,
       paths: prior.files.map((f) => f.path),
@@ -2513,10 +2525,10 @@ publicationReason:
     });
     if (memo) {
       cachedSummary = memo.summary;
-      usage = await recordUsage(opts.userId, memo.modelId, memo.inputTokens, memo.outputTokens);
+      usage = await getUsage(opts.userId);
       setProjectMemory({
         userId: opts.userId,
-        repo: meta?.githubTargetRepo,
+        repo: memoryRepo,
         branch: meta?.githubTargetBranch,
         projectName: prior.projectName,
         files: prior.files,
@@ -2574,6 +2586,7 @@ publicationReason:
         () =>
           runWebIntelligence({
             userId: opts.userId,
+            dispatchScope:{...modelScope,connectedAccountId:'platform'},
             prompt: opts.prompt,
             projectContext,
             signal: opts.signal,
@@ -2583,7 +2596,10 @@ publicationReason:
       research = web.bundle;
       researchBlock = web.evidence;
 
-      if (web.action === 'none') {
+      if(web.needsConfirmation){
+        research=null;researchBlock='';researchState='pending';
+        emit({agent:'research',status:'confirmation_required',message:`Review the exact external research request: [Review action](${web.reviewUrl}). No live evidence has been retrieved.`,swarmStatusLabel:'Research approval required',swarmActivity:'External research has not run',swarmTodos:todos('convert')});
+      } else if (web.action === 'none') {
         research = null;
         researchState = 'skipped';
 
@@ -2620,6 +2636,7 @@ publicationReason:
         });
       }
     } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       console.warn(
         '[pipeline] web intelligence unavailable for build:',
         normalizeProviderError(error).safeMessage,
@@ -2665,14 +2682,9 @@ publicationReason:
             ),
           },
         ],
-        { userId: opts.userId, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
+        { userId: opts.userId, tenantContext, databaseProjectId:admittedDatabaseProjectId, modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
       );
-      usage = await recordUsage(
-        opts.userId,
-        vision.modelId,
-        vision.inputTokens,
-        vision.outputTokens,
-      );
+      usage = await getUsage(opts.userId);
       designReference = `\n\nDESIGN / SCREENSHOT REFERENCE:\n${vision.text.slice(0, 6000)}`;
       emit({
         agent: 'vision',
@@ -2766,13 +2778,9 @@ publicationReason:
       opts.userId,
       converterRequest,
       researchBlock || undefined,
+      {...modelScope,connectedAccountId:'platform'},
     );
-    usage = await recordUsage(
-      opts.userId,
-      'deepseek_v4_flash',
-      converted.inputTokens,
-      converted.outputTokens,
-    );
+    usage = await getUsage(opts.userId);
   }
 
   // Architect agent — concrete file plan (real multi-agent stage).
@@ -2837,6 +2845,7 @@ publicationReason:
       const plan = await Promise.race([
         runArchitectPlan({
           userId: opts.userId,
+          dispatchScope:{...modelScope,connectedAccountId:'platform'},
           brief: converted.instruction,
           userPrompt: userFacingPrompt,
           isUpdate,
@@ -2855,12 +2864,7 @@ publicationReason:
           );
         }),
       ]);
-      usage = await recordUsage(
-        opts.userId,
-        'deepseek_v4_flash',
-        plan.inputTokens,
-        plan.outputTokens,
-      );
+      usage = await getUsage(opts.userId);
       architectBlock = formatArchitectForBuilder(plan);
       architectPlanSummary = {
         stack: plan.stack,
@@ -2985,6 +2989,7 @@ publicationReason:
       {
         userId: opts.userId,
         maxTokens: resilientStaticPath ? 8192 : 16384,
+        tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
         temperature: isUpdate ? 0.3 : 0.45,
         onDelta: opts.onDelta,
         onStreamDelta: (delta) => {
@@ -3041,7 +3046,7 @@ publicationReason:
   });
 
   if (!usedDeterministicScaffold) {
-    usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
+    usage = await getUsage(opts.userId);
   }
 
   // Resolve output files: patches first, then full files, then classic site
@@ -3141,6 +3146,7 @@ publicationReason:
           {
             userId: opts.userId,
             maxTokens: 8192,
+            tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
             temperature: 0.2,
             onDelta: opts.onDelta,
             signal: opts.signal,
@@ -3149,12 +3155,7 @@ publicationReason:
             validateResponse: (completion) => requireBuildArtifacts(completion.text, true),
           },
         );
-        usage = await recordUsage(
-          opts.userId,
-          retry.modelId,
-          retry.inputTokens,
-          retry.outputTokens,
-        );
+        usage = await getUsage(opts.userId);
         result = retry;
         const patches = extractSearchReplacePatches(retry.text);
         if (patches.length) {
@@ -3409,10 +3410,11 @@ publicationReason:
   // the honest value is the base the changes were made against, not the commit they become.
   const baseCommitSha = getProjectMemory(
     opts.userId,
-    meta?.githubTargetRepo,
+    memoryRepo,
     meta?.githubTargetBranch,
   )?.commitSha;
   let qa = await reviewBuildOutput({
+    dispatchScope:{...modelScope,connectedAccountId:'platform'},
     prompt: userFacingPrompt,
     html: siteForQa.html,
     css: siteForQa.css,
@@ -3435,12 +3437,7 @@ publicationReason:
     };
   }
   if (qa.inputTokens || qa.outputTokens) {
-    usage = await recordUsage(
-      opts.userId,
-      reviewerModel,
-      qa.inputTokens,
-      qa.outputTokens,
-    );
+    usage = await getUsage(opts.userId);
   }
 
   // Does the delivered product actually contain what this kind of product needs?
@@ -3592,6 +3589,7 @@ publicationReason:
         {
           userId: opts.userId,
           maxTokens: 12288,
+          tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
           temperature: 0.25,
           onDelta: opts.onDelta,
           signal: opts.signal,
@@ -3600,12 +3598,7 @@ publicationReason:
           validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
         },
       );
-      usage = await recordUsage(
-        opts.userId,
-        fixResult.modelId,
-        fixResult.inputTokens,
-        fixResult.outputTokens,
-      );
+      usage = await getUsage(opts.userId);
 
       if (isUpdate) {
         const patches = extractSearchReplacePatches(fixResult.text);
@@ -3649,6 +3642,7 @@ publicationReason:
 
       const reQaSite = filesToSite(nextFiles);
       qa = await reviewBuildOutput({
+        dispatchScope:{...modelScope,connectedAccountId:'platform'},
         prompt: userFacingPrompt,
         html: reQaSite.html,
         css: reQaSite.css,
@@ -3662,12 +3656,7 @@ publicationReason:
         validationResults: [{ kind: 'production_build', ok: compile.ok, command: compile.buildCommand, exitCode: compile.buildExitCode }],
       });
       if (qa.inputTokens || qa.outputTokens) {
-        usage = await recordUsage(
-          opts.userId,
-          reviewerModel,
-          qa.inputTokens,
-          qa.outputTokens,
-        );
+        usage = await getUsage(opts.userId);
       }
       // Re-compile after fix pass
       executionState.currentWorkingSnapshot=nextFiles.map(file=>({...file}));
@@ -3824,23 +3813,26 @@ publicationReason:
     const { getUserSupabaseManagementToken } = await import(
       '../services/integrations/supabaseProvision.js'
     );
-    const sbPat = await getUserSupabaseManagementToken(opts.userId);
+    const sbPat = await getUserSupabaseManagementToken(opts.userId, tenantContext);
     if (sbUrl && sbService && (sbPat || sbDb)) {
       emit({
         agent: 'deploy',
         status: 'provisioning_supabase',
-        message: 'Setting up schema, AI memory & storage on your Supabase…',
+        message: 'Preparing the exact Supabase schema and private storage action for review.',
         swarmStatusLabel: 'Supabase',
         swarmActivity: 'Auto-provision',
       });
       const provisioned = await provisionUserSupabase({
+        userId: opts.userId, tenantContext, signal:opts.signal,
         projectUrl: sbUrl,
         serviceRoleKey: sbService,
         accessToken: sbPat || undefined,
         dbPassword: sbDb || undefined,
         projectName,
       });
-      if (provisioned.ok) {
+      if (provisioned.needsConfirmation && provisioned.reviewUrl) {
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact Supabase setup: [Review action](${provisioned.reviewUrl}). Schema and storage changes require confirmation.`,swarmStatusLabel:'Approval required',swarmActivity:'Supabase setup awaits approval'});
+      } else if (provisioned.ok) {
         emit({
           agent: 'deploy',
           status: 'supabase_ready',
@@ -3851,6 +3843,7 @@ publicationReason:
       }
     }
   } catch (err) {
+    if(err instanceof AuthorityError || err instanceof EgressDenied || (err instanceof Error && ['AbortError','TimeoutError'].includes(err.name)) || (err && typeof err==='object' && 'code' in err && ['SUPABASE_MANAGEMENT_DENIED','SUPABASE_TRANSPORT_DENIED','CREDENTIAL_WRITE_CONFLICT','TENANT_AUTH_REQUIRED'].includes(String(err.code))))throw err;
     console.warn('[pipeline] supabase provision skipped:', (err as Error).message);
   }
 
@@ -3897,11 +3890,11 @@ publicationReason:
           opts.userId,
           meta.githubTargetRepo,
           githubBranch,
-        ).catch((error) => ({
-          status: 'unavailable' as const,
-          branch: githubBranch,
-          reason: redactSecrets((error as Error).message || 'GitHub inspection failed').slice(0, 160),
-        }))
+          tenantContext,
+        ).catch((error) => {
+          if(isTerminalModelFailure(error))throw error;
+          return {status:'unavailable' as const,branch:githubBranch,reason:redactSecrets((error as Error).message || 'GitHub inspection failed').slice(0,160)};
+        })
       : undefined;
   const supabaseStatus = await getUserSupabaseStatus(opts.userId).catch(() => ({
     connected: false,
@@ -4006,7 +3999,7 @@ publicationReason:
     try {
       const saved = await setProjectMemoryDurable({
         userId: opts.userId,
-        repo: meta?.githubTargetRepo,
+        repo: memoryRepo,
         branch: githubBranch,
         projectName,
         files: nextFiles,
@@ -4072,6 +4065,8 @@ publicationReason:
       const linked = await ensureExpoProjectLinked({
         userId: opts.userId,
         projectName,
+        tenantContext,
+        signal:opts.signal,
       });
       if (linked.projectId) {
         nextFiles = patchExpoProjectIdInFiles(nextFiles, linked.projectId);
@@ -4084,6 +4079,8 @@ publicationReason:
           swarmActivity: linked.projectId.slice(0, 12),
           swarmTodos: todos('push'),
         });
+      } else if(linked.needsConfirmation&&linked.reviewUrl){
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact Expo app creation: [Review action](${linked.reviewUrl}). No app or build has been created.`,swarmStatusLabel:'Approval required',swarmActivity:'Expo app creation awaits approval',swarmTodos:todos('push')});
       } else if (linked.error === 'NEED_PROJECT_PICK') {
         emit({
           agent: 'deploy',
@@ -4153,6 +4150,7 @@ publicationReason:
     });
   }
 
+  let nativePublicationPending = false;
   if (shouldPush) {
     emit({
       agent: 'deploy',
@@ -4166,6 +4164,7 @@ publicationReason:
     });
     try {
       const pushed = await pushBuildToGitHub(opts.userId, filesToPush, {
+        tenantContext,projectId:opts.projectId,
         targetRepo: meta?.githubTargetRepo,
         targetBranch: githubBranch,
         slug: `xroga-${projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`,
@@ -4178,6 +4177,8 @@ publicationReason:
         allowEmptyBootstrap: !isUpdate && prior.files.length === 0,
         visibility: meta?.githubVisibility ?? 'private',
       });
+      if(pushed.needsConfirmation){nativePublicationPending=true;emit({agent:'deploy',status:'confirmation_required',message:`Review GitHub publication: [Review action](${pushed.reviewUrl}). No commit has been written.`,swarmStatusLabel:'Approval required'});}
+      else {
       githubRepoUrl = pushed.htmlUrl;
       githubRepoName = pushed.repoName;
       const verifiedCommitSha = pushed.commitSha;
@@ -4227,7 +4228,9 @@ publicationReason:
             )
           : todos('deploy'),
       });
+      }
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       // Typed refusals from the atomic write path describe themselves, and the one fact
       // that matters most to whoever reads this — that the branch was not changed — only
       // survives if it comes from there rather than from a raw vendor message.
@@ -4260,6 +4263,7 @@ publicationReason:
   let chromeZipOk = false;
   let electronZipOk = false;
   let electronInstallerOk = false;
+
   let easTriggered = false;
   let easUrl: string | undefined;
   let easError: string | undefined;
@@ -4281,6 +4285,8 @@ publicationReason:
     });
     try {
       const zipped = await shipChromeExtensionZip({
+        tenantContext,
+        signal:opts.signal,
         userId: opts.userId,
         repoFullName: githubRepoName,
         files: nextFiles,
@@ -4298,48 +4304,10 @@ publicationReason:
           swarmTodos: todos('push'),
         });
 
-        // Real CWS submit when user connected Chrome Web Store OAuth
-        try {
-          const zipBuf = packageBuildZip(nextFiles, { include: chromeExtensionZipFilter });
-          emit({
-            agent: 'deploy',
-            status: 'cws_submit',
-            message: 'Submitting extension.zip to Chrome Web Store…',
-            swarmStatusLabel: 'CWS submit',
-            swarmActivity: 'upload + publish',
-            swarmTodos: todos('push'),
-          });
-          const cws = await publishChromeExtensionToStore({
-            userId: opts.userId,
-            zip: zipBuf,
-          });
-          if (cws.submitted) {
-            chromeStoreSubmitted = true;
-            chromeStoreUrl = cws.dashboardUrl;
-            emit({
-              agent: 'deploy',
-              status: 'cws_submitted',
-              message: cws.message,
-              swarmStatusLabel: 'CWS submitted',
-              swarmActivity: cws.dashboardUrl || 'awaiting Google review',
-              swarmTodos: todos('push'),
-            });
-          } else if (cws.error && cws.error !== 'NO_CWS_CREDS') {
-            chromeStoreError = cws.message;
-            emit({
-              agent: 'deploy',
-              status: 'cws_failed',
-              message: cws.message,
-              swarmStatusLabel: 'CWS failed',
-              swarmActivity: cws.message.slice(0, 100),
-              swarmTodos: todos('push'),
-            });
-          } else if (cws.error === 'NO_CWS_CREDS') {
-            chromeStoreError = cws.message;
-          }
-        } catch (err) {
-          chromeStoreError = (err as Error).message;
-        }
+      } else if(zipped.needsConfirmation && zipped.reviewUrl) {
+        nativePublicationPending=true;
+        chromeZipError=`Publication awaits approval: ${zipped.reviewUrl}`;
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact extension publication before uploading source: [Review publication](${zipped.reviewUrl})`,swarmStatusLabel:'Approval required',swarmActivity:'No release asset was published',swarmTodos:todos('push')});
       } else {
         chromeZipError = zipped.error || 'extension.zip upload failed';
         chromeReleaseUrl = zipped.releaseUrl;
@@ -4351,6 +4319,17 @@ publicationReason:
           swarmActivity: chromeZipError.slice(0, 100),
           swarmTodos: todos('push'),
         });
+      }
+      if(zipped.needsConfirmation && zipped.preparedArtifact){
+        try{
+        const cws=await publishChromeExtensionToStore({userId:opts.userId,tenantContext,repoFullName:githubRepoName,artifact:zipped.preparedArtifact});
+        if(cws.needsConfirmation && cws.reviewUrl){
+          emit({agent:'deploy',status:'confirmation_required',message:`Review Chrome Web Store upload and submission separately: [Review store submission](${cws.reviewUrl})`,swarmStatusLabel:'Store approval required',swarmActivity:'Nothing was uploaded or submitted to the store',swarmTodos:todos('push')});
+        }else if(cws.error){chromeStoreError=cws.message;}
+        }catch{
+          chromeStoreError='Chrome Web Store preparation could not be verified. The GitHub publication still awaits your separate approval.';
+          emit({agent:'deploy',status:'cws_failed',message:chromeStoreError,swarmStatusLabel:'Store preparation unavailable',swarmActivity:'No store publication was approved',swarmTodos:todos('push')});
+        }
       }
     } catch (err) {
       chromeZipError = (err as Error).message;
@@ -4378,6 +4357,8 @@ publicationReason:
     });
     try {
       const portable = await shipElectronPortableZip({
+        tenantContext,
+        signal:opts.signal,
         userId: opts.userId,
         repoFullName: githubRepoName,
         files: nextFiles,
@@ -4395,6 +4376,10 @@ publicationReason:
           swarmActivity: portable.tag || 'desktop.zip',
           swarmTodos: todos('push'),
         });
+      } else if(portable.needsConfirmation && portable.reviewUrl) {
+        nativePublicationPending=true;
+        electronReleaseError=`Publication awaits approval: ${portable.reviewUrl}`;
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact desktop publication before uploading source: [Review publication](${portable.reviewUrl})`,swarmStatusLabel:'Approval required',swarmActivity:'No release asset was published',swarmTodos:todos('push')});
       } else {
         electronReleaseError = portable.error || 'desktop.zip upload failed';
         desktopReleasesUrl = portable.releaseUrl;
@@ -4408,29 +4393,39 @@ publicationReason:
     emit({
       agent: 'deploy',
       status: 'releasing',
-      message: 'Syncing signing secrets + starting multi-OS installer builds…',
+      message: 'Checking signing approval before installer builds...',
       swarmStatusLabel: 'Desktop Actions',
       swarmActivity: githubRepoName,
       swarmTodos: todos('push'),
     });
     try {
-      await syncElectronSigningSecretsToGitHub({
+      // Preparing a separate tag approval borrows no portable-upload authority.
+      // Neither action can dispatch until its own exact approval is consumed.
+      const signing = await syncElectronSigningSecretsToGitHub({
         userId: opts.userId,
         repoFullName: githubRepoName,
+        tenantContext,
+        signal:opts.signal,
       });
+      if(!signing.ok)throw Object.assign(new Error('Approve signing-material transfer in Publish before starting the signed release.'),{code:'SIGNING_APPROVAL_REQUIRED'});
       const released = await triggerElectronDesktopRelease({
+        tenantContext,
+        signal:opts.signal,
         userId: opts.userId,
         repoFullName: githubRepoName,
-        commitSha,
+        commitSha,projectId:opts.projectId,
       });
       desktopReleaseTag = released.tag || desktopReleaseTag;
       desktopActionsUrl = released.actionsUrl;
       if (released.releasesUrl) desktopReleasesUrl = released.releasesUrl;
+      if(released.needsConfirmation&&released.reviewUrl){nativePublicationPending=true;emit({agent:'deploy',status:'confirmation_required',message:`Review the exact immutable desktop release: [Review action](${released.reviewUrl}). No tag or Actions run has been requested.`,swarmStatusLabel:'Approval required'});}
       if (released.ok) {
         const waited = await waitForDesktopReleaseZip({
+          tenantContext,
+          signal:opts.signal,
           userId: opts.userId,
           repoFullName: githubRepoName,
-          tag: released.tag,
+          tag: released.tag,commitSha,projectId:opts.projectId,
           timeoutMs: 10 * 60 * 1000,
           intervalMs: 20_000,
           onProgress: (msg) => {
@@ -4468,7 +4463,7 @@ publicationReason:
             waited.error ||
             'Installers still building on Actions — portable desktop.zip is ready above';
         }
-      } else if (!electronZipOk) {
+      } else if (!released.needsConfirmation&&!electronZipOk) {
         electronReleaseError = released.error || 'Could not start desktop release';
       }
     } catch (err) {
@@ -4478,7 +4473,7 @@ publicationReason:
       console.warn('[pipeline] electron release:', (err as Error).message);
     }
 
-    if (!electronZipOk && electronReleaseError) {
+    if (!nativePublicationPending && !electronZipOk && electronReleaseError) {
       emit({
         agent: 'deploy',
         status: 'release_failed',
@@ -4490,213 +4485,26 @@ publicationReason:
     }
   }
 
-  // Expo: auto-trigger EAS build, poll artifact, optionally submit when store creds synced
+  // Expo: prepare one exact build approval. A saved key never authorizes submission.
   if (githubPushConfirmed && productScaffoldKind === 'expo') {
-    const expoToken = await getUserProviderKey(opts.userId, 'expo').catch(() => null);
-    if (expoToken) {
-      // Best-effort: push store credentials into Expo before submit
-      const google = await getUserProviderKey(opts.userId, 'google_play').catch(() => null);
-      const appleAsc = await getUserProviderKey(opts.userId, 'apple_asc_api').catch(() => null);
-      const pkgId = packageIdFromProjectName(projectName);
-      if (google) {
-        const synced = await syncGooglePlayCredentialsToExpo({
-          userId: opts.userId,
-          applicationIdentifier: pkgId,
-          projectName,
-        });
-        emit({
-          agent: 'deploy',
-          status: synced.ok ? 'eas_creds' : 'eas_creds_skip',
-          message: synced.message,
-          swarmStatusLabel: synced.ok ? 'Play creds synced' : 'Play creds',
-          swarmActivity: synced.message.slice(0, 80),
-          swarmTodos: todos('push'),
-        });
-      }
-      if (appleAsc) {
-        const syncedApple = await syncAppleAscApiKeyToExpo({
-          userId: opts.userId,
-          bundleIdentifier: pkgId,
-          projectName,
-        });
-        emit({
-          agent: 'deploy',
-          status: syncedApple.ok ? 'eas_apple_creds' : 'eas_apple_creds_skip',
-          message: syncedApple.message,
-          swarmStatusLabel: syncedApple.ok ? 'Apple ASC synced' : 'Apple ASC',
-          swarmActivity: syncedApple.message.slice(0, 80),
-          swarmTodos: todos('push'),
-        });
-      }
-
-      const wantAndroidSubmit = Boolean(google);
-      const wantIosSubmit = Boolean(appleAsc);
-      const priorBuilds = await listEasBuilds({ userId: opts.userId, limit: 10 }).catch(() => []);
-      const ignoreBuildIds = priorBuilds.map((b) => b.id);
-      const startedAfterMs = Date.now() - 15_000;
-
-      emit({
-        agent: 'deploy',
-        status: 'eas_dispatch',
-        message: wantAndroidSubmit
-          ? 'Starting EAS Android build + store submit on your Expo account…'
-          : 'Starting EAS Android build on your Expo account…',
-        swarmStatusLabel: 'EAS',
-        swarmActivity: wantAndroidSubmit ? 'publish-android' : 'build-android',
-        swarmTodos: todos('push'),
+    try {
+      const prepared = await triggerEasPublish({
+        userId: opts.userId, tenantContext, signal: opts.signal,
+        databaseProjectId:admittedDatabaseProjectId??undefined,
+        platform: 'android', gitRef: commitSha || githubBranch || 'main',
+        submit: false, projectName,
       });
-      try {
-        const eas = await triggerEasPublish({
-          userId: opts.userId,
-          platform: 'android',
-          gitRef: githubBranch || 'main',
-          submit: wantAndroidSubmit,
-          projectName,
-        });
-        if (eas.ok) {
-          easTriggered = true;
-          easUrl = eas.url;
-          easStoreSubmitted = wantAndroidSubmit && /publish|submit/i.test(eas.fileName || '');
-          emit({
-            agent: 'deploy',
-            status: 'eas_started',
-            message: eas.message,
-            swarmStatusLabel: 'EAS started',
-            swarmActivity: eas.url || eas.fileName,
-            swarmTodos: todos('push'),
-          });
-
-          const waited = await waitForEasBuildArtifact({
-            userId: opts.userId,
-            projectId: eas.projectId,
-            platform: 'android',
-            timeoutMs: 8 * 60 * 1000,
-            ignoreBuildIds,
-            startedAfterMs,
-            onProgress: (msg) => {
-              emit({
-                agent: 'deploy',
-                status: 'eas_waiting',
-                message: msg,
-                swarmStatusLabel: 'EAS building',
-                swarmActivity: easUrl || 'expo.dev',
-                swarmTodos: todos('push'),
-              });
-            },
-          });
-          if (waited.ok && waited.build) {
-            easBuildOk = true;
-            easArtifactUrl =
-              waited.build.artifactUrl || waited.build.buildDetailsPageUrl;
-            emit({
-              agent: 'deploy',
-              status: 'eas_ready',
-              message: waited.message,
-              swarmStatusLabel: 'EAS binary ready',
-              swarmActivity: easArtifactUrl?.slice(0, 80) || 'artifact',
-              swarmTodos: todos('push'),
-            });
-          } else {
-            easError = waited.message;
-          }
-        } else {
-          easError = eas.message || eas.error || 'EAS dispatch failed';
-          emit({
-            agent: 'deploy',
-            status: 'eas_skipped',
-            message: easError,
-            swarmStatusLabel: 'EAS needs setup',
-            swarmActivity: easError.slice(0, 100),
-            swarmTodos: todos('push'),
-          });
-        }
-
-        // iOS path when ASC API key is in vault (parallel store track — does not block Android)
-        if (wantIosSubmit) {
-          emit({
-            agent: 'deploy',
-            status: 'eas_ios_dispatch',
-            message: 'Starting EAS iOS build + App Store submit on your Expo account…',
-            swarmStatusLabel: 'EAS iOS',
-            swarmActivity: 'publish-ios',
-            swarmTodos: todos('push'),
-          });
-          const easIos = await triggerEasPublish({
-            userId: opts.userId,
-            platform: 'ios',
-            gitRef: githubBranch || 'main',
-            submit: true,
-            projectName,
-          });
-          if (easIos.ok) {
-            easTriggered = true;
-            easUrl = easIos.url || easUrl;
-            easStoreSubmitted = true;
-            emit({
-              agent: 'deploy',
-              status: 'eas_ios_started',
-              message: easIos.message,
-              swarmStatusLabel: 'EAS iOS started',
-              swarmActivity: easIos.url || easIos.fileName,
-              swarmTodos: todos('push'),
-            });
-            const waitedIos = await waitForEasBuildArtifact({
-              userId: opts.userId,
-              projectId: easIos.projectId,
-              platform: 'ios',
-              timeoutMs: 6 * 60 * 1000,
-              ignoreBuildIds,
-              startedAfterMs,
-              onProgress: (msg) => {
-                emit({
-                  agent: 'deploy',
-                  status: 'eas_ios_waiting',
-                  message: msg,
-                  swarmStatusLabel: 'EAS iOS building',
-                  swarmActivity: easUrl || 'expo.dev',
-                  swarmTodos: todos('push'),
-                });
-              },
-            });
-            if (waitedIos.ok && waitedIos.build) {
-              easBuildOk = true;
-              if (!easArtifactUrl) {
-                easArtifactUrl =
-                  waitedIos.build.artifactUrl || waitedIos.build.buildDetailsPageUrl;
-              }
-              emit({
-                agent: 'deploy',
-                status: 'eas_ios_ready',
-                message: waitedIos.message,
-                swarmStatusLabel: 'EAS iOS ready',
-                swarmActivity: (easArtifactUrl || '').slice(0, 80) || 'artifact',
-                swarmTodos: todos('push'),
-              });
-            }
-          } else {
-            emit({
-              agent: 'deploy',
-              status: 'eas_ios_skipped',
-              message: easIos.message || easIos.error || 'iOS EAS dispatch failed',
-              swarmStatusLabel: 'EAS iOS',
-              swarmActivity: (easIos.message || '').slice(0, 100),
-              swarmTodos: todos('push'),
-            });
-          }
-        }
-      } catch (err) {
-        easError = (err as Error).message;
-        emit({
-          agent: 'deploy',
-          status: 'eas_error',
-          message: easError,
-          swarmStatusLabel: 'EAS error',
-          swarmActivity: easError.slice(0, 100),
-          swarmTodos: todos('push'),
-        });
+      if (prepared.needsConfirmation && prepared.reviewUrl) {
+        easError = `Expo action awaits approval: ${prepared.reviewUrl}`;
+        emit({agent:'deploy',status:'confirmation_required',message:`Review the exact Expo build: [Review action](${prepared.reviewUrl}). No build or store submission has started.`,swarmStatusLabel:'Approval required',swarmActivity:'Expo build awaits approval',swarmTodos:todos('push')});
+      } else {
+        easError = prepared.message || 'Select an owned Expo project in Publish.';
+        emit({agent:'deploy',status:'eas_skipped',message:easError,swarmStatusLabel:'Expo setup required',swarmActivity:easError.slice(0,100),swarmTodos:todos('push')});
       }
-    } else {
-      easError = 'No Expo token — Connect Expo in Publish to start EAS builds automatically';
+    } catch (error) {
+      if (isTerminalModelFailure(error)) throw error;
+      easError = (error as Error).message;
+      emit({agent:'deploy',status:'eas_error',message:easError,swarmStatusLabel:'Expo request unavailable',swarmActivity:easError.slice(0,100),swarmTodos:todos('push')});
     }
   }
 
@@ -4705,7 +4513,7 @@ publicationReason:
     try {
       const saved = await setProjectMemoryDurable({
         userId: opts.userId,
-        repo: githubRepoName || meta?.githubTargetRepo,
+        repo: admittedDatabaseProjectId?memoryRepo:githubRepoName || memoryRepo,
         branch: githubBranch,
         projectName,
         files: nextFiles,
@@ -5120,7 +4928,7 @@ publicationReason:
                 : productScaffoldKind === 'expo'
                   ? easBuildOk
                     ? `**${projectName}** EAS binary ready${easStoreSubmitted ? ' + store submit started (awaiting Apple/Google)' : ''}.`
-                    : `**${projectName}** on GitHub${easTriggered ? ' + EAS building' : ' — Connect Expo to auto-build'}.`
+                    : `**${projectName}** on GitHub. ${easError || 'Open Publish to review an Expo build request.'}`
                   : `**${projectName}** handoff ready.`
             : buildOk
               ? `Built **${projectName}** — **not fully shipped.** ${finalBlockers[0] || 'Finish integrations / artifacts below.'}`
@@ -5242,7 +5050,7 @@ publicationReason:
     success: overallSuccess,
   });
   void trace.persist();
-  void saveSessionHistory(opts.userId, githubRepoName || meta?.githubTargetRepo, [
+  void saveSessionHistory(opts.userId, admittedDatabaseProjectId?memoryRepo:githubRepoName || memoryRepo, [
     ...history,
     { role: 'user', content: userFacingPrompt },
     {

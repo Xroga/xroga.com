@@ -1,0 +1,249 @@
+TAP version 13
+# Subtest: actual signing routes require durable exact approval, owned source and current credentials for one sealed write
+    # Subtest: preparation rejects missing actor without credential reads
+    ok 1 - preparation rejects missing actor without credential reads
+      ---
+      duration_ms: 125.8335
+      type: 'test'
+      ...
+    # Subtest: preparation rejects clone actor without credential reads
+    ok 2 - preparation rejects clone actor without credential reads
+      ---
+      duration_ms: 13.3261
+      type: 'test'
+      ...
+    # Subtest: preparation rejects foreign actor without credential reads
+    ok 3 - preparation rejects foreign actor without credential reads
+      ---
+      duration_ms: 11.5498
+      type: 'test'
+      ...
+    # Subtest: ok
+    ok 4 - ok
+      ---
+      duration_ms: 165.5602
+      type: 'test'
+      ...
+    # Subtest: postgres-timestamps
+    ok 5 - postgres-timestamps
+      ---
+      duration_ms: 62.4614
+      type: 'test'
+      ...
+    # Subtest: jsonb-key-order
+    ok 6 - jsonb-key-order
+      ---
+      duration_ms: 40.3926
+      type: 'test'
+      ...
+    # Subtest: provider-restart
+    ok 7 - provider-restart
+      ---
+      duration_ms: 44.0282
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 8 - concurrent
+      ---
+      duration_ms: 47.8019
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 9 - cancelled
+      ---
+      duration_ms: 28.3515
+      type: 'test'
+      ...
+    # Subtest: foreign-project
+    ok 10 - foreign-project
+      ---
+      duration_ms: 25.883
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 11 - changed-target
+      ---
+      duration_ms: 26.8511
+      type: 'test'
+      ...
+    # Subtest: wrong-operation
+    ok 12 - wrong-operation
+      ---
+      duration_ms: 21.8015
+      type: 'test'
+      ...
+    # Subtest: ciphertext-substitution
+    ok 13 - ciphertext-substitution
+      ---
+      duration_ms: 27.528
+      type: 'test'
+      ...
+    # Subtest: proof-substitution
+    ok 14 - proof-substitution
+      ---
+      duration_ms: 28.674
+      type: 'test'
+      ...
+    # Subtest: extra-body
+    ok 15 - extra-body
+      ---
+      duration_ms: 32.8657
+      type: 'test'
+      ...
+    # Subtest: public-key-rotated
+    ok 16 - public-key-rotated
+      ---
+      duration_ms: 34.9428
+      type: 'test'
+      ...
+    # Subtest: revoke-before-confirm
+    ok 17 - revoke-before-confirm
+      ---
+      duration_ms: 28.123
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 18 - audit-fail
+      ---
+      duration_ms: 46.7423
+      type: 'test'
+      ...
+    # Subtest: revoke-at-audit
+    ok 19 - revoke-at-audit
+      ---
+      duration_ms: 72.4811
+      type: 'test'
+      ...
+    # Subtest: revise-at-audit
+    ok 20 - revise-at-audit
+      ---
+      duration_ms: 139.176
+      type: 'test'
+      ...
+    # Subtest: source-metadata-at-audit
+    not ok 21 - source-metadata-at-audit
+      ---
+      duration_ms: 165.2128
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\electronSigning.security.test.ts:1:8655'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\electronSigning.security.test.ts:97:16)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\electronSigning.security.test.ts:74:573)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: connection-metadata-at-audit
+    not ok 22 - connection-metadata-at-audit
+      ---
+      duration_ms: 143.8119
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\electronSigning.security.test.ts:1:8655'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\electronSigning.security.test.ts:97:16)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\electronSigning.security.test.ts:74:573)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: foreign-project-at-audit
+    ok 23 - foreign-project-at-audit
+      ---
+      duration_ms: 94.4716
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 24 - cancel-at-audit
+      ---
+      duration_ms: 91.4495
+      type: 'test'
+      ...
+    # Subtest: cancel-at-claim
+    ok 25 - cancel-at-claim
+      ---
+      duration_ms: 96.9326
+      type: 'test'
+      ...
+    # Subtest: cancel-after-claim
+    ok 26 - cancel-after-claim
+      ---
+      duration_ms: 98.7009
+      type: 'test'
+      ...
+    # Subtest: expire-after-claim
+    ok 27 - expire-after-claim
+      ---
+      duration_ms: 126.7935
+      type: 'test'
+      ...
+    # Subtest: provider200
+    ok 28 - provider200
+      ---
+      duration_ms: 92.8892
+      type: 'test'
+      ...
+    # Subtest: provider403
+    ok 29 - provider403
+      ---
+      duration_ms: 93.8864
+      type: 'test'
+      ...
+    # Subtest: provider503
+    ok 30 - provider503
+      ---
+      duration_ms: 117.1999
+      type: 'test'
+      ...
+    # Subtest: ok-after503
+    ok 31 - ok-after503
+      ---
+      duration_ms: 119.0023
+      type: 'test'
+      ...
+    # Subtest: redirect
+    ok 32 - redirect
+      ---
+      duration_ms: 128.6769
+      type: 'test'
+      ...
+    # Subtest: revoke-after-write
+    ok 33 - revoke-after-write
+      ---
+      duration_ms: 117.9092
+      type: 'test'
+      ...
+    1..33
+not ok 1 - actual signing routes require durable exact approval, owned source and current credentials for one sealed write
+  ---
+  duration_ms: 2660.3746
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\electronSigning.security.test.ts:1:694'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 34
+# suites 0
+# pass 31
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4793.9266

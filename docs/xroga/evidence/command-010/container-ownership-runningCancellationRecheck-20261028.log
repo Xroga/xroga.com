@@ -1,0 +1,17 @@
+TAP version 13
+# Subtest: real cached-image container stops after sandbox cancellation and leaves no owned resource
+ok 1 - real cached-image container stops after sandbox cancellation and leaves no owned resource
+  ---
+  duration_ms: 2882.6576
+  type: 'test'
+  ...
+# {"image":"sha256:63538dfe497cc29dfafdda25ada09b46db68a3f4cc205abf1f5d6bf0913f3384","ownedContainer":"643a4f95e3698a41392f2b37f05ddeb3628b15abdfa5be1ac7680ce15fe58aae","runningAfterCancellation":false,"outcome":"rejected","modelRequests":0,"network":"none"}
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3727.1067

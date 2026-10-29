@@ -1,70 +1,48 @@
-import { NextResponse } from 'next/server';
-import { parseAuraInput, requestGroqStream } from '@/lib/showcase/auraGroq';
+import {randomUUID} from 'node:crypto';
+import {isIP} from 'node:net';
+import {NextResponse} from 'next/server';
+import {parseAuraInput, requestGroqStream, readAuraBoundedText} from '@/lib/showcase/auraGroq';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+const COOKIE = '__Host-xroga-aura-guest';
 
-const windows = new Map<string, { count: number; resetAt: number }>();
-
-function clientAddress(request: Request) {
-  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+function clientAddress(request: Request): string | null {
+  // Vercel overwrites this header at the platform boundary. Arbitrary forwarded
+  // headers outside that deployment never create a new quota identity.
+  if (process.env.VERCEL === '1') {
+    const address = request.headers.get('x-vercel-forwarded-for')?.trim() || '';
+    return isIP(address) ? address : null;
+  }
+  if (process.env.NODE_ENV !== 'production' && ['127.0.0.1', 'localhost'].includes(new URL(request.url).hostname)) return '127.0.0.1';
+  return null;
 }
 
 function sameOrigin(request: Request) {
-  const origin = request.headers.get('origin');
-  if (!origin) return true;
   try {
-    const originHost = new URL(origin).host;
-    const forwardedHost = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim();
-    const requestHost = request.headers.get('host');
-    return originHost === forwardedHost || originHost === requestHost || originHost === new URL(request.url).host;
-  } catch {
-    return false;
-  }
-}
-
-function isRateLimited(address: string) {
-  const now = Date.now();
-  const current = windows.get(address);
-  if (!current || current.resetAt <= now) {
-    windows.set(address, { count: 1, resetAt: now + 60_000 });
-    return false;
-  }
-  current.count += 1;
-  return current.count > 20;
+    const url = new URL(request.url), origin = request.headers.get('origin');
+    if (!origin || origin !== url.origin) return false;
+    if (process.env.NODE_ENV !== 'production') return ['localhost', '127.0.0.1'].includes(url.hostname);
+    const hosts = ['xroga.com', 'www.xroga.com', 'xrogaai.com', 'www.xrogaai.com', process.env.VERCEL_URL, process.env.VERCEL_PROJECT_PRODUCTION_URL];
+    return url.protocol === 'https:' && hosts.includes(url.host);
+  } catch { return false; }
 }
 
 export async function POST(request: Request) {
-  if (!sameOrigin(request)) return NextResponse.json({ error: 'Invalid origin.' }, { status: 403 });
-  if (isRateLimited(clientAddress(request))) {
-    return NextResponse.json({ error: 'The public demo is busy. Please try again in a minute.' }, { status: 429 });
-  }
-
-  const length = Number(request.headers.get('content-length') || 0);
-  if (length > 210_000) return NextResponse.json({ error: 'Request is too large.' }, { status: 413 });
-
-  let payload: unknown;
+  if (!sameOrigin(request)) return NextResponse.json({error: 'Invalid origin.'}, {status: 403});
+  const address = clientAddress(request);
+  if (!address) return NextResponse.json({error: 'Live AI is temporarily unavailable.'}, {status: 503});
+  const deadline = AbortSignal.any([request.signal, AbortSignal.timeout(5000)]);
+  let input;
   try {
-    payload = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
-  }
-  const input = parseAuraInput(payload);
-  if (!input) return NextResponse.json({ error: 'Add a message before sending.' }, { status: 400 });
-
-  try {
-    const result = await requestGroqStream(input, request.signal);
-    if (!result.ok) return NextResponse.json({ error: result.message }, { status: result.status });
-    return new Response(result.body, {
-      headers: {
-        'Content-Type': 'text/event-stream; charset=utf-8',
-        'Cache-Control': 'no-cache, no-transform',
-        'X-Accel-Buffering': 'no',
-      },
-    });
-  } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') return new Response(null, { status: 499 });
-    console.error('Aura showcase request failed', { category: 'groq_upstream_failure' });
-    return NextResponse.json({ error: 'The AI provider could not complete this request.' }, { status: 502 });
-  }
+    const text = await readAuraBoundedText(request.body, deadline, 210000);
+    input = parseAuraInput(JSON.parse(text));
+  } catch { return NextResponse.json({error: 'Invalid or oversized request.'}, {status: 400}); }
+  if (!input) return NextResponse.json({error: 'Add a message before sending.'}, {status: 400});
+  const rawCookie = request.headers.get('cookie')?.split(';').map(value => value.trim()).find(value => value.startsWith(COOKIE + '='))?.slice(COOKIE.length + 1);
+  const sessionId = rawCookie && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(rawCookie) ? rawCookie : randomUUID();
+  const result = await requestGroqStream(input, request.signal, {sessionId, address});
+  const headers = {'Cache-Control': 'no-store', 'Set-Cookie': `${COOKIE}=${sessionId}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=86400`};
+  if (!result.ok) return NextResponse.json({error: result.message}, {status: result.status, headers});
+  return new Response(result.body, {headers: {...headers, 'Content-Type': 'text/event-stream; charset=utf-8', 'X-Accel-Buffering': 'no'}});
 }

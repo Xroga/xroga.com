@@ -18,7 +18,7 @@ export interface ChangeJobDeps {
   readonly intel: ExistingSourceIntelligence;
   readonly store: ChangeStore;
   readonly runAgent: AgentRunner;
-  readonly modelRouteFor: (userId: string, runId: string) => Promise<AgentSoftwareExecutorInput['model']>;
+  readonly modelRouteFor: (userId: string, runId: string, context: TenantContext) => Promise<AgentSoftwareExecutorInput['model']>;
   /** Makes the claim's run attempt the current one. The Job entrypoint's duplicate and cancelled deliveries never reach here. */
   readonly adoptRun: (claim: CanonicalDeliveryClaim) => Promise<unknown>;
   readonly runtimeFor?: (run: ReturnType<typeof canonicalRunFor>) => ReturnType<typeof canonicalChangeRuntime>;
@@ -63,7 +63,7 @@ export async function runExistingSourceChangeJob(input: {
   const changes = new ChangeService({
     source: deps.source, intel: deps.intel, store: deps.store, runAgent: deps.runAgent, maxRunningPerOwner: 1,
     execution: runtime.port, previewVerifierFor: ({ criteria }) => runtime.previewVerifier(criteria),
-    modelRouteFor: (owner) => deps.modelRouteFor(owner, claim.runId),
+    modelRouteFor: (owner) => deps.modelRouteFor(owner, claim.runId, context),
   });
   const onAbort = () => { void changes.cancel(userId, changeId).catch(() => undefined); };
   if (signal.aborted) onAbort(); else signal.addEventListener('abort', onAbort, { once: true });

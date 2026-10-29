@@ -1,4 +1,4 @@
-import { getSecret } from '../../config/envSecrets.js';
+import {requireTenantContext,requireResourceOwner} from '../../security/tenantContext.js';
 import {
   explicitlyDisablesResearch,
 } from '../../lib/taskClassifier.js';
@@ -12,9 +12,8 @@ import {
   type ChatMessage,
 } from '../openaiCompat.js';
 
-import {
-  withProviderReservation,
-} from '../providerBudget.js';
+import {withTenantModelReservation,type TenantModelScope} from '../tenantModelDispatch.js';
+import {isTerminalModelFailure} from '../providerRuntime.js';
 
 import {
   parallelExtract,
@@ -22,10 +21,6 @@ import {
   parallelSearch,
   type ParallelSource,
 } from '../parallelWeb.js';
-
-import {
-  recordWebSpend,
-} from '../webBudget.js';
 
 import type {
   ResearchBundle,
@@ -65,6 +60,8 @@ export interface WebIntelligenceResult {
   sourceCount: number;
   injectionAttempts: number;
   reason: string;
+  needsConfirmation?:boolean;
+  reviewUrl?:string;
 }
 
 const ACTIONS: readonly WebAction[] = [
@@ -225,6 +222,7 @@ export function applyRequestedSourcePolicy(
  */
 export async function decideWebAction(input: {
   userId: string;
+  dispatchScope?:TenantModelScope;
   prompt: string;
   projectContext?: string;
 }): Promise<WebDecision> {
@@ -353,8 +351,9 @@ ${redactSecrets(
 
   try {
     const result =
-      await withProviderReservation({
-        userId: input.userId,
+      await withTenantModelReservation({
+        scope: input.dispatchScope!,
+        payload:{messages},
 
         modelId:
           'deepseek_v4_flash',
@@ -368,14 +367,16 @@ ${redactSecrets(
 
         purpose: 'daily_work',
 
-        execute: () =>
+        execute: dispatch =>
           chatCompletion(
             'deepseek_v4_flash',
-            messages,
+            dispatch.payload.messages as ChatMessage[],
             {
               maxTokens: 500,
               temperature: 0,
               json: true,
+              credentialOverride:dispatch.credentialOverride,
+              beforeDispatch:dispatch.beforeDispatch,
             },
           ),
       });
@@ -392,7 +393,8 @@ ${redactSecrets(
           'Web decision was not parseable.',
       }
     );
-  } catch {
+  } catch (error) {
+    if(isTerminalModelFailure(error))throw error;
     // A broken classifier must not trigger
     // accidental paid searches.
     return {
@@ -408,227 +410,28 @@ ${redactSecrets(
   }
 }
 
+/** X Search has no verified canonical reservation/settlement adapter yet.
+ * A visible-output limit does not bound reasoning or server-side search costs.
+ * Reject before loading a platform credential. This is an explicit availability
+ * restriction, not evidence that the original research caller is complete.
+ * Re-enable only with issued scope, current ownership/run checks, egress receipt,
+ * a verified reservation cost contract and exact durable usage settlement.
+ */
 async function grokXSearch(input: {
   userId: string;
+  dispatchScope?: TenantModelScope;
   question: string;
   signal?: AbortSignal;
-}): Promise<{
-  answer: string;
-  sources: ParallelSource[];
-}> {
-  const apiKey =
-    getSecret('XAI_API_KEY');
-
-  if (!apiKey) {
-    return {
-      answer: '',
-      sources: [],
-    };
-  }
-
-  const model =
-    process.env.GROK_SEARCH_MODEL
-      ?.trim() ||
-    'grok-4.3';
-
-  const response = await fetch(
-    'https://api.x.ai/v1/responses',
-    {
-      method: 'POST',
-
-      headers: {
-        Authorization:
-          `Bearer ${apiKey}`,
-
-        'Content-Type':
-          'application/json',
-      },
-
-      body: JSON.stringify({
-        model,
-
-        input: [
-          'Use X Search only.',
-          'Find current primary X posts, official accounts, threads, and directly relevant discussion.',
-          'Preserve citations.',
-          '',
-          redactSecrets(
-            input.question,
-          ).slice(0, 6_000),
-        ].join('\n'),
-
-        tools: [
-          {
-            type: 'x_search',
-          },
-        ],
-
-        max_output_tokens: 500,
-      }),
-
-      signal:
-        input.signal ??
-        AbortSignal.timeout(30_000),
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      `xAI X Search HTTP ${response.status}`,
-    );
-  }
-
-  const data =
-    (await response.json()) as {
-      id?: string;
-
-      citations?: Array<
-        | string
-        | {
-            url?: string;
-            title?: string;
-          }
-      >;
-
-      output?: Array<{
-        content?: Array<{
-          type?: string;
-          text?: string;
-          annotations?: Array<{
-            type?: string;
-            url?: string;
-            title?: string;
-          }>;
-        }>;
-      }>;
-
-      usage?: {
-        input_tokens?: number;
-        output_tokens?: number;
-        cost_in_usd_ticks?: number;
-      };
-    };
-
-  const contentItems = (
-    data.output ?? []
-  ).flatMap(
-    (item) => item.content ?? [],
-  );
-
-  const answer = contentItems
-    .filter(
-      (item) =>
-        item.type ===
-          'output_text' &&
-        typeof item.text === 'string',
-    )
-    .map((item) => item.text)
-    .join('\n')
-    .trim()
-    .slice(0, 8_000);
-
-  const citationCandidates = [
-    ...(data.citations ?? []).map(
-      (citation) =>
-        typeof citation === 'string'
-          ? {
-              url: citation,
-            }
-          : citation,
-    ),
-
-    ...contentItems.flatMap(
-      (item) =>
-        item.annotations ?? [],
-    ),
-  ];
-
-  const seen =
-    new Set<string>();
-
-  const sources: ParallelSource[] =
-    [];
-
-  for (
-    const citation of
-    citationCandidates
-  ) {
-    const url = citation.url;
-
-    if (
-      !url ||
-      seen.has(url)
-    ) {
-      continue;
-    }
-
-    try {
-      const parsed =
-        new URL(url);
-
-      if (
-        ![
-          'x.com',
-          'www.x.com',
-          'twitter.com',
-          'www.twitter.com',
-        ].includes(
-          parsed.hostname.toLowerCase(),
-        )
-      ) {
-        continue;
-      }
-    } catch {
-      continue;
-    }
-
-    seen.add(url);
-
-    sources.push({
-      title:
-        citation.title?.trim() ||
-        'X post',
-      url,
-      snippet:
-        answer.slice(0, 1_200),
-    });
-
-    if (sources.length >= 12) {
-      break;
-    }
-  }
-
-  /**
-   * xAI returns exact provider cost.
-   *
-   * 1 USD = 10,000,000,000 ticks.
-   * 1 micro-USD = 10,000 ticks.
-   */
-  const ticks =
-    data.usage
-      ?.cost_in_usd_ticks ?? 0;
-
-  if (ticks > 0) {
-    await recordWebSpend({
-      userId: input.userId,
-      provider: 'xai',
-      operation:
-        'grok_x_search',
-
-      microUsd:
-        Math.round(
-          ticks / 10_000,
-        ),
-
-      providerRequestId:
-        data.id,
-    });
-  }
-
-  return {
-    answer,
-    sources,
-  };
+}): Promise<{answer:string;sources:ParallelSource[]}> {
+  input.signal?.throwIfAborted();
+  const context=requireTenantContext(input.dispatchScope?.context);
+  requireResourceOwner(context,input.userId);
+  requireResourceOwner(context,input.dispatchScope!.userId);
+  throw Object.assign(new Error('X research is unavailable until canonical provider accounting is verified.'), {
+    code:'PROVIDER_RESERVATION_DENIED',
+    reason:'X_SEARCH_ACCOUNTING_UNAVAILABLE',
+    retryable:false,
+  });
 }
 
 function toRawResults(
@@ -675,9 +478,13 @@ function toUiSources(
  *
  * No provider fallback waterfall.
  */
+function pendingResearch(decision:WebDecision,reviewUrl:string):WebIntelligenceResult{
+  return{action:decision.action,evidence:`Research is pending exact external-data approval: ${reviewUrl}. No research provider has been dispatched.`,bundle:null,sourceCount:0,injectionAttempts:0,reason:'EXACT_RESEARCH_APPROVAL_REQUIRED',needsConfirmation:true,reviewUrl};
+}
 export async function runWebIntelligence(
   input: {
     userId: string;
+    dispatchScope?:TenantModelScope;
     prompt: string;
     projectContext?: string;
     officialDomains?: readonly string[];
@@ -718,6 +525,7 @@ export async function runWebIntelligence(
     const result =
       await parallelExtract({
         userId: input.userId,
+        dispatchScope: input.dispatchScope,
 
         urls:
           decision.urls,
@@ -728,6 +536,8 @@ export async function runWebIntelligence(
 
         signal: input.signal,
       });
+
+    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
 
     rawResults =
       toRawResults(
@@ -741,6 +551,7 @@ export async function runWebIntelligence(
     const result =
       await parallelSearch({
         userId: input.userId,
+        dispatchScope: input.dispatchScope,
 
         objective:
           [
@@ -763,6 +574,8 @@ export async function runWebIntelligence(
         signal: input.signal,
       });
 
+    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
+
     rawResults =
       toRawResults(
         result.sources,
@@ -778,6 +591,7 @@ export async function runWebIntelligence(
     const result =
       await parallelResponses({
         userId: input.userId,
+        dispatchScope: input.dispatchScope,
 
         question:
           decision.objective ||
@@ -792,6 +606,8 @@ export async function runWebIntelligence(
         signal: input.signal,
       });
 
+    if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
+
     answer = result.answer;
 
     rawResults =
@@ -804,6 +620,7 @@ export async function runWebIntelligence(
     const result =
       await grokXSearch({
         userId: input.userId,
+        dispatchScope: input.dispatchScope,
 
         question:
           decision.objective ||

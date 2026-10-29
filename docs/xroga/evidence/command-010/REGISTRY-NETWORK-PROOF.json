@@ -1,0 +1,47 @@
+{
+  "version":1,
+  "scope":"PREPARATORY_FAIL_CLOSED_NOT_VERIFIED_ONLINE_REGISTRY_OR_PHASE4_ADMISSION",
+  "baseline":"f040165e69222990ea3d03d90057dcbec1d501d7",
+  "originalCi":{"golden":{"run":39867159524,"conclusion":"success"},"unit":{"run":39867159485,"conclusion":"success","branchAndRepeatedIntegrated":true}},
+  "productionCallers":[
+    {"path":"backend/src/synthesis/productionAdapters.ts","need":"Package-manager setup commands from language adapters, npm/pip/cargo and other manifests, followed by validation. Offline setup remains none. Any setup requesting a network is registry-only and now refuses before source dispatch."},
+    {"path":"backend/src/synthesis/browserVerificationAdapter.ts","need":"Browser dependency installation uses registry-only. It cannot be truthfully verified online without restricted network infrastructure."},
+    {"path":"backend/src/synthesis/livePreview/coordinator.ts","need":"Interactive preview process policy also has separate preview/restricted semantics. Those modes are not certified as registry-only by this patch."},
+    {"path":"backend/src/sandbox/flyMachineSandbox.ts","need":"Direct execute and exec-command construction now refuse registry-only before any machine allocation. No live Fly test performed."},
+    {"path":"backend/src/sandbox/remoteSandbox.ts","need":"Direct execute refuses registry-only before HTTP. A health flag alone cannot attest destination filtering."}
+  ],
+  "verification":{"focusedTests":106,"passed":106,"realContainerTests":1,"realContainerPassed":1,"image":"node:22-bookworm","imageDigest":"sha256:63538dfe497cc29dfafdda25ada09b46db68a3f4cc205abf1f5d6bf0913f3384","offlineInstall":"Synthetic local file dependency installed with npm --offline --ignore-scripts in actual existing ContainerSandboxRuntime using network none","kernelEvidence":"No non-loopback interfaces, no default IPv4 route. TCP probes to public, RFC1918, link-local/metadata and IPv6-private targets all denied.","onlineRegistryVerified":false,"liveProviderEffects":false},
+  "remainingRequirement":"An independently verified existing worker or transport must enforce registry allowlists at kernel/network boundary, including direct IP, DNS, IPv6, redirects, CONNECT and metadata bypasses, before online registry-only installs can be enabled. No operator boolean or arbitrary Docker bridge is accepted as that proof.",
+  "observedPackageRequirements":{
+    "node":"npm/pnpm/yarn metadata and artifact downloads. Arbitrary git/http dependencies and package scripts cannot inherit unrestricted access from an install label.",
+    "python":"pip index plus wheel/source-artifact hosts. Offline no-index installation must use already-present artifacts.",
+    "rust":"cargo index and crate artifacts. Git dependencies are separate destination obligations.",
+    "additionalAdapters":"Go proxy/checksum service, Maven/Gradle repositories, NuGet, Dart Pub, Composer, Conan/vcpkg and Solidity toolchains have their own configured dependency sources. Their existing server-generated install plans request registry-only and are refused rather than silently widened.",
+    "boundary":"An application URL check, HTTPS_PROXY variable or package-manager registry option cannot constrain malicious build code or direct sockets. The missing online mechanism must enforce restrictions outside that code."
+  },
+  "persistentRuntimeContinuation":{"manager":"Registry-only exec and startProcess refuse before loading session or resolving secrets","directFlyProvider":"executableLine refuses registry-only before execRaw can send a command or process script","focusedRegressionTests":62,"passed":62,"includes":"Project runtime, browser adapter, existing P0 and zero-effect direct execution negatives","ordinaryPreviewCertified":false},
+  "persistentNativeReviewReconciliation":{
+    "path":"backend/src/synthesis/projectRuntime/flyProvider.ts",
+    "originalRecord":"f040165e69222990ea3d03d90057dcbec1d501d7:docs/xroga/security/caller-reviews.json",
+    "originalSourceSha256":"9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+    "currentSourceSha256":"3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
+    "nativeConversions":[
+      {"method":"create","originalId":"b60d7d17a4b3923a0093","currentId":"8c2d8f9c4601ee2f4d97","unchangedMethodSha256":"b55f25611987a84056286e005496e5ea855c114bdffd1df18853af41d49a4bb1"},
+      {"method":"writeFiles","originalId":"7e77a9e9c61c1c49cb12","currentId":"74ddacc15175556234db","unchangedMethodSha256":"89f155397404d9fb22322f99ff794d003efa1ea089432bd7bc86ae5ace4acd1a"},
+      {"method":"readFile","originalId":"f783b8237adeb061973a","currentId":"96441ee181360879c0db","unchangedMethodSha256":"d7fd27753d36b887b1f03c8904bae3062383db2cd9b7aa0d142d9f0ff9ec050e"}
+    ],
+    "disposition":"NOT_PERSISTENCE applies only to these built-in Buffer conversions. Provider/storage/authority obligations stay open. Entire containing methods are identical before and after the policy change."
+  },
+  "nativeConversionReviewReconciliation":{
+    "path":"backend/src/sandbox/flyMachineSandbox.ts",
+    "originalSourceSha256":"3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",
+    "originalCallIds":["0d4114d4eca28b97f4cf"],
+    "originalDisposition":"NOT_PERSISTENCE",
+    "originalRecord":"f040165e69222990ea3d03d90057dcbec1d501d7:docs/xroga/security/caller-reviews.json",
+    "currentSourceSha256":"3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e",
+    "currentCallIds":["6e872b93785f20224da7"],
+    "method":"buildMachineConfig",
+    "originalAndCurrentAstTextSha256":"faa52dbbf7e6a0f6ce41709247eb85b465272d9080a89852ffcdc31e2c53aca6",
+    "semanticEvidence":"This one built-in Buffer conversion encodes synthetic/project bytes. It is not storage persistence. Its provider upload, environment, source ownership and all execution obligations are retained separately. No validator was changed."
+  }
+}

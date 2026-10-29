@@ -1,0 +1,498 @@
+{
+  "scope": "ONE_SUPABASE_TRANSPORT_GUARD_AND_EXACT_EXISTING_SOURCE_CONTINUATION_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+  "resolvedCandidateIds": [
+    "15dcdf4bce3cfa3abf94"
+  ],
+  "unpromoted": [
+    "807c2948cdfa16e19b84",
+    "5baa649b7c2c9b6b6f30",
+    "7b6e1f490ce974fc3971",
+    "90eeada0337da120131f",
+    "99ec2dc4769b5eced6a5"
+  ],
+  "remaps": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "e4d85b225c1b15ed81a5",
+      "afterId": "98eff4c73564a22cc1f0",
+      "enclosing": "runBuildPipeline",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "sameBlock": true,
+      "sameFunction": false
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "86c1d25d68f4d6dc4446",
+      "afterId": "08f0ea46f9ffcabdaff0",
+      "enclosing": "runBuildPipeline",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "sameBlock": true,
+      "sameFunction": false
+    },
+    {
+      "path": "backend/src/security/egress/dataClassification.ts",
+      "beforeId": "135997e375f52a030d46",
+      "afterId": "64d0c6fa8b1c602f8c68",
+      "enclosing": "containsHeldCredential",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "ddf1dd4812a3afc8ff42b649cc1674a6f7d24f942d74514d1f1b793e7b2d529f",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "beforeId": "76db5ae741f58e8ad98b",
+      "afterId": "c411916d520cbe22dc2d",
+      "enclosing": "userSupabaseMemoryReady",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "c2401d7505bba45f092b1f6ef04e78641ba29ad0a4eae48850aa1ba56e2c0578",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "3d61f3f5ae6402c20b58",
+      "afterId": "3d61f3f5ae6402c20b58",
+      "enclosing": "decryptApiKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "280b341103edcc90f004e60aca0567c43527b5a98e740692c61de9d7b404fa56",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "64f0d9db49a13b562831",
+      "afterId": "64f0d9db49a13b562831",
+      "enclosing": "decryptApiKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "a5fba515e01c7ccb101f1d7090d7525724fca49a7959056fd66f0d5653f91fb7",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "8784feaf266f3ae5d72e",
+      "afterId": "8784feaf266f3ae5d72e",
+      "enclosing": "saveUserProviderKey",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "b101c0c287c875bae159",
+      "afterId": "b101c0c287c875bae159",
+      "enclosing": "loadKeyFromStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "1c2765565427d7a39f41",
+      "afterId": "1c2765565427d7a39f41",
+      "enclosing": "saveUserProviderKey",
+      "kind": "RPC_CANDIDATE",
+      "callSha256": "de1e045c49c310ca7277b611b67a5ebbf0ff8a6f2b327872aa0d00e288c9288f",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "c135db5a5ea7536cfe6f",
+      "afterId": "c135db5a5ea7536cfe6f",
+      "enclosing": "prepareUserProviderKeyWrite",
+      "kind": "RPC_CANDIDATE",
+      "callSha256": "6152bdc4876391e983d27983caedbf0310ef143cae2ce70f8fd08d0d3fa659b0",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "bfd902ca64f5f7780a21",
+      "afterId": "bfd902ca64f5f7780a21",
+      "enclosing": "prepareUserProviderKeyWrite",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "726ceac5ed6ed44f0821",
+      "afterId": "726ceac5ed6ed44f0821",
+      "enclosing": "revokeProviderRow",
+      "kind": "RPC_CANDIDATE",
+      "callSha256": "ef6e25fd3ade4193a9e1f2a5e767d5705be00527b73f953059f8ba70f72b7122",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "37cfa6ca45abf19a23eb",
+      "afterId": "37cfa6ca45abf19a23eb",
+      "enclosing": "saveUserProviderKey",
+      "kind": "RPC_CANDIDATE",
+      "callSha256": "c1c2f5b1feebfc5a6c5cd908d842788b56d649a32bece97f3e4a438e9514b4a5",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "fe37d49899df3732b5cc",
+      "afterId": "fe37d49899df3732b5cc",
+      "enclosing": "listCustomRowsForRevocation",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "ef2d01aaa4ae1572ad53",
+      "afterId": "ef2d01aaa4ae1572ad53",
+      "enclosing": "listCustomRowsForRevocation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "b94e72286c62046ffefd657e13cf7eacad44fdae14e858a6599a365160898e73",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "21bfc5f4b895f0031a37",
+      "afterId": "91c17cc8f6bff705b598",
+      "enclosing": "connectUserSupabase",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "feb5a3e74d32a7765073ba9bed140aff89727ab2135feaa492e610610784f90d",
+      "sameBlock": true,
+      "sameFunction": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "b8a2f76b780dc05a1342",
+      "afterId": "b8a2f76b780dc05a1342",
+      "enclosing": "snapshotSupabaseRows",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "bf70a476decc73712608",
+      "afterId": "bf70a476decc73712608",
+      "enclosing": "snapshotSupabaseRows",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "a1fdd17b3ec1147a0bc3e6d245a27ae62e3970a768356688434d26535a9c7e25",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "fc6a606bde6698305460",
+      "afterId": "fc6a606bde6698305460",
+      "enclosing": "snapshotSupabaseRows",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "e9ecb899da99ce8e0edb37681c43ec4502215e3ad669b1afdb07b9cd9ba20901",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "a48ccd229f5da7688e01",
+      "afterId": "a48ccd229f5da7688e01",
+      "enclosing": "legacyJwtMatches",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "7b6b803acaec1bdcac992791883cb9fc7e75155ecbae1608196512fba26958e1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "ff2f67e37627c078ddb6",
+      "afterId": "1efd8ec34ba641c03034",
+      "enclosing": "saveSupabaseBundle",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "feb5a3e74d32a7765073ba9bed140aff89727ab2135feaa492e610610784f90d",
+      "sameBlock": true,
+      "sameFunction": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "dda425f65c86b04927bd",
+      "afterId": "d68b6df592d887684c6f",
+      "enclosing": "saveSupabaseBundle",
+      "kind": "RPC_CANDIDATE",
+      "callSha256": "e39718a863e75ab96cda1c3eb9f1eb1a29fbb09db40be3a53a94a77c483de204",
+      "sameBlock": false,
+      "sameFunction": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "00a5b7095a4b9bb8d860",
+      "afterId": "d2968f7d0b0673e4e552",
+      "enclosing": "saveSupabaseBundle",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": false,
+      "sameFunction": false
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "feecde5ebb7ae5f4ad78",
+      "afterId": "feecde5ebb7ae5f4ad78",
+      "enclosing": "saveKeyToStorage",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "5e37205582073bfc30c9",
+      "afterId": "5e37205582073bfc30c9",
+      "enclosing": "saveKeyToStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "619e6216a5562cf8f6e6cfe98d82abe76a318cfefef8b61deb2308724970a4e2",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "018c071575ceb3f8516a",
+      "afterId": "018c071575ceb3f8516a",
+      "enclosing": "loadKeyFromStorage",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "c0cad7450906cef3fce8",
+      "afterId": "c0cad7450906cef3fce8",
+      "enclosing": "loadKeyFromStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "619e6216a5562cf8f6e6cfe98d82abe76a318cfefef8b61deb2308724970a4e2",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "125d1fa1b446def91170",
+      "afterId": "125d1fa1b446def91170",
+      "enclosing": "listKeysFromStorage",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "56f1365c1095ea75af85",
+      "afterId": "56f1365c1095ea75af85",
+      "enclosing": "listKeysFromStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "b94e72286c62046ffefd657e13cf7eacad44fdae14e858a6599a365160898e73",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "5f84595697b6399ed442",
+      "afterId": "5f84595697b6399ed442",
+      "enclosing": "listUserProviderKeys",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "30d93bb175651c6091b1",
+      "afterId": "30d93bb175651c6091b1",
+      "enclosing": "listUserProviderKeys",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "6021c31eedb4e0085d2b",
+      "afterId": "6021c31eedb4e0085d2b",
+      "enclosing": "deleteUserProviderKey",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "c36354753e5d659f1133",
+      "afterId": "c36354753e5d659f1133",
+      "enclosing": "deleteUserProviderKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "36190833aa1b3b96e8ee",
+      "afterId": "36190833aa1b3b96e8ee",
+      "enclosing": "revokeProviderRow",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "cac7d32579dae1ccf84c",
+      "afterId": "cac7d32579dae1ccf84c",
+      "enclosing": "revokeProviderRow",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "b94e72286c62046ffefd657e13cf7eacad44fdae14e858a6599a365160898e73",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "a497ca44a05b78d07e6c",
+      "afterId": "a497ca44a05b78d07e6c",
+      "enclosing": "getUserProviderKey",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "977606a7b1f57d55adb2",
+      "afterId": "977606a7b1f57d55adb2",
+      "enclosing": "getUserProviderKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "09371b515df625b7c63bf6b86cd14fa6926d089b6420ba5bfea15d668b22ab63",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "4c3d52cdd8d4da245c3a",
+      "afterId": "4c3d52cdd8d4da245c3a",
+      "enclosing": "getUserProviderKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "fa50fc7afb1cc2af0bfe",
+      "afterId": "fa50fc7afb1cc2af0bfe",
+      "enclosing": "resolveProviderEnvForDeploy",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "aa227a13e3f851a147cb",
+      "afterId": "aa227a13e3f851a147cb",
+      "enclosing": "resolveProviderEnvForDeploy",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "1f040da6c68c16cd33e2",
+      "afterId": "1f040da6c68c16cd33e2",
+      "enclosing": "openCanonicalProviderRow",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "71fea689c69941283b73e3922b1a8f5493e65c599b83a7965ff263d6f7983ca2",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "c0b89211921517abfb82",
+      "afterId": "c0b89211921517abfb82",
+      "enclosing": "openCanonicalProviderRow",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "6a42e1dbe625c387daee",
+      "afterId": "6a42e1dbe625c387daee",
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "PRIVILEGED_FACTORY",
+      "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "f7171c690025f6a4bdde",
+      "afterId": "f7171c690025f6a4bdde",
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "88c53c3d219aa201d578",
+      "afterId": "88c53c3d219aa201d578",
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "RPC_CANDIDATE",
+      "callSha256": "5053a5dd15a817d8f5cecf377c6e67d4dbfcdb5c059102ab3a2768ad6a2affa2",
+      "sameBlock": true,
+      "sameFunction": true
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeId": "dc1960ee19b048e0649c",
+      "afterId": "dc1960ee19b048e0649c",
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3",
+      "sameBlock": true,
+      "sameFunction": true
+    }
+  ],
+  "unchangedEgressFunctions": [
+    {
+      "id": "96fbfea42a399a233486",
+      "path": "backend/src/routes/supabaseOAuth.ts",
+      "unchangedFunctionSha256": "a4b4d0c385306c3fd0f486cda2e9f9c9026e222b2efa98601b0d9f8dbb9f1530"
+    },
+    {
+      "id": "c7711580844b520345cf",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "unchangedFunctionSha256": "5cdfed253721c830ddb9e094dd6ac68d2db00652414d81ee7f83292491fe71a0"
+    },
+    {
+      "id": "c09bb8607fa4d00f23b7",
+      "path": "frontend/src/lib/api.ts",
+      "unchangedFunctionSha256": "8d1099f77da5112591b4c74885b37ef8f10bb9f62aa720f0e572bc764c3549e5"
+    }
+  ],
+  "saveBundleDenyOnlyGuard": "if (/^sb_secret_/i.test(values.anonKey) || values.serviceRoleKey && /^sb_publishable_/i.test(values.serviceRoleKey)) throw new Error('Supabase public and server key roles do not match.');",
+  "strictRulesChanged": false,
+  "frozenCriteriaChanged": false,
+  "productionChanged": false,
+  "phase4Accepted": false
+}

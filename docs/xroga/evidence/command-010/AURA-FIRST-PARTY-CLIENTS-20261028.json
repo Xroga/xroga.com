@@ -1,0 +1,110 @@
+{
+  "scope": "TWO_MANUAL_INPUT_FIRST_PARTY_BROWSER_CALLERS_ONLY_SERVER_GROQ_CALLER805931ff0dc022677403_REMAINS_PENDING",
+  "candidates": [
+    {
+      "id": "fe9ce5d32d8c52cdd3c3",
+      "file": "frontend/src/components/showcase/products/AiSaas.tsx",
+      "line": 63,
+      "entryPoint": "AiSaas",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "375e51592abe471268493d5603b614d3ba9496ca27334282cad799caad5a998f",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "52851686fc818e0e4c5f",
+      "file": "frontend/src/components/showcase/products/AiSaas.tsx",
+      "line": 109,
+      "entryPoint": "sendMessage",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b0b75fd6a0866cb181c0369f58da453bbc3c8d733ce577e59c4a27cb935bd590",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "defects": [
+    "Real307 redirected a manual private conversation to a second server",
+    "Health could trust redirect metadata",
+    "Unbounded chat receipt accepted as successful output"
+  ],
+  "correction": "Keep both existing literal same-origin Next endpoints and component features. Explicit same-origin mode/credentials and redirect:error, health5s/chat60s,4KiB health/error receipts,1MiB streamed output,210000byte request ceiling matching existing server contract, existing last24messages/8000characters contract, cancel/release readers. No arbitrary URL, credential body, userId authorization, file source or account grant added.",
+  "provenance": "Actual component owns only ephemeral local React conversations containing manual user inputs, fixed prompt cards and untrusted returned text. It has no vault, repository, upload, project file, Supabase, connected-account or shared-user cache source. Literal same-origin health and chat ingress only. Text rendering does not create tool or action authority. This is not certification of the separate server provider/key/accounting boundary.",
+  "verification": {
+    "tests": 9,
+    "pass": 9,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Actual transpiled component handlers with controlled React hooks and real local HTTP/redirect/body streams. No DOM, browser login, real model or server billing acceptance claim.",
+    "positive": "Authorized first-party streamed response and ordinary503thenlater-success work. Existing model/persona parsing tests retained.",
+    "negative": "Real redirect outside requests remain zero, private manual body is not forwarded, oversized receipts cannot publish ready/success."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "id": "21236807-c943-4673-beae-9554836e1478",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/aura-clients-red-20261028.log",
+      "rawArchive": "docs/xroga/evidence/command-010/aura-clients-red-20261028.log.original.gz",
+      "originalSha256": "37df9a3ff9d5301fad9575f6e2c7da8ca1d941378f1a8639e96128ee9df6482a",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 12338
+      }
+    },
+    {
+      "name": "green",
+      "id": "7d0823c8-b391-44d5-9ad3-4fd9b10d677f",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/aura-clients-green-20261028.log",
+      "originalSha256": "b39a47f72b834c4257cfd41a27c0088e127dd222aad2c3b450977c8166ff7c12",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 21272
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "frontend/src/components/showcase/products/AiSaas.tsx",
+      "sha256": "392250f343b2ecf065b87470eda60831a1fddb2532f2b60b0a004412eddc8a39"
+    },
+    {
+      "path": "frontend/src/lib/auraFirstParty.security.test.ts",
+      "sha256": "2bd3f103c7c5f6e3ebcf2651ce2870dfcabecbc955ac08c0e40f10d25a87136a"
+    }
+  ],
+  "productionChanged": false,
+  "modelRequests": 0,
+  "spending": 0,
+  "ciPortabilityContinuation": {
+    "scope": "TEST_PORTABILITY_AND_EXISTING_LINT_ONLY",
+    "verification": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/verification.json",
+    "job": "61de11b2-18f8-405c-8008-01056ee7dea6",
+    "status": "passed",
+    "exitCode": 0,
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "log": "docs/xroga/evidence/command-010/ci-portability-focused-20261028.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 582216
+    },
+    "productionChanged": false,
+    "strictCountsChanged": false
+  }
+}

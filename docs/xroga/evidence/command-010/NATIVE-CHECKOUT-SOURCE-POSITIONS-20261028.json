@@ -1,0 +1,549 @@
+{
+  "scope": "EXACT_EXISTING_PERSISTENCE_EXPRESSIONS_NOT_NEW_ACCEPTANCE",
+  "parent": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
+  "remaps": [
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "5410b5e5969f852f3712",
+      "currentId": "b6e81f3387be6297caea",
+      "unchangedExpressionSha256": "75c4b7dfa347fe49877fc96f186c16e6aefd62ba84f1652a14308e71c6b5d377",
+      "unchangedStatementSha256": "baa0865c5402aabcaa1850f96a425720b6b156016cf6ccecac8af1447946912e",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "5c45cbefef78c4a5a862",
+      "currentId": "92f4afbb05381811479f",
+      "unchangedExpressionSha256": "1b0d148ac917f75e1aff0ff0b9f0cc4cfb5cfbe4b432032071848be33530efc4",
+      "unchangedStatementSha256": "31ea759567bf8cfff2a3a106f28c3dc98b251b8384fe815e2ee0f31c7ee31cbb",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "4e302f5858ffdf862b1d",
+      "currentId": "48003506a113ca3e82f5",
+      "unchangedExpressionSha256": "00ad0f5308e264b120afd0e711854f0d1ab8031fd3b79dac79abd713ae6c99db",
+      "unchangedStatementSha256": "97d42726b0815bc8f6af881587afa964a2817c3851ead2878e0f48349e4e28cd",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "50c4ab4ab8bd4ba729e2",
+      "currentId": "9c05fbb420fc3852ecce",
+      "unchangedExpressionSha256": "6b4c211893e4bfb4da3dabb5f41d9032a28b2baea7f3b20c7d0050b289d2e525",
+      "unchangedStatementSha256": "614874e777fbbc0c53af62ad707f516ab82a3286f17484cfe3b47809143c25d3",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "8c782d200dc58f842d59",
+      "currentId": "beb68ff3e374a233ba30",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "614874e777fbbc0c53af62ad707f516ab82a3286f17484cfe3b47809143c25d3",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "b6c14a26860ccb4fc83c",
+      "currentId": "2bebb8cf6e89346599f5",
+      "unchangedExpressionSha256": "9fd4cb5da0f666eb159036f0afde2853f64817e536803b4a194fbf7f2c4f974e",
+      "unchangedStatementSha256": "acd2cbaed7863c8f6ceec002731fa52d9e54aaa42986c4e864689e133360fcd0",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "4b317f364d8478d92af2",
+      "currentId": "bb6bfccce774546507d9",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "acd2cbaed7863c8f6ceec002731fa52d9e54aaa42986c4e864689e133360fcd0",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "dfe3f40f75bc61dc5266",
+      "currentId": "0aea67fa3389bf24ff93",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "4b0983f3e6e937915b3ae6c43245a1cfc8c1faae8de2d8f1e88f1f687047a872",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "4a8d0b5bcd7d8c80f473",
+      "currentId": "6cc61f5a54876d646f16",
+      "unchangedExpressionSha256": "d5117739ab23e77c1d08c2ca97f304da345c54e41330c0bb15d81b62f60a2550",
+      "unchangedStatementSha256": "aee3d7771f0aff288d99342ae67eee9d3dc463dc5aa376465e407666b3c5bebb",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "9bab30418efe8bae3267",
+      "currentId": "89734970287eb563062e",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba",
+      "unchangedStatementSha256": "39ba654cd46e218578ee1b365e6902f9e567907096149db622600dc3cfb36fe7",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "f28ef8c9b129fc1566c5",
+      "currentId": "a99060c68cb22b51ff6f",
+      "unchangedExpressionSha256": "b8fb8970cc56dda808c25e9bf494458e6c9eaf048ff959efaa583053bff35891",
+      "unchangedStatementSha256": "ca6a8d772e697f1509a5eb2a8f81f793b0d42bdf74e4899a1c94739b144d99e3",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "5a355854247aa7377e09",
+      "currentId": "879ac3e81020bce4bbb5",
+      "unchangedExpressionSha256": "82f78d6b549ec4fbf5dd74d653ae7512f96d35413b36722734b4b0adc6ab3c12",
+      "unchangedStatementSha256": "54c7011bc143d14400a6df803b90fa836f3526f1514d639784dde0b87228f92f",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "47490554a63116ae204d",
+      "currentId": "439fccf866dedefa7f2b",
+      "unchangedExpressionSha256": "9fd4cb5da0f666eb159036f0afde2853f64817e536803b4a194fbf7f2c4f974e",
+      "unchangedStatementSha256": "e9ad862a0fd70e1e848e9dcb021faa28bb75870ab47daa75667ed3fe73fe42d5",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "7488715f1171dede4f7e",
+      "currentId": "48550b393b6dfc1fa8f0",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "e9ad862a0fd70e1e848e9dcb021faa28bb75870ab47daa75667ed3fe73fe42d5",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "7962d478dcc2f8bf0e4e",
+      "currentId": "dfe8cf00d3d6957a9d69",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "ad6aeebadcdb653c2df88f8d77021cc75503a4848360987422b718c26c2fb874",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "faa3dacc7aacebf8aa27",
+      "currentId": "f5d3eb081953407d31a7",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba",
+      "unchangedStatementSha256": "c6cd4e2cf687f81a0a2a3e809bf9f39b67b3ed660926c92d6e4d860e16dc6196",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "c4bf0d005c2d16bbf122",
+      "currentId": "803b86f865c8ed7ab2ca",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba",
+      "unchangedStatementSha256": "3daf1ab69a797c75fb8cb39de2edffe3c16b67354b6277670a7a523b8b9efc0f",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "99ba24aefa7f2c2f6de9",
+      "currentId": "99ba24aefa7f2c2f6de9",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "3c64dc5d4a7058fb12f8",
+      "currentId": "3c64dc5d4a7058fb12f8",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "f5f18944ba6ffc65c2727114d51ba3f699571e9c01584b83e2b78687c4138314",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "fc3b3f4bab00e81fbc31",
+      "currentId": "fc3b3f4bab00e81fbc31",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "94f936dfc30fe898eebe",
+      "currentId": "94f936dfc30fe898eebe",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "f26ea0298e6bee48c7b6d8fde76c9a71c93c67a6476697038155147ef6d52932",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "1f375890c653535bb84b",
+      "currentId": "1f375890c653535bb84b",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "9614e2de1a77eacffe05",
+      "currentId": "9614e2de1a77eacffe05",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "27430dbcc3ed6e18001cc82b08bf238f7df43c28383bbdd7038b56d7ce35c684",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "b3a2b5af5ead58408dba",
+      "currentId": "b3a2b5af5ead58408dba",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "1f7c11b7359e0958073e",
+      "currentId": "1f7c11b7359e0958073e",
+      "unchangedExpressionSha256": "988e013708f48a00bb175b2a25d570898ec344958fb63062058458924c467242",
+      "unchangedStatementSha256": "2aa55f92023b52d889eca02cfaa82fd42573e0896de9ba157682e4524ffa685f",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "0f9bdee0b411ef2f246d",
+      "currentId": "a992f061331cff4e8d50",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "adbc1ef16d0ec277edb7",
+      "currentId": "7ddf1ddcae5c5661a52a",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "a8bfa458f22eb41d91a9f5028f4cbddb3368e97e9bbf07bd3850a1719cd47d2b",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "c2ce222ac0cc6f913871",
+      "currentId": "b01c22a391468e45cbe8",
+      "unchangedExpressionSha256": "ebbce1f573b2eb1b4b187c93c0785b81ab7434f8eed1648e0b235d89b1949a4a",
+      "unchangedStatementSha256": "369908544850a7569d67d1ab0c2f85815260cb05913d86e230f477c1f284ae88",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "8f3d42e8e45d7fb2252a",
+      "currentId": "8f3d42e8e45d7fb2252a",
+      "unchangedExpressionSha256": "fec666d0ac3aee419c157c04e8bff5619223014a28b4cad8e63da1828dc0f7fe",
+      "unchangedStatementSha256": "20c9d6690c5116123a9d8fd0696e7823a1283ffa56d19ab3878edadba8a11f07",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "16c8e03100d592b72118",
+      "currentId": "16c8e03100d592b72118",
+      "unchangedExpressionSha256": "317a434a54760d5be9e1d4eb967a1a9c5c924aec741cde60f421fad6e500dfbb",
+      "unchangedStatementSha256": "cee9bedfd07947ded5ed7de4b6826cc5768cb705c36bdbe779b00ba5e73d541a",
+      "disposition": "REVIEWED_GAP"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "402d88eda8e20ef83be0",
+      "currentId": "402d88eda8e20ef83be0",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "cee9bedfd07947ded5ed7de4b6826cc5768cb705c36bdbe779b00ba5e73d541a",
+      "disposition": "REVIEWED_GAP"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "d8dd240dbf1cb3f97b7d",
+      "currentId": "ab85b8388bbce761729d",
+      "unchangedExpressionSha256": "b7652f69e691aa2caa93da8f0619657384327c4e0721cf0cea27578d46efb693",
+      "unchangedStatementSha256": "0dbd6e360c5679e773ae1b4640625cf6d77c052815ef3a5d5fd949d490d57d29",
+      "disposition": "REVIEWED_GAP"
+    }
+  ],
+  "egressContinuations": [
+    {
+      "id": "a7a8d74128349a90e3e8",
+      "path": "backend/src/services/BillingService.ts",
+      "unchangedCallSha256": "8efe1e372087f8e5a178bd708db951fc54d12e1fa7f15d919c0d4bb427e784f2",
+      "priorSourceSha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281",
+      "currentSourceSha256": "5d620ccd6aa43129cbfc1d6b1edaecdec8ffd075b78ce9eab2ed2d0be446d218",
+      "scope": "Existing fixed readback/plan-read or first-party transport only. Native checkout has its own independent proof."
+    },
+    {
+      "id": "9982cf8a2b469fc90070",
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "unchangedCallSha256": "e23aa135cf3f3388831c04f5c291dcdc32248441739edffdda2efe78999fbce9",
+      "priorSourceSha256": "599c4816881fba840f10cdce5a299cf62d5f495f9ea7ad75bfd67f7a22d60372",
+      "currentSourceSha256": "d62a773f55b916320a9fc376d0c3057d0772a88bc27cf41d30ee0b67773f2b97",
+      "scope": "Existing fixed readback/plan-read or first-party transport only. Native checkout has its own independent proof."
+    },
+    {
+      "id": "c09bb8607fa4d00f23b7",
+      "path": "frontend/src/lib/api.ts",
+      "unchangedCallSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+      "priorSourceSha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d",
+      "currentSourceSha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e",
+      "scope": "Existing fixed readback/plan-read or first-party transport only. Native checkout has its own independent proof."
+    }
+  ],
+  "frozenCriteriaChanged": false,
+  "strictAuditorChanged": false,
+  "phase4Accepted": false,
+  "beforeFinalTerminalDenialRemaps": [
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "5410b5e5969f852f3712",
+      "currentId": "d4246acc30a951e3263b",
+      "unchangedExpressionSha256": "75c4b7dfa347fe49877fc96f186c16e6aefd62ba84f1652a14308e71c6b5d377",
+      "unchangedStatementSha256": "baa0865c5402aabcaa1850f96a425720b6b156016cf6ccecac8af1447946912e",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "5c45cbefef78c4a5a862",
+      "currentId": "ecd1fb0922f28623e75f",
+      "unchangedExpressionSha256": "1b0d148ac917f75e1aff0ff0b9f0cc4cfb5cfbe4b432032071848be33530efc4",
+      "unchangedStatementSha256": "31ea759567bf8cfff2a3a106f28c3dc98b251b8384fe815e2ee0f31c7ee31cbb",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "4e302f5858ffdf862b1d",
+      "currentId": "c94f159e91710543dc07",
+      "unchangedExpressionSha256": "00ad0f5308e264b120afd0e711854f0d1ab8031fd3b79dac79abd713ae6c99db",
+      "unchangedStatementSha256": "97d42726b0815bc8f6af881587afa964a2817c3851ead2878e0f48349e4e28cd",
+      "disposition": "NOT_PERSISTENCE"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "50c4ab4ab8bd4ba729e2",
+      "currentId": "0830a4f62e0f96abacee",
+      "unchangedExpressionSha256": "6b4c211893e4bfb4da3dabb5f41d9032a28b2baea7f3b20c7d0050b289d2e525",
+      "unchangedStatementSha256": "614874e777fbbc0c53af62ad707f516ab82a3286f17484cfe3b47809143c25d3",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "8c782d200dc58f842d59",
+      "currentId": "80b12b108ee3e612e6bc",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "614874e777fbbc0c53af62ad707f516ab82a3286f17484cfe3b47809143c25d3",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "b6c14a26860ccb4fc83c",
+      "currentId": "4cbd2b2e86115b3467ff",
+      "unchangedExpressionSha256": "9fd4cb5da0f666eb159036f0afde2853f64817e536803b4a194fbf7f2c4f974e",
+      "unchangedStatementSha256": "acd2cbaed7863c8f6ceec002731fa52d9e54aaa42986c4e864689e133360fcd0",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "4b317f364d8478d92af2",
+      "currentId": "90e0c632fed639d08d48",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "acd2cbaed7863c8f6ceec002731fa52d9e54aaa42986c4e864689e133360fcd0",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "dfe3f40f75bc61dc5266",
+      "currentId": "49146bf498006351f8f6",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "4b0983f3e6e937915b3ae6c43245a1cfc8c1faae8de2d8f1e88f1f687047a872",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "4a8d0b5bcd7d8c80f473",
+      "currentId": "2a52fe11633ee4876ee1",
+      "unchangedExpressionSha256": "d5117739ab23e77c1d08c2ca97f304da345c54e41330c0bb15d81b62f60a2550",
+      "unchangedStatementSha256": "aee3d7771f0aff288d99342ae67eee9d3dc463dc5aa376465e407666b3c5bebb",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "9bab30418efe8bae3267",
+      "currentId": "fcdfc8c4f4cba1353515",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba",
+      "unchangedStatementSha256": "39ba654cd46e218578ee1b365e6902f9e567907096149db622600dc3cfb36fe7",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "f28ef8c9b129fc1566c5",
+      "currentId": "38e04d973e5ac1c0b81b",
+      "unchangedExpressionSha256": "b8fb8970cc56dda808c25e9bf494458e6c9eaf048ff959efaa583053bff35891",
+      "unchangedStatementSha256": "ca6a8d772e697f1509a5eb2a8f81f793b0d42bdf74e4899a1c94739b144d99e3",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "5a355854247aa7377e09",
+      "currentId": "01c717d0ccdbbac93e31",
+      "unchangedExpressionSha256": "82f78d6b549ec4fbf5dd74d653ae7512f96d35413b36722734b4b0adc6ab3c12",
+      "unchangedStatementSha256": "54c7011bc143d14400a6df803b90fa836f3526f1514d639784dde0b87228f92f",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "47490554a63116ae204d",
+      "currentId": "4de6c7b0eee9b3c3f566",
+      "unchangedExpressionSha256": "9fd4cb5da0f666eb159036f0afde2853f64817e536803b4a194fbf7f2c4f974e",
+      "unchangedStatementSha256": "e9ad862a0fd70e1e848e9dcb021faa28bb75870ab47daa75667ed3fe73fe42d5",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "7488715f1171dede4f7e",
+      "currentId": "5f40cfe98bd35de54069",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "e9ad862a0fd70e1e848e9dcb021faa28bb75870ab47daa75667ed3fe73fe42d5",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "7962d478dcc2f8bf0e4e",
+      "currentId": "d1a5d95f28c28db69a1b",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "ad6aeebadcdb653c2df88f8d77021cc75503a4848360987422b718c26c2fb874",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "faa3dacc7aacebf8aa27",
+      "currentId": "3a73039b16e866ff6a72",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba",
+      "unchangedStatementSha256": "c6cd4e2cf687f81a0a2a3e809bf9f39b67b3ed660926c92d6e4d860e16dc6196",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "previousId": "c4bf0d005c2d16bbf122",
+      "currentId": "dbb279e3dfaa059dd635",
+      "unchangedExpressionSha256": "2c7f583c086a4bc0828372f29dc283b5ac0e0ae87343a1d944571caf5217f6ba",
+      "unchangedStatementSha256": "3daf1ab69a797c75fb8cb39de2edffe3c16b67354b6277670a7a523b8b9efc0f",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "99ba24aefa7f2c2f6de9",
+      "currentId": "99ba24aefa7f2c2f6de9",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "3c64dc5d4a7058fb12f8",
+      "currentId": "3c64dc5d4a7058fb12f8",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "f5f18944ba6ffc65c2727114d51ba3f699571e9c01584b83e2b78687c4138314",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "fc3b3f4bab00e81fbc31",
+      "currentId": "fc3b3f4bab00e81fbc31",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "94f936dfc30fe898eebe",
+      "currentId": "94f936dfc30fe898eebe",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "f26ea0298e6bee48c7b6d8fde76c9a71c93c67a6476697038155147ef6d52932",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "1f375890c653535bb84b",
+      "currentId": "1f375890c653535bb84b",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "9614e2de1a77eacffe05",
+      "currentId": "9614e2de1a77eacffe05",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "27430dbcc3ed6e18001cc82b08bf238f7df43c28383bbdd7038b56d7ce35c684",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "b3a2b5af5ead58408dba",
+      "currentId": "b3a2b5af5ead58408dba",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "1f7c11b7359e0958073e",
+      "currentId": "1f7c11b7359e0958073e",
+      "unchangedExpressionSha256": "988e013708f48a00bb175b2a25d570898ec344958fb63062058458924c467242",
+      "unchangedStatementSha256": "2aa55f92023b52d889eca02cfaa82fd42573e0896de9ba157682e4524ffa685f",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "0f9bdee0b411ef2f246d",
+      "currentId": "a992f061331cff4e8d50",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "0ee3ed99ed2da89e3b605ef15e91b2a38338f68db5f9c48d932f07951d01e3fd",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "adbc1ef16d0ec277edb7",
+      "currentId": "7ddf1ddcae5c5661a52a",
+      "unchangedExpressionSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40",
+      "unchangedStatementSha256": "a8bfa458f22eb41d91a9f5028f4cbddb3368e97e9bbf07bd3850a1719cd47d2b",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "c2ce222ac0cc6f913871",
+      "currentId": "b01c22a391468e45cbe8",
+      "unchangedExpressionSha256": "ebbce1f573b2eb1b4b187c93c0785b81ab7434f8eed1648e0b235d89b1949a4a",
+      "unchangedStatementSha256": "369908544850a7569d67d1ab0c2f85815260cb05913d86e230f477c1f284ae88",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "8f3d42e8e45d7fb2252a",
+      "currentId": "8f3d42e8e45d7fb2252a",
+      "unchangedExpressionSha256": "fec666d0ac3aee419c157c04e8bff5619223014a28b4cad8e63da1828dc0f7fe",
+      "unchangedStatementSha256": "20c9d6690c5116123a9d8fd0696e7823a1283ffa56d19ab3878edadba8a11f07",
+      "disposition": "SCOPED_BOUNDARY"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "16c8e03100d592b72118",
+      "currentId": "16c8e03100d592b72118",
+      "unchangedExpressionSha256": "317a434a54760d5be9e1d4eb967a1a9c5c924aec741cde60f421fad6e500dfbb",
+      "unchangedStatementSha256": "cee9bedfd07947ded5ed7de4b6826cc5768cb705c36bdbe779b00ba5e73d541a",
+      "disposition": "REVIEWED_GAP"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "402d88eda8e20ef83be0",
+      "currentId": "402d88eda8e20ef83be0",
+      "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1",
+      "unchangedStatementSha256": "cee9bedfd07947ded5ed7de4b6826cc5768cb705c36bdbe779b00ba5e73d541a",
+      "disposition": "REVIEWED_GAP"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "previousId": "d8dd240dbf1cb3f97b7d",
+      "currentId": "ab85b8388bbce761729d",
+      "unchangedExpressionSha256": "b7652f69e691aa2caa93da8f0619657384327c4e0721cf0cea27578d46efb693",
+      "unchangedStatementSha256": "0dbd6e360c5679e773ae1b4640625cf6d77c052815ef3a5d5fd949d490d57d29",
+      "disposition": "REVIEWED_GAP"
+    }
+  ]
+}

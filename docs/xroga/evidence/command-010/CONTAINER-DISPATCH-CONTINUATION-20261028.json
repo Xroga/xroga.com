@@ -1,0 +1,48 @@
+{
+  "scope": "PARTIAL_CORRECTION_LOCAL_CONTAINER_CANDIDATE_STILL_PENDING",
+  "candidate": "151aa103d929fb10c020",
+  "defects": "Image could become Docker options, request environment bypassed existing secret-name/value checks, preview/restricted policy granted bridge despite no enforcement.",
+  "correction": "Validate image as one reference, reuse existing secret environment validation, deny all unverified container network modes, capture caller data before probe, check cancellation before/after probe. Existing approved Google provider selection and execution binding stay unchanged.",
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "b558b08c-a4b2-481c-8567-6b7efc7c34c6",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/container-dispatch-red-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 556262
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "dfe4c193-2375-40cb-8732-03f374eb258f",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/container-dispatch-green-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 658471
+      }
+    }
+  ],
+  "verification": {
+    "tests": 28,
+    "failures": 0,
+    "skips": 0,
+    "scope": "Controlled TypeScript argument/admission/probe/provider-selection tests. No Docker container created."
+  },
+  "sourceBindings": [
+    {
+      "path": "backend/src/sandbox/sandboxProviders.ts",
+      "sha256": "248e7e65e0c6122171a33976b5d6d355d4937d0882064cf616eca33690b07b8a"
+    },
+    {
+      "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+      "sha256": "27154990fe157250519b4c24f50ffa4f116ac65345746ca5fb21972600a3419c"
+    }
+  ],
+  "remaining": "Verify admitted caller provenance and cancellation after Docker dispatch, including daemon container termination rather than only CLI termination. No caller closure or Google production change claimed.",
+  "spending": 0
+}

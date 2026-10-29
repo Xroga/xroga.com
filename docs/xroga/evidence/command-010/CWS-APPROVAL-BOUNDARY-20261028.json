@@ -1,0 +1,155 @@
+{
+  "scope": "EXACT_CWS_CALLER_PARTITIONS_ORIGINAL_ACTOR_PRIVATE_ARTIFACT_AND_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+  "parent": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+  "resolvedCandidateIds": [
+    "d9708e60456bb2d7e538"
+  ],
+  "path": "Original authenticated Publish/pipeline actor -> explicit manual Google connection or exact current owner-vault CWS account -> owned repository/project/private artifact -> authenticated provider exact-item readback -> existing durable business-action approval -> current claim and producer attestation -> re-read owned source/epoch/full credential metadata and current provider item access -> central egress and immutable audit -> one upload, verified upload receipt, one exact DEFAULT_PUBLISH -> verified submitted state and canonical durable receipt. Status remains read-only and separate.",
+  "defectsFixed": [
+    "Raw or fabricated owner claims and opaque ZIP bytes reached upload and publication without exact approval.",
+    "Manual credential validation acquired its write revision after provider I/O, allowing a concurrent disconnect to be overwritten.",
+    "Publisher/listing identifiers lacked authenticated exact-item access readback before source dispatch.",
+    "Provider transport lacked a finite operation/origin allowlist, bounded response, current actor/credential/claim lifetime and terminal authorization-denial handling."
+  ],
+  "callerPartitions": {
+    "manualConnection": "The actual authenticated /cws-credentials route validates the original actor and captures the existing provider-key CAS admission before Google validation. Explicit skip-validation retains CAS. Save only uses that captured admission. Synthetic real-route tests show revocation during validation prevents persistence.",
+    "oauth": "Existing original-context PKCE consumption and authorization epoch are preserved. Callback prepares write admission before the fixed code exchange and saves with that same admission and original context. Existing OAuth epoch/consume/revoke/vault-lease regressions pass.",
+    "status": "Original issued owner context only. Current full canonical credential row is pinned across refresh and exact fixed-item GET. Only known item state and matching name/item ID are returned. No raw-ID fallback or provider error text.",
+    "publication": "Opaque ZIP inputs are rejected. Reuse the original owned private source reference, inspect before compression and against both stored and newly derived credentials, then require exact canonical confirmation. Full unsigned plan attestation binds source, project, tenant, account, target, publish mode, connection revision, expiry and nonce. Real permit and currently executing durable claim are checked around waits. Failed/uncertain/denied dispatch cannot retry."
+  },
+  "controls": [
+    "Only the exact Google token POST, CWS upload/publish POST and status GET are allowed. No userinfo, alternate origin, encoded path, query, fragment or redirect. Twenty-second provider lifetime and64KiB response cap.",
+    "OAuth and store credentials remain in protected server boundaries, never confirmation arguments, model input, provider error logs or audit metadata. The exact OAuth provider is the only token-exchange recipient.",
+    "Upload and publish share one exact logical action grant. Upload acknowledgement must match publisher/item and SUCCEEDED before submission. Publish acknowledgement must match the same item and an accepted submission state. No fallback after401/403/redirect/authority/storage/audit denial.",
+    "The actual Workspace pipeline prepares two independent review links for GitHub and CWS. It reuses the private artifact and performs no automatic upload, submission, signing or installer action. CWS preparation failure preserves the separate GitHub approval.",
+    "No new store, key, identity, ledger, SQL, runtime provider or orchestration system. Existing owner-private storage, managed custody and durable business-action executor remain canonical."
+  ],
+  "protocolSources": [
+    "https://developer.chrome.com/docs/webstore/api/reference/rest/v2/media/upload",
+    "https://developer.chrome.com/docs/webstore/api/reference/rest/v2/publishers.items/publish",
+    "https://developer.chrome.com/docs/webstore/api/reference/rest/v2/publishers.items/fetchStatus",
+    "https://developer.chrome.com/docs/webstore/api/reference/rest/v2/UploadState",
+    "https://developer.chrome.com/docs/webstore/api/reference/rest/v2/ItemState"
+  ],
+  "evidence": {
+    "opaqueAndRawActorRed": {
+      "job": "05f04f8c-b016-4823-ab69-609af7656cbb",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/cws-opaque-owner-before-fix-20261028.log",
+      "sha256": "70605038a94a3645ab0095840a30a4b6c1d6a45d4f16dbe02e09a630e4b7531d",
+      "rawSha256": "70605038a94a3645ab0095840a30a4b6c1d6a45d4f16dbe02e09a630e4b7531d",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 196328
+      }
+    },
+    "manualWriteRaceRed": {
+      "job": "c70bb677-9ad5-4795-b460-932ad021003e",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/cws-manual-write-race-before-fix-20261028.log",
+      "sha256": "6ea25e58bb62c7394d41cf58806f8f1eed46b749d20e9d1e73488dfd7fd0071d",
+      "rawSha256": "a1ba5b840d5f4b78eb653672398622394d4617b86c718269ca016fd13d3eed26",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1274454
+      }
+    },
+    "accountAccessRed": {
+      "job": "e32c8401-f27d-4f26-a6f2-7e18f82db093",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/cws-account-access-before-fix-20261028.log",
+      "sha256": "ec139797069ae4dff11ba6f420787736ce3c67502a4e1c64b75b3c5449f0b9e5",
+      "rawSha256": "ec139797069ae4dff11ba6f420787736ce3c67502a4e1c64b75b3c5449f0b9e5",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1021183
+      }
+    },
+    "focused": {
+      "job": "ef2bbc62-e34e-47c0-a9af-592632fe62b3",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/cws-final-135tests-20261028.log",
+      "sha256": "0a940bdce6026c3da60f4b84bd2a08b0707d3ea92b62d137db31f56241c459b2",
+      "rawSha256": "0a940bdce6026c3da60f4b84bd2a08b0707d3ea92b62d137db31f56241c459b2",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1440046
+      }
+    },
+    "backendTypes": {
+      "job": "940748a4-bacf-4f59-be51-c39a4e3ca483",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/cws-backend-types-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322076
+      }
+    }
+  },
+  "tests": {
+    "total": 135,
+    "pass": 135,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Actual CWS service, canonical confirmation/claim/dispatch/finish, actual Express credential route and Supabase SDK protocol fixtures, actual pipeline block, unchanged OAuth epoch/consume/revoke/vault lease tests and both native GitHub publication regressions. Synthetic identities, credentials, source and HTTP responses only."
+  },
+  "previousReceiptTestChange": "All previous empty/null/foreign/pending/failed/OAuth/bad-publish/status/transport/resource-ID assertions remain covered through the actual durable executor and original actor. Unverified partial publish is now a failed durable action rather than successful executor completion. No frozen rule or security test skip was changed.",
+  "limitations": [
+    "No real Google store submission, customer credential read, cloud mutation, deployment or spending. Fixture evidence is not live vendor acceptance.",
+    "Google still decides store review and release. No listing creation, developer fee payment, review bypass or automatic retry is introduced.",
+    "Shared GitHub/Actions, Supabase provisioning, Expo, Composio and Parallel remain separate unresolved callers. All original12 Phase4 criteria and final exact-source release checks remain mandatory."
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "sha256": "3d013234b8f34b097c8eae06a5c349985f6bb313881bf4b6e2b225bb3382f4e1"
+    },
+    {
+      "path": "backend/src/services/publish/cwsAdmission.ts",
+      "sha256": "6a80d057c4e6421065848b10a6e88179da89bedf2ddc855c85cab81025b157ce"
+    },
+    {
+      "path": "backend/src/services/publish/cwsAdmission.security.test.ts",
+      "sha256": "f422718610e39e95e1ff66094a53a4a77177ee99c0f94f0d4d21ee6b38ff987d"
+    },
+    {
+      "path": "backend/src/services/publish/chromeWebStore.authority.test.ts",
+      "sha256": "6aeb3ec66a09216237a107718d256e342683b489813afdb73596c468a076c936"
+    },
+    {
+      "path": "backend/src/routes/publish.ts",
+      "sha256": "febe6da7bed4465f534f03fcf1a2fb2cc42f4ff872aaad11958b5be58627e704"
+    },
+    {
+      "path": "backend/src/routes/cwsCredentialAdmission.security.test.ts",
+      "sha256": "7e49743fa621d5fa79c4d3d321c51457d0e220283c22f5756818df093aae8cc2"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "e850ec974e1c4416e899dc6d090f2506caff4316105339ca299a692cf40d7c9b"
+    },
+    {
+      "path": "backend/src/ai/nativePublicationUi.test.ts",
+      "sha256": "6906e5de8f2d1490768d3d115a50e5b0db91d01d0f982834ed5b9549d0fbb864"
+    }
+  ],
+  "phase4Accepted": false,
+  "productionEffects": false,
+  "spending": 0
+}

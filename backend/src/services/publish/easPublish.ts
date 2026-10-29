@@ -1,58 +1,66 @@
 /**
  * EAS workflow dispatch for user-owned Expo projects.
- * Auto-links / creates Expo apps when possible.
- * Does not guarantee App Store / Play approval — only starts builds on the user's Expo account.
+ * Uses original actor and owned provider metadata for every operation.
+ * App creation and workflows require exact durable action confirmation.
  */
 
 import {
-  getUserProviderKey,
   prepareUserProviderKeyWrite,
   saveUserProviderKey,
 } from '../integrations/userProviderKeys.js';
-import { isGitHubConnected } from '../integrations/githubAuth.js';
 import type { ProjectFile } from '../integrations/githubDeploy.js';
+import {AuthorityError} from '../../security/authority/enforce.js';
+import {captureExpoAccess,beforeExpoRequest,readExpoResponse,verifyExpoProject,requireExpoAccess,validExpoId,type ExpoAccess,type ExpoQuery} from './expoAccess.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext}from'../../security/tenantContext.js';
+import type{AuthorityPermit}from'../../security/authority/types.js';
+import type{BusinessActionPlan}from'../integrations/businessAction.js';
 
 const EXPO_API = 'https://api.expo.dev';
 
 export type MobilePlatform = 'android' | 'ios';
+export interface ExpoActorInput{userId:string;tenantContext?:TenantContext;signal?:AbortSignal}
 
 async function expoFetch(
   token: string,
   path: string,
   init?: RequestInit,
+  access?:ExpoAccess,
 ): Promise<{ ok: boolean; status: number; json: unknown; text: string }> {
-  const res = await fetch(`${EXPO_API}${path}`, {
+  const signal=await beforeExpoRequest(access,token,path,init);
+  let res:Response;
+  try{res = await fetch(`${EXPO_API}${path}`, {
     ...init,
+    redirect:'manual',signal,
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...(init?.headers || {}),
     },
-  });
-  const text = await res.text();
-  let json: unknown = null;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch {
-    json = { message: text };
-  }
-  return { ok: res.ok, status: res.status, json, text };
+  });}catch{await access!.check();if(signal.aborted)throw new DOMException('Expo request cancelled.','AbortError');throw new Error('Expo request is unavailable. No automatic retry was made.');}
+  return readExpoResponse(access!,res);
 }
+const queryFor=(access:ExpoAccess):ExpoQuery=>async<T>(query:string,variables?:Record<string,unknown>)=>{
+ const response=await expoFetch(access.token,'/graphql',{method:'POST',body:JSON.stringify({query,variables})},access),body=response.json as{data?:T};
+ if(!response.ok||!body?.data)throw new Error('Expo metadata is unavailable.');return body.data;
+};
+const denied=()=>new AuthorityError('EXPO_PUBLICATION_ADMISSION_DENIED');
 
 function slugifyProjectName(name: string): string {
   const slug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-    .slice(0, 30);
+    .slice(0, 30).replace(/-+$/g,'');
   return slug.length >= 3 ? slug : `app-${Date.now().toString(36).slice(-6)}`;
 }
 
 /** List EAS apps visible to this Expo token (for project picker). */
-export async function listExpoApps(token: string): Promise<
+export async function listExpoApps(token: string,input?:ExpoActorInput,_access?:ExpoAccess): Promise<
   Array<{ id: string; name: string; slug?: string; accountId?: string; accountName?: string }>
 > {
+  if(!input)throw denied();const context=requireTenantContext(input.tenantContext);requireResourceOwner(context,input.userId);
+  const access=_access?requireExpoAccess(_access,context):await captureExpoAccess(input.userId,context,input.signal);
+  try{if(token!==access.token)throw denied();
   const query = `
     query XrogaListApps {
       me {
@@ -72,7 +80,7 @@ export async function listExpoApps(token: string): Promise<
   const res = await expoFetch(token, '/graphql', {
     method: 'POST',
     body: JSON.stringify({ query }),
-  });
+  },access);
   if (!res.ok) {
     throw new Error(
       `Expo GraphQL ${res.status}: ${(res.json as { errors?: Array<{ message?: string }> })?.errors?.[0]?.message || res.text.slice(0, 160)}`,
@@ -100,8 +108,11 @@ export async function listExpoApps(token: string): Promise<
     accountId?: string;
     accountName?: string;
   }> = [];
-  for (const account of data.data?.me?.accounts ?? []) {
+  const accounts=data.data?.me?.accounts;
+  if(!Array.isArray(accounts)||accounts.length>100||accounts.some(row=>!row||!validExpoId(row.id)||typeof row.name!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/.test(row.name)||!Array.isArray(row.apps)||row.apps.length>50)||new Set(accounts.map(row=>row.id)).size!==accounts.length)throw denied();
+  for (const account of accounts) {
     for (const app of account.apps ?? []) {
+      if(!validExpoId(app.id)||typeof app.slug!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/.test(app.slug)||typeof app.name!=='string'||app.name.length>500)throw denied();
       if (app.id) {
         apps.push({
           id: app.id,
@@ -113,10 +124,12 @@ export async function listExpoApps(token: string): Promise<
       }
     }
   }
+  if(new Set(apps.map(app=>app.id)).size!==apps.length)throw denied();await access.check();
   return apps;
+  }finally{if(!_access)access.close();}
 }
 
-async function listExpoAccounts(token: string): Promise<Array<{ id: string; name: string }>> {
+async function listExpoAccounts(token: string,access:ExpoAccess): Promise<Array<{ id: string; name: string }>> {
   const query = `
     query XrogaAccounts {
       me {
@@ -130,7 +143,7 @@ async function listExpoAccounts(token: string): Promise<Array<{ id: string; name
   const res = await expoFetch(token, '/graphql', {
     method: 'POST',
     body: JSON.stringify({ query }),
-  });
+  },access);
   if (!res.ok) {
     throw new Error(`Expo accounts ${res.status}: ${res.text.slice(0, 160)}`);
   }
@@ -139,57 +152,30 @@ async function listExpoAccounts(token: string): Promise<Array<{ id: string; name
     errors?: Array<{ message?: string }>;
   };
   if (data.errors?.length) throw new Error(data.errors[0]?.message || 'Expo GraphQL error');
-  return (data.data?.me?.accounts ?? [])
+  const rows=data.data?.me?.accounts;if(!Array.isArray(rows)||rows.length>100||rows.some(a=>!validExpoId(a.id)||typeof a.name!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/.test(a.name))||new Set(rows.map(a=>a.id)).size!==rows.length)throw denied();
+  return rows
     .filter((a): a is { id: string; name: string } => Boolean(a.id && a.name))
     .map((a) => ({ id: a.id, name: a.name }));
 }
 
-/** Create an unpublished Expo app on the user's account (same as `eas init`). */
+/** Retained legacy signature. A raw token never grants remote creation authority. */
 export async function createExpoApp(
-  token: string,
-  opts: { accountId: string; projectName: string },
+  _token: string,
+  _opts: { accountId: string; projectName: string },
 ): Promise<string> {
-  const mutation = `
-    mutation XrogaCreateApp($appInput: AppInput!) {
-      app {
-        createApp(appInput: $appInput) {
-          id
-        }
-      }
-    }
-  `;
-  const res = await expoFetch(token, '/graphql', {
-    method: 'POST',
-    body: JSON.stringify({
-      query: mutation,
-      variables: {
-        appInput: {
-          accountId: opts.accountId,
-          projectName: slugifyProjectName(opts.projectName),
-        },
-      },
-    }),
-  });
-  const data = res.json as {
-    data?: { app?: { createApp?: { id?: string } } };
-    errors?: Array<{ message?: string }>;
-  };
-  if (!res.ok || data.errors?.length || !data.data?.app?.createApp?.id) {
-    throw new Error(
-      data.errors?.[0]?.message ||
-        (res.json as { message?: string })?.message ||
-        `Could not create Expo app (${res.status})`,
-    );
-  }
-  return data.data.app.createApp.id;
+  // A token is adapter authentication, never authority to create an app.
+  // The canonical native executor owns the approved creation operation.
+  throw denied();
 }
 
 /**
- * Resolve or auto-create an EAS project for this user.
- * Prefer vault → single existing app → create new app on first account.
+ * Verify a selected project, show the existing picker, or prepare creation
+ * under the sole owned account. Creation never silently changes the saved selection.
  */
 export async function ensureExpoProjectLinked(opts: {
   userId: string;
+  tenantContext?:TenantContext;
+  signal?:AbortSignal;
   projectName?: string;
   explicitProjectId?: string;
 }): Promise<{
@@ -197,73 +183,24 @@ export async function ensureExpoProjectLinked(opts: {
   created: boolean;
   message: string;
   error?: string;
+  needsConfirmation?:boolean;
+  reviewUrl?:string;
 }> {
-  const writeAdmission=await prepareUserProviderKeyWrite(opts.userId,'expo_project_id');
-  const token = await getUserProviderKey(opts.userId, 'expo');
-  if (!token) {
-    return {
-      projectId: null,
-      created: false,
-      message: 'Save an Expo access token first',
-      error: 'NO_EXPO_TOKEN',
-    };
-  }
-
-  const existing = await resolveExpoProjectId(opts.userId, opts.explicitProjectId);
-  if (existing) {
-    return { projectId: existing, created: false, message: 'EAS project already linked' };
-  }
-
-  try {
-    const apps = await listExpoApps(token);
-    if (apps.length === 1) {
-      const id = apps[0]!.id;
-      await saveUserProviderKey(opts.userId, 'expo_project_id', id,{writeAdmission});
-      return {
-        projectId: id,
-        created: false,
-        message: `Linked existing Expo app ${apps[0]!.name}`,
-      };
-    }
-    if (apps.length > 1) {
-      return {
-        projectId: null,
-        created: false,
-        message: 'Pick which Expo project to use (multiple found on your account)',
-        error: 'NEED_PROJECT_PICK',
-      };
-    }
-
-    const accounts = await listExpoAccounts(token);
-    const account = accounts[0];
-    if (!account) {
-      return {
-        projectId: null,
-        created: false,
-        message: 'No Expo account found for this token',
-        error: 'NO_ACCOUNT',
-      };
-    }
-
-    const name = opts.projectName || `xroga-app-${Date.now().toString(36).slice(-5)}`;
-    const createdId = await createExpoApp(token, {
-      accountId: account.id,
-      projectName: name,
-    });
-    await saveUserProviderKey(opts.userId, 'expo_project_id', createdId,{writeAdmission});
-    return {
-      projectId: createdId,
-      created: true,
-      message: `Created Expo app @${account.name}/${slugifyProjectName(name)} and linked it`,
-    };
-  } catch (err) {
-    return {
-      projectId: null,
-      created: false,
-      message: (err as Error).message,
-      error: 'ENSURE_FAILED',
-    };
-  }
+  opts={...opts};const access=await captureExpoAccess(opts.userId,opts.tenantContext,opts.signal);
+  try{
+    const selected=opts.explicitProjectId?.trim()||await access.pin('expo_project_id');
+    if(selected){await verifyExpoProject(access,queryFor(access),selected);return{projectId:selected,created:false,message:'Owned EAS project verified.'};}
+    const apps=await listExpoApps(access.token,opts,access);
+    if(apps.length)return{projectId:null,created:false,message:'Select an owned Expo project in Publish to link it.',error:'NEED_PROJECT_PICK'};
+    const rows=await listExpoAccounts(access.token,access);
+    if(rows.length!==1)return{projectId:null,created:false,message:'Choose the account and create an app directly in Expo, then select it in Publish.',error:'EXACT_ACCOUNT_REQUIRED'};
+    const account=rows[0]!,slug=slugifyProjectName(opts.projectName||'xroga-app');
+    const{prepareExpoNativeAction}=await import('./expoApproval.js');
+    const prepared=await prepareExpoNativeAction({context:access.context,operation:'XROGA_EXPO_CREATE_APP',accountId:account.id,
+      arguments:{accountId:account.id,accountName:account.name,slug,connection:access.bindings(),destination:EXPO_API+'/graphql'},
+      summary:`Create unpublished Expo app @${account.name}/${slug}. Select it in Publish afterward to link it. No build starts.`,check:access.check});
+    return{...prepared,projectId:null,created:false};
+  }finally{access.close();}
 }
 
 /** Patch app.json extra.eas.projectId in generated files (in-memory before GitHub push). */
@@ -303,22 +240,30 @@ export function patchExpoProjectIdInFiles(
 export async function resolveExpoProjectId(
   userId: string,
   explicit?: string,
+  tenantContext?:TenantContext,
 ): Promise<string | null> {
-  if (explicit?.trim()) return explicit.trim();
-  const saved = await getUserProviderKey(userId, 'expo_project_id');
-  if (saved?.trim()) return saved.trim();
-  return null;
+  const access=await captureExpoAccess(userId,tenantContext);
+  try{const projectId=explicit?.trim()||await access.pin('expo_project_id');if(!projectId)return null;await verifyExpoProject(access,queryFor(access),projectId);return projectId;}finally{access.close();}
+}
+
+export async function linkOwnedExpoProject(input:ExpoActorInput&{projectId:string}){
+ const context=requireTenantContext(input.tenantContext);requireResourceOwner(context,input.userId);
+ const writeAdmission=await prepareUserProviderKeyWrite(input.userId,'expo_project_id');
+ const access=await captureExpoAccess(input.userId,context,input.signal);
+ try{await verifyExpoProject(access,queryFor(access),input.projectId);await access.check();const saved=await saveUserProviderKey(input.userId,'expo_project_id',input.projectId,{writeAdmission});await access.check();return saved;}finally{access.close();}
 }
 
 /**
- * Trigger EAS workflow dispatch (build, or build+submit when store creds synced to Expo).
- * Auto-creates/links an Expo project when none is set.
- * Call syncGooglePlayCredentialsToExpo / syncAppleAscApiKeyToExpo before submit=true.
+ * Prepare an exact immutable-source workflow approval. Dispatch belongs only
+ * to the canonical executor. Store submission requires verified Expo configuration.
  */
 export async function triggerEasPublish(opts: {
   userId: string;
+  tenantContext?:TenantContext;
+  signal?:AbortSignal;
   platform: MobilePlatform;
   projectId?: string;
+  databaseProjectId?:string;
   gitRef?: string;
   submit?: boolean;
   projectName?: string;
@@ -330,107 +275,17 @@ export async function triggerEasPublish(opts: {
   message: string;
   error?: string;
   projectId?: string;
+  needsConfirmation?:boolean;
+  reviewUrl?:string;
+  manualSetupRequired?:boolean;
+  setupUrl?:string;
 }> {
-  const token = await getUserProviderKey(opts.userId, 'expo');
-  if (!token) {
-    return {
-      ok: false,
-      fileName: '',
-      message: 'Save an Expo access token first',
-      error: 'NO_EXPO_TOKEN',
-    };
-  }
+  const{prepareExpoWorkflow}=await import('./expoWorkflow.js');
+  return prepareExpoWorkflow({...opts},queryFor);
+}
 
-  const githubOk = await isGitHubConnected(opts.userId).catch(() => false);
-  if (!githubOk) {
-    return {
-      ok: false,
-      fileName: '',
-      message: 'Connect GitHub first — EAS builds from your repo',
-      error: 'NO_GITHUB',
-    };
-  }
-
-  let projectId = await resolveExpoProjectId(opts.userId, opts.projectId);
-  if (!projectId) {
-    const ensured = await ensureExpoProjectLinked({
-      userId: opts.userId,
-      projectName: opts.projectName,
-    });
-    projectId = ensured.projectId;
-    if (!projectId) {
-      return {
-        ok: false,
-        fileName: '',
-        message: ensured.message,
-        error: ensured.error || 'NO_PROJECT_ID',
-      };
-    }
-  }
-
-  const wantSubmit = opts.submit === true;
-  const fileName =
-    opts.platform === 'android'
-      ? wantSubmit
-        ? 'publish-android.yml'
-        : 'build-android.yml'
-      : wantSubmit
-        ? 'publish-ios.yml'
-        : 'build-ios.yml';
-
-  const gitRef = (opts.gitRef || 'main').trim() || 'main';
-  const res = await expoFetch(token, '/v2/workflows/dispatch', {
-    method: 'POST',
-    body: JSON.stringify({
-      appId: projectId,
-      gitRef,
-      fileName,
-    }),
-  });
-
-  if (!res.ok) {
-    const msg =
-      (res.json as { message?: string; error?: string })?.message ||
-      (res.json as { error?: string })?.error ||
-      res.text.slice(0, 240);
-    // Fallback: try build-only workflow if publish file missing
-    if (/not found|404/i.test(msg) && wantSubmit) {
-      const fallback = opts.platform === 'android' ? 'build-android.yml' : 'build-ios.yml';
-      const retry = await expoFetch(token, '/v2/workflows/dispatch', {
-        method: 'POST',
-        body: JSON.stringify({ appId: projectId, gitRef, fileName: fallback }),
-      });
-      if (retry.ok) {
-        const data = retry.json as { data?: { id?: string; url?: string } };
-        return {
-          ok: true,
-          workflowRunId: data.data?.id,
-          url: data.data?.url,
-          fileName: fallback,
-          projectId,
-          message:
-            `Build started on EAS (${fallback}). Submit needs store credentials configured in Expo — open the run URL to watch progress.`,
-        };
-      }
-    }
-    return {
-      ok: false,
-      fileName,
-      projectId,
-      message: msg || `EAS workflow dispatch failed (${res.status})`,
-      error: 'DISPATCH_FAILED',
-    };
-  }
-
-  const data = res.json as { data?: { id?: string; url?: string } };
-  return {
-    ok: true,
-    workflowRunId: data.data?.id,
-    url: data.data?.url,
-    fileName,
-    projectId,
-    message: wantSubmit
-      ? `EAS submit workflow started for ${opts.platform}. Watch the run — store approval is still Apple/Google’s decision.`
-      : `EAS build started for ${opts.platform} on your Expo account. Download the binary from the run when green.`,
-  };
+/** Native effects stay behind the existing exact durable executor and transport. */
+export async function executeExpoNativeAction(userId:string,plan:BusinessActionPlan,permit?:AuthorityPermit){
+ const{executeExpoAction}=await import('./expoWorkflow.js');
+ return executeExpoAction(userId,plan,permit,{queryFor,request:(access,path,init)=>expoFetch(access.token,path,init,access),accounts:access=>listExpoAccounts(access.token,access)});
 }

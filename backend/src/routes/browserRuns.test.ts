@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, it } from 'node:test';
 import express from 'express';
-import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
+import { createTenantContext, requireTenantContext,type TenantContext } from '../security/tenantContext.js';
 import { harness, type Harness } from '../storage/testing/harness.js';
 import { MemoryLeaseStore } from '../workers/leaseStore.js';
 import { executeBrowserRun } from '../workers/browserCapability.js';
@@ -19,11 +19,12 @@ import { createBrowserRunsRouter, type BrowserRunRuntime } from './browserRuns.j
 let h: Harness; let base = ''; let server: ReturnType<ReturnType<typeof express>['listen']>;
 let configured = true;
 let behaviour: 'ok' | 'wrongValue' | 'hang' = 'ok';
-let hangAborted = false;
+let hangAborted = false;let workerAuthority:TenantContext|undefined;
 const runs = new MemoryBrowserRunStore();
 
 const worker: BrowserWorkerPort = {
   run: async (job, ctx): Promise<BrowserWorkerResult> => {
+    workerAuthority=requireTenantContext(ctx.modelAuthority?.context);assert.equal(workerAuthority.userId,job.userId);assert.equal(workerAuthority.tenantId,job.tenantId);assert.equal(workerAuthority.provenance,'persisted_owner');await ctx.modelAuthority!.revalidate();
     if (behaviour === 'hang') return new Promise((_, reject) => ctx.signal.addEventListener('abort', () => { hangAborted = true; reject(new Error('stopped')); }));
     return { finalUrl: 'https://quotes.toscrape.com/page/2/', visitedUrls: ['https://quotes.toscrape.com/', 'https://quotes.toscrape.com/page/2/'], navigations: 2, responseBytes: 1_000, summary: 'done',
       extracted: { title: behaviour === 'wrongValue' ? 'Login' : 'Quotes to Scrape' }, artifacts: [{ name: 'page.png', mediaType: 'image/png', bytes: new Uint8Array(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==', 'base64')) }], metrics: { consequentialActions: 0 } };
@@ -73,6 +74,7 @@ describe('/api/browser/runs', () => {
     const start = await call(h.alice.userId, 'POST', '', request({ projectId: h.aliceProject }));
     assert.equal(start.status, 202);
     const run = await finished(h.alice.userId, start.json.runId);
+    assert.equal(workerAuthority?.userId,h.alice.userId);
     assert.equal(run.status, 'completed');
     assert.equal(run.output.outcomeVerified, true);
     assert.equal(run.output.postconditions.length, 3);

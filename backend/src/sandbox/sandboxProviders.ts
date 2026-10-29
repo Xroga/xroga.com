@@ -20,6 +20,8 @@
  */
 
 import { spawn } from 'child_process';
+import {randomUUID} from 'node:crypto';
+import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
 import { buildSandboxEnvironment } from './sandboxEnvironment.js';
 import { remoteSandboxFromEnvironment } from './remoteSandbox.js';
 import { flyMachineSandboxFromEnvironment } from './flyMachineSandbox.js';
@@ -27,6 +29,8 @@ import {GoogleSandboxRuntime} from './google/googleSandbox.js';
 import {googleProjectRuntimeSelected} from '../synthesis/projectRuntime/googleFactory.js';
 import {
   SandboxUnavailableError,
+  SandboxAdmissionError,
+  requireEnforcedSandboxNetworkPolicy,
   type SandboxAvailability,
   type SandboxExecutionRequest,
   type SandboxExecutionResult,
@@ -34,6 +38,20 @@ import {
 } from './sandboxTypes.js';
 
 const MAX_CAPTURE_BYTES = 40_000;
+
+/** Environment of the trusted host Docker/Podman CLI, never the container.
+ * Windows needs its public profile/system paths to resolve the selected daemon.
+ * Child build environment remains the separate exact request.environment.
+ */
+function dockerControlEnvironment(): Record<string,string> {
+  const environment=buildSandboxEnvironment();
+  if(process.platform==='win32'){
+    if(process.env.USERPROFILE)environment.USERPROFILE=process.env.USERPROFILE;
+    if(process.env.SystemRoot)environment.SystemRoot=process.env.SystemRoot;
+  }
+  return environment;
+}
+
 
 /**
  * Why a provider was not chosen, kept alongside its name.
@@ -67,6 +85,8 @@ export class ContainerSandboxRuntime implements SandboxRuntime {
   }
 
   async probe(): Promise<SandboxAvailability> {
+    if(process.env.NODE_ENV==='production')return {available:false,runtime:this.name,reason:'policy_disabled',
+      detail:'Local container execution is development-only. Production must use the admitted Google execution provider.'};
     if (process.env.XROGA_SANDBOX_DISABLED === '1') {
       return {
         available: false,
@@ -88,12 +108,22 @@ export class ContainerSandboxRuntime implements SandboxRuntime {
   }
 
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
+    // A direct class call must not become a production fallback around the
+    // existing Google run/owner/project admission and worker lease boundary.
+    if(process.env.NODE_ENV==='production')throw new SandboxAdmissionError();
+    // Capture mutable caller data before the asynchronous runtime probe.
+    request = {...request, files: request.files.map(file => ({...file})), args: [...request.args],
+      environment: {...request.environment}, limits: {...request.limits}};
+    const image = request.image === undefined ? this.image : request.image.trim();
+    buildContainerArgs(image, request);
+    request.signal?.throwIfAborted();
     const availability = await this.probe();
+    request.signal?.throwIfAborted();
     if (!availability.available) throw new SandboxUnavailableError(availability);
     // A per-request image overrides the provider default. Every isolation flag in
     // `buildContainerArgs` is unchanged by it — the image says what is inside the box, not how
     // tightly the box is closed.
-    return runIsolated(this.binary, request.image?.trim() || this.image, request);
+    return runIsolated(this.binary, image, request);
   }
 }
 
@@ -111,7 +141,7 @@ function canRun(command: string, args: string[]): Promise<boolean> {
         stdio: 'ignore',
         // The probe gets the scrubbed environment too — `docker version` has no more
         // business seeing a Supabase key than generated code does.
-        env: buildSandboxEnvironment(),
+        env: dockerControlEnvironment(),
       });
       const timer = setTimeout(() => {
         child.kill('SIGKILL');
@@ -142,14 +172,43 @@ export function buildContainerArgs(
   image: string,
   request: SandboxExecutionRequest,
 ): string[] {
-  // Network is denied unless the stage explicitly needs a registry. A typecheck or a
+  requireEnforcedSandboxNetworkPolicy(request.networkPolicy, 'container');
+  if (request.networkPolicy !== 'none') throw new SandboxUnavailableError({
+    available: false, runtime: 'container', reason: 'policy_disabled',
+    detail: 'This container adapter has no verified restricted-network enforcement. Use an admitted Google worker for networked execution.',
+  });
+  if (typeof image !== 'string' || image.length > 512 || !/^[A-Za-z0-9][A-Za-z0-9._:/-]*(?:@sha256:[a-fA-F0-9]{64})?$/.test(image)) {
+    throw new SandboxAdmissionError();
+  }
+  request.signal?.throwIfAborted();
+  if (!Number.isSafeInteger(request.timeoutMs) || request.timeoutMs <= 0 || request.timeoutMs > 2_147_483_647
+    || [request.limits.memoryMb,request.limits.cpuSeconds,request.limits.diskMb,request.limits.maxProcesses].some(value=>!Number.isSafeInteger(value)||value<=0)
+    || typeof request.command!=='string' || !request.command || request.command.includes('\0')
+    || !Array.isArray(request.args) || request.args.length>8192 || request.args.some(value=>typeof value!=='string'||value.includes('\0'))
+    || Buffer.byteLength(JSON.stringify(request.args))>2*1024*1024) throw new SandboxAdmissionError();
+  if (Object.entries(request.environment).some(([name,value]) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)
+    || typeof value !== 'string' || value.includes('\0'))
+    || Buffer.byteLength(JSON.stringify(request.environment)) > 65_536) throw new SandboxAdmissionError();
+  // Reuse the existing secret-name and held-value guard without adding host
+  // variables or changing the caller's exact safe child environment.
+  try {
+    buildSandboxEnvironment(request.environment);
+    if(containsCredentialSecretText(JSON.stringify(request.environment)))throw new SandboxAdmissionError();
+  } catch { throw new SandboxAdmissionError(); }
+
+  // Registry-only was refused above, never translated to an unrestricted bridge.
+  // A typecheck or a
   // production build has no legitimate reason to reach the network, and denying it
   // removes exfiltration as an option even if the environment allowlist were weakened.
-  const network = request.networkPolicy === 'none' ? 'none' : 'bridge';
+  const network = 'none';
 
   const args = [
     'run',
     '--rm',
+    '--pull', 'never',
+    // Both supported CLIs accept none. API capture below retains bounded
+    // stdout/stderr without an independent, potentially abandoned log file.
+    '--log-driver', 'none',
     '--network', network,
     '--user', '1000:1000',
     '--read-only',
@@ -173,68 +232,87 @@ export function buildContainerArgs(
   return args;
 }
 
+/** Bounded trusted-host control command. No shell, inherited credentials or
+ * unbounded daemon response is admitted. Only the private lifecycle below calls it.
+ */
+async function containerControl(binary: string, args: string[], timeoutMs = 5000): Promise<{status:number|null;stdout:string}> {
+  return new Promise(resolve => {
+    let stdout='', limited=false, settled=false;
+    const child=spawn(binary,args,{stdio:['ignore','pipe','ignore'],env:dockerControlEnvironment()});
+    const timer=setTimeout(()=>{limited=true;child.kill('SIGKILL');},timeoutMs);
+    const finish=(status:number|null)=>{if(settled)return;settled=true;clearTimeout(timer);resolve({status:limited?null:status,stdout:limited?'':stdout});};
+    child.stdout.on('data',(chunk:Buffer)=>{if(Buffer.byteLength(stdout)+chunk.byteLength>4096){limited=true;child.kill('SIGKILL');}else stdout+=chunk.toString('utf8');});
+    child.on('error',()=>finish(null));child.on('close',finish);
+  });
+}
+
 async function runIsolated(
   binary: string,
   image: string,
   request: SandboxExecutionRequest,
 ): Promise<SandboxExecutionResult> {
-  const started = Date.now();
-  const args = buildContainerArgs(image, request);
-
-  return new Promise<SandboxExecutionResult>((resolve) => {
-    const child = spawn(binary, args, {
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: buildSandboxEnvironment(),
+  const started=Date.now(), args=buildContainerArgs(image,request), nonce=randomUUID();
+  const name=`xroga-sandbox-${nonce}`;
+  let containerId:string|undefined;
+  const denied=(pending=false)=>{const error=new SandboxAdmissionError();error.cleanupPending=pending;return error;};
+  const cleanup=async():Promise<boolean>=>{
+    if(!containerId)return true;
+    for(let attempt=0;attempt<2;attempt++){
+      if((await containerControl(binary,['rm','-f',containerId],2000)).status===0)return true;
+      const remaining=await containerControl(binary,['ps','-aq','--no-trunc','--filter',`id=${containerId}`],2000);
+      if(remaining.status===0&&!remaining.stdout.trim())return true;
+    }
+    return false;
+  };
+  try {
+    request.signal?.throwIfAborted();
+    // Creation cannot run the untrusted command. Obtain its exact daemon-issued
+    // identity before start, so losing/killing the attach CLI cannot orphan it.
+    const managedJob=process.env.XROGA_CLEANUP_JOB_ID;
+    const cleanupJob=managedJob&&/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(managedJob)?managedJob:nonce;
+    const created=await containerControl(binary,['create','--name',name,'--label',`xroga.sandbox-task=${nonce}`,
+      '--label','io.xroga.cleanup.owner=XROGA_LOCAL_DISPOSABLE_JOB_V1',
+      '--label',`io.xroga.cleanup.job=${cleanupJob}`,'--label','io.xroga.cleanup.disposable=true',...args.slice(1)]);
+    if(created.status!==0||!/^[a-f0-9]{64}$/.test(created.stdout.trim()))throw denied(true);
+    containerId=created.stdout.trim();
+    if(request.signal?.aborted)throw denied();
+    const remaining=request.timeoutMs-(Date.now()-started);
+    if(remaining<=0)return{exitCode:null,stdout:'',stderr:'',timedOut:true,killedForLimit:false,durationMs:Date.now()-started};
+    const result=await new Promise<SandboxExecutionResult>((resolve,reject)=>{
+      const child=spawn(binary,['start','--attach',containerId!],{stdio:['ignore','pipe','pipe'],env:dockerControlEnvironment()});
+      let stdout=Buffer.alloc(0),stderr=Buffer.alloc(0),timedOut=false,killedForLimit=false,settled=false;
+      let stopping:Promise<boolean>|undefined;
+      const stop=()=>{child.kill('SIGKILL');stopping??=cleanup();void stopping.catch(()=>undefined);};
+      const onAbort=()=>stop();
+      const timer=setTimeout(()=>{timedOut=true;stop();},remaining);
+      request.signal?.addEventListener('abort',onAbort,{once:true});
+      if(request.signal?.aborted)stop();
+      const capture=(old:Buffer,chunk:Buffer)=>{
+        const room=MAX_CAPTURE_BYTES-old.byteLength;
+        const next=Buffer.concat([old,chunk.subarray(0,Math.max(0,room))]);
+        if(chunk.byteLength>room){killedForLimit=true;stop();}
+        return next;
+      };
+      child.stdout.on('data',(chunk:Buffer)=>{stdout=capture(stdout,chunk);});
+      child.stderr.on('data',(chunk:Buffer)=>{stderr=capture(stderr,chunk);});
+      const finish=async(code:number|null,failed=false)=>{
+        if(settled)return;settled=true;clearTimeout(timer);request.signal?.removeEventListener('abort',onAbort);
+        try{
+          if(stopping&&!await stopping)throw denied(true);
+          if(request.signal?.aborted)throw denied();
+          resolve({exitCode:failed?null:code,stdout:stdout.toString('utf8'),stderr:failed?'Isolated container attachment failed.':stderr.toString('utf8'),timedOut,killedForLimit,durationMs:Date.now()-started});
+        }catch(error){reject(error);}
+      };
+      child.on('close',code=>{void finish(code);});child.on('error',()=>{void finish(null,true);});
     });
-
-    let stdout = '';
-    let stderr = '';
-    let timedOut = false;
-    let killedForLimit = false;
-
-    const timer = setTimeout(() => {
-      timedOut = true;
-      child.kill('SIGKILL');
-    }, request.timeoutMs);
-
-    child.stdout?.on('data', (chunk: Buffer) => {
-      stdout += chunk.toString('utf8');
-      if (stdout.length > MAX_CAPTURE_BYTES) {
-        stdout = stdout.slice(-MAX_CAPTURE_BYTES);
-        killedForLimit = true;
-      }
-    });
-    child.stderr?.on('data', (chunk: Buffer) => {
-      stderr += chunk.toString('utf8');
-      if (stderr.length > MAX_CAPTURE_BYTES) {
-        stderr = stderr.slice(-MAX_CAPTURE_BYTES);
-        killedForLimit = true;
-      }
-    });
-
-    child.on('close', (code) => {
-      clearTimeout(timer);
-      resolve({
-        exitCode: code,
-        stdout,
-        stderr,
-        timedOut,
-        killedForLimit,
-        durationMs: Date.now() - started,
-      });
-    });
-    child.on('error', (error) => {
-      clearTimeout(timer);
-      resolve({
-        exitCode: null,
-        stdout,
-        stderr: (error as Error).message,
-        timedOut,
-        killedForLimit,
-        durationMs: Date.now() - started,
-      });
-    });
-  });
+    if(request.signal?.aborted)throw denied();
+    return result;
+  } finally {
+    // A cleanup failure is a terminal admission failure, never successful
+    // completion or a reason to retry through another execution provider.
+    if(!await cleanup())throw denied(true);
+    if(request.signal?.aborted)throw denied();
+  }
 }
 
 /**

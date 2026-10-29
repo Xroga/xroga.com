@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: actual owned-file adapter permits exact same-owner bytes and refuses foreign ownership before upload
+ok 1 - actual owned-file adapter permits exact same-owner bytes and refuses foreign ownership before upload
+  ---
+  duration_ms: 34.9657
+  type: 'test'
+  ...
+# Subtest: owner changes during receipt wait, altered recipient and secret file canaries produce zero uploads
+ok 2 - owner changes during receipt wait, altered recipient and secret file canaries produce zero uploads
+  ---
+  duration_ms: 5.9094
+  type: 'test'
+  ...
+# Subtest: uninspected binary documents cannot bypass the text credential boundary
+ok 3 - uninspected binary documents cannot bypass the text credential boundary
+  ---
+  duration_ms: 1.5394
+  type: 'test'
+  ...
+# Subtest: ownership revocation during durable authority revalidation prevents dispatch
+ok 4 - ownership revocation during durable authority revalidation prevents dispatch
+  ---
+  duration_ms: 5.1226
+  type: 'test'
+  ...
+# Subtest: signed file capability binds actor/resource/bytes/version and denies tampering and expiry
+ok 5 - signed file capability binds actor/resource/bytes/version and denies tampering and expiry
+  ---
+  duration_ms: 15.6695
+  type: 'test'
+  ...
+# Subtest: file links require a dedicated strong key, bounded expiry and issued context, no dev/provider fallback
+ok 6 - file links require a dedicated strong key, bounded expiry and issued context, no dev/provider fallback
+  ---
+  duration_ms: 2.4052
+  type: 'test'
+  ...
+# Subtest: owner database content passes checksum; corrupt or foreign content cannot produce bytes
+ok 7 - owner database content passes checksum; corrupt or foreign content cannot produce bytes
+  ---
+  duration_ms: 3.9285
+  type: 'test'
+  ...
+# Subtest: legacy public/data URL and raw-key delivery never fetch or fabricate success
+ok 8 - legacy public/data URL and raw-key delivery never fetch or fabricate success
+  ---
+  duration_ms: 2.0306
+  type: 'test'
+  ...
+# Subtest: private object path is owner-bound before any injected object read
+ok 9 - private object path is owner-bound before any injected object read
+  ---
+  duration_ms: 0.7751
+  type: 'test'
+  ...
+# Subtest: public file serialization does not disclose storage internals or unsafe URLs
+ok 10 - public file serialization does not disclose storage internals or unsafe URLs
+  ---
+  duration_ms: 0.3493
+  type: 'test'
+  ...
+# Subtest: file range parser has bounded single-range and suffix semantics
+ok 11 - file range parser has bounded single-range and suffix semantics
+  ---
+  duration_ms: 1.1026
+  type: 'test'
+  ...
+# Subtest: untrusted active file MIME is attachment-only, with no cache/referrer/sniffing
+ok 12 - untrusted active file MIME is attachment-only, with no cache/referrer/sniffing
+  ---
+  duration_ms: 0.9624
+  type: 'test'
+  ...
+# Subtest: private R2 configuration has no legacy/public bucket fallback and keys cannot escape owner prefix
+ok 13 - private R2 configuration has no legacy/public bucket fallback and keys cannot escape owner prefix
+  ---
+  duration_ms: 1.5236
+  type: 'test'
+  ...
+# Subtest: private bucket metadata rejects public/unknown state using GET-only fixed endpoints
+ok 14 - private bucket metadata rejects public/unknown state using GET-only fixed endpoints
+  ---
+  duration_ms: 14.1913
+  type: 'test'
+  ...
+# Subtest: actual private R2 delivery rechecks ownership and file revision after the asynchronous object read
+ok 15 - actual private R2 delivery rechecks ownership and file revision after the asynchronous object read
+  ---
+  duration_ms: 45.6927
+  type: 'test'
+  ...
+# Subtest: project file requires exact durable receipt and snapshots Buffer before ownership awaits
+ok 16 - project file requires exact durable receipt and snapshots Buffer before ownership awaits
+  ---
+  duration_ms: 91.7775
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1752.0427

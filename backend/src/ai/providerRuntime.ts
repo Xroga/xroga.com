@@ -1,5 +1,8 @@
 import type { ModelId } from './models.js';
 import { isPostCompletionAccountingError } from './postCompletionAccounting.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
+import { AuthorityError } from '../security/authority/enforce.js';
+import { EgressDenied } from '../security/egress/egressPolicy.js';
 import {
   providerHealthStore,
   stillConstraining,
@@ -112,6 +115,24 @@ export function normalizeProviderError(error: unknown): NormalizedProviderError 
   };
 }
 
+/** A different provider cannot authorize the same locally rejected request. */
+export function isModelSecurityDenial(error:unknown):boolean{
+  return error instanceof TenantAccessError || error instanceof AuthorityError || error instanceof EgressDenied
+    || ['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED','RUN_STATE_CONFLICT','PROVIDER_RESERVATION_DENIED',
+      'SAFETY_BLOCKED','CAPABILITY_AUTH_REQUIRED','PROJECT_CONTEXT_MISMATCH']
+    .includes((error as {code?:string})?.code??'');
+}
+
+/** Local admission and uncertain accounting cannot be repaired by another model. */
+export function isTerminalModelFailure(error: unknown): boolean {
+  return isModelSecurityDenial(error) || isPostCompletionAccountingError(error)
+    || (error as {code?:string})?.code === 'MODEL_PUBLICATION_FAILED'
+    || (error as {name?:string})?.name === 'AbortError'
+    || (error as {code?:string})?.code === 'BUILD_CANCELLED'
+    || (error as { code?: string })?.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE'
+    || (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE');
+}
+
 function recompute(entry: MutableHealth): void {
   const executions = entry.successes + entry.failures;
   const validations = entry.validationSuccesses + entry.validationFailures;
@@ -125,6 +146,9 @@ export function recordModelExecution(
   result: { ok: boolean; latencyMs: number; error?: unknown },
   now = Date.now(),
 ): ModelRuntimeHealth {
+  // A deterministic pre-dispatch rejection says nothing about provider health.
+  // Untrusted prompt content must not open a shared provider circuit.
+  if(!result.ok&&isModelSecurityDenial(result.error))return {...(health.get(modelId)??initial(modelId))};
   const entry = health.get(modelId) ?? initial(modelId);
   // Captured before mutation so `worthPersisting` can compare states rather than guess.
   const before: ModelRuntimeHealth | undefined = health.has(modelId) ? { ...entry } : undefined;
@@ -285,11 +309,23 @@ export async function executeWithProviderFallback<T>(input: {
         }
         return { value, modelId, failures };
       } catch (error) {
+        if((error as {code?:string})?.code==='MODEL_PUBLICATION_FAILED')throw error;
+        if(((error as {name?:string})?.name==='AbortError'||(error as {code?:string})?.code==='BUILD_CANCELLED')
+          &&!(controller.signal.aborted&&!input.signal?.aborted))throw error;
         if (isPostCompletionAccountingError(error)) throw error;
+        if (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE') throw error;
         const normalized = controller.signal.aborted && !input.signal?.aborted
           ? normalizeProviderError(Object.assign(new Error('Provider request timed out'), { code: 'ETIMEDOUT' }))
           : normalizeProviderError(error);
         failures.push(normalized);
+        // Local security denials apply to the request/account, not the health of
+        // one provider. Another route must never launder a rejected credential
+        // or payload through a different transport.
+        if(isModelSecurityDenial(error)) {
+          // Preserve the denial across outer planners and fallback wrappers.
+          // Reclassifying it as provider availability authorizes another route.
+          throw error;
+        }
 
         /* Account capacity is shared by every model route. Walking fallbacks cannot
          * make capacity appear and only hides the actionable reason. */

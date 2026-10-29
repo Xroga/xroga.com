@@ -225,9 +225,8 @@ describe('the isolation flags are the isolation', () => {
     assert.equal(network, 'none', 'a build with no registry need must have no network');
   });
 
-  it('allows a network only for an explicit registry stage', () => {
-    const args = buildContainerArgs('node:20-alpine', { ...request, networkPolicy: 'registry-only' });
-    assert.equal(args[args.indexOf('--network') + 1], 'bridge');
+  it('refuses registry-only instead of granting unrestricted bridge networking', () => {
+    assert.throws(()=>buildContainerArgs('node:20-alpine', { ...request, networkPolicy: 'registry-only' }),SandboxUnavailableError);
   });
 
   it('runs unprivileged with no capabilities and no privilege escalation', () => {

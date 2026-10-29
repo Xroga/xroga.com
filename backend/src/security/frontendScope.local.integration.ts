@@ -18,7 +18,7 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
   const source=process.env.XB01_TEST_SOURCE_SHA??process.env.EXPECTED_RELEASE_SHA;assert.match(source??'',/^[a-f0-9]{40}$/);
   const receipt=JSON.parse(readFileSync(new URL('../../../frontend/test-results/proxy-origin-evidence.json',import.meta.url),'utf8'));
-  assert.deepEqual(receipt,{sourceSha:source,disposableOnly:true,authenticatedOwnFile:true,foreignFileDenied:true,untrustedScriptExecutesInOpaqueOrigin:true,appCookieStorageParentAndPrivateFileDenied:true,rasterBytesRetained:true,htmlImageRefused:true,rawSvgControlExecutes:true,svgScriptDenied:true,escapedErrorReflection:true,externalProviderCalled:false,command010EgressVerified:false});
+  assert.deepEqual(receipt,{sourceSha:source,disposableOnly:true,authenticatedOwnFile:true,foreignFileDenied:true,untrustedScriptExecutesInOpaqueOrigin:true,appCookieStorageParentAndPrivateFileDenied:true,rasterBytesRetained:true,htmlImageRefused:true,rawSvgControlExecutes:true,svgScriptDenied:true,escapedErrorReflection:true,loopbackUpstreamDenied:true,proxyTransport:'CONTROLLED_PUBLIC_DNS_PINNED_LOCAL_TLS',verificationScope:'all',externalProviderCalled:false,command010EgressVerified:false});
   assert.throws(()=>getGlobalSupabaseAdmin('reviewed_named_internal_client_construction' as never),/Unregistered service operation/);
  });
  test('real server page reads bind verified cookies to own profile and current role despite forged query ownership',async t=>{

@@ -1,0 +1,264 @@
+{
+  "scope": "REAL_LOCAL_ISOLATED_TESTS_NOT_LIVE_PROVIDER_OR_PRODUCTION_VERIFICATION",
+  "pinnedMain": "b0cd0ec31be56a8945ae41998563475237ed52fb",
+  "verifiedPhase4": "92043b72c20e5a12636dee079d760a1e5708b48f",
+  "receipts": [
+    {
+      "label": "builder-negative",
+      "job": "05237c5d-9e18-49cd-ace5-9ab17e3b777f",
+      "status": "failed",
+      "exitCode": 1,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1301938
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/builder-negative.log",
+      "sha256": "5e789916a79853bc2c5dcd836c27a1e366f336ff93928f51a8b0ca4f6db1444c"
+    },
+    {
+      "label": "qa-negative",
+      "job": "3b61cdca-7b54-493d-b226-0471a5ebe704",
+      "status": "failed",
+      "exitCode": 1,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 24593
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/qa-negative.log",
+      "sha256": "49d4e9b00a1aa427f9019560765e89edba8292bd4e1b6977922b1a4db0b68845"
+    },
+    {
+      "label": "durable-secret-negative",
+      "job": "c7530a9e-36d8-4d7b-8191-4f30dbc1a5b0",
+      "status": "failed",
+      "exitCode": 1,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 710096
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/durable-secret-negative.log",
+      "sha256": "56b1a4fad1f3132b9150236b958161c18ce105a0de9ffec5ee4f05f37a1a48cd"
+    },
+    {
+      "label": "builder-upload-dispatch-green",
+      "job": "6cbf9618-4563-4498-aed9-5bb699023e88",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 2079943
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/builder-upload-dispatch-green.log",
+      "sha256": "2ff85b2ce30181fefc5ed84e00b910a2767c0b66ba75845777e965dd74e754b6"
+    },
+    {
+      "label": "qa-green",
+      "job": "33bcd90e-cbbc-47e2-99fa-4151d6e8b6d6",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 2201664
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/qa-green.log",
+      "sha256": "5a3fcc2498336fdb9ede637ba1a1a158758e2cb52f20f7755d9faf81bd1547c9"
+    },
+    {
+      "label": "durable-upload-green",
+      "job": "7d910481-1127-4268-ab5c-5f214e9f1f06",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1153918
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/durable-upload-green.log",
+      "sha256": "53bd89880a861fc2b995eb3af0d73bb3674e3e0639c97b2ea641d9fea88371d8"
+    },
+    {
+      "label": "integrated-native-builder-green",
+      "job": "efb219db-1f18-4f01-b4e3-3007c0ca5985",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 2713577
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/integrated-native-builder-green.log",
+      "sha256": "b8e097b0e8149bba7a8374327bb697e7f8f3e956d9b5fe672b81c538740575fd"
+    },
+    {
+      "label": "frontend-clients-and-lineage-green",
+      "job": "e4c89c93-088e-4f00-91d4-e17a4f4b2df1",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/frontend-clients-and-lineage-green.log",
+      "sha256": "733e75e3942824f8e3e49ab221d77c76d3d7a5bbd59590829884001ca280f8da"
+    },
+    {
+      "label": "http-probe-green",
+      "job": "06032230-a020-48af-931c-7223903603e3",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 4144585
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/http-probe-green.log",
+      "sha256": "73da74c1260278523894b9f9ac7912a78f43f0aba0e3ae93a0831bd2897df9a4"
+    },
+    {
+      "label": "backend-types-green",
+      "job": "5a5f1dbc-ba08-4b33-b731-a88e5e2a20ae",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322036
+      },
+      "log": null,
+      "sha256": null
+    },
+    {
+      "label": "frontend-types-green",
+      "job": "fb729031-44b0-449e-b618-872a5f5e9795",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322124
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/frontend-types-green.log",
+      "sha256": "5348521e0f0ea9553ec98dd6f5737f48bacd92230789d8d982cdccc3335f99db"
+    },
+    {
+      "label": "replica-and-isolated-qa-green",
+      "job": "4d8dc7cd-5eba-4e49-a00c-b2c0cd846d72",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 2185917
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/replica-and-isolated-qa-green.log",
+      "sha256": "77e0b3a59b68020fda64add1c9c238c5cd2f8d25a549bf394091c8fa238f14a3"
+    },
+    {
+      "label": "shared-chromium-and-reachability-green",
+      "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 38553
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/shared-chromium-and-reachability-green.log",
+      "sha256": "3badba4ca92b85fe28ec62da04feb5ec2e8a5832eef76df7a4fb186ba74fe2f4"
+    },
+    {
+      "label": "shared-chromium-types-green",
+      "job": "8f860cdd-7ea6-4ef7-afe0-3551d3fbccc3",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322124
+      },
+      "log": null,
+      "sha256": null
+    },
+    {
+      "label": "github-custody-denial-red",
+      "job": "07d092be-15cc-447d-9019-4167e1204799",
+      "status": "failed",
+      "exitCode": 1,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 18940
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/github-custody-denial-red.log",
+      "sha256": "e4b9e0c211971d3429c973ad5f2a7e3950122b4afa98998cc8e740fd490b73b3"
+    },
+    {
+      "label": "github-consent-green",
+      "job": "d2e4b077-0b41-4fbf-8899-70fce608db51",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1037366
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/github-consent-green.log",
+      "sha256": "057b04963ac2bd07591f2fcaebc472264ebf4a23806ff4e0e4d1f3e6e7b0f7c8"
+    },
+    {
+      "label": "frontend-full-1269-green",
+      "job": "7e0d2ecb-f07f-4224-830b-e202c4dc333d",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 4813880
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/frontend-full-1269-green.log",
+      "sha256": "7bbe20d55d1c97426af7d83677a0d0be5697e112842fc9c2e09d7f0fdee3d560"
+    },
+    {
+      "label": "github-boundary-types-green",
+      "job": "82f9b625-8f48-4b62-aaff-a45495c09a07",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322092
+      },
+      "log": null,
+      "sha256": null
+    },
+    {
+      "label": "vault-mirror-focused-green",
+      "job": "b21932b2-20e8-49ab-a108-bcf02b527e62",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 172475
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/vault-mirror-focused-green.log",
+      "sha256": "2230da3ef6f80a27ab4a2a172d8afb9d93d992e0bedd58baa715470b5b3ca09d"
+    },
+    {
+      "label": "mirror-source-integrity-green",
+      "job": "bfbb70b5-322a-4c78-b5db-2f72d3964656",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      },
+      "log": "docs/xroga/evidence/command-010/integration-20261029/mirror-source-integrity-green.log",
+      "sha256": "efa26954ee44ab33cea3cc421c28a0985ce7a8057ac5e0c603009e1113d8261e"
+    },
+    {
+      "label": "mirror-fixture-types-green",
+      "job": "90be90af-f6b8-416d-8340-031aacbf9879",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322028
+      },
+      "log": null,
+      "sha256": null
+    }
+  ],
+  "modelCalls": 0,
+  "newCloudResources": 0,
+  "productionMutations": false,
+  "originalStrictAuditorChanged": false,
+  "originalFrozenCriteriaChanged": false
+}

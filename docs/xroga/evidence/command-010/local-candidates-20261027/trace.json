@@ -1,0 +1,254 @@
+{
+  "scope": "EIGHT_INDIVIDUAL_LOCAL_DATA_STATE_AND_FIXED_FIRST_PARTY_OR_OPERATOR_GATED_CANDIDATES_NOT_PHASE_ACCEPTANCE",
+  "parent": "e4b314d3468c4f64fc3c61eb3f8134dfaf4f6871",
+  "atUtc": "2026-10-27T17:41:50.755Z",
+  "candidates": [
+    {
+      "id": "e166bef56274bbddc0ad",
+      "file": "backend/src/scripts/verifyGceExecution.ts",
+      "line": 27,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "7ab82f57d2c9bbf547aa6833b7daf32bc6b48b128edc869bb99be8a69c6a46bb",
+      "destination": "http://metadata.google.internal",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "DISABLED_WITH_PROOF",
+        "trust": "OPERATOR_ONLY_SYNTHETIC_VERIFICATION_GATE_CLOSED_IN_NORMAL_PRODUCTION",
+        "trace": "No production source importer. Actual top-level guard precedes the fixed metadata email fetch and requires BOTH the synthetic-only flag and a Cloud Run Job. Canonical production Job does not set that verification flag. Source guard tested with absent flag/job and canonical Job name,0cloud calls. No historical cloud experiment repeated or new window authorized."
+      }
+    },
+    {
+      "id": "4d6615378bab39e757f0",
+      "file": "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
+      "line": 17,
+      "entryPoint": "ApiConnectionBanner",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "ede7bd2306f8403f60e6d5a10f1d0c423903806b3771789a74fc1f859284aac4",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "DISABLED_WITH_PROOF",
+        "trust": "DEVELOPMENT_ONLY_FIXED_API_HEALTH_READ_NO_PRODUCTION_EFFECT",
+        "trace": "Actual useEffect callback returns before fetch when NODE_ENV is production. Evaluated production callback makes0requests. Its development-only URL is the configured first-party /health path and contains no user payload or credential."
+      }
+    },
+    {
+      "id": "f9cea4897b39781b679b",
+      "file": "frontend/src/components/homepage-next/s02/WorkforceStage.tsx",
+      "line": 154,
+      "entryPoint": "Chat",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "e2973dede9c21c43064e02f4a325ac5b339511d64e433826eed10da492d4566c",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "LOCAL_REACT_REDUCER_SEND_CALLBACK_NOT_NETWORK_TRANSPORT",
+        "trace": "The two send calls resolve to the one local arrow callback dispatching a WfAction. S02Work uses workforceReducer and Theater passes that exact reducer dispatch. Runtime callback test emits only two local events. No model, provider, actor or approval is created."
+      }
+    },
+    {
+      "id": "e8a0d676ee1d532a3be6",
+      "file": "frontend/src/components/homepage-next/s02/WorkforceStage.tsx",
+      "line": 164,
+      "entryPoint": "Chat",
+      "transport": "send",
+      "callee": "send",
+      "callSha256": "35d621560f562ee95e77be3cd98718e419d07100ddfc9dcaef565476ddcf3607",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "LOCAL_REACT_REDUCER_SEND_CALLBACK_NOT_NETWORK_TRANSPORT",
+        "trace": "The two send calls resolve to the one local arrow callback dispatching a WfAction. S02Work uses workforceReducer and Theater passes that exact reducer dispatch. Runtime callback test emits only two local events. No model, provider, actor or approval is created."
+      }
+    },
+    {
+      "id": "d836bcd400bd13ddac6c",
+      "file": "frontend/src/components/terminal/ChatBarFileGrid.tsx",
+      "line": 84,
+      "entryPoint": "copyImage",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "02080ee9df2029343f4a9ce242af5ea993a030cc7d8e206f90eb5ab207dd5d52",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "LOCAL_FILE_OBJECT_URL_TO_EXPLICIT_USER_CLIPBOARD_ONLY",
+        "trace": "The private modal has one source call site. Its url prop comes from a map written only by URL.createObjectURL over selected local File values and revoked on change/unmount. AST plus actual copyImage callback reads an owned local blob and invokes only a fixture clipboard. No production clipboard was changed."
+      }
+    },
+    {
+      "id": "333b8a4c447a6b53b794",
+      "file": "frontend/src/lib/avatarPersistence.ts",
+      "line": 23,
+      "entryPoint": "persistAvatarUpload",
+      "transport": "upload",
+      "callee": "bucket.upload",
+      "callSha256": "d08ef83e96316166767d550d425bf198e8d63477d9bb1d5a8b99e7582a0a06a6",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "FIRST_PARTY_EXPLICIT_PUBLIC_PROFILE_PHOTO_UPLOAD_NOT_PRIVATE_FILE_OR_ARBITRARY_EXPORT",
+        "trace": "Actual hook calls persistAvatarUpload(createClient(), selectedFile, setAvatarUrl). Current Auth getUser precedes fixed avatars bucket upload, random object path is derived from returned user.id, filename ignored, no upsert.5MiB approved MIME floor and profile-save receipt failures fail closed. Existing source RLS binds INSERT/UPDATE folder to auth.uid. SDK ports and source policy are tested/read here, no new live RLS or customer storage claim."
+      }
+    },
+    {
+      "id": "20618341b2f95ca0ba5e",
+      "file": "frontend/src/lib/setProfileFromImage.ts",
+      "line": 21,
+      "entryPoint": "setProfileFromImageUrl",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "296029767dcc6797ade3972c2fe750ee84a277e0092f77b1fa04e65329f37787",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "LOCAL_DATA_IMAGE_DECODING_ONLY_NO_HTTP_FETCH_AT_THIS_CANDIDATE",
+        "trace": "HTTP image URLs invoke the separate profile-save callback and return before fetch. The actual fetch expression is reachable only for data:image strings. Unit execution proves HTTP input makes0fetches, data image makes1local conversion, unsupported schemes fail. Profile-save authorization is not promoted."
+      }
+    },
+    {
+      "id": "e1ddea7115498d92341b",
+      "file": "frontend/src/store/useCurrencyStore.ts",
+      "line": 30,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "baf3d03d54eb4a0d39f0cda517a86d667efd0bbb2822f9b41f7f0c6e5cfa686d",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null,
+      "review": {
+        "kind": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "FIXED_SAME_ORIGIN_PUBLIC_COUNTRY_JSON_FOR_LOCAL_DISPLAY_ONLY",
+        "trace": "Actual store detect calls only /api/geo, with no request body or Authorization header, once after load. Route derives public country flags without another network call. Local display state is not an identity, billing entitlement or authority grant. Actual request/store behavior tested with only Zustand and currency formatting ports substituted."
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "frontend/src/components/homepage-next/s02/WorkforceStage.tsx",
+      "sha256": "a23268b21ee451dcbab111d271b0213b2cf6d8473f00f98fd98779ff4f28bdf5"
+    },
+    {
+      "path": "frontend/src/lib/setProfileFromImage.ts",
+      "sha256": "5815d4ace7692c8b88a10810ca72cbfe4ed6e23c8c3574cda6c4dd138fc42d45"
+    },
+    {
+      "path": "frontend/src/components/terminal/ChatBarFileGrid.tsx",
+      "sha256": "bf6d49d5e3ad98a44486de0d443dffb22773056adf389447527c57b1ac6ea695"
+    },
+    {
+      "path": "frontend/src/lib/avatarPersistence.ts",
+      "sha256": "b26780997843838a902d06a7dd928454cff64e5d93ce9140984587ab25c0d934"
+    },
+    {
+      "path": "backend/src/scripts/verifyGceExecution.ts",
+      "sha256": "374af2ebc3e2bb1ffb7b24cdc9ad8454028644750a4b9e6318f4d45440ac7eaa"
+    },
+    {
+      "path": "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
+      "sha256": "9db277444cd7ccdd60d51016b227194bd1e2baf8601b4100fa79a5e23f2de3bd"
+    },
+    {
+      "path": "frontend/src/store/useCurrencyStore.ts",
+      "sha256": "88deb7c3d2a04b2bca92dfdbd92e2bd95d8c9c75ed9399a200af5d6529370559"
+    },
+    {
+      "path": "backend/src/security/localEgressCandidates.security.test.ts",
+      "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+    },
+    {
+      "path": "frontend/src/lib/avatarPersistence.test.ts",
+      "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+    },
+    {
+      "path": "frontend/src/hooks/useAvatarUpdate.ts",
+      "sha256": "8583f513e0d9ce63fa8c0aead21cefe0350e45e406a47fcd4d26a7a019215dd3"
+    },
+    {
+      "path": "supabase/migrations/003_production_setup.sql",
+      "sha256": "d3e059cf0d36a4ab0ae5137022b56b3e4cab10f0ab522a8baed93d8e1efeedf0"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/S02Work.tsx",
+      "sha256": "80e59b4b18fff55d356d107ee19a090d4525435f1ebd0f9d3e10c8ebe71609ae"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/Theater.tsx",
+      "sha256": "45b24ff2c66452568b90969781b91ad29bd3009fe04bb48965f2636908dd832e"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/workforce.ts",
+      "sha256": "1ab7b0f1f5b87865ba3bb4412c4e397e0328c39bf0760e64e6b747c1e6937622"
+    },
+    {
+      "path": "frontend/src/app/api/geo/route.ts",
+      "sha256": "6218b5433f41218f3c85dc7a81b4298dc7e8c19532addd569836f8186fe7865f"
+    }
+  ],
+  "receipt": {
+    "jobId": "e207463a-83e4-4c20-923a-4bd03421efd7",
+    "status": "passed",
+    "log": "docs/xroga/evidence/command-010/local-candidates-20261027/green.log",
+    "tests": 11,
+    "skipped": 0,
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 23360
+    }
+  },
+  "limitations": [
+    "No production, live Supabase/R2, clipboard, model, Compute, IAM or paid operation executed",
+    "Static source graph and actual local callbacks do not certify generated code, reflection, imported future callers, deployed database policy state or unrelated profile/storage callers",
+    "No code disabled or deleted to obtain a pass. Existing local functionality and historical operator verification program are preserved",
+    "Original criteria, actual high-risk caller obligations, final exact-source CI and compatible Phase4 release remain incomplete"
+  ]
+}

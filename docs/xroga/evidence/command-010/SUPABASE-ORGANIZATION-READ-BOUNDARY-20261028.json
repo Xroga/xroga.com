@@ -1,0 +1,108 @@
+{
+  "scope": "SCOPED_OWNER_ORGANIZATION_LIST_ONLY_NOT_PROVISIONING_SQL_PROJECT_CREATION_OR_CREDENTIAL_TRANSFER",
+  "candidate": {
+    "id": "96fbfea42a399a233486",
+    "file": "backend/src/routes/supabaseOAuth.ts",
+    "line": 425,
+    "entryPoint": "<module-or-callback>",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "7f108f6d651966ee8abf288336bb1df93ea2c6816a08806155667c76608f8b8c",
+    "destination": "https://api.supabase.com",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "FIXED_ORIGIN_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "Raw userId could list provider organizations without original actor",
+    "Automatic redirects and unlimited receipt accepted",
+    "Credential rotation or disconnect during read returned stale successful metadata"
+  ],
+  "correction": "Original issuer TenantContext must match request owner before any credential read. Existing OAuth refresh path retained, followed by authoritative-only canonical credential and revision snapshot. Fixed official GET, manual redirects, 15s network timeout and 64KiB receipt, strict bounded organization DTO. Current token, revision and metadata checked after read. Request disconnect cancels lifetime. Static errors never expose provider error content. No partial organization list on denial.",
+  "trace": "backend/src/index.ts mounts authMiddleware at /api/supabase; GET /organizations uses its exact req.tenantContext and matching req.userId before the current supabase_oauth row and the fixed api.supabase.com/v1/organizations read. No resource-creation authority is inferred.",
+  "authority": "Read-only owner metadata. No payload, file or private project content sent. Header credential attached only to exact official issuer. No model dispatch, reservation, provider mutation, durable side effect or new confirmation authority.",
+  "verification": {
+    "tests": 14,
+    "pass": 14,
+    "fail": 0,
+    "skip": 0,
+    "negative": [
+      "missing original actor",
+      "cloned actor",
+      "foreign actor",
+      "redirect",
+      "oversized receipt",
+      "malformed receipt",
+      "provider403",
+      "disconnect during receipt",
+      "same-token revision rotation"
+    ],
+    "positive": [
+      "canonical owner organization listing",
+      "existing disconnect behavior",
+      "existing PKCE callback race regression"
+    ],
+    "ordinaryFailure": "Provider503 returns static failure and no success or fallback. Subsequent independently authorized owner listing succeeds."
+  },
+  "officialReference": "https://supabase.com/docs/reference/api/v1-list-all-organizations",
+  "receipts": [
+    {
+      "name": "red",
+      "id": "1b5c4eb6-6f46-41cb-a980-b5e2f4902f9d",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/supabase-organizations-red-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 585115
+      }
+    },
+    {
+      "name": "green",
+      "id": "f3a694f6-a715-4e92-8c76-81fe9f3aabcf",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/supabase-organizations-green-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 609993
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/routes/supabaseOAuth.ts",
+      "sha256": "28f0a7c8eba8c0e0ad462d6ee004bf0ded78386ead0b451f12d8ac324cd74675"
+    },
+    {
+      "path": "backend/src/routes/supabaseOrganizations.security.test.ts",
+      "sha256": "353a3573fd510fca9c39e143122defbfd3011435df2ea3c8f1dc458179ceb957"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "sha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522"
+    },
+    {
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "sha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
+    },
+    {
+      "path": "backend/src/index.ts",
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
+    },
+    {
+      "path": "backend/src/middleware/auth.ts",
+      "sha256": "8bb257cd67ad643d9ccc59eae5e767e0e03bbda1ca16ee37fcd304d63d04aca8"
+    }
+  ],
+  "productionChanged": false,
+  "liveProviderRequests": 0,
+  "spending": 0,
+  "limitations": [
+    "No project-creation, SQL, provisioning or vault-to-host synchronization acceptance inferred.",
+    "Focused local wire fixtures are not whole-source exact CI or release acceptance."
+  ]
+}

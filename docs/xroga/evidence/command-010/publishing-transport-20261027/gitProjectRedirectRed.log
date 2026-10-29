@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: real publishing transports cannot follow a provider redirect with project or credential payloads
+    # Subtest: Vercel deploy
+    ok 1 - Vercel deploy
+      ---
+      duration_ms: 26.4347
+      type: 'test'
+      ...
+    # Subtest: Netlify deploy
+    ok 2 - Netlify deploy
+      ---
+      duration_ms: 4.3868
+      type: 'test'
+      ...
+    # Subtest: Vercel env sync
+    ok 3 - Vercel env sync
+      ---
+      duration_ms: 2.4082
+      type: 'test'
+      ...
+    # Subtest: Vercel domains
+    ok 4 - Vercel domains
+      ---
+      duration_ms: 2.4999
+      type: 'test'
+      ...
+    # Subtest: Vercel Git project
+    not ok 5 - Vercel Git project
+      ---
+      duration_ms: 12.9679
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\lib\\publishingTransport.security.test.ts:1:1922'
+      failureType: 'testCodeFailure'
+      error: |-
+        A fixed provider may not redirect this transport
+        
+        2 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 2
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\lib\publishingTransport.security.test.ts:25:274)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\lib\publishingTransport.security.test.ts:25:47)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..5
+not ok 1 - real publishing transports cannot follow a provider redirect with project or credential payloads
+  ---
+  duration_ms: 60.7641
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\lib\\publishingTransport.security.test.ts:1:612'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: Netlify lookup cannot substitute an unrelated site after creation fails
+ok 2 - Netlify lookup cannot substitute an unrelated site after creation fails
+  ---
+  duration_ms: 4.0241
+  type: 'test'
+  ...
+# Subtest: Netlify authorization denial stops before lookup or deployment retry
+ok 3 - Netlify authorization denial stops before lookup or deployment retry
+  ---
+  duration_ms: 1.0949
+  type: 'test'
+  ...
+# Subtest: known held credentials in source files stop publishing before provider dispatch
+ok 4 - known held credentials in source files stop publishing before provider dispatch
+  ---
+  duration_ms: 0.9287
+  type: 'test'
+  ...
+# Subtest: authorized Netlify create and exact-name recovery preserve the original source snapshot
+ok 5 - authorized Netlify create and exact-name recovery preserve the original source snapshot
+  ---
+  duration_ms: 5.9048
+  type: 'test'
+  ...
+# Subtest: publishing transport rejects destination, path, method and size violations before dispatch
+ok 6 - publishing transport rejects destination, path, method and size violations before dispatch
+  ---
+  duration_ms: 11.8964
+  type: 'test'
+  ...
+# Subtest: publishing transport bounds response bytes and never exposes provider failure bodies
+ok 7 - publishing transport bounds response bytes and never exposes provider failure bodies
+  ---
+  duration_ms: 1.541
+  type: 'test'
+  ...
+# Subtest: publishing security denials cannot become another provider or platform retry
+ok 8 - publishing security denials cannot become another provider or platform retry
+  ---
+  duration_ms: 2.8708
+  type: 'test'
+  ...
+1..8
+# tests 13
+# suites 0
+# pass 11
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 751.0587

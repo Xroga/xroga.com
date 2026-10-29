@@ -1,0 +1,175 @@
+{
+  "scope": "SUPABASE_FIXED_TOKEN_TRANSPORT_AND_EXPLICIT_X_RESEARCH_ACCOUNTING_BLOCK_NOT_WHOLE_CALLER_OR_PHASE_ACCEPTANCE",
+  "parent": "951d72c60f447478e66b77f490b57bf050f90fcd",
+  "originalCandidates": [
+    {
+      "id": "c0bca58cc5345c0837e1",
+      "file": "backend/src/ai/black-hole/webIntelligence.ts",
+      "line": 438,
+      "entryPoint": "grokXSearch",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b3f5866a7e4f009eca57c7016de406180fee72067a22f707258ae179c531a83c",
+      "destination": "https://api.x.ai",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "9f962d39a30e2e289376",
+      "file": "backend/src/services/integrations/supabaseAuth.ts",
+      "line": 139,
+      "entryPoint": "exchangeSupabaseOAuthCode",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "0ab595e818072eeb2f28d28339c029ba248cd784b7656309104e43482a542bf0",
+      "destination": "https://api.supabase.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "b401421d17d621333330",
+      "file": "backend/src/services/integrations/supabaseAuth.ts",
+      "line": 214,
+      "entryPoint": "refreshSupabaseOAuthToken",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "0ab595e818072eeb2f28d28339c029ba248cd784b7656309104e43482a542bf0",
+      "destination": "https://api.supabase.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "currentFixedTokenTransport": {
+    "id": "beac062acc9e64531d14",
+    "file": "backend/src/services/integrations/supabaseAuth.ts",
+    "line": 123,
+    "entryPoint": "supabaseTokenRequest",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "987374ed698294669fcc1b81662e8f673f5a4536a9e04207050958cdf420fc5f",
+    "destination": "https://api.supabase.com",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "FIXED_ORIGIN_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "X research returned successful cited output with no issued actor, no canonical reservation and no usage receipt. Negative fixture failed before repair.",
+    "Both real Supabase exchange and refresh followed a local HTTP307 to another endpoint before token storage.",
+    "Provider-supplied token error descriptions could reach user-visible errors; successful token receipts were unbounded and unvalidated."
+  ],
+  "corrections": [
+    "X research now requires the original issued actor and matching user, then explicitly rejects before credential loading or any network. No fake empty success or alternate-provider fallback.",
+    "No estimated X search cost ceiling was invented. Official max_output_tokens excludes reasoning/function calls and search-item charges are separately metered. A verified canonical reservation/settlement cost contract remains required before re-enabling.",
+    "The two token exchanges now share one fixed official POST endpoint, manual redirect inspection,15s timeout,64KiB request/actual-response limits, token shape/expiry validation and safe static errors.",
+    "Refresh propagates terminal transport denial instead of returning a stale-token/fallback result. Original PKCE consumption, conditional persistence revision and revocation checks remain unchanged."
+  ],
+  "verification": {
+    "passed": 18,
+    "skipped": 0,
+    "negative": "Actual production functions through controlled vault ports and real local HTTP redirect servers. No redirected request, no save after denial, oversized/malformed receipts rejected, credential echo removed, no raw-user X dispatch or unaccounted publication.",
+    "positive": "Canonical Parallel read remains functional. Normal Supabase refresh succeeds with original conditional-save inputs. Existing actual PKCE epoch, lost revision and callback race tests pass."
+  },
+  "receipts": [
+    {
+      "name": "researchRed",
+      "jobId": "0d60b01f-2cb4-4cc9-9cdf-062e62e2d9e8",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/research-oauth-20261027/researchRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 680986
+      }
+    },
+    {
+      "name": "oauthRed",
+      "jobId": "5590511e-b0fc-415e-b936-488596640094",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/research-oauth-20261027/oauthRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 9831
+      }
+    },
+    {
+      "name": "integratedGreen",
+      "jobId": "8c6e7ab4-a69c-415a-93a8-6f6e05187004",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/research-oauth-20261027/integratedGreen.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1089743
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "sha256": "82ab56fef7542703cabf958a32f5e0d986a94757f4eb19148319687938047e58"
+    },
+    {
+      "path": "backend/src/ai/black-hole/webIntelligence.ts",
+      "sha256": "a03cfeef1fc63aeaa78e30132e0295ae5a8e6ce97759c799a2e8c7b4ef984d79"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseTransport.security.test.ts",
+      "sha256": "f38f87ee4a568f3bb02f4db88ae59c76d65280fba7920444d4557b5ceb13005c"
+    },
+    {
+      "path": "backend/src/ai/black-hole/xResearchAdmission.security.test.ts",
+      "sha256": "fc7668363947f500561e33f2fcc7717e60ac6b346e4c1207b2aea6d3a935dd43"
+    },
+    {
+      "path": "backend/src/ai/black-hole/webIntelligence.test.ts",
+      "sha256": "343907ba1466315b366aaf8cb01c29742afc94e209cb23b5df10c5611a691424"
+    },
+    {
+      "path": "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
+      "sha256": "7c751667634737411674d2064db69b993442f95b680b023486a18d4ec9650b32"
+    },
+    {
+      "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+      "sha256": "23eddde7cfbc09d6f7a65227512ab8e95f92b358f1c517a55040756a393b1376"
+    },
+    {
+      "path": "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
+      "sha256": "505fc13d6afd8491b58927c0b2d253c1bdebea1dc411f34070c7cee4d999804b"
+    }
+  ],
+  "officialReferences": [
+    "https://docs.x.ai/developers/rest-api-reference/inference/responses",
+    "https://docs.x.ai/developers/cost-tracking",
+    "https://docs.x.ai/developers/tools/x-search",
+    "https://supabase.com/docs/guides/integrations/build-a-supabase-oauth-integration"
+  ],
+  "unresolved": [
+    {
+      "originalCandidate": "c0bca58cc5345c0837e1",
+      "state": "EXPLICIT_ACCOUNTING_UNAVAILABLE_NOT_POSITIVELY_VERIFIED",
+      "required": "Verified request cost contract, canonical reservation and exact settlement, current project/run/credential ownership, egress and provenance before re-enabling X research."
+    },
+    "No Supabase project creation, SQL, PAT fallback, arbitrary provisioning, cross-provider credential export or higher consequential caller promoted. Their candidates remain pending.",
+    "Source AST count reductions are consolidation/removal, not three fully verified production features.",
+    "Final exact-source CI, integrated release gates and the original12criteria remain mandatory."
+  ],
+  "productionChanged": false,
+  "liveProviderCalls": 0,
+  "spending": 0
+}

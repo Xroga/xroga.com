@@ -1,0 +1,156 @@
+TAP version 13
+# Subtest: real checkout route uses canonical owner claim, egress, one dispatch and durable completion
+    # Subtest: prepare denies missing actor before any credential or provider read
+    ok 1 - prepare denies missing actor before any credential or provider read
+      ---
+      duration_ms: 653.425
+      type: 'test'
+      ...
+    # Subtest: prepare denies clone actor before any credential or provider read
+    ok 2 - prepare denies clone actor before any credential or provider read
+      ---
+      duration_ms: 26.1069
+      type: 'test'
+      ...
+    # Subtest: prepare denies foreign actor before any credential or provider read
+    ok 3 - prepare denies foreign actor before any credential or provider read
+      ---
+      duration_ms: 11.3305
+      type: 'test'
+      ...
+    # Subtest: ok
+    ok 4 - ok
+      ---
+      duration_ms: 175.0044
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 5 - cancelled
+      ---
+      duration_ms: 42.0724
+      type: 'test'
+      ...
+    # Subtest: foreign-confirmation
+    ok 6 - foreign-confirmation
+      ---
+      duration_ms: 19.2875
+      type: 'test'
+      ...
+    # Subtest: wrong-operation
+    ok 7 - wrong-operation
+      ---
+      duration_ms: 30.6328
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 8 - changed-target
+      ---
+      duration_ms: 32.1816
+      type: 'test'
+      ...
+    # Subtest: changed-summary
+    ok 9 - changed-summary
+      ---
+      duration_ms: 47.6241
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 10 - audit-fail
+      ---
+      duration_ms: 58.5543
+      type: 'test'
+      ...
+    # Subtest: audit-substituted-owner
+    ok 11 - audit-substituted-owner
+      ---
+      duration_ms: 37.64
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 12 - cancel-at-audit
+      ---
+      duration_ms: 36.8015
+      type: 'test'
+      ...
+    # Subtest: expire-at-audit
+    ok 13 - expire-at-audit
+      ---
+      duration_ms: 63.5052
+      type: 'test'
+      ...
+    # Subtest: rotate-at-audit
+    ok 14 - rotate-at-audit
+      ---
+      duration_ms: 48.8686
+      type: 'test'
+      ...
+    # Subtest: provider403
+    ok 15 - provider403
+      ---
+      duration_ms: 29.7722
+      type: 'test'
+      ...
+# {"level":"error","event":"whop_checkout_failed","status":503,"userId":"7f30b904-f353-4e80-9e2c-131d6eeb32a2"}
+    # Subtest: provider503
+    ok 16 - provider503
+      ---
+      duration_ms: 31.2357
+      type: 'test'
+      ...
+    # Subtest: redirect
+    ok 17 - redirect
+      ---
+      duration_ms: 28.3211
+      type: 'test'
+      ...
+    # Subtest: oversized
+    ok 18 - oversized
+      ---
+      duration_ms: 24.1357
+      type: 'test'
+      ...
+    # Subtest: nonce-substitution
+    ok 19 - nonce-substitution
+      ---
+      duration_ms: 25.9963
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 20 - concurrent
+      ---
+      duration_ms: 31.2042
+      type: 'test'
+      ...
+    1..20
+ok 1 - real checkout route uses canonical owner claim, egress, one dispatch and durable completion
+  ---
+  duration_ms: 1511.8607
+  type: 'test'
+  ...
+# Subtest: raw user ID cannot create checkout or read provider plan without issued approval
+ok 2 - raw user ID cannot create checkout or read provider plan without issued approval
+  ---
+  duration_ms: 58.3104
+  type: 'test'
+  ...
+# Subtest: checkout redirect and credential denials remain terminal security failures
+ok 3 - checkout redirect and credential denials remain terminal security failures
+  ---
+  duration_ms: 69.7139
+  type: 'test'
+  ...
+# Subtest: the unit claim fixture cannot mint authority in a production runtime
+ok 4 - the unit claim fixture cannot mint authority in a production runtime
+  ---
+  duration_ms: 0.7997
+  type: 'test'
+  ...
+1..4
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11809.9924

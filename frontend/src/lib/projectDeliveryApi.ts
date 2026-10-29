@@ -2,6 +2,7 @@
 
 import {
   API_URL,
+  fetchApiResponse,
 } from '@/lib/api';
 
 import {
@@ -229,7 +230,7 @@ async function request<T>(
     await accessToken();
 
   const response =
-    await fetch(
+    await fetchApiResponse(
       `${API_URL}${path}`,
 
       {
@@ -309,8 +310,8 @@ export const projectDeliveryApi = {
         'public';
     } =
       {},
-  ): Promise<ProjectDeliveryEnvelope> {
-    return request<ProjectDeliveryEnvelope>(
+  ): Promise<ProjectDeliveryEnvelope|{needsConfirmation:true;reviewUrl:string;message:string}> {
+    return request<ProjectDeliveryEnvelope|{needsConfirmation:true;reviewUrl:string;message:string}>(
       `/api/delivery/${encodeURIComponent(
         projectId,
       )}/publish`,
@@ -354,7 +355,7 @@ export const projectDeliveryApi = {
       await accessToken();
 
     const response =
-      await fetch(
+      await fetchApiResponse(
         `${API_URL}/api/delivery/${encodeURIComponent(
           projectId,
         )}/download.zip`,

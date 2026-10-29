@@ -6,6 +6,21 @@ import { validateIntegrationIdentity,projectVanishedNonPersistenceReviews,projec
 import { discoverPersistenceCalls } from '../security/audit-tenant-policies.mjs';
 const fixture={ci:'true',event:'pull_request',head:'a'.repeat(40),parents:['b'.repeat(40),'c'.repeat(40)],expectedBase:'b'.repeat(40),expectedHead:'c'.repeat(40)};
 
+test('current Phase4 conversion reviews bind feature bytes before virtual merge projection',()=>{
+  const read=path=>readFileSync(new URL('../../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const registry=JSON.parse(read('docs/xroga/security/caller-reviews.json'));
+  const paths=['backend/src/security/boundedPublicGet.ts','backend/src/ai/attachments.ts'];
+  for(const path of paths){
+    const records=registry.reviews.filter(r=>r.path===path);
+    assert.equal(records.length,1);
+    const row=records[0],source=read(path);
+    assert.equal(row.sourceSha256,createHash('sha256').update(source).digest('hex'));
+    assert.deepEqual(row.callIds,discoverPersistenceCalls(path,source).map(c=>c.id));
+  }
+  assert.equal(projectStableArrayConversionReviews(registry,{readFeature:read,readIntegrated:read}).rebound.length,0);
+  const bad={...registry,reviews:registry.reviews.map(r=>r.path===paths[0]?{...r,sourceSha256:'0'.repeat(64)}:r)};
+  assert.throws(()=>projectStableArrayConversionReviews(bad,{readFeature:read,readIntegrated:read}),/Unbound original/);
+});
 test('current-main native conversion reviews bind source without waiving adjacent sidebar DML',()=>{
   const read=path=>readFileSync(new URL(`../../${path}`,import.meta.url),'utf8').replace(/\r\n/g,'\n');
   const registry=JSON.parse(read('docs/xroga/security/caller-reviews.json'));

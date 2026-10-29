@@ -1,5 +1,5 @@
 /**
- * Browser coordinator transport (INFRA-007): how the trusted API (Fly) drives the hardened browser host (Compute Engine).
+ * Browser coordinator transport (INFRA-007): how the trusted API drives the hardened browser host (Compute Engine).
  *
  *   API: RemoteBrowserWorker (a BrowserWorkerPort)  ── signed HTTPS ──>  host: coordinator server ──> ContainerBrowserWorker ──> container
  *
@@ -20,6 +20,9 @@ import { parseBrowserPlan, type BrowserPlan } from './browserPlan.js';
 import { WORKER_ERRORS, type BrowserModelGateway } from './containerBrowserWorker.js';
 import type { Lease } from './leaseStore.js';
 import { BrowserTaskError, type BrowserTaskFailureCode, type BrowserWorkerPort, type BrowserWorkerResult } from './browserTaskHandler.js';
+import { BrowserModelLifetime } from './browserModelLifetime.js';
+import type { BrowserModelAuthority } from './browserModelDispatch.js';
+import { containsCredentialSecretText } from '../security/egress/dataClassification.js';
 
 const SKEW_MS = 60_000;
 const MAX_BODY = 2 * 1024 * 1024;
@@ -111,7 +114,7 @@ export function createCoordinatorServer(opts: CoordinatorOptions): Server {
           .runWithGateway?.(job, { signal: abort.signal, lease, plan }, relay) ?? await opts.worker.run(job, { signal: abort.signal, lease, plan });
         send({ type: 'result', result: { ...result, artifacts: result.artifacts.map((a) => ({ name: a.name, mediaType: a.mediaType, bytes: Buffer.from(a.bytes).toString('base64') })) } });
       } catch (e) {
-        send({ type: 'error', code: e instanceof BrowserTaskError ? e.code : 'WORKER_FAILED', reason: e instanceof BrowserTaskError ? e.message : 'the browser worker failed' });
+        send({ type: 'error', code: e instanceof BrowserTaskError ? e.code : 'WORKER_FAILED', reason: e instanceof BrowserTaskError ? e.message : 'the browser worker failed',...(e instanceof BrowserTaskError&&e.retryable===false?{retryable:false}:{}) });
       } finally {
         running.delete(id); res.end();
       }
@@ -151,58 +154,84 @@ export class RemoteBrowserWorker implements BrowserWorkerPort {
     assertSecret(opts.secret);
     const u = new URL(opts.baseUrl);
     if (u.protocol !== 'https:' && !(u.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname))) throw new Error('the browser coordinator must be https (http only on loopback)');
+    if(u.username||u.password||u.pathname!=='/'||u.search||u.hash)throw new Error('the browser coordinator must be a configured origin');
     this.fetchImpl = opts.fetchImpl ?? fetch;
   }
 
-  private signed(method: string, path: string, payload: unknown, signal?: AbortSignal) {
+  private async signed(method: string, path: string, payload: unknown, signal?: AbortSignal) {
+    if(!((method==='POST'&&path==='/v1/jobs')||((method==='POST'||method==='DELETE')&&/^\/v1\/jobs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\/llm)?$/.test(path))))throw new BrowserTaskError('WORKER_FAILED','the browser coordinator path was denied',false);
     const body = payload === undefined ? '' : JSON.stringify(payload);
-    return this.fetchImpl(new URL(path, this.opts.baseUrl), { method, headers: signRequest(this.opts.secret, method, path, body), body: body || undefined, signal });
+    if(Buffer.byteLength(body)>MAX_BODY)throw new BrowserTaskError('RESULT_OVER_LIMIT','the browser coordinator request exceeded its limit');
+    if(containsCredentialSecretText(body))throw new BrowserTaskError('CREDENTIAL_LIKE_CONTENT','the browser coordinator payload contains protected credential content');
+    const res=await this.fetchImpl(new URL(path, this.opts.baseUrl), { method, headers: signRequest(this.opts.secret, method, path, body), body: body || undefined, signal, redirect:'manual' });
+    if(res.redirected||(res.status>=300&&res.status<400)){
+      await res.body?.cancel().catch(()=>undefined);throw new BrowserTaskError('WORKER_FAILED','the browser coordinator redirect was denied',false);
+    }
+    if([400,401,403].includes(res.status)){
+      await res.body?.cancel().catch(()=>undefined);throw new BrowserTaskError('WORKER_FAILED','the browser coordinator authorization or protocol was denied',false);
+    }
+    return res;
   }
 
-  async run(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan }): Promise<BrowserWorkerResult> {
+  async run(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan; modelAuthority?: BrowserModelAuthority }): Promise<BrowserWorkerResult> {
     let res: Response;
     try { res = await this.signed('POST', '/v1/jobs', { job, plan: ctx.plan ?? { steps: [{ op: 'screenshot', name: 'page.png' }], expect: [] }, lease: { workerId: ctx.lease.workerId, token: ctx.lease.token, expiresAt: ctx.lease.expiresAt } }, ctx.signal); }
-    catch { throw new BrowserTaskError(ctx.signal.aborted ? 'CANCELLED' : 'WORKER_FAILED', ctx.signal.aborted ? 'the job was stopped' : 'the browser host is unreachable'); }
+    catch(error) { if(error instanceof BrowserTaskError)throw error;throw new BrowserTaskError(ctx.signal.aborted ? 'CANCELLED' : 'WORKER_FAILED', ctx.signal.aborted ? 'the job was stopped' : 'the browser host is unreachable'); }
+    if(ctx.signal.aborted){await res.body?.cancel().catch(()=>undefined);throw new BrowserTaskError('CANCELLED','the job was stopped');}
     if (res.status === 429) throw new BrowserTaskError('WORKER_FAILED', 'the browser host is at capacity');
     if (res.status !== 200 || !res.body) throw new BrowserTaskError('WORKER_FAILED', `the browser host refused the job (${res.status})`);
     const jobId = res.headers.get('x-xroga-job') ?? '';
-    const onAbort = () => { this.signed('DELETE', `/v1/jobs/${jobId}`, undefined).catch(() => undefined); };
+    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(jobId)){
+      await res.body.cancel().catch(()=>undefined);throw new BrowserTaskError('WORKER_FAILED','the browser coordinator job identity was denied',false);
+    }
+    const onAbort = () => { this.signed('DELETE', `/v1/jobs/${jobId}`, undefined,AbortSignal.timeout(5000)).catch(() => undefined); };
     ctx.signal.addEventListener('abort', onAbort, { once: true });
 
     const reader = res.body.getReader(); const dec = new TextDecoder(); let buf = '';
-    let spent = 0;
+    const usage={calls:0,inputTokens:0,outputTokens:0,costMicros:0,refused:0};
+    const gateway=this.opts.gateway;
+    const models=new BrowserModelLifetime(job,gateway?{generate:(params,call)=>gateway.generate(params,{...call,authority:ctx.modelAuthority})}:undefined,ctx.signal,usage);
+    let completed=false;let active=true;
+    const maxRecordBytes=Math.ceil(job.limits.maxArtifactBytes*4/3)+MAX_BODY;
+    const maxStreamBytes=maxRecordBytes+16*1024*1024;let streamBytes=0;
     try {
       for (;;) {
+        if(ctx.signal.aborted)throw new BrowserTaskError('CANCELLED','the job was stopped');
         const { value, done } = await reader.read();
         if (done) break;
+        if(ctx.signal.aborted)throw new BrowserTaskError('CANCELLED','the job was stopped');
+        streamBytes+=value.byteLength;
+        if(streamBytes>maxStreamBytes)throw new BrowserTaskError('RESULT_OVER_LIMIT','the browser coordinator stream exceeded its limit');
         buf += dec.decode(value, { stream: true });
+        if(buf.length>maxRecordBytes)throw new BrowserTaskError('RESULT_OVER_LIMIT','the browser coordinator record exceeded its limit');
         let nl: number;
         while ((nl = buf.indexOf('\n')) >= 0) {
           const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
-          let m: any; try { m = JSON.parse(line); } catch { continue; }
+          let m: any; try { m = JSON.parse(line);if(!m||typeof m!=='object'||Array.isArray(m))throw new Error(); } catch { throw new BrowserTaskError('WORKER_FAILED','the browser coordinator record was invalid',false); }
           if (m.type === 'llm') {
-            const reply = async () => {
-              if (!this.opts.gateway) return { ok: false, code: 'MODEL_ROUTE_MISSING', reason: 'no model route is configured' };
-              const remaining = job.limits.maxModelCostMicros - spent;
-              if (remaining <= 0) return { ok: false, code: 'MODEL_BUDGET_EXHAUSTED', reason: 'the job model budget is spent' };
-              try { const r = await this.opts.gateway.generate(m.params, { job, remainingMicros: remaining, signal: ctx.signal }); spent += r.costMicros; return { ok: true, value: r }; }
-              catch (e) { return { ok: false, code: (e as { code?: string }).code ?? 'MODEL_FAILED', reason: 'the model route refused the request' }; }
-            };
-            reply().then((r) => this.signed('POST', `/v1/jobs/${jobId}/llm`, { n: m.n, ...r }).catch(() => undefined));
+            const request=models.request(m.n,m.params);
+            request.then(value=>({ok:true,value}),()=>({ok:false,code:'MODEL_FAILED',reason:'the model route refused the request'}))
+              .then(r=>{if(active&&!ctx.signal.aborted)return this.signed('POST',`/v1/jobs/${jobId}/llm`,{n:m.n,...r},ctx.signal).catch(()=>undefined);});
           } else if (m.type === 'result') {
+            models.assertComplete();
             const r = m.result;
-            return { ...r, artifacts: (r.artifacts ?? []).map((a: any) => ({ name: String(a.name), mediaType: String(a.mediaType), bytes: new Uint8Array(Buffer.from(String(a.bytes), 'base64')) })) };
+            completed=true;
+            return { ...r, metrics:{...(r.metrics??{}),modelUsage:{...usage}}, artifacts: (r.artifacts ?? []).map((a: any) => ({ name: String(a.name), mediaType: String(a.mediaType), bytes: new Uint8Array(Buffer.from(String(a.bytes), 'base64')) })) };
           } else if (m.type === 'error') {
+            models.assertComplete();
             // the host is not trusted to choose arbitrary failure classes: only the worker codes it may legitimately report pass through
             const code: BrowserTaskFailureCode = WORKER_ERRORS.has(m.code) ? m.code : 'WORKER_FAILED';
-            throw new BrowserTaskError(code, code === 'WORKER_FAILED' ? 'the browser worker failed' : String(m.reason ?? '').slice(0, 200));
+            throw new BrowserTaskError(code, 'the isolated browser worker reported a bounded failure',m.retryable===false?false:undefined);
           }
         }
       }
       throw new BrowserTaskError(ctx.signal.aborted ? 'CANCELLED' : 'WORKER_FAILED', 'the browser host closed the stream without a result');
     } finally {
+      active=false;
+      models.close();
       ctx.signal.removeEventListener('abort', onAbort);
-      reader.cancel().catch(() => undefined);
+      await reader.cancel().catch(() => undefined);
+      if(!completed)await this.signed('DELETE',`/v1/jobs/${jobId}`,undefined,AbortSignal.timeout(5000)).catch(()=>undefined);
     }
   }
 }

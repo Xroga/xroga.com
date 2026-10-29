@@ -6,15 +6,15 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Counts
 
-- surfaces: 1713
-- routeRegistrations: 372
-- routes: 312
-- reachableRoutes: 233
+- surfaces: 1765
+- routeRegistrations: 374
+- routes: 314
+- reachableRoutes: 235
 - queues: 4
 - migrations: 157
 - workflows: 21
-- testSuites: 888
-- declaredTests: 6588
+- testSuites: 1011
+- declaredTests: 6909
 - classifiedMarkers: 395
 - reachableMarkers: 333
 - absentRequiredPaths: 5
@@ -55,7 +55,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 | backend/src/services/integrations/businessAction.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/services/integrations/pluginPermissionPolicy.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/services/integrations/oauthPkceStore.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
-| backend/src/services/storage/projectFiles.ts | PRESENT | DEAD_OR_UNREACHABLE |
+| backend/src/services/storage/projectFiles.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/routes/billingWebhook.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/services/publish/easCredentials.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | frontend/src/lib/xrogaBlocks.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |

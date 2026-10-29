@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: canonical API build preserves compiled output and requires the pinned Git compatibility gate
+ok 1 - canonical API build preserves compiled output and requires the pinned Git compatibility gate
+  ---
+  duration_ms: 1.8884
+  type: 'test'
+  ...
+# Subtest: accepted Google migration metadata is canonical and no active service depends on Fly
+ok 2 - accepted Google migration metadata is canonical and no active service depends on Fly
+  ---
+  duration_ms: 0.4857
+  type: 'test'
+  ...
+# Subtest: old Fly liveness cannot admit Fly as the current canonical production API
+ok 3 - old Fly liveness cannot admit Fly as the current canonical production API
+  ---
+  duration_ms: 20.7776
+  type: 'test'
+  ...
+# Subtest: an active Fly worker cannot be admitted by reusing dated successful evidence
+ok 4 - an active Fly worker cannot be admitted by reusing dated successful evidence
+  ---
+  duration_ms: 17.0136
+  type: 'test'
+  ...
+# Subtest: Google dynamic controls have exact reviewed bindings and new expressions remain blocked
+ok 5 - Google dynamic controls have exact reviewed bindings and new expressions remain blocked
+  ---
+  duration_ms: 17.5668
+  type: 'test'
+  ...
+# Subtest: actual API, queue, Supabase and storage definitions are canonical with all discovered names represented
+ok 6 - actual API, queue, Supabase and storage definitions are canonical with all discovered names represented
+  ---
+  duration_ms: 14.6818
+  type: 'test'
+  ...
+# Subtest: an undocumented environment key cannot silently enter production source
+ok 7 - an undocumented environment key cannot silently enter production source
+  ---
+  duration_ms: 7.9189
+  type: 'test'
+  ...
+# Subtest: credential-like inventory content is rejected without authentic secret values
+ok 8 - credential-like inventory content is rejected without authentic secret values
+  ---
+  duration_ms: 11.8358
+  type: 'test'
+  ...
+# Subtest: production localhost, duplicate IDs and conflicting canonical public origins fail
+ok 9 - production localhost, duplicate IDs and conflicting canonical public origins fail
+  ---
+  duration_ms: 43.4852
+  type: 'test'
+  ...
+# Subtest: active service needs actual evidence and every service must expose readiness or an honest gap
+ok 10 - active service needs actual evidence and every service must expose readiness or an honest gap
+  ---
+  duration_ms: 45.4386
+  type: 'test'
+  ...
+# Subtest: production ephemeral fallback remains high risk and unknown dynamic bindings cannot be marked reconciled
+ok 11 - production ephemeral fallback remains high risk and unknown dynamic bindings cannot be marked reconciled
+  ---
+  duration_ms: 43.9565
+  type: 'test'
+  ...
+# Subtest: a new dynamic expression in an already reviewed file still requires explicit caller reconciliation
+ok 12 - a new dynamic expression in an already reviewed file still requires explicit caller reconciliation
+  ---
+  duration_ms: 6.0592
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4572.0214
