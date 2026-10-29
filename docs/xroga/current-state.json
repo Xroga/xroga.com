@@ -17631,6 +17631,73 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:bcf909c866b73f823559",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
+      "sha256": "a574affb1142c429feced62499141e729fe8b7297cab6ff1deb49b14f579a106",
+      "symbols": [
+        "LocalProcessPort",
+        "Spawned",
+        "child",
+        "dir",
+        "f",
+        "full",
+        "last",
+        "onAbort",
+        "r",
+        "records",
+        "run",
+        "s",
+        "stages",
+        "started",
+        "stderr",
+        "stdout",
+        "timedOut",
+        "timer"
+      ],
+      "imports": [
+        "../../../sandbox/sandboxTypes.js",
+        "../testRunner.js",
+        "node:child_process",
+        "node:fs/promises",
+        "node:os",
+        "node:path"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/existingSource/change/canonical.test.ts:18",
+        "backend/src/existingSource/change/change.test.ts:11",
+        "backend/src/existingSource/change/golden.test.ts:23",
+        "backend/src/routes/existingSourceChanges.test.ts:9"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs/promises",
+        "node:os",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/canonical.test.ts",
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/golden.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:97f8ac201492b3298727",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/canonical.ts",
@@ -17937,75 +18004,6 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/existingSource/change/delivery.test.ts",
-        "backend/src/existingSource/change/golden.test.ts",
-        "backend/src/routes/existingSourceChanges.test.ts"
-      ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
-      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
-    },
-    {
-      "id": "surface:08ba5f7fe8d2030a195b",
-      "subsystem": "backend_infrastructure",
-      "sourcePath": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
-      "sha256": "51c33ff14a0dcacc298d28ac1aec2d247a846d8fe853b85a1ed1241dea3a500c",
-      "symbols": [
-        "LocalProcessPort",
-        "Spawned",
-        "child",
-        "dir",
-        "f",
-        "full",
-        "last",
-        "onAbort",
-        "r",
-        "records",
-        "run",
-        "s",
-        "stages",
-        "started",
-        "stderr",
-        "stdout",
-        "timedOut",
-        "timer"
-      ],
-      "imports": [
-        "../../sandbox/sandboxTypes.js",
-        "./testRunner.js",
-        "node:child_process",
-        "node:fs/promises",
-        "node:os",
-        "node:path"
-      ],
-      "runtimeImports": [],
-      "entryPoints": [],
-      "callers": [
-        "backend/src/existingSource/change/canonical.test.ts:18",
-        "backend/src/existingSource/change/change.test.ts:11",
-        "backend/src/existingSource/change/golden.test.ts:23",
-        "backend/src/routes/existingSourceChanges.test.ts:9",
-        "scripts/batch3/live-github-check.ts:22",
-        "scripts/batch3/local-supabase-check.ts:17"
-      ],
-      "reachable": false,
-      "persistenceDependencies": [],
-      "externalProviderDependencies": [
-        "node:child_process",
-        "node:fs/promises",
-        "node:os",
-        "node:path"
-      ],
-      "authBoundary": [],
-      "tenantBoundary": [],
-      "approvalBoundary": [],
-      "costBoundary": [],
-      "evidenceBoundary": [],
-      "testCoverage": [
-        "backend/src/existingSource/change/canonical.test.ts",
-        "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
         "backend/src/routes/existingSourceChanges.test.ts"
       ],
@@ -95644,7 +95642,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "0a431900c3aa5fb339d45f79652dd84a38c11e1d0d550da23af94dfaef708082",
+      "sha256": "e13495ad6aad22831dee79af5884940d3920f080c909b7d3941f475bc55dd60a",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -110626,7 +110624,6 @@
         "backend/src/config/supabase.ts",
         "backend/src/existingSource/archive/archiveStore.ts",
         "backend/src/existingSource/change/delivery.ts",
-        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
         "backend/src/existingSource/change/production.ts",
         "backend/src/existingSource/change/service.ts",
         "backend/src/existingSource/change/store.ts",
@@ -110732,7 +110729,6 @@
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/existingSource/archive/archiveStore.ts",
-        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
         "backend/src/existingSource/change/service.ts",
         "backend/src/existingSource/change/store.ts",
         "backend/src/existingSource/fakeGitHub.testsupport.ts",
@@ -136093,10 +136089,10 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:3d0aa8ea1ec082298115",
+      "id": "frontend-call:da8ee6e50f948e4e2a36",
       "sourcePath": "frontend/src/lib/api.ts",
       "line": 6681,
-      "callee": "fetch",
+      "callee": "fetchApiResponse",
       "reachable": true
     },
     {
@@ -143599,6 +143595,8 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
+    "Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
+    "Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"
   ]
 }

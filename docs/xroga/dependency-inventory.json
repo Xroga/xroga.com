@@ -7660,7 +7660,7 @@
         "backend/src/builder/qa/remoteQa.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/universalAgentFlags.ts",
-        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+        "backend/src/existingSource/change/__tests__/localProcessPort.ts",
         "backend/src/growth/growthService.ts",
         "backend/src/lib/comfyui.ts",
         "backend/src/lib/platformReady.ts",
@@ -7886,7 +7886,7 @@
         "backend/src/builder/qa/remoteQa.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/universalAgentFlags.ts",
-        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+        "backend/src/existingSource/change/__tests__/localProcessPort.ts",
         "backend/src/growth/growthService.ts",
         "backend/src/lib/comfyui.ts",
         "backend/src/lib/platformReady.ts",
@@ -10856,7 +10856,7 @@
     {
       "name": "PATH",
       "consuming_sources": [
-        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+        "backend/src/existingSource/change/__tests__/localProcessPort.ts",
         "backend/src/sandbox/sandboxEnvironment.ts"
       ],
       "environments": [
@@ -11986,7 +11986,7 @@
     {
       "name": "SystemRoot",
       "consuming_sources": [
-        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+        "backend/src/existingSource/change/__tests__/localProcessPort.ts",
         "backend/src/sandbox/sandboxProviders.ts"
       ],
       "environments": [
@@ -16216,6 +16216,10 @@
       "sha256": "43137374d904a31719b385f7facc0cb97cf4138dc229cac764e447323e0f694a"
     },
     {
+      "path": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
+      "sha256": "a574affb1142c429feced62499141e729fe8b7297cab6ff1deb49b14f579a106"
+    },
+    {
       "path": "backend/src/existingSource/change/canonical.ts",
       "sha256": "d08ac8c627251adcc4251e9e01b1a4d4721ee0f4c7507aa5bdf7362ec14e022d"
     },
@@ -16230,10 +16234,6 @@
     {
       "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
       "sha256": "4a11a19d3c21bfaada4eb261d3914c238b04802ef0601d706f46194226991d53"
-    },
-    {
-      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
-      "sha256": "51c33ff14a0dcacc298d28ac1aec2d247a846d8fe853b85a1ed1241dea3a500c"
     },
     {
       "path": "backend/src/existingSource/change/production.ts",
@@ -21301,7 +21301,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "0a431900c3aa5fb339d45f79652dd84a38c11e1d0d550da23af94dfaef708082"
+      "sha256": "e13495ad6aad22831dee79af5884940d3920f080c909b7d3941f475bc55dd60a"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -31223,6 +31223,27 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
+      "line": 34,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
+      "line": 37,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
+      "line": 37,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/existingSource/change/delivery.ts",
       "line": 160,
       "scope": "FUNCTION_LOCAL",
@@ -31304,27 +31325,6 @@
       "line": 66,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
-      "line": 34,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
-      "line": 37,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
-      "line": 37,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
