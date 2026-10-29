@@ -1,0 +1,131 @@
+{
+  "repositoryFiles": 638,
+  "commit": "f5c00e7",
+  "tasks": 4,
+  "before": {
+    "perRequest": {
+      "apiCalls": 638,
+      "bytes": 305753,
+      "contextTokens": 1248.25,
+      "unrelatedFilesRead": 632.75,
+      "unrelatedFilesInContext": 6.25,
+      "targetPrecisionTop8": 0.0625,
+      "targetRecall": 0.5
+    },
+    "rows": [
+      {
+        "task": "invoice-notification-validation",
+        "precision": 0.125,
+        "recall": 1,
+        "contextTokens": 1213,
+        "unrelatedFilesRead": 630,
+        "unrelatedFilesInContext": 3,
+        "apiCalls": 638,
+        "bytes": 305753
+      },
+      {
+        "task": "order-total-rounding",
+        "precision": 0,
+        "recall": 0,
+        "contextTokens": 1411,
+        "unrelatedFilesRead": 632,
+        "unrelatedFilesInContext": 7,
+        "apiCalls": 638,
+        "bytes": 305753
+      },
+      {
+        "task": "stack-trace-session-expiry",
+        "precision": 0.125,
+        "recall": 1,
+        "contextTokens": 785,
+        "unrelatedFilesRead": 635,
+        "unrelatedFilesInContext": 7,
+        "apiCalls": 638,
+        "bytes": 305753
+      },
+      {
+        "task": "shipment-label-500",
+        "precision": 0,
+        "recall": 0,
+        "contextTokens": 1584,
+        "unrelatedFilesRead": 634,
+        "unrelatedFilesInContext": 8,
+        "apiCalls": 638,
+        "bytes": 305753
+      }
+    ]
+  },
+  "after": {
+    "firstVisit": {
+      "apiCalls": 634,
+      "bytes": 305621,
+      "buildMs": 80,
+      "kind": "cold",
+      "filesIndexed": 632
+    },
+    "secondRequestSameCommit": {
+      "apiCalls": 0,
+      "kind": "reused"
+    },
+    "afterOneFileCommit": {
+      "apiCalls": 3,
+      "blobFetches": 1,
+      "buildMs": 14,
+      "kind": "incremental",
+      "reusedRows": 631,
+      "analyzedRows": 1
+    },
+    "perRequest": {
+      "apiCalls": 0,
+      "contextTokens": 467,
+      "unrelatedFilesRead": 0,
+      "unrelatedFilesInContext": 0.5,
+      "contextTokensWithTargetBodies": 593,
+      "targetPrecision": 0.75,
+      "targetRecall": 1,
+      "targetFileBytesToRead": 503.75
+    },
+    "rows": [
+      {
+        "task": "invoice-notification-validation",
+        "precision": 0.5,
+        "recall": 1,
+        "contextTokens": 696,
+        "unrelatedFilesRead": 0,
+        "unrelatedFilesInContext": 1,
+        "apiCalls": 0,
+        "bytes": 0
+      },
+      {
+        "task": "order-total-rounding",
+        "precision": 1,
+        "recall": 1,
+        "contextTokens": 403,
+        "unrelatedFilesRead": 0,
+        "unrelatedFilesInContext": 0,
+        "apiCalls": 0,
+        "bytes": 0
+      },
+      {
+        "task": "stack-trace-session-expiry",
+        "precision": 0.5,
+        "recall": 1,
+        "contextTokens": 405,
+        "unrelatedFilesRead": 0,
+        "unrelatedFilesInContext": 1,
+        "apiCalls": 0,
+        "bytes": 0
+      },
+      {
+        "task": "shipment-label-500",
+        "precision": 1,
+        "recall": 1,
+        "contextTokens": 364,
+        "unrelatedFilesRead": 0,
+        "unrelatedFilesInContext": 0,
+        "apiCalls": 0,
+        "bytes": 0
+      }
+    ]
+  }
+}

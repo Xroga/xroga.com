@@ -1,0 +1,246 @@
+/**
+ * /api/existing-source — link an EXISTING GitHub repository to Xroga and inspect it read-only (Batch 3, Phase 1).
+ * Mounted behind `authMiddleware`. Off unless XROGA_EXISTING_SOURCE=1 (development only until the release is authorised).
+ *
+ *   GET    /repositories             repositories the connected account can read (metadata only, nothing fetched from them)
+ *   POST   /links                    { repositoryId, branch? } link at the exact commit the branch points at now
+ *   GET    /links                    the owner's linked repositories
+ *   GET    /links/:id                re-verify against GitHub: account, access, ownership, where the branch is now
+ *   POST   /links/:id/refresh        move the base commit to the branch's current head, on purpose and recorded
+ *   DELETE /links/:id                unlink (the repository itself is untouched)
+ *   GET    /links/:id/directory      one directory level at the base commit (?path=)
+ *   POST   /archives                 import a ZIP of an existing project (raw body, ?name=); linked like a repository, never written back
+ *   POST   /links/:id/changes        request a change in plain language (runs in isolation; progress is the durable record)
+ *   GET    /changes/:changeId        status, scope, revisions with diffs and test evidence; POST .../cancel, .../resume, .../deliver; GET .../export?format=patch|zip
+ *   GET    /links/:id/file           one file at the base commit (?path=, optional ?startLine=&endLine=), redacted and bounded
+ *
+ * Identity comes only from the issued TenantContext. A repository is named by GitHub's immutable id and judged with the caller's own
+ * connected-account token; the response never contains a token.
+ */
+import express, { Router, type Response } from 'express';
+import { randomUUID } from 'node:crypto';
+import { z } from 'zod';
+import type { AuthRequest } from '../middleware/auth.js';
+import { ChangeDelivery } from '../existingSource/change/delivery.js';
+import { githubDeliveryApi, productionAgentRunner, productionExecutionPort, selectCodingModelRoute } from '../existingSource/change/production.js';
+import { ChangeService } from '../existingSource/change/service.js';
+import { SupabaseChangeStore } from '../existingSource/change/store.js';
+import type { ChangeTask } from '../existingSource/change/types.js';
+import { SupabaseArchiveStore } from '../existingSource/archive/archiveStore.js';
+import { SupabaseCodeIndexStore } from '../existingSource/intelligence/codeIndexStore.js';
+import { ExistingSourceIntelligence } from '../existingSource/intelligence/service.js';
+import { ExistingSourceService } from '../existingSource/service.js';
+import { createRestSourcePort } from '../existingSource/provider.js';
+import { SupabaseSourceBindingStore } from '../existingSource/store.js';
+import { ExistingSourceError } from '../existingSource/types.js';
+import { getGitHubToken } from '../services/integrations/githubAuth.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
+
+export const existingSourceEnabled = (env: NodeJS.ProcessEnv = process.env): boolean => env.XROGA_EXISTING_SOURCE === '1';
+
+export type ExistingSourceServiceFactory = (tenant: TenantContext) => ExistingSourceService;
+
+/** Finds or creates the Xroga project a linked repository shows up as, without renaming a project the owner already has for it. */
+async function projectFor(tenant: TenantContext, input: { ownerId: string; repositoryFullName: string; repositoryUrl: string; branch: string }): Promise<string | null> {
+  const db = getTenantSupabaseAdmin(tenant);
+  const existing = await db.from('projects').select('id').eq('user_id', input.ownerId).eq('github_repo_name', input.repositoryFullName).limit(2);
+  if (existing.error) return null;
+  if ((existing.data ?? []).length === 1) return String(existing.data![0]!.id);
+  if ((existing.data ?? []).length > 1) return null; // ambiguous legacy data: never guess
+  const saved = await db.rpc('save_owned_project_atomic', {
+    p_owner_id: input.ownerId,
+    p_project: { name: input.repositoryFullName.split('/')[1] ?? input.repositoryFullName, type: 'app', github_repo_url: input.repositoryUrl, github_repo_name: input.repositoryFullName, github_branch: input.branch },
+  });
+  const project = (saved.data as { project?: { id?: string; user_id?: string } } | null)?.project;
+  return !saved.error && project?.id && project.user_id === input.ownerId ? project.id : null;
+}
+
+export const defaultExistingSourceService: ExistingSourceServiceFactory = (tenant) => {
+  const context = requireTenantContext(tenant);
+  const codeIndexes = new SupabaseCodeIndexStore(context);
+  const archives = new SupabaseArchiveStore(context);
+  const changeStore = new SupabaseChangeStore(context);
+  return new ExistingSourceService({
+    store: new SupabaseSourceBindingStore(context),
+    tokenFor: (userId) => getGitHubToken(userId),
+    portFor: (token) => createRestSourcePort(token),
+    archives,
+    projectFor: (input) => projectFor(context, input),
+    // an unlinked repository, a removed connection or a lost access takes its derived code map with it
+    onBindingClosed: async (userId, bindingId) => { await codeIndexes.deleteForBinding(userId, bindingId); await archives.deleteForBinding(userId, bindingId); await changeStore.deleteForBinding(userId, bindingId); },
+  });
+};
+
+export type ExistingSourceIntelligenceFactory = (tenant: TenantContext, service: ExistingSourceService) => ExistingSourceIntelligence;
+
+export const defaultExistingSourceIntelligence: ExistingSourceIntelligenceFactory = (tenant, service) =>
+  new ExistingSourceIntelligence({ source: service, store: new SupabaseCodeIndexStore(requireTenantContext(tenant)) });
+
+export interface ExistingSourceChanges { readonly changes: ChangeService; readonly delivery: ChangeDelivery }
+export type ExistingSourceChangesFactory = (tenant: TenantContext, service: ExistingSourceService, intel: ExistingSourceIntelligence) => ExistingSourceChanges;
+
+export const defaultExistingSourceChanges: ExistingSourceChangesFactory = (tenant, service, intel) => {
+  const store = new SupabaseChangeStore(requireTenantContext(tenant));
+  return {
+    changes: new ChangeService({ source: service, intel, store, execution: productionExecutionPort, runAgent: productionAgentRunner, modelRouteFor: (userId, changeId) => selectCodingModelRoute(userId, changeId, requireTenantContext(tenant)),
+      canonicalRunAlive: async (userId, runId) => { const { getRunAsync } = await import('../ai/runStore.js'); return (await getRunAsync(runId, userId, true))?.status === 'running'; } }),
+    delivery: new ChangeDelivery({ source: service, store, apiFor: githubDeliveryApi }),
+  };
+};
+
+/**
+ * Starts a change. On the durable Google path the change is queued as a canonical run and executes in the Cloud Run Job; otherwise it
+ * runs in this process as before. A change that cannot be handed to a worker is ended with the reason, never left looking queued.
+ */
+type ChangeQueue = { selected: () => boolean; admit: typeof import('../workers/googleSwarmQueue.js').admitGoogleRun };
+export async function launchChange(tenant: TenantContext, c: ExistingSourceChanges, task: ChangeTask, queue?: ChangeQueue): Promise<ChangeTask> {
+  let loaded: ChangeQueue;
+  if (queue) loaded = queue;
+  else {
+    const m = await import('../workers/googleSwarmQueue.js');
+    loaded = { selected: () => m.googleBackgroundSelected(), admit: m.admitGoogleRun };
+  }
+  const admitGoogleRun = loaded.admit;
+  if (!loaded.selected()) { c.changes.start(tenant.userId, task.id); return task; }
+  const runId = randomUUID();
+  const queued = await c.changes.attachRun(tenant.userId, task.id, runId);
+  try {
+    await admitGoogleRun(tenant, runId, { prompt: 'Existing project change', existingSourceChangeId: task.id });
+    return queued;
+  } catch (e) {
+    const code = (e as { code?: string })?.code;
+    const reason = code === 'OUT_OF_TOKENS' || code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE' ? 'There is not enough AI capacity to start this change right now.' : 'The change could not be handed to an isolated worker.';
+    await c.changes.abandon(tenant.userId, task.id, reason).catch(() => undefined);
+    throw new ExistingSourceError('EXECUTION_UNAVAILABLE', reason);
+  }
+}
+
+const id = z.string().uuid();
+const changeBody = z.object({ instruction: z.string().min(3).max(8_000), maxAttempts: z.number().int().min(1).max(5).optional(), continueFrom: z.string().uuid().optional() }).strict();
+const deliverBody = z.object({ mode: z.enum(['pull_request', 'branch']).optional(), allowUnverified: z.boolean().optional(), title: z.string().min(3).max(200).optional() }).strict();
+const exportQuery = z.object({ format: z.enum(['patch', 'zip']) });
+
+/** A change as a client sees it: statuses, evidence and diffs, but not the full content of every changed file. */
+const publicChange = (t: ChangeTask) => ({
+  id: t.id, bindingId: t.bindingId, instruction: t.instruction, parentChangeId: t.parentChangeId ?? null, status: t.status, statusReason: t.statusReason, baseCommitSha: t.baseCommitSha, scope: t.scope, acceptanceCriteria: t.acceptanceCriteria,
+  attempts: t.attempts, maxAttempts: t.maxAttempts, revisions: t.revisions, events: t.events, files: t.result.map((r) => ({ path: r.path, kind: r.kind })), reproduction: t.reproduction,
+  regressionTestAdded: t.regressionTestAdded, deliveries: t.deliveries, createdAt: t.createdAt, updatedAt: t.updatedAt,
+});
+const archiveQuery = z.object({ name: z.string().min(1).max(120).optional() });
+export const ARCHIVE_UPLOAD_LIMIT = '10mb';
+const link = z.object({ repositoryId: z.string().regex(/^[0-9]{1,20}$/), branch: z.string().min(1).max(200).optional() }).strict();
+const page = z.coerce.number().int().min(1).max(50).default(1);
+const directory = z.object({ path: z.string().max(1_000).optional() });
+const indexBody = z.object({ force: z.boolean().optional() }).strict();
+const searchQuery = z.object({ q: z.string().min(2).max(120), kind: z.enum(['symbol', 'file', 'any']).optional(), limit: z.coerce.number().int().min(1).max(50).optional() });
+const locateBody = z.object({ instruction: z.string().min(3).max(8_000), budgetTokens: z.number().int().min(500).max(12_000).optional() }).strict();
+const neighborhoodQuery = z.object({ path: z.string().min(1).max(1_000) });
+const file = z.object({ path: z.string().min(1).max(1_000), startLine: z.coerce.number().int().min(1).optional(), endLine: z.coerce.number().int().min(1).optional() })
+  .refine((q) => (q.startLine === undefined) === (q.endLine === undefined), 'startLine and endLine go together');
+
+export function createExistingSourceRouter(
+  serviceFor: ExistingSourceServiceFactory = defaultExistingSourceService,
+  enabled: () => boolean = () => existingSourceEnabled(),
+  intelligenceFor: ExistingSourceIntelligenceFactory = defaultExistingSourceIntelligence,
+  changesFor: ExistingSourceChangesFactory = defaultExistingSourceChanges,
+): Router {
+  const router = Router();
+  router.use((_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
+  router.use((_req, res, next) => {
+    if (!enabled()) { res.status(503).json({ error: 'Existing-repository editing is not enabled on this deployment', code: 'EXISTING_SOURCE_DISABLED' }); return; }
+    next();
+  });
+
+  const fail = (res: Response, e: unknown) => {
+    if (e instanceof TenantAccessError) { res.status(e.status).json({ error: e.message, code: e.code }); return; }
+    if (e instanceof ExistingSourceError) { res.status(e.status).json({ error: e.message, code: e.code }); return; }
+    if (e instanceof z.ZodError) { res.status(400).json({ error: 'Invalid request', code: 'INVALID_REQUEST' }); return; }
+    res.status(500).json({ error: 'The request could not be completed', code: 'INTERNAL' });
+  };
+
+  const handle = (fn: (tenant: TenantContext, service: ExistingSourceService, req: AuthRequest, res: Response) => Promise<unknown>) => async (req: AuthRequest, res: Response) => {
+    try {
+      const tenant = requireTenantContext(req.tenantContext);
+      await fn(tenant, serviceFor(tenant), req, res);
+    } catch (e) { fail(res, e); }
+  };
+
+  router.get('/repositories', handle(async (t, s, req, res) => { res.json(await s.listRepositories(t.userId, page.parse(req.query.page))); }));
+  router.post('/links', handle(async (t, s, req, res) => {
+    const body = link.parse(req.body);
+    const result = await s.link(t.userId, body);
+    res.status(result.created ? 201 : 200).json(result);
+  }));
+  router.get('/links', handle(async (t, s, _req, res) => { res.json({ links: await s.list(t.userId) }); }));
+  router.get('/links/:id', handle(async (t, s, req, res) => { res.json(await s.verify(t.userId, id.parse(req.params.id), { maxAgeMs: 0 })); }));
+  router.post('/links/:id/refresh', handle(async (t, s, req, res) => { res.json(await s.refreshBase(t.userId, id.parse(req.params.id))); }));
+  router.delete('/links/:id', handle(async (t, s, req, res) => { await s.unlink(t.userId, id.parse(req.params.id)); res.status(204).end(); }));
+  router.get('/links/:id/directory', handle(async (t, s, req, res) => { res.json(await s.listDirectory(t.userId, id.parse(req.params.id), directory.parse(req.query))); }));
+  // The code map: derived, owner-scoped, current only for the linked commit.
+  const withIntelligence = (fn: (t: TenantContext, i: ExistingSourceIntelligence, req: AuthRequest, res: Response) => Promise<unknown>) => handle((t, s, req, res) => fn(t, intelligenceFor(t, s), req, res));
+  router.get('/links/:id/index', withIntelligence(async (t, i, req, res) => { res.json(await i.status(t.userId, id.parse(req.params.id))); }));
+  router.post('/links/:id/index', withIntelligence(async (t, i, req, res) => {
+    const body = indexBody.parse(req.body ?? {});
+    const { index, metrics, persisted } = await i.ensure(t.userId, id.parse(req.params.id), body);
+    res.json({ status: index.status, commitSha: index.commitSha, coverage: index.coverage, filesIndexed: index.files.length, packages: index.packages.length, contentFingerprint: index.contentFingerprint, metrics, persisted });
+  }));
+  router.get('/links/:id/search', withIntelligence(async (t, i, req, res) => { const q = searchQuery.parse(req.query); res.json(await i.search(t.userId, id.parse(req.params.id), { query: q.q, kind: q.kind, limit: q.limit })); }));
+  router.post('/links/:id/locate', withIntelligence(async (t, i, req, res) => { const b = locateBody.parse(req.body); res.json(await i.locate(t.userId, id.parse(req.params.id), { instruction: b.instruction, budgetTokens: b.budgetTokens })); }));
+  router.get('/links/:id/neighborhood', withIntelligence(async (t, i, req, res) => { res.json(await i.neighborhood(t.userId, id.parse(req.params.id), { path: neighborhoodQuery.parse(req.query).path })); }));
+  router.post('/archives', express.raw({ type: ['application/zip', 'application/x-zip-compressed', 'application/octet-stream'], limit: ARCHIVE_UPLOAD_LIMIT }), handle(async (t, s, req, res) => {
+    const q = archiveQuery.parse(req.query);
+    const body = req.body as unknown;
+    if (!Buffer.isBuffer(body) || body.length === 0) throw new ExistingSourceError('INVALID_ARCHIVE', 'Send the ZIP file as the request body (Content-Type: application/zip).');
+    const result = await s.importZip(t.userId, body, q.name ?? 'project');
+    res.status(result.created ? 201 : 200).json(result);
+  }));
+  // Changes: a plain-language request against a linked project, run in isolation, verified, then exported or delivered as a draft PR.
+  const withChanges = (fn: (t: TenantContext, c: ExistingSourceChanges, req: AuthRequest, res: Response) => Promise<unknown>) => handle((t, s, req, res) => fn(t, changesFor(t, s, intelligenceFor(t, s)), req, res));
+  router.post('/links/:id/changes', withChanges(async (t, c, req, res) => {
+    const body = changeBody.parse(req.body);
+    const task = await c.changes.create(t.userId, id.parse(req.params.id), body.instruction, { maxAttempts: body.maxAttempts, continueFrom: body.continueFrom });
+    const launched = await launchChange(t, c, task);
+    res.status(202).json({ change: publicChange(launched) });
+  }));
+  router.get('/links/:id/changes', withChanges(async (t, c, req, res) => { res.json({ changes: (await c.changes.list(t.userId, id.parse(req.params.id))).map(publicChange) }); }));
+  router.get('/changes/:changeId', withChanges(async (t, c, req, res) => { res.json({ change: publicChange(await c.changes.get(t.userId, id.parse(req.params.changeId))) }); }));
+  router.post('/changes/:changeId/cancel', withChanges(async (t, c, req, res) => {
+    const changeId = id.parse(req.params.changeId);
+    const current = await c.changes.get(t.userId, changeId);
+    // a change executing in a worker is stopped through its canonical run, which the Job polls; the owner check is the run's own
+    if (current.canonicalRunId && !['verified', 'unverified', 'failed', 'cancelled', 'delivered'].includes(current.status)) {
+      const { requestRunCancellation } = await import('../ai/runStore.js');
+      await requestRunCancellation(current.canonicalRunId, t.userId).catch(() => undefined);
+    }
+    res.json({ change: publicChange(await c.changes.cancel(t.userId, changeId)) });
+  }));
+  router.post('/changes/:changeId/resume', withChanges(async (t, c, req, res) => {
+    const task = await c.changes.get(t.userId, id.parse(req.params.changeId));
+    if (task.status !== 'interrupted') throw new ExistingSourceError('CHANGE_CONFLICT', 'Only an interrupted change can be resumed.');
+    const launched = await launchChange(t, c, task);
+    res.status(202).json({ change: publicChange(launched) });
+  }));
+  router.post('/changes/:changeId/deliver', withChanges(async (t, c, req, res) => {
+    const body = deliverBody.parse(req.body ?? {});
+    const outcome = await c.delivery.deliver(t.userId, id.parse(req.params.changeId), body);
+    if (outcome.status === 'conflict') { res.status(409).json({ code: 'DELIVERY_CONFLICT', error: 'The branch changed files this change also touches.', ...outcome }); return; }
+    res.json({ receipt: outcome.receipt, alreadyDelivered: outcome.alreadyDelivered, change: publicChange(outcome.task) });
+  }));
+  router.get('/changes/:changeId/export', withChanges(async (t, c, req, res) => {
+    const { format } = exportQuery.parse(req.query);
+    const changeId = id.parse(req.params.changeId);
+    if (format === 'patch') { const p = await c.delivery.exportPatch(t.userId, changeId); res.setHeader('Content-Type', 'text/x-diff; charset=utf-8'); res.setHeader('Content-Disposition', `attachment; filename="${p.filename}"`); res.send(p.content); return; }
+    const z = await c.delivery.exportZip(t.userId, changeId);
+    res.setHeader('Content-Type', 'application/zip'); res.setHeader('Content-Disposition', `attachment; filename="${z.filename}"`); res.send(z.data);
+  }));
+  router.get('/links/:id/file', handle(async (t, s, req, res) => { res.json(await s.readFile(t.userId, id.parse(req.params.id), file.parse(req.query))); }));
+  router.use((error: unknown, _req: unknown, res: Response, next: (e?: unknown) => void) => {
+    if ((error as { type?: string } | null)?.type === 'entity.too.large') { res.status(413).json({ error: 'The archive is too large to import', code: 'INVALID_ARCHIVE' }); return; }
+    next(error);
+  });
+  return router;
+}
+
+export default createExistingSourceRouter();
