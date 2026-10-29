@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "37e1a5961991fb8261673f9414dc7f4c7e3a7c43",
+  "source_sha": "669e3af0f46686cf37aedcd8b9d155a0feb6da88",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5688,9 +5688,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "8c54a8da9d88dcae62b236238c278b52a7d68847b90ddb9f4a20869e4105bee6",
-      "byte_size": 5289600,
-      "modified_timestamp": "2026-10-29T22:45:54.690Z",
+      "sha256": "3d29541874bdb43628ebefb587cf2e99a01e1c767408077379f40d84218ace02",
+      "byte_size": 5291698,
+      "modified_timestamp": "2026-10-29T22:56:57.452Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -28610,6 +28610,19 @@
       "sha256": "a79d9dfcf2756fc18bce149659bb002fa37a870360a49183a00603fb186f7c68",
       "byte_size": 17564,
       "modified_timestamp": "2026-10-27T07:55:04.451Z",
+      "parse_status": "AST_METADATA",
+      "category": "SOURCE_CODE",
+      "authority": "CURRENT_CODE",
+      "analyzed": true,
+      "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
+    },
+    {
+      "source_id": "SRC-60ecaa1940acf650",
+      "filename": "verify-live-dictation.mjs",
+      "path_or_url": "scripts/verify-live-dictation.mjs",
+      "sha256": "4fcb1ee0559b420e3bdee18e686a4e9237aad5a8b87e287727adb47482140ada",
+      "byte_size": 4952,
+      "modified_timestamp": "2026-10-29T22:54:16.300Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
