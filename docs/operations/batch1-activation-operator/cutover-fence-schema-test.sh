@@ -99,6 +99,9 @@ if psql -v ON_ERROR_STOP=1 -q -f /proof/rollback.sql >/tmp/rollback-denied.log 2
 echo 'PASS rollback denied until gate paused and runs drained'
 psql -v ON_ERROR_STOP=1 -q -c "BEGIN; SELECT pg_advisory_xact_lock(hashtextextended('xroga-canonical-admission',0)); UPDATE public.xroga_release_fence SET allowed_source=NULL WHERE singleton; COMMIT;" >/dev/null
 if psql -v ON_ERROR_STOP=1 -q -f /proof/rollback.sql >/tmp/rollback-denied.log 2>&1; then echo 'FAIL rollback with active runs'; exit 1; fi
+psql -v ON_ERROR_STOP=1 -q -c "UPDATE public.swarm_runs SET status='planning';"
+if psql -v ON_ERROR_STOP=1 -q -f /proof/rollback.sql >/tmp/rollback-denied.log 2>&1; then echo 'FAIL rollback with planning runs'; exit 1; fi
+echo 'PASS rollback denied with planning runs'
 psql -v ON_ERROR_STOP=1 -q -c "UPDATE public.swarm_runs SET status='complete';"
 psql -v ON_ERROR_STOP=1 -q -f /proof/rollback.sql >/dev/null
 restored=$(psql -qAt -c "SELECT md5(prosrc)='9014766f51e6d9fd878cc5d4724383c2' AND to_regclass('public.xroga_release_fence') IS NULL FROM pg_proc WHERE oid='public.enqueue_google_canonical_run(uuid,uuid,uuid,uuid,jsonb,text)'::regprocedure")

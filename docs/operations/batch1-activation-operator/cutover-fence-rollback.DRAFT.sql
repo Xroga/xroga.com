@@ -6,7 +6,7 @@ SELECT pg_advisory_xact_lock(hashtextextended('xroga-canonical-admission',0));
 DO $guard$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM public.xroga_release_fence WHERE singleton AND allowed_source IS NULL) OR
-     EXISTS (SELECT 1 FROM public.google_canonical_deliveries d JOIN public.swarm_runs r ON r.id=d.run_id AND r.user_id=d.user_id WHERE r.status='running' AND d.state<>'superseded')
+     EXISTS (SELECT 1 FROM public.google_canonical_deliveries d LEFT JOIN public.swarm_runs r ON r.id=d.run_id AND r.user_id=d.user_id WHERE d.state IS DISTINCT FROM 'superseded' AND (r.id IS NULL OR r.status IS NULL OR r.status NOT IN ('completed','failed','complete','error','cancelled')))
   THEN RAISE EXCEPTION 'CANONICAL_FENCE_ROLLBACK_NOT_DRAINED'; END IF;
 END;
 $guard$;

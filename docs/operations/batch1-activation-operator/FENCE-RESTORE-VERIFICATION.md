@@ -6,7 +6,7 @@ Status: PREPARED, NOT EXECUTED. This is not production acceptance and does not a
 
 - Encrypted database object: `gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/database.dump.gpg`, generation `1793086727267501`, size 12,581,025 bytes. The corresponding encrypted backup key and role archive are in the same prefix. The old recovery point is suitable only as an isolated compatibility fixture; it is not current production backup evidence.
 - Existing production project: `nzenxdfumxrnsmybazmo`. It is not a restore target and no SQL below may be run against it without a separate exact authorization.
-- Draft upgrade SHA-256: `3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed`. Draft rollback SHA-256: `3366f3a5df7162d66faf69c90a25fa7791a2dd7198e8cf8462e07d8f35ef58f7`. Recheck both file bytes before use.
+- Draft upgrade SHA-256: `3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed`. Draft rollback SHA-256: `a188225ef4e9b3bbc8c2216e22f85ec3d0e4e2b9dc81d1ff794ee8fd1c508be2`. Recheck both file bytes before use.
 - Release source: `85f83e3f1dcbb057d4a28d8a696dae8396d45114`. Existing serving source: `ca94c2f8a813524e47f5f7abc868acb1618a1c45`.
 
 ## Required protected test environment
