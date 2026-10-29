@@ -85,7 +85,6 @@
     "docs/xroga/security/credential-usage-audit.json",
     "docs/xroga/security/current-migration-additions.json",
     "docs/xroga/security/egress-caller-reviews.json",
-    "docs/xroga/security/egress-callers.json",
     "docs/xroga/security/phase-three-authority-delta.json",
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
