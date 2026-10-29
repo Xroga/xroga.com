@@ -54,6 +54,12 @@ export interface StartupDuties {
   reconcileOrphanedRuns: boolean;
 }
 
+/** A zero-traffic release candidate must not change production run records at
+ * startup. Existing serving revisions retain reconciliation by default. */
+export function startupReconciliationAllowed(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.XROGA_RELEASE_CANDIDATE !== '1';
+}
+
 /** Duties that WRITE to the database at boot. Everything not listed here is read-only or process-local and is not gated. */
 export function dutiesFor(environment: DeploymentEnvironment): StartupDuties {
   switch (environment) {

@@ -62,6 +62,7 @@ import {
   currentRunWorkerId,
 } from './ai/runStore.js';
 import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
+import { startupReconciliationAllowed } from './runtime/startupPolicy.js';
 import { hydrateProviderHealth } from './ai/providerRuntime.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
@@ -331,9 +332,11 @@ server.listen(port, '0.0.0.0', () => {
     });
   // Reconcile only stale durable worker leases. During a rolling deploy the outgoing
   // API may still own a long build, so a row being old and `running` is not enough.
-  void reconcileOrphanedRuns().catch((err) => {
-    console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
-  });
+  if (startupReconciliationAllowed(process.env)) {
+    void reconcileOrphanedRuns().catch((err) => {
+      console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
+    });
+  }
   // Registers a hosted isolation worker only if an operator configured one. With no
   // XROGA_SANDBOX_WORKER_URL this does nothing and costs nothing: the container
   // providers are tried and, failing those, executable validation refuses rather than
