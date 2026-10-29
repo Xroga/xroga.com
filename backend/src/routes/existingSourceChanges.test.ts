@@ -6,7 +6,7 @@ import express from 'express';
 import type { AgentSoftwareExecutorResult } from '../ai/softwareAgent/AgentSoftwareExecutor.js';
 import { ChangeDelivery } from '../existingSource/change/delivery.js';
 import { GitFake } from '../existingSource/change/gitFake.testsupport.js';
-import { LocalProcessPort } from '../existingSource/change/localProcessPort.testsupport.js';
+import { LocalProcessPort } from '../existingSource/change/__tests__/localProcessPort.js';
 import { ChangeService } from '../existingSource/change/service.js';
 import { InMemoryChangeStore } from '../existingSource/change/store.js';
 import type { ExistingSourceToolHost } from '../existingSource/change/toolHost.js';

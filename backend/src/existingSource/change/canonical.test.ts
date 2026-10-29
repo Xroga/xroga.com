@@ -15,7 +15,7 @@ import { InMemorySourceBindingStore } from '../store.js';
 import { ExistingSourceError } from '../types.js';
 import { canonicalChangeRuntime, canonicalExecutionPort, canonicalRunFor, type CanonicalChangeRun, type CanonicalPortDeps } from './canonical.js';
 import { runExistingSourceChangeJob, type ChangeJobDeps } from './canonicalJob.js';
-import { LocalProcessPort } from './localProcessPort.testsupport.js';
+import { LocalProcessPort } from './__tests__/localProcessPort.js';
 import { ChangeService, type AgentRunner } from './service.js';
 import { InMemoryChangeStore } from './store.js';
 import type { ExistingSourceToolHost } from './toolHost.js';

@@ -6678,8 +6678,8 @@ export interface AnalyticsDashboard {
 export async function apiDownload(path: string): Promise<{ blob: Blob; filename: string | null }> {
   const accessToken = await getAccessToken();
   let res: Response;
-  try { res = await fetch(`${API_URL}${path}`, { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {} }); }
-  catch { throw new ApiError('Cannot reach the Xroga API. Check your connection and try again.', 0, { code: 'NETWORK_ERROR' }); }
+  try { res = await fetchApiResponse(`${API_URL}${path}`, { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {} }); }
+  catch (error) { if (error instanceof ApiError) throw error; throw new ApiError('Cannot reach the Xroga API. Check your connection and try again.', 0, { code: 'NETWORK_ERROR' }); }
   if (!res.ok) {
     const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
     throw new ApiError(typeof data.error === 'string' ? data.error : 'Download failed', res.status, data);

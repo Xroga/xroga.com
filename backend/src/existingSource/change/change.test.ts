@@ -8,7 +8,7 @@ import { ExistingSourceIntelligence, IndexCoordinator } from '../intelligence/se
 import { ExistingSourceService } from '../service.js';
 import { InMemorySourceBindingStore } from '../store.js';
 import { ExistingSourceError } from '../types.js';
-import { LocalProcessPort } from './localProcessPort.testsupport.js';
+import { LocalProcessPort } from './__tests__/localProcessPort.js';
 import { ChangeService, type AgentRunner } from './service.js';
 import { InMemoryChangeStore } from './store.js';
 import type { ExecutionPort } from './testRunner.js';

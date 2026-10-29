@@ -7,8 +7,8 @@ import { spawn } from 'node:child_process';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import type { SandboxExecutionRequest, SandboxExecutionResult } from '../../sandbox/sandboxTypes.js';
-import type { ExecutionPort } from './testRunner.js';
+import type { SandboxExecutionRequest, SandboxExecutionResult } from '../../../sandbox/sandboxTypes.js';
+import type { ExecutionPort } from '../testRunner.js';
 
 interface Spawned { exitCode: number | null; stdout: string; stderr: string; timedOut: boolean; durationMs: number }
 

@@ -20,7 +20,7 @@ import { InMemorySourceBindingStore } from '../store.js';
 import { ExistingSourceError, type SourceBinding } from '../types.js';
 import { ChangeDelivery } from './delivery.js';
 import { GitFake } from './gitFake.testsupport.js';
-import { LocalProcessPort } from './localProcessPort.testsupport.js';
+import { LocalProcessPort } from './__tests__/localProcessPort.js';
 import { ChangeService, type AgentRunner } from './service.js';
 import { InMemoryChangeStore } from './store.js';
 import type { ExecutionPort } from './testRunner.js';
