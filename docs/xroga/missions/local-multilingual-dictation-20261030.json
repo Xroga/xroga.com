@@ -1,0 +1,159 @@
+{
+  "version": "1.0",
+  "missionId": "LOCAL-MULTILINGUAL-DICTATION-20261030",
+  "baseSha": "e5768eeeee5c91bc31b2704243850fb896f0dfca",
+  "requirementIds": [
+    "XR-ORIGINAL-F076"
+  ],
+  "state": "BLOCKED",
+  "risk": "medium",
+  "scope": "Replace automatic-send and browser-locale dictation with one manual on-device multilingual microphone flow. No paid speech API, no production deployment, no new scheduler.",
+  "changedFiles": [
+    "docs/xroga/LOCAL_VOICE_INPUT.md",
+    "docs/xroga/evidence/local-voice-20261030/base-after-language-detection.json",
+    "docs/xroga/evidence/local-voice-20261030/base-before-language-detection.json",
+    "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-english-hindi-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-local-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-multilingual-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json",
+    "docs/xroga/missions/local-multilingual-dictation-20261030.json",
+    "frontend/.gitignore",
+    "frontend/e2e/composer-polish.spec.ts",
+    "frontend/next.config.mjs",
+    "frontend/package-lock.json",
+    "frontend/package.json",
+    "frontend/src/components/terminal/ChatBarButtons.tsx",
+    "frontend/src/components/terminal/HomepageChatBar.tsx",
+    "frontend/src/components/terminal/TerminalChatBar.tsx",
+    "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+    "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+    "frontend/src/lib/terminal/voiceRecording.test.ts",
+    "frontend/src/lib/terminal/voiceRecording.ts",
+    "frontend/src/lib/voiceLocal.test.ts",
+    "frontend/src/lib/voiceLocal.ts",
+    "frontend/src/lib/voiceLocalProtocol.ts",
+    "frontend/src/lib/voiceRuntimePolicy.test.ts",
+    "frontend/src/lib/voiceSecurityUi.test.ts",
+    "frontend/src/lib/voiceTranscription.worker.ts",
+    "frontend/src/lib/voiceWorkerPrivacy.test.ts",
+    "frontend/src/styles/uiverse.css",
+    "package-lock.json",
+    "package.json",
+    "scripts/prepare-voice-runtime.mjs",
+    "scripts/verify-local-voice.mjs",
+    "scripts/verify-voice-control.mjs",
+    "scripts/verify-voice-recording.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing composer draft and manual Send, canonical authorization and execution",
+      "Existing protected backend voice endpoint and accounting for other clients"
+    ],
+    "extend": [
+      "MediaRecorder lifecycle, cancellation, per-chat isolation, draft appending and RTL text"
+    ],
+    "replace": [
+      "Composer voice transcription with pinned multilingual Whisper running on-device through Transformers.js"
+    ],
+    "deprecate": [
+      "Spoken commands, automatic sends, voice conversation/TTS restart, language dropdown and browser-specific SpeechRecognition"
+    ]
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database change.",
+    "rollback": "No data migration to undo."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing server controls remain unchanged."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing server controls remain unchanged."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Existing server controls remain unchanged."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing server controls remain unchanged."
+    },
+    "egress": {
+      "changed": true,
+      "description": "The microphone sends no audio externally. A dedicated worker downloads only pinned public model data, with narrowly scoped worker CSP and self-hosted executable/WASM assets. Main page CSP is unchanged."
+    },
+    "cost": {
+      "changed": true,
+      "description": "No paid speech request or provider fallback. Inference uses device CPU/memory and a first-use model download. No new infrastructure."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing server controls remain unchanged."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test selected voice/composer tests",
+      "scope": "66 focused regression tests pass in aggregate, including independent privacy-logging regression.",
+      "negative": true,
+      "reference": "frontend/src/lib/voiceLocal.test.ts"
+    },
+    {
+      "command": "node scripts/verify-local-voice.mjs",
+      "scope": "Historical Base English recognition passed. Actual Small Urdu and Arabic fixture outputs are recorded separately and fail the language-quality gate.",
+      "negative": false,
+      "reference": "docs/xroga/evidence/local-voice-20261030/voice-local-receipt.json"
+    },
+    {
+      "command": "node scripts/verify-voice-control.mjs",
+      "scope": "Actual React control and browser recorder with synthetic audio and stubbed transcription. Both desktop and mobile viewports pass. This is not language accuracy or physical-device evidence.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "The existing composer remains the single draft and Send owner. A disposable inference worker handles speech only, with no agent or task execution authority.",
+    "rfc": null
+  },
+  "rollout": "Review PR and required CI, then obtain the separately held production release approval. Never auto-activate other batches.",
+  "rollback": "Revert this bounded change before deployment or restore the previous verified frontend deployment. No production SQL or credential changes. Reverting restores the old voice behavior, including its provider route, so do not silently enable it as a runtime fallback.",
+  "knownGaps": [
+    "Provisional Small model: Urdu fixture decoded in Hindi script, Arabic word error 33.3%, Hindi word error 43.3%. English fixture word error 0%. Multilingual language-quality acceptance is blocked.",
+    "Medium failed inside CPU/WASM execution; it is not selected and the root cause is not established.",
+    "Physical Android/iOS/Safari/Firefox, actual OS microphone permissions and interruptions, mixed-language and long-utterance acceptance remain unverified.",
+    "First-use model download is approximately 250 MB plus executable runtime. Inference latency varies by hardware."
+  ],
+  "placeholderClaimsRemaining": [
+    "No universal language/device accuracy claim.",
+    "No live deployment claim."
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Urdu script correctness and multilingual accuracy",
+      "Required exact-source PR CI and review",
+      "Physical-device and authenticated-composer acceptance",
+      "Production activation remains separately held"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "docs/xroga/evidence/local-voice-20261030/voice-local-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-multilingual-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
+    "docs/xroga/LOCAL_VOICE_INPUT.md",
+    "docs/xroga/evidence/local-voice-20261030/voice-english-hindi-receipt.json"
+  ]
+}

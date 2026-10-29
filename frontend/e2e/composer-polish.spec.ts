@@ -22,6 +22,7 @@ test('New Work composer is a single surface and model and voice actions remain u
   await expect(page.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Start voice typing' })).toBeEnabled();
   await expect(page.locator('.xv-voice-icon-only svg.lucide-mic')).toHaveCount(1);
+  await expect(page.getByRole('button', {name: 'Voice options'})).toHaveCount(0);
   await page.screenshot({ path: 'test-results/composer-single-surface.png' });
 });
 
