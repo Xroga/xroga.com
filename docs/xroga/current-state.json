@@ -7284,6 +7284,64 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:77765bbc47b656116673",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/repairController.ts",
+      "sha256": "202f7946c8181fd2a20492e2c848d01631542ef6c1d73b9c10d0900e74790df1",
+      "symbols": [
+        "AgentRepairResult",
+        "BudgetPort",
+        "CheckResult",
+        "EMPTY_REPAIR_STATE",
+        "RepairAttemptRecord",
+        "RepairDeps",
+        "RepairOutcome",
+        "RepairPolicy",
+        "RepairResult",
+        "RepairState",
+        "StopReason",
+        "agentFailed",
+        "attempt",
+        "before",
+        "checks",
+        "failing",
+        "failures",
+        "finish",
+        "record",
+        "reservation",
+        "result",
+        "runBoundedRepair",
+        "settle",
+        "state"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/ai/repairController.test.ts:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/repairController.ts#BudgetPort",
+        "backend/src/ai/repairController.ts#reservation"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/repairController.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:c1ec6ad36569187af364",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/repoSummarize.ts",
@@ -7531,6 +7589,60 @@
       "testCoverage": [
         "backend/src/ai/research.test.ts",
         "backend/src/ai/researchLive.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:5135c84e5a786d0abd54",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/resourceLedger.ts",
+      "sha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d",
+      "symbols": [
+        "RESOURCE_CATEGORIES",
+        "ReserveOutcome",
+        "ResourceCategory",
+        "ResourceLedger",
+        "ResourceLedgerError",
+        "SettleOutcome",
+        "SupabaseResourceLedger",
+        "ledgerBudgetPort",
+        "r",
+        "uuid"
+      ],
+      "imports": [
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
+        "./repairController.js",
+        "@supabase/supabase-js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/ai/resourceLedger.test.ts:6"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/resourceLedger.ts#BudgetPort",
+        "backend/src/ai/resourceLedger.ts#ledgerBudgetPort"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/resourceLedger.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -8987,6 +9099,7 @@
         "backend/src/ai/softwareAgent/verificationContinuationPolicy.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
+        "backend/src/existingSource/change/verificationEvidence.test.ts",
         "backend/src/services/integrations/githubSourceRead.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -11794,11 +11907,15 @@
       ],
       "imports": [],
       "runtimeImports": [],
-      "entryPoints": [],
-      "callers": [
-        "backend/src/ai/verificationGate.test.ts:3"
+      "entryPoints": [
+        "backend/src/index.ts"
       ],
-      "reachable": false,
+      "callers": [
+        "backend/src/ai/verificationGate.test.ts:3",
+        "backend/src/builder/qa/verificationEvidence.ts:11",
+        "backend/src/existingSource/change/verificationEvidence.ts:8"
+      ],
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -11813,11 +11930,11 @@
       "testCoverage": [
         "backend/src/ai/verificationGate.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -14514,7 +14631,7 @@
       "id": "surface:bbfaa8438f1bbee4cd88",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/qa/qaService.ts",
-      "sha256": "94c05f42795933f465399f29d7e8223aae193923db0984ea89d7f0f2ab2d3169",
+      "sha256": "8f53e1c1150d46958271f18bda6549cfcb623506a3f97acb8352354d45f5bc66",
       "symbols": [
         "QaService",
         "QaServiceDeps",
@@ -14529,7 +14646,9 @@
         "finalState",
         "full",
         "fullyPassed",
+        "gate",
         "key",
+        "label",
         "latest",
         "now",
         "plan",
@@ -14558,12 +14677,14 @@
         "./repair.js",
         "./runner.js",
         "./types.js",
+        "./verificationEvidence.js",
         "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/builder/qa/plan.ts",
         "backend/src/builder/qa/repair.ts",
         "backend/src/builder/qa/runner.ts",
+        "backend/src/builder/qa/verificationEvidence.ts",
         "backend/src/builder/types.ts"
       ],
       "entryPoints": [
@@ -14954,7 +15075,57 @@
         "backend/src/builder/qa/qaHostMain.test.ts",
         "backend/src/builder/qa/qaService.test.ts",
         "backend/src/builder/qa/remoteQa.test.ts",
+        "backend/src/builder/qa/verificationEvidence.test.ts",
         "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c3908f3d277251703094",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/verificationEvidence.ts",
+      "sha256": "9dd83c7539d485b663499b3cbd98d7e2be49e6eefc1da44bf0f4db69561279d5",
+      "symbols": [
+        "QaGateInput",
+        "at",
+        "gateQaReport",
+        "ids",
+        "receipts",
+        "recorder",
+        "required"
+      ],
+      "imports": [
+        "../../ai/verificationGate.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/verificationGate.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/qa/qaService.ts:12",
+        "backend/src/builder/qa/verificationEvidence.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/builder/qa/verificationEvidence.ts#evaluateVerification",
+        "backend/src/builder/qa/verificationEvidence.ts#receipts"
+      ],
+      "testCoverage": [
+        "backend/src/builder/qa/verificationEvidence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -18159,7 +18330,7 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "a6637f69c3adecd7655d432e7e3b75c3cc2fe7eaaf914addbe2f904175fa1a35",
+      "sha256": "d15fdd6fb27c502c3692c4ce50fec8f99705beb13ab925ee84434064afeb0677",
       "symbols": [
         "ALWAYS_ALLOWED",
         "AgentRunner",
@@ -18187,6 +18358,7 @@
         "contract",
         "controller",
         "criteria",
+        "decided",
         "dirOf",
         "dirs",
         "doomed",
@@ -18197,6 +18369,7 @@
         "fileOf",
         "files",
         "finished",
+        "gate",
         "host",
         "incomplete",
         "isVisualChange",
@@ -18241,6 +18414,7 @@
         "t",
         "targets",
         "task",
+        "testedDigest",
         "tests",
         "text",
         "verified",
@@ -18261,6 +18435,7 @@
         "./testRunner.js",
         "./toolHost.js",
         "./types.js",
+        "./verificationEvidence.js",
         "./workspace.js",
         "node:crypto"
       ],
@@ -18269,6 +18444,7 @@
         "backend/src/existingSource/change/testRunner.ts",
         "backend/src/existingSource/change/toolHost.ts",
         "backend/src/existingSource/change/types.ts",
+        "backend/src/existingSource/change/verificationEvidence.ts",
         "backend/src/existingSource/change/workspace.ts",
         "backend/src/existingSource/intelligence/languageAdapters.ts",
         "backend/src/existingSource/types.ts"
@@ -18293,7 +18469,9 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/existingSource/change/service.ts#testedDigest"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [
         "backend/src/existingSource/change/service.ts#MAX_EVENTS",
@@ -18364,7 +18542,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:22"
+        "backend/src/existingSource/change/service.ts:23"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18529,7 +18707,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:24",
+        "backend/src/existingSource/change/service.ts:25",
         "backend/src/existingSource/change/testRunner.test.ts:6",
         "backend/src/existingSource/change/toolHost.ts:14"
       ],
@@ -18547,7 +18725,8 @@
       "testCoverage": [
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/change/golden.test.ts",
-        "backend/src/existingSource/change/testRunner.test.ts"
+        "backend/src/existingSource/change/testRunner.test.ts",
+        "backend/src/existingSource/change/verificationEvidence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -18606,7 +18785,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:15",
-        "backend/src/existingSource/change/service.ts:25"
+        "backend/src/existingSource/change/service.ts:26"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18662,7 +18841,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/canonicalJob.ts:14",
-        "backend/src/existingSource/change/service.ts:27"
+        "backend/src/existingSource/change/service.ts:28"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18771,6 +18950,66 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:d171ef233cb742e85325",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/verificationEvidence.ts",
+      "sha256": "043da10ae73f921e8f143b787bf27f60ed160ef4d718971ce30133c4325c348f",
+      "symbols": [
+        "ChangeGateInput",
+        "at",
+        "base",
+        "browserOnly",
+        "check",
+        "gateChange",
+        "label",
+        "pRan",
+        "pStatus",
+        "previewStatus",
+        "ran",
+        "receipts",
+        "recorder",
+        "required",
+        "status",
+        "testStatus"
+      ],
+      "imports": [
+        "../../ai/softwareAgent/contracts.js",
+        "../../ai/verificationGate.js",
+        "./testRunner.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/verificationGate.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/service.ts:15",
+        "backend/src/existingSource/change/verificationEvidence.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/verificationEvidence.ts#SoftwarePreviewEvidence",
+        "backend/src/existingSource/change/verificationEvidence.ts#evaluateVerification",
+        "backend/src/existingSource/change/verificationEvidence.ts#receipts"
+      ],
+      "testCoverage": [
+        "backend/src/existingSource/change/verificationEvidence.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:ff8c1e257350a37cd5e3",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/workspace.ts",
@@ -18831,7 +19070,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:18",
-        "backend/src/existingSource/change/service.ts:28",
+        "backend/src/existingSource/change/service.ts:29",
         "backend/src/existingSource/change/toolHost.ts:16"
       ],
       "reachable": true,
@@ -19451,7 +19690,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:18",
+        "backend/src/existingSource/change/service.ts:19",
         "backend/src/existingSource/intelligence/codeIndex.ts:13",
         "backend/src/existingSource/intelligence/exclusions.ts:6",
         "backend/src/existingSource/intelligence/languageAdapters.test.ts:4"
@@ -20265,7 +20504,7 @@
         "backend/src/existingSource/change/golden.test.ts:20",
         "backend/src/existingSource/change/production.test.ts:6",
         "backend/src/existingSource/change/production.ts:8",
-        "backend/src/existingSource/change/service.ts:21",
+        "backend/src/existingSource/change/service.ts:22",
         "backend/src/existingSource/change/store.ts:4",
         "backend/src/existingSource/change/testRunner.ts:14",
         "backend/src/existingSource/change/toolHost.ts:13",
@@ -32479,6 +32718,7 @@
         "backend/src/ai/parallelApproval.ts:4",
         "backend/src/ai/parallelDispatch.ts:4",
         "backend/src/ai/providerHealthStore.ts:29",
+        "backend/src/ai/resourceLedger.ts:9",
         "backend/src/ai/routingOutcomes.ts:2",
         "backend/src/ai/runReconciler.ts:2",
         "backend/src/ai/tenantModelDispatch.ts:5",
@@ -32608,6 +32848,8 @@
         "backend/src/ai/quota.ts:2",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
+        "backend/src/ai/resourceLedger.test.ts:5",
+        "backend/src/ai/resourceLedger.ts:10",
         "backend/src/ai/routingOutcomes.receipt.test.ts:4",
         "backend/src/ai/routingOutcomes.ts:3",
         "backend/src/ai/runStore.ts:12",
@@ -32893,6 +33135,7 @@
         "backend/src/ai/providerBudget.test.ts",
         "backend/src/ai/quota.failure.test.ts",
         "backend/src/ai/repoSummarize.security.test.ts",
+        "backend/src/ai/resourceLedger.test.ts",
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
@@ -114701,7 +114944,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "4ffa330d6ecb929a39873c755a32c025223670b4accd58642e3c6a00e9daba63",
+      "sha256": "6e3577329ec6afdc5de4d3ce4300655542799ff6f6e7084ad436c969064125e6",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -129397,6 +129640,13 @@
       "version": "20261027030000",
       "order": 157,
       "sha256": "c681372afd51b874bce89b06083915a8953ef8327675285ed4608101eb1a5d63"
+    },
+    {
+      "id": "migration:2586a0f208bf25a2cb84",
+      "sourcePath": "supabase/migrations/20261029100000_engineering_resource_ledger.sql",
+      "version": "20261029100000",
+      "order": 158,
+      "sha256": "4478f155d660b7bf1e57721eb4efa7a884154e7efba80b18f4d78466384ad1e0"
     }
   ],
   "workflows": [
@@ -129583,7 +129833,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417",
+      "sha256": "50cae0a22a60d23c59bd9b6ede6f2cb0f3be04e8cae96acb6261d3d3b85e14df",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -137284,6 +137534,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:c9f218eca988b762efd2",
+      "sourcePath": "backend/src/ai/repairController.test.ts",
+      "declaredTests": 13,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:0fe49606c90ceab105a8",
       "sourcePath": "backend/src/ai/repoSummarize.security.test.ts",
       "declaredTests": 1,
@@ -137329,6 +137586,13 @@
       "id": "test-suite:36ae3e593c6eabdef4a7",
       "sourcePath": "backend/src/ai/researchTodos.honesty.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c24bf2448ffab3b58070",
+      "sourcePath": "backend/src/ai/resourceLedger.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -137991,6 +138255,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:83758c5c0c7ab75eac6e",
+      "sourcePath": "backend/src/builder/qa/verificationEvidence.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:758955171cca79403d63",
       "sourcePath": "backend/src/builder/runtime.integration.test.ts",
       "declaredTests": 8,
@@ -138155,6 +138426,13 @@
       "id": "test-suite:cebdaf182e023ff72c40",
       "sourcePath": "backend/src/existingSource/change/testRunner.test.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7c6dc5ca0fb69fbf63cd",
+      "sourcePath": "backend/src/existingSource/change/verificationEvidence.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -141688,6 +141966,13 @@
       "id": "test-suite:36f700f80f385da43e5b",
       "sourcePath": "backend/src/workers/resumeRecovery.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c10ec17d02758925b21d",
+      "sourcePath": "backend/tests/engineeringResourceLedger.local.integration.ts",
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },

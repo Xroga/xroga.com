@@ -28437,6 +28437,33 @@
         "disposition": "NOT_PERSISTENCE"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/ai/resourceLedger.ts",
+      "sourceSha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d",
+      "callIds": [
+        "d7ef2b5739bb17d1c3bb",
+        "95e7704ae23cf0a12840",
+        "5b3bcd3a1fff8904bd0e",
+        "39d4ce9d0a0e8273bc21"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Every call goes through SupabaseResourceLedger, which is constructed only from an issued TenantContext (requireTenantContext) and builds the client with getTenantSupabaseAdmin(context). The owner id sent to the database is always context.userId, never a request or model value. The five database functions are service-role only (anon and authenticated are explicitly revoked, verified by a real-database privilege test) and each takes the owner and refuses another owner's reservation as not found. The cap and window are passed by the caller, validated and bounded before any call; database error text is never returned.",
+      "reason": "Fixed server-side rpc names for an owner-scoped reserve, settle and release ledger of sandbox compute, browser session and storage units. It reads and writes only the caller's own reservations, issues no credential, calls no provider and has no production caller yet (the repair controller and provider metering are not wired to it). This certifies the owner binding and input validation of this client, not that any real usage is metered.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/resourceLedger.test.ts",
+          "marker": "the owner always comes from the issued tenant context"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "another owner cannot settle, release or re-reserve"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+        }
+      ]
     }
   ],
   "retiredSourceReviews": [

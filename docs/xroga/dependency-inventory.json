@@ -15269,7 +15269,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417"
+      "sha256": "50cae0a22a60d23c59bd9b6ede6f2cb0f3be04e8cae96acb6261d3d3b85e14df"
     },
     {
       "path": "Dockerfile.api",
@@ -15592,6 +15592,10 @@
       "sha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4"
     },
     {
+      "path": "backend/src/ai/repairController.ts",
+      "sha256": "202f7946c8181fd2a20492e2c848d01631542ef6c1d73b9c10d0900e74790df1"
+    },
+    {
       "path": "backend/src/ai/repoSummarize.ts",
       "sha256": "bc3c17979ae5ddf3d896055af8ea923d5d77e5fdadf6e8fd2c33f31b45b3fd6d"
     },
@@ -15602,6 +15606,10 @@
     {
       "path": "backend/src/ai/research.ts",
       "sha256": "7b977e721b0dd6c0428aab25c5416b840e5b696da4bf7c99d8d4f328f018853b"
+    },
+    {
+      "path": "backend/src/ai/resourceLedger.ts",
+      "sha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -15997,7 +16005,7 @@
     },
     {
       "path": "backend/src/builder/qa/qaService.ts",
-      "sha256": "94c05f42795933f465399f29d7e8223aae193923db0984ea89d7f0f2ab2d3169"
+      "sha256": "8f53e1c1150d46958271f18bda6549cfcb623506a3f97acb8352354d45f5bc66"
     },
     {
       "path": "backend/src/builder/qa/remoteQa.ts",
@@ -16014,6 +16022,10 @@
     {
       "path": "backend/src/builder/qa/types.ts",
       "sha256": "95922ee6be41e4b819e94f280acddb7f171ce191dca813d5a9379fb62e32846e"
+    },
+    {
+      "path": "backend/src/builder/qa/verificationEvidence.ts",
+      "sha256": "9dd83c7539d485b663499b3cbd98d7e2be49e6eefc1da44bf0f4db69561279d5"
     },
     {
       "path": "backend/src/builder/readiness.ts",
@@ -16245,7 +16257,7 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "sha256": "a6637f69c3adecd7655d432e7e3b75c3cc2fe7eaaf914addbe2f904175fa1a35"
+      "sha256": "d15fdd6fb27c502c3692c4ce50fec8f99705beb13ab925ee84434064afeb0677"
     },
     {
       "path": "backend/src/existingSource/change/snapshot.ts",
@@ -16270,6 +16282,10 @@
     {
       "path": "backend/src/existingSource/change/unifiedDiff.ts",
       "sha256": "2738906aafd959b20513ec104aa18e70b236bc78e5f9d4af554c592b56cd3511"
+    },
+    {
+      "path": "backend/src/existingSource/change/verificationEvidence.ts",
+      "sha256": "043da10ae73f921e8f143b787bf27f60ed160ef4d718971ce30133c4325c348f"
     },
     {
       "path": "backend/src/existingSource/change/workspace.ts",
@@ -30987,7 +31003,7 @@
     },
     {
       "path": "backend/src/builder/qa/qaService.ts",
-      "line": 68,
+      "line": 69,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31044,6 +31060,13 @@
     {
       "path": "backend/src/builder/qa/runner.ts",
       "line": 236,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/verificationEvidence.ts",
+      "line": 41,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31337,13 +31360,6 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 57,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/existingSource/change/service.ts",
       "line": 58,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -31351,28 +31367,35 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 108,
+      "line": 59,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 109,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 274,
+      "line": 278,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 303,
+      "line": 307,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 359,
+      "line": 376,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

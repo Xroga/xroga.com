@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3c2965b7334e880d5e4f0c7d8d0f3b240eee1cd688e1a4f81263ddeaa23f5fc5",
+  "reviewRegistrySha256": "8ddce77d942cf3897b7fdb80e8700f0c6969312e498db8c186e6bc9082496f20",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 220,
-    "persistenceCandidates": 966,
+    "persistenceCandidates": 970,
     "ownerPredicateCandidates": 262,
     "reviewRequired": 134,
-    "reviewedCandidates": 832,
+    "reviewedCandidates": 836,
     "unresolvedSafetyCandidates": 167,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 134,
-    "SCOPED_BOUNDARY": 554,
+    "SCOPED_BOUNDARY": 558,
     "NARROW_EXCEPTION": 41,
     "NOT_PERSISTENCE": 204,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 81,
-    "unresolvedCandidateBoundaries": 885,
+    "unresolvedCandidateBoundaries": 889,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3636,6 +3636,22 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "d7ef2b5739bb17d1c3bb"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "95e7704ae23cf0a12840"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5b3bcd3a1fff8904bd0e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "39d4ce9d0a0e8273bc21"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "b0427411320aa0bef36a"
       },
       {
@@ -6896,6 +6912,22 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d7ef2b5739bb17d1c3bb"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "95e7704ae23cf0a12840"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5b3bcd3a1fff8904bd0e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "39d4ce9d0a0e8273bc21"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "64b99cfd7d4a42c04576"
       },
       {
@@ -9537,11 +9569,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 966,
+    "currentCallers": 970,
     "structuredVerified": 81,
-    "structuredUnproven": 885,
+    "structuredUnproven": 889,
     "manualUnresolved": 167,
-    "manualUnsupported": 718,
+    "manualUnsupported": 722,
     "agreedVerified": 81,
     "proofAwaitingManualReconciliation": 0
   },
@@ -11229,6 +11261,122 @@
           {
             "path": "backend/src/ai/repositoryTools.ts",
             "marker": "        ? Buffer.from(payload.content, 'base64').toString('utf8')\n        : payload.content;\n    if (looksBinary(text)) {"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d7ef2b5739bb17d1c3bb",
+      "path": "backend/src/ai/resourceLedger.ts",
+      "line": 41,
+      "enclosing": "rpc",
+      "kind": "RPC_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d",
+      "semanticReview": {
+        "authority": "Every call goes through SupabaseResourceLedger, which is constructed only from an issued TenantContext (requireTenantContext) and builds the client with getTenantSupabaseAdmin(context). The owner id sent to the database is always context.userId, never a request or model value. The five database functions are service-role only (anon and authenticated are explicitly revoked, verified by a real-database privilege test) and each takes the owner and refuses another owner's reservation as not found. The cap and window are passed by the caller, validated and bounded before any call; database error text is never returned.",
+        "reason": "Fixed server-side rpc names for an owner-scoped reserve, settle and release ledger of sandbox compute, browser session and storage units. It reads and writes only the caller's own reservations, issues no credential, calls no provider and has no production caller yet (the repair controller and provider metering are not wired to it). This certifies the owner binding and input validation of this client, not that any real usage is metered.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/resourceLedger.test.ts",
+            "marker": "the owner always comes from the issued tenant context"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "another owner cannot settle, release or re-reserve"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+          }
+        ]
+      }
+    },
+    {
+      "id": "95e7704ae23cf0a12840",
+      "path": "backend/src/ai/resourceLedger.ts",
+      "line": 50,
+      "enclosing": "reserve",
+      "kind": "RPC_CANDIDATE",
+      "target": "reserve_engineering_resource",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d",
+      "semanticReview": {
+        "authority": "Every call goes through SupabaseResourceLedger, which is constructed only from an issued TenantContext (requireTenantContext) and builds the client with getTenantSupabaseAdmin(context). The owner id sent to the database is always context.userId, never a request or model value. The five database functions are service-role only (anon and authenticated are explicitly revoked, verified by a real-database privilege test) and each takes the owner and refuses another owner's reservation as not found. The cap and window are passed by the caller, validated and bounded before any call; database error text is never returned.",
+        "reason": "Fixed server-side rpc names for an owner-scoped reserve, settle and release ledger of sandbox compute, browser session and storage units. It reads and writes only the caller's own reservations, issues no credential, calls no provider and has no production caller yet (the repair controller and provider metering are not wired to it). This certifies the owner binding and input validation of this client, not that any real usage is metered.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/resourceLedger.test.ts",
+            "marker": "the owner always comes from the issued tenant context"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "another owner cannot settle, release or re-reserve"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5b3bcd3a1fff8904bd0e",
+      "path": "backend/src/ai/resourceLedger.ts",
+      "line": 60,
+      "enclosing": "settle",
+      "kind": "RPC_CANDIDATE",
+      "target": "settle_engineering_resource",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d",
+      "semanticReview": {
+        "authority": "Every call goes through SupabaseResourceLedger, which is constructed only from an issued TenantContext (requireTenantContext) and builds the client with getTenantSupabaseAdmin(context). The owner id sent to the database is always context.userId, never a request or model value. The five database functions are service-role only (anon and authenticated are explicitly revoked, verified by a real-database privilege test) and each takes the owner and refuses another owner's reservation as not found. The cap and window are passed by the caller, validated and bounded before any call; database error text is never returned.",
+        "reason": "Fixed server-side rpc names for an owner-scoped reserve, settle and release ledger of sandbox compute, browser session and storage units. It reads and writes only the caller's own reservations, issues no credential, calls no provider and has no production caller yet (the repair controller and provider metering are not wired to it). This certifies the owner binding and input validation of this client, not that any real usage is metered.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/resourceLedger.test.ts",
+            "marker": "the owner always comes from the issued tenant context"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "another owner cannot settle, release or re-reserve"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+          }
+        ]
+      }
+    },
+    {
+      "id": "39d4ce9d0a0e8273bc21",
+      "path": "backend/src/ai/resourceLedger.ts",
+      "line": 69,
+      "enclosing": "release",
+      "kind": "RPC_CANDIDATE",
+      "target": "release_engineering_resource",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d",
+      "semanticReview": {
+        "authority": "Every call goes through SupabaseResourceLedger, which is constructed only from an issued TenantContext (requireTenantContext) and builds the client with getTenantSupabaseAdmin(context). The owner id sent to the database is always context.userId, never a request or model value. The five database functions are service-role only (anon and authenticated are explicitly revoked, verified by a real-database privilege test) and each takes the owner and refuses another owner's reservation as not found. The cap and window are passed by the caller, validated and bounded before any call; database error text is never returned.",
+        "reason": "Fixed server-side rpc names for an owner-scoped reserve, settle and release ledger of sandbox compute, browser session and storage units. It reads and writes only the caller's own reservations, issues no credential, calls no provider and has no production caller yet (the repair controller and provider metering are not wired to it). This certifies the owner binding and input validation of this client, not that any real usage is metered.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/resourceLedger.test.ts",
+            "marker": "the owner always comes from the issued tenant context"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "another owner cannot settle, release or re-reserve"
+          },
+          {
+            "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+            "marker": "the table and functions are not reachable by anonymous or signed-in roles"
           }
         ]
       }
