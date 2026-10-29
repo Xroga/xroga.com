@@ -30,6 +30,7 @@
     "backend/src/builder/qa/verificationEvidence.ts",
     "backend/src/existingSource/change/change.test.ts",
     "backend/src/existingSource/change/service.ts",
+    "backend/src/existingSource/change/testRunner.ts",
     "backend/src/existingSource/change/verificationEvidence.test.ts",
     "backend/src/existingSource/change/verificationEvidence.ts",
     "backend/src/operations/operationsEngine.ts",

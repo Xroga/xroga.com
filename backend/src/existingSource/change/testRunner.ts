@@ -152,6 +152,10 @@ export async function runTests(input: RunTestsInput): Promise<TestRunResult> {
     if (error instanceof SandboxUnavailableError || (error instanceof ExistingSourceError && error.code === 'EXECUTION_UNAVAILABLE')) {
       return { status: 'unavailable', plan, stages, summary: 'No isolated runtime is available, so the tests were not run. This is not a pass.', evidence: '', durationMs: Date.now() - started };
     }
+    // A used-up allowance is a known stop, identified by its code so this module does not depend on the metering code. It is "not run", never a pass.
+    if ((error as { code?: unknown } | null)?.code === 'RESOURCE_EXHAUSTED') {
+      return { status: 'unavailable', plan, stages, summary: 'The allowance for this resource is used up for now, so the tests were not run. This is not a pass.', evidence: '', durationMs: Date.now() - started };
+    }
     return { status: 'error', plan, stages, summary: 'The isolated test run could not be completed.', evidence: '', durationMs: Date.now() - started };
   }
   const failed = stages.find((s) => s.timedOut || (s.exitCode !== 0));

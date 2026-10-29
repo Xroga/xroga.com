@@ -7375,7 +7375,7 @@
       ],
       "callers": [
         "backend/src/ai/repairController.test.ts:4",
-        "backend/src/existingSource/change/service.ts:15"
+        "backend/src/existingSource/change/service.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -7771,6 +7771,8 @@
       "callers": [
         "backend/src/ai/resourceMeter.test.ts:4",
         "backend/src/ai/resourceMeter.test.ts:92",
+        "backend/src/existingSource/change/change.test.ts:417",
+        "backend/src/existingSource/change/service.ts:15",
         "backend/src/sandbox/meteredExecution.test.ts:5",
         "backend/src/sandbox/meteredExecution.ts:10",
         "backend/src/synthesis/projectRuntime/store.ts:1",
@@ -7792,6 +7794,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/resourceMeter.test.ts",
+        "backend/src/existingSource/change/change.test.ts",
         "backend/src/sandbox/meteredExecution.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -18481,7 +18484,7 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "42be0275b7972330ffe50cb42fa25be1decdf90ce0483531c71f1d0e7e9493d8",
+      "sha256": "19f40607b36a5191fd5dc05a3f68200339aaa127a38ae2195926cb244a5aafaf",
       "symbols": [
         "ALWAYS_ALLOWED",
         "AgentRunner",
@@ -18583,6 +18586,7 @@
       ],
       "imports": [
         "../../ai/repairController.js",
+        "../../ai/resourceMeter.js",
         "../../ai/softwareAgent/AgentSoftwareExecutor.js",
         "../../ai/softwareAgent/contracts.js",
         "../../ai/softwareAgent/runEvents.js",
@@ -18601,6 +18605,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/repairController.ts",
+        "backend/src/ai/resourceMeter.ts",
         "backend/src/existingSource/change/snapshot.ts",
         "backend/src/existingSource/change/testRunner.ts",
         "backend/src/existingSource/change/toolHost.ts",
@@ -18704,7 +18709,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:24"
+        "backend/src/existingSource/change/service.ts:25"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18799,7 +18804,7 @@
       "id": "surface:c16291d87a091474ff12",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/testRunner.ts",
-      "sha256": "d0e59bc562730ee6debe6980c6678671da7e0d4eb43b98e8a39a1d137b7465a0",
+      "sha256": "cfb548002441b240295071691e0c924c2205091751637033fad4ba6de3f1e0c6",
       "symbols": [
         "ChangeRuntime",
         "ExecutionPort",
@@ -18869,7 +18874,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:26",
+        "backend/src/existingSource/change/service.ts:27",
         "backend/src/existingSource/change/testRunner.test.ts:6",
         "backend/src/existingSource/change/toolHost.ts:14"
       ],
@@ -18947,7 +18952,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:15",
-        "backend/src/existingSource/change/service.ts:27"
+        "backend/src/existingSource/change/service.ts:28"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -19003,7 +19008,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/canonicalJob.ts:14",
-        "backend/src/existingSource/change/service.ts:29"
+        "backend/src/existingSource/change/service.ts:30"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -19146,7 +19151,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:16",
+        "backend/src/existingSource/change/service.ts:17",
         "backend/src/existingSource/change/verificationEvidence.test.ts:4"
       ],
       "reachable": true,
@@ -19232,7 +19237,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:18",
-        "backend/src/existingSource/change/service.ts:30",
+        "backend/src/existingSource/change/service.ts:31",
         "backend/src/existingSource/change/toolHost.ts:16"
       ],
       "reachable": true,
@@ -19852,7 +19857,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:20",
+        "backend/src/existingSource/change/service.ts:21",
         "backend/src/existingSource/intelligence/codeIndex.ts:13",
         "backend/src/existingSource/intelligence/exclusions.ts:6",
         "backend/src/existingSource/intelligence/languageAdapters.test.ts:4"
@@ -20666,7 +20671,7 @@
         "backend/src/existingSource/change/golden.test.ts:20",
         "backend/src/existingSource/change/production.test.ts:6",
         "backend/src/existingSource/change/production.ts:8",
-        "backend/src/existingSource/change/service.ts:23",
+        "backend/src/existingSource/change/service.ts:24",
         "backend/src/existingSource/change/store.ts:4",
         "backend/src/existingSource/change/testRunner.ts:14",
         "backend/src/existingSource/change/toolHost.ts:13",
@@ -138825,7 +138830,7 @@
     {
       "id": "test-suite:b0a17c19a50086bf9d9a",
       "sourcePath": "backend/src/existingSource/change/change.test.ts",
-      "declaredTests": 29,
+      "declaredTests": 31,
       "skipLocations": [],
       "focusLocations": []
     },

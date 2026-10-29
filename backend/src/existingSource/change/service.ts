@@ -12,6 +12,7 @@
  *    `not_reproduced`, not as a regression test.
  *  - Cancellation aborts the agent and the isolated run and leaves the source untouched (it never is written here anyway).
  */
+import { ResourceExhaustedError } from '../../ai/resourceMeter.js';
 import { runBoundedRepair } from '../../ai/repairController.js';
 import { gateChange } from './verificationEvidence.js';
 import type { AgentSoftwareExecutorInput, AgentSoftwareExecutorResult } from '../../ai/softwareAgent/AgentSoftwareExecutor.js';
@@ -300,7 +301,8 @@ export class ChangeService {
         task = await save({ status: 'cancelled', statusReason: 'Cancelled. The project and its source were not changed.' }, { type: 'change.cancelled', message: 'Cancelled.' });
         return task;
       }
-      const message = error instanceof ExistingSourceError ? error.message : 'The change could not be completed.';
+      // An exhausted resource allowance is a known, explainable stop; any other unexpected error stays generic and never leaks its text.
+      const message = error instanceof ExistingSourceError || error instanceof ResourceExhaustedError ? error.message : 'The change could not be completed.';
       task = await save({ status: 'failed', statusReason: message }, { type: 'change.failed', message });
       return task;
     } finally {

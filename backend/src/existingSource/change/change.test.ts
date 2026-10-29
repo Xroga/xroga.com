@@ -411,3 +411,19 @@ describe('the shared repair controller drives the repair attempts', () => {
     assert.deepEqual(done.revisions.map((r) => r.tests?.status), ['failed', 'failed', 'passed']);
   });
 });
+
+describe('a used-up resource allowance', () => {
+  it('stops the change with a clear reason, not the generic failure, and never reports it verified', async () => {
+    const { ResourceExhaustedError } = await import('../../ai/resourceMeter.js');
+    const exhausted: ExecutionPort = { async execute() { throw new ResourceExhaustedError('sandbox_compute_seconds', 3600, 3600); } };
+    const t = setup(NODE_PROJECT, {
+      execution: exhausted,
+      runAgent: agent(async (host, input) => { const c = contract(input.contract); await host.writeFile(c, 'src/pricing.js', DISCOUNT_FIX, 'modify'); await host.writeFile(c, 'test/discount.test.js', REGRESSION_TEST, 'create'); }),
+    });
+    const binding = await linked(t);
+    const done = await t.changes.run(ALICE, (await t.changes.create(ALICE, binding.id, 'Fix the broken discount calculation in applyDiscount')).id);
+    assert.notEqual(done.status, 'verified');
+    assert.match(done.statusReason, /allowance for this resource is used up/);
+    assert.doesNotMatch(done.statusReason, /could not be completed/);
+  });
+});
