@@ -4,6 +4,7 @@ import type {SupabaseClient} from '@supabase/supabase-js';
 import {GoogleDeliveryStore,requireCanonicalDeliveryClaim} from './googleDeliveryStore.js';
 import {GoogleDispatchError,type GoogleDispatchConfiguration} from './googleDispatch.js';
 import {createTenantContext} from '../security/tenantContext.js';
+import {fakeTable} from './__tests__/postgrestFilter.js';
 const project='project-c40d4821-e647-4fa2-92d';
 const c:GoogleDispatchConfiguration={project,region:'us-east4',queue:'xroga-canonical-queue',job:'xroga-canonical-worker',
   dispatcherUrl:'https://xroga-dispatcher-fixture.us-east4.run.app/internal/canonical-dispatch',
@@ -74,22 +75,28 @@ test('enqueue refuses a malformed Builder project id before any database call',a
   }
 });
 
-test('maintenance can rediscover an eligible delivery between four and five minutes old',async t=>{
-  const now=Date.parse('2026-10-29T00:05:00.000Z');
+test('maintenance rediscovers every delivery that is still within its queue wait and can still be launched',async t=>{
+  const now=Date.parse('2026-10-29T00:00:00.000Z');
   t.mock.method(Date,'now',()=>now);
-  const rows=[{id:delivery,state:'pending',source_sha:c.sourceSha,created_at:new Date(now-270000).toISOString()},
-    {id:run,state:'pending',source_sha:'c'.repeat(40),created_at:new Date(now-1000).toISOString()},
-    {id:owner,state:'superseded',source_sha:c.sourceSha,created_at:new Date(now-1000).toISOString()},
-    {id:worker,state:'pending',source_sha:c.sourceSha,created_at:new Date(now-301000).toISOString()}];
-  const service=()=>({from:(table:string)=>{
-    assert.equal(table,'google_canonical_deliveries');let found=rows.slice();
-    const query={select:(columns:string)=>{assert.equal(columns,'id');return query;},
-      eq:(key:string,value:string)=>{found=found.filter(row=>row[key as keyof typeof row]===value);return query;},
-      gte:(key:string,value:string)=>{found=found.filter(row=>row[key as keyof typeof row]>=value);return query;},
-      order:()=>query,limit:async(n:number)=>({data:found.slice(0,n).map(({id})=>({id})),error:null})};
-    return query;
-  }} as unknown as SupabaseClient);
-  assert.deepEqual(await new GoogleDeliveryStore(c,env,async()=>{},service).pendingDeliveryIds(),[delivery]);
+  const ago=(ms:number)=>new Date(now-ms).toISOString();
+  const row=(id:string,extra:Record<string,unknown>)=>({id,state:'pending',source_sha:c.sourceSha,created_at:ago(60000),launch_attempts:0,launch_lease_until:null,...extra});
+  const ids={fresh:'00000000-0000-4000-8000-000000000001',waited:'00000000-0000-4000-8000-000000000002',expiredLaunch:'00000000-0000-4000-8000-000000000003',
+    activeLaunch:'00000000-0000-4000-8000-000000000004',tooOld:'00000000-0000-4000-8000-000000000005',exhausted:'00000000-0000-4000-8000-000000000006',
+    otherSource:'00000000-0000-4000-8000-000000000007',superseded:'00000000-0000-4000-8000-000000000008',running:'00000000-0000-4000-8000-000000000009'};
+  const rows=[
+    row(ids.waited,{created_at:ago(30*60000)}),                                   // waited 30 minutes for capacity, still bounded
+    row(ids.fresh,{created_at:ago(60000)}),
+    row(ids.expiredLaunch,{state:'launching',created_at:ago(20*60000),launch_attempts:1,launch_lease_until:ago(1000)}), // unknown outcome, lease over
+    row(ids.activeLaunch,{state:'launching',launch_attempts:1,launch_lease_until:new Date(now+120000).toISOString()}),   // another dispatcher owns it
+    row(ids.tooOld,{created_at:ago(61*60000)}),                                   // past the queue wait: the reconciler ends the run
+    row(ids.exhausted,{launch_attempts:5}),                                        // the database's absolute attempt ceiling
+    row(ids.otherSource,{source_sha:'c'.repeat(40)}),
+    row(ids.superseded,{state:'superseded'}),
+    row(ids.running,{state:'running'}),
+  ];
+  const service=()=>({from:(table:string)=>{assert.equal(table,'google_canonical_deliveries');return fakeTable(rows);}} as unknown as SupabaseClient);
+  const found=await new GoogleDeliveryStore(c,env,async()=>{},service).pendingDeliveryIds();
+  assert.deepEqual(found,[ids.waited,ids.expiredLaunch,ids.fresh]);
 });
 const changeId='66666666-6666-4666-8666-666666666666';
 test('an existing-project change id travels through the claim only when it is a valid id',async()=>{
