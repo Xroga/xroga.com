@@ -1,16 +1,16 @@
-# Builds the production API image from one exact, already-merged commit of main. Branch-only (push to claude/release-image-build):
+# Builds the production API image from one exact, already-merged commit of main. Branch-only (push to codex/batch1-release-image-20261029):
 # no secrets, no cloud credentials, no deployment. Publishes to GitHub's container registry with the built-in token; the Google side
 # pulls it through an Artifact Registry remote repository. The commit is pinned below, never "latest".
 name: release-image-build
 on:
   push:
-    branches: ['claude/release-image-build']
+    branches: ['codex/batch1-release-image-20261029']
     paths: ['.github/workflows/release-image-build.yml']
 permissions:
   contents: read
   packages: write
 env:
-  RELEASE_SHA: b0cd0ec31be56a8945ae41998563475237ed52fb
+  RELEASE_SHA: ff4032ca02c4b233c2598724caf44ab04b91fb0f
   IMAGE: ghcr.io/xroga/xroga-api-release
 jobs:
   build:
