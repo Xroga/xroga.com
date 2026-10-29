@@ -15477,6 +15477,7 @@
         "backend/src/synthesis/projectRuntime/projectHistory.ts:1",
         "backend/src/synthesis/projectRuntime/store.ts:6",
         "backend/src/synthesis/universalEntrypoint.ts:52",
+        "scripts/batch3/live-github-check.ts:16",
         "scripts/batch3/local-supabase-check.ts:14"
       ],
       "reachable": true,
@@ -15858,6 +15859,7 @@
       "callers": [
         "backend/src/routes/existingSource.ts:29",
         "backend/src/routes/existingSourceArchive.test.ts:7",
+        "scripts/batch3/live-github-check.ts:18",
         "scripts/batch3/local-supabase-check.ts:16"
       ],
       "reachable": true,
@@ -16394,7 +16396,8 @@
         "backend/src/existingSource/change/delivery.test.ts:14",
         "backend/src/existingSource/change/golden.test.ts:21",
         "backend/src/routes/existingSource.ts:24",
-        "backend/src/routes/existingSourceChanges.test.ts:7"
+        "backend/src/routes/existingSourceChanges.test.ts:7",
+        "scripts/batch3/live-github-check.ts:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16518,6 +16521,7 @@
         "backend/src/existingSource/change/change.test.ts:11",
         "backend/src/existingSource/change/golden.test.ts:23",
         "backend/src/routes/existingSourceChanges.test.ts:9",
+        "scripts/batch3/live-github-check.ts:20",
         "scripts/batch3/local-supabase-check.ts:17"
       ],
       "reachable": false,
@@ -16613,7 +16617,7 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "1cc7db85701ff8a2eaaf9add0e8384278244c42213f233ea4c7f1a678a05740c",
+      "sha256": "a6637f69c3adecd7655d432e7e3b75c3cc2fe7eaaf914addbe2f904175fa1a35",
       "symbols": [
         "ALWAYS_ALLOWED",
         "AgentRunner",
@@ -16681,6 +16685,7 @@
         "result",
         "retentionMs",
         "revision",
+        "rootFiles",
         "rows",
         "running",
         "runningByOwner",
@@ -16736,6 +16741,7 @@
         "backend/src/existingSource/change/golden.test.ts:24",
         "backend/src/routes/existingSource.ts:26",
         "backend/src/routes/existingSourceChanges.test.ts:10",
+        "scripts/batch3/live-github-check.ts:21",
         "scripts/batch3/local-supabase-check.ts:18"
       ],
       "reachable": true,
@@ -16880,6 +16886,7 @@
         "backend/src/existingSource/change/golden.test.ts:25",
         "backend/src/routes/existingSource.ts:27",
         "backend/src/routes/existingSourceChanges.test.ts:11",
+        "scripts/batch3/live-github-check.ts:22",
         "scripts/batch3/local-supabase-check.ts:19"
       ],
       "reachable": true,
@@ -17569,6 +17576,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:9",
         "backend/src/routes/existingSourceChanges.test.ts:15",
         "backend/src/routes/existingSourceIntelligence.test.ts:7",
+        "scripts/batch3/live-github-check.ts:24",
         "scripts/batch3/local-supabase-check.ts:22"
       ],
       "reachable": true,
@@ -18197,6 +18205,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:10",
         "backend/src/routes/existingSourceChanges.test.ts:16",
         "backend/src/routes/existingSourceIntelligence.test.ts:9",
+        "scripts/batch3/live-github-check.ts:25",
         "scripts/batch3/local-supabase-check.ts:23"
       ],
       "reachable": true,
@@ -18325,7 +18334,8 @@
       "callers": [
         "backend/src/existingSource/provider.test.ts:4",
         "backend/src/existingSource/service.ts:18",
-        "backend/src/routes/existingSource.ts:33"
+        "backend/src/routes/existingSource.ts:33",
+        "scripts/batch3/live-github-check.ts:26"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18495,6 +18505,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:11",
         "backend/src/routes/existingSourceChanges.test.ts:17",
         "backend/src/routes/existingSourceIntelligence.test.ts:10",
+        "scripts/batch3/live-github-check.ts:27",
         "scripts/batch3/local-supabase-check.ts:24"
       ],
       "reachable": true,
@@ -18586,6 +18597,7 @@
         "backend/src/routes/existingSourceArchive.test.ts:12",
         "backend/src/routes/existingSourceChanges.test.ts:18",
         "backend/src/routes/existingSourceIntelligence.test.ts:11",
+        "scripts/batch3/live-github-check.ts:28",
         "scripts/batch3/local-supabase-check.ts:25"
       ],
       "reachable": true,
@@ -30233,6 +30245,7 @@
         "backend/src/workers/googleDeliveryStore.ts:3",
         "backend/src/workers/googleSwarmQueue.test.ts:7",
         "backend/src/workers/googleSwarmQueue.ts:2",
+        "scripts/batch3/live-github-check.ts:17",
         "scripts/batch3/local-supabase-check.ts:15",
         "scripts/browser/run-workflows.mts:18",
         "scripts/security/verify-oci-kms.ts:8"
@@ -32340,7 +32353,8 @@
         "backend/src/existingSource/change/production.ts:44",
         "backend/src/services/integrations/githubAtomicTransport.test.ts:3",
         "backend/src/services/integrations/githubDeploy.ts:41",
-        "backend/src/synthesis/universalCommit.ts:30"
+        "backend/src/synthesis/universalCommit.ts:30",
+        "scripts/batch3/live-github-check.ts:29"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104384,6 +104398,109 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:a4e5d41b622c6da4997b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/batch3/live-github-check.ts",
+      "sha256": "06a8b836ef2364d659ecfd5cca6adce597d16aaa943feda78ad4a1c084ecfbe2",
+      "symbols": [
+        "ALLOWED_WRITE",
+        "REPO",
+        "admin",
+        "again",
+        "agent",
+        "archives",
+        "before",
+        "binding",
+        "changeStore",
+        "changes",
+        "choice",
+        "created",
+        "ctx",
+        "delivery",
+        "done",
+        "files",
+        "gh",
+        "guardedFetch",
+        "guardedGh",
+        "guardedPath",
+        "host",
+        "indexed",
+        "indexes",
+        "intel",
+        "left",
+        "listed",
+        "main",
+        "open",
+        "outcome",
+        "page",
+        "pass",
+        "pr",
+        "receipt",
+        "results",
+        "source",
+        "task",
+        "token",
+        "u",
+        "userId"
+      ],
+      "imports": [
+        "../../backend/src/ai/softwareAgent/AgentSoftwareExecutor.js",
+        "../../backend/src/config/supabase.js",
+        "../../backend/src/existingSource/archive/archiveStore.js",
+        "../../backend/src/existingSource/change/delivery.js",
+        "../../backend/src/existingSource/change/localProcessPort.testsupport.js",
+        "../../backend/src/existingSource/change/service.js",
+        "../../backend/src/existingSource/change/store.js",
+        "../../backend/src/existingSource/change/toolHost.js",
+        "../../backend/src/existingSource/intelligence/codeIndexStore.js",
+        "../../backend/src/existingSource/intelligence/service.js",
+        "../../backend/src/existingSource/provider.js",
+        "../../backend/src/existingSource/service.js",
+        "../../backend/src/existingSource/store.js",
+        "../../backend/src/security/tenantContext.js",
+        "../../backend/src/services/integrations/githubAtomicTransport.js",
+        "node:assert/strict",
+        "node:child_process"
+      ],
+      "runtimeImports": [
+        "backend/src/config/supabase.ts",
+        "backend/src/existingSource/archive/archiveStore.ts",
+        "backend/src/existingSource/change/delivery.ts",
+        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+        "backend/src/existingSource/change/service.ts",
+        "backend/src/existingSource/change/store.ts",
+        "backend/src/existingSource/intelligence/codeIndexStore.ts",
+        "backend/src/existingSource/intelligence/service.ts",
+        "backend/src/existingSource/provider.ts",
+        "backend/src/existingSource/service.ts",
+        "backend/src/existingSource/store.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/githubAtomicTransport.ts"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/batch3/live-github-check.ts#receipt"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:3e300a36bc68d3ebaf5f",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/batch3/local-supabase-check.ts",
@@ -130983,7 +131100,7 @@
     {
       "id": "test-suite:4d3e17cafc59593cb5cb",
       "sourcePath": "backend/src/existingSource/change/canonical.test.ts",
-      "declaredTests": 19,
+      "declaredTests": 21,
       "skipLocations": [],
       "focusLocations": []
     },

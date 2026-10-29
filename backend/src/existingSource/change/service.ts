@@ -284,8 +284,10 @@ export class ChangeService {
   private policy(scope: ChangeScope): ChangePolicy {
     const limits = this.deps.changeLimits ?? { maxChangedFiles: DEFAULT_MAX_CHANGED_FILES, maxChangedBytes: DEFAULT_MAX_CHANGED_BYTES };
     const narrow = scope.allowedDirs.length === 0;
+    // files at the repository root belong to no directory, so a project with both root files and subdirectories would otherwise refuse the root ones it located
+    const rootFiles = [...scope.targets, ...scope.consumers, ...scope.tests].filter((p) => dirOf(p) === '');
     return {
-      write: { allowedPaths: scope.allowedDirs.length ? [...scope.allowedDirs.map((d) => `${d}/**`), ...ALWAYS_ALLOWED] : [], deniedPaths: DENIED_PATHS, allowCreate: true, allowDelete: true, allowRename: true },
+      write: { allowedPaths: scope.allowedDirs.length ? [...scope.allowedDirs.map((d) => `${d}/**`), ...rootFiles, ...ALWAYS_ALLOWED] : [], deniedPaths: DENIED_PATHS, allowCreate: true, allowDelete: true, allowRename: true },
       maxChangedFiles: narrow ? Math.min(10, limits.maxChangedFiles) : limits.maxChangedFiles, maxChangedBytes: limits.maxChangedBytes,
     };
   }

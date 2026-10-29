@@ -283,3 +283,28 @@ describe('retention of finished changes', () => {
     assert.ok(await t.store.get(ALICE, mine.id));
   });
 });
+
+describe('a project with files at the root and in a subdirectory', () => {
+  it('authorizes the root files it located, not only the subdirectory', async () => {
+    const gh = new FakeGitHub();
+    gh.addAccount('tok-alice', '501', 'alice');
+    const files: FakeFile[] = [
+      { path: 'index.html', content: '<html><body></body></html>\n' }, { path: 'styles.css', content: 'body { margin: 0; }\n' },
+      { path: 'public/index.html', content: '<html><body>public</body></html>\n' },
+    ];
+    const repo = gh.addRepo({ fullName: 'acme/site', ownerId: '501', files, access: { '501': { pull: true, push: true } } });
+    const source = new ExistingSourceService({ store: new InMemorySourceBindingStore(), tokenFor: async () => 'tok-alice', portFor: (t: string) => gh.port(t), treeCache: new Map() } as never);
+    const intel = new ExistingSourceIntelligence({ source, store: new InMemoryCodeIndexStore(), coordinator: new IndexCoordinator() });
+    const agent: AgentRunner = async (input: AgentSoftwareExecutorInput) => {
+      const host = input.host as ExistingSourceToolHost;
+      await host.writeFile(input.contract, 'index.html', '<html><body><section>About</section></body></html>\n', 'modify');
+      await host.writeFile(input.contract, 'styles.css', 'body { margin: 0; }\nsection { margin: 1rem; }\n', 'modify');
+      return { status: 'implemented', evidence: { changedFiles: [], checks: [] }, blockers: [], outputText: 'done', iterations: 1 } as AgentSoftwareExecutorResult;
+    };
+    const changes = new ChangeService({ source, intel, store: new InMemoryChangeStore(), execution: new LocalProcessPort(), runAgent: agent, modelRouteFor: async () => ({}) as never });
+    const binding = (await source.link(ALICE, { repositoryId: repo })).binding;
+    const task = await changes.create(ALICE, binding.id, 'Add a short About section to `index.html` and style it in `styles.css`');
+    const done = await changes.run(ALICE, task.id);
+    assert.deepEqual(done.result.map((r) => r.path).sort(), ['index.html', 'styles.css'], `${done.status}: ${done.statusReason}`);
+  });
+});
