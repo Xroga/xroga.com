@@ -213,6 +213,14 @@ export class ChangeService {
       const verify = async (): Promise<TestRunResult | null> => {
         const set = workspace.changeSet();
         if (set.files.length === 0) return null;
+        // Exactly this source was already verified and failed (before a restart, or by a repair that changed nothing). Its recorded result is the evidence a
+        // repair needs; running the tests again would only save a second identical revision.
+        const prior = task.revisions.at(-1);
+        if (prior && prior.digest === set.digest && prior.tests?.status === 'failed' && !prior.preview) {
+          testedDigest = set.digest; preview = null;
+          last = { status: 'failed', plan: {} as TestRunResult['plan'], stages: [], summary: prior.tests.summary, evidence: prior.tests.evidence, durationMs: 0 };
+          return last;
+        }
         task = await save({ status: 'verifying', statusReason: 'Running the project tests in isolation.', result: this.resultOf(workspace) }, { type: 'verification.started', message: 'Running the project\'s own tests in an isolated runtime.' });
         const changedPaths = set.files.filter((f) => f.kind !== 'deleted').map((f) => f.path);
         last = await runTests({ port: this.deps.execution, files: workspace.files(), changedPaths, signal: controller.signal });
@@ -232,10 +240,16 @@ export class ChangeService {
         return last;
       };
 
-      // The first attempt: the agent makes the change. A task that already made it (resumed) goes straight to verification.
-      if (task.attempts === 0) {
-        task = await save({ attempts: 1, status: 'working', statusReason: 'The agent is making the change.' }, { type: 'agent.started', message: 'The agent started.' });
-        const agentResult = await this.runAgentOnce({ task, binding, workspace, scope, criteria, bug, attempt: 1, evidence: null, signal: controller.signal, emit: (e) => save({}, e) });
+      // The first attempt: the agent makes the change. It is owed whenever no durable result exists: a fresh task, or one whose worker died before its
+      // first attempt saved anything. A crashed attempt still counts against the bound, so a restart can never grant extra attempts.
+      if (task.attempts === 0 || task.result.length === 0) {
+        if (task.attempts >= task.maxAttempts) {
+          task = await save({ status: 'failed', statusReason: 'The worker stopped before this change finished and no attempts remain. Create the change again.' }, { type: 'change.failed', message: 'No attempts remain after the worker stopped.' });
+          return task;
+        }
+        const firstAttempt = task.attempts + 1;
+        task = await save({ attempts: firstAttempt, status: 'working', statusReason: 'The agent is making the change.' }, { type: 'agent.started', message: 'The agent started.' });
+        const agentResult = await this.runAgentOnce({ task, binding, workspace, scope, criteria, bug, attempt: firstAttempt, evidence: null, signal: controller.signal, emit: (e) => save({}, e) });
         if (controller.signal.aborted || agentResult.status === 'cancelled') throw new CancelledError();
         if (workspace.changeSet().files.length === 0) {
           note = agentResult.status === 'failed' ? 'The agent could not complete the request.' : 'The agent made no change.';

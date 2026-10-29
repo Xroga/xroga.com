@@ -306,12 +306,24 @@
       "schema": "public",
       "table_name": "engineering_resource_reservations",
       "migration": "20261029100000_engineering_resource_ledger.sql",
-      "migrationSha256": "4478f155d660b7bf1e57721eb4efa7a884154e7efba80b18f4d78466384ad1e0",
+      "migrationSha256": "f710197cb889a7c5eb5f7a4a71758e9e919dda63ae64d812d63cf91b0350cb11",
       "authorizationMigration": "20261029100000_engineering_resource_ledger.sql",
-      "authorizationSha256": "4478f155d660b7bf1e57721eb4efa7a884154e7efba80b18f4d78466384ad1e0",
+      "authorizationSha256": "f710197cb889a7c5eb5f7a4a71758e9e919dda63ae64d812d63cf91b0350cb11",
       "boundary": "RLS enabled. No grant to anon, authenticated or PUBLIC on the table or on its five functions; service_role only (the API). Append-style ledger of sandbox compute, browser session and storage reservations and settlements, keyed by owner, run, category and idempotency key. Every function takes the verified owner id and refuses another owner's reservation; no credential or customer content is stored.",
       "tests": "backend/tests/engineeringResourceLedger.local.integration.ts",
       "evidence": "Batch 4 migration, development only and not applied to production. Exercised against a real disposable PostgreSQL: idempotent reserve, atomic cap under a 12-way concurrent race, settle exactly once, release, cross-owner denial, stale sweep, invalid input and role privileges. Not a live Supabase receipt.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "engineering_resource_limits",
+      "migration": "20261029100000_engineering_resource_ledger.sql",
+      "migrationSha256": "f710197cb889a7c5eb5f7a4a71758e9e919dda63ae64d812d63cf91b0350cb11",
+      "authorizationMigration": "20261029100000_engineering_resource_ledger.sql",
+      "authorizationSha256": "f710197cb889a7c5eb5f7a4a71758e9e919dda63ae64d812d63cf91b0350cb11",
+      "boundary": "RLS enabled. No grant to anon, authenticated or PUBLIC on the table or on its set/clear/purge/list functions; service_role only (the API, through the operator router behind the database admin/owner middleware). A per-owner, per-category resource cap that exists only when an operator sets one; no default value is stored. Holds no credential or customer content.",
+      "tests": "backend/tests/engineeringResourceLedger.local.integration.ts",
+      "evidence": "Batch 4 migration, development only and not applied to production. Exercised against a real disposable PostgreSQL: an override replaces the default for one owner only and applies even to a record-only category, clearing reverts, invalid values are rejected, and the table and functions are unreachable by anon and authenticated roles. Not a live Supabase receipt.",
       "productionChanges": false
     }
   ]

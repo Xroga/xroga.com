@@ -20,7 +20,9 @@ const uuid = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 /** The largest cap an operator can set; also the record-only sentinel's order of magnitude, so a typo in digits cannot silently disable a limit by overflow. */
 export const MAX_TENANT_CAP = 1e15;
 
-const operatorClient = (): SupabaseClient => getGlobalSupabaseAdmin('engineering_operator');
+function operatorClient(): SupabaseClient {
+  return getGlobalSupabaseAdmin('engineering_operator');
+}
 const unavailable = (): never => { throw new OperatorError('UNAVAILABLE', 'The engineering records are unavailable.'); };
 
 export function requireCategory(value: unknown): ResourceCategory {

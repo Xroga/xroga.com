@@ -14717,7 +14717,7 @@
     },
     {
       "path": "backend/src/routes/admin.ts",
-      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
       "callIds": [
         "900b714de6b6407ee20d",
         "8f0a6deb321279d0013d",
@@ -16349,7 +16349,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "callIds": [
         "d84df34ff692e4fb31c1"
       ],
@@ -16762,10 +16762,10 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "callIds": [
-        "9d26892e33e0990fa9b1",
-        "2029ec3274d22032f064"
+        "1b37735eaa4faaadbcd6",
+        "e2494b6f2fc6cb166eb2"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -16943,9 +16943,9 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "callIds": [
-        "6aa631c47e1c902cc88a"
+        "b41f1945ffa218ebbb70"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "This internal constructor requires an exact own key of the immutable17-entry global operation registry and has no public administrative endpoint. Every named recipient independently proves its fixed operation, limited data projection, current staff/signature/capability authority where needed and actual positive/negative behavior. All other633 receiving inventory sites are already verified before this constructor is considered. Actual unknown, prototype and missing names fail before SDK construction, valid private routing/readiness uses execute, and revoked readiness SELECT denies without leaking identities. Returned SDK is privileged, not an enforced query sandbox. This exemption covers only named actual internal recipients, never arbitrary future queries or a user-selectable admin handle.",
@@ -28487,6 +28487,65 @@
         {
           "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
           "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/engineeringOperator.ts",
+      "sourceSha256": "f00e3e1dac207e02b2aedfa5fef844483a77435613cc5e6ba48b7cd75ec3cafa",
+      "callIds": [
+        "b3b3a1c034dd18ca9c06",
+        "fb8966cc34230bfd3928",
+        "82d1360b637eed5eea4c",
+        "a1dd05cf1230f2a9b782",
+        "71aa73e77e244619a4c7",
+        "56d814db6802676d9b57",
+        "1cce4a63f04c3513e1c5"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Reached only from routes/engineeringOperator.ts, which is mounted under routes/admin.ts, which index.ts mounts behind authMiddleware and the database admin/owner middleware, and from the existing delivery maintenance tick (retention only, and only when metering is on and a retention period is configured). Two registered named operations: engineering_operator (diagnostics, list, set and clear of per-owner caps) and engineering_resource_retention (purge). Each call is a fixed database function; owner id, category and cap are validated before the call (uuid, enum, finite positive number below 1e15) and no SQL, table name or filter is supplied by the caller.",
+      "reason": "Operator-scoped maintenance and configuration that spans owners by design. Diagnostics return counts, ages and a few identifiers and never a prompt, output, worker id or lease identity (checked against a real disposable PostgreSQL). Setting a cap changes only that owner and category and is audited with the acting admin. Database errors are never returned. The functions are service-role only and anon/authenticated are explicitly revoked (verified). This certifies these bounded operator calls, not accounting accuracy or any production behaviour.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/engineeringOperator.test.ts",
+          "marker": "input validation refuses a bad user, category or cap before any database call"
+        },
+        {
+          "path": "backend/src/ai/engineeringOperator.test.ts",
+          "marker": "the operator routes are mounted only under the admin router"
+        },
+        {
+          "path": "backend/tests/engineeringDiagnostics.local.integration.ts",
+          "marker": "the diagnostics functions are not reachable by anonymous or signed-in roles"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "retention purges old settled and released rows, never an open hold"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/sandbox/google/orphanReconciler.ts",
+      "sourceSha256": "8bc32eb0a778573f3dd9f8de1643ce5059f37b5384e61059a606490be4ad2570",
+      "callIds": [
+        "a5ef52942a284c97e1e1",
+        "4513966c972a639bd886"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Only the existing Google delivery maintenance tick, and only when XROGA_GCE_ORPHAN_SWEEP=1 and the Google runtime is selected. It uses the registered gce_allocation_reconcile authority, which selects only session_id for provider google-gce in a live status, filtered by one exact GCE instance id, limit 1. No owner, project or state is returned or logged. A lookup error is treated as \"cannot tell\" and the machine is never deleted.",
+      "reason": "Fixed-table lifecycle maintenance that decides whether an execution machine has a session record. It deletes nothing itself: destruction goes through the existing GceMachineControl.destroy, which re-verifies the instance id, labels, expiry and boot image, so a newer machine that took over a reused slot name is never deleted (tested). It only acts on machines older than a configurable recording deadline (minimum 600 seconds), checks recorded-ness twice, bounds deletions per run and never acts on a partial inventory. This certifies the lookup and its use, not behaviour against a real Compute API.",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/google/orphanReconciler.test.ts",
+          "marker": "an uncertain record lookup is never treated as unrecorded"
+        },
+        {
+          "path": "backend/src/sandbox/google/orphanReconciler.test.ts",
+          "marker": "a newer machine that took over the slot name after the listing is not deleted"
+        },
+        {
+          "path": "backend/src/sandbox/google/orphanReconciler.test.ts",
+          "marker": "the inventory is read across pages, and one that cannot be completed deletes nothing"
         }
       ]
     }

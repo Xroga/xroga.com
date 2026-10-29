@@ -3283,6 +3283,75 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:500137461941cfd323de",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/engineeringOperator.ts",
+      "sha256": "f00e3e1dac207e02b2aedfa5fef844483a77435613cc5e6ba48b7cd75ec3cafa",
+      "symbols": [
+        "EngineeringDiagnostics",
+        "MAX_TENANT_CAP",
+        "OperatorError",
+        "clearTenantLimit",
+        "d",
+        "days",
+        "getEngineeringDiagnostics",
+        "listTenantLimits",
+        "operatorClient",
+        "purgeExpiredEngineeringReservations",
+        "raw",
+        "requireCap",
+        "requireCategory",
+        "requireUserId",
+        "retentionDaysFromEnv",
+        "setTenantLimit",
+        "thresholds",
+        "unavailable",
+        "uuid"
+      ],
+      "imports": [
+        "../security/serviceRoleGuard.js",
+        "./resourceLedger.js",
+        "./resourceMeter.js",
+        "./runReconciler.js",
+        "@supabase/supabase-js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/resourceLedger.ts",
+        "backend/src/ai/resourceMeter.ts",
+        "backend/src/ai/runReconciler.ts",
+        "backend/src/security/serviceRoleGuard.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/ai/engineeringOperator.test.ts:8",
+        "backend/src/routes/engineeringOperator.ts:3",
+        "backend/src/workers/googleDeliveryMaintenance.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/engineeringOperator.ts#purgeExpiredEngineeringReservations"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/engineeringOperator.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:3e08dbe7827fa0edc4e8",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/engineeringRoles.ts",
@@ -7686,6 +7755,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/engineeringOperator.ts:12",
         "backend/src/ai/resourceLedger.test.ts:6",
         "backend/src/ai/resourceMeter.test.ts:5",
         "backend/src/ai/resourceMeter.ts:16"
@@ -7769,6 +7839,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/engineeringOperator.ts:13",
         "backend/src/ai/resourceMeter.test.ts:4",
         "backend/src/ai/resourceMeter.test.ts:92",
         "backend/src/existingSource/change/change.test.ts:417",
@@ -7793,6 +7864,7 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/engineeringOperator.test.ts",
         "backend/src/ai/resourceMeter.test.ts",
         "backend/src/existingSource/change/change.test.ts",
         "backend/src/sandbox/meteredExecution.test.ts"
@@ -8043,6 +8115,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/engineeringOperator.ts:11",
         "backend/src/ai/runReconciler.queue.test.ts:4",
         "backend/src/ai/runReconciler.test.ts:3",
         "backend/src/index.ts:65",
@@ -18026,6 +18099,122 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:9497016e01860f52b542",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/__tests__/crashChild.ts",
+      "sha256": "9a9b7b9c69d9169d6334309a926f3366e7d478e363fb4c2c91a642cbed02c741",
+      "symbols": [
+        "binding",
+        "c",
+        "created",
+        "h",
+        "hang",
+        "runAgent",
+        "t"
+      ],
+      "imports": [
+        "../toolHost.js",
+        "./crashHarness.js"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b6efa85c31da46f7268f",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/__tests__/crashHarness.ts",
+      "sha256": "3841cd469501698c38633a026608976cb124518f8c8a40389baf0f25ed7e3f9d",
+      "symbols": [
+        "ALICE",
+        "FileChangeStore",
+        "INSTRUCTION",
+        "PROJECT",
+        "RIGHT_FIX",
+        "Step",
+        "WRONG_FIX",
+        "agent",
+        "buildService",
+        "changes",
+        "gh",
+        "intel",
+        "link",
+        "repo",
+        "result",
+        "source",
+        "store",
+        "t",
+        "task",
+        "tmp"
+      ],
+      "imports": [
+        "../../../ai/softwareAgent/AgentSoftwareExecutor.js",
+        "../../fakeGitHub.testsupport.js",
+        "../../intelligence/codeIndexStore.js",
+        "../../intelligence/service.js",
+        "../../service.js",
+        "../../store.js",
+        "../service.js",
+        "../store.js",
+        "../toolHost.js",
+        "../types.js",
+        "./localProcessPort.js",
+        "node:fs",
+        "node:path"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/change/__tests__/localProcessPort.ts",
+        "backend/src/existingSource/change/service.ts",
+        "backend/src/existingSource/fakeGitHub.testsupport.ts",
+        "backend/src/existingSource/intelligence/codeIndexStore.ts",
+        "backend/src/existingSource/intelligence/service.ts",
+        "backend/src/existingSource/service.ts",
+        "backend/src/existingSource/store.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/existingSource/change/__tests__/crashChild.ts:7",
+        "backend/src/existingSource/change/crashRecovery.test.ts:7"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:fs",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/crashRecovery.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:bcf909c866b73f823559",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
@@ -18061,6 +18250,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts:18",
         "backend/src/existingSource/change/canonical.test.ts:18",
         "backend/src/existingSource/change/change.test.ts:11",
         "backend/src/existingSource/change/golden.test.ts:23",
@@ -18484,7 +18674,7 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "19f40607b36a5191fd5dc05a3f68200339aaa127a38ae2195926cb244a5aafaf",
+      "sha256": "542f5e2f1c942ce8d8572ad4099814b54d9c68c30546bfed6ef52107afd9df37",
       "symbols": [
         "ALWAYS_ALLOWED",
         "AgentRunner",
@@ -18529,6 +18719,7 @@
         "fileOf",
         "files",
         "finished",
+        "firstAttempt",
         "gate",
         "host",
         "incomplete",
@@ -18555,6 +18746,7 @@
         "parent",
         "parentChangeId",
         "preview",
+        "prior",
         "r",
         "repaired",
         "reproduction",
@@ -18619,6 +18811,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts:14",
         "backend/src/existingSource/change/canonical.test.ts:19",
         "backend/src/existingSource/change/canonicalJob.ts:12",
         "backend/src/existingSource/change/change.test.ts:12",
@@ -19318,6 +19511,7 @@
       ],
       "entryPoints": [],
       "callers": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts:9",
         "backend/src/existingSource/change/canonical.test.ts:10",
         "backend/src/existingSource/change/change.test.ts:5",
         "backend/src/existingSource/change/delivery.test.ts:10",
@@ -19515,6 +19709,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts:10",
         "backend/src/existingSource/change/canonical.test.ts:11",
         "backend/src/existingSource/change/change.test.ts:6",
         "backend/src/existingSource/change/golden.test.ts:15",
@@ -20144,6 +20339,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts:11",
         "backend/src/existingSource/change/canonical.test.ts:12",
         "backend/src/existingSource/change/change.test.ts:7",
         "backend/src/existingSource/change/golden.test.ts:17",
@@ -20441,6 +20637,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts:12",
         "backend/src/existingSource/change/canonical.test.ts:13",
         "backend/src/existingSource/change/change.test.ts:8",
         "backend/src/existingSource/change/delivery.test.ts:11",
@@ -20533,6 +20730,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/__tests__/crashHarness.ts:13",
         "backend/src/existingSource/change/canonical.test.ts:14",
         "backend/src/existingSource/change/change.test.ts:9",
         "backend/src/existingSource/change/delivery.test.ts:12",
@@ -26673,7 +26871,7 @@
       "id": "surface:9cf56c86a002c17e3dd5",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/admin.ts",
-      "sha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "sha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
       "symbols": [
         "api",
         "boundedLimit",
@@ -26688,11 +26886,13 @@
         "../middleware/auth.js",
         "../operations/operationsEngine.js",
         "../security/serviceRoleGuard.js",
+        "./engineeringOperator.js",
         "express"
       ],
       "runtimeImports": [
         "backend/src/lib/platformReady.ts",
         "backend/src/operations/operationsEngine.ts",
+        "backend/src/routes/engineeringOperator.ts",
         "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
@@ -27870,6 +28070,58 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/drive.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e550d201044abcbc5de2",
+      "subsystem": "backend_routes",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "sha256": "45c2ee4237c0358fb8d6f789d92a7cb5ba2fe04f696398883f0aadab387fccaa",
+      "symbols": [
+        "EngineeringOperatorDeps",
+        "body",
+        "createEngineeringOperatorRouter",
+        "defaults",
+        "error",
+        "fail",
+        "router",
+        "state"
+      ],
+      "imports": [
+        "../ai/engineeringOperator.js",
+        "../middleware/auth.js",
+        "express"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/engineeringOperator.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/ai/engineeringOperator.test.ts:12",
+        "backend/src/routes/admin.ts:67"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "express"
+      ],
+      "authBoundary": [
+        "backend/src/routes/engineeringOperator.ts#AuthRequest"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/engineeringOperator.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -30707,7 +30959,7 @@
       "id": "surface:897d95ac00321c6dbe84",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/google/gceMachineControl.ts",
-      "sha256": "c5f14d10ea481b849ac90329e567818bcd25a6572fc2bd9d6f378f16a88bca2a",
+      "sha256": "51a6da39eb7fa50b7f02ab3613a78caf3ed7e5298b00b1d265098aa6592d39d4",
       "symbols": [
         "CreateGceExecution",
         "CreationOperation",
@@ -30726,15 +30978,19 @@
         "boot",
         "captureAllocation",
         "cleanupDeadline",
+        "complete",
         "configuration",
+        "created",
         "creationDeadline",
         "digest",
         "disk",
         "error",
         "executionBinding",
+        "expires",
         "expiresAtEpoch",
         "fail",
         "forbidden",
+        "found",
         "gceBootstrap",
         "handle",
         "hash",
@@ -30744,6 +31000,7 @@
         "index",
         "instance",
         "keys",
+        "labels",
         "list",
         "machine",
         "metadata",
@@ -30780,6 +31037,8 @@
         "backend/src/sandbox/google/gceSshTransport.ts:5",
         "backend/src/sandbox/google/googleSandbox.test.ts:7",
         "backend/src/sandbox/google/googleSandbox.ts:1",
+        "backend/src/sandbox/google/orphanReconciler.test.ts:4",
+        "backend/src/sandbox/google/orphanReconciler.ts:126",
         "backend/src/scripts/verifyGceExecution.ts:5",
         "backend/src/synthesis/livePreview/googleTarget.test.ts:4",
         "backend/src/synthesis/livePreview/googleTarget.ts:1",
@@ -30810,6 +31069,7 @@
         "backend/src/sandbox/google/gceMachineControl.test.ts",
         "backend/src/sandbox/google/gceSshTransport.test.ts",
         "backend/src/sandbox/google/googleSandbox.test.ts",
+        "backend/src/sandbox/google/orphanReconciler.test.ts",
         "backend/src/synthesis/livePreview/googleTarget.test.ts",
         "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
         "backend/src/workers/googleDispatch.test.ts"
@@ -31014,6 +31274,80 @@
       ],
       "testCoverage": [
         "backend/src/sandbox/google/googleSandbox.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:eda1de7379850ddd4807",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "backend/src/sandbox/google/orphanReconciler.ts",
+      "sha256": "8bc32eb0a778573f3dd9f8de1643ce5059f37b5384e61059a606490be4ad2570",
+      "symbols": [
+        "AllocationControl",
+        "AllocationOutcome",
+        "AllocationReport",
+        "MIN_RECORDING_DEADLINE_SECONDS",
+        "OrphanDeps",
+        "OrphanReport",
+        "age",
+        "base",
+        "deleted",
+        "deps",
+        "error",
+        "failed",
+        "item",
+        "limit",
+        "n",
+        "now",
+        "productionDeps",
+        "raw",
+        "reconcileUnrecordedAllocations",
+        "recordedAllocationLookup",
+        "recordingDeadlineFromEnv",
+        "report",
+        "reports",
+        "supabase",
+        "sweepUnrecordedGceAllocations"
+      ],
+      "imports": [
+        "../../security/serviceRoleGuard.js",
+        "../../synthesis/projectRuntime/googleFactory.js",
+        "./gceMachineControl.js",
+        "@supabase/supabase-js"
+      ],
+      "runtimeImports": [
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/sandbox/google/orphanReconciler.test.ts:5",
+        "backend/src/workers/googleDeliveryMaintenance.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "project_runtime_sessions"
+      ],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/sandbox/google/orphanReconciler.ts#reconcileUnrecordedAllocations"
+      ],
+      "testCoverage": [
+        "backend/src/sandbox/google/orphanReconciler.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -32926,7 +33260,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
+      "sha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "symbols": [
         "GlobalDataOperation",
         "getGlobalSupabaseAdmin",
@@ -32948,6 +33282,7 @@
       ],
       "callers": [
         "backend/src/ai/buildOutcomeMemory.ts:1",
+        "backend/src/ai/engineeringOperator.ts:10",
         "backend/src/ai/executionRuntime.ts:7",
         "backend/src/ai/measuredEvidence.ts:33",
         "backend/src/ai/parallelApproval.ts:4",
@@ -32977,6 +33312,7 @@
         "backend/src/routes/operations.ts:4",
         "backend/src/routes/profile.ts:3",
         "backend/src/routes/projects.ts:3",
+        "backend/src/sandbox/google/orphanReconciler.ts:18",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:11",
         "backend/src/security/communityPublicException.test.ts:5",
         "backend/src/security/egress/securityDecision.ts:3",
@@ -48849,6 +49185,7 @@
         "backend/src/existingSource/change/production.ts:16",
         "backend/src/middleware/runtimePreviewGateway.ts:31",
         "backend/src/sandbox/google/googleSandbox.ts:3",
+        "backend/src/sandbox/google/orphanReconciler.ts:126",
         "backend/src/sandbox/sandboxProviders.ts:29",
         "backend/src/sandbox/sandboxRuntime.ts:32",
         "backend/src/synthesis/livePreview/coordinator.ts:6",
@@ -53782,7 +54119,7 @@
       "id": "surface:ea62bbfd325f94d0960d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/workers/googleDeliveryMaintenance.ts",
-      "sha256": "a0f9e5eae338655fb1e1b3d702988ed98557bae71d60154fa42ceb5d0d45f9dc",
+      "sha256": "cfa7f3ea9ac196696e453b576c68cc4e34b2e109b10df23ee9e5917800b81bec",
       "symbols": [
         "c",
         "id",
@@ -53793,14 +54130,18 @@
         "unavailable"
       ],
       "imports": [
+        "../ai/engineeringOperator.js",
         "../ai/resourceMeter.js",
         "../ai/runReconciler.js",
+        "../sandbox/google/orphanReconciler.js",
         "./googleDeliveryStore.js",
         "./googleDispatch.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/engineeringOperator.ts",
         "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/runReconciler.ts",
+        "backend/src/sandbox/google/orphanReconciler.ts",
         "backend/src/workers/googleDeliveryStore.ts",
         "backend/src/workers/googleDispatch.ts"
       ],
@@ -53817,6 +54158,7 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
+        "backend/src/workers/googleDeliveryMaintenance.ts#purgeExpiredEngineeringReservations",
         "backend/src/workers/googleDeliveryMaintenance.ts#sweepStaleEngineeringReservations"
       ],
       "evidenceBoundary": [
@@ -115339,7 +115681,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "6e3577329ec6afdc5de4d3ce4300655542799ff6f6e7084ad436c969064125e6",
+      "sha256": "d2d6ccc2887ede3682a17cf1d1a630d52b8fe69528ee1f6684573b3c774b8dbf",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -119521,6 +119863,20 @@
       "inlineResponse": true
     },
     {
+      "id": "registration:880083005d9c9484cd93",
+      "sourcePath": "backend/src/routes/admin.ts",
+      "line": 68,
+      "receiver": "router",
+      "method": "use",
+      "path": "/engineering",
+      "handlers": [
+        "engineeringOperatorRouter"
+      ],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": false
+    },
+    {
       "id": "registration:40dda5436b4c89a24562",
       "sourcePath": "backend/src/routes/billing.ts",
       "line": 22,
@@ -120935,6 +121291,54 @@
       "scope": "function",
       "functionName": "createDriveRouter",
       "inlineResponse": false
+    },
+    {
+      "id": "registration:065dfe2027afb31bea02",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 32,
+      "receiver": "router",
+      "method": "get",
+      "path": "/diagnostics",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createEngineeringOperatorRouter",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:8c320eeb23c9f648f9ac",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 36,
+      "receiver": "router",
+      "method": "get",
+      "path": "/limits/:userId",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createEngineeringOperatorRouter",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:c8631f7d157f95dc51f8",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 40,
+      "receiver": "router",
+      "method": "put",
+      "path": "/limits/:userId/:category",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createEngineeringOperatorRouter",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:0ee69949a7fc04e63647",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 49,
+      "receiver": "router",
+      "method": "delete",
+      "path": "/limits/:userId/:category",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createEngineeringOperatorRouter",
+      "inlineResponse": true
     },
     {
       "id": "registration:d7ef6b4fee299f5c061a",
@@ -124838,6 +125242,86 @@
       "reachable": true,
       "state": "IMPLEMENTED_AND_REACHABLE",
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:5326e3223df796c6dbc7",
+      "registrationId": "registration:065dfe2027afb31bea02",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 32,
+      "method": "GET",
+      "path": "/api/admin/engineering/diagnostics",
+      "mountChain": [
+        "backend/src/index.ts:241",
+        "backend/src/routes/admin.ts:68"
+      ],
+      "authBoundary": [
+        "adminMiddleware",
+        "adminRouter",
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:a89702e9bf62e85074f7",
+      "registrationId": "registration:8c320eeb23c9f648f9ac",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 36,
+      "method": "GET",
+      "path": "/api/admin/engineering/limits/:userId",
+      "mountChain": [
+        "backend/src/index.ts:241",
+        "backend/src/routes/admin.ts:68"
+      ],
+      "authBoundary": [
+        "adminMiddleware",
+        "adminRouter",
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:1828bd1e570a2f110d23",
+      "registrationId": "registration:c8631f7d157f95dc51f8",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 40,
+      "method": "PUT",
+      "path": "/api/admin/engineering/limits/:userId/:category",
+      "mountChain": [
+        "backend/src/index.ts:241",
+        "backend/src/routes/admin.ts:68"
+      ],
+      "authBoundary": [
+        "adminMiddleware",
+        "adminRouter",
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:0f24a3ac5aa95ac5de1b",
+      "registrationId": "registration:0ee69949a7fc04e63647",
+      "sourcePath": "backend/src/routes/engineeringOperator.ts",
+      "line": 49,
+      "method": "DELETE",
+      "path": "/api/admin/engineering/limits/:userId/:category",
+      "mountChain": [
+        "backend/src/index.ts:241",
+        "backend/src/routes/admin.ts:68"
+      ],
+      "authBoundary": [
+        "adminMiddleware",
+        "adminRouter",
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
       "id": "route:3aba71eb7c22fc7f3c70",
@@ -130041,7 +130525,14 @@
       "sourcePath": "supabase/migrations/20261029100000_engineering_resource_ledger.sql",
       "version": "20261029100000",
       "order": 158,
-      "sha256": "4478f155d660b7bf1e57721eb4efa7a884154e7efba80b18f4d78466384ad1e0"
+      "sha256": "f710197cb889a7c5eb5f7a4a71758e9e919dda63ae64d812d63cf91b0350cb11"
+    },
+    {
+      "id": "migration:9ab3ad4ffd6e988399f7",
+      "sourcePath": "supabase/migrations/20261029110000_engineering_operator_diagnostics.sql",
+      "version": "20261029110000",
+      "order": 159,
+      "sha256": "3bb41db387dc750d45748fdcde883626f7dc3203aeaefb1c08c6b274eddbd118"
     }
   ],
   "workflows": [
@@ -130228,7 +130719,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "d3d7319381221a45c5137db5b88f10cd33e09f72e5a3487597c8d18d0a2f5975",
+      "sha256": "c1c34123f29e073d2bf814d5ac4140b04895c350af18b70656d7ddaf475af9a4",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -137602,6 +138093,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:5cf1f42f829c5ceee81d",
+      "sourcePath": "backend/src/ai/engineeringOperator.test.ts",
+      "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b99062ed81211d2f316e",
       "sourcePath": "backend/src/ai/engineeringRoles.test.ts",
       "declaredTests": 12,
@@ -138841,6 +139339,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:bbc512ea7508ef59e0e6",
+      "sourcePath": "backend/src/existingSource/change/crashRecovery.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d0b57541db66d2690507",
       "sourcePath": "backend/src/existingSource/change/delivery.test.ts",
       "declaredTests": 14,
@@ -139952,6 +140457,13 @@
       "id": "test-suite:dabd58d321ef48a60e87",
       "sourcePath": "backend/src/sandbox/google/googleSandbox.test.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a03b7192346cfffed8d9",
+      "sourcePath": "backend/src/sandbox/google/orphanReconciler.test.ts",
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -142437,9 +142949,16 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:bf8d4646374a271fd9d7",
+      "sourcePath": "backend/tests/engineeringDiagnostics.local.integration.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:c10ec17d02758925b21d",
       "sourcePath": "backend/tests/engineeringResourceLedger.local.integration.ts",
-      "declaredTests": 10,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },

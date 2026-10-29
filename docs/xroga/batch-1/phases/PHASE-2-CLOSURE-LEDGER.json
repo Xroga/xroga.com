@@ -1127,7 +1127,7 @@
       "id": "B1-P2-d87d5c8270aa4666",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/routes/admin.ts",
-      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
       "baselineCallerIds": [
         "900b714de6b6407ee20d",
         "8f0a6deb321279d0013d",
@@ -1175,7 +1175,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d87d5c8270aa4666",
-        "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+        "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
         "executionStatus": "IN_PROGRESS",
         "finding": "FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_VERIFIED_AT_7BE44030",
         "originalCriteria": [
@@ -1251,7 +1251,7 @@
         {
           "path": "backend/src/routes/admin.ts",
           "marker": "authorized_platform_errors",
-          "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+          "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7893,14 +7893,14 @@
       "id": "B1-P2-f8cb123dcb4c4a53",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "baselineCallerIds": [
         "d84df34ff692e4fb31c1",
         "bda2ddc16c7864ef18d8"
       ],
       "currentCallerIds": [
         "d84df34ff692e4fb31c1",
-        "6aa631c47e1c902cc88a"
+        "b41f1945ffa218ebbb70"
       ],
       "mapping": [
         {
@@ -7913,7 +7913,7 @@
         {
           "baselineCallerId": "bda2ddc16c7864ef18d8",
           "currentCallerIds": [
-            "6aa631c47e1c902cc88a"
+            "b41f1945ffa218ebbb70"
           ],
           "change": "RETAINED"
         }
@@ -7923,7 +7923,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-f8cb123dcb4c4a53",
-        "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
+        "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
         "originalCriteria": [

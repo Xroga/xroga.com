@@ -92,9 +92,10 @@ export async function reconcileUnrecordedAllocations(deps: OrphanDeps): Promise<
 }
 
 /** Whether a live session (creating, running or stopped) references this machine. A destroyed or failed record does not make a still-running machine "recorded". */
-export function recordedAllocationLookup(client: SupabaseClient = getGlobalSupabaseAdmin('gce_allocation_reconcile')): OrphanDeps['isRecorded'] {
+export function recordedAllocationLookup(client?: SupabaseClient): OrphanDeps['isRecorded'] {
+  const supabase = client ?? getGlobalSupabaseAdmin('gce_allocation_reconcile');
   return async (handle) => {
-    const { data, error } = await client.from('project_runtime_sessions').select('session_id')
+    const { data, error } = await supabase.from('project_runtime_sessions').select('session_id')
       .eq('provider_id', 'google-gce').in('status', ['creating', 'running', 'stopped'])
       .filter('state->providerState->gce->>instanceId', 'eq', handle.instanceId).limit(1);
     if (error || !Array.isArray(data)) throw new Error('lookup failed');

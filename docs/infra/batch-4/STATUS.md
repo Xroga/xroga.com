@@ -23,13 +23,14 @@ The tables below describe the first checkpoint; where they disagree with the upd
 
 This separates two things that are easy to blur. **Unfinished development** is work that needs code or a local test and is not done. **Deferred live checks** need infrastructure, a model or a provider that has not been authorised, and are not development gaps.
 
-### Unfinished development (not done)
+### Unfinished development
 
-1. **Operator diagnostics** (spec section 11.4) are not built: no read-only operator view of stalled runs, lease and queue state, preview health, orphan candidates or budget anomalies. Deliberately not added as an untested admin route.
-2. **Source recovery after a worker is killed mid file edit** is not shown end to end (killed worker, source restored from the last durable revision, re-validated, verified). The pieces are tested separately; the whole path is not.
-3. **Provider-side orphan sweep** for an allocation that was never recorded and whose destruction failed is not built or tested (only the cleanup classification exists).
-4. **Ledger follow-ups:** no retention job for old rows, no per-plan or per-tenant cap overrides.
-5. **Batch 2's repair** stays the canonical task graph's `validation_repair` task by design. This is a decision, not a gap, and is recorded so it is not mistaken for one.
+The four items previously listed here are done and tested (operator diagnostics, local crash recovery mid-edit, reconciliation of unrecorded allocations, ledger retention and per-tenant caps). What remains is small and stated plainly:
+
+1. Operator diagnostics are an API only; there is no admin UI.
+2. The orphan sweep and ledger retention are wired into the existing maintenance tick but tested by injecting their dependencies, not on a real tick against a real Compute API or Supabase.
+3. Crash recovery is shown for the Batch 3 change path with a file-backed store and a scripted agent.
+4. **Batch 2's repair** stays the canonical task graph's `validation_repair` task by design. This is a decision, not a gap.
 
 ### Deferred live-infrastructure checks (not development gaps)
 

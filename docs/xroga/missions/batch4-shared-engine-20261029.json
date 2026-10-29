@@ -13,6 +13,8 @@
   "changedFiles": [
     ".github/workflows/xroga-tenant-security.yml",
     "BATCH-4-HANDOFF.md",
+    "backend/src/ai/engineeringOperator.test.ts",
+    "backend/src/ai/engineeringOperator.ts",
     "backend/src/ai/eventReplay.test.ts",
     "backend/src/ai/eventReplay.ts",
     "backend/src/ai/repairController.test.ts",
@@ -28,17 +30,25 @@
     "backend/src/builder/qa/qaService.ts",
     "backend/src/builder/qa/verificationEvidence.test.ts",
     "backend/src/builder/qa/verificationEvidence.ts",
+    "backend/src/existingSource/change/__tests__/crashChild.ts",
+    "backend/src/existingSource/change/__tests__/crashHarness.ts",
     "backend/src/existingSource/change/change.test.ts",
+    "backend/src/existingSource/change/crashRecovery.test.ts",
     "backend/src/existingSource/change/service.ts",
     "backend/src/existingSource/change/testRunner.ts",
     "backend/src/existingSource/change/verificationEvidence.test.ts",
     "backend/src/existingSource/change/verificationEvidence.ts",
     "backend/src/operations/operationsEngine.ts",
     "backend/src/operations/redactionCanary.test.ts",
+    "backend/src/routes/admin.ts",
+    "backend/src/routes/engineeringOperator.ts",
     "backend/src/routes/projectRuntime.ts",
     "backend/src/routes/swarm.ts",
+    "backend/src/sandbox/google/gceMachineControl.ts",
     "backend/src/sandbox/google/googleSandbox.test.ts",
     "backend/src/sandbox/google/googleSandbox.ts",
+    "backend/src/sandbox/google/orphanReconciler.test.ts",
+    "backend/src/sandbox/google/orphanReconciler.ts",
     "backend/src/sandbox/meteredExecution.test.ts",
     "backend/src/sandbox/meteredExecution.ts",
     "backend/src/sandbox/sandboxRuntime.ts",
@@ -64,6 +74,7 @@
     "backend/src/workers/googleDeliveryStore.test.ts",
     "backend/src/workers/googleDeliveryStore.ts",
     "backend/src/workers/postgresLeaseStore.integration.test.ts",
+    "backend/tests/engineeringDiagnostics.local.integration.ts",
     "backend/tests/engineeringResourceLedger.local.integration.ts",
     "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
     "backend/tests/googleDeliveryCrash.local.integration.ts",
@@ -104,7 +115,8 @@
     "scripts/batch4/local-fairness-benchmark.ts",
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
-    "supabase/migrations/20261029100000_engineering_resource_ledger.sql"
+    "supabase/migrations/20261029100000_engineering_resource_ledger.sql",
+    "supabase/migrations/20261029110000_engineering_operator_diagnostics.sql"
   ],
   "decisions": {
     "keep": [
@@ -123,10 +135,11 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
-      "supabase/migrations/20261029100000_engineering_resource_ledger.sql"
+      "supabase/migrations/20261029100000_engineering_resource_ledger.sql",
+      "supabase/migrations/20261029110000_engineering_operator_diagnostics.sql"
     ],
-    "rollout": "Additive service-role-only table and five functions. Not applied by this change; apply through the verified migration workflow after authorisation.",
-    "rollback": "DROP TABLE public.engineering_resource_reservations; drop the five engineering_resource functions. Nothing else references them."
+    "rollout": "Additive service-role-only tables and functions. Not applied by this change; apply through the verified migration workflow after authorisation.",
+    "rollback": "DROP TABLE public.engineering_resource_reservations, public.engineering_resource_limits; drop the engineering_resource and engineering_diagnostics functions. Nothing else references them."
   },
   "securityImpact": {
     "auth": {
@@ -260,6 +273,30 @@
       "scope": "Frontend contracts: lost history is reported once; a stale preview is labelled as an older version.",
       "negative": true,
       "reference": "frontend/src/lib/swarmReplayGap.contract.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/engineeringOperator.test.ts",
+      "scope": "Operator module and router: validation, fixed functions, no error-text leak, retention rules, mounted only behind the admin middleware.",
+      "negative": true,
+      "reference": "backend/src/ai/engineeringOperator.test.ts"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_DIAGNOSTICS_TEST_DATABASE_URL=<loopback disposable> node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringDiagnostics.local.integration.ts",
+      "scope": "Operator diagnostics on a real disposable PostgreSQL: exact counts for each stalled state, samples, no run content, privileges.",
+      "negative": true,
+      "reference": "backend/tests/engineeringDiagnostics.local.integration.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/sandbox/google/orphanReconciler.test.ts",
+      "scope": "Reconciliation of unrecorded Google machines through the real control against a simulated Compute API.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/orphanReconciler.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/crashRecovery.test.ts",
+      "scope": "A real worker process killed mid-edit; a restarted service recovers from the durable row alone.",
+      "negative": true,
+      "reference": "backend/src/existingSource/change/crashRecovery.test.ts"
     }
   ],
   "architecture": {
@@ -270,10 +307,12 @@
   "rollout": "Development only. Merge and activation need the founder authorisation after all three phases and acceptance gates.",
   "rollback": "Revert the branch. The reconciler change only alters when an unclaimed run is ended and which reason it records; the read-back only adds a verification read after an insert.",
   "knownGaps": [
-    "Unfinished development: operator diagnostics (spec 11.4), end-to-end source recovery after a worker killed mid-edit, provider-side orphan sweep, ledger retention and per-tenant overrides",
+    "Operator diagnostics are an API only (no admin UI)",
+    "The orphan sweep and ledger retention are wired to the maintenance tick but tested with injected dependencies, not against a real Compute API or Supabase",
+    "Crash recovery is shown for the Batch 3 path with a file-backed store and a scripted agent",
     "Batch 2 repair intentionally remains the canonical task graph task; only Batch 3 uses the shared controller",
     "Several changes are default-on (queued-run wait, fair discovery, revision read-back, redaction, gate cross-check); see docs/infra/batch-4/OPERATIONS.md",
-    "Golden A-V: 2 PASS, 20 PARTIAL; the PARTIAL rows need a real sandbox, preview, browser or model",
+    "Golden A-V: 4 PASS (stated levels), 18 PARTIAL; the PARTIAL rows need a real sandbox, preview, browser or model",
     "All real-model, real-provider, staging and production verification is DEFERRED BY FOUNDER"
   ],
   "placeholderClaimsRemaining": [
