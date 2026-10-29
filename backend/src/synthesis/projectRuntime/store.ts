@@ -1,3 +1,4 @@
+import { engineeringMeterFor } from '../../ai/resourceMeter.js';
 import {
   createHash,
   randomUUID,
@@ -633,7 +634,24 @@ export class SupabaseProjectRuntimeStore
   constructor(attempt?: AdmittedRunAttempt) {
     this.attempt = attempt ? requireAdmittedRunAttempt(attempt) : undefined;
   }
+  /**
+   * Saves a revision and, when engineering metering is on, records the bytes actually persisted (not the bytes of a save that failed). This is write volume
+   * in the accounting window, not the total stored footprint, which would need deduplication and deletion accounting.
+   */
   async saveRevision(
+    userId:
+      string,
+
+    project:
+      SoftwareProject,
+  ): Promise<ProjectRevisionRecord> {
+    const meter = engineeringMeterFor(userId);
+    if (!meter) return this.persistRevision(userId, project);
+    const bytes = project.workspace.files.reduce((total, file) => total + Buffer.byteLength(file.content, 'utf8'), 0);
+    return meter.measure({ category: 'storage_bytes', runId: project.runId, estimateUnits: bytes }, () => this.persistRevision(userId, project), (result) => (result ? bytes : 0));
+  }
+
+  private async persistRevision(
     userId:
       string,
 
@@ -695,6 +713,11 @@ export class SupabaseProjectRuntimeStore
       throw new Error('Project revision persistence evidence is invalid.');
     }
 
+    // A revision is durable only when the stored row, read back by its own id under the same owner, restores to exactly the bytes that were
+    // fingerprinted. The insert receipt alone proves nothing about what the database can later return.
+    const stored = await this.readBackRevision(userId, project.projectId, String(data.revision_id), fingerprint, project.runId);
+    project = stored.project;
+
     return {
       revisionId:
         String(
@@ -727,6 +750,17 @@ export class SupabaseProjectRuntimeStore
           data.created_at,
         ),
     };
+  }
+
+  private async readBackRevision(userId: string, projectId: string, revisionId: string, fingerprint: string, runId: string): Promise<ProjectRevisionRecord> {
+    const unavailable = () => Object.assign(new Error('Project revision could not be read back after it was saved.'), { code: 'REVISION_READBACK_FAILED' });
+    const { data, error } = await getSupabaseAdmin().from('project_runtime_revisions')
+      .select('revision_id, user_id, project_id, run_id, revision_number, workspace_fingerprint, software_project, created_at')
+      .eq('user_id', userId).eq('revision_id', revisionId).maybeSingle();
+    if (error || !data) throw unavailable();
+    const restored = restoreOwnerBoundProjectRevision(data, userId, projectId);
+    if (!restored || restored.revisionId !== revisionId || restored.runId !== runId || restored.workspaceFingerprint !== fingerprint) throw unavailable();
+    return restored;
   }
 
   private async saveWorkerRevision(userId: string, project: SoftwareProject, fingerprint: string) {
@@ -1162,6 +1196,13 @@ export function restoreOwnerBoundProjectRevision(row: unknown, userId: string, p
   if (!contract || typeof contract !== 'object' || Array.isArray(contract)) return null;
   const identity = contract as Record<string, unknown>;
   if (snapshot.projectId !== projectId || snapshot.runId !== record.run_id || identity.projectId !== projectId || identity.runId !== record.run_id) return null;
+  const workspace = snapshot.workspace;
+  if (!workspace || typeof workspace !== 'object' || Array.isArray(workspace)) return null;
+  const files = (workspace as Record<string, unknown>).files;
+  if (!Array.isArray(files) || files.some(file => !file || typeof file !== 'object' || Array.isArray(file)
+    || typeof file.path !== 'string' || typeof file.content !== 'string')) return null;
+  if (typeof record.workspace_fingerprint !== 'string' || !/^[a-f0-9]{64}$/.test(record.workspace_fingerprint)
+    || projectWorkspaceFingerprint(project as SoftwareProject) !== record.workspace_fingerprint) return null;
   return {
     revisionId: String(record.revision_id), userId, projectId, runId: record.run_id,
     revisionNumber: Number(record.revision_number), workspaceFingerprint: String(record.workspace_fingerprint),

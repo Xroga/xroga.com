@@ -1,0 +1,33 @@
+{
+  "scope": "PHASE_1_INCREMENTAL_NOT_ACCEPTANCE",
+  "baseline": "11b1154a7ef2dca901e128e0de90991ae290972d",
+  "batch3Draft": "6db97ab9a7d517ef6b9aad228cb9633b375e6e69",
+  "finding": "A pending delivery aged between four and five minutes was ineligible for rediscovery while its run was still within the orphan grace period.",
+  "change": "Align the bounded pending-delivery selection with the existing five-minute orphan grace period. Existing source, state, native identity and atomic reservation checks remain in force.",
+  "evidence": [
+    {"kind":"regression_before_fix","result":"FAIL_EXPECTED","localJob":"5e526029-ae9c-4647-95d3-71f36eb62f61","scope":"Synthetic query fixture, not real database recovery"},
+    {"kind":"focused_after_fix","result":"PASS","tests":18,"failed":0,"skipped":0,"localJob":"cc344b4a-a469-465e-a3fa-51ed6866d78f"},
+    {"kind":"backend_typecheck","result":"PASS","localJob":"0769844e-5e70-4ca4-bb84-0df82c5f783d"},
+    {"kind":"process_and_lease_tests","result":"PARTIAL","tests":26,"passed":25,"failed":0,"skipped":1,"localJob":"03762949-54bb-4668-addd-5787a52f16e2","limitation":"POSIX orphan sweep skipped on Windows. Process-tree cancellation and deadline tests ran locally. Lease fixtures use an in-memory store."},
+    {"kind":"strict_egress_audit","result":"PASS","reviewed":148,"pending":0,"unresolvedHighRisk":0,"localJob":"81198728-32c3-44c9-ab39-899afa6e9f21"},
+    {"kind":"local_postgres_lease_integration","result":"PASS","tests":16,"failed":0,"skipped":0,"localJob":"a77b367d-6539-47b0-b17d-6404748880ca","scope":"Disposable local PostgreSQL 17.11. A separate Node process was killed after acquiring a lease; a replacement acquired it after expiry, and its higher fencing token rejected the old worker. Container and network were removed.","limitation":"This verifies database lease takeover, not end-to-end canonical worker or source checkpoint recovery."},
+    {"kind":"backend_typecheck_after_lease_test","result":"PASS","localJob":"a503bbf6-e883-4b34-a7e6-efe69ed32e10"},
+    {"kind":"browser_checkpoint_stale_lease_before_fix","result":"FAIL_EXPECTED","localJob":"8f6a42cc-40b8-4a2d-ae8c-abe6ddaf2e11","scope":"Real local PostgreSQL reproduced a stale worker checkpoint accepted after lease replacement."},
+    {"kind":"browser_checkpoint_fencing_after_fix","result":"PASS","tests":9,"failed":0,"skipped":0,"localJob":"3009a219-e27a-4ba0-8069-8a435016396a","scope":"Real local PostgreSQL verifies current lease, stale-worker denial, tenant isolation, cancellation versus success and the canonical scheduler. Disposable container and network are removed."},
+    {"kind":"browser_recovery_regression","result":"PASS","tests":16,"failed":0,"skipped":0,"localJob":"8591b556-73fa-4fc4-93fc-38facd5eeae8"},
+    {"kind":"backend_typecheck_after_browser_fix","result":"PASS","localJob":"7c54179d-c615-4647-b125-417197d89f20"},
+    {"kind":"strict_egress_audit_after_browser_fix","result":"PASS","reviewed":148,"pending":0,"unresolvedHighRisk":0,"localJob":"ada6052e-7f1f-4da0-9776-5f4bdb76a94a"},
+    {"kind":"allocation_cleanup_reporting_before_fix","result":"FAIL_EXPECTED","localJob":"c8f3b8c5-e462-441d-b34c-4639cea9687e","scope":"Synthetic provider fixture reproduced loss of the cleanup-pending classification."},
+    {"kind":"allocation_cleanup_reporting_after_fix","result":"PASS","tests":19,"failed":0,"skipped":0,"localJob":"2819522a-7d4a-4a34-b571-dcbc7ec77caa","scope":"Synthetic provider/control tests, not a live Google resource test."},
+    {"kind":"strict_egress_audit_after_cleanup_fix","result":"PASS","reviewed":148,"pending":0,"unresolvedHighRisk":0,"localJob":"70f3f8f5-2eb8-479c-adf7-c979613956f6"},
+    {"kind":"backend_typecheck_after_cleanup_fix","result":"PASS","localJob":"814e2753-7699-4d03-9c16-48e012168ecf"}
+  ],
+  "remaining": [
+    "Prove canonical run restart and source checkpoint recovery with actual processes and an isolated database; lease takeover alone is verified.",
+    "Resolve deliveries after longer outages without replaying expired authority or ambiguous external effects.",
+    "Verify source checkpoint persistence, workspace restoration, cancellation races and cross-tenant isolation for the actual shared engineering paths.",
+    "Complete remaining Phase 1 criteria and exact-source CI before claiming acceptance."
+  ],
+  "productionActivation": false,
+  "realModelCalls": 0
+}

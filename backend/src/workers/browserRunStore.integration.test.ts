@@ -4,9 +4,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { after, before, describe, it } from 'node:test';
 import type pg from 'pg';
-import { createCanonicalExecutionState } from '../ai/executionRuntime.js';
+import { createCanonicalExecutionState, ExecutionScheduler } from '../ai/executionRuntime.js';
 import { createDisposableDb, PG_TEST_URL } from '../storage/testing/pgFixture.js';
 import { PostgresBrowserRunStore, type BrowserRunSpec } from './browserRunStore.js';
+import { PostgresLeaseStore } from './postgresLeaseStore.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const MIGRATION = path.resolve(here, '../../../supabase/migrations/20261026100000_browser_runs_durable.sql');
@@ -27,6 +28,7 @@ describe('durable browser runs against real PostgreSQL', { skip }, () => {
     const db = await createDisposableDb();
     pool = db.pool; drop = db.drop;
     await pool.query(readFileSync(MIGRATION, 'utf8'));
+    await pool.query(readFileSync(path.resolve(here, '../../../supabase/migrations/20261024000000_worker_task_leases.sql'), 'utf8'));
     store = new PostgresBrowserRunStore(pool);
   });
   after(async () => { await drop(); });
@@ -44,17 +46,23 @@ describe('durable browser runs against real PostgreSQL', { skip }, () => {
 
   it('saves state for the owner only, derives the status, and never reopens a finished run', async () => {
     await store.create({ tenantId: 't1', userId: 'u1', state: newState(id(2)), spec: SPEC });
-    const own = store.stateStore('u1');
+    const lease = await new PostgresLeaseStore(pool).acquire({tenantId:'t1',runId:id(2),taskId:'execute'},'worker',30000);
+    assert.ok(lease);
+    const own = store.stateStore('u1',()=>lease);
     const state = (await own.load(id(2)))!;
     state.tasks[0]!.status = 'running';
     await own.save(state);
     assert.equal((await store.load('u1', id(2)))?.status, 'running');
-    await assert.rejects(store.stateStore('u2').save(state), /no longer authoritative/);
+    await assert.rejects(store.stateStore('u2',()=>lease).save(state), /no longer authoritative/);
     state.tasks[0]!.status = 'completed';
     await own.save(state);
     assert.equal((await store.load('u1', id(2)))?.status, 'completed');
+    state.tasks[0]!.objective = 'late rewrite';
+    await own.save(state); // the scheduler may repeat a terminal checkpoint
+    assert.equal((await store.load('u1',id(2)))?.state.tasks[0]?.objective,'g');
+    await assert.rejects(store.stateStore('u1').save(state), /no longer authoritative/);
     state.tasks[0]!.status = 'running';
-    await own.save(state); // a late writer: ignored, not an error and not a reopen
+    await assert.rejects(own.save(state), /no longer authoritative/);
     assert.equal((await store.load('u1', id(2)))?.status, 'completed');
   });
 
@@ -68,6 +76,24 @@ describe('durable browser runs against real PostgreSQL', { skip }, () => {
     assert.equal((await store.load('u1', id(3)))?.cancelRequested, true);
     assert.equal(await store.requestCancel('u1', id(2)), 'already_finished');
     assert.equal(await store.requestCancel('u1', id(99)), 'not_found');
+  });
+
+  it('rejects a checkpoint from a worker after its durable execution lease is replaced', async () => {
+    const runId=id(20), key={tenantId:'t1',runId,taskId:'execute'};
+    await store.create({tenantId:'t1',userId:'u1',state:newState(runId),spec:SPEC});
+    const leases=new PostgresLeaseStore(pool);
+    const old=await leases.acquire(key,'old-worker',30000); assert.ok(old);
+    await leases.release(old);
+    const current=await leases.acquire(key,'new-worker',30000); assert.ok(current);
+    const oldStore=store.stateStore('u1',()=>old);
+    const currentStore=store.stateStore('u1',()=>current);
+    const oldState=newState(runId); oldState.tasks[0]!.status='completed';
+    await assert.rejects(oldStore.save(oldState),/no longer authoritative/);
+    const liveState=newState(runId); liveState.tasks[0]!.status='running';
+    await currentStore.save(liveState);
+    assert.equal((await store.load('u1',runId))?.status,'running');
+    liveState.tasks[0]!.status='completed';
+    await currentStore.save(liveState);
   });
 
   it('counts active runs per tenant and lists stale unfinished runs only', async () => {
@@ -85,5 +111,45 @@ describe('durable browser runs against real PostgreSQL', { skip }, () => {
     assert.equal(r.rows[0]?.rls, true);
     const grants = await pool.query<{ grantee: string }>("select grantee from information_schema.role_table_grants where table_schema='public' and table_name='browser_runs' and grantee in ('anon','authenticated','PUBLIC')");
     assert.deepEqual(grants.rows, []);
+  });
+
+  it('does not persist a success after cancellation wins the database race', async () => {
+    const runId=id(21),key={tenantId:'t1',runId,taskId:'execute'};
+    await store.create({tenantId:'t1',userId:'u1',state:newState(runId),spec:SPEC});
+    const lease=await new PostgresLeaseStore(pool).acquire(key,'worker',30000);assert.ok(lease);
+    const state=newState(runId), writable=store.stateStore('u1',()=>lease);
+    assert.equal(await store.requestCancel('u1',runId),'requested');
+    state.tasks[0]!.status='completed';
+    await assert.rejects(writable.save(state),/no longer authoritative/);
+    state.tasks[0]!.status='cancelled';
+    await writable.save(state);
+    assert.equal((await store.load('u1',runId))?.status,'cancelled');
+  });
+
+  it('allows the scheduler to finish through fenced checkpoints without rewriting terminal state', async () => {
+    const runId=id(22),key={tenantId:'t1',runId,taskId:'execute'};
+    const state=newState(runId);
+    await store.create({tenantId:'t1',userId:'u1',state,spec:SPEC});
+    const lease=await new PostgresLeaseStore(pool).acquire(key,'worker',30000);assert.ok(lease);
+    let calls=0;
+    await new ExecutionScheduler(store.stateStore('u1',()=>lease)).run(state,{
+      browser_automation:async()=>{calls++;return {output:'synthetic',validated:true,evidence:[{id:'fixture',kind:'test',summary:'local',timestamp:new Date().toISOString()}]};},
+    });
+    assert.equal(calls,1);
+    assert.equal((await store.load('u1',runId))?.status,'completed');
+  });
+
+  it('allows an already-cancelled scheduler to persist cancellation without dispatching work', async () => {
+    const runId=id(23),key={tenantId:'t1',runId,taskId:'execute'};
+    const state=newState(runId);
+    await store.create({tenantId:'t1',userId:'u1',state,spec:SPEC});
+    const lease=await new PostgresLeaseStore(pool).acquire(key,'worker',30000);assert.ok(lease);
+    assert.equal(await store.requestCancel('u1',runId),'requested');
+    const abort=new AbortController();abort.abort();let calls=0;
+    await new ExecutionScheduler(store.stateStore('u1',()=>lease)).run(state,{
+      browser_automation:async()=>{calls++;throw new Error('must not dispatch');},
+    },abort.signal);
+    assert.equal(calls,0);
+    assert.equal((await store.load('u1',runId))?.status,'cancelled');
   });
 });

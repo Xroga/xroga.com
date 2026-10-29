@@ -130,6 +130,12 @@ export class GoogleSandboxRuntime implements SandboxRuntime {
       return{...last,stdout:records.map(record=>record.stdout).join('\n'),stderr:records.map(record=>record.stderr).join('\n'),
         durationMs:Date.now()-started,stages:records};
     }catch(error){
+      if(error instanceof GceControlError&&error.code==='GCE_ALLOCATION_CLEANUP_PENDING'){
+        if(revoked||request.signal?.aborted){
+          terminalDenial=new SandboxAdmissionError();terminalDenial.cleanupPending=true;throw terminalDenial;
+        }
+        throw new GoogleSandboxCleanupPendingError();
+      }
       if(error instanceof SandboxAdmissionError||revoked||request.signal?.aborted||admissionDenied(error)){
         terminalDenial=error instanceof SandboxAdmissionError?error:new SandboxAdmissionError();throw terminalDenial;
       }

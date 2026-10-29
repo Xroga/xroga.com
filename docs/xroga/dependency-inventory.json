@@ -366,6 +366,8 @@
         "XROGA_GCE_DEFAULT_IMAGE",
         "XROGA_GCE_MAX_INSTANCES",
         "XROGA_GCE_NODE_IMAGE",
+        "XROGA_GCE_ORPHAN_DEADLINE_SECONDS",
+        "XROGA_GCE_ORPHAN_SWEEP",
         "XROGA_GCE_PROJECT",
         "XROGA_GCE_PYTHON_IMAGE",
         "XROGA_GCE_RUST_IMAGE",
@@ -7648,9 +7650,11 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/ai/black-hole/cutover.ts",
+        "backend/src/ai/engineeringOperator.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerRuntime.ts",
+        "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
@@ -7826,6 +7830,13 @@
         "XROGA_DRIVE_R2_ACCOUNT_ID",
         "XROGA_DRIVE_R2_BUCKET",
         "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+        "XROGA_ENGINEERING_CAP_BROWSER_SECONDS",
+        "XROGA_ENGINEERING_CAP_SANDBOX_SECONDS",
+        "XROGA_ENGINEERING_CAP_STORAGE_BYTES",
+        "XROGA_ENGINEERING_CAP_WINDOW_SECONDS",
+        "XROGA_ENGINEERING_METERING",
+        "XROGA_ENGINEERING_RETENTION_DAYS",
+        "XROGA_ENGINEERING_SWEEP_AFTER_SECONDS",
         "XROGA_EXISTING_SOURCE",
         "XROGA_FLY_OIDC_IMAGE_DIGESTS",
         "XROGA_FLY_OIDC_ISSUER",
@@ -7876,9 +7887,11 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/black-hole/cutover.ts",
+        "backend/src/ai/engineeringOperator.ts",
         "backend/src/ai/legacyBuilderAdapter.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerRuntime.ts",
+        "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
@@ -13486,6 +13499,139 @@
       ]
     },
     {
+      "name": "XROGA_ENGINEERING_CAP_BROWSER_SECONDS",
+      "consuming_sources": [
+        "backend/src/ai/resourceMeter.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_ENGINEERING_CAP_SANDBOX_SECONDS",
+      "consuming_sources": [
+        "backend/src/ai/resourceMeter.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_ENGINEERING_CAP_STORAGE_BYTES",
+      "consuming_sources": [
+        "backend/src/ai/resourceMeter.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_ENGINEERING_CAP_WINDOW_SECONDS",
+      "consuming_sources": [
+        "backend/src/ai/resourceMeter.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_ENGINEERING_METERING",
+      "consuming_sources": [
+        "backend/src/ai/resourceMeter.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_ENGINEERING_RETENTION_DAYS",
+      "consuming_sources": [
+        "backend/src/ai/engineeringOperator.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_ENGINEERING_SWEEP_AFTER_SECONDS",
+      "consuming_sources": [
+        "backend/src/ai/resourceMeter.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_EXISTING_SOURCE",
       "consuming_sources": [
         "backend/src/routes/existingSource.ts"
@@ -13695,6 +13841,44 @@
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
         "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "google-execution"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_ORPHAN_DEADLINE_SECONDS",
+      "consuming_sources": [
+        "backend/src/sandbox/google/orphanReconciler.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "google-execution"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_ORPHAN_SWEEP",
+      "consuming_sources": [
+        "backend/src/sandbox/google/orphanReconciler.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
         "google-execution"
@@ -15291,7 +15475,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417"
+      "sha256": "c1c34123f29e073d2bf814d5ac4140b04895c350af18b70656d7ddaf475af9a4"
     },
     {
       "path": "Dockerfile.api",
@@ -15462,12 +15646,20 @@
       "sha256": "b938ad5726b869ad1763fd12a01a789f59591cfe7db038d5e3a82681ba7b7a31"
     },
     {
+      "path": "backend/src/ai/engineeringOperator.ts",
+      "sha256": "f00e3e1dac207e02b2aedfa5fef844483a77435613cc5e6ba48b7cd75ec3cafa"
+    },
+    {
       "path": "backend/src/ai/engineeringRoles.ts",
       "sha256": "dd313f3bbc4f9e6550835aec4ecaa9dc565f79339d346d580a93048f45977063"
     },
     {
       "path": "backend/src/ai/engineeringTasks.ts",
       "sha256": "0f72350a0dcb893fc903dd098a484236d0a1ec3c5d862d0c40f1fd92fe79862e"
+    },
+    {
+      "path": "backend/src/ai/eventReplay.ts",
+      "sha256": "0ca59a487d010e939fbdd93f6ea0baaea0b9cc8b5ea19b51645a887b02340be4"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
@@ -15614,6 +15806,10 @@
       "sha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4"
     },
     {
+      "path": "backend/src/ai/repairController.ts",
+      "sha256": "202f7946c8181fd2a20492e2c848d01631542ef6c1d73b9c10d0900e74790df1"
+    },
+    {
       "path": "backend/src/ai/repoSummarize.ts",
       "sha256": "bc3c17979ae5ddf3d896055af8ea923d5d77e5fdadf6e8fd2c33f31b45b3fd6d"
     },
@@ -15624,6 +15820,14 @@
     {
       "path": "backend/src/ai/research.ts",
       "sha256": "7b977e721b0dd6c0428aab25c5416b840e5b696da4bf7c99d8d4f328f018853b"
+    },
+    {
+      "path": "backend/src/ai/resourceLedger.ts",
+      "sha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d"
+    },
+    {
+      "path": "backend/src/ai/resourceMeter.ts",
+      "sha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -15639,7 +15843,7 @@
     },
     {
       "path": "backend/src/ai/runReconciler.ts",
-      "sha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55"
+      "sha256": "748ba493598f0a99ab4dc9a404743514032fe8fd8835d08734aa3ab2077e313f"
     },
     {
       "path": "backend/src/ai/runStore.ts",
@@ -15870,6 +16074,10 @@
       "sha256": "860e41831c61d26d9742c64b71cda0ee88764cc6abd5f78636a3eebf811250a8"
     },
     {
+      "path": "backend/src/ai/verificationGate.ts",
+      "sha256": "c459ce31598b7d0837a350d8993d92c72561450e8ba18476d2624618a18d686b"
+    },
+    {
       "path": "backend/src/ai/verificationLifecycle.ts",
       "sha256": "5464af325a9bd1863a83c7218a275519dcb4247724a4b5147b5f800bad9258fe"
     },
@@ -16015,7 +16223,7 @@
     },
     {
       "path": "backend/src/builder/qa/qaService.ts",
-      "sha256": "94c05f42795933f465399f29d7e8223aae193923db0984ea89d7f0f2ab2d3169"
+      "sha256": "8f53e1c1150d46958271f18bda6549cfcb623506a3f97acb8352354d45f5bc66"
     },
     {
       "path": "backend/src/builder/qa/remoteQa.ts",
@@ -16032,6 +16240,10 @@
     {
       "path": "backend/src/builder/qa/types.ts",
       "sha256": "95922ee6be41e4b819e94f280acddb7f171ce191dca813d5a9379fb62e32846e"
+    },
+    {
+      "path": "backend/src/builder/qa/verificationEvidence.ts",
+      "sha256": "9dd83c7539d485b663499b3cbd98d7e2be49e6eefc1da44bf0f4db69561279d5"
     },
     {
       "path": "backend/src/builder/readiness.ts",
@@ -16238,6 +16450,14 @@
       "sha256": "43137374d904a31719b385f7facc0cb97cf4138dc229cac764e447323e0f694a"
     },
     {
+      "path": "backend/src/existingSource/change/__tests__/crashChild.ts",
+      "sha256": "9a9b7b9c69d9169d6334309a926f3366e7d478e363fb4c2c91a642cbed02c741"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/crashHarness.ts",
+      "sha256": "3841cd469501698c38633a026608976cb124518f8c8a40389baf0f25ed7e3f9d"
+    },
+    {
       "path": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
       "sha256": "a574affb1142c429feced62499141e729fe8b7297cab6ff1deb49b14f579a106"
     },
@@ -16263,7 +16483,7 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "sha256": "a6637f69c3adecd7655d432e7e3b75c3cc2fe7eaaf914addbe2f904175fa1a35"
+      "sha256": "542f5e2f1c942ce8d8572ad4099814b54d9c68c30546bfed6ef52107afd9df37"
     },
     {
       "path": "backend/src/existingSource/change/snapshot.ts",
@@ -16275,7 +16495,7 @@
     },
     {
       "path": "backend/src/existingSource/change/testRunner.ts",
-      "sha256": "d0e59bc562730ee6debe6980c6678671da7e0d4eb43b98e8a39a1d137b7465a0"
+      "sha256": "cfb548002441b240295071691e0c924c2205091751637033fad4ba6de3f1e0c6"
     },
     {
       "path": "backend/src/existingSource/change/toolHost.ts",
@@ -16288,6 +16508,10 @@
     {
       "path": "backend/src/existingSource/change/unifiedDiff.ts",
       "sha256": "2738906aafd959b20513ec104aa18e70b236bc78e5f9d4af554c592b56cd3511"
+    },
+    {
+      "path": "backend/src/existingSource/change/verificationEvidence.ts",
+      "sha256": "043da10ae73f921e8f143b787bf27f60ed160ef4d718971ce30133c4325c348f"
     },
     {
       "path": "backend/src/existingSource/change/workspace.ts",
@@ -16711,7 +16935,7 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "sha256": "874eccd05ce00b093c38f1c5b84c434430eb6ed1cdaefac945ea70e330c471c4"
+      "sha256": "02137cde1069831d1c62174a0bfa4d2fccbad9978baf034d9954ffb626c32958"
     },
     {
       "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
@@ -16827,7 +17051,7 @@
     },
     {
       "path": "backend/src/routes/admin.ts",
-      "sha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d"
+      "sha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554"
     },
     {
       "path": "backend/src/routes/analytics.ts",
@@ -16902,6 +17126,10 @@
       "sha256": "82e83b1911f78196329573dcd7086312ce047d9e3ccff349f661598313475cfd"
     },
     {
+      "path": "backend/src/routes/engineeringOperator.ts",
+      "sha256": "45c2ee4237c0358fb8d6f789d92a7cb5ba2fe04f696398883f0aadab387fccaa"
+    },
+    {
       "path": "backend/src/routes/existingSource.ts",
       "sha256": "28074e44009875a1c2aa95d24396f979a2d8da782a5ea0ade089c22d2f714864"
     },
@@ -16959,7 +17187,7 @@
     },
     {
       "path": "backend/src/routes/projectRuntime.ts",
-      "sha256": "cfd97ee11bbcf0e6dacca99dd31b25282196288ea8acb923b171d5884f751396"
+      "sha256": "3329e8e1dfd1d6ae0ddf5898098736540a9e0494c34f50f7e6a6e9f54f67e845"
     },
     {
       "path": "backend/src/routes/projects.ts",
@@ -16995,7 +17223,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622"
+      "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -17055,7 +17283,7 @@
     },
     {
       "path": "backend/src/sandbox/google/gceMachineControl.ts",
-      "sha256": "c5f14d10ea481b849ac90329e567818bcd25a6572fc2bd9d6f378f16a88bca2a"
+      "sha256": "51a6da39eb7fa50b7f02ab3613a78caf3ed7e5298b00b1d265098aa6592d39d4"
     },
     {
       "path": "backend/src/sandbox/google/gceSshTransport.ts",
@@ -17063,7 +17291,15 @@
     },
     {
       "path": "backend/src/sandbox/google/googleSandbox.ts",
-      "sha256": "d5b72b4e7d5bb17a189a623d24f2523a3dda238a914b7597e6f6f287aefbc821"
+      "sha256": "390693285ca32b5738d25ce4e5602e20a3a6602defd29dd20ef25acf3578c2ec"
+    },
+    {
+      "path": "backend/src/sandbox/google/orphanReconciler.ts",
+      "sha256": "8bc32eb0a778573f3dd9f8de1643ce5059f37b5384e61059a606490be4ad2570"
+    },
+    {
+      "path": "backend/src/sandbox/meteredExecution.ts",
+      "sha256": "e55acab12c5d0ec4900d0f61a1fae4090fe1e3b20f45cf22ce55018df396fcad"
     },
     {
       "path": "backend/src/sandbox/remoteSandbox.ts",
@@ -17079,7 +17315,7 @@
     },
     {
       "path": "backend/src/sandbox/sandboxRuntime.ts",
-      "sha256": "fdde1c8881c155ba9eabe1722aa7ec7122d3ba3289ef782bb4a8ca7a501c34ef"
+      "sha256": "4ae10273a23f7c686ec8fc2a4c31aa7343caefb9d5742d3374222ca930d7c340"
     },
     {
       "path": "backend/src/sandbox/sandboxTypes.ts",
@@ -17331,7 +17567,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88"
+      "sha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280"
     },
     {
       "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
@@ -18027,7 +18263,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/coordinator.ts",
-      "sha256": "bc1bb6127395d40779ee293662ead3de803c07b687d063b281b79c5e283613d0"
+      "sha256": "98337c0ed2597f6c95a59e2ec5933a4c0844e99db75ffcbfffebb9466265cdd2"
     },
     {
       "path": "backend/src/synthesis/livePreview/googleTarget.ts",
@@ -18051,7 +18287,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/status.ts",
-      "sha256": "e6776acafc12017f38e2f9519529843c1a95f728710612cb6d2405c866d220b2"
+      "sha256": "37b0b02a3e029effa528e19e876148bb3ea75531db02b6d4f28a656ae7439c12"
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
@@ -18059,7 +18295,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/types.ts",
-      "sha256": "876fa495106c8cb829819d3c165e395d370d7ea2a33e2d8e1c11a3d71178c69a"
+      "sha256": "25139addca80208696c7fcb440dc1248ef4d6230a24c9efba5dae50f5cd243f7"
     },
     {
       "path": "backend/src/synthesis/nichePacks.ts",
@@ -18143,11 +18379,11 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3"
+      "sha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "5991ba693df1f9ea64dc99a0370866e87c855841822251d3601003bef4b90133"
+      "sha256": "281f631fb4943c3a30730307176fbd6ca8ff024497ceb299ae2bcd313a14d70d"
     },
     {
       "path": "backend/src/synthesis/reliability/canonicalResume.ts",
@@ -18278,12 +18514,16 @@
       "sha256": "38b7acfeef14671c49714336ee8bea15c3b9458cabf56f7019b975c306e263b7"
     },
     {
+      "path": "backend/src/workers/__tests__/postgrestFilter.ts",
+      "sha256": "de22eb72fe5ffea30139d8e6c7ce5c6273acf4a01247d566b587547c2ec64a3f"
+    },
+    {
       "path": "backend/src/workers/admission.ts",
       "sha256": "9679143c7b92982db8f9ec4830185c13f781b136cfbce5b0d618cf31e57cbfa2"
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "5d75d311b49b606b3116dcc84e1284c30ce556a7f0f4a5ae530c406d0631aefa"
+      "sha256": "7d2bab8d22905fdccca667481ce0be5c1a61ac799d0b117d098ce1768d0d5511"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
@@ -18319,7 +18559,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "sha256": "59976a8c9023dbf82995c97721fbb60959ff6e764770c310bd9a4a44868693f4"
+      "sha256": "75054d2fd6ba5b567ea9f49a7c08027ed48c5149f00cc48b1b79eca32d935f86"
     },
     {
       "path": "backend/src/workers/browserTaskHandler.ts",
@@ -18342,12 +18582,16 @@
       "sha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
     },
     {
+      "path": "backend/src/workers/fairSelection.ts",
+      "sha256": "7503aca5435f3ac875846476b749c707223624eacaadc1078102a3cb7508ac50"
+    },
+    {
       "path": "backend/src/workers/googleDeliveryMaintenance.ts",
-      "sha256": "dd3bf3c4f9ebb36ee0aad88c030cd6d021111c54a9d0f73f1af8582414fc9871"
+      "sha256": "cfa7f3ea9ac196696e453b576c68cc4e34b2e109b10df23ee9e5917800b81bec"
     },
     {
       "path": "backend/src/workers/googleDeliveryStore.ts",
-      "sha256": "6635da58e4486468b47e054bbfc58a2295436f267e4b9ea522d3879031f8d91d"
+      "sha256": "e423b96b1e223d6f645cb715040b002a8caa725db879a2d52b101dae8b31b3cd"
     },
     {
       "path": "backend/src/workers/googleDispatch.ts",
@@ -20927,7 +21171,7 @@
     },
     {
       "path": "frontend/src/components/terminal/RuntimePreviewControls.tsx",
-      "sha256": "f2282a51ca5a3cf812b6f7f24afc195437d4a50bd4f21e854191d842097607f7"
+      "sha256": "47ec4ab37aefa1f94ebe604872322e01ac95a40050ac99f0f5c22f9bd3c34df2"
     },
     {
       "path": "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
@@ -21323,7 +21567,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "e13495ad6aad22831dee79af5884940d3920f080c909b7d3941f475bc55dd60a"
+      "sha256": "ad02eac726314973063455083e590b98f3a86ff9aa6324a98ad992ac9e6b6151"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22263,7 +22507,7 @@
     },
     {
       "path": "frontend/src/store/useLiveBuildStore.ts",
-      "sha256": "3c6c8f715487bd23da78c570c6a27cb6ad91149e2f871dca823fa27e76926384"
+      "sha256": "3b8afef92bcbbafddd83aac8e59da74b558f0a8acd9514a4d0d04d62d17da5fa"
     },
     {
       "path": "frontend/src/store/useOsCommand2Store.ts",
@@ -29719,6 +29963,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/ai/eventReplay.ts",
+      "line": 29,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/eventReplay.ts",
+      "line": 41,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/ai/executionRuntime.ts",
       "line": 158,
       "scope": "INSTANCE_LIFETIME",
@@ -31001,7 +31259,7 @@
     },
     {
       "path": "backend/src/builder/qa/qaService.ts",
-      "line": 68,
+      "line": 69,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31058,6 +31316,13 @@
     {
       "path": "backend/src/builder/qa/runner.ts",
       "line": 236,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/verificationEvidence.ts",
+      "line": 41,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31245,6 +31510,55 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/existingSource/change/__tests__/crashChild.ts",
+      "line": 18,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/crashChild.ts",
+      "line": 21,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/crashChild.ts",
+      "line": 23,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/crashHarness.ts",
+      "line": 33,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/crashHarness.ts",
+      "line": 38,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/crashHarness.ts",
+      "line": 53,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/__tests__/crashHarness.ts",
+      "line": 68,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/existingSource/change/__tests__/localProcessPort.ts",
       "line": 34,
       "scope": "FUNCTION_LOCAL",
@@ -31351,42 +31665,70 @@
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 57,
+      "line": 60,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 58,
+      "line": 61,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 108,
+      "line": 111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 274,
+      "line": 264,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 303,
+      "line": 282,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/change/service.ts",
-      "line": 359,
+      "line": 283,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 284,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 342,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 371,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 440,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32170,21 +32512,21 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 137,
+      "line": 145,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 138,
+      "line": 146,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 171,
+      "line": 179,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32919,7 +33261,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "line": 35,
+      "line": 36,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34543,7 +34885,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/coordinator.ts",
-      "line": 136,
+      "line": 137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34634,21 +34976,21 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 290,
+      "line": 291,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 296,
+      "line": 297,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 306,
+      "line": 307,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35138,7 +35480,7 @@
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
-      "line": 74,
+      "line": 75,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35216,6 +35558,13 @@
     {
       "path": "backend/src/workers/egressProxy.ts",
       "line": 88,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/fairSelection.ts",
+      "line": 13,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

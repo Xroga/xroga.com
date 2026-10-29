@@ -8530,15 +8530,16 @@
     },
     {
       "path": "backend/src/ai/runReconciler.ts",
-      "sourceSha256": "0604a2c343ae8eb549de9866040ac3500081e86aa09fa40a64f8ffbffa743b55",
+      "sourceSha256": "748ba493598f0a99ab4dc9a404743514032fe8fd8835d08734aa3ab2077e313f",
       "callIds": [
-        "dd0376eeca45f71ec6f1",
-        "bcf07881a45f30e33264",
-        "42f5c4cf7fee8caeddc3",
-        "fe1a3b914c605d3f900a"
+        "b0427411320aa0bef36a",
+        "dbd6d3d4d0a981573ebf",
+        "bad9923788e12e11ad81",
+        "0c6a0c256f4c6e05e11d",
+        "e522a71398537f1a2c25"
       ],
       "disposition": "NARROW_EXCEPTION",
-      "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status.",
+      "authority": "Only discovered production consumers are index.ts startup and shutdown. Startup uses the registered stale_run_reconcile authority with a minimum five-minute stale-heartbeat predicate and running status; shutdown uses leased_worker_shutdown with current process active IDs, current worker lease and running status. Unclaimed queued runs (admission heartbeat, no worker and no lease generation) are ended only after their own bounded 60-minute wait, owner-agnostic maintenance exactly like the other reconciler updates, with the never_started reason; worker-held runs keep the five-minute rule.",
       "reason": "Fixed-table lifecycle maintenance intentionally spans tenants, never selects customer payloads or invokes providers. Real disposable PostgreSQL tests preserve fresh/terminal rows and reject another worker lease even when its ID is supplied. This exception certifies only these bounded maintenance updates, not all scheduler identity, staged restart or provider exactly-once behavior.",
       "evidence": [
         {
@@ -8548,6 +8549,10 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "registered shutdown cannot alter an active ID owned by a different worker lease"
+        },
+        {
+          "path": "backend/src/ai/runReconciler.queue.test.ts",
+          "marker": "a request waiting for capacity is not ended as a stopped worker"
         }
       ],
       "beforeCurrentMainIntegration": {
@@ -14712,7 +14717,7 @@
     },
     {
       "path": "backend/src/routes/admin.ts",
-      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
       "callIds": [
         "900b714de6b6407ee20d",
         "8f0a6deb321279d0013d",
@@ -16344,7 +16349,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "callIds": [
         "d84df34ff692e4fb31c1"
       ],
@@ -16757,10 +16762,10 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "callIds": [
-        "7fa0b75d1947b7252b32",
-        "475ce22bc32e3c36e043"
+        "1b37735eaa4faaadbcd6",
+        "e2494b6f2fc6cb166eb2"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -16938,9 +16943,9 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "callIds": [
-        "cfcd9a8afee3dabccf13"
+        "b41f1945ffa218ebbb70"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "This internal constructor requires an exact own key of the immutable17-entry global operation registry and has no public administrative endpoint. Every named recipient independently proves its fixed operation, limited data projection, current staff/signature/capability authority where needed and actual positive/negative behavior. All other633 receiving inventory sites are already verified before this constructor is considered. Actual unknown, prototype and missing names fail before SDK construction, valid private routing/readiness uses execute, and revoked readiness SELECT denies without leaking identities. Returned SDK is privileged, not an enforced query sandbox. This exemption covers only named actual internal recipients, never arbitrary future queries or a user-selectable admin handle.",
@@ -25555,22 +25560,24 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "a7a1747d2192d62b505b",
-        "4623023af1a7fe9573f6",
-        "dfd2b022b39413db1561",
-        "6da2a4d0d15144e0aad0",
-        "2a0d2f322b23c157502d",
-        "e49e4b26ba7d2860dc41",
-        "a2f0c39a047770542a8b",
-        "492e2a6c5aee7adbc460",
-        "7f42805766f9e4a7622d",
-        "32701c89f04a3536291d",
-        "18ace9b81c3f92c7fa17"
+        "a864bc5998ad30044406",
+        "705840502528b9097f92",
+        "794f2986baf15127a5e5",
+        "2660919ebdd0c11227d5",
+        "b2f45a155f1f9ed6ccee",
+        "952e2977dbbd8adc9b21",
+        "d37aef8db513054ed541",
+        "1244fa5f77d64178a682",
+        "358bbf620757dbdc20c7",
+        "7e1732412cef6d6c7465",
+        "86f871c90f683c44c842",
+        "250095e9cfae8788cc06",
+        "2c2b50961cb989373f04"
       ],
       "disposition": "SCOPED_BOUNDARY",
-      "authority": "Generic revision producers are two issued-owner runtime handlers which first load exact owner/project snapshot and exact owner/project/session, plus private delivery lifecycle writes whose only production publish/deploy producers are authenticated delivery routes and whose service first loads that exact owner/project revision. History restore/fork also load exact owner/project/revision first, with no current production caller. The generic exported persistence wrapper has no production consumer. Active pipeline/preview workers instead use the separately proven admitted-attempt RPC. The snapshot fixes project/run/OutcomeContract before await and exact receipt binds owner/project/run/fingerprint/revision. Existing database trigger locks an attached current database project through the run where present. Logical project IDs remain owner-namespaced text and are not cast to projects UUIDs. No user body chooses durable owner or replaces run identity.\nThe sole production runtime manager factory is used by authenticated runtime routes or livePreview coordinator. Routes derive owner from original issued context, load owner-bound revision and bind requested project/session before provider access. Coordinator producers are the same pipeline, route and admitted-attempt agent bridge. Manager retains that owner, loads exact owner/session and derives event project/session from the retained row. The only selected current provider is the internal Fly adapter, which constructs owner/project/class/provider identity from supplied server input rather than provider JSON. Pipeline delivery events use its issued actor and admitted software project. The separate user-triggered delivery service gets server req.userId from its auth-mounted route and loads exact owner/project revision before session-less events. Dormant history helpers also load exact owner/project/revision first. Session persistence validates first-owner immutable identity and exact receipt. New SQL holds exact current session owner/project on event insertion.\nThe only production ProjectSecretManager constructor is ProjectRuntimeManager with retained server owner. Its factory receives the authenticated runtime route owner or admitted coordinator owner, whose exact producers are hash bound above. Enabled exec/start/log loads exact owner/session before deriving the logical project from that row. No requested provider/default account selects these secrets. Save/read/delete keys contain original owner plus logical project/name/scope. Save/delete helpers currently have no production mutation consumer outside that retained-owner secret manager. The new real test exercises those existing helpers directly with isolated Auth actors, not a fabricated public endpoint. Current browser roles cannot read/write/delete these rows. No fallback exists.",
+      "authority": "Generic revision producers are two issued-owner runtime handlers which first load exact owner/project snapshot and exact owner/project/session, plus private delivery lifecycle writes whose only production publish/deploy producers are authenticated delivery routes and whose service first loads that exact owner/project revision. History restore/fork also load exact owner/project/revision first, with no current production caller. The generic exported persistence wrapper has no production consumer. Active pipeline/preview workers instead use the separately proven admitted-attempt RPC. The snapshot fixes project/run/OutcomeContract before await and exact receipt binds owner/project/run/fingerprint/revision. Existing database trigger locks an attached current database project through the run where present. Logical project IDs remain owner-namespaced text and are not cast to projects UUIDs. No user body chooses durable owner or replaces run identity.\nThe sole production runtime manager factory is used by authenticated runtime routes or livePreview coordinator. Routes derive owner from original issued context, load owner-bound revision and bind requested project/session before provider access. Coordinator producers are the same pipeline, route and admitted-attempt agent bridge. Manager retains that owner, loads exact owner/session and derives event project/session from the retained row. The only selected current provider is the internal Fly adapter, which constructs owner/project/class/provider identity from supplied server input rather than provider JSON. Pipeline delivery events use its issued actor and admitted software project. The separate user-triggered delivery service gets server req.userId from its auth-mounted route and loads exact owner/project revision before session-less events. Dormant history helpers also load exact owner/project/revision first. Session persistence validates first-owner immutable identity and exact receipt. New SQL holds exact current session owner/project on event insertion.\nThe only production ProjectSecretManager constructor is ProjectRuntimeManager with retained server owner. Its factory receives the authenticated runtime route owner or admitted coordinator owner, whose exact producers are hash bound above. Enabled exec/start/log loads exact owner/session before deriving the logical project from that row. No requested provider/default account selects these secrets. Save/read/delete keys contain original owner plus logical project/name/scope. Save/delete helpers currently have no production mutation consumer outside that retained-owner secret manager. The new real test exercises those existing helpers directly with isolated Auth actors, not a fabricated public endpoint. Current browser roles cannot read/write/delete these rows. No fallback exists. After an insert or admitted-attempt persist, readBackRevision re-reads the stored row by its own revision id under the same verified owner and restores it through the owner-bound restore path, so a revision is reported durable only if the stored bytes match their fingerprint.",
       "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Two generic revision insert/factory callers only. Existing actual same-owner save/read/history and foreign/malformed contract denial, authenticated same-owner cross-project runtime denial, and worker parent/generation races are reused. User lifecycle snapshots are distinct from worker generations. Same-owner snapshot ordering is not claimed as a tenant race or new last-writer-wins defect.\nThree fixed session/event calls only, proven by actual store owner/identity/first-insert races, authenticated project/session mismatch denial and new event-parent lock/deletion/rollback receipts. Eight original revision/secret calls remain open. Provider effects, complete secret custody and full runtime lifecycle are not certified.\nSix exact secret table/factory callers only. Actual two-owner shared-logical-key concurrent writes, scoped reads, malformed-envelope denial, browser denial, same-owner and repeated deletion with unchanged foreign bytes, actual owner/session manager consumer and checked mutation receipts. No invented projects-table membership on independent logical workspace namespaces. No009 custody/rotation/migration or008 action authority certificate. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
       "evidence": [
         {
@@ -25580,6 +25587,10 @@
         {
           "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
           "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+        },
+        {
+          "path": "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
+          "marker": "a saved revision is read back before it is reported durable"
         }
       ],
       "historicalReview": {
@@ -25702,9 +25713,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "af204e0e037ebe211a63"
+        "601d86d506f90f4af7b4"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
@@ -25734,9 +25745,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "1bb48a0fd529036dbd67"
+        "1145e419d776dc7df9c2"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
@@ -25766,9 +25777,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "0053e3638ad34a6cbb95"
+        "cc1d5d8e1cb0c92c86db"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
@@ -25798,9 +25809,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "1d84483f4cae80e8b954"
+        "6d3a8c300b6a8f18fbb5"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
@@ -25830,9 +25841,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "1f977fbbb1102e6dac1d"
+        "6c6c1e09597d26afcf99"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
@@ -25862,9 +25873,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "b404673ae5984ef51dee"
+        "4b4714060afccfa2aed1"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
@@ -25894,9 +25905,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "0e4c41c7ca91a4914c3f"
+        "6379dcdeb795d49645a2"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Exact receiver is Node Buffer.from, decoding canonical base64 segments of an encrypted envelope in memory. It performs no database or Storage action and does not decrypt or authenticate ciphertext.",
@@ -27416,7 +27427,7 @@
       "evidence": [
         {
           "path": "frontend/src/components/os-preview/Command2Sections.tsx",
-          "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} \u00b7 {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
+          "marker": "return <><div className=\"os-split\"><section className=\"os-panel\"><div className=\"os-field\"><label htmlFor=\"os-genome-search\">Search demo assets</label><input id=\"os-genome-search\" value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className=\"os-field\"><label htmlFor=\"os-genome-category\">Category</label><select id=\"os-genome-category\" value={category} onChange={(e) => setCategory(e.target.value)}><option value=\"all\">All categories</option>{Array.from(new Set(DEMO_ASSETS.map((a) => a.category))).map((c) => <option key={c}>{c}</option>)}</select></div><div className=\"os-catalog-grid\">{filtered.map((a) => <button key={a.id} className={`os-catalog-item ${selected === a.id ? 'is-current' : ''}`} onClick={() => setSelected(a.id)}><strong>{a.name}</strong><small>{a.category} · {a.trust.replaceAll('-',' ')}</small></button>)}</div></section><section className=\"os-panel\"><span className=\"os-eyebrow\">Provenance and trust</span><h2>{asset.name}</h2><p>{asset.detail}</p><ul className=\"os-list\"><li><strong>License</strong><small>{asset.license}</small></li><li><strong>Compatibility</strong><small>{asset.trust === 'approved-demo' ? 'Original fixture compatible with this preview.' : 'Not approved for composition.'}</small></li><li><strong>Certification evidence</strong><small>{asset.trust === 'approved-demo' ? 'Demo review only; no production certification.' : 'Rejected in this example.'}</small></li></ul><div className=\"os-field\"><label htmlFor=\"os-genome-approach\">Proposed approach</label><select id=\"os-genome-approach\" value={approach} onChange={(e) => setApproach(e.target.value)}>{['Reuse','Adapt','Compose','Generate'].map((a) => <option key={a}>{a}</option>)}</select></div><p role=\"status\">{asset.trust === 'approved-demo' ? `${approach} is available as a local design example. No code is imported.` : 'Composition blocked by the documented trust or dependency issue.'}</p></section></div><StoryTrail story=\"clinic\"/></>;"
         }
       ],
       "beforeCurrentMainIntegration": {
@@ -28426,6 +28437,117 @@
         "disposition": "NOT_PERSISTENCE"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+    },
+    {
+      "path": "backend/src/ai/resourceLedger.ts",
+      "sourceSha256": "a1283ca0dd11b7f986cdd83f795d35af29e62ec5baa42e94bf60c68d81004b5d",
+      "callIds": [
+        "d7ef2b5739bb17d1c3bb",
+        "95e7704ae23cf0a12840",
+        "5b3bcd3a1fff8904bd0e",
+        "39d4ce9d0a0e8273bc21"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Every call goes through SupabaseResourceLedger, which is constructed only from an issued TenantContext (requireTenantContext) and builds the client with getTenantSupabaseAdmin(context). The owner id sent to the database is always context.userId, never a request or model value. The five database functions are service-role only (anon and authenticated are explicitly revoked, verified by a real-database privilege test) and each takes the owner and refuses another owner's reservation as not found. The cap and window are passed by the caller, validated and bounded before any call; database error text is never returned.",
+      "reason": "Fixed server-side rpc names for an owner-scoped reserve, settle and release ledger of sandbox compute, browser session and storage units. It reads and writes only the caller's own reservations, issues no credential, calls no provider and has no production caller yet (the repair controller and provider metering are not wired to it). This certifies the owner binding and input validation of this client, not that any real usage is metered.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/resourceLedger.test.ts",
+          "marker": "the owner always comes from the issued tenant context"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "another owner cannot settle, release or re-reserve"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/resourceMeter.ts",
+      "sourceSha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d",
+      "callIds": [
+        "1f13e40af8474dd650cc",
+        "508616f756e49c4a7c6a"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
+      "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/resourceMeter.test.ts",
+          "marker": "sweep: off when metering is off"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+          "marker": "a worker killed with SIGKILL while holding a reservation leaks a visible hold"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/engineeringOperator.ts",
+      "sourceSha256": "f00e3e1dac207e02b2aedfa5fef844483a77435613cc5e6ba48b7cd75ec3cafa",
+      "callIds": [
+        "b3b3a1c034dd18ca9c06",
+        "fb8966cc34230bfd3928",
+        "82d1360b637eed5eea4c",
+        "a1dd05cf1230f2a9b782",
+        "71aa73e77e244619a4c7",
+        "56d814db6802676d9b57",
+        "1cce4a63f04c3513e1c5"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Reached only from routes/engineeringOperator.ts, which is mounted under routes/admin.ts, which index.ts mounts behind authMiddleware and the database admin/owner middleware, and from the existing delivery maintenance tick (retention only, and only when metering is on and a retention period is configured). Two registered named operations: engineering_operator (diagnostics, list, set and clear of per-owner caps) and engineering_resource_retention (purge). Each call is a fixed database function; owner id, category and cap are validated before the call (uuid, enum, finite positive number below 1e15) and no SQL, table name or filter is supplied by the caller.",
+      "reason": "Operator-scoped maintenance and configuration that spans owners by design. Diagnostics return counts, ages and a few identifiers and never a prompt, output, worker id or lease identity (checked against a real disposable PostgreSQL). Setting a cap changes only that owner and category and is audited with the acting admin. Database errors are never returned. The functions are service-role only and anon/authenticated are explicitly revoked (verified). This certifies these bounded operator calls, not accounting accuracy or any production behaviour.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/engineeringOperator.test.ts",
+          "marker": "input validation refuses a bad user, category or cap before any database call"
+        },
+        {
+          "path": "backend/src/ai/engineeringOperator.test.ts",
+          "marker": "the operator routes are mounted only under the admin router"
+        },
+        {
+          "path": "backend/tests/engineeringDiagnostics.local.integration.ts",
+          "marker": "the diagnostics functions are not reachable by anonymous or signed-in roles"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "retention purges old settled and released rows, never an open hold"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/sandbox/google/orphanReconciler.ts",
+      "sourceSha256": "8bc32eb0a778573f3dd9f8de1643ce5059f37b5384e61059a606490be4ad2570",
+      "callIds": [
+        "a5ef52942a284c97e1e1",
+        "4513966c972a639bd886"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "Only the existing Google delivery maintenance tick, and only when XROGA_GCE_ORPHAN_SWEEP=1 and the Google runtime is selected. It uses the registered gce_allocation_reconcile authority, which selects only session_id for provider google-gce in a live status, filtered by one exact GCE instance id, limit 1. No owner, project or state is returned or logged. A lookup error is treated as \"cannot tell\" and the machine is never deleted.",
+      "reason": "Fixed-table lifecycle maintenance that decides whether an execution machine has a session record. It deletes nothing itself: destruction goes through the existing GceMachineControl.destroy, which re-verifies the instance id, labels, expiry and boot image, so a newer machine that took over a reused slot name is never deleted (tested). It only acts on machines older than a configurable recording deadline (minimum 600 seconds), checks recorded-ness twice, bounds deletions per run and never acts on a partial inventory. This certifies the lookup and its use, not behaviour against a real Compute API.",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/google/orphanReconciler.test.ts",
+          "marker": "an uncertain record lookup is never treated as unrecorded"
+        },
+        {
+          "path": "backend/src/sandbox/google/orphanReconciler.test.ts",
+          "marker": "a newer machine that took over the slot name after the listing is not deleted"
+        },
+        {
+          "path": "backend/src/sandbox/google/orphanReconciler.test.ts",
+          "marker": "the inventory is read across pages, and one that cannot be completed deletes nothing"
+        }
+      ]
     }
   ],
   "retiredSourceReviews": [

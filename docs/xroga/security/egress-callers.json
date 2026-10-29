@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "d8e9a4463667b5d437fd8776e9a5f887a00d54f9808089f3e0210bad083a19b4",
+  "sourceTreeDigest": "0772a16a2ac32fd647038f08c4c64a747fda6a6d6591b530e8b3e7203390315d",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4459,7 +4459,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "file": "frontend/src/lib/api.ts",
-      "line": 1437,
+      "line": 1448,
       "entryPoint": "fetchApiResponse",
       "transport": "fetch",
       "callee": "fetch",

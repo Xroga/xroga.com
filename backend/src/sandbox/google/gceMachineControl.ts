@@ -269,6 +269,38 @@ export class GceMachineControl {
     }
     return fail('GCE_CREATION_TIMED_OUT_NO_REPROVISION');
   }
+  /**
+   * Every Xroga execution machine in the zone, with the identity its labels and metadata claim. A machine whose identity cannot be read completely has
+   * a null handle: it is reported but can never be destroyed from here. The inventory must be complete; a listing that cannot be finished is an
+   * error, never a partial answer an orphan sweep could act on.
+   */
+  async listAllocations(): Promise<Array<{name: string; handle: GceExecutionHandle | null; createdAtEpoch: number | null; status: string}>> {
+    const found: Array<{name: string; handle: GceExecutionHandle | null; createdAtEpoch: number | null; status: string}> = [];
+    let page: string | undefined;
+    for (let index = 0; ; index++) {
+      if (index === 20) fail('GCE_FLEET_INVENTORY_INCOMPLETE');
+      const list = await this.call<{items?: (Instance & {creationTimestamp?: string})[]; nextPageToken?: string}>('GET',
+        `/zones/${this.configuration.zone}/instances?maxResults=500&fields=items(id,name,status,labels,creationTimestamp,metadata/items),nextPageToken${page ? '&pageToken=' + encodeURIComponent(page) : ''}`);
+      for (const machine of list.items ?? []) {
+        if (!machine.name?.startsWith('xroga-exec-')) continue;
+        const labels = machine.labels ?? {};
+        const metadata = Object.fromEntries((machine.metadata?.items ?? []).map(item => [item.key, item.value]));
+        const expires = Number(metadata['xroga-expires-at']);
+        const created = machine.creationTimestamp ? Math.floor(Date.parse(machine.creationTimestamp) / 1000) : NaN;
+        const complete = id(machine.id) && /^xroga-exec-(?:[a-f0-9]{32}|slot-[12])$/.test(machine.name)
+          && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(labels['xroga-runtime'] ?? '')
+          && /^[a-f0-9]{40}$/.test(labels['xroga-owner'] ?? '') && /^[a-f0-9]{40}$/.test(labels['xroga-project'] ?? '') && Number.isInteger(expires);
+        found.push({
+          name: machine.name, status: machine.status ?? 'UNKNOWN', createdAtEpoch: Number.isFinite(created) ? created : null,
+          handle: complete ? {name: machine.name, instanceId: machine.id!, runtimeId: labels['xroga-runtime']!, ownerBinding: labels['xroga-owner']!,
+            projectBinding: labels['xroga-project']!, expiresAtEpoch: expires} : null,
+        });
+      }
+      page = list.nextPageToken;
+      if (!page) break;
+    }
+    return found;
+  }
   private validateReference(handle:GceExecutionHandle,cleanup:boolean):void {
     this.path(handle.name);
     if (!id(handle.instanceId) || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(handle.runtimeId)

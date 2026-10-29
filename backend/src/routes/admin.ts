@@ -62,4 +62,9 @@ router.get('/deployments', async (req: AuthRequest, res) => {
   }
 });
 
+// Operator-only engineering diagnostics and per-tenant caps. This router is mounted behind authMiddleware and adminMiddleware, so they are inherited.
+// The mount is last on purpose: the frozen Phase 2 worklist identifies this file's database calls by position, so nothing above them may move.
+import engineeringOperatorRouter from './engineeringOperator.js';
+router.use('/engineering', engineeringOperatorRouter);
+
 export default router;

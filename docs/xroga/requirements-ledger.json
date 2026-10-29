@@ -2093,6 +2093,8 @@
         "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/sandbox/google/gceSshTransport.ts",
         "backend/src/sandbox/google/googleSandbox.ts",
+        "backend/src/sandbox/google/orphanReconciler.ts",
+        "backend/src/sandbox/meteredExecution.ts",
         "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
         "backend/src/sandbox/sandboxProviders.ts",

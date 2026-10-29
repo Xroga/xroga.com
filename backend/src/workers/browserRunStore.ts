@@ -13,6 +13,7 @@
  */
 import type { Pool } from 'pg';
 import type { CanonicalExecutionState, ExecutionStateStore } from '../ai/executionRuntime.js';
+import type { Lease } from './leaseStore.js';
 
 export type BrowserRunStatus = 'queued' | 'running' | 'completed' | 'failed' | 'blocked' | 'cancelled';
 const TERMINAL: readonly BrowserRunStatus[] = ['completed', 'failed', 'blocked', 'cancelled'];
@@ -48,7 +49,7 @@ export interface BrowserRunStore {
   /** Persists a validated run as `queued`. */
   create(input: { tenantId: string; userId: string; state: CanonicalExecutionState; spec: BrowserRunSpec }): Promise<void>;
   /** The canonical execution store for one owner: another owner's run id loads as nothing and cannot be written. */
-  stateStore(userId: string): ExecutionStateStore;
+  stateStore(userId: string, executionLease?: () => Lease): ExecutionStateStore;
   load(userId: string, runId: string): Promise<BrowserRunRecord | null>;
   /** For the signed internal endpoints only. */
   loadInternal(runId: string): Promise<BrowserRunRecord | null>;
@@ -79,7 +80,7 @@ export class MemoryBrowserRunStore implements BrowserRunStore {
     this.rows.set(input.state.runId, { runId: input.state.runId, tenantId: input.tenantId, userId: input.userId, projectKey: input.state.projectId, status: 'queued', spec: structuredClone(input.spec), state: structuredClone(input.state), cancelRequested: false, updatedAt: new Date(this.now()).toISOString(), touched: this.now(), dispatched: false });
   }
 
-  stateStore(userId: string): ExecutionStateStore {
+  stateStore(userId: string, _executionLease?: () => Lease): ExecutionStateStore {
     return {
       load: async (runId) => { const row = this.rows.get(runId); return row && row.userId === userId ? structuredClone(row.state) : null; },
       save: async (state) => {
@@ -131,22 +132,36 @@ export class PostgresBrowserRunStore implements BrowserRunStore {
     );
   }
 
-  stateStore(userId: string): ExecutionStateStore {
+  stateStore(userId: string, executionLease?: () => Lease): ExecutionStateStore {
     return {
       load: async (runId) => {
         const r = await this.pool.query<{ state: CanonicalExecutionState }>('select state from public.browser_runs where run_id=$1 and user_id=$2', [runId, userId]);
         return r.rows[0]?.state ?? null;
       },
       save: async (state) => {
-        // a finished run is never reopened by a late writer, and another owner's id matches no row
+        // Lock the lease row in the same statement as the checkpoint update. A
+        // pre-write lease check alone races with expiry and replacement.
+        const lease = executionLease?.();
+        if (!lease || lease.runId !== state.runId || lease.taskId !== 'execute') {
+          throw Object.assign(new Error('Execution checkpoint is no longer authoritative.'), { code: 'RUN_STATE_CONFLICT' });
+        }
         const r = await this.pool.query(
-          'update public.browser_runs set state=$3::jsonb, status=$4, updated_at=now() where run_id=$1 and user_id=$2 and status in (\'queued\',\'running\')',
-          [state.runId, userId, JSON.stringify(state), runStatusOf(state)],
+          `with valid_lease as (
+             select tenant_id, run_id, expires_at from public.worker_task_leases
+             where tenant_id=$5 and run_id=$1::text and task_id='execute' and worker_id=$6
+               and token=$7 and held and expires_at>clock_timestamp() for update
+           )
+           update public.browser_runs b set
+             state=case when b.status in ('queued','running') then $3::jsonb else b.state end,
+             status=case when b.status in ('queued','running') then $4 else b.status end,
+             updated_at=case when b.status in ('queued','running') then now() else b.updated_at end
+           from valid_lease l where b.run_id=$1::uuid and b.user_id=$2 and b.tenant_id=l.tenant_id
+             and b.project_key=$8 and (b.status in ('queued','running') or b.status=$4)
+             and l.expires_at>clock_timestamp() and (b.cancel_requested_at is null or $4<>'completed')`,
+          [state.runId, userId, JSON.stringify(state), runStatusOf(state), lease.tenantId, lease.workerId, lease.token, state.projectId],
         );
         if (r.rowCount === 0) {
-          const existing = await this.pool.query<{ status: BrowserRunStatus }>('select status from public.browser_runs where run_id=$1 and user_id=$2', [state.runId, userId]);
-          if (!existing.rows[0] || !isTerminalRunStatus(existing.rows[0].status)) throw Object.assign(new Error('Execution checkpoint is no longer authoritative.'), { code: 'RUN_STATE_CONFLICT' });
-          // already terminal: a repeated final save of the same outcome is harmless, a different one is refused by omission
+          throw Object.assign(new Error('Execution checkpoint is no longer authoritative.'), { code: 'RUN_STATE_CONFLICT' });
         }
       },
     };

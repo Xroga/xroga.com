@@ -387,6 +387,7 @@ async function waitForPersistedSwarmRun(
 
   let lastSequence =
     afterSequence;
+  let notedHistoryGap = false;
 
   while (
     Date.now() <
@@ -499,6 +500,16 @@ async function waitForPersistedSwarmRun(
     const run =
       await response.json() as
         SwarmRunSummary;
+    // The server keeps only the most recent events. If it reports that some between our cursor and the oldest it still holds are gone, say so once
+    // instead of presenting the jump as an unbroken history.
+    if (run.eventsTruncated && !notedHistoryGap) {
+      notedHistoryGap = true;
+      options.onProgress?.({
+        agent: 'runtime',
+        status: 'running',
+        message: 'Some earlier progress is no longer available. Showing the latest steps.',
+      });
+    }
 
     for (
       const event of
@@ -5793,6 +5804,12 @@ export interface SwarmRunSummary {
 
   lastSequence?:
     number;
+
+  /** Oldest event the server still retains; absent on older servers. */
+  firstRetainedSequence?: number | null;
+
+  /** True when events between the requested cursor and the oldest retained event are no longer available. */
+  eventsTruncated?: boolean;
 }
 
 export interface DashboardSummary {

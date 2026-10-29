@@ -107,7 +107,7 @@
       "enclosing": "saveEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
-      "currentCallerId": "e49e4b26ba7d2860dc41",
+      "currentCallerId": "952e2977dbbd8adc9b21",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -117,7 +117,7 @@
       "enclosing": "saveEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "a2f0c39a047770542a8b",
+      "currentCallerId": "d37aef8db513054ed541",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -127,7 +127,7 @@
       "enclosing": "loadEncryptedSecrets",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
-      "currentCallerId": "492e2a6c5aee7adbc460",
+      "currentCallerId": "1244fa5f77d64178a682",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -137,7 +137,7 @@
       "enclosing": "loadEncryptedSecrets",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "7f42805766f9e4a7622d",
+      "currentCallerId": "358bbf620757dbdc20c7",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -147,7 +147,7 @@
       "enclosing": "deleteEncryptedSecret",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_runtime_secrets",
-      "currentCallerId": "32701c89f04a3536291d",
+      "currentCallerId": "7e1732412cef6d6c7465",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -157,7 +157,7 @@
       "enclosing": "deleteEncryptedSecret",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
-      "currentCallerId": "18ace9b81c3f92c7fa17",
+      "currentCallerId": "86f871c90f683c44c842",
       "reason": "Retain the original runtime secret operation and fixed owner-inclusive key after adding exact persistence receipt validation. Source offsets changed. This mechanical mapping does not certify actor provenance, custody or database verification."
     },
     {
@@ -1317,7 +1317,7 @@
     },
     {
       "packetId": "B1-P2-d87d5c8270aa4666",
-      "sourceSha256": "b0ebeab3363ba2d2446ce8fe19b48910d4febbde409056b3e232dfc521b3277d",
+      "sourceSha256": "2e9c04a38f096a4b4d3711e53a3278d8850732e15014ee42b0a688e268275554",
       "executionStatus": "IN_PROGRESS",
       "finding": "FOREIGN_ADMIN_ROLE_RECEIPT_ACCEPTED_IN_ACTUAL_MIDDLEWARE_TRANSPORT_TEST_FIXED_VERIFIED_AT_7BE44030",
       "originalCriteria": [
@@ -1378,7 +1378,7 @@
     },
     {
       "packetId": "B1-P2-aca46b7ed6cc0fa7",
-      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "executionStatus": "IN_PROGRESS",
       "finding": "EVENT_PARENT_VERIFIED_AT_397C_SECRET_RECEIPT_REJECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "The existing SupabaseProjectRuntimeStore.appendEvent inserts user/project/session values into the fixed event table. Current disposable catalog has only event PK and Auth-user FK, with owner-only browser SELECT policy. It has no session-parent relationship. A synthetic SQL probe using the exact original table definitions accepts an owner's event referencing a foreign session. This establishes a service-write parent gap, not a browser write bypass or foreign-payload disclosure. All eleven original store callers remain open unless separately proven.",
@@ -1438,17 +1438,17 @@
       "current007Evidence": {
         "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
         "verifiedCurrentCallerIds": [
-          "a7a1747d2192d62b505b",
-          "4623023af1a7fe9573f6",
-          "dfd2b022b39413db1561",
-          "6da2a4d0d15144e0aad0",
-          "2a0d2f322b23c157502d",
-          "e49e4b26ba7d2860dc41",
-          "a2f0c39a047770542a8b",
-          "492e2a6c5aee7adbc460",
-          "7f42805766f9e4a7622d",
-          "32701c89f04a3536291d",
-          "18ace9b81c3f92c7fa17"
+          "a864bc5998ad30044406",
+          "705840502528b9097f92",
+          "794f2986baf15127a5e5",
+          "2660919ebdd0c11227d5",
+          "b2f45a155f1f9ed6ccee",
+          "952e2977dbbd8adc9b21",
+          "d37aef8db513054ed541",
+          "1244fa5f77d64178a682",
+          "358bbf620757dbdc20c7",
+          "7e1732412cef6d6c7465",
+          "86f871c90f683c44c842"
         ],
         "remainingCurrentCallerIds": [],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
@@ -2371,7 +2371,7 @@
         },
         {
           "path": "backend/src/routes/swarm.ts",
-          "sha256": "195f1d1872a3a7fc828c28c1df5613c78a7292b4905534826f2afdd8c1a17622",
+          "sha256": "d15e6178d0e9ae30c0b7a1b5cb42996d1ddcc41dc06fcbdd90c09fc125fcd098",
           "preGoogleMigrationSha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
         },
         {
@@ -3244,7 +3244,7 @@
     },
     {
       "packetId": "B1-P2-f8cb123dcb4c4a53",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "c942cc2588c0ffeb77eba5c789c05b03b1158d4ef8dd4ea29dbbf1041c76d280",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
       "originalCriteria": [
