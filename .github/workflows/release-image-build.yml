@@ -1,16 +1,16 @@
-# Builds the production API image from an exact Batch 1 release-safety commit. Branch-only (push to codex/batch1-release-image-20261029):
+# Builds the production API image from an exact Batch 1 release-safety commit. Branch-only (push to codex/batch1-preview-image-20261029):
 # no secrets, no cloud credentials, no deployment. Publishes to GitHub's container registry with the built-in token; the Google side
 # pulls it through an Artifact Registry remote repository. The commit is pinned below, never "latest".
 name: release-image-build
 on:
   push:
-    branches: ['codex/batch1-release-image-20261029']
+    branches: ['codex/batch1-preview-image-20261029']
     paths: ['.github/workflows/release-image-build.yml']
 permissions:
   contents: read
   packages: write
 env:
-  RELEASE_SHA: ca94c2f8a813524e47f5f7abc868acb1618a1c45
+  RELEASE_SHA: 85f83e3f1dcbb057d4a28d8a696dae8396d45114
   IMAGE: ghcr.io/xroga/xroga-api-release
 jobs:
   build:
@@ -24,9 +24,9 @@ jobs:
       - name: Verify pinned Batch 1 release-safety source
         run: |
           test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
-          git fetch --no-tags origin codex/batch1-release-safety-20261029
+          git fetch --no-tags origin codex/batch1-preview-release-c36
           test "$(git rev-parse FETCH_HEAD)" = "$RELEASE_SHA"
-          git merge-base --is-ancestor ff4032ca02c4b233c2598724caf44ab04b91fb0f "$RELEASE_SHA"
+          git merge-base --is-ancestor ca94c2f8a813524e47f5f7abc868acb1618a1c45 "$RELEASE_SHA"
           test -f Dockerfile.api
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
