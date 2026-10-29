@@ -1,0 +1,26 @@
+{
+  "scope": "NETWORKLESS_LOCAL_SYNTHETIC_SCHEMA_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "recordedUtc": "2026-10-29T16:52:07.814407+00:00",
+  "result": "PASS",
+  "checkedNonterminalStatuses": [
+    "pending",
+    "planning",
+    "building",
+    "reviewing",
+    "testing",
+    "verifying",
+    "running"
+  ],
+  "sha256": {
+    "cutover-fence-upgrade.DRAFT.sql": "3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed",
+    "cutover-fence-rollback.DRAFT.sql": "a188225ef4e9b3bbc8c2216e22f85ec3d0e4e2b9dc81d1ff794ee8fd1c508be2",
+    "cutover-fence-schema-test.sh": "bc6c1ec967281ab442452470ad11c12d265ef16a0fa8ef6fcfdad7322eb37ee9",
+    "local-schema-only-fixture.sql": "c3e5b3b2c033b752e831b7b286df90db4f97dcacf898999e7fe5f42166a6f52f"
+  },
+  "limitations": [
+    "No customer data",
+    "Not a full production restore",
+    "No production SQL applied",
+    "No release rollback executed"
+  ]
+}
