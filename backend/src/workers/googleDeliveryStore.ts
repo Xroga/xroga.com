@@ -6,6 +6,7 @@ import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
 import {verifyAttachedGoogleIdentity} from '../synthesis/projectRuntime/googleFactory.js';
 import {type GoogleDispatchConfiguration,GoogleDispatchError,validateGoogleDispatchConfiguration} from './googleDispatch.js';
 import type {ChatAttachment} from '../ai/attachments.js';
+import {ORPHAN_GRACE_MS} from '../ai/runReconciler.js';
 
 export interface CanonicalQueuedInput {
   prompt:string;
@@ -63,7 +64,9 @@ export class GoogleDeliveryStore {
   async pendingDeliveryIds():Promise<string[]>{
     const {data,error}=await this.service().from('google_canonical_deliveries').select('id')
       .eq('state','pending').eq('source_sha',this.c.sourceSha)
-      .gte('created_at',new Date(Date.now()-4*60*1000).toISOString()).order('created_at',{ascending:true}).limit(10);
+      // Keep the bounded selection aligned with the orphan reconciler. The
+      // dispatcher still requires the database reservation and native identity.
+      .gte('created_at',new Date(Date.now()-ORPHAN_GRACE_MS).toISOString()).order('created_at',{ascending:true}).limit(10);
     if(error||!Array.isArray(data)||data.some(row=>!uuid.test(row.id)))return denied();
     return data.map(row=>row.id);
   }

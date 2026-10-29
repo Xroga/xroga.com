@@ -26,7 +26,7 @@ import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
  */
 
 /** Runs older than this with no owning process are certainly abandoned. */
-const ORPHAN_GRACE_MS = 5 * 60_000;
+export const ORPHAN_GRACE_MS = 5 * 60_000;
 
 export type ReconcileReason = 'worker_restarted' | 'deploy_interrupted' | 'worker_lost';
 

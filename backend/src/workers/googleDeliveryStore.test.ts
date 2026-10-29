@@ -73,3 +73,21 @@ test('enqueue refuses a malformed Builder project id before any database call',a
     await assert.rejects(store.enqueue(context,run,{prompt:'synthetic',builderProjectId:bad}),denied);
   }
 });
+
+test('maintenance can rediscover an eligible delivery between four and five minutes old',async t=>{
+  const now=Date.parse('2026-10-29T00:05:00.000Z');
+  t.mock.method(Date,'now',()=>now);
+  const rows=[{id:delivery,state:'pending',source_sha:c.sourceSha,created_at:new Date(now-270000).toISOString()},
+    {id:run,state:'pending',source_sha:'c'.repeat(40),created_at:new Date(now-1000).toISOString()},
+    {id:owner,state:'superseded',source_sha:c.sourceSha,created_at:new Date(now-1000).toISOString()},
+    {id:worker,state:'pending',source_sha:c.sourceSha,created_at:new Date(now-301000).toISOString()}];
+  const service=()=>({from:(table:string)=>{
+    assert.equal(table,'google_canonical_deliveries');let found=rows.slice();
+    const query={select:(columns:string)=>{assert.equal(columns,'id');return query;},
+      eq:(key:string,value:string)=>{found=found.filter(row=>row[key as keyof typeof row]===value);return query;},
+      gte:(key:string,value:string)=>{found=found.filter(row=>row[key as keyof typeof row]>=value);return query;},
+      order:()=>query,limit:async(n:number)=>({data:found.slice(0,n).map(({id})=>({id})),error:null})};
+    return query;
+  }} as unknown as SupabaseClient);
+  assert.deepEqual(await new GoogleDeliveryStore(c,env,async()=>{},service).pendingDeliveryIds(),[delivery]);
+});
