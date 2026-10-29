@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1ad0e053a48868e37160b92017b5530dc0b11647",
+  "source_sha": "4a2fbabfe2f9935c01184f22caca4af0f9df2f1f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21019,7 +21019,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
-      "sha256": "4f56cb2cde8876000fa39e4b3e7a7d181098e7a84d6e878ea02eb7938f38a846"
+      "sha256": "6693290f2ac88415d4c9d85ecbfca77179528fd3ff98c320839704b493534f03"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarFileGrid.tsx",
@@ -21091,7 +21091,7 @@
     },
     {
       "path": "frontend/src/components/terminal/HomepageChatBar.tsx",
-      "sha256": "4af65a1afbd2fc9f664d7a9630ed4b838224a86f1a5614f3d24244958df0148e"
+      "sha256": "d36419a6ba177bbdeb0a1e088259120a86b7e1e89de91849ee8e7de2ee350581"
     },
     {
       "path": "frontend/src/components/terminal/ImageEditModal.tsx",
@@ -21199,7 +21199,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860"
+      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -21311,7 +21311,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a"
+      "sha256": "a61ca63df7f8b5fce7b6f87dd9fab09c089642ab314d0ed5c58cb2f9a166db3d"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -22306,8 +22306,8 @@
       "sha256": "ee217fbea21cf0a9f5eddd180160ccf932c21b8d7067a3df31df68b46aa612af"
     },
     {
-      "path": "frontend/src/lib/terminal/voiceConversation.ts",
-      "sha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278"
+      "path": "frontend/src/lib/terminal/voiceRecording.ts",
+      "sha256": "6d5423f874077088783aa1c5240719b13019cf2aac461e359da14b50546b1afd"
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
@@ -22374,12 +22374,24 @@
       "sha256": "a8dca12f52c75799b62ea0249742b102d7f8eb3557d6f14d19a1c0c359c85fcd"
     },
     {
+      "path": "frontend/src/lib/voiceLocal.ts",
+      "sha256": "e56b1c90da283ec22cc680edb5b3da43c2c7e9dae87e108b3d32f7059f782d9a"
+    },
+    {
+      "path": "frontend/src/lib/voiceLocalProtocol.ts",
+      "sha256": "e73078ea8e82eb6bbd7617af69eec55159e78ea9a5a4d13025541ddec08d0cc3"
+    },
+    {
       "path": "frontend/src/lib/voicePcm.ts",
       "sha256": "afa17f8408cdc3197e46530e6f64239e34c3093c82c6dccbc53c1e83e2034fa0"
     },
     {
       "path": "frontend/src/lib/voiceRequestPolicy.ts",
       "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
+    },
+    {
+      "path": "frontend/src/lib/voiceTranscription.worker.ts",
+      "sha256": "bada35b056f4553cdac12b2fef1ee6900df6c6d3b372f6cc06c1d432abbfae63"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -36252,34 +36264,6 @@
       "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
       "line": 172,
       "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 49,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 62,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 75,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 88,
-      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

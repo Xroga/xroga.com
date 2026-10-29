@@ -1,20 +1,20 @@
 # Xroga repository truth map
 
-Source SHA: `8ce54f2421039d724571bb727ecce234bcc02a03`. Branch observed: `codex/xroga-batch-01`. Audit started: 2026-10-21T15:13:45.536Z.
+Source SHA: `4a2fbabfe2f9935c01184f22caca4af0f9df2f1f`. Branch observed: `codex/multilingual-voice-input-20261030`. Audit started: 2026-10-29T22:07:16.964Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1781
+- surfaces: 1788
 - routeRegistrations: 379
 - routes: 318
 - reachableRoutes: 235
-- queues: 4
+- queues: 5
 - migrations: 159
 - workflows: 21
-- testSuites: 1032
-- declaredTests: 7060
+- testSuites: 1035
+- declaredTests: 7065
 - classifiedMarkers: 398
 - reachableMarkers: 333
 - absentRequiredPaths: 5
@@ -66,6 +66,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Queue processing
 
+- **<dynamic>**: NO_PRODUCER_FOUND; CONSUMER_CODE_PRESENT; registration must be verified. Definitions: frontend/src/lib/voiceLocal.ts:8. Producer/consumer source recorded; runtime connectivity unverified.
 - **email-jobs**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:36. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **notifications**: PRODUCER_CODE_PRESENT; caller activation must be verified; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:18. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **swarm-tasks**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/redis.ts:22. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
