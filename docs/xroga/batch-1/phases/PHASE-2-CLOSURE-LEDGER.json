@@ -5114,7 +5114,7 @@
         {
           "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
           "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers",
-          "sourceSha256": "11f78ce35ce587fe4c68caa48d7e69ddbc296e8f85c392a9b276feccd0fb4aea",
+          "sourceSha256": "8d54794044ab6f5a140afe5c8215743539c4bda2bb17e1c7928a0fc554868e85",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

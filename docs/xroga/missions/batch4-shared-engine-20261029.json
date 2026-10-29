@@ -44,6 +44,7 @@
     "docs/xroga/research/source-reconciliation.md",
     "docs/xroga/security/caller-reviews.json",
     "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/phase-three-authority-delta.json",
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md"
   ],
@@ -57,7 +58,9 @@
       "Saved revisions are read back by their own id under the same owner before they are reported durable",
       "Queued runs get a bounded wait (heartbeat from admission or resume) and end as never_started instead of worker_restarted",
       "A verification gate binds test evidence to the exact delivered source, run, project and attempt"
-    ]
+    ],
+    "replace": [],
+    "deprecate": []
   },
   "schemaImpact": {
     "changed": false,
@@ -150,6 +153,9 @@
       "Production hold",
       "Phases 1-3 incomplete"
     ],
-    "authenticatedE2e": "BLOCKED"
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
   }
 }
