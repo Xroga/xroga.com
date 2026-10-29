@@ -135,7 +135,6 @@ export const COPY = {
   ledeNote: 'Xroga prepares the testing, store materials and handoff. You approve what ships.',
   studio: 'Release Studio',
   preview: 'Illustrative preview',
-  replay: 'Replay',
   note: 'Illustrative walkthrough with fictional products. No store account is connected here and nothing is submitted.',
 };
 

@@ -124,13 +124,11 @@ test('the work panel says what Xroga is accomplishing; tasks settle with the sce
   assert.match(card, /className=\{s\.spec\}/);
 });
 
-test('the visitor can pause and resume the walkthrough', () => {
+test('the readiness list carries no Pause/Play or Replay controls; autoplay stays', () => {
   const main = src('S04Publish.tsx');
-  assert.match(main, /aria-pressed=\{sc\.paused\}/);
-  assert.match(main, /Pause the walkthrough/);
-  assert.match(main, /Play the walkthrough/);
+  assert.doesNotMatch(main, /sc\.togglePause|sc\.replay|aria-pressed=\{sc\.paused\}|Pause the walkthrough|Play the walkthrough/);
+  assert.doesNotMatch(main, /COPY\.replay/);
   const clock = src('useScene.ts');
-  assert.match(clock, /const togglePause = /);
   assert.match(clock, /c\.playing && !c\.paused/, 'leaving the viewport never overrides a visitor pause');
 });
 
