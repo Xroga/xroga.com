@@ -27,6 +27,7 @@ const PROFILE = read('../../ui/ProfileQuickMenu.tsx');
 const SEND = read('../../terminal/ChatBarSendIcon.tsx');
 const ACTIONS = read('../../terminal/ChatBarActionsMenu.tsx');
 const MIC = read('../../terminal/ChatBarButtons.tsx');
+const VOICE = read('../../terminal/XrogaVoiceControl.tsx');
 const LOG = read('../../terminal/SwarmMessageLog.tsx');
 const DASHBOARD = read('../../dashboard/DashboardView.tsx');
 const WORKSPACE_IDENTITY = read('../../terminal/WorkspaceIdentityMenu.tsx');
@@ -267,8 +268,9 @@ test('the composer takes the ring, the bars and the wheel', () => {
    * looks like, and that it runs for exactly as long as the recording does, is
    * asserted in `mobileChrome.test.ts` where the rest of the composer's chrome lives.
    */
-  assert.match(MIC, /<AudioLinesIcon ref=\{meterRef\}/, 'the mic button is not the meter');
-  assert.ok(!/<Mic\b/.test(MIC), 'the static mic is back');
+  assert.match(MIC, /<XrogaVoiceControl\b/, 'the shared microphone is not mounted');
+  assert.match(VOICE, /<AudioLinesIcon ref=\{meterRef\}/, 'the mic button is not the meter');
+  assert.ok(!/<Mic\b/.test(VOICE), 'the static mic is back');
 });
 
 /**
