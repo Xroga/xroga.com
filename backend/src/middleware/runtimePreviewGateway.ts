@@ -449,9 +449,7 @@ async function admitConnection(hostname:string,resolver:TargetResolver):Promise<
     if(!target||!Number.isFinite(target.expiresAt)||target.expiresAt<=Date.now())return null;
     if(!await target.revalidate()||target.expiresAt<=Date.now())return null;
     return target;
-  // Google admission includes identity, storage and control-plane checks.
-  // Keep a deadline, but allow those checks to complete under transient latency.
-  })(),new Promise<null>(resolve=>{timer=setTimeout(()=>resolve(null),15000);})]);}
+  })(),new Promise<null>(resolve=>{timer=setTimeout(()=>resolve(null),15e3);})]);}
   catch{return null;}finally{if(timer)clearTimeout(timer);}
 }
 
