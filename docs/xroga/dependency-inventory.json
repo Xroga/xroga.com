@@ -15291,7 +15291,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "50cae0a22a60d23c59bd9b6ede6f2cb0f3be04e8cae96acb6261d3d3b85e14df"
+      "sha256": "76e903243874e9d2edbad45ae0b1f36e8fa5baac7e67b1fa195b31e4b43f6f69"
     },
     {
       "path": "Dockerfile.api",

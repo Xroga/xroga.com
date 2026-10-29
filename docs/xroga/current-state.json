@@ -129842,7 +129842,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "50cae0a22a60d23c59bd9b6ede6f2cb0f3be04e8cae96acb6261d3d3b85e14df",
+      "sha256": "76e903243874e9d2edbad45ae0b1f36e8fa5baac7e67b1fa195b31e4b43f6f69",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -141982,6 +141982,13 @@
       "id": "test-suite:c10ec17d02758925b21d",
       "sourcePath": "backend/tests/engineeringResourceLedger.local.integration.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8334394ea354e59f796b",
+      "sourcePath": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
