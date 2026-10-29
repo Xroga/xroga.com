@@ -12,6 +12,7 @@
  *    `not_reproduced`, not as a regression test.
  *  - Cancellation aborts the agent and the isolated run and leaves the source untouched (it never is written here anyway).
  */
+import { runBoundedRepair } from '../../ai/repairController.js';
 import { gateChange } from './verificationEvidence.js';
 import type { AgentSoftwareExecutorInput, AgentSoftwareExecutorResult } from '../../ai/softwareAgent/AgentSoftwareExecutor.js';
 import type { SoftwareCheckResult, SoftwareExecutionContract } from '../../ai/softwareAgent/contracts.js';
@@ -202,21 +203,15 @@ export class ChangeService {
       const parent = task.parentChangeId ? await this.deps.store.get(userId, task.parentChangeId) : null;
       if (task.parentChangeId && (!parent || parent.baseCommitSha !== task.baseCommitSha)) throw new ExistingSourceError('CHANGE_CONFLICT', 'The change this one builds on is no longer available at the same commit.');
       const startFrom = task.result.length ? task.result : parent?.result ?? [];
-      const workspace = new ChangeWorkspace(snapshot, this.policy(scope), startFrom.length ? this.restoredFiles(snapshot, startFrom) : undefined);
+      let workspace = new ChangeWorkspace(snapshot, this.policy(scope), startFrom.length ? this.restoredFiles(snapshot, startFrom) : undefined);
 
       let testedDigest: string | null = null;
       let last: TestRunResult | null = null; let note = ''; let preview: SoftwarePreviewEvidence | null = null;
-      for (let attempt = task.attempts + 1; attempt <= task.maxAttempts; attempt++) {
-        if (controller.signal.aborted) throw new CancelledError();
-        task = await save({ attempts: attempt, status: attempt === 1 ? 'working' : 'repairing', statusReason: attempt === 1 ? 'The agent is making the change.' : `Repair attempt ${attempt - 1} from the failing test output.` }, { type: attempt === 1 ? 'agent.started' : 'repair.started', message: attempt === 1 ? 'The agent started.' : 'Repairing from failing tests.' });
-        const agentResult = await this.runAgentOnce({ task, binding, workspace, scope, criteria, bug, attempt, evidence: last, signal: controller.signal, emit: (e) => save({}, e) });
-        if (controller.signal.aborted || agentResult.status === 'cancelled') throw new CancelledError();
+
+      // One verification pass over the current working copy: the project's tests, then a browser observation for a visual change. Records the revision.
+      const verify = async (): Promise<TestRunResult | null> => {
         const set = workspace.changeSet();
-        if (set.files.length === 0) {
-          note = agentResult.status === 'failed' ? 'The agent could not complete the request.' : 'The agent made no change.';
-          task = await save({ status: 'failed', statusReason: `${note}${agentResult.blockers.length ? ` ${agentResult.blockers.slice(0, 2).join(' ')}` : ''}` }, { type: 'change.failed', message: note });
-          return task;
-        }
+        if (set.files.length === 0) return null;
         task = await save({ status: 'verifying', statusReason: 'Running the project tests in isolation.', result: this.resultOf(workspace) }, { type: 'verification.started', message: 'Running the project\'s own tests in an isolated runtime.' });
         const changedPaths = set.files.filter((f) => f.kind !== 'deleted').map((f) => f.path);
         last = await runTests({ port: this.deps.execution, files: workspace.files(), changedPaths, signal: controller.signal });
@@ -232,14 +227,67 @@ export class ChangeService {
         const incomplete = !snapshot.complete;
         const revision = this.revision(task, set, last, incomplete ? `Working copy incomplete (${snapshot.incompleteReason}).` : '', preview);
         task = await save({ revisions: [...task.revisions, revision].slice(-MAX_REVISIONS), regressionTestAdded: set.files.some((f) => f.kind !== 'deleted' && isTestPath(f.path)) },
-          { type: 'verification.completed', message: last.summary, data: { status: last.status, attempt, files: set.files.length } });
-        if (last.status === 'passed') break;
-        if (last.status !== 'failed') break; // unsupported, unavailable, timeout, error: more agent turns cannot fix these
+          { type: 'verification.completed', message: last.summary, data: { status: last.status, attempt: task.attempts, files: set.files.length } });
+        return last;
+      };
+
+      // The first attempt: the agent makes the change. A task that already made it (resumed) goes straight to verification.
+      if (task.attempts === 0) {
+        task = await save({ attempts: 1, status: 'working', statusReason: 'The agent is making the change.' }, { type: 'agent.started', message: 'The agent started.' });
+        const agentResult = await this.runAgentOnce({ task, binding, workspace, scope, criteria, bug, attempt: 1, evidence: null, signal: controller.signal, emit: (e) => save({}, e) });
+        if (controller.signal.aborted || agentResult.status === 'cancelled') throw new CancelledError();
+        if (workspace.changeSet().files.length === 0) {
+          note = agentResult.status === 'failed' ? 'The agent could not complete the request.' : 'The agent made no change.';
+          task = await save({ status: 'failed', statusReason: `${note}${agentResult.blockers.length ? ` ${agentResult.blockers.slice(0, 2).join(' ')}` : ''}` }, { type: 'change.failed', message: note });
+          return task;
+        }
+      }
+
+      // Verification and every repair after the first attempt are the shared bounded repair controller's loop. The task's own saved attempt count is the
+      // persisted state, so a restart resumes with the repairs already used. Model spend is reserved and settled by the provider budget ledger inside the
+      // agent, so the controller's budget port here only names the attempt and does not account a second time.
+      const baseTestPaths = new Set(workspace.snapshot.files.filter((f) => isTestPath(f.path)).map((f) => f.path));
+      let beforeAttempt: { path: string; content: string }[] = [];
+      let emptied = false; let agentCancelled = false;
+      const repaired = await runBoundedRepair({
+        policy: { maxAttempts: Math.max(0, task.maxAttempts - 1), maxNoProgress: 2, isProtectedPath: (path) => baseTestPaths.has(path) },
+        budget: { reserve: async (attempt) => `repair-${task.id}-${attempt}`, settle: async () => undefined },
+        runChecks: async () => {
+          const result = await verify();
+          if (!result) { emptied = true; return [{ checkId: 'project-tests', status: 'unavailable' as const, summary: 'The change set is empty.' }]; }
+          // only a failed check can be repaired; unsupported, unavailable, timeout and error need something other than another agent turn
+          return [{ checkId: 'project-tests', status: result.status === 'passed' ? 'passed' as const : result.status === 'failed' ? 'failed' as const : 'unavailable' as const, summary: result.summary }];
+        },
+        currentFingerprint: async () => workspace.changeSet().digest,
+        repair: async ({ attempt }) => {
+          beforeAttempt = workspace.files();
+          task = await save({ attempts: task.attempts + 1, status: 'repairing', statusReason: `Repair attempt ${attempt} from the failing test output.` }, { type: 'repair.started', message: 'Repairing from failing tests.' });
+          const agentResult = await this.runAgentOnce({ task, binding, workspace, scope, criteria, bug, attempt: task.attempts, evidence: last, signal: controller.signal, emit: (e) => save({}, e) });
+          if (agentResult.status === 'cancelled') { agentCancelled = true; throw new CancelledError(); }
+          const before = new Map(beforeAttempt.map((f) => [f.path, f.content]));
+          const after = new Map(workspace.files().map((f) => [f.path, f.content]));
+          const changed = [...new Set([...before.keys(), ...after.keys()])].filter((p) => before.get(p) !== after.get(p));
+          return { sourceFingerprint: workspace.changeSet().digest, changedPaths: changed };
+        },
+        // a refused repair is undone by rebuilding the working copy from what it was before the attempt
+        rollback: async () => { workspace = new ChangeWorkspace(snapshot, this.policy(scope), beforeAttempt); },
+        loadState: async () => ({ attemptsUsed: Math.max(0, task.attempts - 1), noProgress: 0, triedFingerprints: task.revisions.map((r) => r.digest), history: [], openReservationId: null }),
+        saveState: async () => undefined,
+        leaseCurrent: async () => !controller.signal.aborted,
+        signal: controller.signal,
+      });
+      if (repaired.reason === 'cancelled' || agentCancelled) throw new CancelledError();
+      if (emptied) {
+        note = 'The agent made no change.';
+        task = await save({ status: 'failed', statusReason: note }, { type: 'change.failed', message: note });
+        return task;
       }
 
       const set = workspace.changeSet();
       const decided = this.outcome(last, snapshot, preview);
-      const outcome = this.crossCheck(decided, { task, set, last, preview, testedDigest, snapshot });
+      let outcome = this.crossCheck(decided, { task, set, last, preview, testedDigest, snapshot });
+      // A repair that edited a test the project already had was undone by the controller. That is never a pass, and the reason says why.
+      if (repaired.reason === 'protected_change') outcome = { status: 'failed', reason: `A repair tried to change the project's existing tests, which is not allowed, so it was undone and the change was not accepted. ${outcome.reason}` };
       let reproduction: ChangeTask['reproduction'] = 'not_applicable';
       if (bug && task.regressionTestAdded && outcome.status === 'verified') {
         reproduction = await this.reproduce(workspace, controller.signal);

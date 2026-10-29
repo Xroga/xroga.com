@@ -354,3 +354,60 @@ describe('prompt injection and abuse', () => {
     for (let i = 0; i < 100 && (await t.changes.get(ALICE, ids[0]!)).status === 'planning'; i++) await new Promise((r) => setTimeout(r, 20));
   });
 });
+
+describe('the shared repair controller drives the repair attempts', () => {
+  it('refuses and undoes a repair that edits a test the project already had, even when that repair would have made the tests pass', async () => {
+    const weakened = "const test = require('node:test');\ntest('line total', () => {});\n";
+    const t = setup(NODE_PROJECT, {
+      runAgent: agent(async (host, input) => {
+        const c = contract(input.contract);
+        if (!input.resumedFromCheckpoint) { await host.writeFile(c, 'src/pricing.js', WRONG_FIX, 'modify'); await host.writeFile(c, 'test/discount.test.js', REGRESSION_TEST, 'create'); return; }
+        await host.writeFile(c, 'src/pricing.js', DISCOUNT_FIX, 'modify');
+        await host.writeFile(c, 'test/pricing.test.js', weakened, 'modify'); // a protected, pre-existing test
+      }),
+    });
+    const binding = await linked(t);
+    const done = await t.changes.run(ALICE, (await t.changes.create(ALICE, binding.id, 'Fix the broken discount calculation in applyDiscount')).id);
+    assert.equal(done.status, 'failed');
+    assert.match(done.statusReason, /existing tests, which is not allowed/);
+    assert.ok(!done.result.some((f) => f.path === 'test/pricing.test.js'), 'the weakened test is not part of the result');
+    assert.ok(done.revisions.every((r) => r.tests?.status !== 'passed'), 'no passing revision exists, so nothing can be reported verified');
+  });
+
+  it('uses at most maxAttempts - 1 repairs and stops when the agent keeps changing nothing', async () => {
+    let calls = 0;
+    const t = setup(NODE_PROJECT, {
+      maxAttempts: 5,
+      runAgent: agent(async (host, input) => {
+        calls++;
+        const c = contract(input.contract);
+        if (!input.resumedFromCheckpoint) { await host.writeFile(c, 'src/pricing.js', WRONG_FIX, 'modify'); await host.writeFile(c, 'test/discount.test.js', REGRESSION_TEST, 'create'); }
+        // every repair writes the same wrong fix again: no change, so the loop stops on no progress instead of spending all five attempts
+      }),
+    });
+    const binding = await linked(t);
+    const done = await t.changes.run(ALICE, (await t.changes.create(ALICE, binding.id, 'Fix the discount bug in applyDiscount')).id);
+    assert.equal(done.status, 'failed');
+    assert.equal(calls, 3, 'the first attempt plus two repairs that changed nothing');
+    assert.ok(done.attempts <= 5);
+  });
+
+  it('repairs more than once when each attempt makes real progress, and stays within the bound', async () => {
+    let repair = 0;
+    const t = setup(NODE_PROJECT, {
+      maxAttempts: 4,
+      runAgent: agent(async (host, input) => {
+        const c = contract(input.contract);
+        if (!input.resumedFromCheckpoint) { await host.writeFile(c, 'src/pricing.js', WRONG_FIX, 'modify'); await host.writeFile(c, 'test/discount.test.js', REGRESSION_TEST, 'create'); return; }
+        repair++;
+        await host.writeFile(c, 'src/pricing.js', repair === 1 ? WRONG_FIX.replace('percent / 100', 'percent / 50') : DISCOUNT_FIX, 'modify');
+      }),
+    });
+    const binding = await linked(t);
+    const done = await t.changes.run(ALICE, (await t.changes.create(ALICE, binding.id, 'Fix the broken discount calculation in applyDiscount')).id);
+    assert.equal(done.status, 'verified', done.statusReason);
+    assert.equal(done.attempts, 3);
+    assert.equal(done.revisions.length, 3);
+    assert.deepEqual(done.revisions.map((r) => r.tests?.status), ['failed', 'failed', 'passed']);
+  });
+});
