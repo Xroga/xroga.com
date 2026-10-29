@@ -38,6 +38,7 @@
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
     "frontend/.gitignore",
+    "frontend/e2e/chat-turn-rail.spec.ts",
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/composer-polish.spec.ts",
     "frontend/next.config.mjs",
