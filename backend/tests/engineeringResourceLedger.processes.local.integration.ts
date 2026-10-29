@@ -19,7 +19,11 @@ const db = new pg.Client({ connectionString: url, connectionTimeoutMillis: 3000 
 before(async () => {
   await db.connect();
   await db.query("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='service_role') THEN CREATE ROLE service_role NOLOGIN; END IF; END $$");
-  await db.query(migration);
+  // Both ledger test files may run at once against one database; serialize the DDL so IF NOT EXISTS cannot race itself.
+  await db.query('SELECT pg_advisory_lock(847201901)');
+  try {
+    await db.query(migration);
+  } finally { await db.query('SELECT pg_advisory_unlock(847201901)'); }
 });
 after(async () => { await db.end(); });
 

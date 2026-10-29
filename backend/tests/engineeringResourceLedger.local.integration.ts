@@ -24,8 +24,12 @@ async function reserve(client: pg.Client, user: string, run: string, category: s
 before(async () => {
   await db.connect();
   await db.query("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='service_role') THEN CREATE ROLE service_role NOLOGIN; END IF; IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='anon') THEN CREATE ROLE anon NOLOGIN; END IF; IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='authenticated') THEN CREATE ROLE authenticated NOLOGIN; END IF; END $$");
-  await db.query(migration);
-  await db.query(migration); // idempotent: applying it twice must not fail
+  // Both ledger test files may run at once against one database; serialize the DDL so IF NOT EXISTS cannot race itself.
+  await db.query('SELECT pg_advisory_lock(847201901)');
+  try {
+    await db.query(migration);
+    await db.query(migration); // idempotent: applying it twice must not fail
+  } finally { await db.query('SELECT pg_advisory_unlock(847201901)'); }
 });
 after(async () => { await db.end(); });
 
