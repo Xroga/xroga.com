@@ -8,6 +8,9 @@
 -- Reservations are idempotent by (run, category, key), so a redelivered request or a retried worker can never reserve or settle twice.
 -- Nothing here prices anything. Units are what the provider boundary measured: seconds of compute, seconds of browser session, bytes stored.
 --
+-- Caps can be overridden per owner and category (engineering_resource_limits). An override replaces the caller-supplied default for that owner only, and
+-- applies even to a category that is otherwise record-only. Settled and released rows can be purged after a retention period; open holds never are.
+--
 -- Additive and service-role only. Not applied to production by this change.
 
 CREATE TABLE IF NOT EXISTS public.engineering_resource_reservations (
@@ -40,6 +43,22 @@ DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN GRANT SELECT, INSERT, UPDATE ON public.engineering_resource_reservations TO service_role; END IF;
 END $$;
 
+-- A per-owner cap for one category. No value is baked in anywhere: a row exists only when an operator sets one, and the caller-supplied default applies otherwise.
+CREATE TABLE IF NOT EXISTS public.engineering_resource_limits (
+  user_id UUID NOT NULL,
+  category TEXT NOT NULL CHECK (category IN ('sandbox_compute_seconds', 'browser_session_seconds', 'storage_bytes')),
+  cap NUMERIC NOT NULL CHECK (cap > 0),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY (user_id, category)
+);
+ALTER TABLE public.engineering_resource_limits ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON public.engineering_resource_limits FROM PUBLIC;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN REVOKE ALL ON public.engineering_resource_limits FROM anon; END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN REVOKE ALL ON public.engineering_resource_limits FROM authenticated; END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN GRANT SELECT, INSERT, UPDATE, DELETE ON public.engineering_resource_limits TO service_role; END IF;
+END $$;
+
 -- Units already committed to an owner's category inside the window. A settled row counts what was actually measured; an open reservation counts
 -- what was held; a released one counts nothing.
 CREATE OR REPLACE FUNCTION public.engineering_resource_used(p_user UUID, p_category TEXT, p_window INTERVAL)
@@ -52,7 +71,7 @@ $$;
 CREATE OR REPLACE FUNCTION public.reserve_engineering_resource(
   p_user UUID, p_run UUID, p_category TEXT, p_units NUMERIC, p_key TEXT, p_cap NUMERIC, p_window INTERVAL)
 RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path = public AS $$
-DECLARE existing public.engineering_resource_reservations%ROWTYPE; used NUMERIC; created_id UUID;
+DECLARE existing public.engineering_resource_reservations%ROWTYPE; used NUMERIC; created_id UUID; effective NUMERIC; capped_by TEXT := 'default';
 BEGIN
   IF p_user IS NULL OR p_run IS NULL OR p_units IS NULL OR p_units <= 0 OR p_cap IS NULL OR p_cap <= 0 OR p_key IS NULL
      OR p_window IS NULL OR p_window <= INTERVAL '0' OR p_window > INTERVAL '31 days' THEN
@@ -65,8 +84,11 @@ BEGIN
     IF existing.user_id <> p_user THEN RAISE EXCEPTION 'RESOURCE_NOT_FOUND'; END IF;
     RETURN jsonb_build_object('state', 'duplicate', 'reservationId', existing.id, 'ledgerState', existing.state);
   END IF;
+  effective := p_cap;
+  SELECT l.cap INTO effective FROM public.engineering_resource_limits l WHERE l.user_id = p_user AND l.category = p_category;
+  IF FOUND THEN capped_by := 'tenant_override'; ELSE effective := p_cap; END IF;
   used := public.engineering_resource_used(p_user, p_category, p_window);
-  IF used + p_units > p_cap THEN RETURN jsonb_build_object('state', 'exhausted', 'used', used, 'cap', p_cap); END IF;
+  IF used + p_units > effective THEN RETURN jsonb_build_object('state', 'exhausted', 'used', used, 'cap', effective, 'capSource', capped_by); END IF;
   INSERT INTO public.engineering_resource_reservations (user_id, run_id, category, idempotency_key, reserved_units)
     VALUES (p_user, p_run, p_category, p_key, p_units) RETURNING id INTO created_id;
   RETURN jsonb_build_object('state', 'reserved', 'reservationId', created_id);
@@ -116,6 +138,61 @@ BEGIN
   RETURN swept;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION public.set_engineering_resource_limit(p_user UUID, p_category TEXT, p_cap NUMERIC)
+RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path = public AS $$
+BEGIN
+  IF p_user IS NULL OR p_category IS NULL OR p_cap IS NULL OR p_cap <= 0 THEN RAISE EXCEPTION 'RESOURCE_INVALID'; END IF;
+  INSERT INTO public.engineering_resource_limits (user_id, category, cap) VALUES (p_user, p_category, p_cap)
+    ON CONFLICT (user_id, category) DO UPDATE SET cap = EXCLUDED.cap, updated_at = clock_timestamp();
+  RETURN jsonb_build_object('state', 'set', 'cap', p_cap);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.clear_engineering_resource_limit(p_user UUID, p_category TEXT)
+RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path = public AS $$
+DECLARE removed INTEGER;
+BEGIN
+  IF p_user IS NULL OR p_category IS NULL THEN RAISE EXCEPTION 'RESOURCE_INVALID'; END IF;
+  DELETE FROM public.engineering_resource_limits WHERE user_id = p_user AND category = p_category;
+  GET DIAGNOSTICS removed = ROW_COUNT;
+  RETURN jsonb_build_object('state', CASE WHEN removed > 0 THEN 'cleared' ELSE 'absent' END);
+END;
+$$;
+
+-- Retention: removes settled and released rows older than the period. An open hold is never purged (the sweep settles it first), and the period cannot be
+-- shorter than a day, so an accounting window can never lose rows it still counts.
+CREATE OR REPLACE FUNCTION public.purge_engineering_reservations(p_older_than INTERVAL)
+RETURNS INTEGER LANGUAGE plpgsql SECURITY INVOKER SET search_path = public AS $$
+DECLARE purged INTEGER;
+BEGIN
+  IF p_older_than IS NULL OR p_older_than < INTERVAL '1 day' THEN RAISE EXCEPTION 'RESOURCE_INVALID'; END IF;
+  DELETE FROM public.engineering_resource_reservations WHERE state <> 'reserved' AND COALESCE(settled_at, created_at) < clock_timestamp() - p_older_than;
+  GET DIAGNOSTICS purged = ROW_COUNT;
+  RETURN purged;
+END;
+$$;
+
+DO $$ BEGIN
+  REVOKE ALL ON FUNCTION public.set_engineering_resource_limit(UUID, TEXT, NUMERIC) FROM PUBLIC;
+  REVOKE ALL ON FUNCTION public.clear_engineering_resource_limit(UUID, TEXT) FROM PUBLIC;
+  REVOKE ALL ON FUNCTION public.purge_engineering_reservations(INTERVAL) FROM PUBLIC;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    REVOKE ALL ON FUNCTION public.set_engineering_resource_limit(UUID, TEXT, NUMERIC) FROM anon;
+    REVOKE ALL ON FUNCTION public.clear_engineering_resource_limit(UUID, TEXT) FROM anon;
+    REVOKE ALL ON FUNCTION public.purge_engineering_reservations(INTERVAL) FROM anon;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    REVOKE ALL ON FUNCTION public.set_engineering_resource_limit(UUID, TEXT, NUMERIC) FROM authenticated;
+    REVOKE ALL ON FUNCTION public.clear_engineering_resource_limit(UUID, TEXT) FROM authenticated;
+    REVOKE ALL ON FUNCTION public.purge_engineering_reservations(INTERVAL) FROM authenticated;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
+    GRANT EXECUTE ON FUNCTION public.set_engineering_resource_limit(UUID, TEXT, NUMERIC) TO service_role;
+    GRANT EXECUTE ON FUNCTION public.clear_engineering_resource_limit(UUID, TEXT) TO service_role;
+    GRANT EXECUTE ON FUNCTION public.purge_engineering_reservations(INTERVAL) TO service_role;
+  END IF;
+END $$;
 
 DO $$ BEGIN
   REVOKE ALL ON FUNCTION public.engineering_resource_used(UUID, TEXT, INTERVAL) FROM PUBLIC;

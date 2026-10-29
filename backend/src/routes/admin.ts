@@ -1,3 +1,4 @@
+import engineeringOperatorRouter from './engineeringOperator.js';
 import { Router } from 'express';
 import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import type { AuthRequest } from '../middleware/auth.js';
@@ -5,6 +6,9 @@ import { computePlatformReady } from '../lib/platformReady.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
 
 const router = Router();
+
+// Operator-only engineering diagnostics and per-tenant caps. This router is mounted behind authMiddleware and adminMiddleware, so they are inherited.
+router.use('/engineering', engineeringOperatorRouter);
 
 function boundedLimit(value: unknown, fallback: number, maximum: number): number | null {
   if (value === undefined) return fallback;

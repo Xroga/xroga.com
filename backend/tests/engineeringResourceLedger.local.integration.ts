@@ -136,3 +136,59 @@ test('the table and functions are not reachable by anonymous or signed-in roles'
   assert.equal(svc.e, true, 'positive control: the service role can reserve');
   assert.equal((await db.query("SELECT relrowsecurity FROM pg_class WHERE oid='public.engineering_resource_reservations'::regclass")).rows[0].relrowsecurity, true);
 });
+
+const setLimit = (user: string, category: string, cap: number) => db.query('SELECT public.set_engineering_resource_limit($1,$2,$3) AS r', [user, category, cap]);
+
+test('a per-tenant cap override replaces the default for that owner only, applies even where the default is record-only, and clearing it reverts', async () => {
+  const limited = randomUUID(); const other = randomUUID(); const run = randomUUID();
+  const HUGE = 1e15; // what a record-only category passes as its default
+  assert.equal((await reserve(db, limited, run, 'sandbox_compute_seconds', 400, 'override-aaa-1', HUGE)).state, 'reserved', 'no override: record-only default allows it');
+  await setLimit(limited, 'sandbox_compute_seconds', 500);
+  const refused = await reserve(db, limited, run, 'sandbox_compute_seconds', 200, 'override-aaa-2', HUGE) as unknown as { state: string; cap: number; capSource: string };
+  assert.equal(refused.state, 'exhausted'); assert.equal(Number(refused.cap), 500); assert.equal(refused.capSource, 'tenant_override', 'the answer says which cap refused it');
+  assert.equal((await reserve(db, other, run, 'sandbox_compute_seconds', 200, 'override-aaa-3', HUGE)).state, 'reserved', 'another owner is untouched by the override');
+  assert.equal((await reserve(db, limited, run, 'browser_session_seconds', 200, 'override-aaa-4', HUGE)).state, 'reserved', 'so is another category of the same owner');
+  await setLimit(limited, 'sandbox_compute_seconds', 5000);
+  assert.equal((await reserve(db, limited, run, 'sandbox_compute_seconds', 200, 'override-aaa-5', 100)).state, 'reserved', 'an override can raise the cap above a low default');
+  const cleared = (await db.query('SELECT public.clear_engineering_resource_limit($1,$2) AS r', [limited, 'sandbox_compute_seconds'])).rows[0].r;
+  assert.equal(cleared.state, 'cleared');
+  assert.equal((await db.query('SELECT public.clear_engineering_resource_limit($1,$2) AS r', [limited, 'sandbox_compute_seconds'])).rows[0].r.state, 'absent');
+  const back = await reserve(db, limited, run, 'sandbox_compute_seconds', 200, 'override-aaa-6', 100) as unknown as { state: string; capSource: string };
+  assert.equal(back.state, 'exhausted'); assert.equal(back.capSource, 'default', 'cleared: the caller-supplied default applies again');
+});
+
+test('invalid limit overrides fail closed', async () => {
+  for (const [category, cap] of [['sandbox_compute_seconds', 0], ['sandbox_compute_seconds', -5]] as const) {
+    await assert.rejects(setLimit(randomUUID(), category, cap), /RESOURCE_INVALID/);
+  }
+  await assert.rejects(setLimit(randomUUID(), 'gpu_seconds', 10), /category|check/i);
+});
+
+test('retention purges old settled and released rows, never an open hold, and never a period shorter than a day', async () => {
+  const user = randomUUID(); const run = randomUUID();
+  const old = (await reserve(db, user, run, 'storage_bytes', 10, 'purge-aaaa-1', 1e9)).reservationId!;
+  const oldReleased = (await reserve(db, user, run, 'storage_bytes', 10, 'purge-aaaa-2', 1e9)).reservationId!;
+  const oldOpen = (await reserve(db, user, run, 'storage_bytes', 10, 'purge-aaaa-3', 1e9)).reservationId!;
+  const recent = (await reserve(db, user, run, 'storage_bytes', 10, 'purge-aaaa-4', 1e9)).reservationId!;
+  await db.query('SELECT public.settle_engineering_resource($1,$2,$3)', [user, old, 10]);
+  await db.query('SELECT public.release_engineering_resource($1,$2)', [user, oldReleased]);
+  await db.query('SELECT public.settle_engineering_resource($1,$2,$3)', [user, recent, 10]);
+  await db.query("UPDATE public.engineering_resource_reservations SET created_at = clock_timestamp() - interval '40 days', settled_at = CASE WHEN settled_at IS NULL THEN NULL ELSE clock_timestamp() - interval '40 days' END WHERE id = ANY($1::uuid[])", [[old, oldReleased, oldOpen]]);
+  await assert.rejects(db.query("SELECT public.purge_engineering_reservations('1 hour')"), /RESOURCE_INVALID/);
+  const purged = Number((await db.query("SELECT public.purge_engineering_reservations('30 days') AS n")).rows[0].n);
+  assert.ok(purged >= 2, 'the old settled and the old released row are removed');
+  const left = new Set((await db.query('SELECT id FROM public.engineering_resource_reservations WHERE id = ANY($1::uuid[])', [[old, oldReleased, oldOpen, recent]])).rows.map((r) => r.id));
+  assert.equal(left.has(old), false); assert.equal(left.has(oldReleased), false);
+  assert.equal(left.has(oldOpen), true, 'an open hold, however old, is never purged');
+  assert.equal(left.has(recent), true, 'a recent settled row is kept');
+  assert.equal(Number((await db.query("SELECT public.purge_engineering_reservations('30 days') AS n")).rows[0].n), 0, 'repeatable');
+});
+
+test('the limits table and the new functions are not reachable by anonymous or signed-in roles', async () => {
+  for (const role of ['anon', 'authenticated']) {
+    const r = (await db.query("SELECT has_table_privilege($1,'public.engineering_resource_limits','SELECT') t, has_function_privilege($1,'public.set_engineering_resource_limit(uuid,text,numeric)','EXECUTE') s, has_function_privilege($1,'public.clear_engineering_resource_limit(uuid,text)','EXECUTE') c, has_function_privilege($1,'public.purge_engineering_reservations(interval)','EXECUTE') p", [role])).rows[0];
+    assert.deepEqual([r.t, r.s, r.c, r.p], [false, false, false, false], `${role} has no access`);
+  }
+  const svc = (await db.query("SELECT has_function_privilege('service_role','public.set_engineering_resource_limit(uuid,text,numeric)','EXECUTE') s, relrowsecurity FROM pg_class WHERE oid='public.engineering_resource_limits'::regclass")).rows[0];
+  assert.equal(svc.s, true, 'positive control'); assert.equal(svc.relrowsecurity, true);
+});
