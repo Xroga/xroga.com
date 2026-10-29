@@ -87,3 +87,16 @@ test('a run id that is not a real run identity is not metered rather than mis-bi
   const ledger = new FakeLedger(); const meter = new ResourceMeter(ledger, on({ sandbox_compute_seconds: 100 }));
   assert.equal(await meter.measure({ ...input, runId: 'logical-run' }, async () => 'ok'), 'ok'); assert.equal(ledger.reserveCalls, 0);
 });
+
+test('sweep: off when metering is off, passes the configured threshold, and a floor protects live calls from being charged early', async () => {
+  const { sweepStaleEngineeringReservations, sweepThresholdSeconds } = await import('./resourceMeter.js');
+  let called = 0; const calls: Array<{ fn: string; args: Record<string, unknown> }> = [];
+  const client = { rpc: async (fn: string, args: Record<string, unknown>) => { called++; calls.push({ fn, args }); return { data: 3, error: null }; } } as never;
+  assert.equal(await sweepStaleEngineeringReservations({ enabled: false, caps: {}, windowSeconds: 86_400 }, client), 0); assert.equal(called, 0);
+  assert.equal(await sweepStaleEngineeringReservations({ enabled: true, caps: {}, windowSeconds: 86_400 }, client), 3);
+  assert.equal(calls[0]!.fn, 'sweep_stale_engineering_reservations'); assert.equal(calls[0]!.args.p_older_than, '7200 seconds');
+  assert.equal(sweepThresholdSeconds({ XROGA_ENGINEERING_SWEEP_AFTER_SECONDS: '10800' }), 10800);
+  assert.throws(() => sweepThresholdSeconds({ XROGA_ENGINEERING_SWEEP_AFTER_SECONDS: '600' }), /at least 3600/);
+  const failing = { rpc: async () => ({ data: null, error: { message: 'PRIVATE' } }) } as never;
+  await assert.rejects(sweepStaleEngineeringReservations({ enabled: true, caps: {}, windowSeconds: 86_400 }, failing), (e: Error) => !/PRIVATE/.test(e.message));
+});

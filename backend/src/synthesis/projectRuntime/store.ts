@@ -1,3 +1,4 @@
+import { engineeringMeterFor } from '../../ai/resourceMeter.js';
 import {
   createHash,
   randomUUID,
@@ -633,7 +634,24 @@ export class SupabaseProjectRuntimeStore
   constructor(attempt?: AdmittedRunAttempt) {
     this.attempt = attempt ? requireAdmittedRunAttempt(attempt) : undefined;
   }
+  /**
+   * Saves a revision and, when engineering metering is on, records the bytes actually persisted (not the bytes of a save that failed). This is write volume
+   * in the accounting window, not the total stored footprint, which would need deduplication and deletion accounting.
+   */
   async saveRevision(
+    userId:
+      string,
+
+    project:
+      SoftwareProject,
+  ): Promise<ProjectRevisionRecord> {
+    const meter = engineeringMeterFor(userId);
+    if (!meter) return this.persistRevision(userId, project);
+    const bytes = project.workspace.files.reduce((total, file) => total + Buffer.byteLength(file.content, 'utf8'), 0);
+    return meter.measure({ category: 'storage_bytes', runId: project.runId, estimateUnits: bytes }, () => this.persistRevision(userId, project), (result) => (result ? bytes : 0));
+  }
+
+  private async persistRevision(
     userId:
       string,
 

@@ -41,8 +41,9 @@ test('the held estimate is the stage timeouts when staged, otherwise the call ti
 });
 
 test('metering off (the default): a straight call that never looks up an attempt or touches the ledger', async () => {
-  const { d, ledger } = deps({ enabled: false });
-  let looked = false; d.attempt = async () => { looked = true; return { userId: owner, runId: run }; };
+  const base = deps({ enabled: false }); const ledger = base.ledger;
+  let looked = false;
+  const d: MeteredCallDeps = { ...base.d, attempt: async () => { looked = true; return { userId: owner, runId: run }; } };
   assert.equal(await meterCanonicalSandbox('software-agent-command', { timeoutMs: 1000 }, async () => 'ran', d), 'ran');
   assert.equal(looked, false); assert.equal(ledger.reserved.length, 0);
 });

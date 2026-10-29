@@ -15,6 +15,8 @@
 import { randomUUID } from 'node:crypto';
 import { RESOURCE_CATEGORIES, ResourceLedgerError, SupabaseResourceLedger, type ResourceCategory, type ResourceLedger } from './resourceLedger.js';
 import { createTenantContext } from '../security/tenantContext.js';
+import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export interface MeterConfig {
   readonly enabled: boolean;
@@ -100,4 +102,24 @@ export class ResourceMeter {
 export function engineeringMeterFor(userId: string, config: MeterConfig = meterConfigFromEnv(), ledgerFor: (userId: string) => ResourceLedger = (id) => new SupabaseResourceLedger(createTenantContext({ userId: id, via: 'persisted_owner' }))): ResourceMeter | null {
   if (!config.enabled) return null;
   return new ResourceMeter(ledgerFor(userId), config);
+}
+
+/**
+ * A hold whose worker died before settling is charged in full by the database sweep. The threshold must be longer than any call can legitimately
+ * run, or a live call's hold would be charged early: the longest canonical task timeout is 55 minutes, so the default is two hours. Configurable.
+ */
+export function sweepThresholdSeconds(env: NodeJS.ProcessEnv = process.env): number {
+  const raw = env.XROGA_ENGINEERING_SWEEP_AFTER_SECONDS;
+  const n = raw === undefined || raw.trim() === '' ? 7200 : Number(raw);
+  if (!Number.isFinite(n) || n < 3600) throw new Error('XROGA_ENGINEERING_SWEEP_AFTER_SECONDS must be at least 3600 so a running call is never charged early.');
+  return Math.floor(n);
+}
+
+/** One maintenance step: sweep stale holds. Returns how many were charged. Does nothing when metering is off. */
+export async function sweepStaleEngineeringReservations(config: MeterConfig = meterConfigFromEnv(), client?: SupabaseClient): Promise<number> {
+  if (!config.enabled) return 0;
+  const supabase = client ?? getGlobalSupabaseAdmin('engineering_resource_sweep');
+  const { data, error } = await supabase.rpc('sweep_stale_engineering_reservations', { p_older_than: `${sweepThresholdSeconds()} seconds` });
+  if (error) throw new ResourceLedgerError('RESOURCE_UNAVAILABLE', 'The resource ledger sweep is unavailable.');
+  return Number(data ?? 0);
 }
