@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "48543def6f74d615577f02a4a6e4cfdd55ae049970f1e784097554a1a79d290d",
+  "reviewRegistrySha256": "372731543258d9169271ec350f89dd353231edf73b644b6e08e951a17dee43b4",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -15881,7 +15881,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+      "sourceSha256": "e1d2fda6b417aee092e86f40ed141822b54a9e46e83ca5594e9ac15f2557ec5f",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",

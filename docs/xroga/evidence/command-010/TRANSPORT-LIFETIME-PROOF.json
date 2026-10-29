@@ -138,11 +138,13 @@
   "currentSourceBindings": [
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+      "sha256": "e1d2fda6b417aee092e86f40ed141822b54a9e46e83ca5594e9ac15f2557ec5f",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/middleware/runtimePreviewGateway.ts",
         "sha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57"
-      }
+      },
+      "beforePreviewAdmissionDeadlineSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+      "previewAdmissionDeadlineContinuation": "Deadline increased from 5 to 15 seconds. Grant, ownership, target validation and revalidation remain required. Live acceptance remains independently required."
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.transport.test.ts",

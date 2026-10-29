@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "0ad940b97c7f770f1b47bb714cc07c4484638d95c236ab0ee3d0d8cebfab274c",
+  "sourceTreeDigest": "d8e9a4463667b5d437fd8776e9a5f887a00d54f9808089f3e0210bad083a19b4",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -1745,12 +1745,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1802,12 +1802,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1859,12 +1859,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1916,12 +1916,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -1973,12 +1973,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
@@ -2030,12 +2030,12 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
           "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
-          "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+          "sha256": "101a81f1b20f8ea86d622e75062891844928c77347bf3c1baab25d39f1f7c8db"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",

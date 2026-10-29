@@ -449,7 +449,7 @@ async function admitConnection(hostname:string,resolver:TargetResolver):Promise<
     if(!target||!Number.isFinite(target.expiresAt)||target.expiresAt<=Date.now())return null;
     if(!await target.revalidate()||target.expiresAt<=Date.now())return null;
     return target;
-  })(),new Promise<null>(resolve=>{timer=setTimeout(()=>resolve(null),5000);})]);}
+  })(),new Promise<null>(resolve=>{timer=setTimeout(()=>resolve(null),15e3);})]);}
   catch{return null;}finally{if(timer)clearTimeout(timer);}
 }
 
