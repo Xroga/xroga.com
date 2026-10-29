@@ -15476,7 +15476,8 @@
         "backend/src/synthesis/delivery/projectDeliveryService.ts:1",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:1",
         "backend/src/synthesis/projectRuntime/store.ts:6",
-        "backend/src/synthesis/universalEntrypoint.ts:52"
+        "backend/src/synthesis/universalEntrypoint.ts:52",
+        "scripts/batch3/local-supabase-check.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -15856,7 +15857,8 @@
       ],
       "callers": [
         "backend/src/routes/existingSource.ts:29",
-        "backend/src/routes/existingSourceArchive.test.ts:7"
+        "backend/src/routes/existingSourceArchive.test.ts:7",
+        "scripts/batch3/local-supabase-check.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -16515,7 +16517,8 @@
         "backend/src/existingSource/change/canonical.test.ts:18",
         "backend/src/existingSource/change/change.test.ts:11",
         "backend/src/existingSource/change/golden.test.ts:23",
-        "backend/src/routes/existingSourceChanges.test.ts:9"
+        "backend/src/routes/existingSourceChanges.test.ts:9",
+        "scripts/batch3/local-supabase-check.ts:17"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -16732,7 +16735,8 @@
         "backend/src/existingSource/change/change.test.ts:12",
         "backend/src/existingSource/change/golden.test.ts:24",
         "backend/src/routes/existingSource.ts:26",
-        "backend/src/routes/existingSourceChanges.test.ts:10"
+        "backend/src/routes/existingSourceChanges.test.ts:10",
+        "scripts/batch3/local-supabase-check.ts:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16875,7 +16879,8 @@
         "backend/src/existingSource/change/delivery.test.ts:16",
         "backend/src/existingSource/change/golden.test.ts:25",
         "backend/src/routes/existingSource.ts:27",
-        "backend/src/routes/existingSourceChanges.test.ts:11"
+        "backend/src/routes/existingSourceChanges.test.ts:11",
+        "scripts/batch3/local-supabase-check.ts:19"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -17368,7 +17373,8 @@
         "backend/src/routes/existingSource.test.ts:6",
         "backend/src/routes/existingSourceArchive.test.ts:8",
         "backend/src/routes/existingSourceChanges.test.ts:14",
-        "backend/src/routes/existingSourceIntelligence.test.ts:6"
+        "backend/src/routes/existingSourceIntelligence.test.ts:6",
+        "scripts/batch3/local-supabase-check.ts:21"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -17562,7 +17568,8 @@
         "backend/src/routes/existingSource.ts:30",
         "backend/src/routes/existingSourceArchive.test.ts:9",
         "backend/src/routes/existingSourceChanges.test.ts:15",
-        "backend/src/routes/existingSourceIntelligence.test.ts:7"
+        "backend/src/routes/existingSourceIntelligence.test.ts:7",
+        "scripts/batch3/local-supabase-check.ts:22"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -18189,7 +18196,8 @@
         "backend/src/routes/existingSource.ts:31",
         "backend/src/routes/existingSourceArchive.test.ts:10",
         "backend/src/routes/existingSourceChanges.test.ts:16",
-        "backend/src/routes/existingSourceIntelligence.test.ts:9"
+        "backend/src/routes/existingSourceIntelligence.test.ts:9",
+        "scripts/batch3/local-supabase-check.ts:23"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18486,7 +18494,8 @@
         "backend/src/routes/existingSource.ts:32",
         "backend/src/routes/existingSourceArchive.test.ts:11",
         "backend/src/routes/existingSourceChanges.test.ts:17",
-        "backend/src/routes/existingSourceIntelligence.test.ts:10"
+        "backend/src/routes/existingSourceIntelligence.test.ts:10",
+        "scripts/batch3/local-supabase-check.ts:24"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18576,7 +18585,8 @@
         "backend/src/routes/existingSource.ts:34",
         "backend/src/routes/existingSourceArchive.test.ts:12",
         "backend/src/routes/existingSourceChanges.test.ts:18",
-        "backend/src/routes/existingSourceIntelligence.test.ts:11"
+        "backend/src/routes/existingSourceIntelligence.test.ts:11",
+        "scripts/batch3/local-supabase-check.ts:25"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -30223,6 +30233,7 @@
         "backend/src/workers/googleDeliveryStore.ts:3",
         "backend/src/workers/googleSwarmQueue.test.ts:7",
         "backend/src/workers/googleSwarmQueue.ts:2",
+        "scripts/batch3/local-supabase-check.ts:15",
         "scripts/browser/run-workflows.mts:18",
         "scripts/security/verify-oci-kms.ts:8"
       ],
@@ -104358,6 +104369,102 @@
         "fs",
         "path",
         "url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:3e300a36bc68d3ebaf5f",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/batch3/local-supabase-check.ts",
+      "sha256": "d7da6c2d64ed588c60fd8e8a2defec5a9443166be60882026b603697e63f6772",
+      "symbols": [
+        "A",
+        "B",
+        "FIX",
+        "PROJECT",
+        "a",
+        "admin",
+        "archives",
+        "b",
+        "binding",
+        "changeStore",
+        "changes",
+        "count",
+        "created",
+        "ctxA",
+        "ctxB",
+        "done",
+        "fixer",
+        "follow",
+        "found",
+        "gh",
+        "indexes",
+        "intel",
+        "keepOne",
+        "list",
+        "main",
+        "pass",
+        "q",
+        "remaining",
+        "repo",
+        "results",
+        "row",
+        "source",
+        "stack",
+        "table",
+        "task",
+        "tokens",
+        "url",
+        "user"
+      ],
+      "imports": [
+        "../../backend/src/ai/softwareAgent/AgentSoftwareExecutor.js",
+        "../../backend/src/config/supabase.js",
+        "../../backend/src/existingSource/archive/archiveStore.js",
+        "../../backend/src/existingSource/change/localProcessPort.testsupport.js",
+        "../../backend/src/existingSource/change/service.js",
+        "../../backend/src/existingSource/change/store.js",
+        "../../backend/src/existingSource/change/toolHost.js",
+        "../../backend/src/existingSource/fakeGitHub.testsupport.js",
+        "../../backend/src/existingSource/intelligence/codeIndexStore.js",
+        "../../backend/src/existingSource/intelligence/service.js",
+        "../../backend/src/existingSource/service.js",
+        "../../backend/src/existingSource/store.js",
+        "../../backend/src/security/tenantContext.js",
+        "node:assert/strict"
+      ],
+      "runtimeImports": [
+        "backend/src/config/supabase.ts",
+        "backend/src/existingSource/archive/archiveStore.ts",
+        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+        "backend/src/existingSource/change/service.ts",
+        "backend/src/existingSource/change/store.ts",
+        "backend/src/existingSource/fakeGitHub.testsupport.ts",
+        "backend/src/existingSource/intelligence/codeIndexStore.ts",
+        "backend/src/existingSource/intelligence/service.ts",
+        "backend/src/existingSource/service.ts",
+        "backend/src/existingSource/store.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [
+        "existing_source_changes"
+      ],
+      "externalProviderDependencies": [
+        "node:assert/strict"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
