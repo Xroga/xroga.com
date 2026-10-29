@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `ff4032ca02c4b233c2598724caf44ab04b91fb0f`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `ca94c2f8a813524e47f5f7abc868acb1618a1c45`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -299,6 +299,7 @@ Values are forbidden. Source SHA: `ff4032ca02c4b233c2598724caf44ab04b91fb0f`. Na
 | XROGA_QA_HOST_ALLOWED_SUFFIXES | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_QA_HOST_MAX_CONCURRENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_QA_HOST_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| XROGA_RELEASE_CANDIDATE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_RELEASE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-metadata-google-internal |
 | XROGA_REQUIRE_HIGH_RISK_REVIEW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_REQUIRE_MANAGED_CUSTODY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |

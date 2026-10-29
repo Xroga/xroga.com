@@ -1,10 +1,19 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { decideStartup, dutiesFor, resolveDeploymentEnvironment, PRODUCTION_FLY_APP } from './startupPolicy.js';
+import { decideStartup, dutiesFor, resolveDeploymentEnvironment, PRODUCTION_FLY_APP, startupReconciliationAllowed } from './startupPolicy.js';
 
 const env = (e: Record<string, string | undefined>): NodeJS.ProcessEnv => e;
 const NO_DUTIES = { ensureSchemas: false, reconcileOrphanedRuns: false };
 const ALL_DUTIES = { ensureSchemas: true, reconcileOrphanedRuns: true };
+
+describe('release candidate startup', () => {
+  it('suppresses reconciliation only when the candidate flag is explicit', () => {
+    assert.equal(startupReconciliationAllowed({ XROGA_RELEASE_CANDIDATE: '1' }), false);
+    for (const value of [undefined, '', '0', 'true']) {
+      assert.equal(startupReconciliationAllowed({ XROGA_RELEASE_CANDIDATE: value }), true);
+    }
+  });
+});
 
 describe('deployment environment resolution', () => {
   it('the production Fly app is production with no new configuration, so today\'s deployment is unchanged', () => {
