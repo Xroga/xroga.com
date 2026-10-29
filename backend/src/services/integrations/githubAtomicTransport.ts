@@ -222,6 +222,7 @@ export function makeAtomicWriteApi(
           base: input.base,
           title: input.title,
           body: input.body,
+          ...(input.draft ? { draft: true } : {}),
         }),
       });
       if (!res.ok) throw await failure(res, 'GitHub pull request creation');
