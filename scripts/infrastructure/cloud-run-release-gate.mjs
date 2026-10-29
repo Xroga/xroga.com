@@ -49,6 +49,7 @@ export function validateCloudRunRelease(actual, expected) {
   // The SHA comes from the independently verified immutable image, not an env override.
   requireCondition(!environment.some(value => value.name === 'XROGA_RELEASE_SHA'), 'RELEASE_IDENTITY_OVERRIDE');
   const env = new Map(environment.map(value => [value.name, value]));
+  requireCondition(!env.has('XROGA_RELEASE_CANDIDATE'), 'CANDIDATE_MODE_NOT_PROMOTABLE');
   requireCondition(expected.plainEnvironment && typeof expected.plainEnvironment === 'object'
     && !Array.isArray(expected.plainEnvironment)
     && Object.entries(expected.plainEnvironment).every(([name,value]) =>

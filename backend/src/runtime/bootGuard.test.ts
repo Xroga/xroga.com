@@ -20,6 +20,10 @@ describe('boot duties follow main\'s contract', () => {
     assert.equal([...source.matchAll(/\breconcileOrphanedRuns\(/g)].length, 1);
   });
 
+  it('does not reconcile live runs when starting a zero-traffic release candidate', () => {
+    assert.match(source, /if\s*\(\s*startupReconciliationAllowed\(process\.env\)\s*\)/);
+  });
+
   it('/ready answers from the credential-vault and database probes', () => {
     assert.match(source, /app\.get\('\/ready',\s*credentialVaultReadinessMiddleware\(/);
     assert.match(source, /app\.get\('\/ready'[\s\S]{0,700}probeDatabaseReadiness\(\)/);
