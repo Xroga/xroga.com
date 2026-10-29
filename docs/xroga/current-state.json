@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/multilingual-voice-input-20261030",
-    "sha": "53bdd6f9e2fcbe9419368166d9aaf43f50b68499",
-    "sourceTimestampUtc": "2026-10-30T03:32:51+05:00",
-    "auditStartedUtc": "2026-10-29T22:33:32.455Z",
+    "sha": "37e1a5961991fb8261673f9414dc7f4c7e3a7c43",
+    "sourceTimestampUtc": "2026-10-30T03:43:21+05:00",
+    "auditStartedUtc": "2026-10-29T22:45:53.204Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -108986,7 +108986,7 @@
       "id": "surface:2b17ca63734e8f47f9dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceLocalProtocol.ts",
-      "sha256": "a32c7a3f45d395d92843409f740d01dc6e8975e7bd0aaf65028ba8ec99dfb425",
+      "sha256": "978820be6bc6c129c036ac7dd89681e4bbc5096a0d4e1cc728b25a6d1995f798",
       "symbols": [
         "VOICE_MAX_BYTES",
         "VOICE_MAX_SECONDS",
@@ -108996,14 +108996,24 @@
         "VOICE_RUNTIME_PATH",
         "VOICE_SAMPLE_RATE",
         "VoiceWorkerReply",
+        "at",
         "best",
+        "end",
+        "energy",
+        "frame",
+        "i",
         "language",
         "last",
+        "quietEnd",
+        "result",
         "score",
         "selectVoiceLanguage",
+        "start",
         "tokens",
         "validateVoiceSamples",
-        "voiceCompletionGuard"
+        "voiceCompletionGuard",
+        "voiceSegments",
+        "window"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -109134,7 +109144,7 @@
       "id": "surface:0e134ae9a2c4ff74595d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceTranscription.worker.ts",
-      "sha256": "69328c311b700a32af5b8c61fdbd348fcc48b313ee82cc9bb52b83f7857f77c3",
+      "sha256": "ec783b7c952cfcb75fd28bddf4b50f620fd2fefcd98bb0b987ad8af781e4cf49",
       "symbols": [
         "config",
         "detection",
@@ -109148,10 +109158,12 @@
         "result",
         "rms",
         "samples",
+        "segment",
         "started",
         "streamer",
         "text",
-        "transcriber"
+        "transcriber",
+        "transcripts"
       ],
       "imports": [
         "./voiceLocalProtocol",
@@ -116960,7 +116972,7 @@
       "id": "surface:12658203d457ab6f1fe6",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/verify-local-voice.mjs",
-      "sha256": "7a433103a41649bfa5c42ed72a4d66b01f7a9c8694776a29b2577326524e8c13",
+      "sha256": "700bb4af938168c2888cadcd44b38f399f0a61fd55ccef4fff6ff6adcf6cd881",
       "symbols": [
         "audio",
         "browser",
@@ -116981,6 +116993,7 @@
         "longFixture",
         "longRecording",
         "medium",
+        "missingSpeech",
         "modelName",
         "modelRevision",
         "multilingual",
@@ -144784,7 +144797,7 @@
     {
       "id": "test-suite:c6e129b8c30f92eaef9d",
       "sourcePath": "frontend/src/lib/voiceLocal.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

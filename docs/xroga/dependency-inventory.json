@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "53bdd6f9e2fcbe9419368166d9aaf43f50b68499",
+  "source_sha": "37e1a5961991fb8261673f9414dc7f4c7e3a7c43",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22379,7 +22379,7 @@
     },
     {
       "path": "frontend/src/lib/voiceLocalProtocol.ts",
-      "sha256": "a32c7a3f45d395d92843409f740d01dc6e8975e7bd0aaf65028ba8ec99dfb425"
+      "sha256": "978820be6bc6c129c036ac7dd89681e4bbc5096a0d4e1cc728b25a6d1995f798"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -22391,7 +22391,7 @@
     },
     {
       "path": "frontend/src/lib/voiceTranscription.worker.ts",
-      "sha256": "69328c311b700a32af5b8c61fdbd348fcc48b313ee82cc9bb52b83f7857f77c3"
+      "sha256": "ec783b7c952cfcb75fd28bddf4b50f620fd2fefcd98bb0b987ad8af781e4cf49"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
