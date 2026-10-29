@@ -9,6 +9,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 const multilingual = process.argv.includes('--multilingual');
 const medium = process.argv.includes('--medium');
+const longRecording = process.argv.includes('--long');
 const modelName = medium ? 'Xenova/whisper-medium' : 'onnx-community/whisper-small';
 const modelRevision = medium ? '8c5b90880ab9f79487ab33613413431bf661d595' : '36050c46d777d46dc4b5f43f6d90574fc38f8732';
 const candidateSource = text => medium ? text.replaceAll('onnx-community/whisper-small', modelName).replaceAll('36050c46d777d46dc4b5f43f6d90574fc38f8732', modelRevision).replaceAll('6650c62b74664a42ddfb297a', '647740e7f911e9e76c5f4eb7') : text;
@@ -36,7 +37,7 @@ for (const language of fixtureDirectory ? [] : multilingual ? ['ur_pk', 'hi_in',
 }
 assert.ok(fixtures.length, 'No accessible public speech fixture');
 let audio = fixtures[0].audio;
-const bundle = await build({ stdin: { contents: `import {transcribeVoiceLocally} from './frontend/src/lib/voiceLocal';window.runVoice=async()=>{window.voiceStages=[];const audio=await (await fetch('/fixture.flac')).blob();return transcribeVoiceLocally(audio,new AbortController().signal,stage=>{window.voiceStages.push({stage,time:Date.now()});console.log('VOICE_STAGE',stage);});};`, resolveDir: process.cwd() }, bundle: true, write: false, format: 'iife', platform: 'browser' });
+const bundle = await build({ stdin: { contents: `import {transcribeVoiceLocally,recognizeVoiceSamples} from './frontend/src/lib/voiceLocal';window.runVoice=async()=>{window.voiceStages=[];const audio=await (await fetch('/fixture.flac')).blob();const signal=new AbortController().signal;const progress=stage=>{window.voiceStages.push({stage,time:Date.now()});console.log('VOICE_STAGE',stage);};if(${longRecording}){const decoded=await new OfflineAudioContext(1,1,16000).decodeAudioData(await audio.arrayBuffer());const clip=decoded.getChannelData(0);const repeats=Math.ceil(135/decoded.duration);const samples=new Float32Array(clip.length*repeats);for(let i=0;i<repeats;i++)samples.set(clip,i*clip.length);window.longFixture={repeats,durationSeconds:samples.length/16000};return recognizeVoiceSamples(samples,signal,progress);}return transcribeVoiceLocally(audio,signal,progress);};`, resolveDir: process.cwd() }, bundle: true, write: false, format: 'iife', platform: 'browser' });
 const config = (await import('../frontend/next.config.mjs')).default;
 const rules = await config.headers();
 const workerHeaders = rules.find(rule => rule.source === '/voice-runtime/:path*').headers.map(header => ({ ...header, value: candidateSource(header.value) }));
@@ -69,6 +70,8 @@ try {
   for (const fixture of fixtures) {
     audio = fixture.audio;
     const start = Date.now(); const transcript = await page.evaluate(() => window.runVoice());
+    const longFixture = longRecording ? await page.evaluate(() => window.longFixture) : null;
+    if (longFixture) assert.equal((transcript.toLowerCase().match(/ask not what your country can do for you/g) ?? []).length, longFixture.repeats, 'Every repeated speech segment must survive chunked recognition');
     if (!multilingual) {
       assert.match(transcript.toLowerCase(), /ask not what your country can do for you/);
       assert.match(transcript.toLowerCase(), /what you can do for your country/);
@@ -83,10 +86,10 @@ try {
       previous = next;
     }
     const stages = await page.evaluate(() => window.voiceStages);
-    results.push({ language: fixture.language, fixtureUrl: fixture.fixtureUrl, fixtureSha256: createHash('sha256').update(audio).digest('hex'), reference: fixture.expected, transcript, wordErrorRate: previous[predicted.length]/reference.length, durationMs: Date.now()-start, stages });
+    results.push({ language: fixture.language, fixtureUrl: fixture.fixtureUrl, fixtureSha256: createHash('sha256').update(audio).digest('hex'), reference: fixture.expected, transcript, wordErrorRate: longFixture ? null : previous[predicted.length]/reference.length, longFixture, durationMs: Date.now()-start, stages });
     console.log('FIXTURE_RECOGNIZED', fixture.language, results.at(-1).wordErrorRate, results.at(-1).durationMs);
   }
   assert.ok(requests.every(request => request.method === 'GET'), 'Audio must never be uploaded');
   const receipt = { scope: 'ACTUAL_LOCAL_WASM_RECOGNITION_PUBLIC_FIXTURES_NOT_BROAD_LANGUAGE_CERTIFICATION', model: modelName, revision: modelRevision, browser: browser.version(), results, unavailableFixtures, audioUploads: 0, paidRequests: 0, requestOrigins: [...new Set(requests.map(request => request.origin))] };
-  await writeFile(path.join(tmpdir(), medium ? 'voice-medium-receipt.json' : multilingual ? 'voice-multilingual-receipt.json' : 'voice-local-receipt.json'), JSON.stringify(receipt, null, 2));
+  await writeFile(path.join(tmpdir(), longRecording ? 'voice-long-receipt.json' : medium ? 'voice-medium-receipt.json' : multilingual ? 'voice-multilingual-receipt.json' : 'voice-local-receipt.json'), JSON.stringify(receipt, null, 2));
 } finally { await browser?.close(); await new Promise(resolve => server.close(resolve)); }

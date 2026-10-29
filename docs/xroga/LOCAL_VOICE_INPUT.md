@@ -2,7 +2,7 @@
 
 Development branch: `codex/multilingual-voice-input-20261030`.
 Base: `e5768eeeee5c91bc31b2704243850fb896f0dfca`.
-Production remains unchanged. This document does not authorize merge or activation.
+The founder authorized voice-only production activation on 2026-10-30. Other batch activation remains held. Current production must be preserved until the voice candidate passes release checks.
 
 ## Behavior
 
@@ -18,7 +18,7 @@ Transformers.js 3 silently defaults to English when language is omitted. The ada
 
 Raw recordings are not uploaded or retained by this feature. The recognized text follows the existing composer draft-saving and manual Send behavior. Model weights can be cached by the browser. Worker termination releases the model and recording on completion, cancellation, timeout and failure. Backend voice authorization and accounting remain intact for existing clients, but these microphone controls do not call that paid route.
 
-Limits: two-minute recording, 8 MiB encoded audio, 125-second decoded validation margin, 15-second decode timeout, ten-minute total model preparation/inference deadline. Silence, malformed samples, interrupted recording and worker failures leave the existing draft intact. This is not a guarantee against recognition errors in noise or ambiguous speech.
+Limits: thirty-minute recording with clean Stop and final-chunk preservation, 64 MiB encoded audio, 1805-second decoded validation margin, 15-second decode timeout. Recognition has a ten-minute preparation allowance plus six times the audio duration. Silence, malformed samples, interrupted recording and worker failures leave the existing draft intact. This is not a guarantee against recognition errors in noise or ambiguous speech.
 
 ## Verification
 
@@ -37,7 +37,7 @@ The isolated worker suppresses upstream input-tensor error logging and returns o
 
 ## Release gate and limitations
 
-Recognition quality remains under evaluation. Base produced high word error rates. Small improved Arabic but selected Hindi script for the Urdu fixture. No production-quality Urdu or universal multilingual claim is supported by those results. The 776 MB Medium comparison failed inside the local runtime with error `1284783576`; its root cause is unconfirmed and it is not selected. Small remains a provisional development candidate, not a production acceptance claim.
+The founder explicitly accepted Urdu/Hindi script ambiguity on 2026-10-30. Recognition errors remain measured limitations requiring editable review, not a promise of exact text. Base produced high word error rates. Small improved Arabic but selected Hindi script for the Urdu fixture. No production-quality Urdu or universal multilingual claim is supported by those results. The 776 MB Medium comparison failed inside the local runtime with error `1284783576`; its root cause is unconfirmed and it is not selected. Small remains a provisional development candidate, not a production acceptance claim.
 
 Measured single-fixture word-error rates after automatic detection:
 
@@ -66,3 +66,7 @@ For rollback, revert this bounded change before deployment or restore the previo
 - [Whisper implementation and license](https://github.com/openai/whisper)
 - [Transformers.js Whisper language-detection limitation](https://github.com/huggingface/transformers.js/issues/302)
 - [Google FLEURS corpus](https://huggingface.co/datasets/google/fleurs)
+
+## Voice-only release scope
+
+Live frontend baseline is d7ce7def4ab94a72587907cb4f60690d7f288838, deployment 9MEC7muKc5udcQqPn7oFJ3Z6rDEQ. Release branch codex/voice-only-production-20261030 applies only the microphone changes to that source. It must not replace production with unrelated current-main Batch 3 changes. Preserve the existing deployment as rollback. No backend deployment, production SQL, new service or paid speech request is included.
