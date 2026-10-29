@@ -1,12 +1,12 @@
 # Xroga repository truth map
 
-Source SHA: `ee1ff7c13a365037ae25147f75c1fe1a9fd73844`. Branch observed: `codex/voice-only-production-20261030`. Audit started: 2026-10-29T22:43:57.181Z.
+Source SHA: `6bd3ba87ab1d6c23c7f6bb504ecf23e6be55da6f`. Branch observed: `codex/voice-only-production-20261030`. Audit started: 2026-10-29T22:56:07.897Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1726
+- surfaces: 1727
 - routeRegistrations: 349
 - routes: 293
 - reachableRoutes: 235
