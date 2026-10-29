@@ -1,10 +1,10 @@
 'use client';
 
-import { Mic, Square, X } from 'lucide-react';
+import { Square, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { transcribeVoiceLocally } from '@/lib/voiceLocal';
-import { AudioLinesIcon } from './AudioLinesIcon';
+import { AudioLinesIcon, type AudioLinesIconHandle } from '../icons/animated/AudioLinesIcon';
 import { captureVoiceRecording } from '@/lib/terminal/voiceRecording';
 
 interface CaptureSession { abort: AbortController; stream?: MediaStream; stop?: () => void }
@@ -21,6 +21,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
   const [progress, setProgress] = useState<'loading' | 'transcribing'>('loading');
   const [stage, setStage] = useState<HTMLElement | null>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+  const meterRef = useRef<AudioLinesIconHandle>(null);
   const session = useRef<CaptureSession | null>(null);
   const publish = useRef(onVoiceDraft);
   publish.current = onVoiceDraft;
@@ -45,6 +46,10 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
     };
   }, [cancel]);
   useEffect(() => { if (disabled) cancel(); }, [disabled, cancel]);
+  useEffect(() => {
+    if (mode === 'listening') meterRef.current?.startAnimation();
+    else meterRef.current?.stopAnimation();
+  }, [mode]);
 
   const start = async () => {
     if (session.current || disabled) return;
@@ -97,11 +102,11 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       {error ? <p role="alert" className="xv-voice-v8-error">{error}</p> : <p className="xv-voice-v8-hint">Audio stays on your device. First use downloads a speech model of about 250 MB. Review the text, then press Send.</p>}
     </div>) : null;
   return <>
-    <button ref={trigger} type="button" className={`xv-voice-icon-only${listening ? ' is-listening' : ''}`}
+    <button ref={trigger} type="button" className={`xv-voice-icon-only xv-mic-btn${listening ? ' is-listening' : ''}`}
       disabled={disabled || mode === 'requesting_permission' || mode === 'finalizing'}
       aria-label={listening ? 'Stop voice typing and keep text' : 'Start voice typing'}
       onClick={() => listening ? session.current?.stop?.() : void start()}>
-      {listening ? <AudioLinesIcon size={22} active /> : <Mic className="h-[22px] w-[22px]" aria-hidden />}
+      <AudioLinesIcon ref={meterRef} loop size={22} />
     </button>
     {feedback && (stage ? createPortal(feedback, stage) : feedback)}
   </>;
