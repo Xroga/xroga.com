@@ -18,7 +18,13 @@ export const productionExecutionPort: ExecutionPort = {
       // have one yet, and manufacturing that authority here would bypass the admission rule it exists to enforce.
       throw new ExistingSourceError('EXECUTION_UNAVAILABLE', 'Isolated execution on the Google runtime needs a canonical run for this change, which is not connected yet.');
     }
-    const { executeSandboxed } = await import('../../sandbox/sandboxRuntime.js');
+    const { executeSandboxed, selectSandboxProvider } = await import('../../sandbox/sandboxRuntime.js');
+    // A plain container runtime starts an empty container: it never copies the project's files in and cannot run a staged test plan, so the
+    // project's tests would "fail" with no output. That is a missing runtime, not a failing test, and must be reported as unavailable.
+    const { availability } = await selectSandboxProvider();
+    if (request.stages || ['docker', 'podman'].includes(availability.runtime)) {
+      throw new ExistingSourceError('EXECUTION_UNAVAILABLE', 'This deployment has no isolated runtime that can run a project\'s files, so nothing was run.');
+    }
     return executeSandboxed(request);
   },
 };

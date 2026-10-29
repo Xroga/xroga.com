@@ -99,7 +99,7 @@ export function ChangeWorkbench({ binding }: { binding: SourceBinding }) {
         <textarea id="change-instruction" value={instruction} onChange={(e) => setInstruction(e.target.value)} rows={3} maxLength={8_000} placeholder="For example: the order total is off by a cent when a discount applies; fix `calculateOrderTotal`" className="w-full rounded border border-[var(--card-border)] bg-transparent p-2 text-xs" />
         {canBuildOn ? <label className="flex items-center gap-1 text-[11px]"><input type="checkbox" checked={buildOn} onChange={(e) => setBuildOn(e.target.checked)} />Build on the change shown below (keeps its edits)</label> : null}
         <div className="flex items-center gap-2">
-          <button type="submit" disabled={busy === 'create' || instruction.trim().length < 3} className="inline-flex items-center gap-1 rounded-lg bg-[var(--accent)] px-3 py-1 text-xs font-medium text-white disabled:opacity-50">
+          <button type="submit" disabled={busy === 'create' || instruction.trim().length < 3} className="inline-flex items-center gap-1 rounded-lg bg-[var(--foreground)] px-3 py-1 text-xs font-medium text-[var(--background)] disabled:opacity-50">
             {busy === 'create' ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <Wand2 className="h-3.5 w-3.5" aria-hidden="true" />}Start the change
           </button>
           <span className="text-[11px] text-[var(--muted)]">{instruction.length}/8000</span>

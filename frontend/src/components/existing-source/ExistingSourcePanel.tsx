@@ -186,7 +186,7 @@ export function ExistingSourcePanel() {
 
       <section aria-label="Link a repository" className="space-y-2 rounded-lg border border-[var(--card-border)]/60 p-3">
         {choices === null ? (
-          <button type="button" onClick={() => void loadChoices()} disabled={busy === 'repositories'} className="flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60">
+          <button type="button" onClick={() => void loadChoices()} disabled={busy === 'repositories'} className="flex items-center gap-1.5 rounded-lg bg-[var(--foreground)] px-3 py-1.5 text-xs font-medium text-[var(--background)] disabled:opacity-60">
             {busy === 'repositories' ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <Link2 className="h-3.5 w-3.5" aria-hidden="true" />} Choose a repository
           </button>
         ) : (
@@ -211,7 +211,7 @@ export function ExistingSourcePanel() {
                 <label className="flex items-center gap-1"><GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
                   <input value={branch} onChange={(e) => setBranch(e.target.value)} placeholder={selected.defaultBranch} aria-label="Branch" className="w-40 rounded border border-[var(--card-border)] bg-transparent px-2 py-1" />
                 </label>
-                <button type="button" onClick={() => void link()} disabled={busy === 'link'} className="rounded-lg bg-[var(--accent)] px-3 py-1 font-medium text-white disabled:opacity-60">{busy === 'link' ? 'Linking' : 'Link this repository'}</button>
+                <button type="button" onClick={() => void link()} disabled={busy === 'link'} className="rounded-lg bg-[var(--foreground)] px-3 py-1 font-medium text-[var(--background)] disabled:opacity-60">{busy === 'link' ? 'Linking' : 'Link this repository'}</button>
               </div>
             ) : null}
           </div>
