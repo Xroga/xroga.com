@@ -695,6 +695,11 @@ export class SupabaseProjectRuntimeStore
       throw new Error('Project revision persistence evidence is invalid.');
     }
 
+    // A revision is durable only when the stored row, read back by its own id under the same owner, restores to exactly the bytes that were
+    // fingerprinted. The insert receipt alone proves nothing about what the database can later return.
+    const stored = await this.readBackRevision(userId, project.projectId, String(data.revision_id), fingerprint, project.runId);
+    project = stored.project;
+
     return {
       revisionId:
         String(
@@ -727,6 +732,17 @@ export class SupabaseProjectRuntimeStore
           data.created_at,
         ),
     };
+  }
+
+  private async readBackRevision(userId: string, projectId: string, revisionId: string, fingerprint: string, runId: string): Promise<ProjectRevisionRecord> {
+    const unavailable = () => Object.assign(new Error('Project revision could not be read back after it was saved.'), { code: 'REVISION_READBACK_FAILED' });
+    const { data, error } = await getSupabaseAdmin().from('project_runtime_revisions')
+      .select('revision_id, user_id, project_id, run_id, revision_number, workspace_fingerprint, software_project, created_at')
+      .eq('user_id', userId).eq('revision_id', revisionId).maybeSingle();
+    if (error || !data) throw unavailable();
+    const restored = restoreOwnerBoundProjectRevision(data, userId, projectId);
+    if (!restored || restored.revisionId !== revisionId || restored.runId !== runId || restored.workspaceFingerprint !== fingerprint) throw unavailable();
+    return restored;
   }
 
   private async saveWorkerRevision(userId: string, project: SoftwareProject, fingerprint: string) {
