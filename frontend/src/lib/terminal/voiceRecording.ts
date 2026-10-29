@@ -1,3 +1,4 @@
+import { VOICE_RECORDING_MS, VOICE_MAX_BYTES } from '../voiceLocalProtocol';
 /** Preserve typed formatting and legitimate repeated words. Each session publishes once. */
 export function appendVoiceTranscript(current: string, transcript: string): string {
   const text = transcript.trim();
@@ -5,7 +6,7 @@ export function appendVoiceTranscript(current: string, transcript: string): stri
 }
 
 export function captureVoiceRecording(stream: MediaStream, signal: AbortSignal,
-  Recorder: typeof MediaRecorder = MediaRecorder, limitMs = 120000) {
+  Recorder: typeof MediaRecorder = MediaRecorder, limitMs = VOICE_RECORDING_MS) {
   const mimeType = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm', 'audio/ogg;codecs=opus'].find(mime => Recorder.isTypeSupported(mime));
   const recorder = mimeType ? new Recorder(stream, { mimeType }) : new Recorder(stream);
   let resolveReady!: (started: boolean) => void;
@@ -15,6 +16,7 @@ export function captureVoiceRecording(stream: MediaStream, signal: AbortSignal,
   let timer: ReturnType<typeof setTimeout>;
   let stopTimer: ReturnType<typeof setTimeout>;
   let rejectAudio: (error: Error) => void;
+  let stopAtDurationLimit = () => {};
   const tracks = stream.getTracks();
   const cleanup = () => {
     clearTimeout(timer); clearTimeout(stopTimer);
@@ -39,7 +41,7 @@ export function captureVoiceRecording(stream: MediaStream, signal: AbortSignal,
     recorder.ondataavailable = event => {
       if (finished) return;
       bytes += event.data.size;
-      if (bytes > 8 * 1024 * 1024) { fail('RecordingLimitError'); return; }
+      if (bytes > VOICE_MAX_BYTES) { fail('RecordingLimitError'); return; }
       if (event.data.size) chunks.push(event.data);
     };
     recorder.onerror = interrupted;
@@ -54,7 +56,7 @@ export function captureVoiceRecording(stream: MediaStream, signal: AbortSignal,
     signal.addEventListener('abort', abort, { once: true });
     for (const track of tracks) track.addEventListener('ended', interrupted, { once: true });
     if (signal.aborted) { abort(); return; }
-    try { recorder.start(250); timer = setTimeout(() => fail('RecordingLimitError'), limitMs); }
+    try { recorder.start(250); timer = setTimeout(() => stopAtDurationLimit(), limitMs); }
     catch { interrupted(); }
   });
   const stop = () => {
@@ -64,5 +66,6 @@ export function captureVoiceRecording(stream: MediaStream, signal: AbortSignal,
     stopTimer = setTimeout(interrupted, 5000);
     try { recorder.stop(); } catch { interrupted(); }
   };
+  stopAtDurationLimit = stop;
   return { audio, stop, ready };
 }

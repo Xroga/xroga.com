@@ -57,7 +57,7 @@ onmessage = async (event: MessageEvent<unknown>) => {
       const result = await transcriber(samples, { language, task: 'transcribe', chunk_length_s: 25, stride_length_s: 5,
         streamer });
       const text = !Array.isArray(result) && typeof result.text === 'string' ? result.text.trim() : '';
-      if (!text || text.length > 20000) throw new Error('No usable transcript');
+      if (!text || text.length > 100000) throw new Error('No usable transcript');
       reply({ type: 'complete', text });
     } finally { samples.fill(0); await transcriber.dispose(); }
   } catch { reply({ type: 'error' }); }

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { recognizeVoiceSamples } from './voiceLocal';
-import { validateVoiceSamples, selectVoiceLanguage, voiceCompletionGuard } from './voiceLocalProtocol';
+import { VOICE_MAX_SECONDS, VOICE_SAMPLE_RATE, validateVoiceSamples, selectVoiceLanguage, voiceCompletionGuard } from './voiceLocalProtocol';
 
 function fixture() {
   const worker = { onmessage: null as ((event: {data: unknown}) => void) | null, onerror: null as (() => void) | null, onmessageerror: null as (() => void) | null,
@@ -27,14 +27,15 @@ test('cancel during loading/inference terminates the worker and denies late tran
   const g = fixture(); g.abort.abort(); await assert.rejects(g.run(), { name: 'AbortError' }); assert.equal(g.worker.posted, 0);
 });
 test('download errors, malformed results, worker crashes and timeout preserve the draft', async () => {
-  for (const data of [{ type: 'error' }, { type: 'complete', text: '' }, { type: 'complete', text: 'x'.repeat(20001) }, null]) {
+  for (const data of [{ type: 'error' }, { type: 'complete', text: '' }, { type: 'complete', text: 'x'.repeat(100001) }, null]) {
     const f = fixture(), pending = f.run(); f.worker.onmessage!({ data }); await assert.rejects(pending); assert.equal(f.worker.stopped, 1);
   }
   const crash = fixture(), pending = crash.run(); crash.worker.onerror!(); await assert.rejects(pending);
   const timed = fixture(); await assert.rejects(timed.run(1), /timed out/); assert.equal(timed.worker.stopped, 1);
 });
 test('invalid, oversized, nonfinite and clipped samples never start a worker', () => {
-  for (const samples of [null, new Float32Array(1), new Float32Array(2000001), new Float32Array(16000).fill(NaN), new Float32Array(16000).fill(2)]) {
+  validateVoiceSamples(new Float32Array(VOICE_SAMPLE_RATE * 180));
+  for (const samples of [null, new Float32Array(1), new Float32Array(VOICE_SAMPLE_RATE * VOICE_MAX_SECONDS + 1), new Float32Array(16000).fill(NaN), new Float32Array(16000).fill(2)]) {
     assert.throws(() => validateVoiceSamples(samples));
   }
 });

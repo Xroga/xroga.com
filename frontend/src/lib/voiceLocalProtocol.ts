@@ -3,7 +3,9 @@ export const VOICE_MODEL = 'onnx-community/whisper-small';
 export const VOICE_MODEL_REVISION = '36050c46d777d46dc4b5f43f6d90574fc38f8732';
 export const VOICE_RUNTIME_PATH = '/voice-runtime/v1/';
 export const VOICE_SAMPLE_RATE = 16000;
-export const VOICE_MAX_SECONDS = 125;
+export const VOICE_RECORDING_MS = 30 * 60 * 1000;
+export const VOICE_MAX_BYTES = 64 * 1024 * 1024;
+export const VOICE_MAX_SECONDS = VOICE_RECORDING_MS / 1000 + 5;
 export type VoiceWorkerReply =
   | { type: 'progress'; stage: 'loading' | 'transcribing' }
   | { type: 'complete'; text: string }

@@ -84,7 +84,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       const name = failure instanceof Error ? failure.name : '';
       setError(name === 'NotAllowedError' ? 'Microphone permission was denied. Allow access in your browser or type your message.'
         : name === 'NotFoundError' ? 'No microphone was found. Connect one or type your message.'
-        : name === 'RecordingLimitError' ? 'Recording reached the two-minute or size limit. Please record a shorter message.'
+        : name === 'RecordingLimitError' ? 'Recording exceeded this device’s audio size limit. Please record a shorter message.'
         : name === 'RecordingInterruptedError' ? 'Recording was interrupted. Please record again. Your typed text is unchanged.'
         : 'Speech recognition could not finish on this device. Try a shorter recording or type your message. Your typed text is unchanged.');
     } finally {
@@ -96,10 +96,10 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
   const feedback = (mode !== 'idle' || error) ? (<div className="xv-voice-v8-session" data-testid="xroga-voice-session">
       <div className="xv-voice-v8-primary">
         {mode !== 'idle' ? <button type="button" className="xv-voice-v8-control" aria-label="Cancel voice typing" onClick={cancel}><X className="h-4 w-4" aria-hidden /></button> : null}
-        <span role="status" className="xv-voice-v8-status">{listening ? 'Listening. Click Stop when finished.' : mode === 'finalizing' ? (progress === 'loading' ? 'Loading the on-device voice model. First use may take a moment.' : 'Transcribing on your device...') : mode === 'requesting_permission' ? 'Waiting for microphone permission' : 'Voice input unavailable'}</span>
+        <span role="status" className="xv-voice-v8-status">{listening ? 'Listening. Click Stop when finished.' : mode === 'finalizing' ? (progress === 'loading' ? 'Loading the on-device voice model. First use can take a few minutes.' : 'Transcribing on your device...') : mode === 'requesting_permission' ? 'Waiting for microphone permission' : 'Voice input unavailable'}</span>
         {listening ? <button type="button" className="xv-voice-v8-control" aria-label="Stop recording" onClick={() => session.current?.stop?.()}><Square className="h-4 w-4" aria-hidden /></button> : null}
       </div>
-      {error ? <p role="alert" className="xv-voice-v8-error">{error}</p> : <p className="xv-voice-v8-hint">Audio stays on your device. First use downloads a speech model of about 250 MB. Review the text, then press Send.</p>}
+      {error ? <p role="alert" className="xv-voice-v8-error">{error}</p> : <p className="xv-voice-v8-hint">Audio stays on your device. First use downloads about 250 MB. Up to 30 minutes per recording. Review the text, then press Send.</p>}
     </div>) : null;
   return <>
     <button ref={trigger} type="button" className={`xv-voice-icon-only xv-mic-btn${listening ? ' is-listening' : ''}`}

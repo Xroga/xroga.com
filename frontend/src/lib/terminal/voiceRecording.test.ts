@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {appendVoiceTranscript, captureVoiceRecording} from './voiceRecording';
+import {VOICE_MAX_BYTES} from '../voiceLocalProtocol';
 class Track extends EventTarget { stopped = false; stop() { this.stopped = true; } }
 class Recorder {
   static latest: Recorder;
@@ -39,8 +40,11 @@ test('unexpected recorder termination fails instead of publishing partial speech
  const f=fixture(); const rejected=assert.rejects(f.audio,{name:'RecordingInterruptedError'});
  f.recorder.chunk('partial'.repeat(512)); f.recorder.onstop?.(); await rejected; assert.equal(f.track.stopped,true);
 });
-test('duration and size limits discard incomplete audio without submitting', async () => {
- const f=fixture(5); await assert.rejects(f.audio,{name:'RecordingLimitError'}); assert.equal(f.track.stopped,true);
+test('duration limit stops cleanly and preserves final audio, oversized data fails closed', async () => {
+ const f=fixture(5); f.recorder.chunk('a'.repeat(512));
+ await new Promise(resolve=>setTimeout(resolve,15)); assert.equal(f.recorder.stops,1);
+ f.recorder.chunk('b'.repeat(512)); f.recorder.onstop?.();
+ assert.equal(await (await f.audio).text(),'a'.repeat(512)+'b'.repeat(512)); assert.equal(f.track.stopped,true);
  const large=fixture(); const rejected=assert.rejects(large.audio,{name:'RecordingLimitError'});
- large.recorder.chunk('x'.repeat(8*1024*1024+1)); await rejected;
+ large.recorder.chunk('x'.repeat(VOICE_MAX_BYTES+1)); await rejected;
 });
