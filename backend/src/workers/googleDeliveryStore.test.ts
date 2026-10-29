@@ -73,3 +73,23 @@ test('enqueue refuses a malformed Builder project id before any database call',a
     await assert.rejects(store.enqueue(context,run,{prompt:'synthetic',builderProjectId:bad}),denied);
   }
 });
+
+const changeId='66666666-6666-4666-8666-666666666666';
+test('an existing-project change id travels through the claim only when it is a valid id',async()=>{
+  let value:unknown=changeId;
+  const service=()=>({rpc:async(_name:string,args:any)=>({error:null,data:{deliveryId:delivery,runId:run,userId:owner,sourceSha:c.sourceSha,
+    workerId:worker,generation:args.p_generation,freshStart:true,input:{prompt:'synthetic',existingSourceChangeId:value}}})} as unknown as SupabaseClient);
+  const store=new GoogleDeliveryStore(c,env,async()=>{},service);
+  const claim=await store.claim(delivery,worker);assert.ok(claim);
+  assert.equal(requireCanonicalDeliveryClaim(claim).input.existingSourceChangeId,changeId);
+  for(const bad of ['not-a-uuid',42,{id:changeId},'']){value=bad;await assert.rejects(store.claim(delivery,worker),denied);}
+  value=undefined;const plain=await store.claim(delivery,worker);assert.ok(plain);
+  assert.equal(requireCanonicalDeliveryClaim(plain).input.existingSourceChangeId,undefined);
+});
+test('enqueue refuses a malformed existing-project change id before any database call',async()=>{
+  const store=new GoogleDeliveryStore(c,env,async()=>{},()=>{throw new Error('NO_DATABASE_CALL_EXPECTED');});
+  const context=createTenantContext({userId:owner,via:'persisted_owner'});
+  for(const bad of ['../etc','not-a-uuid','',' ']){
+    await assert.rejects(store.enqueue(context,run,{prompt:'synthetic',existingSourceChangeId:bad}),denied);
+  }
+});
