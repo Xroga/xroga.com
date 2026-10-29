@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4f71e5f0a8d0b3d969b6c05c076d440e7cde1e60",
+  "source_sha": "1ad0e053a48868e37160b92017b5530dc0b11647",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19947,7 +19947,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s04/S04Publish.tsx",
-      "sha256": "11981f6481222ae470abddc343bed0d7e181d48ee12c6f9f90eecb17baff491b"
+      "sha256": "e853404f2aebe23e9008b2adfcac749423c8a6b3f0bd6dab0de4e6506eb92ef8"
     },
     {
       "path": "frontend/src/components/homepage-next/s04/StoreMark.tsx",
@@ -19967,7 +19967,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s04/publish.ts",
-      "sha256": "3e4355fcf35db42aa81b79f862c1557cff3588c258ac56412d35dc5d5d56bd41"
+      "sha256": "7d9b4eaf5ed0ddfd385b654a439e1535af501229a7fbc664d9cfd5de2827289a"
     },
     {
       "path": "frontend/src/components/homepage-next/s04/stage/Handoff.tsx",

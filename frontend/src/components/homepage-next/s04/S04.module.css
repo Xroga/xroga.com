@@ -387,7 +387,7 @@
 /* ------------------------------------------------------------------ readiness */
 .rail {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: 16px;
   padding: 6px 14px 6px 12px;
@@ -483,31 +483,6 @@
 .items li[data-state='owner'] small {
   color: #e3c18f;
 }
-.replay {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 0 16px !important;
-  border-radius: 999px !important;
-  box-shadow: inset 0 0 0 1px var(--hair-2);
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #c8d2de;
-  transition: background-color 200ms var(--ease);
-}
-.replay:hover {
-  background: rgba(236, 240, 246, 0.05) !important;
-}
-.replay svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
 .note.note {
   margin-top: 16px;
   font-size: 12.5px;
@@ -560,9 +535,6 @@
   }
   .items small {
     display: none;
-  }
-  .replay {
-    min-height: 36px;
   }
 }
 
@@ -668,10 +640,6 @@
   }
   .items :is(b, small) {
     white-space: normal;
-  }
-  .replay {
-    justify-self: stretch;
-    justify-content: center;
   }
 }
 
