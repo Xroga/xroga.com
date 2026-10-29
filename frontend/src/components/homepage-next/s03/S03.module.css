@@ -552,7 +552,6 @@
 .gPerson {
   fill: var(--apricot);
 }
-.cta svg,
 .tourBtn svg {
   width: 15px;
   height: 15px;
@@ -3878,14 +3877,6 @@
   color: #f19a8c;
 }
 
-/* ------------------------------------------------------------------------------------------------- footer */
-.foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px 20px;
-  margin-top: 28px;
-}
 .aboutNote.aboutNote {
   max-width: 78ch;
   margin: 0 0 10px;
@@ -3897,27 +3888,6 @@
   color: var(--sub);
   animation: popIn 240ms var(--ease) backwards;
 }
-.cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 0 18px;
-  border-radius: 13px;
-  font:
-    600 14.5px/1 var(--font-inter),
-    system-ui,
-    sans-serif;
-  text-decoration: none;
-  color: var(--text);
-  box-shadow: inset 0 0 0 1px rgba(121, 169, 255, 0.55);
-  background: rgba(47, 123, 255, 0.1);
-  transition: background 160ms linear;
-}
-.cta:hover {
-  background: rgba(47, 123, 255, 0.2);
-}
-
 /* ---------------------------------------------------------------------------------------------- ≤1240 */
 @media (max-width: 1240px) {
   .bench {

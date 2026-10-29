@@ -271,9 +271,8 @@ test('providers appear inside the work they support, never as a wall', () => {
   for (const id of ['ahrefs', 'gbp'] as const) assert.equal(hasMark(id), false);
 });
 
-test('exactly one route into the product, plus the integrations directory', () => {
-  assert.equal((SHELL.match(/<Link /g) ?? []).length, 1);
-  assert.match(SHELL, /loggedIn \? '\/workspace' : '\/auth\/signup'/);
+test('no footer route into the product; scenes carry no hrefs', () => {
+  assert.equal((SHELL.match(/<Link /g) ?? []).length, 0);
   assert.doesNotMatch(SCENES, /href=/);
 });
 

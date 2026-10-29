@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ec4986c292c4433b96497a06655e33096698d725",
+  "source_sha": "4f71e5f0a8d0b3d969b6c05c076d440e7cde1e60",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19815,7 +19815,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s02/S02Work.tsx",
-      "sha256": "80e59b4b18fff55d356d107ee19a090d4525435f1ebd0f9d3e10c8ebe71609ae"
+      "sha256": "b629586f6c6331cd4ac46faeea39d86a9ad9aafa6a8ee00e05bab6be749c5a92"
     },
     {
       "path": "frontend/src/components/homepage-next/s02/Theater.tsx",
@@ -19851,7 +19851,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s02/script.ts",
-      "sha256": "ed968a7ce41cf92e38ea309004c52517f7c543024fbe242b849b9528d62e98cc"
+      "sha256": "91f914b2577a1639c797738642de69a6c521a873db9fbe736aead4af75cbe416"
     },
     {
       "path": "frontend/src/components/homepage-next/s02/team.ts",
@@ -19871,7 +19871,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
-      "sha256": "b6e8883db1951f9b10e88b9318f4f3db2e319d66a2f18cb7cd0f113c23394ef3"
+      "sha256": "1ce6c1bdddaf9c8c521533a5e0250bfb27c8e311cf3196cc7b055ed8cfb84d80"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/SearchStudio.tsx",

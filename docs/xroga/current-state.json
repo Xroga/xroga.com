@@ -67594,7 +67594,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:25",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:24",
         "frontend/src/components/homepage/HomepageClient.tsx:21"
       ],
       "reachable": true,
@@ -69478,7 +69478,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:23",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:22",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:14",
         "frontend/src/components/homepage-next/s02/Workspaces.tsx:11"
       ],
@@ -69516,7 +69516,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:24"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:23"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -69640,7 +69640,7 @@
       "id": "surface:e91efcfd09bfe6cbb4b9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/S02Work.tsx",
-      "sha256": "80e59b4b18fff55d356d107ee19a090d4525435f1ebd0f9d3e10c8ebe71609ae",
+      "sha256": "b629586f6c6331cd4ac46faeea39d86a9ad9aafa6a8ee00e05bab6be749c5a92",
       "symbols": [
         "Hold",
         "MODES",
@@ -69686,7 +69686,6 @@
         "./workforce",
         "motion/react",
         "next/dynamic",
-        "next/link",
         "react"
       ],
       "runtimeImports": [
@@ -69713,7 +69712,6 @@
       "externalProviderDependencies": [
         "motion/react",
         "next/dynamic",
-        "next/link",
         "react"
       ],
       "authBoundary": [],
@@ -69773,7 +69771,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:32"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:31"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -69998,7 +69996,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:20",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
         "frontend/src/components/homepage-next/s02/s02.test.ts:4",
         "frontend/src/components/homepage-next/s02/useDemoClock.ts:4"
       ],
@@ -70070,7 +70068,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:18",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:19"
       ],
       "reachable": true,
@@ -70164,7 +70162,7 @@
       "id": "surface:2ea7d69e957166ca400d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/script.ts",
-      "sha256": "ed968a7ce41cf92e38ea309004c52517f7c543024fbe242b849b9528d62e98cc",
+      "sha256": "91f914b2577a1639c797738642de69a6c521a873db9fbe736aead4af75cbe416",
       "symbols": [
         "Action",
         "COPY",
@@ -70189,7 +70187,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:17",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:16",
         "frontend/src/components/homepage-next/s02/Theater.tsx:19",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:18",
         "frontend/src/components/homepage-next/s02/engine.ts:6",
@@ -70246,7 +70244,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:18",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:17",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:16",
         "frontend/src/components/homepage-next/s02/Workspaces.tsx:12",
         "frontend/src/components/homepage-next/s02/s02.test.ts:6",
@@ -70299,7 +70297,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:21"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70368,7 +70366,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:22",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:21",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:17",
         "frontend/src/components/homepage-next/s02/s02.test.ts:7"
       ],
@@ -70428,7 +70426,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:14"
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70452,7 +70450,7 @@
       "id": "surface:1aeaaff28fa1b90a8110",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
-      "sha256": "b6e8883db1951f9b10e88b9318f4f3db2e319d66a2f18cb7cd0f113c23394ef3",
+      "sha256": "1ce6c1bdddaf9c8c521533a5e0250bfb27c8e311cf3196cc7b055ed8cfb84d80",
       "symbols": [
         "LAST_AT",
         "LEAD_AT",
@@ -70483,7 +70481,6 @@
         "./state",
         "./tourBeats",
         "motion/react",
-        "next/link",
         "react"
       ],
       "runtimeImports": [
@@ -70505,7 +70502,6 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "motion/react",
-        "next/link",
         "react"
       ],
       "authBoundary": [],
@@ -70562,7 +70558,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:15"
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70629,7 +70625,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:17"
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70732,7 +70728,7 @@
       ],
       "callers": [
         "frontend/src/components/homepage-next/s03/GrowthStudio.tsx:9",
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:13",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:12",
         "frontend/src/components/homepage-next/s03/SearchStudio.tsx:9",
         "frontend/src/components/homepage-next/s03/Tour.tsx:11",
         "frontend/src/components/homepage-next/s03/growth/Launch.tsx:9",
@@ -71474,7 +71470,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:16",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:15",
         "frontend/src/components/homepage-next/s03/s03.test.ts:32"
       ],
       "reachable": true,
@@ -71529,7 +71525,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:18",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:17",
         "frontend/src/components/homepage-next/s03/s03.test.ts:33"
       ],
       "reachable": true,

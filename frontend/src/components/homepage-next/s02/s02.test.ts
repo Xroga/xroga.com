@@ -212,13 +212,10 @@ test('clocks run only on screen and visible; nothing moves the page', () => {
   for (const [i, css] of CSS.entries()) if (/animation|transition/.test(css)) assert.match(css, /prefers-reduced-motion: reduce/, CSS_FILES[i]);
 });
 
-test('one compact section: heading, one disclosure, one CTA, no video', () => {
+test('one compact section: heading, no footer CTA, no video', () => {
   assert.equal(COPY.eyebrow, 'Xroga in action');
   assert.equal(COPY.title, 'Give Xroga a task. Or give an AI Employee a job.');
-  assert.equal(COPY.disclosure, 'Illustrative examples · sample data');
-  assert.equal((SHELL.match(/COPY\.disclosure/g) ?? []).length, 1);
-  assert.equal((SHELL.match(/<Link /g) ?? []).length, 1);
-  assert.match(SHELL, /'\/workspace' : '\/auth\/signup'/);
+  assert.doesNotMatch(SHELL, /<Link |<footer|COPY\.(disclosure|cta)/);
   assert.doesNotMatch(ALL_COPY, /<video|autoPlay/);
   assert.match(PAGE, /<S02Work loggedIn=\{loggedIn\} \/>/);
 });

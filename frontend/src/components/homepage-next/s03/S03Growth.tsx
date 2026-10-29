@@ -7,7 +7,6 @@
  * input hands control over at once, and there is nothing to replay. Everything is a local walkthrough with fictional
  * examples: no account is linked and nothing is published or spent.
  */
-import Link from 'next/link';
 import { useReducedMotion } from 'motion/react';
 import { useEffect, useReducer, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { COPY } from './data';
@@ -28,7 +27,7 @@ const titleParts = {
   last: COPY.title.slice(LAST_AT),
 };
 
-export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
+export function S03Growth(_props: { loggedIn?: boolean }) {
   const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const [st, dispatch] = useReducer(reducer, undefined, initialState);
@@ -169,15 +168,6 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
           <div key={st.view} className={s.modePanel}>
             {st.view === 'search' ? <SearchStudio st={st} dispatch={dispatch} /> : <GrowthStudio st={st} dispatch={dispatch} />}
           </div>
-        </div>
-
-        <div className={s.foot}>
-          <Link href={loggedIn ? '/workspace' : '/auth/signup'} className={s.cta}>
-            Open the Xroga workspace
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" />
-            </svg>
-          </Link>
         </div>
       </div>
     </section>
