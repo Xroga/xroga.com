@@ -19,6 +19,17 @@ Added since the first checkpoint, all development only and covered by CI on the 
 
 The tables below describe the first checkpoint; where they disagree with the update above, the update and the golden matrix are current.
 
+## Update (third increment)
+
+Everything below is development only; the migration is unapplied and production is on hold.
+
+- **Batch 3 repair loop now uses the shared controller** (`existingSource/change/service.ts`). Verification and every repair after the first attempt run through `runBoundedRepair`; the task's saved attempt count is the persisted state. A repair that edits a test the project already had is refused and rolled back. All 138 existing Batch 3 tests pass plus three new integration tests with a real process runner.
+- **Batch 2 is intentionally not moved onto the controller.** Its repair is the canonical task graph's `validation_repair` task (attempt-capped, checkpointed by the graph). Wrapping it would add a second orchestrator, which the architecture invariants forbid. Batch 2 shares the verification gate.
+- **Resource metering is connected** to the canonical sandbox seam (compute and browser time), `saveRevision` (bytes) and the maintenance tick (sweep), behind a flag, with configurable caps and record-only mode. See `RESOURCE-LEDGER.md`.
+- **Delivery fairness fixed and measured** (`workers/fairSelection.ts`, `benchmarks/local-fairness-latency.json`).
+- **Real-process delivery kill tests** (`backend/tests/googleDeliveryCrash.local.integration.ts`): dispatcher killed after reserving, worker killed after claiming, cancellation after admission.
+- Golden A–V: 2 PASS (D local-process, R contract), 20 PARTIAL, 0 NOT_RUN.
+
 ## Reconciliation with main and Batch 3
 
 | Item | Result |

@@ -16349,7 +16349,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
       "callIds": [
         "d84df34ff692e4fb31c1"
       ],
@@ -16762,10 +16762,10 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
       "callIds": [
-        "7fa0b75d1947b7252b32",
-        "475ce22bc32e3c36e043"
+        "9d26892e33e0990fa9b1",
+        "2029ec3274d22032f064"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -16943,9 +16943,9 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sourceSha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
       "callIds": [
-        "cfcd9a8afee3dabccf13"
+        "6aa631c47e1c902cc88a"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "This internal constructor requires an exact own key of the immutable17-entry global operation registry and has no public administrative endpoint. Every named recipient independently proves its fixed operation, limited data projection, current staff/signature/capability authority where needed and actual positive/negative behavior. All other633 receiving inventory sites are already verified before this constructor is considered. Actual unknown, prototype and missing names fail before SDK construction, valid private routing/readiness uses execute, and revoked readiness SELECT denies without leaking identities. Returned SDK is privileged, not an enforced query sandbox. This exemption covers only named actual internal recipients, never arbitrary future queries or a user-selectable admin handle.",
@@ -25560,21 +25560,21 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "a7a1747d2192d62b505b",
-        "4623023af1a7fe9573f6",
-        "28dfd8245286c04b697b",
-        "45874c3043d8516c9e20",
-        "b1922cb9ec459f4186c2",
-        "3027098ec062496251e3",
-        "d51ac26872d000030145",
-        "9f445fdb22b362ba675a",
-        "f9c86e5e58481551703f",
-        "bbbbeadcb9be36006874",
-        "c870b0981e8435dd6a08",
-        "e2f116acf28dc7ae723a",
-        "1b7b471f9cb79b53190d"
+        "a864bc5998ad30044406",
+        "705840502528b9097f92",
+        "794f2986baf15127a5e5",
+        "2660919ebdd0c11227d5",
+        "b2f45a155f1f9ed6ccee",
+        "952e2977dbbd8adc9b21",
+        "d37aef8db513054ed541",
+        "1244fa5f77d64178a682",
+        "358bbf620757dbdc20c7",
+        "7e1732412cef6d6c7465",
+        "86f871c90f683c44c842",
+        "250095e9cfae8788cc06",
+        "2c2b50961cb989373f04"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Generic revision producers are two issued-owner runtime handlers which first load exact owner/project snapshot and exact owner/project/session, plus private delivery lifecycle writes whose only production publish/deploy producers are authenticated delivery routes and whose service first loads that exact owner/project revision. History restore/fork also load exact owner/project/revision first, with no current production caller. The generic exported persistence wrapper has no production consumer. Active pipeline/preview workers instead use the separately proven admitted-attempt RPC. The snapshot fixes project/run/OutcomeContract before await and exact receipt binds owner/project/run/fingerprint/revision. Existing database trigger locks an attached current database project through the run where present. Logical project IDs remain owner-namespaced text and are not cast to projects UUIDs. No user body chooses durable owner or replaces run identity.\nThe sole production runtime manager factory is used by authenticated runtime routes or livePreview coordinator. Routes derive owner from original issued context, load owner-bound revision and bind requested project/session before provider access. Coordinator producers are the same pipeline, route and admitted-attempt agent bridge. Manager retains that owner, loads exact owner/session and derives event project/session from the retained row. The only selected current provider is the internal Fly adapter, which constructs owner/project/class/provider identity from supplied server input rather than provider JSON. Pipeline delivery events use its issued actor and admitted software project. The separate user-triggered delivery service gets server req.userId from its auth-mounted route and loads exact owner/project revision before session-less events. Dormant history helpers also load exact owner/project/revision first. Session persistence validates first-owner immutable identity and exact receipt. New SQL holds exact current session owner/project on event insertion.\nThe only production ProjectSecretManager constructor is ProjectRuntimeManager with retained server owner. Its factory receives the authenticated runtime route owner or admitted coordinator owner, whose exact producers are hash bound above. Enabled exec/start/log loads exact owner/session before deriving the logical project from that row. No requested provider/default account selects these secrets. Save/read/delete keys contain original owner plus logical project/name/scope. Save/delete helpers currently have no production mutation consumer outside that retained-owner secret manager. The new real test exercises those existing helpers directly with isolated Auth actors, not a fabricated public endpoint. Current browser roles cannot read/write/delete these rows. No fallback exists. After an insert or admitted-attempt persist, readBackRevision re-reads the stored row by its own revision id under the same verified owner and restores it through the owner-bound restore path, so a revision is reported durable only if the stored bytes match their fingerprint.",
@@ -25713,9 +25713,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "13a50c6c5346f86b9ac9"
+        "601d86d506f90f4af7b4"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
@@ -25745,9 +25745,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "8d8bcfd2405f10633106"
+        "1145e419d776dc7df9c2"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
@@ -25777,9 +25777,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "290ec46eb473e771a86a"
+        "cc1d5d8e1cb0c92c86db"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
@@ -25809,9 +25809,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "bfb53639942d2ab34e06"
+        "6d3a8c300b6a8f18fbb5"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
@@ -25841,9 +25841,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "287792dd5c3e6b7628ae"
+        "6c6c1e09597d26afcf99"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
@@ -25873,9 +25873,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "c37621a1df285b101ac9"
+        "4b4714060afccfa2aed1"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
@@ -25905,9 +25905,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sourceSha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "callIds": [
-        "0e40876fd6a3cb2fdbb2"
+        "6379dcdeb795d49645a2"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Exact receiver is Node Buffer.from, decoding canonical base64 segments of an encrypted envelope in memory. It performs no database or Storage action and does not decrypt or authenticate ciphertext.",
@@ -28458,6 +28458,31 @@
         {
           "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
           "marker": "another owner cannot settle, release or re-reserve"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.local.integration.ts",
+          "marker": "the table and functions are not reachable by anonymous or signed-in roles"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/resourceMeter.ts",
+      "sourceSha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d",
+      "callIds": [
+        "1f13e40af8474dd650cc",
+        "508616f756e49c4a7c6a"
+      ],
+      "disposition": "NARROW_EXCEPTION",
+      "authority": "The only caller is the existing Google delivery maintenance tick, and only when XROGA_ENGINEERING_METERING=1. It uses the registered engineering_resource_sweep authority, which calls the single database function sweep_stale_engineering_reservations with a bounded interval. The function takes no owner, selects no row for the caller and returns only a count. The threshold has a floor of one hour (default two) so a call that is still running cannot be charged early.",
+      "reason": "Fixed-table lifecycle maintenance that spans owners by design, never selects or returns customer content and invokes no provider. A real disposable PostgreSQL test with a worker killed by SIGKILL shows the unsettled hold is charged in full once, the sweep is repeatable, and a recent hold is left alone. The function is service-role only and anon/authenticated are explicitly revoked. This certifies this bounded maintenance call, not usage accounting accuracy or any production behaviour.",
+      "evidence": [
+        {
+          "path": "backend/src/ai/resourceMeter.test.ts",
+          "marker": "sweep: off when metering is off"
+        },
+        {
+          "path": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+          "marker": "a worker killed with SIGKILL while holding a reservation leaks a visible hold"
         },
         {
           "path": "backend/tests/engineeringResourceLedger.local.integration.ts",

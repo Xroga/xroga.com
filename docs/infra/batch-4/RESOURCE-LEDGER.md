@@ -32,11 +32,26 @@ indistinguishable from a missing one. Database error text is never returned to c
 **12 concurrent reservations against a cap that fits five: exactly five succeed**, release/settle ordering, cross-owner denial, overrun recorded, sweep charged and repeatable, invalid input,
 role privileges with a positive control. The migration applies twice without error. Client behaviour: `backend/src/ai/resourceLedger.test.ts` (6 tests).
 
+## Where it is connected
+
+All of it is off unless `XROGA_ENGINEERING_METERING=1`, and the migration is not applied to production, so nothing is recorded in production.
+
+| Resource | Where | What is held and settled |
+| --- | --- | --- |
+| Sandbox compute seconds | `sandbox/meteredExecution.ts`, called from `executeCanonicalSandboxed` for every canonical caller except browser verification | Held at the stage timeouts (or the call timeout), settled at the measured wall time, also on failure |
+| Browser session seconds | same seam, caller `browser-verification` | same |
+| Storage bytes | `SupabaseProjectRuntimeStore.saveRevision` | UTF-8 bytes of the revision, settled only if it was actually saved (a failed save is charged 0) |
+| Reconciliation | `sweepStaleEngineeringReservations`, on the existing delivery maintenance tick | Open holds older than the threshold are charged in full as `swept_unsettled` |
+
+The owner and run come from the admitted run attempt (or the revision's owner), never from a request. Caps are configuration: `XROGA_ENGINEERING_CAP_SANDBOX_SECONDS`, `..._BROWSER_SECONDS`, `..._STORAGE_BYTES`, window `XROGA_ENGINEERING_CAP_WINDOW_SECONDS` (default one day, a window length and not a limit), sweep threshold `XROGA_ENGINEERING_SWEEP_AFTER_SECONDS` (default two hours, because the longest canonical task timeout is 55 minutes; it cannot be set below one hour). **A category with no cap is record-only: usage is measured and written and nothing is refused**, so real numbers exist before anyone chooses a limit. A category with a cap fails closed if the ledger is unavailable; record-only fails open and logs it. A malformed cap is refused at startup rather than treated as no cap.
+
 ## Not covered
 
-- No call site meters real sandbox or browser usage yet: the provider boundary does not report measured units to the ledger. The ledger, client and repair adapter exist; wiring each provider's measurement is a follow-up.
-- No retention or archival of old rows. Foreign keys to `swarm_runs` are intentionally absent so the table installs on its own; rows for deleted runs need a retention job.
-- Caps and windows are not configured anywhere yet. Choosing them needs measurements, not guesses.
+- Nothing has run against a real Google sandbox or browser, so no real usage exists yet; the metering paths are tested with fakes, a loopback PostgREST and a real PostgreSQL for the ledger itself.
+- No caps are chosen. Choosing them needs measurements from a real environment.
+- Storage is bytes written in the window, not total stored footprint (that would need deduplication and deletion accounting).
+- No retention or archival of old rows, and no foreign key to `swarm_runs` (so the table installs on its own); rows for deleted runs need a retention job.
+- Per-tenant limits are the same configured cap applied per owner; there are no per-plan or per-tenant overrides yet.
 - Not applied to any production database.
 
 ## Rollback

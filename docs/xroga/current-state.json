@@ -7370,11 +7370,14 @@
       ],
       "imports": [],
       "runtimeImports": [],
-      "entryPoints": [],
-      "callers": [
-        "backend/src/ai/repairController.test.ts:4"
+      "entryPoints": [
+        "backend/src/index.ts"
       ],
-      "reachable": false,
+      "callers": [
+        "backend/src/ai/repairController.test.ts:4",
+        "backend/src/existingSource/change/service.ts:15"
+      ],
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -7388,11 +7391,11 @@
       "testCoverage": [
         "backend/src/ai/repairController.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -7678,11 +7681,16 @@
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts"
       ],
-      "entryPoints": [],
-      "callers": [
-        "backend/src/ai/resourceLedger.test.ts:6"
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
-      "reachable": false,
+      "callers": [
+        "backend/src/ai/resourceLedger.test.ts:6",
+        "backend/src/ai/resourceMeter.test.ts:5",
+        "backend/src/ai/resourceMeter.ts:16"
+      ],
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "@supabase/supabase-js"
@@ -7696,13 +7704,101 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/resourceLedger.test.ts"
+        "backend/src/ai/resourceLedger.test.ts",
+        "backend/src/ai/resourceMeter.test.ts",
+        "backend/src/sandbox/meteredExecution.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a9b022cb745d51c810ff",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/resourceMeter.ts",
+      "sha256": "41d41394517529873968222975159e930630e672a03f7f6d786507d63cee1a3d",
+      "symbols": [
+        "CAP_ENV_NAME",
+        "DEFAULT_WINDOW_SECONDS",
+        "MeterConfig",
+        "MeterInput",
+        "RECORD_ONLY_CAP",
+        "ResourceExhaustedError",
+        "ResourceMeter",
+        "cap",
+        "caps",
+        "category",
+        "elapsedSeconds",
+        "enforced",
+        "engineeringMeterFor",
+        "error",
+        "estimate",
+        "meterConfigFromEnv",
+        "n",
+        "raw",
+        "rawWindow",
+        "raws",
+        "reservationId",
+        "reserved",
+        "result",
+        "started",
+        "supabase",
+        "sweepStaleEngineeringReservations",
+        "sweepThresholdSeconds",
+        "units",
+        "uuid",
+        "window"
+      ],
+      "imports": [
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
+        "./resourceLedger.js",
+        "@supabase/supabase-js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/resourceLedger.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/resourceMeter.test.ts:4",
+        "backend/src/ai/resourceMeter.test.ts:92",
+        "backend/src/sandbox/meteredExecution.test.ts:5",
+        "backend/src/sandbox/meteredExecution.ts:10",
+        "backend/src/synthesis/projectRuntime/store.ts:1",
+        "backend/src/workers/googleDeliveryMaintenance.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js",
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/ai/resourceMeter.ts#reservationId",
+        "backend/src/ai/resourceMeter.ts#sweepStaleEngineeringReservations"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/ai/resourceMeter.test.ts",
+        "backend/src/sandbox/meteredExecution.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -8160,6 +8256,7 @@
         "backend/src/routes/swarm.ts:18",
         "backend/src/sandbox/google/executionBinding.test.ts:4",
         "backend/src/sandbox/google/executionBinding.ts:2",
+        "backend/src/sandbox/meteredExecution.ts:22",
         "backend/src/scripts/runCanonicalWorker.ts:9",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:8",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:8",
@@ -8175,7 +8272,7 @@
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:4",
         "backend/src/synthesis/projectRuntime/googleAuthority.ts:1",
-        "backend/src/synthesis/projectRuntime/store.ts:13",
+        "backend/src/synthesis/projectRuntime/store.ts:14",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts:4",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:16",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:9",
@@ -17234,7 +17331,7 @@
         "backend/src/services/storage/projectFiles.ts:3",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:4",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:1",
-        "backend/src/synthesis/projectRuntime/store.ts:6",
+        "backend/src/synthesis/projectRuntime/store.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:52",
         "scripts/batch3/live-github-check.ts:18",
         "scripts/batch3/local-supabase-check.ts:14"
@@ -18384,7 +18481,7 @@
       "id": "surface:2070bbfff315c07e9311",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/change/service.ts",
-      "sha256": "d15fdd6fb27c502c3692c4ce50fec8f99705beb13ab925ee84434064afeb0677",
+      "sha256": "42be0275b7972330ffe50cb42fa25be1decdf90ce0483531c71f1d0e7e9493d8",
       "symbols": [
         "ALWAYS_ALLOWED",
         "AgentRunner",
@@ -18395,16 +18492,21 @@
         "ChangeService",
         "DENIED_PATHS",
         "VISUAL_PATH",
+        "after",
+        "agentCancelled",
         "agentResult",
         "aliveElsewhere",
         "all",
         "at",
-        "attempt",
+        "baseTestPaths",
         "baseWithTests",
+        "before",
+        "beforeAttempt",
         "binding",
         "bug",
         "bytes",
         "c",
+        "changed",
         "changedPaths",
         "changes",
         "consumers",
@@ -18416,6 +18518,7 @@
         "dirOf",
         "dirs",
         "doomed",
+        "emptied",
         "error",
         "events",
         "evidence",
@@ -18450,6 +18553,7 @@
         "parentChangeId",
         "preview",
         "r",
+        "repaired",
         "reproduction",
         "result",
         "retentionMs",
@@ -18472,11 +18576,13 @@
         "tests",
         "text",
         "verified",
+        "verify",
         "workspace",
         "write",
         "writing"
       ],
       "imports": [
+        "../../ai/repairController.js",
         "../../ai/softwareAgent/AgentSoftwareExecutor.js",
         "../../ai/softwareAgent/contracts.js",
         "../../ai/softwareAgent/runEvents.js",
@@ -18494,6 +18600,7 @@
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/ai/repairController.ts",
         "backend/src/existingSource/change/snapshot.ts",
         "backend/src/existingSource/change/testRunner.ts",
         "backend/src/existingSource/change/toolHost.ts",
@@ -18534,7 +18641,8 @@
         "backend/src/existingSource/change/service.ts#SoftwareRunEventSink",
         "backend/src/existingSource/change/service.ts#events",
         "backend/src/existingSource/change/service.ts#evidence",
-        "backend/src/existingSource/change/service.ts#verified"
+        "backend/src/existingSource/change/service.ts#verified",
+        "backend/src/existingSource/change/service.ts#verify"
       ],
       "testCoverage": [
         "backend/src/existingSource/change/canonical.test.ts",
@@ -18596,7 +18704,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:23"
+        "backend/src/existingSource/change/service.ts:24"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18761,7 +18869,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:25",
+        "backend/src/existingSource/change/service.ts:26",
         "backend/src/existingSource/change/testRunner.test.ts:6",
         "backend/src/existingSource/change/toolHost.ts:14"
       ],
@@ -18839,7 +18947,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:15",
-        "backend/src/existingSource/change/service.ts:26"
+        "backend/src/existingSource/change/service.ts:27"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -18895,7 +19003,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/canonicalJob.ts:14",
-        "backend/src/existingSource/change/service.ts:28"
+        "backend/src/existingSource/change/service.ts:29"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -19038,7 +19146,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:15",
+        "backend/src/existingSource/change/service.ts:16",
         "backend/src/existingSource/change/verificationEvidence.test.ts:4"
       ],
       "reachable": true,
@@ -19124,7 +19232,7 @@
       ],
       "callers": [
         "backend/src/existingSource/change/change.test.ts:18",
-        "backend/src/existingSource/change/service.ts:29",
+        "backend/src/existingSource/change/service.ts:30",
         "backend/src/existingSource/change/toolHost.ts:16"
       ],
       "reachable": true,
@@ -19744,7 +19852,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/existingSource/change/service.ts:19",
+        "backend/src/existingSource/change/service.ts:20",
         "backend/src/existingSource/intelligence/codeIndex.ts:13",
         "backend/src/existingSource/intelligence/exclusions.ts:6",
         "backend/src/existingSource/intelligence/languageAdapters.test.ts:4"
@@ -20558,7 +20666,7 @@
         "backend/src/existingSource/change/golden.test.ts:20",
         "backend/src/existingSource/change/production.test.ts:6",
         "backend/src/existingSource/change/production.ts:8",
-        "backend/src/existingSource/change/service.ts:22",
+        "backend/src/existingSource/change/service.ts:23",
         "backend/src/existingSource/change/store.ts:4",
         "backend/src/existingSource/change/testRunner.ts:14",
         "backend/src/existingSource/change/toolHost.ts:13",
@@ -30910,6 +31018,58 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:3b0ddd8dde3ad4672d62",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "backend/src/sandbox/meteredExecution.ts",
+      "sha256": "e55acab12c5d0ec4900d0f61a1fae4090fe1e3b20f45cf22ce55018df396fcad",
+      "symbols": [
+        "MeteredCallDeps",
+        "a",
+        "attempt",
+        "categoryFor",
+        "config",
+        "defaultDeps",
+        "estimatedSeconds",
+        "meter",
+        "meterCanonicalSandbox",
+        "staged"
+      ],
+      "imports": [
+        "../ai/resourceLedger.js",
+        "../ai/resourceMeter.js",
+        "../ai/runStore.js",
+        "./google/executionBinding.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/resourceMeter.ts",
+        "backend/src/ai/runStore.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/sandbox/meteredExecution.test.ts:4",
+        "backend/src/sandbox/sandboxRuntime.ts:35"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/sandbox/meteredExecution.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:4b085564b5e45cf0c04b",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/remoteSandbox.ts",
@@ -30953,7 +31113,7 @@
         "backend/src/sandbox/registryNetwork.test.ts:4",
         "backend/src/sandbox/remoteSandbox.test.ts:14",
         "backend/src/sandbox/sandboxProviders.ts:26",
-        "backend/src/sandbox/sandboxRuntime.ts:47"
+        "backend/src/sandbox/sandboxRuntime.ts:48"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -31137,7 +31297,7 @@
         "backend/src/sandbox/sandboxProbeBoundary.test.ts:6",
         "backend/src/sandbox/sandboxProviders.test.ts:12",
         "backend/src/sandbox/sandboxRuntime.ts:27",
-        "backend/src/sandbox/sandboxRuntime.ts:36",
+        "backend/src/sandbox/sandboxRuntime.ts:37",
         "backend/src/scripts/verifyFlySandboxBrowser.ts:28",
         "backend/src/synthesis/productionAdapters.test.ts:16",
         "backend/tests/sandboxNetwork.local.integration.ts:5"
@@ -31178,7 +31338,7 @@
       "id": "surface:233b38baac5d5deb70a6",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/sandboxRuntime.ts",
-      "sha256": "fdde1c8881c155ba9eabe1722aa7ec7122d3ba3289ef782bb4a8ca7a501c34ef",
+      "sha256": "4ae10273a23f7c686ec8fc2a4c31aa7343caefb9d5742d3374222ca930d7c340",
       "symbols": [
         "DockerSandboxRuntime",
         "PROBE_TTL_MS",
@@ -31197,6 +31357,7 @@
         "../synthesis/projectRuntime/googleFactory.js",
         "./google/executionBinding.js",
         "./google/googleSandbox.js",
+        "./meteredExecution.js",
         "./remoteSandbox.js",
         "./sandboxProviders.js",
         "./sandboxTypes.js"
@@ -31204,6 +31365,7 @@
       "runtimeImports": [
         "backend/src/sandbox/google/executionBinding.ts",
         "backend/src/sandbox/google/googleSandbox.ts",
+        "backend/src/sandbox/meteredExecution.ts",
         "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/sandbox/sandboxProviders.ts",
         "backend/src/sandbox/sandboxTypes.ts",
@@ -32553,7 +32715,7 @@
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/swarmHeartbeat.local.integration.ts:8",
         "backend/src/security/tenantIsolation.local.integration.ts:24",
-        "backend/src/synthesis/projectRuntime/store.ts:12",
+        "backend/src/synthesis/projectRuntime/store.ts:13",
         "backend/src/synthesis/universalPersistence.ts:25"
       ],
       "reachable": true,
@@ -32759,7 +32921,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+      "sha256": "0179924dd5ee6ccb2e78cd2946e5eb71eaa59d1b75e005ad5cb838f88fa1b262",
       "symbols": [
         "GlobalDataOperation",
         "getGlobalSupabaseAdmin",
@@ -32787,6 +32949,7 @@
         "backend/src/ai/parallelDispatch.ts:4",
         "backend/src/ai/providerHealthStore.ts:29",
         "backend/src/ai/resourceLedger.ts:9",
+        "backend/src/ai/resourceMeter.ts:18",
         "backend/src/ai/routingOutcomes.ts:2",
         "backend/src/ai/runReconciler.ts:2",
         "backend/src/ai/tenantModelDispatch.ts:5",
@@ -32918,6 +33081,7 @@
         "backend/src/ai/repoSummarize.ts:19",
         "backend/src/ai/resourceLedger.test.ts:5",
         "backend/src/ai/resourceLedger.ts:10",
+        "backend/src/ai/resourceMeter.ts:17",
         "backend/src/ai/routingOutcomes.receipt.test.ts:4",
         "backend/src/ai/routingOutcomes.ts:3",
         "backend/src/ai/runStore.ts:12",
@@ -33156,7 +33320,7 @@
         "backend/src/synthesis/projectRuntime/googleAuthority.ts:2",
         "backend/src/synthesis/projectRuntime/googleFactory.test.ts:5",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts:7",
-        "backend/src/synthesis/projectRuntime/store.ts:9",
+        "backend/src/synthesis/projectRuntime/store.ts:10",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:10",
         "backend/src/synthesis/universalEntrypoint.ts:55",
         "backend/src/synthesis/universalPersistence.owner.test.ts:7",
@@ -33410,7 +33574,7 @@
         "backend/src/synthesis/projectRuntime/googleAuthority.ts:4",
         "backend/src/synthesis/projectRuntime/googleProvider.ts:6",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:4",
-        "backend/src/synthesis/projectRuntime/store.ts:10",
+        "backend/src/synthesis/projectRuntime/store.ts:11",
         "backend/src/synthesis/universalPersistence.ts:24"
       ],
       "reachable": true,
@@ -35459,7 +35623,7 @@
         "backend/src/services/integrations/credentialVaultRuntime.ts:2",
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts:5",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts:5",
-        "backend/src/synthesis/projectRuntime/store.ts:11",
+        "backend/src/synthesis/projectRuntime/store.ts:12",
         "scripts/security/verify-oci-kms.ts:7"
       ],
       "reachable": true,
@@ -49172,7 +49336,7 @@
       "id": "surface:52eacb67555cd24b2de9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "e2c354cb93b8b81db567a5ce7337bc507576a6b1effcb7f1920bd4061953fdc8",
+      "sha256": "44b17c766b33903fa2d63a54de394b05a69d2cc8385f17b5da0e9767dfe839ab",
       "symbols": [
         "EncryptedProjectSecretRecord",
         "InMemoryProjectRuntimeStore",
@@ -49196,6 +49360,7 @@
         "identity",
         "key",
         "latest",
+        "meter",
         "parts",
         "persistSoftwareProjectRevision",
         "persistWorkerSoftwareProjectRevision",
@@ -49220,6 +49385,7 @@
         "workspace"
       ],
       "imports": [
+        "../../ai/resourceMeter.js",
         "../../ai/runStore.js",
         "../../config/supabase.js",
         "../../security/ownedRunPersistence.js",
@@ -49231,6 +49397,7 @@
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/config/supabase.ts",
         "backend/src/security/ownedRunPersistence.ts",
@@ -49274,6 +49441,7 @@
         "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts:3",
         "backend/src/synthesis/projectRuntime/sessionIdentity.test.ts:3",
         "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts:5",
+        "backend/src/synthesis/projectRuntime/store.metering.test.ts:5",
         "backend/src/synthesis/projectRuntime/store.owner.test.ts:4",
         "backend/src/synthesis/projectRuntime/store.persistence.test.ts:4",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts:5"
@@ -49292,11 +49460,11 @@
         "backend/src/synthesis/projectRuntime/store.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/synthesis/projectRuntime/store.ts:739 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:775 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:866 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1060 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1105 (user_id)"
+        "backend/src/synthesis/projectRuntime/store.ts:757 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:793 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:884 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1078 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1123 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -49329,6 +49497,7 @@
         "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts",
         "backend/src/synthesis/projectRuntime/sessionIdentity.test.ts",
         "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts",
+        "backend/src/synthesis/projectRuntime/store.metering.test.ts",
         "backend/src/synthesis/projectRuntime/store.owner.test.ts",
         "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts"
@@ -50898,6 +51067,7 @@
         "backend/src/synthesis/delivery/projectDelivery.test.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/store.metering.test.ts",
         "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
         "backend/src/synthesis/projectRuntime/store.worker.test.ts"
       ],
@@ -52094,7 +52264,8 @@
       "entryPoints": [],
       "callers": [
         "backend/src/ai/runReconciler.queue.test.ts:5",
-        "backend/src/workers/googleDeliveryStore.test.ts:7"
+        "backend/src/workers/googleDeliveryStore.test.ts:7",
+        "scripts/batch4/local-fairness-benchmark.ts:21"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -53551,10 +53722,57 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:769344734367c1d09aa9",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/workers/fairSelection.ts",
+      "sha256": "7503aca5435f3ac875846476b749c707223624eacaadc1078102a3cb7508ac50",
+      "symbols": [
+        "QueuedRow",
+        "byTenant",
+        "key",
+        "list",
+        "out",
+        "queue",
+        "queues",
+        "round",
+        "row",
+        "selectFairly",
+        "tookAny"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/workers/fairSelection.test.ts:3",
+        "backend/src/workers/googleDeliveryStore.ts:10",
+        "scripts/batch4/local-fairness-benchmark.ts:20"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/workers/fairSelection.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:ea62bbfd325f94d0960d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/workers/googleDeliveryMaintenance.ts",
-      "sha256": "dd3bf3c4f9ebb36ee0aad88c030cd6d021111c54a9d0f73f1af8582414fc9871",
+      "sha256": "a0f9e5eae338655fb1e1b3d702988ed98557bae71d60154fa42ceb5d0d45f9dc",
       "symbols": [
         "c",
         "id",
@@ -53565,11 +53783,13 @@
         "unavailable"
       ],
       "imports": [
+        "../ai/resourceMeter.js",
         "../ai/runReconciler.js",
         "./googleDeliveryStore.js",
         "./googleDispatch.js"
       ],
       "runtimeImports": [
+        "backend/src/ai/resourceMeter.ts",
         "backend/src/ai/runReconciler.ts",
         "backend/src/workers/googleDeliveryStore.ts",
         "backend/src/workers/googleDispatch.ts"
@@ -53586,7 +53806,9 @@
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
-      "costBoundary": [],
+      "costBoundary": [
+        "backend/src/workers/googleDeliveryMaintenance.ts#sweepStaleEngineeringReservations"
+      ],
       "evidenceBoundary": [
         "backend/src/workers/googleDeliveryMaintenance.ts#reconcileOrphanedRuns"
       ],
@@ -53602,10 +53824,12 @@
       "id": "surface:97528249b6af89789095",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/workers/googleDeliveryStore.ts",
-      "sha256": "8f511532bdf2f3db92cf4b20ab6c87548fecb34fab8d84f5594c5813cc85ce36",
+      "sha256": "e423b96b1e223d6f645cb715040b002a8caa725db879a2d52b101dae8b31b3cd",
       "symbols": [
         "CanonicalDeliveryClaim",
         "CanonicalQueuedInput",
+        "DISCOVERY_WINDOW",
+        "DISPATCH_BATCH",
         "GoogleDeliveryStore",
         "actor",
         "claim",
@@ -53630,6 +53854,7 @@
         "../security/serviceRoleGuard.js",
         "../security/tenantContext.js",
         "../synthesis/projectRuntime/googleFactory.js",
+        "./fairSelection.js",
         "./googleDispatch.js",
         "@supabase/supabase-js",
         "node:crypto"
@@ -53640,6 +53865,7 @@
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
+        "backend/src/workers/fairSelection.ts",
         "backend/src/workers/googleDispatch.ts"
       ],
       "entryPoints": [
@@ -53653,7 +53879,8 @@
         "backend/src/workers/googleDeliveryMaintenance.ts:1",
         "backend/src/workers/googleDeliveryStore.test.ts:4",
         "backend/src/workers/googleDispatchHandler.ts:4",
-        "backend/src/workers/googleSwarmQueue.ts:3"
+        "backend/src/workers/googleSwarmQueue.ts:3",
+        "scripts/batch4/local-fairness-benchmark.ts:19"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -53667,7 +53894,7 @@
         "backend/src/workers/googleDeliveryStore.ts#verifyAttachedGoogleIdentity"
       ],
       "tenantBoundary": [
-        "backend/src/workers/googleDeliveryStore.ts:106 (user_id)"
+        "backend/src/workers/googleDeliveryStore.ts:111 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -111208,6 +111435,95 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:4571ad562d27e1c09178",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/batch4/local-fairness-benchmark.ts",
+      "sha256": "cc50eff0ea26f2d50fee21ac4515a44377b95238ee317685deb672371029b3ea",
+      "symbols": [
+        "LAUNCH_CAPACITY_PER_TICK",
+        "base",
+        "burn",
+        "children",
+        "config",
+        "cores",
+        "eligible",
+        "fairness",
+        "i",
+        "id",
+        "latency",
+        "launchedAt",
+        "lightTicks",
+        "main",
+        "measureLatency",
+        "n",
+        "offered",
+        "out",
+        "owner",
+        "percentile",
+        "port",
+        "project",
+        "realNow",
+        "report",
+        "response",
+        "row",
+        "rows",
+        "samples",
+        "server",
+        "service",
+        "simulate",
+        "sorted",
+        "sourceSha",
+        "start",
+        "store",
+        "t",
+        "tenant",
+        "tick",
+        "uid"
+      ],
+      "imports": [
+        "../../backend/src/workers/__tests__/postgrestFilter.js",
+        "../../backend/src/workers/fairSelection.js",
+        "../../backend/src/workers/googleDeliveryStore.js",
+        "../../backend/src/workers/googleDispatch.js",
+        "@supabase/supabase-js",
+        "node:child_process",
+        "node:fs",
+        "node:http",
+        "node:os",
+        "node:path"
+      ],
+      "runtimeImports": [
+        "backend/src/workers/__tests__/postgrestFilter.ts",
+        "backend/src/workers/fairSelection.ts",
+        "backend/src/workers/googleDeliveryStore.ts"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js",
+        "declared-host:xroga-dispatcher-fixture.us-east4.run.app",
+        "node:child_process",
+        "node:fs",
+        "node:http",
+        "node:os",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:36bc1457b5e0e3fd724a",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/browser/browser-coordinator.mts",
@@ -129901,7 +130217,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "76e903243874e9d2edbad45ae0b1f36e8fa5baac7e67b1fa195b31e4b43f6f69",
+      "sha256": "d3d7319381221a45c5137db5b88f10cd33e09f72e5a3487597c8d18d0a2f5975",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -133582,6 +133898,36 @@
       "line": 442,
       "kind": "PLACEHOLDER",
       "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:56ca1048e6215c4dc817",
+      "sourcePath": "scripts/batch4/local-fairness-benchmark.ts",
+      "line": 35,
+      "kind": "SIMULATE",
+      "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:54ac699b37dbe9bf7168",
+      "sourcePath": "scripts/batch4/local-fairness-benchmark.ts",
+      "line": 93,
+      "kind": "SIMULATE",
+      "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:a49c58a8f79a4f31918f",
+      "sourcePath": "scripts/batch4/local-fairness-benchmark.ts",
+      "line": 93,
+      "kind": "SIMULATE",
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -137672,6 +138018,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:808bf4865334cd9932bd",
+      "sourcePath": "backend/src/ai/resourceMeter.test.ts",
+      "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:29d787b61ac04237b0c4",
       "sourcePath": "backend/src/ai/reviewerRouting.test.ts",
       "declaredTests": 1,
@@ -138472,7 +138825,7 @@
     {
       "id": "test-suite:b0a17c19a50086bf9d9a",
       "sourcePath": "backend/src/existingSource/change/change.test.ts",
-      "declaredTests": 25,
+      "declaredTests": 29,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139595,6 +139948,13 @@
       "id": "test-suite:1a0c7caa046b20a06bf6",
       "sourcePath": "backend/src/sandbox/googleSelection.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6dcb3eb12a7fed4d6126",
+      "sourcePath": "backend/src/sandbox/meteredExecution.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -141601,6 +141961,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:aa0bb4146cdc015dee0c",
+      "sourcePath": "backend/src/synthesis/projectRuntime/store.metering.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:06ea418cf83423dcff7b",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
       "declaredTests": 5,
@@ -141982,6 +142349,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:663615717023a3e26a87",
+      "sourcePath": "backend/src/workers/fairSelection.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:2132596885b429e3fb45",
       "sourcePath": "backend/src/workers/googleDeliveryStore.test.ts",
       "declaredTests": 9,
@@ -142061,6 +142435,13 @@
     {
       "id": "test-suite:8334394ea354e59f796b",
       "sourcePath": "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f0ed9f062c744f61b5a6",
+      "sourcePath": "backend/tests/googleDeliveryCrash.local.integration.ts",
       "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []

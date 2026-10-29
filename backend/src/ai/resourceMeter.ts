@@ -24,7 +24,7 @@ export interface MeterConfig {
   readonly windowSeconds: number;
 }
 
-const CAP_ENV: Record<ResourceCategory, string> = {
+const CAP_ENV_NAME: Record<ResourceCategory, string> = {
   sandbox_compute_seconds: 'XROGA_ENGINEERING_CAP_SANDBOX_SECONDS',
   browser_session_seconds: 'XROGA_ENGINEERING_CAP_BROWSER_SECONDS',
   storage_bytes: 'XROGA_ENGINEERING_CAP_STORAGE_BYTES',
@@ -35,13 +35,19 @@ const RECORD_ONLY_CAP = 1e15;
 const uuid = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
 export function meterConfigFromEnv(env: NodeJS.ProcessEnv = process.env): MeterConfig {
+  // Each setting is read by its literal name so the runtime-configuration inventory can see it.
+  const raws: Record<ResourceCategory, string | undefined> = {
+    sandbox_compute_seconds: env.XROGA_ENGINEERING_CAP_SANDBOX_SECONDS,
+    browser_session_seconds: env.XROGA_ENGINEERING_CAP_BROWSER_SECONDS,
+    storage_bytes: env.XROGA_ENGINEERING_CAP_STORAGE_BYTES,
+  };
   const caps: Partial<Record<ResourceCategory, number>> = {};
   for (const category of RESOURCE_CATEGORIES) {
-    const raw = env[CAP_ENV[category]];
+    const raw = raws[category];
     if (raw === undefined || raw.trim() === '') continue;
     const n = Number(raw);
     // a malformed cap is a configuration mistake: treating it as "no cap" would silently stop enforcing, so it is refused loudly
-    if (!Number.isFinite(n) || n <= 0) throw new Error(`${CAP_ENV[category]} must be a positive number.`);
+    if (!Number.isFinite(n) || n <= 0) throw new Error(`${CAP_ENV_NAME[category]} must be a positive number.`);
     caps[category] = n;
   }
   const rawWindow = env.XROGA_ENGINEERING_CAP_WINDOW_SECONDS;

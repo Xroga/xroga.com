@@ -58,6 +58,11 @@ jobs:
           XB01_DISPOSABLE_DATABASE: '1'
           XB01_LEDGER_TEST_DATABASE_URL: postgres://postgres:disposable-fixture-only@127.0.0.1:5432/xb01_tenant_test
         run: node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringResourceLedger.local.integration.ts backend/tests/engineeringResourceLedger.processes.local.integration.ts
+      - name: Real-process dispatcher and worker kill tests against the delivery migrations
+        env:
+          XB01_DISPOSABLE_DATABASE: '1'
+          XB01_DELIVERY_TEST_DATABASE_URL: postgres://postgres:disposable-fixture-only@127.0.0.1:5432/xb01_tenant_test
+        run: node node_modules/tsx/dist/cli.mjs --test backend/tests/googleDeliveryCrash.local.integration.ts
       - name: Backend context and loopback boundary tests (not live Supabase evidence)
         run: node node_modules/tsx/dist/cli.mjs --test backend/src/security/*.test.ts
       - name: Real immutable egress receipt and dispatch-race database tests
