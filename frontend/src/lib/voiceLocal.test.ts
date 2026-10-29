@@ -1,7 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { recognizeVoiceSamples } from './voiceLocal';
-import { VOICE_MAX_SECONDS, VOICE_SAMPLE_RATE, validateVoiceSamples, selectVoiceLanguage, voiceCompletionGuard } from './voiceLocalProtocol';
+import { VOICE_MAX_SECONDS, VOICE_SAMPLE_RATE, validateVoiceSamples, selectVoiceLanguage, voiceCompletionGuard, voiceSegments } from './voiceLocalProtocol';
+
+test('long speech partitions cover all audio once, retain the tail and prefer quiet boundaries', () => {
+  const samples = new Float32Array(VOICE_SAMPLE_RATE * 135).fill(0.1);
+  samples.fill(0, VOICE_SAMPLE_RATE * 22, VOICE_SAMPLE_RATE * 23);
+  const ranges = voiceSegments(samples);
+  assert.ok(ranges[0][1] > VOICE_SAMPLE_RATE * 22 && ranges[0][1] < VOICE_SAMPLE_RATE * 23);
+  assert.equal(ranges[0][0], 0); assert.equal(ranges.at(-1)![1], samples.length);
+  for (let i = 0; i < ranges.length; i++) {
+    assert.ok(ranges[i][1] > ranges[i][0] && ranges[i][1] - ranges[i][0] <= 25 * VOICE_SAMPLE_RATE);
+    if (i) assert.equal(ranges[i][0], ranges[i-1][1]);
+  }
+});
 
 function fixture() {
   const worker = { onmessage: null as ((event: {data: unknown}) => void) | null, onerror: null as (() => void) | null, onmessageerror: null as (() => void) | null,

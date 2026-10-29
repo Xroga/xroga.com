@@ -67,11 +67,15 @@ try {
   page.on('console', message => { if (message.type() === 'error' || message.text().startsWith('VOICE_STAGE')) console.log(message.text().slice(0,500)); });
   await page.goto(`http://127.0.0.1:${server.address().port}`);
   const results = [];
+  const missingSpeech = [];
   for (const fixture of fixtures) {
     audio = fixture.audio;
     const start = Date.now(); const transcript = await page.evaluate(() => window.runVoice());
     const longFixture = longRecording ? await page.evaluate(() => window.longFixture) : null;
-    if (longFixture) assert.equal((transcript.toLowerCase().match(/ask not what your country can do for you/g) ?? []).length, longFixture.repeats, 'Every repeated speech segment must survive chunked recognition');
+    if (longFixture) {
+      longFixture.recognizedRepeats = (transcript.toLowerCase().match(/ask not what your country can do for you/g) ?? []).length;
+      if (longFixture.recognizedRepeats !== longFixture.repeats) missingSpeech.push(longFixture);
+    }
     if (!multilingual) {
       assert.match(transcript.toLowerCase(), /ask not what your country can do for you/);
       assert.match(transcript.toLowerCase(), /what you can do for your country/);
@@ -92,4 +96,5 @@ try {
   assert.ok(requests.every(request => request.method === 'GET'), 'Audio must never be uploaded');
   const receipt = { scope: 'ACTUAL_LOCAL_WASM_RECOGNITION_PUBLIC_FIXTURES_NOT_BROAD_LANGUAGE_CERTIFICATION', model: modelName, revision: modelRevision, browser: browser.version(), results, unavailableFixtures, audioUploads: 0, paidRequests: 0, requestOrigins: [...new Set(requests.map(request => request.origin))] };
   await writeFile(path.join(tmpdir(), longRecording ? 'voice-long-receipt.json' : medium ? 'voice-medium-receipt.json' : multilingual ? 'voice-multilingual-receipt.json' : 'voice-local-receipt.json'), JSON.stringify(receipt, null, 2));
+  assert.deepEqual(missingSpeech, [], 'Every repeated speech segment must survive chunked recognition');
 } finally { await browser?.close(); await new Promise(resolve => server.close(resolve)); }
