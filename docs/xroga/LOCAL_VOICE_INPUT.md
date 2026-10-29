@@ -22,6 +22,7 @@ Limits: two-minute recording, 8 MiB encoded audio, 125-second decoded validation
 
 ## Verification
 
+- The complete local frontend suite passed 1,295 tests after restoring the established microphone animation and updating page-policy and manual-dictation assertions. Application source: `9af1b227`. Final PR CI remains independently required.
 - 66 focused regression tests passed, including cancel races, last audio chunks, draft editing, repeated words, account/chat invalidation, invalid worker output, token exhaustion, automatic language token selection, existing server authorization and accounting guards, and scoped CSP.
 - Frontend TypeScript passed after correcting the new adapter types.
 - The canonical Node 22.21.1 frontend production build passed with existing repository warnings using a bounded 6 GiB job ceiling. A preceding 4 GiB attempt exhausted its limit during type validation. Exact-source PR CI remains separate from this local result.

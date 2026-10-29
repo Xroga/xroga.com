@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/multilingual-voice-input-20261030",
-    "sha": "4a2fbabfe2f9935c01184f22caca4af0f9df2f1f",
-    "sourceTimestampUtc": "2026-10-30T03:03:16+05:00",
-    "auditStartedUtc": "2026-10-29T22:07:16.964Z",
+    "sha": "9af1b227ee3ee5730e8fa7838962c6c054c369a0",
+    "sourceTimestampUtc": "2026-10-30T03:21:35+05:00",
+    "auditStartedUtc": "2026-10-29T22:24:07.983Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -74140,9 +74140,17 @@
         "frontend/src/components/icons/animated/MotionProvider.tsx",
         "frontend/src/lib/utils.ts"
       ],
-      "entryPoints": [],
-      "callers": [],
-      "reachable": false,
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7"
+      ],
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:www.w3.org",
@@ -74156,11 +74164,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -87504,17 +87512,9 @@
       "runtimeImports": [
         "frontend/src/lib/utils.ts"
       ],
-      "entryPoints": [
-        "frontend/src/app/(shell)/layout.tsx",
-        "frontend/src/app/(workspace)/layout.tsx",
-        "frontend/src/app/ai-app-builder/page.tsx",
-        "frontend/src/app/game-builder/page.tsx",
-        "frontend/src/app/software/page.tsx"
-      ],
-      "callers": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7"
-      ],
-      "reachable": true,
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:www.w3.org",
@@ -87527,11 +87527,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -92759,7 +92759,7 @@
       "id": "surface:41e3e1a7bd535ee1f059",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "a61ca63df7f8b5fce7b6f87dd9fab09c089642ab314d0ed5c58cb2f9a166db3d",
+      "sha256": "d1fbf1a7489e5f2e9ea54737479a98aabd3368803ff2144e3daa090fb80fe467",
       "symbols": [
         "CaptureSession",
         "Mode",
@@ -92772,6 +92772,7 @@
         "feedback",
         "hide",
         "listening",
+        "meterRef",
         "name",
         "publish",
         "recording",
@@ -92783,7 +92784,7 @@
         "trigger"
       ],
       "imports": [
-        "./AudioLinesIcon",
+        "../icons/animated/AudioLinesIcon",
         "@/lib/terminal/voiceRecording",
         "@/lib/voiceLocal",
         "lucide-react",
@@ -92791,7 +92792,7 @@
         "react-dom"
       ],
       "runtimeImports": [
-        "frontend/src/components/terminal/AudioLinesIcon.tsx",
+        "frontend/src/components/icons/animated/AudioLinesIcon.tsx",
         "frontend/src/lib/terminal/voiceRecording.ts",
         "frontend/src/lib/voiceLocal.ts"
       ],
@@ -135044,72 +135045,72 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:427fdd89335e8ccc9a66",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 949,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:faafed77b554f77b94e9",
+      "id": "frontend-call:b61cd3468bd6dc082f21",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 950,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:4d7d92469406bee2c3fe",
+      "id": "frontend-call:22b44de068933c1abe7b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 955,
+      "line": 951,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:27b40b3b17f726059b65",
+      "id": "frontend-call:49c15d0c1b8c7ae48e03",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 956,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8e46dbd2026936679247",
+      "id": "frontend-call:ecc8d461ee17e6d8226d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 962,
+      "line": 957,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5bb3c35c47613571f54b",
+      "id": "frontend-call:7accf2b7b971a48f713a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 967,
+      "line": 963,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0de83f183b54977b685d",
+      "id": "frontend-call:850eb467e88863bd97e2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1015,
+      "line": 968,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d9d66fa9a152caaafbd3",
+      "id": "frontend-call:1e8c4471746d7117e804",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1016,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ada8f5e6241e1218ccc0",
+      "id": "frontend-call:50667be6b539a180e4e9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1023,
+      "line": 1017,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9538dda1ebaf33a33392",
+      "id": "frontend-call:ac1420dde19ebc535a1a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1037,
+      "line": 1024,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:20dc76acbda4782f4882",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1038,
       "callee": "fetch",
       "reachable": false
     },
