@@ -9,7 +9,6 @@
   "risk": "medium",
   "scope": "Replace automatic-send and browser-locale dictation with one manual on-device multilingual microphone flow. Free local transcription, founder-authorized voice-only frontend release, no new scheduler.",
   "changedFiles": [
-    ".github/workflows/xroga-tenant-security.yml",
     "docs/xroga/blockers.md",
     "docs/xroga/current-state.json",
     "docs/xroga/current-state.md",
@@ -18,9 +17,11 @@
     "docs/xroga/evidence/local-voice-20261030/base-after-language-detection.json",
     "docs/xroga/evidence/local-voice-20261030/base-before-language-detection.json",
     "docs/xroga/evidence/local-voice-20261030/caller-reconciliation.json",
+    "docs/xroga/evidence/local-voice-20261030/long-before.json",
     "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
     "docs/xroga/evidence/local-voice-20261030/voice-english-hindi-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-local-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-long-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-multilingual-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json",
     "docs/xroga/LOCAL_VOICE_INPUT.md",
@@ -63,6 +64,7 @@
     "package-lock.json",
     "package.json",
     "scripts/prepare-voice-runtime.mjs",
+    "scripts/verify-live-dictation.mjs",
     "scripts/verify-local-voice.mjs",
     "scripts/verify-voice-control.mjs",
     "scripts/verify-voice-recording.mjs"
@@ -170,9 +172,11 @@
   },
   "evidenceRefs": [
     "docs/xroga/evidence/local-voice-20261030/caller-reconciliation.json",
+    "docs/xroga/evidence/local-voice-20261030/long-before.json",
     "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
     "docs/xroga/evidence/local-voice-20261030/voice-english-hindi-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-local-receipt.json",
+    "docs/xroga/evidence/local-voice-20261030/voice-long-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-multilingual-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json",
     "docs/xroga/LOCAL_VOICE_INPUT.md"

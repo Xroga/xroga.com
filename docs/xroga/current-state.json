@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/voice-only-production-20261030",
-    "sha": "df486e4de47aafe1094fcbf697df1732ee3a27e6",
-    "sourceTimestampUtc": "2026-10-30T03:31:20+05:00",
-    "auditStartedUtc": "2026-10-29T22:35:36.074Z",
+    "sha": "ee1ff7c13a365037ae25147f75c1fe1a9fd73844",
+    "sourceTimestampUtc": "2026-10-30T03:43:21+05:00",
+    "auditStartedUtc": "2026-10-29T22:43:57.181Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -50612,7 +50612,7 @@
       "callers": [
         "frontend/src/lib/untrustedProxyConfig.test.ts:6",
         "frontend/src/lib/voiceRuntimePolicy.test.ts:6",
-        "scripts/verify-local-voice.mjs:40"
+        "scripts/verify-local-voice.mjs:41"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -104256,7 +104256,7 @@
       "id": "surface:2b17ca63734e8f47f9dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceLocalProtocol.ts",
-      "sha256": "a32c7a3f45d395d92843409f740d01dc6e8975e7bd0aaf65028ba8ec99dfb425",
+      "sha256": "978820be6bc6c129c036ac7dd89681e4bbc5096a0d4e1cc728b25a6d1995f798",
       "symbols": [
         "VOICE_MAX_BYTES",
         "VOICE_MAX_SECONDS",
@@ -104266,14 +104266,24 @@
         "VOICE_RUNTIME_PATH",
         "VOICE_SAMPLE_RATE",
         "VoiceWorkerReply",
+        "at",
         "best",
+        "end",
+        "energy",
+        "frame",
+        "i",
         "language",
         "last",
+        "quietEnd",
+        "result",
         "score",
         "selectVoiceLanguage",
+        "start",
         "tokens",
         "validateVoiceSamples",
-        "voiceCompletionGuard"
+        "voiceCompletionGuard",
+        "voiceSegments",
+        "window"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -104404,7 +104414,7 @@
       "id": "surface:0e134ae9a2c4ff74595d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceTranscription.worker.ts",
-      "sha256": "69328c311b700a32af5b8c61fdbd348fcc48b313ee82cc9bb52b83f7857f77c3",
+      "sha256": "ec783b7c952cfcb75fd28bddf4b50f620fd2fefcd98bb0b987ad8af781e4cf49",
       "symbols": [
         "config",
         "detection",
@@ -104418,10 +104428,12 @@
         "result",
         "rms",
         "samples",
+        "segment",
         "started",
         "streamer",
         "text",
-        "transcriber"
+        "transcriber",
+        "transcripts"
       ],
       "imports": [
         "./voiceLocalProtocol",
@@ -111919,7 +111931,7 @@
       "id": "surface:12658203d457ab6f1fe6",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/verify-local-voice.mjs",
-      "sha256": "ff74690b6870cc045fa86928f21f823dd7c329150b9a079c21ae70ea8f81d5cd",
+      "sha256": "700bb4af938168c2888cadcd44b38f399f0a61fd55ccef4fff6ff6adcf6cd881",
       "symbols": [
         "audio",
         "browser",
@@ -111937,7 +111949,10 @@
         "i",
         "j",
         "language",
+        "longFixture",
+        "longRecording",
         "medium",
+        "missingSpeech",
         "modelName",
         "modelRevision",
         "multilingual",
@@ -125099,7 +125114,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "84e2563d9d3bfef408fc68516a2cba1e19939f2194949cace7f5fa64b778b365",
+      "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -138478,7 +138493,7 @@
     {
       "id": "test-suite:c6e129b8c30f92eaef9d",
       "sourcePath": "frontend/src/lib/voiceLocal.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

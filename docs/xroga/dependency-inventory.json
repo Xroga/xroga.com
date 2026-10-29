@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "df486e4de47aafe1094fcbf697df1732ee3a27e6",
+  "source_sha": "ee1ff7c13a365037ae25147f75c1fe1a9fd73844",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15238,7 +15238,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "84e2563d9d3bfef408fc68516a2cba1e19939f2194949cace7f5fa64b778b365"
+      "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417"
     },
     {
       "path": "Dockerfile.api",
@@ -21906,7 +21906,7 @@
     },
     {
       "path": "frontend/src/lib/voiceLocalProtocol.ts",
-      "sha256": "a32c7a3f45d395d92843409f740d01dc6e8975e7bd0aaf65028ba8ec99dfb425"
+      "sha256": "978820be6bc6c129c036ac7dd89681e4bbc5096a0d4e1cc728b25a6d1995f798"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -21918,7 +21918,7 @@
     },
     {
       "path": "frontend/src/lib/voiceTranscription.worker.ts",
-      "sha256": "69328c311b700a32af5b8c61fdbd348fcc48b313ee82cc9bb52b83f7857f77c3"
+      "sha256": "ec783b7c952cfcb75fd28bddf4b50f620fd2fefcd98bb0b987ad8af781e4cf49"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
