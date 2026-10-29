@@ -142,3 +142,17 @@ Founder authorised development to resume; production activation stays paused. So
 | Real-browser accessibility and responsive check of the Existing project tab | **BLOCKED** | Same staging prerequisites; CI's authenticated-browser job passes but does not exercise this tab with a live backend. |
 
 Unchanged and still true: no production activation, no production migration, flags off. Percentages are not claimed; see the item table. The honest state is: development delivered for all three phases, integration with current main complete, canonical execution and browser verification implemented and tested with fakes, live-provider certification incomplete.
+
+## 12. Founder priority change (2026-10-29): build first, real-world execution later
+
+All real-model runs, live agent tasks, new Cloud Run Job deployments, production activation and paid infrastructure are stopped. Findings from the earlier
+OpenRouter run (one bounded DeepSeek Flash run, the tool-call fragment bug, the root-file write policy) are kept as evidence; none is repeated.
+
+Status: **DEFERRED BY FOUNDER** (not PASS) until after Batch 4:
+
+- Real coding-model performance and reliability; model routing (including the Kimi route) and multi-model comparisons.
+- End-to-end agent task execution, real Google sandbox execution and browser-task workflows.
+- Real-provider acceptance that needs deployed infrastructure; real GitHub OAuth connection through the UI; large-repository performance.
+- Production deployment and activation.
+
+Development completion and live operational acceptance stay separate. The temporary model key lives only in the gitignored `backend/.env.local`; the owner revokes it.
