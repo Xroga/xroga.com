@@ -7,7 +7,7 @@ import type {ProviderRuntimeCreateInput,ProjectRuntimeProcessRecord} from './typ
 
 // Transport/control are synthetic fixtures. They do not certify a live caller.
 function fixture(){
- const image='node@sha256:'+'a'.repeat(64);let creates=0,destroys=0,dispatches=0;let denied=false,denyDuringAdmission=false,persistFailure=false;
+ const image='node@sha256:'+'a'.repeat(64);let creates=0,destroys=0,dispatches=0;let denied=false,denyDuringAdmission=false,persistFailure=false,destroyFailure=false;
  const operations:Record<string,unknown>[]=[];const sessions:unknown[]=[];
  let reply:unknown;let last:GceExecutionHandle|undefined;
  const configuration={project:'synthetic-project',zone:'us-central1-a',subnet:'projects/synthetic-project/regions/us-central1/subnetworks/test',
@@ -17,7 +17,7 @@ function fixture(){
   async persistAllocation(session){if(persistFailure)throw new Error('PRIVATE_DB_CANARY');sessions.push(structuredClone(session));},
   control:{configuration,async probe(){},async resolve(){return{privateIp:'10.90.0.2',sshHostKey:'synthetic'};},
    async create(input:CreateGceExecution,onAllocated?:(handle:GceExecutionHandle)=>Promise<void>){creates++;last={...executionBinding(input),name:'xroga-exec-'+input.runtimeId.replaceAll('-',''),instanceId:'123456',expiresAtEpoch:Math.floor(Date.now()/1000)+input.ttlSeconds};await onAllocated?.(last);return last;},
-   async destroy(){destroys++;}},
+   async destroy(){destroys++;if(destroyFailure)throw new Error('PRIVATE_CLEANUP_CANARY');}},
   transport:{async run<T>(_handle:GceExecutionHandle,operation:Readonly<Record<string,unknown>>,_timeout:number,admit?:()=>Promise<void>){
    assert.equal(typeof admit,'function');await admit!();if(denyDuringAdmission)denied=true;await admit!();
    dispatches++;operations.push(structuredClone(operation));
@@ -32,7 +32,7 @@ function fixture(){
   files:[{path:'src/index.ts',content:'owned-source'}],image:null,environment:{},secretEnvironment:{},ttlSeconds:600};
  return {options,input,provider:new GoogleProjectRuntimeProvider(options),operations,sessions,
   get creates(){return creates;},get destroys(){return destroys;},get dispatches(){return dispatches;},get last(){return last;},
-  deny(){denied=true;},denyAfterLogin(){denyDuringAdmission=true;},failPersistence(){persistFailure=true;},setReply(value:unknown){reply=value;}};
+  deny(){denied=true;},denyAfterLogin(){denyDuringAdmission=true;},failPersistence(){persistFailure=true;},failDestroy(){destroyFailure=true;},setReply(value:unknown){reply=value;}};
 }
 
 test('native project allocation persists its owner binding before transferring canonical files',async()=>{
@@ -58,6 +58,12 @@ test('allocation persistence or malformed write receipt fails closed and destroy
   await assert.rejects(f.provider.create(f.input),error=>error instanceof Error&&!error.message.includes('PRIVATE_DB_CANARY'));
   assert.equal(f.creates,1);assert.equal(f.destroys,1);assert.equal(f.dispatches,mode==='persistence'?0:1);
  }
+});
+
+test('failed allocation persistence and failed destruction report unverified cleanup',async()=>{
+ const f=fixture();f.failPersistence();f.failDestroy();
+ await assert.rejects(f.provider.create(f.input),{message:'GCE_ALLOCATION_CLEANUP_PENDING'});
+ assert.equal(f.creates,1);assert.equal(f.destroys,1);assert.equal(f.dispatches,0);
 });
 
 test('revocation during admission prevents execution, never retries or switches provider',async()=>{

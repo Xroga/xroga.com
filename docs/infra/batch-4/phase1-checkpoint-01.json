@@ -16,7 +16,11 @@
     {"kind":"browser_checkpoint_fencing_after_fix","result":"PASS","tests":9,"failed":0,"skipped":0,"localJob":"3009a219-e27a-4ba0-8069-8a435016396a","scope":"Real local PostgreSQL verifies current lease, stale-worker denial, tenant isolation, cancellation versus success and the canonical scheduler. Disposable container and network are removed."},
     {"kind":"browser_recovery_regression","result":"PASS","tests":16,"failed":0,"skipped":0,"localJob":"8591b556-73fa-4fc4-93fc-38facd5eeae8"},
     {"kind":"backend_typecheck_after_browser_fix","result":"PASS","localJob":"7c54179d-c615-4647-b125-417197d89f20"},
-    {"kind":"strict_egress_audit_after_browser_fix","result":"PASS","reviewed":148,"pending":0,"unresolvedHighRisk":0,"localJob":"ada6052e-7f1f-4da0-9776-5f4bdb76a94a"}
+    {"kind":"strict_egress_audit_after_browser_fix","result":"PASS","reviewed":148,"pending":0,"unresolvedHighRisk":0,"localJob":"ada6052e-7f1f-4da0-9776-5f4bdb76a94a"},
+    {"kind":"allocation_cleanup_reporting_before_fix","result":"FAIL_EXPECTED","localJob":"c8f3b8c5-e462-441d-b34c-4639cea9687e","scope":"Synthetic provider fixture reproduced loss of the cleanup-pending classification."},
+    {"kind":"allocation_cleanup_reporting_after_fix","result":"PASS","tests":19,"failed":0,"skipped":0,"localJob":"2819522a-7d4a-4a34-b571-dcbc7ec77caa","scope":"Synthetic provider/control tests, not a live Google resource test."},
+    {"kind":"strict_egress_audit_after_cleanup_fix","result":"PASS","reviewed":148,"pending":0,"unresolvedHighRisk":0,"localJob":"70f3f8f5-2eb8-479c-adf7-c979613956f6"},
+    {"kind":"backend_typecheck_after_cleanup_fix","result":"PASS","localJob":"814e2753-7699-4d03-9c16-48e012168ecf"}
   ],
   "remaining": [
     "Prove canonical run restart and source checkpoint recovery with actual processes and an isolated database; lease takeover alone is verified.",

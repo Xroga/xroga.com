@@ -10,7 +10,7 @@ import {GceControlError} from './gceMachineControl.js';
 // staging have separate evidence and are not certified by this fixture.
 function fixture(){
   const binding=Object.freeze({userId:'synthetic-owner',projectId:'synthetic-project',runId:'synthetic-run',caller:'universal-validation' as const,requestSha256:'a'.repeat(64)});
-  const store=new InMemoryProjectRuntimeStore();let creates=0,destroys=0,denied=false,cleanupFails=false,stalled=false;
+  const store=new InMemoryProjectRuntimeStore();let creates=0,destroys=0,denied=false,cleanupFails=false,stalled=false,creationCleanupPending=false;
   let failedEvent:string|undefined;const append=store.appendEvent.bind(store);
   store.appendEvent=async input=>{if(input.eventType===failedEvent)throw new Error('PRIVATE_RECEIPT_CANARY');return append(input);};
   const operations:{command:string;networkPolicy:unknown;environment:unknown}[]=[];let onExec=()=>{};
@@ -20,6 +20,7 @@ function fixture(){
       if(!cleanup&&stalled)return new Promise<typeof binding>(()=>{});return binding;},
     provider:(_scope,_store,admit,allocated)=>({
       async create(input){await admit({userId:input.userId,projectId:input.projectId,action:'create',sourceFiles:input.files});creates++;
+        if(creationCleanupPending)throw new GceControlError('GCE_ALLOCATION_CLEANUP_PENDING');
         const now=new Date().toISOString();const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId:'synthetic-session',userId:input.userId,
           projectId:input.projectId,providerId:'google-gce',runtimeClass:'verification',status:'creating',image:'node@sha256:'+'a'.repeat(64),
           knownFiles:input.files.map(file=>file.path),workspaceRevision:0,processes:[],ports:[],providerState:{gce:{instanceId:'synthetic'}},createdAt:now,updatedAt:now,expiresAt:new Date(Date.now()+600000).toISOString()};
@@ -33,7 +34,7 @@ function fixture(){
     stages:[{id:'install',command:'npm',args:['install','--ignore-scripts'],networkPolicy:'registry-only',timeoutMs:10000},
       {id:'build',command:'npm',args:['run','build'],networkPolicy:'none',timeoutMs:10000}]};
   return {runtime,request,store,operations,get creates(){return creates;},get destroys(){return destroys;},deny(){denied=true;},
-    failCleanup(){cleanupFails=true;},failEvent(value:string){failedEvent=value;},stall(){stalled=true;},onExec(value:()=>void){onExec=value;},reply(value:Partial<typeof result>){result={...result,...value};}};
+    failCleanup(){cleanupFails=true;},failCreationCleanup(){creationCleanupPending=true;},failEvent(value:string){failedEvent=value;},stall(){stalled=true;},onExec(value:()=>void){onExec=value;},reply(value:Partial<typeof result>){result={...result,...value};}};
 }
 
 test('native stages share one VM and retain distinct setup/build network policies, then destroy it',async()=>{
@@ -74,6 +75,12 @@ test('execution limit or unverified cleanup cannot return successful verificatio
   const pending=fixture();pending.failCleanup();await assert.rejects(pending.runtime.execute(pending.request),error=>
     error instanceof GoogleSandboxCleanupPendingError&&error.cleanupCode==='GCE_ALLOCATION_CLEANUP_PENDING'&&!error.message.includes('PRIVATE_'));
   assert.equal(pending.destroys,1);assert.equal((await pending.store.loadSession('synthetic-owner','synthetic-session'))?.status,'running');
+});
+
+test('a provider that cannot clean a failed allocation reports cleanup pending',async()=>{
+  const f=fixture();f.failCreationCleanup();
+  await assert.rejects(f.runtime.execute(f.request),error=>error instanceof GoogleSandboxCleanupPendingError&&error.cleanupCode==='GCE_ALLOCATION_CLEANUP_PENDING');
+  assert.equal(f.operations.length,0);
 });
 
 test('physical ownership denial remains fatal even when cleanup also fails',async()=>{
