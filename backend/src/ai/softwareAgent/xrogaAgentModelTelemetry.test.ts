@@ -244,3 +244,37 @@ test(
     );
   },
 );
+
+import { createToolCallDeltaMapper } from './xrogaAgentModel.js';
+
+/** The rule the agent SDK applies: a fragment is filed under its tool-call id when it has one, otherwise under its index. */
+const sdkKey = (delta: { toolCallId?: string; index?: number }) => delta.toolCallId ?? `tool_${delta.index ?? 0}`;
+
+test(
+  'every streamed fragment of one tool call is filed under the same key, so its arguments are not lost',
+  () => {
+    const map = createToolCallDeltaMapper();
+    const chunks = [
+      { index: 0, id: 'call_a', function: { name: 'project_write_file', arguments: '' } },
+      { index: 0, function: { arguments: '{"path":"index.html",' } },
+      { index: 0, function: { arguments: '"intent":"modify"}' } },
+      { index: 1, id: 'call_b', function: { name: 'project_read_files', arguments: '{"paths":["a"]}' } },
+    ].map((chunk) => map(chunk));
+    assert.deepEqual(chunks.slice(0, 3).map(sdkKey), ['call_a', 'call_a', 'call_a']);
+    assert.equal(sdkKey(chunks[3]!), 'call_b');
+    assert.equal(chunks[0]!.toolName, 'project_write_file');
+    assert.equal(chunks[1]!.toolName, undefined);
+    assert.equal(chunks.slice(0, 3).map((c) => c.inputText ?? '').join(''), '{"path":"index.html","intent":"modify"}');
+  },
+);
+
+test(
+  'a provider that sends the whole call in one chunk, or no ids at all, still maps cleanly',
+  () => {
+    const map = createToolCallDeltaMapper();
+    assert.equal(map({ index: 0, id: 'x', function: { name: 'n', arguments: '{}' } }).toolCallId, 'x');
+    const anonymous = createToolCallDeltaMapper();
+    assert.equal(sdkKey(anonymous({ index: 2, function: { arguments: '{' } })), 'tool_2');
+    assert.equal(sdkKey(anonymous({ index: 2, function: { arguments: '}' } })), 'tool_2');
+  },
+);

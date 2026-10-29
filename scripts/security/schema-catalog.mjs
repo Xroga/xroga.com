@@ -23,7 +23,11 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     builder_verifications:['20261026010000_builder_phase2.sql','20261026010000_builder_phase2.sql'],
     builder_external_operations:['20261026010000_builder_phase2.sql','20261026010000_builder_phase2.sql'],
     google_canonical_deliveries:['20261026000000_google_canonical_deliveries.sql','20261026000000_google_canonical_deliveries.sql'],
-    browser_runs:['20261026100000_browser_runs_durable.sql','20261026100000_browser_runs_durable.sql']};
+    browser_runs:['20261026100000_browser_runs_durable.sql','20261026100000_browser_runs_durable.sql'],
+    existing_source_projects:['20261027000000_existing_source_projects.sql','20261027000000_existing_source_projects.sql'],
+    existing_source_indexes:['20261027010000_existing_source_indexes.sql','20261027010000_existing_source_indexes.sql'],
+    existing_source_archives:['20261027020000_existing_source_archives.sql','20261027020000_existing_source_archives.sql'],
+    existing_source_changes:['20261027030000_existing_source_changes.sql','20261027030000_existing_source_changes.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

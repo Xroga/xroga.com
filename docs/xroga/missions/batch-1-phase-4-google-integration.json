@@ -5,9 +5,9 @@
   "requirementIds": [
     "XB01-C010"
   ],
-  "state": "IN_PROGRESS",
+  "state": "CODE_COMPLETE",
   "risk": "high",
-  "scope": "Founder directive dc5fccd7ee346e4fb00f4b17ba9ad9954b3a5007964a942c2a98e36700440bfe authorizes original Command010 all12criteria after accepted Google migration. Reconcile PR844 against pinned main5ada5db7526efb1e0a4e426dbf4feab3d538597f and Google checkpoint7a3f1167d6f8d56e954d0e7ead692a45ac2354ac. No Phase4 acceptance or later-batch integration is claimed. Earlier preparatory mission remains historical evidence, superseded in current authorization only. Updated founder directive: ONLY Batch1 Phase4 Command010. Claude owns all Batch1.5/2 integration, activation and release. No later-batch implementation or deployment is authorized in this mission. Current founder build-first directive supersedes the earlier handoff-only scope. Controlled integration starts at b0cd0ec31be56a8945ae41998563475237ed52fb, with verified Phase4 source 92043b72c20e5a12636dee079d760a1e5708b48f. Historical mission and previous base 87e33b94b3d85deaac12d4bcc691363f4876fa64 remain preserved at docs/xroga/evidence/command-010/integration-20261029/batch-1-phase-4-google-integration-AT-92043b72.json. This projection authorizes Batch1 compatibility work only, no later-batch activation and no production release.",
+  "scope": "Batch1 Phase4 Command010 development and current-main integration are complete at ff4032ca02c4b233c2598724caf44ab04b91fb0f through PR878. All twelve original criteria and required source CI pass. Original Phase1/2/3 accepted checkpoints and all historical proof remain preserved. Founder explicitly retained the production hold and requested development-only closure. No Batch1.5/2 activation, production release or new implementation is authorized by this closure.",
   "changedFiles": [
     ".dockerignore",
     ".github/pull_request_template.md",
@@ -750,6 +750,8 @@
     "docs/operations/google-production-migration.md",
     "docs/seo/crypto-editorial-outreach.md",
     "docs/xroga/LOCAL_STORAGE_CLEANUP.md",
+    "docs/xroga/batch-1/BATCH-1-DEVELOPMENT-CLOSURE.json",
+    "docs/xroga/batch-1/BATCH-1-DEVELOPMENT-CLOSURE.md",
     "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
     "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
     "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md",
@@ -884,6 +886,12 @@
     "docs/xroga/evidence/command-010/container-ownership-labelRed-20261028.log",
     "docs/xroga/evidence/command-010/container-ownership-labelRed-20261028.log.original.gz",
     "docs/xroga/evidence/command-010/container-ownership-runningCancellationRecheck-20261028.log",
+    "docs/xroga/evidence/command-010/development-closure-20261029/CURRENT-PHASE4-ACCEPTANCE-AT-ff4032ca.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/batch-1-phase-4-google-integration-AT-ff4032ca.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/merged-main-manifest.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/merged-main-run-a-manifest.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/merged-main-run-b-manifest.json",
     "docs/xroga/evidence/command-010/dormant-consequential-20261027.log",
     "docs/xroga/evidence/command-010/expo-identity-20261027/green.log",
     "docs/xroga/evidence/command-010/expo-identity-20261027/red.log",
@@ -1446,11 +1454,11 @@
   "securityImpact": {
     "auth": {
       "changed": true,
-      "description": "Hosted __Host- Auth cookie policy prevents parent-domain Preview injection. New release requires fresh sign-in and actual authenticated/browser acceptance."
+      "description": "Original issued actor and authenticated browser controls pass isolated tests. No current-source production authentication claim."
     },
     "tenant": {
       "changed": true,
-      "description": "Original contexts, current project/file ownership, worker generations and revocation are rechecked. Remaining caller proofs and disposable SQL tests are incomplete."
+      "description": "Current project/file ownership, worker generations, cancellation and revocation pass focused and actual disposable database tests at the verified implementation source."
     },
     "approval": {
       "changed": true,
@@ -1462,7 +1470,7 @@
     },
     "egress": {
       "changed": true,
-      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.13unreviewed callers and8high-risk obligations remain."
+      "description": "Unchanged strict audit reports148 reviewed,0pending,0unresolved high-risk callers. All original137 reviews and11individually traced current-main callers are preserved."
     },
     "cost": {
       "changed": true,
@@ -1491,6 +1499,12 @@
       "scope": "Canonical Node22.21.1 focused integration type checks. Final exact-source CI remains required.",
       "negative": false,
       "reference": "docs/xroga/evidence/command-010/local-20261027/checkpoint.json"
+    },
+    {
+      "command": "npm run verify:baseline",
+      "scope": "Both complete baselines passed on the exact merged implementation. Includes backend/frontend types, builds, tests, lint and negative/inventory guards. Reused immutable receipt, no new application test run.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json"
     }
   ],
   "architecture": {
@@ -1498,21 +1512,16 @@
     "reason": "Use existing actor, authority, scheduler, egress, vault, ledger and Google runtime. No new control plane or orchestration system.",
     "rfc": null
   },
-  "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
+  "rollout": "Development integration merged through PR878. Keep deploy/PRODUCTION_ACTIVATION_HOLD.json enabled. Production release is a separately authorized coordinated operation.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "13remaining source traces including8high-risk candidates, not all are demonstrated vulnerabilities",
-    "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
-    "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
-    "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
-    "Final exact-source disposable/Auth and complete integration CI, original strict acceptance and controlled release remain pending",
-    "X research deliberately fails closed before credential access until canonical accounting cost contract, ownership, egress and settlement are verified. Removed unsafe dispatch is not positive feature acceptance."
+    "Production activation and actual live API/Job/browser image verification are intentionally held, not development blockers.",
+    "Unsupported xResearch accounting remains fail-closed before credentials or dispatch. No positive availability or whole-product claim is made."
   ],
-  "placeholderClaimsRemaining": [
-    "No B1_P4_VERIFIED or Batch1closure",
-    "No current candidate-source live deployment, authenticated provider acceptance or later batch activation"
-  ],
+  "placeholderClaimsRemaining": [],
   "evidenceRefs": [
+    "docs/xroga/batch-1/BATCH-1-DEVELOPMENT-CLOSURE.json",
+    "docs/xroga/batch-1/BATCH-1-DEVELOPMENT-CLOSURE.md",
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
     "docs/xroga/evidence/command-010/AURA-CLIENTS-CHECKPOINT-20261028.json",
     "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json",
@@ -1544,12 +1553,19 @@
     "docs/xroga/evidence/command-010/auth-provider-20261028/trace.json",
     "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/ci-a0ff83a3-20261028/verification.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/CURRENT-PHASE4-ACCEPTANCE-AT-ff4032ca.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/VERIFIED-IMPLEMENTATION-RECEIPT.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/batch-1-phase-4-google-integration-AT-ff4032ca.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/merged-main-manifest.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/merged-main-run-a-manifest.json",
+    "docs/xroga/evidence/command-010/development-closure-20261029/merged-main-run-b-manifest.json",
     "docs/xroga/evidence/command-010/expo-identity-20261027/trace.json",
     "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/checkpoint.json",
     "docs/xroga/evidence/command-010/github-routes-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/github-routes-20261027/current-credential-read.json",
     "docs/xroga/evidence/command-010/github-routes-20261027/trace.json",
     "docs/xroga/evidence/command-010/image-client-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/integration-20261029/batch-1-phase-4-google-integration-AT-92043b72.json",
     "docs/xroga/evidence/command-010/local-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
     "docs/xroga/evidence/command-010/provider-frontend-20261027/checkpoint.json",
@@ -1564,18 +1580,17 @@
     "docs/xroga/evidence/command-010/supabase-sdk-20261027/trace.json",
     "docs/xroga/evidence/command-010/vercel-routes-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/worker-protocol-20261027/checkpoint.json",
-    "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json",
-    "docs/xroga/evidence/command-010/integration-20261029/batch-1-phase-4-google-integration-AT-92043b72.json"
+    "docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Final exact-source CI and reviewed integration merge remain required. Production activation is held for the coordinated release."
+      "Founder explicitly retained coordinated production activation hold. Immutable release images and actual production acceptance are required for a future authorized release."
     ],
-    "authenticatedE2e": "BLOCKED",
-    "stagedSecurity": "BLOCKED",
+    "authenticatedE2e": "PASS",
+    "stagedSecurity": "PASS",
     "liveUrl": null,
     "deployedSha": null
   }

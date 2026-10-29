@@ -10,6 +10,7 @@ import {
   FilePlus,
   FolderTree,
   GitBranch,
+  GitPullRequest,
   Loader2,
   RefreshCw,
   Rocket,
@@ -34,6 +35,8 @@ import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 import { useLiveBuildStore } from '@/store/useLiveBuildStore';
+import { ExistingSourcePanel } from '@/components/existing-source/ExistingSourcePanel';
+import { EXISTING_SOURCE_ENABLED } from '@/lib/existingSourceApi';
 import { LiveBuildTimeline } from './LiveBuildTimeline';
 import { RuntimePreviewControls } from './RuntimePreviewControls';
 import {
@@ -49,6 +52,8 @@ const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree 
   { id: 'terminal', label: 'Terminal', Icon: TerminalIcon },
   { id: 'preview', label: 'Preview', Icon: Eye },
   { id: 'deploy', label: 'Deploy', Icon: Rocket },
+  // an existing repository or ZIP, edited by Xroga in isolation; absent until Batch 3 is authorised for release
+  ...(EXISTING_SOURCE_ENABLED ? [{ id: 'existing' as const, label: 'Existing project', Icon: GitPullRequest }] : []),
 ];
 const PROJECT_TAB: { id: DevWorkspaceTab; label: string; Icon: typeof FolderTree } = { id: 'project', label: 'Project', Icon: Eye };
 
@@ -641,6 +646,12 @@ export function DevWorkspacePanel({
                {activeTab === 'deploy' ? (
           <div className="h-full overflow-y-auto p-4">
             <ProjectDeliveryPanel />
+          </div>
+        ) : null}
+
+        {activeTab === 'existing' && EXISTING_SOURCE_ENABLED ? (
+          <div className="h-full overflow-y-auto">
+            <ExistingSourcePanel />
           </div>
         ) : null}
       </div>

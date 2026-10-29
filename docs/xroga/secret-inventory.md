@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `9cf6ce1ec89d37a83afce1fe762a3eeb889fe38a`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `ca94c2f8a813524e47f5f7abc868acb1618a1c45`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -129,6 +129,7 @@ Values are forbidden. Source SHA: `9cf6ce1ec89d37a83afce1fe762a3eeb889fe38a`. Na
 | NEXT_PUBLIC_XROGA_BROWSER_RUNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-example-com, endpoint-your-website-com |
 | NEXT_PUBLIC_XROGA_BUILDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_XROGA_DRIVE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
+| NEXT_PUBLIC_XROGA_EXISTING_SOURCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NODE_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-backend-composio-dev, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-openai-com |
@@ -243,6 +244,7 @@ Values are forbidden. Source SHA: `9cf6ce1ec89d37a83afce1fe762a3eeb889fe38a`. Na
 | XROGA_DRIVE_R2_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_DRIVE_R2_BUCKET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_DRIVE_R2_SECRET_ACCESS_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| XROGA_EXISTING_SOURCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_FLY_OIDC_IMAGE_DIGESTS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_FLY_OIDC_ISSUER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_FLY_OIDC_ORGANIZATION_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |

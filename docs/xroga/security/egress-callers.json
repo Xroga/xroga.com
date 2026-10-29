@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "371b4b6490cd848260ea884534cd5cbc9003a19d962624efd43881add0545e07",
+  "sourceTreeDigest": "0ad940b97c7f770f1b47bb714cc07c4484638d95c236ab0ee3d0d8cebfab274c",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -213,7 +213,7 @@
     {
       "id": "4c899876b9e3850af11b",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 740,
+      "line": 764,
       "entryPoint": "execute",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -2094,7 +2094,7 @@
     {
       "id": "35923d1b52d197c378e1",
       "file": "backend/src/routes/github.ts",
-      "line": 116,
+      "line": 117,
       "entryPoint": "githubIdentityRequest",
       "transport": "fetch",
       "callee": "fetch",
