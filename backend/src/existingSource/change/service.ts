@@ -12,6 +12,7 @@
  *    `not_reproduced`, not as a regression test.
  *  - Cancellation aborts the agent and the isolated run and leaves the source untouched (it never is written here anyway).
  */
+import { gateChange } from './verificationEvidence.js';
 import type { AgentSoftwareExecutorInput, AgentSoftwareExecutorResult } from '../../ai/softwareAgent/AgentSoftwareExecutor.js';
 import type { SoftwareCheckResult, SoftwareExecutionContract } from '../../ai/softwareAgent/contracts.js';
 import type { SoftwareRunEvent, SoftwareRunEventSink } from '../../ai/softwareAgent/runEvents.js';
@@ -203,6 +204,7 @@ export class ChangeService {
       const startFrom = task.result.length ? task.result : parent?.result ?? [];
       const workspace = new ChangeWorkspace(snapshot, this.policy(scope), startFrom.length ? this.restoredFiles(snapshot, startFrom) : undefined);
 
+      let testedDigest: string | null = null;
       let last: TestRunResult | null = null; let note = ''; let preview: SoftwarePreviewEvidence | null = null;
       for (let attempt = task.attempts + 1; attempt <= task.maxAttempts; attempt++) {
         if (controller.signal.aborted) throw new CancelledError();
@@ -219,6 +221,7 @@ export class ChangeService {
         const changedPaths = set.files.filter((f) => f.kind !== 'deleted').map((f) => f.path);
         last = await runTests({ port: this.deps.execution, files: workspace.files(), changedPaths, signal: controller.signal });
         if (controller.signal.aborted || last.status === 'cancelled') throw new CancelledError();
+        testedDigest = set.digest;
         preview = null;
         if (isVisualChange(changedPaths) && last.status !== 'failed') {
           preview = await this.observePreview(task, binding, criteria, workspace, last);
@@ -235,7 +238,8 @@ export class ChangeService {
       }
 
       const set = workspace.changeSet();
-      const outcome = this.outcome(last, snapshot, preview);
+      const decided = this.outcome(last, snapshot, preview);
+      const outcome = this.crossCheck(decided, { task, set, last, preview, testedDigest, snapshot });
       let reproduction: ChangeTask['reproduction'] = 'not_applicable';
       if (bug && task.regressionTestAdded && outcome.status === 'verified') {
         reproduction = await this.reproduce(workspace, controller.signal);
@@ -350,6 +354,19 @@ export class ChangeService {
       case 'timeout': return { status: 'unverified', reason: `${last.summary} The change is not verified.` };
       default: return { status: 'unverified', reason: `${last.summary} The change is not verified.` };
     }
+  }
+
+  /**
+   * The shared verification gate as an independent second check on a `verified` decision. Receipts are bound to the digest of the change set
+   * that was actually tested, so a final change that differs from the tested one, or any missing or non-genuine evidence, downgrades to unverified.
+   */
+  private crossCheck(decided: { status: ChangeStatus; reason: string }, input: { task: ChangeTask; set: ReturnType<ChangeWorkspace['changeSet']>; last: TestRunResult | null; preview: SoftwarePreviewEvidence | null; testedDigest: string | null; snapshot: BaseSnapshot }): { status: ChangeStatus; reason: string } {
+    if (decided.status !== 'verified') return decided;
+    const owesBrowser = input.preview !== null && input.preview.notCheckedReason !== 'not_a_web_project';
+    const gate = gateChange({ runId: input.task.canonicalRunId ?? input.task.id, projectId: input.task.bindingId, testedDigest: input.testedDigest, deliveredDigest: input.set.digest,
+      tests: input.last, preview: input.preview, owesBrowser, sourceComplete: input.snapshot.complete });
+    if (gate.outcome === 'verified') return decided;
+    return { status: 'unverified', reason: `The verification gate did not confirm this change: ${gate.reasons.join(' ') || 'required evidence is missing.'}` };
   }
 
   /** Runs only the added or changed tests against the untouched base: a real regression test must fail there. */
