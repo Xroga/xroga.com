@@ -1,0 +1,31 @@
+{
+  "recordedUtc": "2026-10-29T16:29:59.882293+00:00",
+  "scope": "NETWORKLESS_LOCAL_POSTGRES_17_SCHEMA_ONLY_NOT_PRODUCTION_ACCEPTANCE",
+  "source": "schema-only selected tables from existing local development database; no data rows",
+  "productionComparison": "read-only catalog hashes match columns, types and nullability for projects, swarm_runs and google_canonical_deliveries",
+  "files": {
+    "cutover-fence-upgrade.DRAFT.sql": "3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed",
+    "cutover-fence-rollback.DRAFT.sql": "3366f3a5df7162d66faf69c90a25fa7791a2dd7198e8cf8462e07d8f35ef58f7",
+    "cutover-fence-schema-test.sh": "ab712b8ad04f6fc4a7bedde14422649b6ee0e1435528a2013bc35bc9e128f61d",
+    "local-schema-only-fixture.sql": "c3e5b3b2c033b752e831b7b286df90db4f97dcacf898999e7fe5f42166a6f52f"
+  },
+  "observed": [
+    "altered function rejected without partial schema",
+    "unsafe anon function grant rejected without applying schema",
+    "trigger installation waits for existing writer",
+    "fence waits for in-flight admission",
+    "service role cannot modify fence",
+    "paused idempotent retry denied",
+    "direct delivery insert denied while paused",
+    "old source denied and current source admitted",
+    "cross-tenant denial and atomic rollback",
+    "rollback denied until paused and runs drained",
+    "rollback restores original function"
+  ],
+  "limitations": [
+    "not a full production restore",
+    "no production DDL applied",
+    "external service rollout and recovery not tested"
+  ],
+  "productionFunctionAclCheck": "anon=false, authenticated=false, service_role=true"
+}
