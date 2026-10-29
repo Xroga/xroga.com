@@ -17109,7 +17109,7 @@
     },
     {
       "path": "backend/src/routes/projectRuntime.ts",
-      "sha256": "cfd97ee11bbcf0e6dacca99dd31b25282196288ea8acb923b171d5884f751396"
+      "sha256": "3329e8e1dfd1d6ae0ddf5898098736540a9e0494c34f50f7e6a6e9f54f67e845"
     },
     {
       "path": "backend/src/routes/projects.ts",
@@ -18181,7 +18181,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/coordinator.ts",
-      "sha256": "bc1bb6127395d40779ee293662ead3de803c07b687d063b281b79c5e283613d0"
+      "sha256": "98337c0ed2597f6c95a59e2ec5933a4c0844e99db75ffcbfffebb9466265cdd2"
     },
     {
       "path": "backend/src/synthesis/livePreview/googleTarget.ts",
@@ -18205,7 +18205,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/status.ts",
-      "sha256": "e6776acafc12017f38e2f9519529843c1a95f728710612cb6d2405c866d220b2"
+      "sha256": "37b0b02a3e029effa528e19e876148bb3ea75531db02b6d4f28a656ae7439c12"
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
@@ -18213,7 +18213,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/types.ts",
-      "sha256": "876fa495106c8cb829819d3c165e395d370d7ea2a33e2d8e1c11a3d71178c69a"
+      "sha256": "25139addca80208696c7fcb440dc1248ef4d6230a24c9efba5dae50f5cd243f7"
     },
     {
       "path": "backend/src/synthesis/nichePacks.ts",
@@ -18301,7 +18301,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "5991ba693df1f9ea64dc99a0370866e87c855841822251d3601003bef4b90133"
+      "sha256": "281f631fb4943c3a30730307176fbd6ca8ff024497ceb299ae2bcd313a14d70d"
     },
     {
       "path": "backend/src/synthesis/reliability/canonicalResume.ts",
@@ -21089,7 +21089,7 @@
     },
     {
       "path": "frontend/src/components/terminal/RuntimePreviewControls.tsx",
-      "sha256": "f2282a51ca5a3cf812b6f7f24afc195437d4a50bd4f21e854191d842097607f7"
+      "sha256": "47ec4ab37aefa1f94ebe604872322e01ac95a40050ac99f0f5c22f9bd3c34df2"
     },
     {
       "path": "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
@@ -21485,7 +21485,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "65078c12e4c89537a5178aac6d59d1c6253a955b4242775d2dbe0f706925d793"
+      "sha256": "ad02eac726314973063455083e590b98f3a86ff9aa6324a98ad992ac9e6b6151"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22425,7 +22425,7 @@
     },
     {
       "path": "frontend/src/store/useLiveBuildStore.ts",
-      "sha256": "3c6c8f715487bd23da78c570c6a27cb6ad91149e2f871dca823fa27e76926384"
+      "sha256": "3b8afef92bcbbafddd83aac8e59da74b558f0a8acd9514a4d0d04d62d17da5fa"
     },
     {
       "path": "frontend/src/store/useOsCommand2Store.ts",
@@ -34754,7 +34754,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/coordinator.ts",
-      "line": 136,
+      "line": 137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

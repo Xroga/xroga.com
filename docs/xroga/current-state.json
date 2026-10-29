@@ -29117,7 +29117,7 @@
       "id": "surface:3d74dc318d6d51f5d44e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "sha256": "cfd97ee11bbcf0e6dacca99dd31b25282196288ea8acb923b171d5884f751396",
+      "sha256": "3329e8e1dfd1d6ae0ddf5898098736540a9e0494c34f50f7e6a6e9f54f67e845",
       "symbols": [
         "binding",
         "error",
@@ -47291,7 +47291,7 @@
       "id": "surface:76ce9a21485f65e9bc65",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/coordinator.ts",
-      "sha256": "bc1bb6127395d40779ee293662ead3de803c07b687d063b281b79c5e283613d0",
+      "sha256": "98337c0ed2597f6c95a59e2ec5933a4c0844e99db75ffcbfffebb9466265cdd2",
       "symbols": [
         "LivePreviewEventEmitter",
         "attempt",
@@ -47345,6 +47345,7 @@
         "../projectRuntime/googleAuthority.js",
         "../projectRuntime/googleFactory.js",
         "../projectRuntime/index.js",
+        "../projectRuntime/store.js",
         "../projectRuntime/types.js",
         "../softwareProject.js",
         "./plan.js",
@@ -47360,7 +47361,8 @@
         "backend/src/synthesis/livePreview/store.ts",
         "backend/src/synthesis/livePreview/types.ts",
         "backend/src/synthesis/projectRuntime/googleFactory.ts",
-        "backend/src/synthesis/projectRuntime/index.ts"
+        "backend/src/synthesis/projectRuntime/index.ts",
+        "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -47546,7 +47548,7 @@
         "backend/src/builder/canonical.ts:6",
         "backend/src/builder/runtime.integration.test.ts:8",
         "backend/src/routes/projectRuntime.ts:31",
-        "backend/src/synthesis/livePreview/coordinator.ts:40",
+        "backend/src/synthesis/livePreview/coordinator.ts:41",
         "backend/src/synthesis/livePreview/index.ts:7",
         "backend/src/synthesis/livePreview/livePreview.test.ts:16"
       ],
@@ -47648,7 +47650,7 @@
         "backend/src/middleware/runtimePreviewGateway.ts:35",
         "backend/src/routes/projectRuntime.ts:27",
         "backend/src/security/previewConsumer.local.integration.ts:9",
-        "backend/src/synthesis/livePreview/coordinator.ts:36",
+        "backend/src/synthesis/livePreview/coordinator.ts:37",
         "backend/src/synthesis/livePreview/index.ts:5",
         "backend/src/synthesis/livePreview/livePreview.test.ts:20",
         "backend/src/synthesis/livePreview/signingDns.test.ts:3"
@@ -47683,10 +47685,11 @@
       "id": "surface:213643cd11a1b980d889",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/status.ts",
-      "sha256": "e6776acafc12017f38e2f9519529843c1a95f728710612cb6d2405c866d220b2",
+      "sha256": "37b0b02a3e029effa528e19e876148bb3ea75531db02b6d4f28a656ae7439c12",
       "symbols": [
         "LivePreviewStatusFacts",
-        "livePreviewStatusFromFacts"
+        "livePreviewStatusFromFacts",
+        "previewSourceState"
       ],
       "imports": [
         "./types.js"
@@ -47764,7 +47767,7 @@
         "backend/src/security/previewConsumer.local.integration.ts:8",
         "backend/src/security/previewGrantAdmission.local.integration.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:54",
-        "backend/src/synthesis/livePreview/coordinator.ts:30",
+        "backend/src/synthesis/livePreview/coordinator.ts:31",
         "backend/src/synthesis/livePreview/index.ts:3",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:6"
       ],
@@ -47804,7 +47807,7 @@
       "id": "surface:09aba8fa07f4e6743816",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/types.ts",
-      "sha256": "876fa495106c8cb829819d3c165e395d370d7ea2a33e2d8e1c11a3d71178c69a",
+      "sha256": "25139addca80208696c7fcb440dc1248ef4d6230a24c9efba5dae50f5cd243f7",
       "symbols": [
         "LIVE_PREVIEW_SCHEMA_VERSION",
         "LivePreviewCommandPlan",
@@ -47813,7 +47816,8 @@
         "LivePreviewKind",
         "LivePreviewLaunchPlan",
         "LivePreviewProcessPlan",
-        "LivePreviewStatus"
+        "LivePreviewStatus",
+        "PreviewSourceState"
       ],
       "imports": [],
       "runtimeImports": [],
@@ -47822,7 +47826,7 @@
       ],
       "callers": [
         "backend/src/routes/projectRuntime.ts:35",
-        "backend/src/synthesis/livePreview/coordinator.ts:44",
+        "backend/src/synthesis/livePreview/coordinator.ts:45",
         "backend/src/synthesis/livePreview/index.ts:1"
       ],
       "reachable": true,
@@ -49431,6 +49435,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/security/workerProjectAdmission.local.integration.ts:11",
         "backend/src/security/workerRevision.local.integration.ts:9",
+        "backend/src/synthesis/livePreview/coordinator.ts:25",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:4",
         "backend/src/synthesis/livePreview/store.ts:8",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:6",
@@ -49518,7 +49523,7 @@
       "id": "surface:f32bc6f66d06656f548d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "5991ba693df1f9ea64dc99a0370866e87c855841822251d3601003bef4b90133",
+      "sha256": "281f631fb4943c3a30730307176fbd6ca8ff024497ceb299ae2bcd313a14d70d",
       "symbols": [
         "PROJECT_RUNTIME_SCHEMA_VERSION",
         "ProjectRuntimeBinding",
@@ -89936,7 +89941,7 @@
       "id": "surface:0fb358f5ece8d9d142d0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/RuntimePreviewControls.tsx",
-      "sha256": "f2282a51ca5a3cf812b6f7f24afc195437d4a50bd4f21e854191d842097607f7",
+      "sha256": "47ec4ab37aefa1f94ebe604872322e01ac95a40050ac99f0f5c22f9bd3c34df2",
       "symbols": [
         "RuntimePreviewControls",
         "markStopped",
@@ -96321,7 +96326,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "65078c12e4c89537a5178aac6d59d1c6253a955b4242775d2dbe0f706925d793",
+      "sha256": "ad02eac726314973063455083e590b98f3a86ff9aa6324a98ad992ac9e6b6151",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -96401,6 +96406,7 @@
         "line",
         "lines",
         "message",
+        "notedHistoryGap",
         "out",
         "outType",
         "output",
@@ -110629,7 +110635,7 @@
       "id": "surface:8335976d8c9335ea6d76",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/store/useLiveBuildStore.ts",
-      "sha256": "3c6c8f715487bd23da78c570c6a27cb6ad91149e2f871dca823fa27e76926384",
+      "sha256": "3b8afef92bcbbafddd83aac8e59da74b558f0a8acd9514a4d0d04d62d17da5fa",
       "symbols": [
         "LiveBuildState",
         "LiveBuildTimelineItem",
@@ -122617,9 +122623,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:773e03a8f6e038cdcfc5",
+      "id": "registration:f1db2c38be352aaa9d2b",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 54,
+      "line": 55,
       "receiver": "router",
       "method": "get",
       "path": "/:projectId/logs",
@@ -122629,9 +122635,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5220a6386c3a30ad6ee3",
+      "id": "registration:e4409de9179745a7d82d",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 165,
+      "line": 166,
       "receiver": "router",
       "method": "post",
       "path": "/:projectId/restart",
@@ -122641,9 +122647,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bb708162e4d24fe5727f",
+      "id": "registration:a57e0a648a37d2f079ce",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 246,
+      "line": 247,
       "receiver": "router",
       "method": "post",
       "path": "/:projectId/stop",
@@ -122653,9 +122659,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:62b6cd4267aef1659c7a",
+      "id": "registration:893e407bb579307319a2",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 346,
+      "line": 347,
       "receiver": "router",
       "method": "get",
       "path": "/:projectId",
@@ -123583,10 +123589,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f5250120d29d34d897c7",
-      "registrationId": "registration:773e03a8f6e038cdcfc5",
+      "id": "route:57f70584d3d10157c086",
+      "registrationId": "registration:f1db2c38be352aaa9d2b",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 54,
+      "line": 55,
       "method": "GET",
       "path": "/api/project-runtime/:projectId/logs",
       "mountChain": [
@@ -123600,10 +123606,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:06125fcb1f97229e28ee",
-      "registrationId": "registration:5220a6386c3a30ad6ee3",
+      "id": "route:b944826095aaef92e1e0",
+      "registrationId": "registration:e4409de9179745a7d82d",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 165,
+      "line": 166,
       "method": "POST",
       "path": "/api/project-runtime/:projectId/restart",
       "mountChain": [
@@ -123617,10 +123623,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:16827ff7887e0bd49cbe",
-      "registrationId": "registration:bb708162e4d24fe5727f",
+      "id": "route:7b9512cc77ee684047ee",
+      "registrationId": "registration:a57e0a648a37d2f079ce",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 246,
+      "line": 247,
       "method": "POST",
       "path": "/api/project-runtime/:projectId/stop",
       "mountChain": [
@@ -123634,10 +123640,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b48fa530d5e067ced68b",
-      "registrationId": "registration:62b6cd4267aef1659c7a",
+      "id": "route:0878d12d7ffb7c3f471b",
+      "registrationId": "registration:893e407bb579307319a2",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 346,
+      "line": 347,
       "method": "GET",
       "path": "/api/project-runtime/:projectId",
       "mountChain": [
@@ -136866,37 +136872,37 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:7baea8a1423754f5aa88",
+      "id": "frontend-call:07fb624fbb0163d53845",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 430,
+      "line": 431,
       "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:74b1955e9e4263a46307",
+      "id": "frontend-call:4b8fab8cc8ced3a63ab1",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 733,
+      "line": 744,
       "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:5ac05ceee0612e6c7b5e",
+      "id": "frontend-call:2bdbf5b46891f567dba9",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 1437,
+      "line": 1448,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:b76d448d3023e0a79888",
+      "id": "frontend-call:0b5a2264b1fe2a41f814",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 1678,
+      "line": 1689,
       "callee": "fetchApiResponse",
       "reachable": true
     },
     {
-      "id": "frontend-call:41b49a875d0079830960",
+      "id": "frontend-call:01d16bf0d1a743dd19e1",
       "sourcePath": "frontend/src/lib/api.ts",
-      "line": 6687,
+      "line": 6698,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -141828,7 +141834,7 @@
     {
       "id": "test-suite:ff95ef585183cf93670a",
       "sourcePath": "backend/src/synthesis/livePreview/status.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -142818,6 +142824,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:055095cf6dfaedf4aa67",
+      "sourcePath": "frontend/src/components/terminal/RuntimePreviewControls.staleNotice.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:365299b4ac71b627e87d",
       "sourcePath": "frontend/src/components/workspace/WorkspaceAuthGate.test.ts",
       "declaredTests": 4,
@@ -143731,6 +143744,13 @@
       "id": "test-suite:35d1381840b58c5d6fda",
       "sourcePath": "frontend/src/lib/supabase/telemetryRealm.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:1409e18ce87a6696702e",
+      "sourcePath": "frontend/src/lib/swarmReplayGap.contract.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

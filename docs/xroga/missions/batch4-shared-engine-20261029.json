@@ -35,6 +35,7 @@
     "backend/src/existingSource/change/verificationEvidence.ts",
     "backend/src/operations/operationsEngine.ts",
     "backend/src/operations/redactionCanary.test.ts",
+    "backend/src/routes/projectRuntime.ts",
     "backend/src/routes/swarm.ts",
     "backend/src/sandbox/google/googleSandbox.test.ts",
     "backend/src/sandbox/google/googleSandbox.ts",
@@ -42,12 +43,17 @@
     "backend/src/sandbox/meteredExecution.ts",
     "backend/src/sandbox/sandboxRuntime.ts",
     "backend/src/security/serviceRoleGuard.ts",
+    "backend/src/synthesis/livePreview/coordinator.ts",
+    "backend/src/synthesis/livePreview/status.test.ts",
+    "backend/src/synthesis/livePreview/status.ts",
+    "backend/src/synthesis/livePreview/types.ts",
     "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
     "backend/src/synthesis/projectRuntime/store.metering.test.ts",
     "backend/src/synthesis/projectRuntime/store.owner.test.ts",
     "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
     "backend/src/synthesis/projectRuntime/store.ts",
     "backend/src/synthesis/projectRuntime/store.worker.test.ts",
+    "backend/src/synthesis/projectRuntime/types.ts",
     "backend/src/workers/__tests__/postgrestFilter.ts",
     "backend/src/workers/browserCapability.ts",
     "backend/src/workers/browserRunStore.integration.test.ts",
@@ -62,6 +68,7 @@
     "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
     "backend/tests/googleDeliveryCrash.local.integration.ts",
     "docs/infra/batch-4/GOLDEN-MATRIX.md",
+    "docs/infra/batch-4/OPERATIONS.md",
     "docs/infra/batch-4/ORIGINAL-SPECIFICATION.md",
     "docs/infra/batch-4/RESOURCE-LEDGER.md",
     "docs/infra/batch-4/STATUS.md",
@@ -85,10 +92,15 @@
     "docs/xroga/security/credential-usage-audit.json",
     "docs/xroga/security/current-migration-additions.json",
     "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
     "docs/xroga/security/phase-three-authority-delta.json",
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
+    "frontend/src/components/terminal/RuntimePreviewControls.staleNotice.test.ts",
+    "frontend/src/components/terminal/RuntimePreviewControls.tsx",
     "frontend/src/lib/api.ts",
+    "frontend/src/lib/swarmReplayGap.contract.test.ts",
+    "frontend/src/store/useLiveBuildStore.ts",
     "scripts/batch4/local-fairness-benchmark.ts",
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
@@ -236,6 +248,18 @@
       "scope": "Local fairness and latency measurement (not production performance).",
       "negative": true,
       "reference": "scripts/batch4/local-fairness-benchmark.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/synthesis/livePreview/status.test.ts",
+      "scope": "Preview source state: only a recorded matching fingerprint is current.",
+      "negative": true,
+      "reference": "backend/src/synthesis/livePreview/status.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/swarmReplayGap.contract.test.ts frontend/src/components/terminal/RuntimePreviewControls.staleNotice.test.ts",
+      "scope": "Frontend contracts: lost history is reported once; a stale preview is labelled as an older version.",
+      "negative": true,
+      "reference": "frontend/src/lib/swarmReplayGap.contract.test.ts"
     }
   ],
   "architecture": {
@@ -246,9 +270,9 @@
   "rollout": "Development only. Merge and activation need the founder authorisation after all three phases and acceptance gates.",
   "rollback": "Revert the branch. The reconciler change only alters when an unclaimed run is ended and which reason it records; the read-back only adds a verification read after an insert.",
   "knownGaps": [
-    "Phase 1: source recovery after a worker killed mid file edit is not shown end to end; allocation-cleanup proof against a provider and R2 read-back are not done",
-    "The resource ledger is wired but off by default and unapplied; no caps are chosen and no real usage has been recorded",
-    "Batch 2 repair stays the canonical graph task by design; only Batch 3 uses the shared controller",
+    "Unfinished development: operator diagnostics (spec 11.4), end-to-end source recovery after a worker killed mid-edit, provider-side orphan sweep, ledger retention and per-tenant overrides",
+    "Batch 2 repair intentionally remains the canonical task graph task; only Batch 3 uses the shared controller",
+    "Several changes are default-on (queued-run wait, fair discovery, revision read-back, redaction, gate cross-check); see docs/infra/batch-4/OPERATIONS.md",
     "Golden A-V: 2 PASS, 20 PARTIAL; the PARTIAL rows need a real sandbox, preview, browser or model",
     "All real-model, real-provider, staging and production verification is DEFERRED BY FOUNDER"
   ],
@@ -258,7 +282,9 @@
   "evidenceRefs": [
     "docs/infra/batch-4/STATUS.md",
     "docs/infra/batch-4/RESOURCE-LEDGER.md",
-    "BATCH-4-HANDOFF.md"
+    "BATCH-4-HANDOFF.md",
+    "docs/infra/batch-4/OPERATIONS.md",
+    "docs/infra/batch-4/GOLDEN-MATRIX.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

@@ -19,6 +19,29 @@ Added since the first checkpoint, all development only and covered by CI on the 
 
 The tables below describe the first checkpoint; where they disagree with the update above, the update and the golden matrix are current.
 
+## Development closure (read this first)
+
+This separates two things that are easy to blur. **Unfinished development** is work that needs code or a local test and is not done. **Deferred live checks** need infrastructure, a model or a provider that has not been authorised, and are not development gaps.
+
+### Unfinished development (not done)
+
+1. **Operator diagnostics** (spec section 11.4) are not built: no read-only operator view of stalled runs, lease and queue state, preview health, orphan candidates or budget anomalies. Deliberately not added as an untested admin route.
+2. **Source recovery after a worker is killed mid file edit** is not shown end to end (killed worker, source restored from the last durable revision, re-validated, verified). The pieces are tested separately; the whole path is not.
+3. **Provider-side orphan sweep** for an allocation that was never recorded and whose destruction failed is not built or tested (only the cleanup classification exists).
+4. **Ledger follow-ups:** no retention job for old rows, no per-plan or per-tenant cap overrides.
+5. **Batch 2's repair** stays the canonical task graph's `validation_repair` task by design. This is a decision, not a gap, and is recorded so it is not mistaken for one.
+
+### Deferred live-infrastructure checks (not development gaps)
+
+Real Google sandbox execution and its isolation tests (path, symlink, package-script, metadata and network denial); a real dev server and preview against a deployed environment; real browser (Playwright) QA; R2 upload, read-back and integrity; Cloud Tasks delivery, tombstones and redelivery; real model-driven repair; live GitHub, Vercel and Supabase reconciliation; ledger migration applied to a real database and measured usage from a real environment; choosing resource caps; production-scale load and latency; the full UI against a deployed backend.
+
+### What changed on this closure pass
+
+- Merged current `main` (preview admission, `8e3d0fb9`) with the generated records regenerated and the proof bindings rebound.
+- The generic preview route now reports whether the running preview reflects the latest saved source (`sourceState`: current, stale or unknown) and the UI shows an "Older version" notice for a stale one.
+- The reconnecting client now says once when part of a run's history is no longer retained.
+- `docs/infra/batch-4/OPERATIONS.md`: what merging changes by default, what stays off, the safe activation order and rollback.
+
 ## Update (third increment)
 
 Everything below is development only; the migration is unapplied and production is on hold.

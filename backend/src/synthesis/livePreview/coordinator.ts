@@ -22,6 +22,7 @@ import {
   ProjectProcessManager,
   SupabaseProjectRuntimeStore,
 } from '../projectRuntime/index.js';
+import { projectWorkspaceFingerprint } from '../projectRuntime/store.js';
 
 import type {
   ProjectRuntimeSession,
@@ -1205,11 +1206,11 @@ if (
       }
     }
 
-    const binding =
-      await runtime
-        .binding(
-          session.sessionId,
-        );
+    // Record exactly which source this runtime was synchronized from, so a later status read can say whether it is still the latest.
+    const binding = {
+      ...(await runtime.binding(session.sessionId)),
+      sourceFingerprint: projectWorkspaceFingerprint(input.project),
+    };
 
     const updatedProject:
       SoftwareProject = {
@@ -1422,11 +1423,10 @@ if (
         project = {
           ...project,
 
-          runtime:
-            await runtime
-              .binding(
-                session.sessionId,
-              ),
+          runtime: {
+            ...(await runtime.binding(session.sessionId)),
+            sourceFingerprint: projectWorkspaceFingerprint(input.project),
+          },
 
           updatedAt:
             now(),
