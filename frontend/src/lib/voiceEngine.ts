@@ -46,11 +46,10 @@ export function createVoiceEngine(createWorker = () => new Worker(`${VOICE_RUNTI
     clearIdle();
     return new Promise((resolve,reject)=>{
       const id=++sequence,abort=()=>dispose(cancelled());
-      let timer:ReturnType<typeof setTimeout>;
+      const timer=setTimeout(()=>dispose(failure('timeout')),deadlineMs+(samples?samples.length/VOICE_SAMPLE_RATE*6000:0));
       const cleanup=()=>{clearTimeout(timer);signal.removeEventListener('abort',abort);if(samples?.byteLength)samples.fill(0);};
       pending.set(id,{type,progress,resolve,reject,cleanup});
       signal.addEventListener('abort',abort,{once:true});
-      timer=setTimeout(()=>dispose(failure('timeout')),deadlineMs+(samples?samples.length/VOICE_SAMPLE_RATE*6000:0));
       try{getWorker().postMessage({id,type,...(samples?{samples}: {})},samples?[samples.buffer as ArrayBuffer]:[]);}
       catch{dispose(failure('engine'));}
     });
