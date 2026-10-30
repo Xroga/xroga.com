@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "669e3af0f46686cf37aedcd8b9d155a0feb6da88",
+  "source_sha": "1d24fd0febee370bf1249ac2700f4e15406bda8b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22375,7 +22375,7 @@
     },
     {
       "path": "frontend/src/lib/voiceLocal.ts",
-      "sha256": "c8bb9b1dc4408b167fc20439777dacef9e4a6d5d807dcd362092587e189c06ef"
+      "sha256": "ca657a98e140b0e5082d13b0b1fa073749546b60e695ff76719d1243f9a69aa9"
     },
     {
       "path": "frontend/src/lib/voiceLocalProtocol.ts",
