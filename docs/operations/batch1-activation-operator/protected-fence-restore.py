@@ -22,7 +22,10 @@ NEW = '85f83e3f1dcbb057d4a28d8a696dae8396d45114'
 PREFIX = 'gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/'
 HASHES = {'cutover-fence-upgrade.DRAFT.sql':'3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed',
           'cutover-fence-rollback.DRAFT.sql':'a188225ef4e9b3bbc8c2216e22f85ec3d0e4e2b9dc81d1ff794ee8fd1c508be2',
-          'released-google-canonical-deliveries.sql':'1fca51799370f969165de860091591984b84198217488d19df98c591a4ce160d'}
+          'released-google-canonical-deliveries.sql':'1fca51799370f969165de860091591984b84198217488d19df98c591a4ce160d',
+          'cutover-pause.sql':'2ba3b7649cacb260b39b5708e44f47c6f16f2ff4eef6d11a6fb857f423b53fa9',
+          'cutover-allow-85.sql':'0849fc12176ee20efdb831911f826cc4132dccc51dfbdd5e105154c1b264b13a',
+          'cutover-allow-ca94.sql':'54421453ee0b37d11c1609d56bffb295273bbe465463537fa9ce5a4c4a1ec501'}
 
 def cmd(args, data=None, timeout=120):
     return subprocess.run(args, input=data, capture_output=True, timeout=timeout)
@@ -77,11 +80,18 @@ def main():
     assert docker('inspect',NAME).returncode != 0, 'EXISTING_CONTAINER_PRESERVED'
     for file, digest in HASHES.items():
         assert hashlib.sha256((ROOT/file).read_bytes()).hexdigest() == digest, 'DRAFT_HASH_MISMATCH'
-    source = json.loads((HOME/'xroga-google-migration-backup-receipt-20261027-v4.json').read_text())
-    assert source['status']=='PASS_ENCRYPTED_PRODUCTION_BACKUP_NOT_YET_RESTORED' and source['prefix']==PREFIX, 'BACKUP_RECEIPT_MISMATCH'
+    fresh='--fresh' in sys.argv
+    source = json.loads((ROOT/'fresh-backup-input.json' if fresh else HOME/'xroga-google-migration-backup-receipt-20261027-v4.json').read_text())
+    prefix=source['prefix']
+    assert source['status']=='PASS_ENCRYPTED_PRODUCTION_BACKUP_NOT_YET_RESTORED', 'BACKUP_RECEIPT_MISMATCH'
+    if fresh:
+        assert re.fullmatch(r'gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20\d{6}T\d{6}Z/',prefix), 'FRESH_BACKUP_DESTINATION_MISMATCH'
+        assert source.get('readOnlyPreflight',{}).get('enqueueMd5')=='9014766f51e6d9fd878cc5d4724383c2', 'FRESH_BACKUP_PREFLIGHT_REQUIRED'
+    else:
+        assert prefix==PREFIX, 'RETAINED_BACKUP_IDENTITY_MISMATCH'
     assert source['project']=='nzenxdfumxrnsmybazmo' and source['dumpDataFormat']=='INSERT', 'BACKUP_IDENTITY_MISMATCH'
     state={'startedAtUtc':now(),'productionSqlApplied':False,'productionConnections':False,
-           'customerProviderDispatch':False,'backupPrefix':PREFIX,'draftHashes':HASHES,'stages':[]}
+           'customerProviderDispatch':False,'backupPrefix':prefix,'freshBackup':fresh,'draftHashes':HASHES,'stages':[]}
     def mark(stage):
         state['stages'].append(stage)
         RECEIPT.write_text(json.dumps(state,indent=2)+'\n')
@@ -92,13 +102,15 @@ def main():
     for file in ['database.dump.gpg','roles.sql.gpg','backup-secret.kms']:
         item=next(v for v in source['encryptedFiles'] if v['name']==file)
         target=cipher/file
-        meta=cmd(['gcloud','storage','objects','describe',PREFIX+file,'--format=json','--quiet'])
+        meta=cmd(['gcloud','storage','objects','describe',prefix+file,'--format=json','--quiet'])
         assert meta.returncode==0,'BACKUP_METADATA_ACCESS_FAILED'
         metadata=json.loads(meta.stdout)
-        if file=='database.dump.gpg':
+        assert int(metadata['size'])==item['bytes'],'BACKUP_OBJECT_SIZE_MISMATCH'
+        if file=='database.dump.gpg' and not fresh:
             assert str(metadata['generation'])=='1793086727267501','BACKUP_GENERATION_MISMATCH'
             assert int(metadata['size'])==12581025,'BACKUP_SIZE_MISMATCH'
-        fetched=cmd(['gcloud','storage','cp',PREFIX+file+'#'+str(metadata['generation']),str(target),'--quiet'])
+        if file=='database.dump.gpg':state['databaseObjectGeneration']=str(metadata['generation'])
+        fetched=cmd(['gcloud','storage','cp',prefix+file+'#'+str(metadata['generation']),str(target),'--quiet'])
         assert fetched.returncode==0,'ENCRYPTED_BACKUP_FETCH_FAILED'
         assert target.stat().st_size==item['bytes'],'CIPHERTEXT_SIZE_MISMATCH'
         assert hashlib.sha256(target.read_bytes()).hexdigest()==item['sha256'],'CIPHERTEXT_HASH_MISMATCH'
@@ -107,6 +119,7 @@ def main():
     META.write_text(json.dumps({'jobId':job,'deadline':time.time()+35*60,'createdAtUtc':now()}))
     subprocess.Popen([sys.executable,str(pathlib.Path(__file__).resolve()),'--watch'],
                      stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True)
+    secret=None
     try:
         r=docker('run','-d','--rm','--name',NAME,'--network','none','--memory','1g','--memory-swap','1g','--cpus','1',
             '--log-driver','none','--label','io.xroga.cleanup.owner='+OWNER,'--label','io.xroga.cleanup.job='+job,
@@ -176,6 +189,7 @@ def main():
         mark('FULL_BACKUP_ROLES_DATABASE_OWNERS_ACLS_RESTORED')
         shape=json.loads(sql("SELECT json_build_object('deliveryTable',to_regclass('public.google_canonical_deliveries') IS NOT NULL,'enqueue',to_regprocedure('public.enqueue_google_canonical_run(uuid,uuid,uuid,uuid,jsonb,text)') IS NOT NULL);").stdout)
         state['retainedSnapshotCanonicalObjects']=shape
+        if fresh:assert all(shape.values()),'FRESH_BACKUP_CANONICAL_SCHEMA_MISSING'
         if shape=={'deliveryTable':False,'enqueue':False}:
             # This fixture predates the already released Google transport SQL.
             # Reproduce that exact expansion only in the isolated restored DB.
@@ -195,6 +209,7 @@ def main():
         state['status']='BLOCKED_ISOLATED_RESTORE_OR_FENCE'
         state['errorCategory']=str(e) if isinstance(e,AssertionError) else type(e).__name__
     finally:
+        if isinstance(secret,bytearray):secret[:]=b'\0'*len(secret)
         cleanup(job)
         state['cleanupVerified']=True
         state['completedAtUtc']=now()
@@ -212,6 +227,9 @@ def exercise_fence(sql,mark):
         deliveries.append(d);runs.append(r)
         return "SET ROLE service_role; SELECT public.enqueue_google_canonical_run('"+d+"','"+r+"','"+user+"','"+project+"','{\"prompt\":\"isolated synthetic fence test\"}','"+source+"');"
     first=enqueue()
+    pause='SET ROLE postgres; '+(ROOT/'cutover-pause.sql').read_text()
+    allow_new='SET ROLE postgres; '+(ROOT/'cutover-allow-85.sql').read_text()
+    allow_old='SET ROLE postgres; '+(ROOT/'cutover-allow-ca94.sql').read_text()
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
         admission=pool.submit(sql,'BEGIN; '+first+' SELECT pg_sleep(3); COMMIT;')
         for _ in range(60):
@@ -220,7 +238,7 @@ def exercise_fence(sql,mark):
             time.sleep(.05)
         else:raise AssertionError('INFLIGHT_ADMISSION_NOT_OBSERVED')
         started=time.monotonic()
-        sql("BEGIN; SELECT pg_advisory_xact_lock(hashtextextended('xroga-canonical-admission',0)); UPDATE public.xroga_release_fence SET allowed_source=NULL WHERE singleton; COMMIT;")
+        sql(pause)
         elapsed=time.monotonic()-started
         admission.result()
         assert elapsed>1.5,'FENCE_DID_NOT_DRAIN_INFLIGHT_ADMISSION'
@@ -229,17 +247,27 @@ def exercise_fence(sql,mark):
     assert sql("SET ROLE service_role; UPDATE public.xroga_release_fence SET allowed_source='"+NEW+"';",expected=False).returncode!=0,'SERVICE_ROLE_MODIFIED_GATE'
     for role in ['anon','authenticated']:
         assert sql('SET ROLE '+role+'; SELECT * FROM public.xroga_release_fence;',expected=False).returncode!=0,'UNPRIVILEGED_GATE_READ'
-    sql("BEGIN; SELECT pg_advisory_xact_lock(hashtextextended('xroga-canonical-admission',0)); UPDATE public.xroga_release_fence SET allowed_source='"+NEW+"' WHERE singleton; COMMIT;")
+    assert sql(allow_new,expected=False).returncode!=0,'FORWARD_OPEN_WITH_OLD_ACTIVE_WORK_ACCEPTED'
+    assert sql(allow_old,expected=False).returncode!=0,'RECOVERY_OPEN_WITH_ACTIVE_WORK_ACCEPTED'
+    sql("UPDATE public.swarm_runs SET status='complete' WHERE id='"+runs[0]+"';")
+    sql(allow_new)
+    mark('EXACT_SOURCE_TRANSITION_SQL_REQUIRES_PAUSE_AND_FULL_DRAIN_PASS')
     assert sql(enqueue(),expected=False).returncode!=0,'OLD_SOURCE_ADMITTED'
     sql(enqueue(NEW))
     assert sql(enqueue(NEW,foreign),expected=False).returncode!=0,'FOREIGN_OWNER_ADMITTED'
     mark('FULL_RESTORE_PAUSE_SOURCE_TENANT_AND_GATE_PRIVILEGES_PASS')
     rollback='SET ROLE postgres; '+(ROOT/'cutover-fence-rollback.DRAFT.sql').read_text()
     assert sql(rollback,expected=False).returncode!=0,'ROLLBACK_WITH_OPEN_GATE_ACCEPTED'
-    sql("BEGIN; SELECT pg_advisory_xact_lock(hashtextextended('xroga-canonical-admission',0)); UPDATE public.xroga_release_fence SET allowed_source=NULL WHERE singleton; COMMIT;")
+    sql(pause)
     assert sql(rollback,expected=False).returncode!=0,'ROLLBACK_WITH_ACTIVE_WORK_ACCEPTED'
     ids=','.join("'"+r+"'" for r in runs)
     sql('UPDATE public.swarm_runs SET status=\'complete\' WHERE id IN ('+ids+');')
+    sql(allow_old)
+    assert sql(enqueue(NEW),expected=False).returncode!=0,'RECOVERY_GATE_ADMITTED_NEW_SOURCE'
+    sql(enqueue(OLD))
+    sql("UPDATE public.swarm_runs SET status='complete' WHERE id='"+runs[-1]+"';")
+    sql(pause)
+    mark('EXACT_CA94_RECOVERY_GATE_SOURCE_AND_DRAIN_PASS')
     # Existing snapshot work is never force-completed to make rollback pass.
     assert sql(rollback,expected=False).returncode==0,'RESTORED_SNAPSHOT_HAS_UNDRAINED_WORK_ROLLBACK_REFUSED'
     assert sql("SELECT md5(prosrc)='9014766f51e6d9fd878cc5d4724383c2' AND to_regclass('public.xroga_release_fence') IS NULL FROM pg_proc WHERE oid='public.enqueue_google_canonical_run(uuid,uuid,uuid,uuid,jsonb,text)'::regprocedure;").stdout.strip()==b't','ROLLBACK_DID_NOT_RESTORE_EXACT_ORIGINAL'
