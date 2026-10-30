@@ -31,6 +31,72 @@ personal files or WSL virtual disks. Existing leftovers require exact-path,
 content, Git and active-use verification. Preserve ambiguous files for review.
 This is local development hygiene, not a product scheduler or runtime dependency.
 
+## Mandatory cloud usage and cost containment
+
+Follow `docs/operations/cloud-usage-policy.md` for every cloud operation.
+Build the full Xroga execution platform. Prefer suitable existing infrastructure,
+open source, local processing, included CI and free quotas. Use paid resources
+when required for capability, security, reliability or isolation. Do not weaken
+the product or substitute an inadequate free option merely to lower the bill.
+
+Keep ordinary code, types, lint, tests, repository audits and documentation on
+local or existing CI resources. Before material new spending, record the actual
+need, alternatives and their limitations, expected benefit, one-time/recurring/
+usage and idle costs, scaling bounds, owner, lifetime, cleanup and rollback.
+Normal operations within existing permissions, scope and budgets may continue
+without repeating approval requests for already-authorized steps.
+
+Prefer demand-driven workers, browser sessions and heavy execution where safe.
+Inspect every tagged revision. Zero-percent traffic does not stop a revision's
+minimum instances. Explicitly bound temporary candidates and verify cleanup.
+Retain cold recovery images instead of silently accumulating warm old tags.
+Preserve startup guards, canonical API/Job pairing and local storage cleanup.
+
+Claude and Codex must inspect shared resources and ownership before provisioning,
+use existing mission/release records, designate one operator for a shared change
+window and avoid duplicated infrastructure or competing orchestration paths.
+Measure cost per verified successful task, idle cost, completion time, failures,
+retries and utilization together. Missing evidence is not a zero value or PASS.
+
+Do not stop critical production to save money, add paid monitoring unnecessarily,
+enable paid fallbacks or exceed approved spending. Separate gross usage, credits
+and cash cost. Budget alerts are not hard caps. This principle grants no new IAM,
+production deployment or batch activation authority and lifts no specific hold.
+
+## Mandatory Cloud Shell usage policy
+
+Follow `docs/operations/cloud-shell-usage-policy.md`. Cloud Shell is a specialized
+operational tool. Use the existing local repository, authorized local gcloud,
+APIs, integrations or existing CI whenever an equivalent secure method works.
+Before opening or reconnecting, record the exact technical need, alternatives,
+project, permissions, production/billing effects, expected duration and shared
+operation owner. Check available quota and avoid duplicate agent sessions.
+Prepare commands first, verify the result, preserve evidence and end the session
+when its operation finishes. Never interrupt critical recovery to save quota.
+Do not keep sessions alive artificially, evade quota, export protected secrets,
+depend on Cloud Shell for durable work or buy a replacement without approval.
+Local gcloud saves session hours but does not remove underlying cloud charges.
+This rule grants no new spending, IAM, deployment or batch activation authority.
+
+## Mandatory pre-traffic-shift verification
+
+Follow `docs/operations/pre-traffic-shift-verification.md` before a production
+traffic shift, frontend promotion, endpoint routing change or worker activation.
+Before requesting promotion approval, require source, tests, security, runtime,
+compatibility and cost review PASS, with a verified compatible rollback ready.
+Provide the exact source/image, CI, actual changed-flow evidence, current and
+candidate configuration, compatibility, cost, rollout, rollback and cleanup.
+Known blocking defects or missing mandatory proof prevent promotion.
+
+Use local/CI first and approved isolated or zero-production-traffic candidates
+where necessary. Zero default traffic does not prevent startup side effects.
+Preserve startup guards and canonical API/Job source pairing. Use a canary only
+when safe for that protocol. Check measured gates before each increase, and use
+controlled authenticated synthetic cases when natural traffic is insufficient.
+On failure, recover compatibly and diagnose before another rollout. Verify final
+allocations and retire temporary tags within their approved cleanup scope.
+This policy grants no production or spending authority and lifts no batch hold.
+
 ## Cursor Cloud specific instructions
 
 Xroga is an npm-workspaces monorepo ("AI Swarm OS"):
