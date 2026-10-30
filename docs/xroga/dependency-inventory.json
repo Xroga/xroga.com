@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f7ab2ef4bf922a7e547ae63b810965bd4aa6b7c5",
+  "source_sha": "adcfc53e2ec5710040fbee50d355c91926009f7b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17331,7 +17331,7 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "sha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501"
+      "sha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -21399,7 +21399,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "215bac3fe7e9b0b58d69fc074e6834c1e514eea9efb20e32c03c84e42c27c1af"
+      "sha256": "07e2ab8504794e1316f4e932b422fe20c9ccc6659cdb1b083fccc580aecf008d"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -22463,7 +22463,7 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "3ab1bee74b63323a85c22d82045898f03bca3dd9fd95288c8e14a5403cc486b2"
+      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
@@ -24496,7 +24496,7 @@
       "hostname": "api.cloudflare.com",
       "protocol": "https:",
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 56,
+      "line": 59,
       "credentialsInUrl": false
     },
     {
@@ -33393,7 +33393,7 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 13,
+      "line": 16,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

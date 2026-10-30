@@ -1,11 +1,11 @@
 {
   "version": "1.0",
   "identity": {
-    "repository": "C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga.com/.",
-    "branch": "voice-rebuild",
-    "sha": "f7ab2ef4bf922a7e547ae63b810965bd4aa6b7c5",
-    "sourceTimestampUtc": "2026-10-31T01:22:31+05:00",
-    "auditStartedUtc": "2026-10-30T20:22:55.075Z",
+    "repository": "https://github.com/Xroga/xroga.com.git",
+    "branch": "feat/mic-final-main-sync-20261031",
+    "sha": "adcfc53e2ec5710040fbee50d355c91926009f7b",
+    "sourceTimestampUtc": "2026-10-31T01:48:31+05:00",
+    "auditStartedUtc": "2026-10-30T22:49:05.750Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -12309,7 +12309,7 @@
       ],
       "callers": [
         "backend/src/routes/voice.ts:6",
-        "backend/src/routes/voiceFree.security.test.ts:7",
+        "backend/src/routes/voiceFree.security.test.ts:8",
         "backend/src/routes/voiceFree.ts:6"
       ],
       "reachable": true,
@@ -30560,9 +30560,10 @@
       "id": "surface:9bd59dc251f0f14ea40b",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/voiceFree.ts",
-      "sha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501",
+      "sha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827",
       "symbols": [
         "MAX_CONCURRENT_PER_USER",
+        "VOICE_VOCABULARY",
         "abort",
         "at",
         "audio",
@@ -30611,7 +30612,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/voice.ts:9"
+        "backend/src/routes/voice.ts:9",
+        "backend/src/routes/voiceFree.security.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -30628,7 +30630,9 @@
       "evidenceBoundary": [
         "backend/src/routes/voiceFree.ts#receipt"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/routes/voiceFree.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -33611,7 +33615,7 @@
         "backend/src/routes/vercelTransport.security.test.ts:10",
         "backend/src/routes/voice.security.test.ts:6",
         "backend/src/routes/voice.ts:3",
-        "backend/src/routes/voiceFree.security.test.ts:6",
+        "backend/src/routes/voiceFree.security.test.ts:7",
         "backend/src/routes/voiceFree.ts:3",
         "backend/src/security/authority/enforce.test.ts:3",
         "backend/src/security/authority/enforce.ts:1",
@@ -92916,7 +92920,7 @@
       "id": "surface:41e3e1a7bd535ee1f059",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "215bac3fe7e9b0b58d69fc074e6834c1e514eea9efb20e32c03c84e42c27c1af",
+      "sha256": "07e2ab8504794e1316f4e932b422fe20c9ccc6659cdb1b083fccc580aecf008d",
       "symbols": [
         "CaptureSession",
         "Mode",
@@ -109123,7 +109127,7 @@
       "id": "surface:0e1350a6a9f50317c14e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
-      "sha256": "3ab1bee74b63323a85c22d82045898f03bca3dd9fd95288c8e14a5403cc486b2",
+      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d",
       "symbols": [
         "bytes",
         "chunk",
@@ -109140,7 +109144,8 @@
         "size",
         "text",
         "token",
-        "transcribeVoiceAudio"
+        "transcribeVoiceAudio",
+        "warmVoiceBackend"
       ],
       "imports": [
         "./voicePcm",
@@ -124249,9 +124254,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9cb42102987cc42f0afb",
+      "id": "registration:8f250ce1b67c876e85c7",
       "sourcePath": "backend/src/routes/voiceFree.ts",
-      "line": 32,
+      "line": 35,
       "receiver": "router",
       "method": "post",
       "path": "/transcribe-free",
@@ -126369,10 +126374,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ac1a665f4519e97d4b60",
-      "registrationId": "registration:9cb42102987cc42f0afb",
+      "id": "route:3da0549ab0bacb889674",
+      "registrationId": "registration:8f250ce1b67c876e85c7",
       "sourcePath": "backend/src/routes/voiceFree.ts",
-      "line": 32,
+      "line": 35,
       "method": "POST",
       "path": "/api/voice/transcribe-free",
       "mountChain": [
@@ -138121,6 +138126,27 @@
       "reachable": false
     },
     {
+      "id": "frontend-call:07ccbfeb6ba144abb110",
+      "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "line": 36,
+      "callee": "api.slice",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:99204761154e343d67f0",
+      "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "line": 36,
+      "callee": "api.indexOf",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:8d94223a0617b6313d1e",
+      "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "line": 36,
+      "callee": "api.indexOf",
+      "reachable": false
+    },
+    {
       "id": "frontend-call:5b31a29885be2c49fc99",
       "sourcePath": "frontend/src/lib/vercelConnect.ts",
       "line": 52,
@@ -138191,9 +138217,23 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:4182873aaf33deb52d18",
+      "id": "frontend-call:b4b60f3600b25c6f3c8d",
       "sourcePath": "frontend/src/lib/voiceApi.ts",
-      "line": 21,
+      "line": 9,
+      "callee": "fetch().catch",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:1bc3aa9747d00ec5689b",
+      "sourcePath": "frontend/src/lib/voiceApi.ts",
+      "line": 9,
+      "callee": "fetch",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:7446a5d8b76ee9fa698b",
+      "sourcePath": "frontend/src/lib/voiceApi.ts",
+      "line": 28,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -144810,7 +144850,7 @@
     {
       "id": "test-suite:cdfc35393b38a687a42a",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

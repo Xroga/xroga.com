@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "de9614e8ce3434eeef73876d5db55a758ef16ab96cfea0969488304d7833bf00",
+  "sourceTreeDigest": "42901bfa168ec84d90b3b4cbd4cefd954e82af1175088aefccf280360e9082df",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2185,11 +2185,11 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "file": "backend/src/routes/voiceFree.ts",
-      "line": 58,
+      "line": 61,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
+      "callSha256": "93e31a05032e016a8c6cf393fee960363d7115eaf59892ae3f1e5bcffecd6580",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -2200,7 +2200,7 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "a3594573c1fd3b89c30e2bcc2ea9aac259cd4bca9be696e91fd669165b7f52ea"
+          "sha256": "77da96d82d190edc1a625db5d0c8e2e5af896624b520dc610545ae587f424ddc"
         }
       ]
     },
@@ -4740,6 +4740,28 @@
       ]
     },
     {
+      "id": "eb39e5759b146603faf0",
+      "file": "frontend/src/lib/voiceApi.ts",
+      "line": 9,
+      "entryPoint": "warmVoiceBackend",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "FIRST_PARTY_API_ORIGIN_WAKE_UP_NO_CREDENTIAL_NO_BODY_RESPONSE_IGNORED",
+      "tenantAuthority": "NONE_REQUIRED_NO_USER_DATA_OR_AUTHORITY_SENT_BEST_EFFORT_ONLY",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+          "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
+          "sha256": "05d099ddd7199328a25e566b678cf96dcc916d81fb42fe62fc9b5e6881dde5fa"
+        }
+      ]
+    },
+    {
       "id": "e1ddea7115498d92341b",
       "file": "frontend/src/store/useCurrencyStore.ts",
       "line": 30,
@@ -4873,6 +4895,7 @@
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
         "68df836263d1eff0010b",
+        "eb39e5759b146603faf0",
         "e1ddea7115498d92341b"
       ]
     },
@@ -5012,8 +5035,8 @@
     }
   ],
   "counts": {
-    "total": 149,
-    "reviewed": 149,
+    "total": 150,
+    "reviewed": 150,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }
