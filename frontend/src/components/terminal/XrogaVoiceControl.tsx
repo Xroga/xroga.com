@@ -27,7 +27,9 @@ type SpeechWindow = { SpeechRecognition?: DictationConstructor; webkitSpeechReco
  * device cannot provide that, the browser's own speech recognition is used
  * instead so the mic still works.
  */
+const preferBrowserSpeech = process.env.NEXT_PUBLIC_VOICE_ENGINE === 'browser';
 function localWhisperSupported(): boolean {
+  if (preferBrowserSpeech) return false;
   if (typeof Worker === 'undefined' || typeof WebAssembly === 'undefined' || typeof OfflineAudioContext === 'undefined' || typeof MediaRecorder === 'undefined') return false;
   const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
   return !(typeof memory === 'number' && memory < 2);
