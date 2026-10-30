@@ -1795,8 +1795,30 @@
   .shots {
     gap: 8px;
   }
+  /* phones: the iPhone, Xroga's work and the store page are one swipeable row of panels (each snaps, the next one peeks) instead of three screens of stacked height */
+  .ios {
+    display: flex;
+    grid-template-columns: none;
+    gap: 12px;
+    margin-inline: -14px;
+    padding: 2px 14px 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 14px;
+    scrollbar-width: none;
+  }
+  .ios::-webkit-scrollbar {
+    display: none;
+  }
+  .iosLive,
+  .iosStudio,
+  .iosStore {
+    flex: 0 0 min(82%, 300px);
+    scroll-snap-align: start;
+  }
   .shot {
-    height: 220px;
+    height: 196px;
     padding: 10px 6px 0;
     border-radius: 14px;
   }

@@ -4507,6 +4507,26 @@
 @media (max-width: 520px) {
   .title.title { white-space: normal; text-wrap: balance; }
 }
+/* phones: the crawl map is about 300px wide, so its page cards share the columns instead of overlapping (columns sit at 13/40/72%) */
+@media (max-width: 520px) {
+  .page:not([data-home]) {
+    min-width: 0;
+    max-width: 94px;
+    padding: 24px 6px 7px;
+  }
+  .page:not([data-home]) code {
+    font-size: 10px;
+    overflow-wrap: anywhere;
+  }
+  .page:not([data-home]) em {
+    font-size: 9px;
+    line-height: 1.2;
+  }
+  /* the quiet "hidden on purpose" card gives up its note so it never runs into the issue chips below the map */
+  .page[data-state='excluded'] em {
+    display: none;
+  }
+}
 @media (max-width: 400px) {
   .scenarioName {
     flex: 1 1 100%;
