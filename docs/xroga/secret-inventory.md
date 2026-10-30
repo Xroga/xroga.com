@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `8db36c5b82203610048159c8b558a16c1e6a31ad`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `38f260332ec0b8adbb345573d9eab96f25a23cf0`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -127,7 +127,7 @@ Values are forbidden. Source SHA: `8db36c5b82203610048159c8b558a16c1e6a31ad`. Na
 | NEXT_PUBLIC_SUPABASE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1 |
 | NEXT_PUBLIC_SUPPORT_PHONE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_VERCEL_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
-| NEXT_PUBLIC_VOICE_TRANSCRIPTION_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
+| NEXT_PUBLIC_VOICE_ENGINE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_XROGA_AUTH_BASE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1 |
 | NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1 |
 | NEXT_PUBLIC_XROGA_BROWSER_RUNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-example-com, endpoint-your-website-com |

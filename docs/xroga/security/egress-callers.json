@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "5aa941a891dcb3b8b36c3f8b411c1c11533effd348a230c9fc22d560f3ef8c3f",
+  "sourceTreeDigest": "2935403b6460220ee33f7ebb748adebb7cebe6b472271cf0eace69b5793672d3",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2185,7 +2185,7 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "file": "backend/src/routes/voiceFree.ts",
-      "line": 50,
+      "line": 58,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
@@ -2200,7 +2200,7 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "553b196e893ce2bee2dca7299f60a5eaa6ac59e8e2a0dc5d2916d4e3ee750975"
+          "sha256": "a3594573c1fd3b89c30e2bcc2ea9aac259cd4bca9be696e91fd669165b7f52ea"
         },
         {
           "path": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
@@ -4536,7 +4536,7 @@
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
-          "sha256": "88aaee722508dfa7e46ee9db1886aa6adeeb534b44c6ba554c456b2eabbf85c7",
+          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481",
           "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
         }
       ]

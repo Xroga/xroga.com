@@ -85,30 +85,12 @@
     "frontend/src/lib/terminal/voiceRecording.ts",
     "frontend/src/lib/voiceApi.security.test.ts",
     "frontend/src/lib/voiceApi.ts",
-    "frontend/src/lib/voiceEngine.test.ts",
-    "frontend/src/lib/voiceEngine.ts",
-    "frontend/src/lib/voiceFree.test.ts",
-    "frontend/src/lib/voiceFree.ts",
-    "frontend/src/lib/voiceLocal.test.ts",
-    "frontend/src/lib/voiceLocal.ts",
-    "frontend/src/lib/voiceLocalProtocol.ts",
-    "frontend/src/lib/voiceModelLoading.test.ts",
-    "frontend/src/lib/voiceModelLoading.ts",
-    "frontend/src/lib/voiceRuntimePolicy.test.ts",
-    "frontend/src/lib/voiceSecurityUi.test.ts",
-    "frontend/src/lib/voiceTranscription.worker.ts",
-    "frontend/src/lib/voiceWorkerPrivacy.test.ts",
     "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
     "frontend/src/styles/homepage-closing-animation.css",
     "frontend/src/styles/uiverse.css",
     "package-lock.json",
     "package.json",
-    "scripts/prepare-voice-runtime.mjs",
     "scripts/security/verify-free-voice-ledger.ts",
-    "scripts/verify-live-dictation.mjs",
-    "scripts/verify-local-voice.mjs",
-    "scripts/verify-voice-control.mjs",
-    "scripts/verify-voice-recording.mjs",
     "scripts/xroga/runtime-facts.mjs"
   ],
   "decisions": {
@@ -168,7 +150,7 @@
       "command": "node --import tsx --test selected voice/composer tests",
       "scope": "66 focused regression tests pass in aggregate, including independent privacy-logging regression.",
       "negative": true,
-      "reference": "frontend/src/lib/voiceLocal.test.ts"
+      "reference": "frontend/src/lib/voiceDictation.test.ts"
     },
     {
       "command": "node scripts/verify-local-voice.mjs",
@@ -210,7 +192,8 @@
     "User-reported Chrome public-model download failed in production. Bounded retry and retained-audio repair requires exact-source CI and live acceptance. Measured browser GPU and native CPU comparisons do not justify an instant-recognition claim.",
     "Three public provider calls returned in 3.8-5.5s. Hindi was rendered in Urdu script and Urdu word errors remain. This is not exact transcription, long-recording latency or real microphone/physical-phone acceptance.",
     "Initial b83 CI passed 4960 backend and 1289 frontend tests, then rejected stale historical current caller counts. Isolated auth CI rejected an obsolete tiny-audio transport fixture. Metadata and valid PCM fixtures are corrected without weakening the tests. A real isolated JWT/zero-ledger verification step is now required before release.",
-    "054d isolated verification passed real free-voice JWT/zero settlement and seven browser journeys. The hide-control journey timed out under a hover-paused restore toast. The fixture now moves the pointer away and waits for normal dismissal, preserving all security assertions."
+    "054d isolated verification passed real free-voice JWT/zero settlement and seven browser journeys. The hide-control journey timed out under a hover-paused restore toast. The fixture now moves the pointer away and waits for normal dismissal, preserving all security assertions.",
+    "2026-10-31: the on-device Whisper engine described by this mission was removed. Dictation now uses the approved Cloudflare Whisper route with segmented PCM capture; the local-engine files no longer exist."
   ],
   "placeholderClaimsRemaining": [
     "No universal language/device accuracy claim.",

@@ -2951,7 +2951,7 @@
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
-          "sha256": "88aaee722508dfa7e46ee9db1886aa6adeeb534b44c6ba554c456b2eabbf85c7",
+          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481",
           "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
         }
       ],
@@ -4421,7 +4421,7 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
-      "sourceFileSha256": "762cbe62c9cba93a6b66e360351a3ea18c2fa4b9f0fce65774985df4d947c3ad",
+      "sourceFileSha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -4429,7 +4429,7 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "553b196e893ce2bee2dca7299f60a5eaa6ac59e8e2a0dc5d2916d4e3ee750975"
+          "sha256": "a3594573c1fd3b89c30e2bcc2ea9aac259cd4bca9be696e91fd669165b7f52ea"
         },
         {
           "path": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
