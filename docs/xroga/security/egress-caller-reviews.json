@@ -3892,7 +3892,7 @@
     {
       "id": "fcbe4c75dea0e59bcb3a",
       "callSha256": "1d718a41f05b9aafe273c87f127bda6a86d9501a1107c865bfb1c2cf729e268d",
-      "sourceFileSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
+      "sourceFileSha256": "15ec0ebcfabdfa9d3a664020aaab07fa1b5f8ae626e00cd4f64976725eef916d",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_OPENAI_TRANSCRIPTION_ORIGINAL_ACTOR_MANUAL_PCM_AND_EXACT_DURABLE_ACCOUNTING_NO_PRIVATE_LOOKUP",
       "tenantAuthority": "AUTH_MIDDLEWARE_ORIGINAL_CONTEXT_EXACT_OWNER_BUDGET_AUDIT_AND_ORIGINAL_CLIENT_SESSION_ONLY_NO_RAW_ID_FALLBACK",
@@ -3907,7 +3907,11 @@
           "marker": "actual voice route requires original actor and budget",
           "sha256": "677f058c8ff884dc8cbefd7ac7b869072d1ef08a1876045388703688ca0075df"
         }
-      ]
+      ],
+      "beforeFreeVoiceMount": {
+        "sourceFileSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
+        "callSha256": "1d718a41f05b9aafe273c87f127bda6a86d9501a1107c865bfb1c2cf729e268d"
+      }
     },
     {
       "id": "094a251245ce9b6ab659",
@@ -4410,6 +4414,21 @@
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
           "marker": "811d45a99740e2ecccba",
           "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
+        }
+      ]
+    },
+    {
+      "id": "19343161fc1afbd3f2fb",
+      "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
+      "sourceFileSha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
+      "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voiceFree.security.test.ts",
+          "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
+          "sha256": "a3594573c1fd3b89c30e2bcc2ea9aac259cd4bca9be696e91fd669165b7f52ea"
         }
       ]
     }

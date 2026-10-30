@@ -1,21 +1,21 @@
 # Xroga repository truth map
 
-Source SHA: `66508abb103a895d86d1c4595d9a648c6f9d7986`. Branch observed: `voice-rebuild`. Audit started: 2026-10-30T17:00:29.046Z.
+Source SHA: `3accb3845acc464e2f44ec2ace31d46ad2fe95ed`. Branch observed: `voice-rebuild`. Audit started: 2026-10-30T19:34:46.296Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1792
-- routeRegistrations: 379
-- routes: 318
-- reachableRoutes: 235
-- queues: 5
+- surfaces: 1787
+- routeRegistrations: 381
+- routes: 319
+- reachableRoutes: 236
+- queues: 4
 - migrations: 159
 - workflows: 21
-- testSuites: 1038
-- declaredTests: 7096
-- classifiedMarkers: 398
+- testSuites: 1035
+- declaredTests: 7088
+- classifiedMarkers: 399
 - reachableMarkers: 333
 - absentRequiredPaths: 5
 - duplicateIds: 0
@@ -66,7 +66,6 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Queue processing
 
-- **<dynamic>**: NO_PRODUCER_FOUND; CONSUMER_CODE_PRESENT; registration must be verified. Definitions: frontend/src/lib/voiceEngine.ts:10, frontend/src/lib/voiceLocal.ts:8. Producer/consumer source recorded; runtime connectivity unverified.
 - **email-jobs**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:36. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **notifications**: PRODUCER_CODE_PRESENT; caller activation must be verified; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:18. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **swarm-tasks**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/redis.ts:22. Queue definition is not proof of active processing; no Worker consumer found in inspected source.

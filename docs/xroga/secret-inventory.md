@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `66508abb103a895d86d1c4595d9a648c6f9d7986`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `3accb3845acc464e2f44ec2ace31d46ad2fe95ed`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -25,6 +25,9 @@ Values are forbidden. Source SHA: `66508abb103a895d86d1c4595d9a648c6f9d7986`. Na
 | CLOUDFLARE_R2_METADATA_READ_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
 | CLOUDFLARE_R2_PRIVATE_BUCKET | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | r2, endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
 | CLOUDFLARE_R2_SECRET_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
+| CLOUDFLARE_VOICE_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | r2 |
+| CLOUDFLARE_VOICE_API_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
+| CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | r2 |
 | CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | CLOUD_RUN_EXECUTION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | CLOUD_RUN_JOB | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |

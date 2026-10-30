@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "66508abb103a895d86d1c4595d9a648c6f9d7986",
+  "source_sha": "3accb3845acc464e2f44ec2ace31d46ad2fe95ed",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -279,7 +279,10 @@
         "CLOUDFLARE_R2_BUCKET",
         "CLOUDFLARE_R2_METADATA_READ_TOKEN",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
-        "CLOUDFLARE_R2_SECRET_KEY"
+        "CLOUDFLARE_R2_SECRET_KEY",
+        "CLOUDFLARE_VOICE_ACCOUNT_ID",
+        "CLOUDFLARE_VOICE_API_TOKEN",
+        "CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -8466,6 +8469,63 @@
       ]
     },
     {
+      "name": "CLOUDFLARE_VOICE_ACCOUNT_ID",
+      "consuming_sources": [
+        "backend/src/ai/voiceBudget.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "PUBLIC_IDENTIFIER",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
+      "name": "CLOUDFLARE_VOICE_API_TOKEN",
+      "consuming_sources": [
+        "backend/src/ai/voiceBudget.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
+      "name": "CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED",
+      "consuming_sources": [
+        "backend/src/ai/voiceBudget.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
       "name": "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE",
       "consuming_sources": [
         "backend/src/sandbox/google/gceMachineControl.ts",
@@ -16103,7 +16163,7 @@
     },
     {
       "path": "backend/src/ai/voiceBudget.ts",
-      "sha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012"
+      "sha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e"
     },
     {
       "path": "backend/src/ai/voicePcm.ts",
@@ -17267,7 +17327,11 @@
     },
     {
       "path": "backend/src/routes/voice.ts",
-      "sha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921"
+      "sha256": "15ec0ebcfabdfa9d3a664020aaab07fa1b5f8ae626e00cd4f64976725eef916d"
+    },
+    {
+      "path": "backend/src/routes/voiceFree.ts",
+      "sha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -21331,7 +21395,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "250b994058053c1e5556746652e64d281f14620212cc54a15c016318e269d006"
+      "sha256": "c3d4053ee9e0c2c5636742ee3ea5c8b4ccf73f95c83b2235996a241aa9e7f539"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -22331,7 +22395,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/voiceRecording.ts",
-      "sha256": "ac264885f8c571166e26106cfe00ee9f07298d450dfd4a4a5f913985d9e44f99"
+      "sha256": "e3e408b1a74111cdb2863b2de3ddf3dd60a4e9859e81e9895ba3d4dd7f35e632"
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
@@ -22395,23 +22459,15 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "a8dca12f52c75799b62ea0249742b102d7f8eb3557d6f14d19a1c0c359c85fcd"
+      "sha256": "3ab1bee74b63323a85c22d82045898f03bca3dd9fd95288c8e14a5403cc486b2"
     },
     {
-      "path": "frontend/src/lib/voiceEngine.ts",
-      "sha256": "407d1c68e67647ddbab600033c894ad162715cac1499948a450e0221cdfb7196"
+      "path": "frontend/src/lib/voiceCapture.ts",
+      "sha256": "7f8c3b44cee5c881e214a1792dcc1590a3131ef84974813015954e4363881d08"
     },
     {
-      "path": "frontend/src/lib/voiceLocal.ts",
-      "sha256": "d44613c95de297cf5257775ffd57db316b7145acc3d56ccb3203a56c6574631f"
-    },
-    {
-      "path": "frontend/src/lib/voiceLocalProtocol.ts",
-      "sha256": "c7f0127e9f9f51dd4b170607f2b3d960ee660a3277fa105d62e876f0e596fdc2"
-    },
-    {
-      "path": "frontend/src/lib/voiceModelLoading.ts",
-      "sha256": "5e47eba6887ecd80f8385c0373e9cd16614eec1a9b0f975f07c725916ea1c56b"
+      "path": "frontend/src/lib/voiceDictation.ts",
+      "sha256": "1e04bcd6669d67b7f5baa5491d60b1990000f3dfab0ea02c2a22551f653c75b7"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -22422,8 +22478,8 @@
       "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
     },
     {
-      "path": "frontend/src/lib/voiceTranscription.worker.ts",
-      "sha256": "6321f593e5c40f9c50017660fa4fffbeaba94cd82c05479ef1eec03ce50507fe"
+      "path": "frontend/src/lib/voiceSegmenter.ts",
+      "sha256": "82a82cc0f56469442ede2894df3727538ae827c2f9fdd49b285d1cda46530cfc"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -24429,7 +24485,14 @@
       "hostname": "api.openai.com",
       "protocol": "https:",
       "path": "backend/src/routes/voice.ts",
-      "line": 55,
+      "line": 57,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.cloudflare.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/voiceFree.ts",
+      "line": 56,
       "credentialsInUrl": false
     },
     {
@@ -33319,8 +33382,15 @@
     },
     {
       "path": "backend/src/routes/voice.ts",
-      "line": 38,
+      "line": 40,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/voiceFree.ts",
+      "line": 13,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -36797,15 +36867,8 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "frontend/src/lib/voiceEngine.ts",
-      "line": 13,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/lib/voiceTranscription.worker.ts",
-      "line": 29,
+      "path": "frontend/src/lib/voiceDictation.ts",
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
