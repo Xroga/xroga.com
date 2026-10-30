@@ -4534,6 +4534,23 @@
     min-width: 0;
     scroll-snap-align: start;
   }
+  /* the AI-answers and keyword stages are as tall as their content (answer, sources, product page / the search flow) instead of a fixed 640-860px box with empty space */
+  .chapter .stage[data-lens='ai'],
+  .chapter .stage[data-lens='content'] {
+    height: auto;
+  }
+  .chapter .stage[data-lens='ai'] .scene,
+  .chapter .stage[data-lens='content'] .scene,
+  .chapter .stage[data-lens='ai'] .scene > div,
+  .chapter .stage[data-lens='content'] .scene > div {
+    position: relative;
+    inset: auto;
+  }
+  .chapter .stage[data-lens='ai'] .aiGrid {
+    position: relative;
+    inset: auto;
+    padding: 62px 12px 14px;
+  }
   /* the tool chips are one scrollable row instead of two or three wrapped rows */
   .tools {
     flex-wrap: nowrap;
@@ -4546,6 +4563,14 @@
   }
   .tools > * {
     flex: none;
+  }
+  /* the note that no provider is connected is a disclosure: it wraps instead of scrolling */
+  .tools:has(.noTool) {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .tools > .noTool {
+    flex: 1 1 100%;
   }
   /* the two mode buttons are one compact row: art beside the title; the line under it repeats the lede above */
   .mode {
