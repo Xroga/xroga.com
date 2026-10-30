@@ -1,0 +1,8 @@
+{
+  "status": "PASS_OWN_TEMPORARY_TAG_REMOVED",
+  "atUtc": "2026-10-30T22:10:57.657396+00:00",
+  "tag": "batch1-85f-verify",
+  "revisionRetained": "xroga-api-batch1-85f-guard-1031",
+  "defaultAndVoiceTrafficPreserved": true,
+  "imagesSecretsJobQueuesUnchanged": true
+}

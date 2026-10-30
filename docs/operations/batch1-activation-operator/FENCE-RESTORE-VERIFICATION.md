@@ -1,6 +1,6 @@
 # Batch 1 cutover fence: protected restore verification
 
-Status: PREPARED, NOT EXECUTED. This is not production acceptance and does not authorize any production SQL.
+Update, October 31: the retained fixture and a fresh encrypted production backup were restored in the no-swap owner Cloud Shell. The exact fence upgrade, pause/drain source transitions and guarded rollback passed. See `fresh-backup-and-fence-proof-20261031.json`. The original preparation record below is historical. Production SQL and production acceptance remain pending and are not authorized by this document.
 
 ## Fixed inputs
 

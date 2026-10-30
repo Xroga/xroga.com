@@ -1,6 +1,6 @@
 # Batch 1 operator runbook
 
-Status: PREPARATION ONLY. The production cutover, full restore test and rollback rehearsal are not approved by this document and have not been executed. Batch 1.5 and later batches remain on hold.
+Current checkpoint, October 31: full protected fresh-backup restore, fence/source-transition tests, exact function rollback and guarded candidate readiness passed. Production SQL and the API/Job cutover remain pending exact owner approval. See `STATUS-20261031.md` and `PRODUCTION-FENCE-AND-CUTOVER-APPROVAL.md` before using the historical preparation steps below. Batch 1.5 and later batches remain on hold, and Claude owns microphone work.
 
 ## Known release identifiers
 
