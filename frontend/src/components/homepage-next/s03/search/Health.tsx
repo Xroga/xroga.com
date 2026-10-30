@@ -120,7 +120,7 @@ export function HealthStage({ st, dispatch }: { st: State; dispatch: Dispatch<Ac
               aria-hidden="true"
             >
               <i />
-              <code>{p.path}</code>
+              <code>{p.path.split('/').map((seg, i) => (i ? <span key={i}>/<wbr />{seg}</span> : seg))}</code>
               {flag && <em>{flag.tag}</em>}
               {st.repair && issue?.id === 'broken' && sel.id === 'broken' && <em data-proposed="">→ /protein/whey-isolate-1kg · proposed</em>}
             </span>
