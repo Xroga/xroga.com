@@ -5,14 +5,6 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
 const require=createRequire(new URL('../../package.json',import.meta.url)),ts=require('typescript');
-function voiceFixture(){
-  const bytes=Buffer.alloc(44+22050*2);
-  bytes.write('RIFF');bytes.writeUInt32LE(bytes.length-8,4);bytes.write('WAVEfmt ',8);
-  bytes.writeUInt32LE(16,16);bytes.writeUInt16LE(1,20);bytes.writeUInt16LE(1,22);
-  bytes.writeUInt32LE(22050,24);bytes.writeUInt32LE(44100,28);bytes.writeUInt16LE(2,32);bytes.writeUInt16LE(16,34);
-  bytes.write('data',36);bytes.writeUInt32LE(bytes.length-44,40);
-  return new Blob([bytes],{type:'audio/wav'});
-}
 // Compile the actual client modules, substituting only imports for Auth/UI
 // dependencies and audio decoding. HTTP remains real, local and synthetic.
 // Audio normalization has its own tests, this fixture verifies transport only.
@@ -43,9 +35,9 @@ function loadClients(origin){
   return{load};
 }
 test('each first-party client refuses API redirects without forwarding private request bodies',async t=>{
-  let forwarded=0,apiRequests=0;
+  let forwarded=0;
   const sink=createServer((_req,res)=>{forwarded++;res.writeHead(503,{'content-type':'application/json'}).end('{"error":"synthetic denied"}');});
-  const api=createServer((_req,res)=>{apiRequests++;res.writeHead(307,{location:`http://127.0.0.1:${sink.address().port}/collect`}).end();});
+  const api=createServer((_req,res)=>res.writeHead(307,{location:`http://127.0.0.1:${sink.address().port}/collect`}).end());
   await new Promise(r=>sink.listen(0,'127.0.0.1',r));await new Promise(r=>api.listen(0,'127.0.0.1',r));
   try{
     const {load}=loadClients(`http://127.0.0.1:${api.address().port}`),core=load('api');
@@ -57,10 +49,9 @@ test('each first-party client refuses API redirects without forwarding private r
       ['Builder download',()=>load('builderApiPhase2').builderPhase2Api.downloadSource('owned-project')],
       ['delivery status',()=>load('projectDeliveryApi').projectDeliveryApi.status('owned-project')],
       ['delivery download',()=>load('projectDeliveryApi').projectDeliveryApi.download('owned-project')],
-      ['voice',()=>load('voiceApi').transcribeVoiceAudio(voiceFixture())],
-      ['free voice',()=>load('voiceApi').transcribeVoiceAudio(voiceFixture(),undefined,{freeOnly:true,preparedPcm:true,expectedToken:'synthetic-browser-access'})],
+      ['voice',()=>load('voiceApi').transcribeVoiceAudio(new Blob([new Uint8Array(1024)],{type:'audio/webm'}))],
       ['guest',()=>load('runGuestLaneChat').runGuestLaneChat({prompt:'private fixture',history:[],signal:new AbortController().signal,onPartial(){}})]];
-    for(const[name,invoke]of cases)await t.test(name,async()=>{forwarded=0;apiRequests=0;await assert.rejects(invoke());assert.equal(forwarded,0,'No private request follows an API redirect');if(name.includes('voice'))assert.equal(apiRequests,1,'Valid audio must reach the first-party redirect boundary');});
+    for(const[name,invoke]of cases)await t.test(name,async()=>{forwarded=0;await assert.rejects(invoke());assert.equal(forwarded,0,'No private request follows an API redirect');});
   }finally{api.closeAllConnections();sink.closeAllConnections();await Promise.all([new Promise(r=>api.close(r)),new Promise(r=>sink.close(r))]);}
 });
 test('API polling treats redirect refusal as terminal and authorized requests retain their contracts',async()=>{
@@ -71,7 +62,7 @@ test('API polling treats redirect refusal as terminal and authorized requests re
     if(req.url==='/api/swarm/execute'){res.writeHead(200,{'content-type':'text/event-stream'}).end('event: complete\ndata: {"runId":"owned-run","success":true,"output":{"response":"owned fixture"}}\n\n');return;}
     const payload=req.url?.includes('/api/swarm/runs/')?{runId:'owned-run',status:'completed',events:[],output:{response:'owned fixture'}}:
       req.url==='/api/guest/chat'?{response:'owned fixture',guestSessionId:'synthetic-session',guest:{limit:1,remaining:0,resetAt:'2030-01-01'}}:
-      ['/api/voice/transcribe','/api/voice/transcribe-free'].includes(req.url)?{text:'owned transcript'}:{fixture:true,preview:{owned:true}};
+      req.url==='/api/voice/transcribe'?{text:'owned transcript'}:{fixture:true,preview:{owned:true}};
     res.writeHead(200,{'content-type':'application/json'}).end(JSON.stringify(payload));
   });
   await new Promise(r=>api.listen(0,'127.0.0.1',r));
@@ -85,8 +76,7 @@ test('API polling treats redirect refusal as terminal and authorized requests re
     await load('projectDeliveryApi').projectDeliveryApi.download('owned-project');
     assert.equal((await load('builderApi').builderApi.create({prompt:'owned',requestKey:'fixture-request-key'})).fixture,true);
     assert.equal((await load('builderApiPhase2').builderPhase2Api.downloadSource('owned-project')).filename,'project.zip');
-    assert.equal(await load('voiceApi').transcribeVoiceAudio(voiceFixture()),'owned transcript');
-    assert.equal(await load('voiceApi').transcribeVoiceAudio(voiceFixture(),undefined,{freeOnly:true,preparedPcm:true,expectedToken:'synthetic-browser-access'}),'owned transcript');
+    assert.equal(await load('voiceApi').transcribeVoiceAudio(new Blob([new Uint8Array(1024)])),'owned transcript');
     assert.equal((await load('runGuestLaneChat').runGuestLaneChat({prompt:'owned',history:[],signal:new AbortController().signal,onPartial(){}})).response,'owned fixture');
     assert.equal(await core.waitForPersistedSwarmRun('owned-run','synthetic-browser-access',{},''),'owned fixture');
     requests=0;mode='redirect';

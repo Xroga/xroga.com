@@ -58,6 +58,6 @@ export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSign
   }
 
   const text = typeof payload?.text === 'string' ? payload.text.trim() : '';
-  if (!text || text.length > 16000) throw new ApiError('No verified speech was received.', 422, {code: 'VOICE_TRANSCRIPTION_DENIED'});
+  if (text.length > 16000 || !text && !options?.freeOnly) throw new ApiError('No verified speech was received.', 422, {code: 'VOICE_TRANSCRIPTION_DENIED'});
   return text;
 }

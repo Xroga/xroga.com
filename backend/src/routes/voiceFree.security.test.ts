@@ -106,11 +106,19 @@ test('free speech route preserves original actor, credential, reservation and pu
   for (const value of ['reservationDenied', 'wrongOwnerHold', 'rotateAtReservation', 'admissionAuditDenied']) await t.test(value + ' sends no audio', async () => {
     reset(value); assert.notEqual((await post()).status, 200); assert.equal(dispatches, 0);
   });
-  for (const value of ['401', '403', '429', '503', 'redirect', 'malformed', 'oversized', 'rotateAfterDispatch', 'revokeFreePlan', 'wrongDuration', 'missingRequestId', 'settlementDenied', 'wrongSettlement', 'usageDenied', 'completedAuditDenied', 'empty', 'secret']) await t.test(value + ' cannot publish or use paid fallback', async () => {
+  for (const value of ['401', '403', '429', '503', 'redirect', 'malformed', 'oversized', 'rotateAfterDispatch', 'revokeFreePlan', 'wrongDuration', 'missingRequestId', 'settlementDenied', 'wrongSettlement', 'usageDenied', 'completedAuditDenied', 'secret']) await t.test(value + ' cannot publish or use paid fallback', async () => {
     reset(value); const result = await post(); assert.notEqual(result.status, 200); assert.equal(dispatches, 1); assert.doesNotMatch(await result.text(), /PRIVATE_PROVIDER_MESSAGE|synthetic-cloudflare/);
   });
   for (const value of ['cancelAtReservation', 'cancelAtSettlement', 'hungProvider']) await t.test(value + ' cannot resume after cancellation', async () => {
     reset(value); await assert.rejects(post()); await new Promise<void>(resolve => setImmediate(resolve)); assert.equal(dispatches, value === 'cancelAtReservation' ? 0 : 1);
+  });
+  await t.test('speechless audio settles and returns empty text, never invented words', async () => {
+    reset('empty'); const result = await post(); const body = await result.json() as {text: string};
+    assert.equal(result.status, 200); assert.equal(body.text, ''); assert.deepEqual(events, ['reserve', 'audit:ADMITTED', 'provider', 'settle', 'usage', 'audit:COMPLETED']);
+  });
+  await t.test('exhausted free allowance is a clear retryable 429 with no private provider text', async () => {
+    reset('429'); const result = await post(); const text = await result.text();
+    assert.equal(result.status, 429); assert.match(text, /VOICE_QUOTA_EXHAUSTED/); assert.doesNotMatch(text, /PRIVATE_PROVIDER_MESSAGE/); assert.equal(dispatches, 1);
   });
   await t.test('silent and malformed PCM do not invoke a model', async () => {
     reset(); assert.equal((await post(wav(true))).status, 422); assert.notEqual((await post(Buffer.alloc(600))).status, 200); assert.equal(dispatches, 0);
