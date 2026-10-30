@@ -53,7 +53,7 @@ const server = createServer(async (req, res) => {
     else if (/^\/voice-runtime\/v1\/[a-zA-Z0-9.-]+$/.test(req.url)) {
       for (const header of workerHeaders) res.setHeader(header.key, header.value);
       res.setHeader('Content-Type', req.url.endsWith('.wasm') ? 'application/wasm' : 'text/javascript');
-      res.end(req.url.endsWith('/worker.js') ? diagnosticWorker.outputFiles[0].text : await readFile(path.join(process.cwd(), 'frontend/public', req.url)));
+      res.end(req.url.endsWith('/worker.js') && !process.argv.includes('--shipped-runtime') ? diagnosticWorker.outputFiles[0].text : await readFile(path.join(process.cwd(), 'frontend/public', req.url)));
     } else { res.statusCode = 404; res.end(); }
   } catch { res.statusCode = 500; res.end(); }
 });
