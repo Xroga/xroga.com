@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "2935403b6460220ee33f7ebb748adebb7cebe6b472271cf0eace69b5793672d3",
+  "sourceTreeDigest": "c5391f33a89a1d8c777c0b5893e6bae923a7374b8cc448a3207b482928a2455d",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2185,11 +2185,11 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "file": "backend/src/routes/voiceFree.ts",
-      "line": 58,
+      "line": 61,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
+      "callSha256": "93e31a05032e016a8c6cf393fee960363d7115eaf59892ae3f1e5bcffecd6580",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -2200,7 +2200,7 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "a3594573c1fd3b89c30e2bcc2ea9aac259cd4bca9be696e91fd669165b7f52ea"
+          "sha256": "77da96d82d190edc1a625db5d0c8e2e5af896624b520dc610545ae587f424ddc"
         },
         {
           "path": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
@@ -4746,6 +4746,22 @@
       ]
     },
     {
+      "id": "eb39e5759b146603faf0",
+      "file": "frontend/src/lib/voiceApi.ts",
+      "line": 9,
+      "entryPoint": "warmVoiceBackend",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
       "id": "e1ddea7115498d92341b",
       "file": "frontend/src/store/useCurrencyStore.ts",
       "line": 30,
@@ -4879,6 +4895,7 @@
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
         "68df836263d1eff0010b",
+        "eb39e5759b146603faf0",
         "e1ddea7115498d92341b"
       ]
     },
@@ -5018,9 +5035,9 @@
     }
   ],
   "counts": {
-    "total": 149,
+    "total": 150,
     "reviewed": 149,
-    "pending": 0,
-    "unresolvedHighRiskBypasses": 0
+    "pending": 1,
+    "unresolvedHighRiskBypasses": 1
   }
 }
