@@ -53729,7 +53729,7 @@
       "id": "surface:e4740fd5f297485958dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/blog/[slug]/page.tsx",
-      "sha256": "453b970c967e139cf466cafb2f5b162e95df7b6b92b8da225e0abbc94c1b7707",
+      "sha256": "30884d7df978aeec36d5a08c0f1280c096fbdb19ff153ff6839ffd152efda0ee",
       "symbols": [
         "Page",
         "article",
@@ -53809,7 +53809,7 @@
       "id": "surface:b8b210db970292995b41",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/blog/page.tsx",
-      "sha256": "1ac92bdca080405b4ec7c9132b09dbd3b3dca3f5ae34626ea2418229bb8ad107",
+      "sha256": "fac176abc5b0981729ddc01577b4214ff9fba11b753a7a8883caaad314736d0c",
       "symbols": [
         "Page",
         "metadata"
@@ -55523,7 +55523,7 @@
       "id": "surface:2b0171bdbea3342cb29e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/llms.txt/route.ts",
-      "sha256": "b494e9c8742842e9e91ffb4b3664e39744c53e99e0c84b20fd469462e8c6c6b9",
+      "sha256": "2b89e2f0eb28ca125717769404a7c41a684e8c0075855e3669bd27dc414b0c86",
       "symbols": [
         "GET",
         "body"
@@ -62957,7 +62957,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:25",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:24",
         "frontend/src/components/homepage/HomepageClient.tsx:21"
       ],
       "reachable": true,
@@ -64841,7 +64841,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:23",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:22",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:14",
         "frontend/src/components/homepage-next/s02/Workspaces.tsx:11"
       ],
@@ -64879,7 +64879,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:24"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:23"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -65003,7 +65003,7 @@
       "id": "surface:e91efcfd09bfe6cbb4b9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/S02Work.tsx",
-      "sha256": "80e59b4b18fff55d356d107ee19a090d4525435f1ebd0f9d3e10c8ebe71609ae",
+      "sha256": "b629586f6c6331cd4ac46faeea39d86a9ad9aafa6a8ee00e05bab6be749c5a92",
       "symbols": [
         "Hold",
         "MODES",
@@ -65049,7 +65049,6 @@
         "./workforce",
         "motion/react",
         "next/dynamic",
-        "next/link",
         "react"
       ],
       "runtimeImports": [
@@ -65076,7 +65075,6 @@
       "externalProviderDependencies": [
         "motion/react",
         "next/dynamic",
-        "next/link",
         "react"
       ],
       "authBoundary": [],
@@ -65136,7 +65134,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:32"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:31"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -65361,7 +65359,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:20",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
         "frontend/src/components/homepage-next/s02/s02.test.ts:4",
         "frontend/src/components/homepage-next/s02/useDemoClock.ts:4"
       ],
@@ -65433,7 +65431,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:18",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:19"
       ],
       "reachable": true,
@@ -65527,7 +65525,7 @@
       "id": "surface:2ea7d69e957166ca400d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/script.ts",
-      "sha256": "ed968a7ce41cf92e38ea309004c52517f7c543024fbe242b849b9528d62e98cc",
+      "sha256": "91f914b2577a1639c797738642de69a6c521a873db9fbe736aead4af75cbe416",
       "symbols": [
         "Action",
         "COPY",
@@ -65552,7 +65550,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:17",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:16",
         "frontend/src/components/homepage-next/s02/Theater.tsx:19",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:18",
         "frontend/src/components/homepage-next/s02/engine.ts:6",
@@ -65609,7 +65607,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:18",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:17",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:16",
         "frontend/src/components/homepage-next/s02/Workspaces.tsx:12",
         "frontend/src/components/homepage-next/s02/s02.test.ts:6",
@@ -65662,7 +65660,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:21"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -65731,7 +65729,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:22",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:21",
         "frontend/src/components/homepage-next/s02/WorkforceStage.tsx:17",
         "frontend/src/components/homepage-next/s02/s02.test.ts:7"
       ],
@@ -65791,7 +65789,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:14"
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -65815,7 +65813,7 @@
       "id": "surface:1aeaaff28fa1b90a8110",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
-      "sha256": "b6e8883db1951f9b10e88b9318f4f3db2e319d66a2f18cb7cd0f113c23394ef3",
+      "sha256": "1ce6c1bdddaf9c8c521533a5e0250bfb27c8e311cf3196cc7b055ed8cfb84d80",
       "symbols": [
         "LAST_AT",
         "LEAD_AT",
@@ -65846,7 +65844,6 @@
         "./state",
         "./tourBeats",
         "motion/react",
-        "next/link",
         "react"
       ],
       "runtimeImports": [
@@ -65868,7 +65865,6 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "motion/react",
-        "next/link",
         "react"
       ],
       "authBoundary": [],
@@ -65925,7 +65921,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:15"
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -65992,7 +65988,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:17"
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -66095,7 +66091,7 @@
       ],
       "callers": [
         "frontend/src/components/homepage-next/s03/GrowthStudio.tsx:9",
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:13",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:12",
         "frontend/src/components/homepage-next/s03/SearchStudio.tsx:9",
         "frontend/src/components/homepage-next/s03/Tour.tsx:11",
         "frontend/src/components/homepage-next/s03/growth/Launch.tsx:9",
@@ -66837,7 +66833,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:16",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:15",
         "frontend/src/components/homepage-next/s03/s03.test.ts:32"
       ],
       "reachable": true,
@@ -66892,7 +66888,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:18",
+        "frontend/src/components/homepage-next/s03/S03Growth.tsx:17",
         "frontend/src/components/homepage-next/s03/s03.test.ts:33"
       ],
       "reachable": true,
@@ -66977,7 +66973,7 @@
       "id": "surface:44422fb198b6ae2c6fee",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s04/S04Publish.tsx",
-      "sha256": "11981f6481222ae470abddc343bed0d7e181d48ee12c6f9f90eecb17baff491b",
+      "sha256": "e853404f2aebe23e9008b2adfcac749423c8a6b3f0bd6dab0de4e6506eb92ef8",
       "symbols": [
         "S",
         "S04Publish",
@@ -67267,7 +67263,7 @@
       "id": "surface:b786271506e2aff89b17",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s04/publish.ts",
-      "sha256": "3e4355fcf35db42aa81b79f862c1557cff3588c258ac56412d35dc5d5d56bd41",
+      "sha256": "7d9b4eaf5ed0ddfd385b654a439e1535af501229a7fbc664d9cfd5de2827289a",
       "symbols": [
         "Beat",
         "COPY",
@@ -80539,7 +80535,7 @@
       "id": "surface:1bb1312380cf3ecb47fa",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/seo/EditorialPage.tsx",
-      "sha256": "5cc7eb6549990d8055097856495dcda4359283264a3edbf92f33d86f32517bbd",
+      "sha256": "a9d81de600db885c7283ca25e57838fad01f5673b7a368df19a3a0cd4daf76ad",
       "symbols": [
         "Crumb",
         "EditorialHub",
@@ -80717,7 +80713,7 @@
       "id": "surface:0b9fdc67c372c015631f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/seo/GrowthEvidence.tsx",
-      "sha256": "463367b2325376bf57f6236a20bf884651f8f89dcfeb36dcc38113b364eeea38",
+      "sha256": "c592f3e0122f6e93c8cf0ca2623f3ecc6323052815316b0de8a4750f0481ab46",
       "symbols": [
         "AccessibleDataChart",
         "ChartPoint",
@@ -94279,7 +94275,7 @@
         "frontend/src/app/vibe-coding/page.tsx"
       ],
       "callers": [
-        "frontend/src/lib/seoGrowthContent.ts:9"
+        "frontend/src/lib/seoGrowthContent.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -98873,7 +98869,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "30c3a17e1f6737f0226ba1ce6b5652631eb8ba487ef2b2ad8f4255e1a927ab87",
+      "sha256": "c2d4bdf086e8412c25992be4e7cdbdea7a84678f6bead5ebb34bb734676f9989",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -98912,6 +98908,7 @@
       "entryPoints": [],
       "callers": [
         "frontend/src/app/sitemap.ts:2",
+        "frontend/src/lib/appBuildingEditorialContent.test.ts:5",
         "frontend/src/lib/publicUrlInventory.osPreview.test.ts:3",
         "scripts/growth-publishing/core.test.ts:4",
         "scripts/growth-publishing/core.ts:6"
@@ -98927,6 +98924,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/lib/appBuildingEditorialContent.test.ts",
         "frontend/src/lib/publicUrlInventory.osPreview.test.ts",
         "scripts/growth-publishing/core.test.ts"
       ],
@@ -100333,6 +100331,7 @@
         "frontend/src/app/blog/feed.xml/route.ts:1",
         "frontend/src/app/changelog/feed.xml/route.ts:1",
         "frontend/src/app/research/feed.xml/route.ts:1",
+        "frontend/src/lib/appBuildingEditorialContent.test.ts:6",
         "scripts/growth-publishing/core.test.ts:3"
       ],
       "reachable": true,
@@ -100346,6 +100345,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/lib/appBuildingEditorialContent.test.ts",
         "scripts/growth-publishing/core.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -100359,7 +100359,7 @@
       "id": "surface:81ab1aaf9010967cea49",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "09a9e105197a70a3efae67019239245dd78ffc1c245cc0caeec4d74c641919e3",
+      "sha256": "93c3327231328af16661937b1cc1f35baef8915d0e6815e93f2a9bca24bccbd2",
       "symbols": [
         "ALTERNATIVES",
         "BLOG_ARTICLES",
@@ -100376,10 +100376,12 @@
         "verified"
       ],
       "imports": [
+        "./appBuildingEditorialContent.json",
         "./cryptoEditorialContent",
         "./seoPhase2Content"
       ],
       "runtimeImports": [
+        "frontend/src/lib/appBuildingEditorialContent.json",
         "frontend/src/lib/cryptoEditorialContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
@@ -100411,6 +100413,7 @@
         "frontend/src/app/compare/[slug]/page.tsx:22",
         "frontend/src/app/compare/page.tsx:2",
         "frontend/src/app/vibe-coding/page.tsx:1",
+        "frontend/src/lib/appBuildingEditorialContent.test.ts:4",
         "frontend/src/lib/publicUrlInventory.ts:4",
         "frontend/src/lib/seoFeeds.ts:1",
         "frontend/src/lib/seoGrowthContent.test.ts:4"
@@ -100435,6 +100438,7 @@
         "frontend/src/lib/seoGrowthContent.ts#verified"
       ],
       "testCoverage": [
+        "frontend/src/lib/appBuildingEditorialContent.test.ts",
         "frontend/src/lib/seoGrowthContent.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -100478,7 +100482,7 @@
       "callers": [
         "frontend/src/app/build-with/[slug]/page.tsx:1",
         "frontend/src/app/build/[slug]/page.tsx:1",
-        "frontend/src/lib/seoGrowthContent.ts:8"
+        "frontend/src/lib/seoGrowthContent.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -137013,7 +137017,7 @@
     {
       "id": "test-suite:3fc0ed1a95cfc8c5098f",
       "sourcePath": "frontend/src/components/homepage-next/s04/s04.test.ts",
-      "declaredTests": 17,
+      "declaredTests": 18,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -137112,6 +137116,13 @@
       "id": "test-suite:f61033ee5bbb5f5af90c",
       "sourcePath": "frontend/src/lib/apiLocalPort.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f9e0b5b32fa40a8f8cf6",
+      "sourcePath": "frontend/src/lib/appBuildingEditorialContent.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
