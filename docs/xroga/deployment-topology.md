@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `98b87a7017e7d123b0baee33bfbbbeb15177e53f`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `ec3279530696328108aacfdbd5cc4dfb66bb963e`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -16,6 +16,7 @@ Source SHA: `98b87a7017e7d123b0baee33bfbbbeb15177e53f`; exact current source/con
 | browserbase | Browserbase | LEGACY | www.browserbase.com | NOT_INDEPENDENTLY_VERIFIED |
 | google-delivery | Google Cloud Tasks and Cloud Run Jobs | ACTIVE | cloudtasks.googleapis.com, run.googleapis.com | Observed evidence explicitly scoped below; not full journey certification |
 | cloudflare-workers-proposal | Cloudflare Workers | PROPOSED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
+| cloudflare-voice | Cloudflare Workers AI, Workers Free | PROPOSED | api.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-127-0-0-1 | Source-defined endpoint 127.0.0.1 | LOCAL_ONLY | 127.0.0.1 | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-about-meta-com | Source-defined endpoint about.meta.com | CONFIGURED_BUT_UNVERIFIED | about.meta.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-accounts-google-com | Source-defined endpoint accounts.google.com | CONFIGURED_BUT_UNVERIFIED | accounts.google.com | NOT_INDEPENDENTLY_VERIFIED |

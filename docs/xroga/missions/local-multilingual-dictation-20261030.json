@@ -6,19 +6,32 @@
     "XR-ORIGINAL-F076"
   ],
   "state": "IN_PROGRESS",
-  "risk": "medium",
-  "scope": "Replace automatic-send and browser-locale dictation with one manual on-device multilingual microphone flow. Free local transcription, founder-authorized voice-only frontend release, no new scheduler.",
+  "risk": "high",
+  "scope": "One editable manual dictation flow. Founder-approved Cloudflare Workers Free Whisper through existing authenticated Google API, preserving local-only recovery, live mobile fixes and all other batch holds.",
   "changedFiles": [
+    "backend/.env.example",
+    "backend/src/ai/voiceBudget.ts",
+    "backend/src/routes/voice.ts",
+    "backend/src/routes/voiceFree.security.test.ts",
+    "backend/src/routes/voiceFree.ts",
+    "docs/operations/voice-free-provider-approval-20261030.md",
     "docs/xroga/LOCAL_VOICE_INPUT.md",
     "docs/xroga/blockers.md",
     "docs/xroga/current-state.json",
     "docs/xroga/current-state.md",
     "docs/xroga/dependency-inventory.json",
     "docs/xroga/deployment-topology.md",
+    "docs/xroga/deployment-topology.mmd",
     "docs/xroga/evidence/local-voice-20261030/base-after-language-detection.json",
     "docs/xroga/evidence/local-voice-20261030/base-before-language-detection.json",
     "docs/xroga/evidence/local-voice-20261030/browser-codec-overshoot-before.json",
     "docs/xroga/evidence/local-voice-20261030/caller-reconciliation.json",
+    "docs/xroga/evidence/local-voice-20261030/free-cancellation-before.log",
+    "docs/xroga/evidence/local-voice-20261030/free-frontend-tests.log",
+    "docs/xroga/evidence/local-voice-20261030/free-public-provider.json",
+    "docs/xroga/evidence/local-voice-20261030/free-security-tests.log",
+    "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
+    "docs/xroga/evidence/local-voice-20261030/free-ui-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/long-before.json",
     "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
     "docs/xroga/evidence/local-voice-20261030/repair-focused-tests.log",
@@ -38,17 +51,24 @@
     "docs/xroga/runtime-contract.md",
     "docs/xroga/secret-inventory.md",
     "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/egress-caller-reviews.json",
     "docs/xroga/security/egress-callers.json",
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
+    "frontend/.env.local.example",
     "frontend/.gitignore",
     "frontend/e2e/command3-auth.spec.ts",
     "frontend/e2e/composer-polish.spec.ts",
     "frontend/next.config.mjs",
     "frontend/package-lock.json",
     "frontend/package.json",
+    "frontend/src/components/homepage-next/phase1/Stage.module.css",
+    "frontend/src/components/homepage-next/s03/S03.module.css",
+    "frontend/src/components/homepage-next/s04/s04.test.ts",
+    "frontend/src/components/homepage-next/s04/stage/Stages.module.css",
     "frontend/src/components/icons/animated/animatedIcons.test.ts",
     "frontend/src/components/layout/mobileChrome.test.ts",
+    "frontend/src/components/layout/nav/xroga-nav.css",
     "frontend/src/components/terminal/ChatBarButtons.tsx",
     "frontend/src/components/terminal/HomepageChatBar.tsx",
     "frontend/src/components/terminal/TerminalChatBar.tsx",
@@ -57,8 +77,12 @@
     "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
     "frontend/src/lib/terminal/voiceRecording.test.ts",
     "frontend/src/lib/terminal/voiceRecording.ts",
+    "frontend/src/lib/voiceApi.security.test.ts",
+    "frontend/src/lib/voiceApi.ts",
     "frontend/src/lib/voiceEngine.test.ts",
     "frontend/src/lib/voiceEngine.ts",
+    "frontend/src/lib/voiceFree.test.ts",
+    "frontend/src/lib/voiceFree.ts",
     "frontend/src/lib/voiceLocal.test.ts",
     "frontend/src/lib/voiceLocal.ts",
     "frontend/src/lib/voiceLocalProtocol.ts",
@@ -69,6 +93,7 @@
     "frontend/src/lib/voiceTranscription.worker.ts",
     "frontend/src/lib/voiceWorkerPrivacy.test.ts",
     "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
+    "frontend/src/styles/homepage-closing-animation.css",
     "frontend/src/styles/uiverse.css",
     "package-lock.json",
     "package.json",
@@ -76,7 +101,8 @@
     "scripts/verify-live-dictation.mjs",
     "scripts/verify-local-voice.mjs",
     "scripts/verify-voice-control.mjs",
-    "scripts/verify-voice-recording.mjs"
+    "scripts/verify-voice-recording.mjs",
+    "scripts/xroga/runtime-facts.mjs"
   ],
   "decisions": {
     "keep": [
@@ -87,7 +113,7 @@
       "MediaRecorder lifecycle, cancellation, per-chat isolation, draft appending and RTL text"
     ],
     "replace": [
-      "Composer voice transcription with pinned multilingual Whisper running on-device through Transformers.js"
+      "Default dictation inference in the approved cloudflare-free configuration uses pinned open-source Whisper through the protected API. Local-only mode remains an explicit configuration and recovery option, never a failure-triggered fallback."
     ],
     "deprecate": [
       "Spoken commands, automatic sends, voice conversation/TTS restart, language dropdown and browser-specific SpeechRecognition"
@@ -101,8 +127,8 @@
   },
   "securityImpact": {
     "auth": {
-      "changed": false,
-      "description": "Existing server controls remain unchanged."
+      "changed": true,
+      "description": "Free endpoint requires existing server authentication, issued actor and owner. The client pins the initiating account through every chunk and publication."
     },
     "tenant": {
       "changed": false,
@@ -113,16 +139,16 @@
       "description": "Existing server controls remain unchanged."
     },
     "credentials": {
-      "changed": false,
-      "description": "Existing server controls remain unchanged."
+      "changed": true,
+      "description": "Approved new 90-day account-only Workers AI Read token in one Google secret, accessible only to existing runtime identity. No customer custody change."
     },
     "egress": {
       "changed": true,
-      "description": "The microphone sends no audio externally. A dedicated worker downloads only pinned public model data, with narrowly scoped worker CSP and self-hosted executable/WASM assets. Main page CSP is unchanged."
+      "description": "Approved user-initiated PCM through authenticated API to fixed Cloudflare Whisper endpoint. No draft/project data, raw-audio storage, paid fallback or arbitrary destination. Explicit local mode keeps prior on-device behavior."
     },
     "cost": {
       "changed": true,
-      "description": "No paid speech request or provider fallback. Inference uses device CPU/memory and a first-use model download. No new infrastructure."
+      "description": "Workers Free only. Existing canonical holds and zero-cost settlement/usage verification remain mandatory. Google one-time <=$0.10 and incremental <=$5/month within approved allocation, credits first. No paid speech overage."
     },
     "billing": {
       "changed": false,
@@ -153,6 +179,12 @@
       "scope": "30 focused tests pass. Actual React/MediaRecorder retry/reuse fixture passes in two viewport sizes with stubbed recognition. Real speech performance comparisons are limitations, not production acceptance.",
       "negative": true,
       "reference": "docs/xroga/evidence/local-voice-20261030/repair-focused-tests.log"
+    },
+    {
+      "command": "selected free voice security/frontend tests and real recorder fixture",
+      "scope": "64 backend positive/negative tests and 22 frontend tests passed. Actual React/MediaRecorder passes in two viewport sizes with stubbed recognition. Three real public provider calls took 3.8-5.5s, with measured script and word errors. Not production/physical-device acceptance.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json"
     }
   ],
   "architecture": {
@@ -160,14 +192,15 @@
     "reason": "The existing composer remains the single draft and Send owner. A disposable inference worker handles speech only, with no agent or task execution authority.",
     "rfc": null
   },
-  "rollout": "Founder authorized voice-only release on 2026-10-30, using the existing production frontend baseline. Preserve other batch holds and the prior Vercel deployment.",
-  "rollback": "Revert this bounded change before deployment or restore the previous verified frontend deployment. No production SQL or credential changes. Reverting restores the old voice behavior, including its provider route, so do not silently enable it as a runtime fallback.",
+  "rollout": "Approved exact free-voice package on October 30. CI and public provider gates before guarded zero-traffic candidate, paired source-safe API/Job promotion and voice-only frontend with current mobile changes. No other batch activation.",
+  "rollback": "Restore retained local-only voice frontend before restoring previous compatible paired API/Job digest 49505ef9. Keep KMS, data, platform secret and current feature holds. No production SQL.",
   "knownGaps": [
     "Founder accepted Urdu/Hindi script ambiguity on 2026-10-30. Measured speech errors remain documented limitations requiring editable review.",
     "Medium failed inside CPU/WASM execution; it is not selected and the root cause is not established.",
     "Physical Android/iOS/Safari/Firefox, actual OS microphone permissions and interruptions, mixed-language and long-utterance acceptance remain unverified.",
     "First-use model download is approximately 250 MB plus executable runtime. Inference latency varies by hardware.",
-    "User-reported Chrome public-model download failed in production. Bounded retry and retained-audio repair requires exact-source CI and live acceptance. Measured browser GPU and native CPU comparisons do not justify an instant-recognition claim."
+    "User-reported Chrome public-model download failed in production. Bounded retry and retained-audio repair requires exact-source CI and live acceptance. Measured browser GPU and native CPU comparisons do not justify an instant-recognition claim.",
+    "Three public provider calls returned in 3.8-5.5s. Hindi was rendered in Urdu script and Urdu word errors remain. This is not exact transcription, long-recording latency or real microphone/physical-phone acceptance."
   ],
   "placeholderClaimsRemaining": [
     "No universal language/device accuracy claim.",
@@ -178,8 +211,8 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact-source CI for the bounded retry/cache/retained-audio repair",
-      "Live user dictation acceptance including first-use model download and transcription latency"
+      "Exact-source CI and approved paired API/Job/frontend release",
+      "Authenticated production microphone acceptance and physical device coverage"
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
@@ -189,6 +222,11 @@
   "evidenceRefs": [
     "docs/xroga/LOCAL_VOICE_INPUT.md",
     "docs/xroga/evidence/local-voice-20261030/caller-reconciliation.json",
+    "docs/xroga/evidence/local-voice-20261030/free-frontend-tests.log",
+    "docs/xroga/evidence/local-voice-20261030/free-public-provider.json",
+    "docs/xroga/evidence/local-voice-20261030/free-security-tests.log",
+    "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
+    "docs/xroga/evidence/local-voice-20261030/free-ui-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/long-before.json",
     "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
     "docs/xroga/evidence/local-voice-20261030/repair-focused-tests.log",

@@ -9,7 +9,7 @@ function handler(failure?: unknown) {
  const ast=ts.createSourceFile('voice.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
  const callbacks=new Map<string,string>(); const visit=(node:ts.Node)=>{if(ts.isVariableDeclaration(node)&&['start','run','retry','getInference'].includes(node.name.getText(ast))&&node.initializer)callbacks.set(node.name.getText(ast),node.initializer.getText(ast));ts.forEachChild(node,visit);};visit(ast);assert.ok(callbacks.has('start'));
  const drafts:string[]=[],errors:string[]=[];let stopped=false;
- const context={start:async()=>{},AbortController,MediaRecorder:class{},disabled:false,session:{current:null as {abort:AbortController} | null},publish:{current:(text:string)=>drafts.push(text)},
+ const context={start:async()=>{},AbortController,MediaRecorder:class{},disabled:false,useFreeProvider:false,session:{current:null as {abort:AbortController} | null},publish:{current:(text:string)=>drafts.push(text)},
  setError:(text:string)=>{if(text)errors.push(text);},setMode:()=>{},setProgress:()=>{},setPercent:()=>{},setRetryable:()=>{},retainedAudio:{current:null},inference:{current:null},retryExpiry:{current:undefined},setTimeout:()=>1,clearTimeout:()=>{},
  createVoiceEngine:()=>({prepare:async()=>{},recognize:async()=>'',dispose:()=>{},idle:()=>{}}),
  navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:()=>{stopped=true;}}]})}},

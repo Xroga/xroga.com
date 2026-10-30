@@ -1,0 +1,145 @@
+TAP version 13
+# Subtest: actual voice API pins the original session through local decoding and publication
+    # Subtest: changeDuringNormalize
+    ok 1 - changeDuringNormalize
+      ---
+      duration_ms: 215.4696
+      type: 'test'
+      ...
+    # Subtest: logoutDuringNormalize
+    ok 2 - logoutDuringNormalize
+      ---
+      duration_ms: 33.8732
+      type: 'test'
+      ...
+    # Subtest: changeAfterResponse
+    ok 3 - changeAfterResponse
+      ---
+      duration_ms: 48.2745
+      type: 'test'
+      ...
+    # Subtest: cancelled capture sends nothing
+    ok 4 - cancelled capture sends nothing
+      ---
+      duration_ms: 33.5859
+      type: 'test'
+      ...
+    # Subtest: denial and oversize are terminal, ordinary availability stays recoverable
+    ok 5 - denial and oversize are terminal, ordinary availability stays recoverable
+      ---
+      duration_ms: 119.3516
+      type: 'test'
+      ...
+    # Subtest: authorized current user receives the verified transcript once
+    ok 6 - authorized current user receives the verified transcript once
+      ---
+      duration_ms: 36.756
+      type: 'test'
+      ...
+    1..6
+ok 1 - actual voice API pins the original session through local decoding and publication
+  ---
+  duration_ms: 491.7554
+  type: 'test'
+  ...
+# Subtest: prepared PCM uses only the free endpoint and pins the original session
+ok 2 - prepared PCM uses only the free endpoint and pins the original session
+  ---
+  duration_ms: 84.0854
+  type: 'test'
+  ...
+# (node:42916) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: model preparation begins during capture and the ready worker serves repeated dictation
+ok 3 - model preparation begins during capture and the ready worker serves repeated dictation
+  ---
+  duration_ms: 14.2523
+  type: 'test'
+  ...
+# Subtest: cancel terminates loading, rejects pending work and ignores stale replies
+ok 4 - cancel terminates loading, rejects pending work and ignores stale replies
+  ---
+  duration_ms: 3.2213
+  type: 'test'
+  ...
+# Subtest: idle public-model memory is released after two minutes
+ok 5 - idle public-model memory is released after two minutes
+  ---
+  duration_ms: 2.699
+  type: 'test'
+  ...
+# Subtest: download failure is classified without raw provider errors or a false transcript
+ok 6 - download failure is classified without raw provider errors or a false transcript
+  ---
+  duration_ms: 0.9888
+  type: 'test'
+  ...
+# Subtest: a cached worker cannot deliver an earlier utterance to a new request
+ok 7 - a cached worker cannot deliver an earlier utterance to a new request
+  ---
+  duration_ms: 3.1425
+  type: 'test'
+  ...
+# Subtest: free dictation preserves contiguous speech and repeated words through bounded first-party PCM calls
+ok 8 - free dictation preserves contiguous speech and repeated words through bounded first-party PCM calls
+  ---
+  duration_ms: 298.7263
+  type: 'test'
+  ...
+# Subtest: failed or cancelled chunks never publish a partial transcript or retry another provider
+ok 9 - failed or cancelled chunks never publish a partial transcript or retry another provider
+  ---
+  duration_ms: 355.4512
+  type: 'test'
+  ...
+# Subtest: guest, pre-cancelled and silent requests do not dispatch audio
+ok 10 - guest, pre-cancelled and silent requests do not dispatch audio
+  ---
+  duration_ms: 72.8357
+  type: 'test'
+  ...
+# Subtest: actual browser voice encoder produces server-validated fixed PCM and preserves stereo samples
+ok 11 - actual browser voice encoder produces server-validated fixed PCM and preserves stereo samples
+  ---
+  duration_ms: 20.2227
+  type: 'test'
+  ...
+# Subtest: real isolated Chromium decodes a recording and normalizes it without a provider or saved artifacts
+ok 12 - real isolated Chromium decodes a recording and normalizes it without a provider or saved artifacts
+  ---
+  duration_ms: 2823.1313
+  type: 'test'
+  ...
+# Subtest: actual recording workflow publishes verified speech as editable text only
+ok 13 - actual recording workflow publishes verified speech as editable text only
+  ---
+  duration_ms: 159.3872
+  type: 'test'
+  ...
+# Subtest: local model and device failures preserve draft and release mic
+ok 14 - local model and device failures preserve draft and release mic
+  ---
+  duration_ms: 143.9153
+  type: 'test'
+  ...
+# Subtest: late permission response after session cancellation stops tracks and never uploads
+ok 15 - late permission response after session cancellation stops tracks and never uploads
+  ---
+  duration_ms: 34.8718
+  type: 'test'
+  ...
+# Subtest: late transcript after cancellation cannot publish into the next chat
+ok 16 - late transcript after cancellation cannot publish into the next chat
+  ---
+  duration_ms: 42.9424
+  type: 'test'
+  ...
+1..16
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3752.8197

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "784aba0aa675179e75cd387c9720a6e93c831686c6ad31250077917ce3ea3603",
+  "sourceTreeDigest": "baa0a6c58febe934f15b3bd4244b14b4ed8b0f70ec7258554ee76bf18b14caac",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2158,7 +2158,7 @@
     {
       "id": "fcbe4c75dea0e59bcb3a",
       "file": "backend/src/routes/voice.ts",
-      "line": 55,
+      "line": 57,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
@@ -2179,6 +2179,33 @@
           "path": "backend/src/routes/voice.security.test.ts",
           "marker": "actual voice route requires original actor and budget",
           "sha256": "677f058c8ff884dc8cbefd7ac7b869072d1ef08a1876045388703688ca0075df"
+        }
+      ]
+    },
+    {
+      "id": "19343161fc1afbd3f2fb",
+      "file": "backend/src/routes/voiceFree.ts",
+      "line": 50,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
+      "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voiceFree.security.test.ts",
+          "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
+          "sha256": "553b196e893ce2bee2dca7299f60a5eaa6ac59e8e2a0dc5d2916d4e3ee750975"
+        },
+        {
+          "path": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
+          "marker": "ONLY_EXACT_FREE_VOICE_ADMISSION_AND_CHANGED_VOICE_NATIVE_CONVERSIONS",
+          "sha256": "4715d07866813f677ef2eee7beca59c63adc0878e4d3df213b88aadb9f4b8f04"
         }
       ]
     },
@@ -4819,6 +4846,7 @@
         "35923d1b52d197c378e1",
         "807c2948cdfa16e19b84",
         "fcbe4c75dea0e59bcb3a",
+        "19343161fc1afbd3f2fb",
         "e166bef56274bbddc0ad",
         "a7a8d74128349a90e3e8",
         "fcad57247cfb79779f95",
@@ -4989,8 +5017,8 @@
     }
   ],
   "counts": {
-    "total": 148,
-    "reviewed": 148,
+    "total": 149,
+    "reviewed": 149,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

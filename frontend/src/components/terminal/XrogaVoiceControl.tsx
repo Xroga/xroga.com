@@ -5,12 +5,14 @@ import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { transcribeVoiceLocally } from '@/lib/voiceLocal';
 import { createVoiceEngine, type VoiceEngine } from '@/lib/voiceEngine';
+import { transcribeFreeVoiceAudio } from '@/lib/voiceFree';
 import { AudioLinesIcon, type AudioLinesIconHandle } from '../icons/animated/AudioLinesIcon';
 import { captureVoiceRecording } from '@/lib/terminal/voiceRecording';
 
 interface CaptureSession { abort: AbortController; stream?: MediaStream; stop?: () => void; audio?: Blob }
 
 type Mode = 'idle' | 'requesting_permission' | 'listening' | 'finalizing';
+const useFreeProvider = process.env.NEXT_PUBLIC_VOICE_TRANSCRIPTION_MODE === 'cloudflare-free';
 
 /** Dictation only. Submission belongs exclusively to the composer's Send action. */
 export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
@@ -90,17 +92,18 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
         if(!started){await recording.audio;return;}
         setMode('listening');
       }
-      const engine=getInference();
+      const engine=useFreeProvider ? null : getInference();
       // Handle rejection now, while the user may still be speaking. A failed
       // warmup is surfaced after Stop, never retried indefinitely in the background.
-      const preparation=engine.prepare(current.abort.signal,onProgress).then(()=>null,error=>error);
+      const preparation=engine ? engine.prepare(current.abort.signal,onProgress).then(()=>null,error=>error) : Promise.resolve(null);
       const audio = audioToRetry??await recording!.audio;
       if (session.current !== current) return;
       current.audio=audio;retainedAudio.current=audio;
       setMode('finalizing');
       const preparationError=await preparation;
       if(preparationError)throw preparationError;
-      const transcript = await transcribeVoiceLocally(audio, current.abort.signal,onProgress,engine.recognize);
+      const transcript = useFreeProvider ? await transcribeFreeVoiceAudio(audio,current.abort.signal,onProgress)
+        : await transcribeVoiceLocally(audio, current.abort.signal,onProgress,engine!.recognize);
       if (session.current !== current || current.abort.signal.aborted) return;
       retainedAudio.current=null;setRetryable(false);
       clearTimeout(retryExpiry.current);
@@ -118,6 +121,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
         : name === 'RecordingInterruptedError' ? 'Recording was interrupted. Please record again.'
         : name === 'VoiceDownloadError' ? 'Voice setup was interrupted. Your recording is still here. Retry when your connection is ready.'
         : name === 'VoiceSilenceError' ? 'No speech was heard. Check your microphone and record again.'
+        : (failure as {status?: number})?.status === 401 ? 'Please sign in to use voice input. Your typed text is unchanged.'
         : 'This recording could not be transcribed. Retry or record again. Your typed text is unchanged.');
     } finally {
       current.stream?.getTracks().forEach(track => track.stop());

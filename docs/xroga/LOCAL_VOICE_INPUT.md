@@ -90,3 +90,11 @@ An isolated Transformers.js 4.3.2 WebGPU comparison correctly recognized the pub
 An isolated native whisper.cpp v1.9.2 Small q5_1 comparison transcribed public English, Hindi and Urdu recordings and detected en, hi and ur. End-to-end command times were 15,781, 18,047 and 17,375 ms on this laptop. These include loading the model for each command and do not establish Cloud Run latency. Recognition errors remain visible in the public receipts. No native service, backend route, IAM change or paid API was created.
 
 This repair does not establish ChatGPT-equivalent latency or accuracy. First-use download reliability and real user acceptance still require live verification. The current production source is 98b87a7017e7d123b0baee33bfbbbeb15177e53f. The repair is not live merely because source checks pass.
+
+## Approved free-provider correction
+
+The user approved `docs/operations/voice-free-provider-approval-20261030.md`. A new protected free-only route reuses the original actor, owner, reservation, audit and usage boundary. One Cloudflare account and model are pinned. Provider denial, revocation, cancellation or missing accounting never authorizes fallback or text publication. The existing local engine is not loaded when the approved free mode is selected. Audio stays in RAM and Send remains manual.
+
+The real public English, Hindi and Urdu fixtures returned in 5500, 3938 and 3781 ms. English matched its reference. Hindi was rendered in Urdu script. Urdu had about 20.5% reference word error. These results establish provider availability and short-clip timing, not universal accuracy, long-recording timing or production microphone acceptance. Public audio totaled 35.48 seconds. No customer recording was used.
+
+An actual negative cancellation test reproduced one dispatch after reservation-time disconnection. Synchronous request-state checks fixed it. All 64 backend legacy/free voice tests, 22 frontend tests, and real React/MediaRecorder desktop/mobile viewport checks passed. Exact-source CI and production release are still pending. Claude's six already-live mobile layout files are preserved unchanged.
