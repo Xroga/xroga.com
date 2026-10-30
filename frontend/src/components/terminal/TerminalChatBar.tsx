@@ -36,6 +36,7 @@ import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 import { X, Folder, Puzzle } from 'lucide-react';
 import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css';
 import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
+import { appendVoiceTranscript } from '@/lib/terminal/voiceRecording';
 import { XrogaVoiceControl } from './XrogaVoiceControl';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 
@@ -100,6 +101,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
    * re-render on every letter (that caused double characters / rewritten input).
    */
   const [draft, setDraft] = useState(prompt);
+  const [voiceEpoch, setVoiceEpoch] = useState(0);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [shortcutIndex, setShortcutIndex] = useState(0);
   useEffect(() => {
@@ -284,6 +286,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     const raw = (textareaRef.current?.value ?? draft).trim();
     const text = autocorrectText(raw);
     if (!text && files.length === 0) return;
+    setVoiceEpoch(value => value + 1);
     setDraft(text);
     draftRef.current = text;
     setPrompt(text);
@@ -372,28 +375,12 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
 
   const handleVoiceDraft = useCallback(
     (spokenText: string) => {
-      const text = spokenText.replace(/\s+/g, ' ').trimStart();
+      const text = appendVoiceTranscript(draftRef.current, spokenText);
       setDraft(text);
       draftRef.current = text;
       setPrompt(text);
       lastExternalPrompt.current = text;
       triggerComposerSignal(700);
-    },
-    [setPrompt, triggerComposerSignal],
-  );
-
-  const handleVoiceSend = useCallback(
-    (spokenText: string) => {
-      const text = spokenText.replace(/\s+/g, ' ').trim();
-      if (!text) return;
-      setDraft(text);
-      draftRef.current = text;
-      setPrompt(text);
-      lastExternalPrompt.current = text;
-      triggerComposerSignal(900);
-      window.requestAnimationFrame(() => {
-        formRef.current?.requestSubmit();
-      });
     },
     [setPrompt, triggerComposerSignal],
   );
@@ -738,26 +725,15 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                   </div>
                 ) : null
               }
-              hideMicrophone={!incognito}
+              hideMicrophone
               trailingExtras={
-                !incognito ? (
-                  <XrogaVoiceControl
-                    composerText={draft}
-                    onVoiceDraft={handleVoiceDraft}
-                    onVoiceSend={handleVoiceSend}
-                  />
-                ) : null
+                <XrogaVoiceControl
+                  key={`${workspaceIdentity.status}:${workspaceIdentity.userId}:${sessionId}:${projectId}:${incognito}:${voiceEpoch}`}
+                  disabled={sessionRestoring}
+                  onVoiceDraft={handleVoiceDraft}
+                />
               }
-              onTranscript={(text) => {
-                // Incognito keeps the existing one-shot microphone control; the
-                // dashboard voice surface is intentionally not mounted there.
-                setDraft((current) => {
-                  const next = current.trim() ? `${current.trim()} ${text}` : text;
-                  draftRef.current = next;
-                  return next;
-                });
-                textareaRef.current?.focus();
-              }}
+              onTranscript={handleVoiceDraft}
               surface={incognito ? 'incognito' : 'dashboard'}
               compactGo={!!draft.trim()}
               sendState={sendState}
@@ -770,6 +746,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
               <textarea
                 ref={textareaRef}
                 data-terminal-composer=""
+                dir="auto"
                 data-draft-owner={hydrated ? (workspaceIdentity.status === 'guest' ? 'guest' : workspaceIdentity.userId ?? '') : ''}
                 data-draft-session={hydrated ? sessionId : ''}
                 data-draft-project={hydrated ? projectId ?? '' : ''}
