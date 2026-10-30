@@ -42,6 +42,11 @@ layer when an existing component meets the requirement effectively.
 
 ## Default execution location
 
+Apply the [mandatory Cloud Shell usage policy](cloud-shell-usage-policy.md)
+before opening or reconnecting a session. Protect session quota separately from
+cloud credits and billing. Prefer equivalent authorized local tools, APIs,
+integrations and existing CI, while preserving sensitive recovery requirements.
+
 Use the existing laptop or CI for editing, documentation, repository audits,
 type checking, linting, ordinary unit tests, UI fixtures, mocked integrations and
 isolated database tests. Respect the permanent local storage cleanup policy.

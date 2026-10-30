@@ -63,6 +63,21 @@ enable paid fallbacks or exceed approved spending. Separate gross usage, credits
 and cash cost. Budget alerts are not hard caps. This principle grants no new IAM,
 production deployment or batch activation authority and lifts no specific hold.
 
+## Mandatory Cloud Shell usage policy
+
+Follow `docs/operations/cloud-shell-usage-policy.md`. Cloud Shell is a specialized
+operational tool. Use the existing local repository, authorized local gcloud,
+APIs, integrations or existing CI whenever an equivalent secure method works.
+Before opening or reconnecting, record the exact technical need, alternatives,
+project, permissions, production/billing effects, expected duration and shared
+operation owner. Check available quota and avoid duplicate agent sessions.
+Prepare commands first, verify the result, preserve evidence and end the session
+when its operation finishes. Never interrupt critical recovery to save quota.
+Do not keep sessions alive artificially, evade quota, export protected secrets,
+depend on Cloud Shell for durable work or buy a replacement without approval.
+Local gcloud saves session hours but does not remove underlying cloud charges.
+This rule grants no new spending, IAM, deployment or batch activation authority.
+
 ## Mandatory pre-traffic-shift verification
 
 Follow `docs/operations/pre-traffic-shift-verification.md` before a production
