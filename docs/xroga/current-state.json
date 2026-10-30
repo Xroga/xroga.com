@@ -3,9 +3,9 @@
   "identity": {
     "repository": "C:/xr-mob",
     "branch": "claude/homepage-mobile-responsive",
-    "sha": "0b4b88699b97e8633072d69f96f781859b8a5d75",
-    "sourceTimestampUtc": "2026-10-30T16:24:55+05:00",
-    "auditStartedUtc": "2026-10-30T11:25:43.208Z",
+    "sha": "95b67775e9e7c2cfc1bf2ac757903caa30b08239",
+    "sourceTimestampUtc": "2026-10-30T16:36:45+05:00",
+    "auditStartedUtc": "2026-10-30T11:37:34.603Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
