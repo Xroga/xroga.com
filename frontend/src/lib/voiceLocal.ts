@@ -37,7 +37,8 @@ export function recognizeVoiceSamples(samples: Float32Array, signal: AbortSignal
   });
 }
 
-export async function transcribeVoiceLocally(audio: Blob, signal: AbortSignal, progress: Progress): Promise<string> {
+export async function transcribeVoiceLocally(audio: Blob, signal: AbortSignal, progress: Progress,
+  recognize = recognizeVoiceSamples): Promise<string> {
   if (signal.aborted) throw abortError();
   if (audio.size < 512 || audio.size > VOICE_MAX_BYTES || typeof OfflineAudioContext === 'undefined') {
     throw new Error('Unsupported voice recording.');
@@ -72,7 +73,7 @@ export async function transcribeVoiceLocally(audio: Blob, signal: AbortSignal, p
       if (!Number.isFinite(samples[frame])) throw new Error('Invalid decoded voice sample.');
       samples[frame] = Math.max(-1, Math.min(1, samples[frame]));
     }
-    return await recognizeVoiceSamples(samples, signal, progress);
+    return await recognize(samples, signal, progress);
   } finally {
     clearTimeout(timer);
     if (cancel) signal.removeEventListener('abort', cancel);

@@ -1,5 +1,6 @@
-import { env, pipeline, Tensor, TextStreamer } from '@huggingface/transformers';
+import { env, pipeline, Tensor, TextStreamer, type AutomaticSpeechRecognitionPipeline } from '@huggingface/transformers';
 import { VOICE_MODEL, VOICE_MODEL_REVISION, VOICE_RUNTIME_PATH, validateVoiceSamples, selectVoiceLanguage, voiceCompletionGuard, voiceSegments, type VoiceWorkerReply } from './voiceLocalProtocol';
+import { isVoiceDownloadFailure, loadVoiceModel } from './voiceModelLoading';
 
 // The upstream model runner logs input tensors on failure. This dedicated worker
 // reports only the bounded error message below, never private audio features.
@@ -11,23 +12,47 @@ env.useBrowserCache = true;
 env.backends.onnx.wasm!.wasmPaths = VOICE_RUNTIME_PATH;
 env.backends.onnx.wasm!.numThreads = 1;
 env.backends.onnx.wasm!.proxy = false;
-let started = false;
-const reply = (value: VoiceWorkerReply) => postMessage(value);
+let busy = false;
+let prepared: Promise<AutomaticSpeechRecognitionPipeline> | null = null;
+const reply = (value: VoiceWorkerReply, id?: number) => postMessage(id === undefined ? value : {...value,id});
 onmessage = async (event: MessageEvent<unknown>) => {
-  if (started) return;
-  started = true;
+  const framed=event.data && typeof event.data==='object' && !(event.data instanceof Float32Array) ? event.data as {id?:number;type?:string;samples?:unknown} : null;
+  const id=framed?.id;
+  if(framed && (!Number.isSafeInteger(id) || id!<=0 || !['prepare','transcribe'].includes(framed.type??'')))return;
+  if(busy){reply({type:'error',code:'engine'},id);return;}
+  busy = true;
+  let samples: Float32Array | undefined, loading=false;
+  const prepare=()=>{
+    loading=true;
+    reply({type:'progress',stage:'loading'},id);
+    if(!prepared) {
+      const files=new Map<string,{loaded:number;total:number}>();
+      prepared=loadVoiceModel(()=>pipeline('automatic-speech-recognition',VOICE_MODEL,{
+        revision:VOICE_MODEL_REVISION,device:'wasm',dtype:'q8',
+        progress_callback:(event:unknown)=>{
+          if(!event || typeof event!=='object')return;
+          const update=event as {status?:string;file?:string;loaded?:number;total?:number};
+          if(update.status!=='progress'||!update.file?.endsWith('.onnx')||!Number.isFinite(update.loaded)||!Number.isFinite(update.total)||update.total!<=0)return;
+          files.set(update.file,{loaded:Math.max(0,update.loaded!),total:update.total!});
+          const all=[...files.values()],loaded=all.reduce((sum,file)=>sum+file.loaded,0),total=all.reduce((sum,file)=>sum+file.total,0);
+          reply({type:'progress',stage:'loading',percent:Math.min(99,Math.round(100*loaded/total))},id);
+        },
+      }),()=>{files.clear();reply({type:'progress',stage:'loading'},id);}).catch(error=>{prepared=null;throw error;});
+    }
+    return prepared;
+  };
   try {
-    validateVoiceSamples(event.data);
-    const samples = event.data;
+    if(framed?.type==='prepare'){await prepare();reply({type:'ready'},id);return;}
+    const input=framed?framed.samples:event.data;
+    validateVoiceSamples(input);
+    samples = input;
     // Silence is not a prompt. Avoid publishing Whisper's hallucinations on empty input.
     const rms = Math.sqrt(samples.reduce((sum, sample) => sum + sample * sample, 0) / samples.length);
-    if (rms < 0.0005) throw new Error('No audible input');
-    reply({ type: 'progress', stage: 'loading' });
-    const transcriber = await pipeline('automatic-speech-recognition', VOICE_MODEL, {
-      revision: VOICE_MODEL_REVISION, device: 'wasm', dtype: 'q8',
-    });
+    if (rms < 0.0005) {reply({type:'error',code:'silence'},id);return;}
+    const transcriber = await prepare();
+    loading=false;
     try {
-      reply({ type: 'progress', stage: 'transcribing' });
+      reply({ type: 'progress', stage: 'transcribing' },id);
       // Transformers.js 3 defaults to English when language is omitted. Use Whisper's
       // own first-token language scores instead, as in openai/whisper detect_language.
       const config = transcriber.model.generation_config;
@@ -66,7 +91,13 @@ onmessage = async (event: MessageEvent<unknown>) => {
       }
       const text = transcripts.join(' ');
       if (!text || text.length > 100000) throw new Error('No usable transcript');
-      reply({ type: 'complete', text });
-    } finally { samples.fill(0); await transcriber.dispose(); }
-  } catch { reply({ type: 'error' }); }
+      reply({ type: 'complete', text },id);
+    } finally {
+      samples.fill(0);
+      // Legacy one-shot helpers dispose immediately. A context-owned engine
+      // retains only the public model and is terminated on cancel/idle/unmount.
+      if(!framed){await transcriber.dispose();prepared=null;}
+    }
+  } catch(error) { reply({ type: 'error',code:loading && isVoiceDownloadFailure(error)?'download':'engine' },id); }
+  finally {samples?.fill(0);busy=false;}
 };

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f2234a444025be51cd24e67b4148cf999d5784b3",
+  "source_sha": "98b87a7017e7d123b0baee33bfbbbeb15177e53f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20842,7 +20842,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "fb6f4ba224dcd672b561bfe965fff3fbb1b493db68433c059776780694575d9e"
+      "sha256": "b99fe5161c1061aebe243c87f875c90147a5b1a9199841ca113a7a46fefab396"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -21901,12 +21901,20 @@
       "sha256": "a8dca12f52c75799b62ea0249742b102d7f8eb3557d6f14d19a1c0c359c85fcd"
     },
     {
+      "path": "frontend/src/lib/voiceEngine.ts",
+      "sha256": "ae0fc953daf0f7d9382d0185069d0e13a0e9c3e518938106cf5f707cd59bdfd5"
+    },
+    {
       "path": "frontend/src/lib/voiceLocal.ts",
-      "sha256": "ca657a98e140b0e5082d13b0b1fa073749546b60e695ff76719d1243f9a69aa9"
+      "sha256": "d44613c95de297cf5257775ffd57db316b7145acc3d56ccb3203a56c6574631f"
     },
     {
       "path": "frontend/src/lib/voiceLocalProtocol.ts",
-      "sha256": "978820be6bc6c129c036ac7dd89681e4bbc5096a0d4e1cc728b25a6d1995f798"
+      "sha256": "c7f0127e9f9f51dd4b170607f2b3d960ee660a3277fa105d62e876f0e596fdc2"
+    },
+    {
+      "path": "frontend/src/lib/voiceModelLoading.ts",
+      "sha256": "5e47eba6887ecd80f8385c0373e9cd16614eec1a9b0f975f07c725916ea1c56b"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -21918,7 +21926,7 @@
     },
     {
       "path": "frontend/src/lib/voiceTranscription.worker.ts",
-      "sha256": "ec783b7c952cfcb75fd28bddf4b50f620fd2fefcd98bb0b987ad8af781e4cf49"
+      "sha256": "6321f593e5c40f9c50017660fa4fffbeaba94cd82c05479ef1eec03ce50507fe"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -35392,6 +35400,20 @@
       "path": "frontend/src/lib/uploadCoalescing.ts",
       "line": 56,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/voiceEngine.ts",
+      "line": 13,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/voiceTranscription.worker.ts",
+      "line": 29,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

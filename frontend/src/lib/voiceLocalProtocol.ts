@@ -27,9 +27,10 @@ export function voiceSegments(samples: Float32Array): Array<[number, number]> {
   return result;
 }
 export type VoiceWorkerReply =
-  | { type: 'progress'; stage: 'loading' | 'transcribing' }
+  | { type: 'progress'; stage: 'loading' | 'transcribing'; percent?: number }
+  | { type: 'ready' }
   | { type: 'complete'; text: string }
-  | { type: 'error' };
+  | { type: 'error'; code?: 'download' | 'silence' | 'engine' };
 
 export function validateVoiceSamples(samples: unknown): asserts samples is Float32Array {
   if (!(samples instanceof Float32Array) || samples.length < 1600

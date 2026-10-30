@@ -7,14 +7,15 @@ type StreamFixture = { getTracks: () => { stop: () => void }[] };
 function handler(failure?: unknown) {
  const source=readFileSync(new URL('../components/terminal/XrogaVoiceControl.tsx',import.meta.url),'utf8');
  const ast=ts.createSourceFile('voice.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
- let callback=''; const visit=(node:ts.Node)=>{if(ts.isVariableDeclaration(node)&&node.name.getText(ast)==='start'&&node.initializer)callback=node.initializer.getText(ast);ts.forEachChild(node,visit);};visit(ast);assert.ok(callback);
+ const callbacks=new Map<string,string>(); const visit=(node:ts.Node)=>{if(ts.isVariableDeclaration(node)&&['start','run','retry','getInference'].includes(node.name.getText(ast))&&node.initializer)callbacks.set(node.name.getText(ast),node.initializer.getText(ast));ts.forEachChild(node,visit);};visit(ast);assert.ok(callbacks.has('start'));
  const drafts:string[]=[],errors:string[]=[];let stopped=false;
  const context={start:async()=>{},AbortController,MediaRecorder:class{},disabled:false,session:{current:null as {abort:AbortController} | null},publish:{current:(text:string)=>drafts.push(text)},
- setError:(text:string)=>{if(text)errors.push(text);},setMode:()=>{},setProgress:()=>{},
+ setError:(text:string)=>{if(text)errors.push(text);},setMode:()=>{},setProgress:()=>{},setPercent:()=>{},setRetryable:()=>{},retainedAudio:{current:null},inference:{current:null},retryExpiry:{current:undefined},setTimeout:()=>1,clearTimeout:()=>{},
+ createVoiceEngine:()=>({prepare:async()=>{},recognize:async()=>'',dispose:()=>{},idle:()=>{}}),
  navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:()=>{stopped=true;}}]})}},
  captureVoiceRecording:()=>({stop:()=>{},ready:Promise.resolve(true),audio:Promise.resolve(new Blob(['fixture']))}),
  transcribeVoiceLocally:async()=>{if(failure)throw failure;return 'send send ابھی بھیج دو';}};
- vm.runInNewContext(ts.transpileModule('globalThis.start='+callback,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText,context);
+ vm.runInNewContext(ts.transpileModule([...callbacks].map(([name,callback])=>'globalThis.'+name+'='+callback).join(';'),{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText,context);
  return {context,drafts,errors,stopped:()=>stopped,start:context.start as ()=>Promise<void>};
 }
 test('actual recording workflow publishes verified speech as editable text only',async()=>{

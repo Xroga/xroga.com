@@ -9,6 +9,7 @@
   "risk": "medium",
   "scope": "Replace automatic-send and browser-locale dictation with one manual on-device multilingual microphone flow. Free local transcription, founder-authorized voice-only frontend release, no new scheduler.",
   "changedFiles": [
+    "docs/xroga/LOCAL_VOICE_INPUT.md",
     "docs/xroga/blockers.md",
     "docs/xroga/current-state.json",
     "docs/xroga/current-state.md",
@@ -20,12 +21,15 @@
     "docs/xroga/evidence/local-voice-20261030/caller-reconciliation.json",
     "docs/xroga/evidence/local-voice-20261030/long-before.json",
     "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
+    "docs/xroga/evidence/local-voice-20261030/repair-focused-tests.log",
+    "docs/xroga/evidence/local-voice-20261030/repair-gpu-performance.json",
+    "docs/xroga/evidence/local-voice-20261030/repair-native-performance.json",
+    "docs/xroga/evidence/local-voice-20261030/repair-ui-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-english-hindi-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-local-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-long-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-multilingual-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json",
-    "docs/xroga/LOCAL_VOICE_INPUT.md",
     "docs/xroga/missions/local-multilingual-dictation-20261030.json",
     "docs/xroga/requirements-ledger.json",
     "docs/xroga/requirements-ledger.md",
@@ -53,9 +57,13 @@
     "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
     "frontend/src/lib/terminal/voiceRecording.test.ts",
     "frontend/src/lib/terminal/voiceRecording.ts",
+    "frontend/src/lib/voiceEngine.test.ts",
+    "frontend/src/lib/voiceEngine.ts",
     "frontend/src/lib/voiceLocal.test.ts",
     "frontend/src/lib/voiceLocal.ts",
     "frontend/src/lib/voiceLocalProtocol.ts",
+    "frontend/src/lib/voiceModelLoading.test.ts",
+    "frontend/src/lib/voiceModelLoading.ts",
     "frontend/src/lib/voiceRuntimePolicy.test.ts",
     "frontend/src/lib/voiceSecurityUi.test.ts",
     "frontend/src/lib/voiceTranscription.worker.ts",
@@ -139,6 +147,12 @@
       "scope": "Actual React control and browser recorder with synthetic audio and stubbed transcription. Both desktop and mobile viewports pass. This is not language accuracy or physical-device evidence.",
       "negative": true,
       "reference": "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json"
+    },
+    {
+      "command": "node --import tsx --test selected voice repair tests",
+      "scope": "30 focused tests pass. Actual React/MediaRecorder retry/reuse fixture passes in two viewport sizes with stubbed recognition. Real speech performance comparisons are limitations, not production acceptance.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/local-voice-20261030/repair-focused-tests.log"
     }
   ],
   "architecture": {
@@ -152,7 +166,8 @@
     "Founder accepted Urdu/Hindi script ambiguity on 2026-10-30. Measured speech errors remain documented limitations requiring editable review.",
     "Medium failed inside CPU/WASM execution; it is not selected and the root cause is not established.",
     "Physical Android/iOS/Safari/Firefox, actual OS microphone permissions and interruptions, mixed-language and long-utterance acceptance remain unverified.",
-    "First-use model download is approximately 250 MB plus executable runtime. Inference latency varies by hardware."
+    "First-use model download is approximately 250 MB plus executable runtime. Inference latency varies by hardware.",
+    "User-reported Chrome public-model download failed in production. Bounded retry and retained-audio repair requires exact-source CI and live acceptance. Measured browser GPU and native CPU comparisons do not justify an instant-recognition claim."
   ],
   "placeholderClaimsRemaining": [
     "No universal language/device accuracy claim.",
@@ -163,8 +178,8 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Final exact-source CI and voice-only production deployment",
-      "Live authenticated dictation and rollback verification"
+      "Exact-source CI for the bounded retry/cache/retained-audio repair",
+      "Live user dictation acceptance including first-use model download and transcription latency"
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
@@ -172,14 +187,18 @@
     "deployedSha": null
   },
   "evidenceRefs": [
+    "docs/xroga/LOCAL_VOICE_INPUT.md",
     "docs/xroga/evidence/local-voice-20261030/caller-reconciliation.json",
     "docs/xroga/evidence/local-voice-20261030/long-before.json",
     "docs/xroga/evidence/local-voice-20261030/medium-runtime-failure.json",
+    "docs/xroga/evidence/local-voice-20261030/repair-focused-tests.log",
+    "docs/xroga/evidence/local-voice-20261030/repair-gpu-performance.json",
+    "docs/xroga/evidence/local-voice-20261030/repair-native-performance.json",
+    "docs/xroga/evidence/local-voice-20261030/repair-ui-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-english-hindi-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-local-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-long-receipt.json",
     "docs/xroga/evidence/local-voice-20261030/voice-multilingual-receipt.json",
-    "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json",
-    "docs/xroga/LOCAL_VOICE_INPUT.md"
+    "docs/xroga/evidence/local-voice-20261030/voice-ui-receipt.json"
   ]
 }
