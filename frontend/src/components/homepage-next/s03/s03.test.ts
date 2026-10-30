@@ -554,3 +554,12 @@ test('phones: Launch & Marketing is one swipe row of two panes; on larger screen
   assert.ok(tsx.indexOf('className={s.atelierPanes}') < tsx.indexOf('className={s.atelierMain}'));
   assert.ok(tsx.indexOf('className={s.atelierMain}') < tsx.indexOf('className={s.controls}'));
 });
+
+test('phones: social ads show one placement at a time and the crawl-map paths break at slashes, never mid-word', () => {
+  const css = readFileSync(new URL('./S03.module.css', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+  const phones = css.slice(css.indexOf('/* social ads: one placement is shown at a time'));
+  assert.match(phones, /\.feed\[data-pos='back'\],\s*\.story\[data-pos='back'\] \{[^}]*opacity: 0;/);
+  assert.match(phones, /\.feed\[data-pos='front'\],\s*\.story\[data-pos='front'\] \{[^}]*translate\(-50%, -50%\)/);
+  const health = readFileSync(new URL('./search/Health.tsx', import.meta.url), 'utf8');
+  assert.match(health, /<wbr \/>/);
+});

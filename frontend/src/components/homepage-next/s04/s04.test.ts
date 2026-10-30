@@ -254,3 +254,11 @@ test('phones: the iPhone, Xroga\'s work and the store page are one snapping swip
   assert.match(rule, /overscroll-behavior-x: contain;/);
   assert.match(phones, /\.iosStore \{\s*flex: 0 0 min\(82%, 300px\);/);
 });
+
+test('phones: the Google Play listing header and the Chrome listing never put three things in one row', () => {
+  const stages = src('stage/Stages.module.css').replace(/\r\n/g, '\n');
+  assert.match(stages, /\.playHead \{\s*grid-template-columns: auto minmax\(0, 1fr\);\s*\}/);
+  assert.match(stages, /\.playHead > em \{\s*grid-column: 1 \/ -1;/);
+  assert.match(stages, /\.cwsMedia \{\s*grid-template-columns: minmax\(0, 1fr\);/);
+  assert.match(stages, /\.ios\[data-ready\] \.shot \{\s*height: auto;/);
+});
