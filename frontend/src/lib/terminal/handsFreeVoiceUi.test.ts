@@ -5,9 +5,9 @@ import test from 'node:test';
 const source=(p:string)=>fs.readFileSync(path.resolve(__dirname,p),'utf8');
 test('single manual dictation control has no spoken commands, auto-send or conversation restart',()=>{
  const voice=source('../../components/terminal/XrogaVoiceControl.tsx');
- assert.doesNotMatch(voice,/SEND_COMMANDS|onVoiceSend|autoSendTimerRef|speechSynthesis|SpeechRecognition|conversationRef|optionsOpen|speechLanguage|ChevronDown/);
+ assert.doesNotMatch(voice,/SEND_COMMANDS|onVoiceSend|autoSendTimerRef|speechSynthesis|new SpeechRecognition|webkitSpeechRecognition\(|conversationRef|optionsOpen|speechLanguage|ChevronDown/);
  assert.match(voice,/Stop recording/);assert.match(voice,/Cancel voice typing/);assert.match(voice,/transcribeVoiceLocally/);
- assert.doesNotMatch(voice,/voiceApi|getAccessToken|fetch\(/);assert.match(voice,/pagehide/);assert.match(voice,/session.current !== current/);
+ assert.doesNotMatch(voice,/voiceApi|getAccessToken|fetch\(/);assert.match(voice,/startSpeechFallback/);assert.match(voice,/DictationController/);assert.match(voice,/pagehide/);assert.match(voice,/session.current !== current/);
 });
 test('composer preserves editable draft and scopes microphone to account, project and conversation',()=>{
  const bar=source('../../components/terminal/TerminalChatBar.tsx');
