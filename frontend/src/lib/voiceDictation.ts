@@ -40,7 +40,7 @@ export function createDictationPipeline(options: {
     waiting = [];
     release.forEach(done => done());
   };
-  const send = (item: Item) => {
+  const upload = (item: Item) => {
     item.state = 'sending';
     active++;
     const started = now();
@@ -65,7 +65,7 @@ export function createDictationPipeline(options: {
     if (halted !== undefined || options.signal.aborted) return;
     for (const item of items.values()) {
       if (active >= MAX_CONCURRENT_UPLOADS) break;
-      if (item.state === 'queued') send(item);
+      if (item.state === 'queued') upload(item);
     }
   };
   return {
