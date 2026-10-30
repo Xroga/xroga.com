@@ -4507,6 +4507,87 @@
 @media (max-width: 520px) {
   .title.title { white-space: normal; text-wrap: balance; }
 }
+/* the settings column and the preview are two panes of one studio; on desktop they are just the studio's own columns */
+.atelierPanes {
+  display: contents;
+}
+/* phones: Launch & Marketing shows one pane at a time (the preview, then the settings), swiped sideways, instead of stacking both into one 1,100px column */
+@media (max-width: 700px) {
+  .atelierPanes {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-inline: -16px;
+    padding: 2px 16px 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .atelierPanes::-webkit-scrollbar {
+    display: none;
+  }
+  .atelierPanes > .atelierMain,
+  .atelierPanes > .controls {
+    flex: 0 0 min(88%, 340px);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  /* the AI-answers and keyword stages are as tall as their content (answer, sources, product page / the search flow) instead of a fixed 640-860px box with empty space */
+  .chapter .stage[data-lens='ai'],
+  .chapter .stage[data-lens='content'] {
+    height: auto;
+  }
+  .chapter .stage[data-lens='ai'] .scene,
+  .chapter .stage[data-lens='content'] .scene,
+  .chapter .stage[data-lens='ai'] .scene > div,
+  .chapter .stage[data-lens='content'] .scene > div {
+    position: relative;
+    inset: auto;
+  }
+  .chapter .stage[data-lens='ai'] .aiGrid {
+    position: relative;
+    inset: auto;
+    padding: 62px 12px 14px;
+  }
+  /* the tool chips are one scrollable row instead of two or three wrapped rows */
+  .tools {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    min-height: 44px;
+  }
+  .tools::-webkit-scrollbar {
+    display: none;
+  }
+  .tools > * {
+    flex: none;
+  }
+  /* the note that no provider is connected is a disclosure: it wraps instead of scrolling */
+  .tools:has(.noTool) {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .tools > .noTool {
+    flex: 1 1 100%;
+  }
+  /* the two mode buttons are one compact row: art beside the title; the line under it repeats the lede above */
+  .mode {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    justify-items: start;
+    gap: 10px;
+    padding: 8px 10px;
+  }
+  .modeArt {
+    width: 56px;
+    height: 32px;
+  }
+  .modeText small {
+    display: none;
+  }
+}
 /* phones: the crawl map is about 300px wide, so its page cards share the columns instead of overlapping (columns sit at 13/40/72%) */
 @media (max-width: 520px) {
   .page:not([data-home]) {

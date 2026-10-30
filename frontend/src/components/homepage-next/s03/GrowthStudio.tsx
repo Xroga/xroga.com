@@ -54,6 +54,7 @@ export function GrowthStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
           ))}
         </div>
 
+        <div className={s.atelierPanes}>
         <div id="s03-mission-panel" role="tabpanel" aria-labelledby={`s03-mission-${st.mission}`} className={s.atelierMain}>
           <div className={s.canvas} data-mission={st.mission}>
             <div key={st.mission} className={s.scene}>
@@ -96,6 +97,7 @@ export function GrowthStudio({ st, dispatch }: { st: State; dispatch: Dispatch<A
             {st.mission === 'paths' && <PathsControls st={st} dispatch={dispatch} />}
           </div>
         </aside>
+        </div>
       </div>
     </div>
   );
