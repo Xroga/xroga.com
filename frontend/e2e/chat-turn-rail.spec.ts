@@ -83,10 +83,14 @@ test('active reading marker follows both scroll directions and no rail appears f
   const root = page.locator('.xv-terminal-scroll').first();
   await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
   await expect.poll(async () => rail.locator('.xv-chat-turn-tick--active').count()).toBe(1);
-  const topActive = await rail.locator('.xv-chat-turn-tick--active').getAttribute('aria-label');
+  // An active marker already exists before the scroll's animation-frame update.
+  // Wait for the expected endpoint rather than saving that stale reading position.
+  const topActive = await rail.locator('.xv-chat-turn-tick').first().getAttribute('aria-label');
+  const bottomActive = await rail.locator('.xv-chat-turn-tick').last().getAttribute('aria-label');
+  await expect.poll(async () => rail.locator('.xv-chat-turn-tick--active').getAttribute('aria-label')).toBe(topActive);
   await root.evaluate(element => element.scrollTo({ top: element.scrollHeight, behavior: 'instant' }));
   await expect.poll(async () => rail.locator('.xv-chat-turn-tick--active').getAttribute('aria-label'))
-    .not.toBe(topActive);
+    .toBe(bottomActive);
   await root.evaluate(element => element.scrollTo({ top: 0, behavior: 'instant' }));
   await expect.poll(async () => rail.locator('.xv-chat-turn-tick--active').getAttribute('aria-label'))
     .toBe(topActive);

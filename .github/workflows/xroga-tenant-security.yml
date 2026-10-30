@@ -57,7 +57,7 @@ jobs:
         env:
           XB01_DISPOSABLE_DATABASE: '1'
           XB01_LEDGER_TEST_DATABASE_URL: postgres://postgres:disposable-fixture-only@127.0.0.1:5432/xb01_tenant_test
-        run: node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringResourceLedger.local.integration.ts backend/tests/engineeringResourceLedger.processes.local.integration.ts
+        run: node node_modules/tsx/dist/cli.mjs --test --test-concurrency=1 backend/tests/engineeringResourceLedger.local.integration.ts backend/tests/engineeringResourceLedger.processes.local.integration.ts
       - name: Operator diagnostics real database tests
         env:
           XB01_DISPOSABLE_DATABASE: '1'

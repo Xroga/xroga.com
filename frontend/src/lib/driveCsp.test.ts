@@ -11,7 +11,11 @@ async function connectSrc(driveFlag: string | undefined): Promise<string> {
   try {
     const mod = await import(`../../next.config.mjs?drive=${String(driveFlag)}-${Math.random()}`);
     const headers = await mod.default.headers();
-    const csp = headers.flatMap((h: { headers: { key: string; value: string }[] }) => h.headers).find((h: { key: string }) => h.key === 'Content-Security-Policy');
+    // Inspect the page policy. The isolated voice worker intentionally cannot
+    // contact Drive or application APIs, regardless of the Drive feature flag.
+    const pageRule = headers.find((h: { source: string }) => h.source.startsWith('/(('));
+    assert.ok(pageRule, 'the general application page policy is configured');
+    const csp = pageRule.headers.find((h: { key: string }) => h.key === 'Content-Security-Policy');
     assert.ok(csp, 'a Content-Security-Policy header is configured');
     const directive = /connect-src[^;]*/.exec(csp.value);
     assert.ok(directive, 'connect-src is present');

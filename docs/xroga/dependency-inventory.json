@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1ad0e053a48868e37160b92017b5530dc0b11647",
+  "source_sha": "1d24fd0febee370bf1249ac2700f4e15406bda8b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15475,7 +15475,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "c1c34123f29e073d2bf814d5ac4140b04895c350af18b70656d7ddaf475af9a4"
+      "sha256": "84e2563d9d3bfef408fc68516a2cba1e19939f2194949cace7f5fa64b778b365"
     },
     {
       "path": "Dockerfile.api",
@@ -21019,7 +21019,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
-      "sha256": "4f56cb2cde8876000fa39e4b3e7a7d181098e7a84d6e878ea02eb7938f38a846"
+      "sha256": "6693290f2ac88415d4c9d85ecbfca77179528fd3ff98c320839704b493534f03"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarFileGrid.tsx",
@@ -21091,7 +21091,7 @@
     },
     {
       "path": "frontend/src/components/terminal/HomepageChatBar.tsx",
-      "sha256": "4af65a1afbd2fc9f664d7a9630ed4b838224a86f1a5614f3d24244958df0148e"
+      "sha256": "d36419a6ba177bbdeb0a1e088259120a86b7e1e89de91849ee8e7de2ee350581"
     },
     {
       "path": "frontend/src/components/terminal/ImageEditModal.tsx",
@@ -21199,7 +21199,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860"
+      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -21311,7 +21311,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a"
+      "sha256": "fb6f4ba224dcd672b561bfe965fff3fbb1b493db68433c059776780694575d9e"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -22306,8 +22306,8 @@
       "sha256": "ee217fbea21cf0a9f5eddd180160ccf932c21b8d7067a3df31df68b46aa612af"
     },
     {
-      "path": "frontend/src/lib/terminal/voiceConversation.ts",
-      "sha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278"
+      "path": "frontend/src/lib/terminal/voiceRecording.ts",
+      "sha256": "ac264885f8c571166e26106cfe00ee9f07298d450dfd4a4a5f913985d9e44f99"
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
@@ -22374,12 +22374,24 @@
       "sha256": "a8dca12f52c75799b62ea0249742b102d7f8eb3557d6f14d19a1c0c359c85fcd"
     },
     {
+      "path": "frontend/src/lib/voiceLocal.ts",
+      "sha256": "ca657a98e140b0e5082d13b0b1fa073749546b60e695ff76719d1243f9a69aa9"
+    },
+    {
+      "path": "frontend/src/lib/voiceLocalProtocol.ts",
+      "sha256": "978820be6bc6c129c036ac7dd89681e4bbc5096a0d4e1cc728b25a6d1995f798"
+    },
+    {
       "path": "frontend/src/lib/voicePcm.ts",
       "sha256": "afa17f8408cdc3197e46530e6f64239e34c3093c82c6dccbc53c1e83e2034fa0"
     },
     {
       "path": "frontend/src/lib/voiceRequestPolicy.ts",
       "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
+    },
+    {
+      "path": "frontend/src/lib/voiceTranscription.worker.ts",
+      "sha256": "ec783b7c952cfcb75fd28bddf4b50f620fd2fefcd98bb0b987ad8af781e4cf49"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -36252,34 +36264,6 @@
       "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
       "line": 172,
       "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 49,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 62,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 75,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 88,
-      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

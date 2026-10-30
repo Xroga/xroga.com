@@ -2,16 +2,17 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/xroga-batch-01",
-    "sha": "8ce54f2421039d724571bb727ecce234bcc02a03",
-    "sourceTimestampUtc": "2026-10-21T20:13:18+05:00",
-    "auditStartedUtc": "2026-10-21T15:13:45.536Z",
+    "branch": "codex/multilingual-voice-input-20261030",
+    "sha": "669e3af0f46686cf37aedcd8b9d155a0feb6da88",
+    "sourceTimestampUtc": "2026-10-30T03:54:21+05:00",
+    "auditStartedUtc": "2026-10-29T22:56:55.879Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
-    "npm": "11.16.0",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
+      "deploy/browser-worker/package-lock.json",
       "frontend/package-lock.json",
       "package-lock.json"
     ],
@@ -19,6 +20,7 @@
       ".github/workflows/agent-v2-dependency-lock.yml",
       ".github/workflows/api-build-check.yml",
       ".github/workflows/backend-health-verification.yml",
+      ".github/workflows/builder-phase1.yml",
       ".github/workflows/chat-turn-rail-browser.yml",
       ".github/workflows/command3-auth-browser.yml",
       ".github/workflows/command4-authority.yml",
@@ -29,6 +31,7 @@
       ".github/workflows/growth-technical-publishing.yml",
       ".github/workflows/launch-production-verification.yml",
       ".github/workflows/seo-audit.yml",
+      ".github/workflows/storage-phase1.yml",
       ".github/workflows/supabase-migrate.yml",
       ".github/workflows/unit-tests.yml",
       ".github/workflows/vercel-build-check.yml",
@@ -39,6 +42,9 @@
       "Dockerfile.api",
       "backend/Dockerfile",
       "backend/package.json",
+      "deploy/browser-worker/Dockerfile",
+      "deploy/browser-worker/Dockerfile.proxy",
+      "deploy/browser-worker/package.json",
       "frontend/package.json",
       "package.json"
     ]
@@ -54865,7 +54871,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "15aa726c269bef1f557a8a5924a9e42d23aff6d1d9dea284c283866ea6956458",
+      "sha256": "094a00838d7e362113235b7b2e9721d2e05302925f2149f350fec44f8b4da424",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -54901,7 +54907,9 @@
       ],
       "entryPoints": [],
       "callers": [
-        "frontend/src/lib/untrustedProxyConfig.test.ts:6"
+        "frontend/src/lib/untrustedProxyConfig.test.ts:6",
+        "frontend/src/lib/voiceRuntimePolicy.test.ts:6",
+        "scripts/verify-local-voice.mjs:41"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -54930,7 +54938,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "frontend/src/lib/untrustedProxyConfig.test.ts"
+        "frontend/src/lib/untrustedProxyConfig.test.ts",
+        "frontend/src/lib/voiceRuntimePolicy.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -74139,7 +74148,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ChatBarButtons.tsx:6"
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87503,14 +87512,9 @@
       "runtimeImports": [
         "frontend/src/lib/utils.ts"
       ],
-      "entryPoints": [
-        "frontend/src/app/(shell)/layout.tsx",
-        "frontend/src/app/(workspace)/layout.tsx"
-      ],
-      "callers": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:12"
-      ],
-      "reachable": true,
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:www.w3.org",
@@ -87523,11 +87527,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -87930,12 +87934,8 @@
       "id": "surface:b1a5e3abfe2741791a6b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/ChatBarButtons.tsx",
-      "sha256": "4f56cb2cde8876000fa39e4b3e7a7d181098e7a84d6e878ea02eb7938f38a846",
+      "sha256": "6693290f2ac88415d4c9d85ecbfca77179528fd3ff98c320839704b493534f03",
       "symbols": [
-        "BrowserSpeechRecognition",
-        "BrowserSpeechRecognitionConstructor",
-        "BrowserSpeechRecognitionErrorEvent",
-        "BrowserSpeechRecognitionEvent",
         "ChatBarBrandChip",
         "ChatBarMicrophoneButton",
         "ChatBarSendButton",
@@ -87943,35 +87943,21 @@
         "ChatbarSurface",
         "GitHubChipIcon",
         "GitLabChipIcon",
-        "SpeechInputState",
-        "SpeechRecognition",
         "TwitterChipIcon",
         "VercelChipIcon",
         "busy",
-        "finalTranscript",
-        "getSpeechRecognitionConstructor",
-        "handleClick",
         "icons",
-        "index",
-        "label",
-        "loading",
-        "meterRef",
-        "recognition",
-        "recognitionRef",
-        "result",
-        "speechWindow",
-        "transcript"
+        "loading"
       ],
       "imports": [
         "./ChatBarSendIcon",
-        "@/components/icons/animated/AudioLinesIcon",
+        "./XrogaVoiceControl",
         "@/lib/utils",
-        "lucide-react",
-        "react"
+        "lucide-react"
       ],
       "runtimeImports": [
-        "frontend/src/components/icons/animated/AudioLinesIcon.tsx",
         "frontend/src/components/terminal/ChatBarSendIcon.tsx",
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx",
         "frontend/src/lib/utils.ts"
       ],
       "entryPoints": [
@@ -87983,22 +87969,18 @@
       ],
       "callers": [
         "frontend/src/components/terminal/ChatBarParts.tsx:5",
-        "frontend/src/components/terminal/HomepageChatBar.tsx:12"
+        "frontend/src/components/terminal/HomepageChatBar.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "lucide-react",
-        "react"
+        "lucide-react"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [
-        "frontend/src/components/terminal/ChatBarButtons.tsx#BrowserSpeechRecognitionErrorEvent",
-        "frontend/src/components/terminal/ChatBarButtons.tsx#BrowserSpeechRecognitionEvent"
-      ],
+      "evidenceBoundary": [],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -88167,7 +88149,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/ChatBarButtons.tsx:7"
+        "frontend/src/components/terminal/ChatBarButtons.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88965,7 +88947,7 @@
       "id": "surface:f833c88c88adaa5b6219",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/HomepageChatBar.tsx",
-      "sha256": "4af65a1afbd2fc9f664d7a9630ed4b838224a86f1a5614f3d24244958df0148e",
+      "sha256": "d36419a6ba177bbdeb0a1e088259120a86b7e1e89de91849ee8e7de2ee350581",
       "symbols": [
         "HomepageChatBar",
         "TYPEWRITER_FEATURES",
@@ -88999,6 +88981,7 @@
         "@/lib/companion",
         "@/lib/constants",
         "@/lib/supabase/client",
+        "@/lib/terminal/voiceRecording",
         "@/lib/utils",
         "next/navigation",
         "react"
@@ -89012,6 +88995,7 @@
         "frontend/src/lib/companion.ts",
         "frontend/src/lib/constants.ts",
         "frontend/src/lib/supabase/client.ts",
+        "frontend/src/lib/terminal/voiceRecording.ts",
         "frontend/src/lib/utils.ts"
       ],
       "entryPoints": [
@@ -90775,7 +90759,7 @@
       "id": "surface:3a6e395bda32efc304e5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
       "symbols": [
         "COMPOSER_PLACEHOLDERS",
         "MIN_INPUT_H",
@@ -90804,7 +90788,6 @@
         "handlePaste",
         "handleSubmit",
         "handleVoiceDraft",
-        "handleVoiceSend",
         "hasAttach",
         "hydrated",
         "i",
@@ -90884,6 +90867,7 @@
         "@/lib/repoContext",
         "@/lib/repoSessionsIndex",
         "@/lib/repoWorkspaceGate",
+        "@/lib/terminal/voiceRecording",
         "@/lib/utils",
         "@/lib/xrogaArtifactContext",
         "@/store/useComposerToolsStore",
@@ -90920,6 +90904,7 @@
         "frontend/src/lib/repoContext.ts",
         "frontend/src/lib/repoSessionsIndex.ts",
         "frontend/src/lib/repoWorkspaceGate.ts",
+        "frontend/src/lib/terminal/voiceRecording.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/lib/xrogaArtifactContext.ts",
         "frontend/src/store/useComposerToolsStore.ts",
@@ -92774,155 +92759,53 @@
       "id": "surface:41e3e1a7bd535ee1f059",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
+      "sha256": "fb6f4ba224dcd672b561bfe965fff3fbb1b493db68433c059776780694575d9e",
       "symbols": [
-        "AudioContextCtor",
-        "BrowserSpeechRecognition",
-        "BrowserSpeechRecognitionAlternative",
-        "BrowserSpeechRecognitionConstructor",
-        "BrowserSpeechRecognitionErrorEvent",
-        "BrowserSpeechRecognitionEvent",
-        "BrowserSpeechRecognitionResultLike",
-        "PAUSE_COMMANDS",
-        "RESUME_COMMANDS",
-        "Recognition",
-        "SEND_COMMANDS",
-        "STOP_COMMANDS",
-        "VoiceMode",
-        "VoiceWave",
+        "CaptureSession",
+        "Mode",
         "XrogaVoiceControl",
-        "active",
-        "analyser",
-        "animationFrameRef",
-        "answer",
         "audio",
-        "audioContextRef",
-        "authoritative",
-        "autoSendTimerRef",
-        "awaitingAfterRef",
-        "bars",
-        "bins",
-        "browserVoice",
-        "cancelVoice",
-        "captureGeneration",
-        "captureGenerationRef",
-        "captureReady",
-        "captureText",
-        "center",
-        "centerWeight",
-        "cleanSpeech",
-        "clearRecordingTimeout",
-        "closeOnBackground",
-        "command",
-        "composerTextRef",
-        "context",
-        "conversationRef",
-        "endConversation",
-        "endingRef",
-        "ensureMicrophone",
-        "error",
-        "finalTextRef",
-        "finalVoice",
-        "finalized",
-        "finishVoice",
-        "finishVoiceRef",
-        "fullText",
-        "generation",
-        "handleVoiceControlCommand",
-        "index",
-        "interim",
-        "interimTextRef",
-        "language",
-        "lastPaint",
-        "latestAssistantIdRef",
-        "left",
-        "live",
-        "lowerLeft",
-        "lowerRight",
-        "mergeSeed",
-        "mergeText",
-        "mime",
-        "mimeType",
-        "modeRef",
-        "muteVoice",
-        "normalizedCommand",
-        "pauseVoice",
-        "pauseVoiceRef",
-        "publishLiveDraft",
-        "recognition",
-        "recognitionConstructor",
-        "recognitionRef",
-        "recognitionRestartRef",
-        "recorder",
-        "recorderChunksRef",
-        "recorderMimeType",
-        "recorderRef",
-        "recorderResolveRef",
-        "recordingTimeoutRef",
-        "releaseMicrophone",
-        "resolve",
-        "result",
-        "resumeVoice",
-        "resumeVoiceRef",
-        "right",
-        "scale",
-        "seedTextRef",
-        "sendReviewed",
+        "cancel",
+        "composer",
+        "current",
+        "failure",
+        "feedback",
+        "hide",
+        "listening",
+        "meterRef",
+        "name",
+        "publish",
+        "recording",
         "session",
-        "setMode",
-        "speechGeneration",
-        "speechGenerationRef",
-        "speechWindow",
-        "startConversation",
-        "startMeter",
-        "startRecognition",
-        "startRecorder",
-        "startVoice",
-        "startVoiceRef",
-        "statusText",
-        "stopAudio",
-        "stopMeter",
-        "stopRecognition",
-        "stopRecorder",
-        "stopped",
+        "start",
+        "started",
         "stream",
-        "streamRef",
-        "sum",
-        "text",
-        "tick",
         "transcript",
-        "transcription",
-        "transcriptionAbortRef",
-        "unmuteVoice",
-        "utterance",
-        "voice",
-        "voices"
+        "trigger"
       ],
       "imports": [
-        "./AudioLinesIcon",
-        "@/context/TerminalChatContext",
-        "@/lib/terminal/voiceConversation",
-        "@/lib/utils",
-        "@/lib/voiceApi",
-        "@/lib/voiceRequestPolicy",
+        "../icons/animated/AudioLinesIcon",
+        "@/lib/terminal/voiceRecording",
+        "@/lib/voiceLocal",
         "lucide-react",
         "react",
         "react-dom"
       ],
       "runtimeImports": [
-        "frontend/src/components/terminal/AudioLinesIcon.tsx",
-        "frontend/src/context/TerminalChatContext.tsx",
-        "frontend/src/lib/terminal/voiceConversation.ts",
-        "frontend/src/lib/utils.ts",
-        "frontend/src/lib/voiceApi.ts",
-        "frontend/src/lib/voiceRequestPolicy.ts"
+        "frontend/src/components/icons/animated/AudioLinesIcon.tsx",
+        "frontend/src/lib/terminal/voiceRecording.ts",
+        "frontend/src/lib/voiceLocal.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",
-        "frontend/src/app/(workspace)/layout.tsx"
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/TerminalChatBar.tsx:39"
+        "frontend/src/components/terminal/ChatBarButtons.tsx:5",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:40"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -92931,16 +92814,11 @@
         "react",
         "react-dom"
       ],
-      "authBoundary": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx#authoritative"
-      ],
+      "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx#BrowserSpeechRecognitionErrorEvent",
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx#BrowserSpeechRecognitionEvent"
-      ],
+      "evidenceBoundary": [],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -95951,8 +95829,7 @@
         "frontend/src/components/terminal/TerminalDock.tsx:18",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:20",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:9",
-        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:6",
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:10"
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -96936,7 +96813,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:11",
         "frontend/src/components/terminal/TerminalChatBar.tsx:23",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:325",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:328",
         "frontend/src/components/terminal/VercelBuildGateModal.tsx:5",
         "frontend/src/components/terminal/VercelDeployButton.tsx:5",
         "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx:10",
@@ -98492,7 +98369,7 @@
       "callers": [
         "frontend/src/app/crypto/CryptoPromptBar.tsx:12",
         "frontend/src/components/companion/CompanionCustomizer.tsx:6",
-        "frontend/src/components/terminal/HomepageChatBar.tsx:14",
+        "frontend/src/components/terminal/HomepageChatBar.tsx:15",
         "frontend/src/components/terminal/TerminalChatBar.tsx:25",
         "frontend/src/context/TerminalChatContext.tsx:92",
         "frontend/src/lib/companion.costumes.test.ts:4",
@@ -100237,7 +100114,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:35",
         "frontend/src/components/terminal/RepoContextBar.tsx:21",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:274",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:276",
         "frontend/src/context/TerminalChatContext.tsx:1804",
         "frontend/src/context/TerminalChatContext.tsx:3231",
         "frontend/src/context/TerminalChatContext.tsx:59",
@@ -102561,7 +102438,7 @@
       "callers": [
         "frontend/src/components/terminal/ImageStudioCard.tsx:26",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:6",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:347",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:350",
         "frontend/src/context/TerminalChatContext.tsx:57",
         "frontend/src/lib/phase1Routing.ts:2",
         "frontend/src/lib/workLanes.ts:2"
@@ -104106,8 +103983,8 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:10",
         "frontend/src/components/terminal/RepoContextBar.tsx:214",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:248",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:40",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:250",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:41",
         "frontend/src/context/TerminalChatContext.tsx:1797",
         "frontend/src/context/TerminalChatContext.tsx:49",
         "frontend/src/lib/buildDefaultTodos.ts:2",
@@ -106647,7 +106524,7 @@
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:6",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:6",
         "frontend/src/components/showcase/ShowcaseDialogs.tsx:24",
-        "frontend/src/components/terminal/HomepageChatBar.tsx:13",
+        "frontend/src/components/terminal/HomepageChatBar.tsx:14",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:20",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:24",
         "frontend/src/context/TerminalChatContext.tsx:18",
@@ -107810,26 +107687,54 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
-      "id": "surface:a8dbbebe7a33ec636e7c",
+      "id": "surface:1a18ee52f1a6095daeb1",
       "subsystem": "frontend",
-      "sourcePath": "frontend/src/lib/terminal/voiceConversation.ts",
-      "sha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
+      "sourcePath": "frontend/src/lib/terminal/voiceRecording.ts",
+      "sha256": "ac264885f8c571166e26106cfe00ee9f07298d450dfd4a4a5f913985d9e44f99",
       "symbols": [
-        "acceptMicStream",
-        "preferredSpeechLanguage",
-        "requiresVoiceReview",
-        "spokenReply"
+        "abort",
+        "appendVoiceTranscript",
+        "audio",
+        "blob",
+        "bytes",
+        "captureVoiceRecording",
+        "chunks",
+        "cleanup",
+        "fail",
+        "finished",
+        "interrupted",
+        "mimeType",
+        "ready",
+        "recorder",
+        "rejectAudio",
+        "resolveReady",
+        "stop",
+        "stopAtDurationLimit",
+        "stopTimer",
+        "stopping",
+        "text",
+        "timer",
+        "track",
+        "tracks"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "../voiceLocalProtocol"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/voiceLocalProtocol.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",
-        "frontend/src/app/(workspace)/layout.tsx"
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:11",
-        "frontend/src/lib/terminal/voiceConversation.test.ts:3",
-        "frontend/src/lib/voiceSecurityUi.test.ts:7"
+        "frontend/src/components/terminal/HomepageChatBar.tsx:12",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:39",
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx:8",
+        "frontend/src/lib/terminal/voiceRecording.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -107840,8 +107745,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "frontend/src/lib/terminal/voiceConversation.test.ts",
-        "frontend/src/lib/voiceSecurityUi.test.ts"
+        "frontend/src/lib/terminal/voiceRecording.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -108762,7 +108666,6 @@
         "frontend/src/components/terminal/VariantThumbGrid.tsx:4",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:5",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:8",
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:7",
         "frontend/src/components/terminal/builder/BuilderHistory.tsx:9",
         "frontend/src/components/terminal/builder/BuilderProvenance.tsx:7",
         "frontend/src/components/terminal/builder/BuilderTests.tsx:8",
@@ -109004,12 +108907,62 @@
         "frontend/src/lib/voicePcm.ts",
         "frontend/src/lib/voiceRequestPolicy.ts"
       ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:d18575abc4e850393da7",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/voiceLocal.ts",
+      "sha256": "ca657a98e140b0e5082d13b0b1fa073749546b60e695ff76719d1243f9a69aa9",
+      "symbols": [
+        "Progress",
+        "abortError",
+        "cancel",
+        "channel",
+        "context",
+        "decoded",
+        "finish",
+        "finished",
+        "frame",
+        "recognizeVoiceSamples",
+        "samples",
+        "timer",
+        "transcribeVoiceLocally",
+        "values",
+        "worker"
+      ],
+      "imports": [
+        "./voiceLocalProtocol"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/voiceLocalProtocol.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/(shell)/layout.tsx",
-        "frontend/src/app/(workspace)/layout.tsx"
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:8"
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx:6",
+        "frontend/src/lib/voiceLocal.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -109019,7 +108972,81 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/voiceLocal.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:2b17ca63734e8f47f9dd",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/voiceLocalProtocol.ts",
+      "sha256": "978820be6bc6c129c036ac7dd89681e4bbc5096a0d4e1cc728b25a6d1995f798",
+      "symbols": [
+        "VOICE_MAX_BYTES",
+        "VOICE_MAX_SECONDS",
+        "VOICE_MODEL",
+        "VOICE_MODEL_REVISION",
+        "VOICE_RECORDING_MS",
+        "VOICE_RUNTIME_PATH",
+        "VOICE_SAMPLE_RATE",
+        "VoiceWorkerReply",
+        "at",
+        "best",
+        "end",
+        "energy",
+        "frame",
+        "i",
+        "language",
+        "last",
+        "quietEnd",
+        "result",
+        "score",
+        "selectVoiceLanguage",
+        "start",
+        "tokens",
+        "validateVoiceSamples",
+        "voiceCompletionGuard",
+        "voiceSegments",
+        "window"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/ai-app-builder/page.tsx",
+        "frontend/src/app/game-builder/page.tsx",
+        "frontend/src/app/software/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/terminal/voiceRecording.test.ts:4",
+        "frontend/src/lib/terminal/voiceRecording.ts:1",
+        "frontend/src/lib/voiceLocal.test.ts:4",
+        "frontend/src/lib/voiceLocal.ts:1",
+        "frontend/src/lib/voiceRuntimePolicy.test.ts:3",
+        "frontend/src/lib/voiceTranscription.worker.ts:2",
+        "frontend/src/lib/voiceWorkerPrivacy.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/terminal/voiceRecording.test.ts",
+        "frontend/src/lib/voiceLocal.test.ts",
+        "frontend/src/lib/voiceRuntimePolicy.test.ts",
+        "frontend/src/lib/voiceWorkerPrivacy.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -109054,15 +109081,12 @@
       ],
       "imports": [],
       "runtimeImports": [],
-      "entryPoints": [
-        "frontend/src/app/(shell)/layout.tsx",
-        "frontend/src/app/(workspace)/layout.tsx"
-      ],
+      "entryPoints": [],
       "callers": [
         "frontend/src/lib/voiceApi.ts:2",
         "frontend/src/lib/voicePcm.test.ts:6"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -109073,11 +109097,11 @@
       "testCoverage": [
         "frontend/src/lib/voicePcm.test.ts"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -109093,17 +109117,12 @@
       ],
       "imports": [],
       "runtimeImports": [],
-      "entryPoints": [
-        "frontend/src/app/(shell)/layout.tsx",
-        "frontend/src/app/(workspace)/layout.tsx"
-      ],
+      "entryPoints": [],
       "callers": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:9",
         "frontend/src/lib/voiceApi.security.test.ts:6",
-        "frontend/src/lib/voiceApi.ts:3",
-        "frontend/src/lib/voiceSecurityUi.test.ts:6"
+        "frontend/src/lib/voiceApi.ts:3"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -109112,14 +109131,65 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "frontend/src/lib/voiceApi.security.test.ts",
-        "frontend/src/lib/voiceSecurityUi.test.ts"
+        "frontend/src/lib/voiceApi.security.test.ts"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0e134ae9a2c4ff74595d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/voiceTranscription.worker.ts",
+      "sha256": "ec783b7c952cfcb75fd28bddf4b50f620fd2fefcd98bb0b987ad8af781e4cf49",
+      "symbols": [
+        "config",
+        "detection",
+        "dispose",
+        "features",
+        "language",
+        "languageTokens",
+        "logits",
+        "prompt",
+        "reply",
+        "result",
+        "rms",
+        "samples",
+        "segment",
+        "started",
+        "streamer",
+        "text",
+        "transcriber",
+        "transcripts"
+      ],
+      "imports": [
+        "./voiceLocalProtocol",
+        "@huggingface/transformers"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/voiceLocalProtocol.ts"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@huggingface/transformers"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -114313,6 +114383,50 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:b89b30271270cb3ac792",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/prepare-voice-runtime.mjs",
+      "sha256": "47bac1148955b5ad96a791491419c6cda8d8404c3b57c223278f6ac3b8b3e1c5",
+      "symbols": [
+        "destination",
+        "name",
+        "ort",
+        "require",
+        "root"
+      ],
+      "imports": [
+        "esbuild",
+        "node:fs/promises",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "esbuild",
+        "node:fs/promises",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:82986de9253deb8e7698",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/render-software-art.mjs",
@@ -116851,6 +116965,296 @@
       "confidence": "LOW",
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:60ecaa1940acf6508eea",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/verify-live-dictation.mjs",
+      "sha256": "9741a609e0b10e73a25338589320084bfd2d1fb4a7569f3f40d6fc499737a795",
+      "symbols": [
+        "OriginalWorker",
+        "audio",
+        "automaticSubmissions",
+        "body",
+        "browser",
+        "buffer",
+        "capture",
+        "channel",
+        "context",
+        "decode",
+        "diagnostic",
+        "diagnosticPage",
+        "draft",
+        "error",
+        "errors",
+        "evidence",
+        "expectedSource",
+        "fixture",
+        "i",
+        "identity",
+        "item",
+        "mic",
+        "networkFailures",
+        "origin",
+        "originalDecode",
+        "page",
+        "pattern",
+        "peak",
+        "request",
+        "response",
+        "runtimeFailures",
+        "samples",
+        "status",
+        "text",
+        "transcript",
+        "url",
+        "value",
+        "view",
+        "voiceStages",
+        "wav",
+        "wavPath"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:fs/promises",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:api.xroga.com",
+        "declared-host:raw.githubusercontent.com",
+        "node:assert/strict",
+        "node:fs/promises",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "authBoundary": [
+        "scripts/verify-live-dictation.mjs#identity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/verify-live-dictation.mjs#evidence"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:12658203d457ab6f1fe6",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/verify-local-voice.mjs",
+      "sha256": "e0da2255b448c4fff6873526125c4ead5b147e570b42c34b298a89b2f58dda89",
+      "symbols": [
+        "audio",
+        "browser",
+        "bundle",
+        "candidateSource",
+        "config",
+        "context",
+        "diagnosticWorker",
+        "expected",
+        "fixture",
+        "fixtureDirectory",
+        "fixtureUrl",
+        "fixtures",
+        "header",
+        "i",
+        "j",
+        "language",
+        "longFixture",
+        "longRecording",
+        "medium",
+        "missingSpeech",
+        "modelName",
+        "modelRevision",
+        "multilingual",
+        "next",
+        "page",
+        "predicted",
+        "previous",
+        "receipt",
+        "reference",
+        "requests",
+        "response",
+        "results",
+        "row",
+        "rows",
+        "rules",
+        "server",
+        "stages",
+        "start",
+        "transcript",
+        "unavailableFixtures",
+        "words",
+        "workerHeaders"
+      ],
+      "imports": [
+        "../frontend/next.config.mjs",
+        "esbuild",
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises",
+        "node:http",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "runtimeImports": [
+        "frontend/next.config.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:raw.githubusercontent.com",
+        "esbuild",
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises",
+        "node:http",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/verify-local-voice.mjs#receipt"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:1ba67e4e3eaa1ed17951",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/verify-voice-control.mjs",
+      "sha256": "bfe401d043e82b418c4597c5f53d4e8bc4325b1a05484bf34ed812e7fd9b21bb",
+      "symbols": [
+        "browser",
+        "bundle",
+        "c",
+        "contents",
+        "d",
+        "page",
+        "receipt",
+        "require",
+        "results",
+        "server",
+        "source",
+        "viewport"
+      ],
+      "imports": [
+        "esbuild",
+        "node:assert/strict",
+        "node:fs/promises",
+        "node:http",
+        "node:module",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "esbuild",
+        "node:assert/strict",
+        "node:fs/promises",
+        "node:http",
+        "node:module",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/verify-voice-control.mjs#receipt"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:7abb2ff5c50035961379",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/verify-voice-recording.mjs",
+      "sha256": "4f99f008639938a153c9d40121ca355acdd21d82d8f4636a4ec13fea49875b66",
+      "symbols": [
+        "browser",
+        "evidence",
+        "page",
+        "receipts",
+        "result",
+        "root",
+        "server",
+        "viewport"
+      ],
+      "imports": [
+        "esbuild",
+        "node:fs/promises",
+        "node:http",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "esbuild",
+        "node:fs/promises",
+        "node:http",
+        "node:os",
+        "node:path",
+        "playwright"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/verify-voice-recording.mjs#evidence",
+        "scripts/verify-voice-recording.mjs#receipts"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -129064,6 +129468,24 @@
   ],
   "queues": [
     {
+      "id": "queue:c12d8d268dbfcec8e934",
+      "name": "<dynamic>",
+      "definitions": [
+        "frontend/src/lib/voiceLocal.ts:8"
+      ],
+      "factorySymbols": [],
+      "producers": [],
+      "consumers": [
+        "frontend/src/lib/voiceLocal.ts:8"
+      ],
+      "callers": [],
+      "producerStatus": "NO_PRODUCER_FOUND",
+      "consumerStatus": "CONSUMER_CODE_PRESENT; registration must be verified",
+      "reachable": true,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Producer/consumer source recorded; runtime connectivity unverified."
+    },
+    {
       "id": "queue:3511472396bdcc12f253",
       "name": "email-jobs",
       "definitions": [
@@ -130715,7 +131137,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "c1c34123f29e073d2bf814d5ac4140b04895c350af18b70656d7ddaf475af9a4",
+      "sha256": "84e2563d9d3bfef408fc68516a2cba1e19939f2194949cace7f5fa64b778b365",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -133481,9 +133903,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:fb6f8fc301a3b0394590",
+      "id": "finding:250b035cc55b1cbb8e7c",
       "sourcePath": "frontend/src/components/terminal/HomepageChatBar.tsx",
-      "line": 215,
+      "line": 217,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -133531,9 +133953,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4de5b43aff4cf8aeac2c",
+      "id": "finding:67a6e770249437b6f3d0",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 814,
+      "line": 791,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -133541,9 +133963,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0591760bb4a0e2887f45",
+      "id": "finding:778af8bfa79721e6d3de",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 822,
+      "line": 799,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -133551,9 +133973,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b820c0a572f8e7f9bb5b",
+      "id": "finding:11fc76ba3f7fe62528c7",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 822,
+      "line": 799,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -134734,72 +135156,72 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:427fdd89335e8ccc9a66",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 949,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:faafed77b554f77b94e9",
+      "id": "frontend-call:b61cd3468bd6dc082f21",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 950,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:4d7d92469406bee2c3fe",
+      "id": "frontend-call:22b44de068933c1abe7b",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 955,
+      "line": 951,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:27b40b3b17f726059b65",
+      "id": "frontend-call:49c15d0c1b8c7ae48e03",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 956,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8e46dbd2026936679247",
+      "id": "frontend-call:ecc8d461ee17e6d8226d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 962,
+      "line": 957,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5bb3c35c47613571f54b",
+      "id": "frontend-call:7accf2b7b971a48f713a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 967,
+      "line": 963,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0de83f183b54977b685d",
+      "id": "frontend-call:850eb467e88863bd97e2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1015,
+      "line": 968,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d9d66fa9a152caaafbd3",
+      "id": "frontend-call:1e8c4471746d7117e804",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1016,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ada8f5e6241e1218ccc0",
+      "id": "frontend-call:50667be6b539a180e4e9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1023,
+      "line": 1017,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9538dda1ebaf33a33392",
+      "id": "frontend-call:ac1420dde19ebc535a1a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1037,
+      "line": 1024,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:20dc76acbda4782f4882",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1038,
       "callee": "fetch",
       "reachable": false
     },
@@ -136883,72 +137305,72 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:43229fbd1796e3c40a87",
+      "id": "frontend-call:14b6fb5030ffd0d1ec1f",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 194,
+      "line": 196,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:6bbdb21569e2ae3bae4d",
+      "id": "frontend-call:23d9881112cf68e1da4f",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 194,
+      "line": 196,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:47702c650262a476c650",
+      "id": "frontend-call:918616d78d8908a90a69",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 194,
+      "line": 196,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:4d18f1c02eada96ffee5",
+      "id": "frontend-call:18bc2e89a6c16747fe1a",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 198,
+      "line": 200,
       "callee": "api.vercel.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:d1762a00a357f3067649",
+      "id": "frontend-call:41d675f3a13da8cf4b5d",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 198,
+      "line": 200,
       "callee": "api.vercel.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:6eb9b64820f20fe87692",
+      "id": "frontend-call:ff4f9177a0936e0ed9a9",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 198,
+      "line": 200,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:ead491a7efb545c714c5",
+      "id": "frontend-call:70a2067714cda251a6f6",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 258,
+      "line": 260,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:9c4e27476e01e41af8d1",
+      "id": "frontend-call:a1ca585bcc6528e04e19",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 594,
+      "line": 581,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:7f79663d936dad38a38c",
+      "id": "frontend-call:f01fcd047a6be78cffa2",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 594,
+      "line": 581,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:e01611c85d15ccdd2a32",
+      "id": "frontend-call:a370c556c60891595845",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 594,
+      "line": 581,
       "callee": "api.github.status",
       "reachable": true
     },
@@ -137713,7 +138135,7 @@
       "sourcePath": "frontend/src/lib/voiceApi.ts",
       "line": 18,
       "callee": "fetchApiResponse",
-      "reachable": true
+      "reachable": false
     },
     {
       "id": "frontend-call:72533b84af15b667ea2a",
@@ -144314,7 +144736,7 @@
     {
       "id": "test-suite:cdfc35393b38a687a42a",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144354,9 +144776,9 @@
       "focusLocations": []
     },
     {
-      "id": "test-suite:9373f81caaf7533eb5d0",
-      "sourcePath": "frontend/src/lib/terminal/voiceConversation.test.ts",
-      "declaredTests": 3,
+      "id": "test-suite:b7e2e3021da74137f226",
+      "sourcePath": "frontend/src/lib/terminal/voiceRecording.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -144459,6 +144881,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:c6e129b8c30f92eaef9d",
+      "sourcePath": "frontend/src/lib/voiceLocal.test.ts",
+      "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:999a7357fc00e21a91cc",
       "sourcePath": "frontend/src/lib/voicePcm.test.ts",
       "declaredTests": 2,
@@ -144466,9 +144895,23 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:38e9fd407476b1178d8a",
+      "sourcePath": "frontend/src/lib/voiceRuntimePolicy.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9cd99e2e8273394dcc36",
       "sourcePath": "frontend/src/lib/voiceSecurityUi.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:ff76f8ce10cd9747167a",
+      "sourcePath": "frontend/src/lib/voiceWorkerPrivacy.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
