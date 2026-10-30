@@ -4551,6 +4551,24 @@
     inset: auto;
     padding: 62px 12px 14px;
   }
+  /* social ads: one placement is shown at a time, centred in the pane (side-by-side cards overlapped at this width); the settings pane still switches placement */
+  .feed,
+  .story {
+    transition:
+      transform 560ms var(--ease),
+      opacity 300ms linear;
+  }
+  .feed[data-pos='front'],
+  .story[data-pos='front'] {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  .feed[data-pos='back'],
+  .story[data-pos='back'] {
+    transform: translate(-50%, -50%) scale(0.94);
+    opacity: 0;
+    pointer-events: none;
+  }
   /* the tool chips are one scrollable row instead of two or three wrapped rows */
   .tools {
     flex-wrap: nowrap;
@@ -4588,6 +4606,13 @@
     display: none;
   }
 }
+/* the smallest phones give each pane more of the row so the ad card and the settings never clip */
+@media (max-width: 340px) {
+  .atelierPanes > .atelierMain,
+  .atelierPanes > .controls {
+    flex-basis: 94%;
+  }
+}
 /* phones: the crawl map is about 300px wide, so its page cards share the columns instead of overlapping (columns sit at 13/40/72%) */
 @media (max-width: 520px) {
   .page:not([data-home]) {
@@ -4597,7 +4622,6 @@
   }
   .page:not([data-home]) code {
     font-size: 10px;
-    overflow-wrap: anywhere;
   }
   .page:not([data-home]) em {
     font-size: 9px;
