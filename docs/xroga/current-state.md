@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `38f260332ec0b8adbb345573d9eab96f25a23cf0`. Branch observed: `release/mic-narrow-20261031`. Audit started: 2026-10-30T21:18:59.645Z.
+Source SHA: `9f62bba5cf36da21de9fa683d300676b034d2151`. Branch observed: `release/mic-narrow-20261031`. Audit started: 2026-10-30T22:22:36.709Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 

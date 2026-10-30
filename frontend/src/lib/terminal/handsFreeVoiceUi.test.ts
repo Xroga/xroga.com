@@ -12,7 +12,7 @@ test('single manual dictation control has no spoken commands, auto-send or conve
 test('dictation uses Cloudflare through the authenticated Xroga voice API only, with no on-device model',()=>{
  const voice=source('../../components/terminal/XrogaVoiceControl.tsx');
  assert.match(voice,/transcribeVoiceAudio\(wav, signal, \{ freeOnly: true, preparedPcm: true, expectedToken: token \}\)/);
- assert.match(voice,/Your voice is sent to Cloudflare to be transcribed\./);
+ assert.match(voice,/Your voice is sent to Cloudflare to be transcribed\./);assert.match(voice,/warmVoiceBackend\(\);/);
  assert.doesNotMatch(voice,/fetch\(|huggingface|onnx|transformers|voiceLocal|voiceEngine|new Worker/);
  const api=source('../voiceApi.ts');
  assert.match(api,/transcribe-free/);assert.doesNotMatch(api,/api\.cloudflare\.com|CLOUDFLARE/);

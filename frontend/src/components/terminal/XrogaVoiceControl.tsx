@@ -4,7 +4,7 @@ import { Square, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, getAccessToken } from '@/lib/api';
-import { transcribeVoiceAudio } from '@/lib/voiceApi';
+import { transcribeVoiceAudio, warmVoiceBackend } from '@/lib/voiceApi';
 import { openVoiceCapture, voiceCaptureSupported, type VoiceCapture } from '@/lib/voiceCapture';
 import { createVoiceSegmenter } from '@/lib/voiceSegmenter';
 import { createDictationPipeline, MAX_RECORDING_SECONDS, type DictationPipeline } from '@/lib/voiceDictation';
@@ -215,6 +215,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       const token = await getAccessToken();
       if (!token) throw new ApiError('Please sign in to use voice input.', 401);
       if (session.current !== current) return;
+      warmVoiceBackend();
       const capture = await openVoiceCapture(
         () => finish(current, 'Recording was interrupted. Transcribing what was captured.'), current.abort.signal);
       if (session.current !== current) { capture.stop(); return; }

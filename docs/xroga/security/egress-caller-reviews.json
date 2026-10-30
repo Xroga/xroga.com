@@ -4421,7 +4421,7 @@
     {
       "id": "19343161fc1afbd3f2fb",
       "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
-      "sourceFileSha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501",
+      "sourceFileSha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -4429,7 +4429,7 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "a3594573c1fd3b89c30e2bcc2ea9aac259cd4bca9be696e91fd669165b7f52ea"
+          "sha256": "77da96d82d190edc1a625db5d0c8e2e5af896624b520dc610545ae587f424ddc"
         },
         {
           "path": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",

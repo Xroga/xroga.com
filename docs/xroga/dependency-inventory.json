@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "38f260332ec0b8adbb345573d9eab96f25a23cf0",
+  "source_sha": "9f62bba5cf36da21de9fa683d300676b034d2151",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15156,7 +15156,7 @@
     },
     {
       "path": ".vercel/project.json",
-      "presence": "ABSENT",
+      "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
     },
     {
@@ -15359,6 +15359,10 @@
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
       "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417"
+    },
+    {
+      "path": ".vercel/project.json",
+      "sha256": "978867a51bff89f97ca84a99eb20eb76980bb1c8fb7e4a71b6aac71a78d26c48"
     },
     {
       "path": "Dockerfile.api",
@@ -16942,7 +16946,7 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "sha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501"
+      "sha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -20970,7 +20974,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "215bac3fe7e9b0b58d69fc074e6834c1e514eea9efb20e32c03c84e42c27c1af"
+      "sha256": "c697b19e889aad80ad6294667ae7cc453889a38be9a4f7cef1dace8828a3ff07"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -22030,7 +22034,7 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "3ab1bee74b63323a85c22d82045898f03bca3dd9fd95288c8e14a5403cc486b2"
+      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d"
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
@@ -24042,7 +24046,7 @@
       "hostname": "api.cloudflare.com",
       "protocol": "https:",
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 56,
+      "line": 59,
       "credentialsInUrl": false
     },
     {
@@ -32071,7 +32075,7 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 13,
+      "line": 16,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
