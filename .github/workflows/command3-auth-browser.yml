@@ -269,6 +269,7 @@ jobs:
             artifacts/batch-01-local-security/schema-catalog.json
             artifacts/batch-01-local-security/supabase-start-redacted.log
             artifacts/batch-01-local-security/*.redacted
+            ${{ runner.temp }}/voice-free-real-ledger.json
           if-no-files-found: warn
           retention-days: 14
       - name: Cleanup processes

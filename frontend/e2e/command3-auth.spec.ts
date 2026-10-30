@@ -28,6 +28,11 @@ async function openPersistedConversation(page: import('@playwright/test').Page, 
   await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-session', conversation.id);
   await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-restoring', 'false');
   await expect(page.getByText(conversation.reply, { exact: true })).toBeVisible();
+  // A pointer left over the top-right restore toast pauses its five-second
+  // timer. Move away, then wait for normal dismissal before testing controls
+  // underneath it. Never force a click through the notification.
+  await page.mouse.move(0, 0);
+  await expect(page.getByText('Conversation restored', { exact: true })).toHaveCount(0, { timeout: 10_000 });
 }
 
 test.setTimeout(180_000);

@@ -67,7 +67,9 @@
     "frontend/package-lock.json",
     "frontend/package.json",
     "frontend/src/components/homepage-next/phase1/Stage.module.css",
+    "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
     "frontend/src/components/homepage-next/s03/S03.module.css",
+    "frontend/src/components/homepage-next/s03/s03.test.ts",
     "frontend/src/components/homepage-next/s04/s04.test.ts",
     "frontend/src/components/homepage-next/s04/stage/Stages.module.css",
     "frontend/src/components/icons/animated/animatedIcons.test.ts",
@@ -112,7 +114,8 @@
   "decisions": {
     "keep": [
       "Existing composer draft and manual Send, canonical authorization and execution",
-      "Existing protected backend voice endpoint and accounting for other clients"
+      "Existing protected backend voice endpoint and accounting for other clients",
+      "Preserve live mobile homepage hotfix f81c9436 through focused cherry-picks. Backend release remains pinned to 054d7ae4 with unchanged implementation."
     ],
     "extend": [
       "MediaRecorder lifecycle, cancellation, per-chat isolation, draft appending and RTL text"
@@ -206,7 +209,8 @@
     "First-use model download is approximately 250 MB plus executable runtime. Inference latency varies by hardware.",
     "User-reported Chrome public-model download failed in production. Bounded retry and retained-audio repair requires exact-source CI and live acceptance. Measured browser GPU and native CPU comparisons do not justify an instant-recognition claim.",
     "Three public provider calls returned in 3.8-5.5s. Hindi was rendered in Urdu script and Urdu word errors remain. This is not exact transcription, long-recording latency or real microphone/physical-phone acceptance.",
-    "Initial b83 CI passed 4960 backend and 1289 frontend tests, then rejected stale historical current caller counts. Isolated auth CI rejected an obsolete tiny-audio transport fixture. Metadata and valid PCM fixtures are corrected without weakening the tests. A real isolated JWT/zero-ledger verification step is now required before release."
+    "Initial b83 CI passed 4960 backend and 1289 frontend tests, then rejected stale historical current caller counts. Isolated auth CI rejected an obsolete tiny-audio transport fixture. Metadata and valid PCM fixtures are corrected without weakening the tests. A real isolated JWT/zero-ledger verification step is now required before release.",
+    "054d isolated verification passed real free-voice JWT/zero settlement and seven browser journeys. The hide-control journey timed out under a hover-paused restore toast. The fixture now moves the pointer away and waits for normal dismissal, preserving all security assertions."
   ],
   "placeholderClaimsRemaining": [
     "No universal language/device accuracy claim.",
