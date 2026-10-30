@@ -3,9 +3,9 @@
   "identity": {
     "repository": "C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga.com/.",
     "branch": "voice-rebuild",
-    "sha": "9b225b060055d2d1ad00b7b0d0afb87909ddf119",
-    "sourceTimestampUtc": "2026-10-31T01:02:55+05:00",
-    "auditStartedUtc": "2026-10-30T20:03:19.820Z",
+    "sha": "f7ab2ef4bf922a7e547ae63b810965bd4aa6b7c5",
+    "sourceTimestampUtc": "2026-10-31T01:22:31+05:00",
+    "auditStartedUtc": "2026-10-30T20:22:55.075Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
