@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "59deaa303a892040e2781901c6ad0c946f6a2e8e",
+  "source_sha": "9b225b060055d2d1ad00b7b0d0afb87909ddf119",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21326,6 +21326,10 @@
       "sha256": "ee912b3954c930fb717c475660015075aa84994c09fed435eb3ab985ce742507"
     },
     {
+      "path": "frontend/src/components/terminal/VoiceWaveform.tsx",
+      "sha256": "a3709982dbdc423229b105d170fd6f806978a1cb05f1a89cf1c717243adfae3c"
+    },
+    {
       "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
       "sha256": "a5e5e7a7ed3189f9fc3fd66e46df99560b9b7cd4a88c45c472d21648e5c3a64b"
     },
@@ -21395,7 +21399,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "c3d4053ee9e0c2c5636742ee3ea5c8b4ccf73f95c83b2235996a241aa9e7f539"
+      "sha256": "215bac3fe7e9b0b58d69fc074e6834c1e514eea9efb20e32c03c84e42c27c1af"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",

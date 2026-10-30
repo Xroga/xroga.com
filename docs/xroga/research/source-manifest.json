@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "59deaa303a892040e2781901c6ad0c946f6a2e8e",
+  "source_sha": "9b225b060055d2d1ad00b7b0d0afb87909ddf119",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5688,9 +5688,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "3e13028bae3185e869b28e2b4887ae07fe9048bdb38fabe52505f674647efe0b",
-      "byte_size": 5292305,
-      "modified_timestamp": "2026-10-30T19:49:46.893Z",
+      "sha256": "4c87b7f4f036afece0a68368163ffb8e0f178eff130a0093f3598172b6bb411a",
+      "byte_size": 5294455,
+      "modified_timestamp": "2026-10-30T20:03:20.478Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -23391,6 +23391,19 @@
       "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
     },
     {
+      "source_id": "SRC-041862e04f77a68d",
+      "filename": "VoiceWaveform.tsx",
+      "path_or_url": "frontend/src/components/terminal/VoiceWaveform.tsx",
+      "sha256": "a3709982dbdc423229b105d170fd6f806978a1cb05f1a89cf1c717243adfae3c",
+      "byte_size": 2167,
+      "modified_timestamp": "2026-10-30T20:03:06.520Z",
+      "parse_status": "AST_METADATA",
+      "category": "SOURCE_CODE",
+      "authority": "CURRENT_CODE",
+      "analyzed": true,
+      "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
+    },
+    {
       "source_id": "SRC-a212535f2411db17",
       "filename": "WebSourcesPanel.tsx",
       "path_or_url": "frontend/src/components/terminal/WebSourcesPanel.tsx",
@@ -23615,9 +23628,9 @@
       "source_id": "SRC-41e3e1a7bd535ee1",
       "filename": "XrogaVoiceControl.tsx",
       "path_or_url": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "c3d4053ee9e0c2c5636742ee3ea5c8b4ccf73f95c83b2235996a241aa9e7f539",
-      "byte_size": 13894,
-      "modified_timestamp": "2026-10-30T19:28:25.550Z",
+      "sha256": "215bac3fe7e9b0b58d69fc074e6834c1e514eea9efb20e32c03c84e42c27c1af",
+      "byte_size": 15205,
+      "modified_timestamp": "2026-10-30T20:03:06.555Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

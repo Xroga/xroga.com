@@ -1,12 +1,12 @@
 # Xroga repository truth map
 
-Source SHA: `59deaa303a892040e2781901c6ad0c946f6a2e8e`. Branch observed: `voice-rebuild`. Audit started: 2026-10-30T19:49:46.238Z.
+Source SHA: `9b225b060055d2d1ad00b7b0d0afb87909ddf119`. Branch observed: `voice-rebuild`. Audit started: 2026-10-30T20:03:19.820Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1787
+- surfaces: 1788
 - routeRegistrations: 381
 - routes: 319
 - reachableRoutes: 236
