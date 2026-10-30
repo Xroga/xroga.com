@@ -1817,6 +1817,43 @@
     flex: 0 0 min(82%, 300px);
     scroll-snap-align: start;
   }
+  /* Google Play and Chrome Web Store use the same swipe row: your product, the store listing, then Xroga's work and the handoff,
+     each one panel wide, instead of one 2,000px column */
+  .android,
+  .chrome {
+    display: flex;
+    grid-template-columns: none;
+    align-items: flex-start;
+    gap: 12px;
+    margin-inline: -14px;
+    padding: 2px 14px 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 14px;
+    scrollbar-width: none;
+  }
+  .android::-webkit-scrollbar,
+  .chrome::-webkit-scrollbar {
+    display: none;
+  }
+  .anRight,
+  .chRight {
+    display: contents;
+  }
+  .anPhone,
+  .anMain,
+  .anCard,
+  .anHandoff,
+  .chLeft,
+  .chMain,
+  .chCard,
+  .chHandoff {
+    flex: 0 0 min(82%, 300px);
+    min-width: 0;
+    margin-top: 0;
+    scroll-snap-align: start;
+  }
   .shot {
     height: 196px;
     padding: 10px 6px 0;

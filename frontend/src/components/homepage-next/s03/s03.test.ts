@@ -540,3 +540,17 @@ test('the heading sequence plays once in ~3.2 s: visibility lit, three cues, a c
   assert.match(SHELL, /setTitleReady\(!reduced\)/);
   assert.match(CSS, /\.section\[data-title-ready\]:not\(\[data-title-seen\]\) \.cue,/);
 });
+
+test('phones: Launch & Marketing is one swipe row of two panes; on larger screens the panes are the studio\'s own columns', () => {
+  const css = readFileSync(new URL('./S03.module.css', import.meta.url), 'utf8');
+  const tsx = readFileSync(new URL('./GrowthStudio.tsx', import.meta.url), 'utf8');
+  assert.match(css, /\.atelierPanes \{\s*display: contents;\s*\}/);
+  const phones = css.slice(css.indexOf('/* phones: Launch & Marketing shows one pane at a time'));
+  const rule = phones.match(/\.atelierPanes \{[^}]*\}/)?.[0] ?? '';
+  assert.match(rule, /display: flex;/);
+  assert.match(rule, /scroll-snap-type: x mandatory;/);
+  assert.match(rule, /overscroll-behavior-x: contain;/);
+  // the preview pane and the settings aside are both inside the row, in reading order
+  assert.ok(tsx.indexOf('className={s.atelierPanes}') < tsx.indexOf('className={s.atelierMain}'));
+  assert.ok(tsx.indexOf('className={s.atelierMain}') < tsx.indexOf('className={s.controls}'));
+});
