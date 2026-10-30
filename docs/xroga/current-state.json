@@ -1,17 +1,18 @@
 {
   "version": "1.0",
   "identity": {
-    "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/xroga-batch-01",
-    "sha": "8ce54f2421039d724571bb727ecce234bcc02a03",
-    "sourceTimestampUtc": "2026-10-21T20:13:18+05:00",
-    "auditStartedUtc": "2026-10-21T15:13:45.536Z",
+    "repository": "C:/xr-mob",
+    "branch": "claude/homepage-mobile-responsive",
+    "sha": "fb64e673a312419c7551ba6eeff79d1457a41e52",
+    "sourceTimestampUtc": "2026-10-30T15:03:58+05:00",
+    "auditStartedUtc": "2026-10-30T10:07:56.240Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v22.21.1",
+    "node": "v24.18.0",
     "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
+      "deploy/browser-worker/package-lock.json",
       "frontend/package-lock.json",
       "package-lock.json"
     ],
@@ -19,6 +20,7 @@
       ".github/workflows/agent-v2-dependency-lock.yml",
       ".github/workflows/api-build-check.yml",
       ".github/workflows/backend-health-verification.yml",
+      ".github/workflows/builder-phase1.yml",
       ".github/workflows/chat-turn-rail-browser.yml",
       ".github/workflows/command3-auth-browser.yml",
       ".github/workflows/command4-authority.yml",
@@ -29,6 +31,7 @@
       ".github/workflows/growth-technical-publishing.yml",
       ".github/workflows/launch-production-verification.yml",
       ".github/workflows/seo-audit.yml",
+      ".github/workflows/storage-phase1.yml",
       ".github/workflows/supabase-migrate.yml",
       ".github/workflows/unit-tests.yml",
       ".github/workflows/vercel-build-check.yml",
@@ -39,6 +42,9 @@
       "Dockerfile.api",
       "backend/Dockerfile",
       "backend/package.json",
+      "deploy/browser-worker/Dockerfile",
+      "deploy/browser-worker/Dockerfile.proxy",
+      "deploy/browser-worker/package.json",
       "frontend/package.json",
       "package.json"
     ]
@@ -143292,7 +143298,7 @@
     {
       "id": "test-suite:3fc0ed1a95cfc8c5098f",
       "sourcePath": "frontend/src/components/homepage-next/s04/s04.test.ts",
-      "declaredTests": 17,
+      "declaredTests": 18,
       "skipLocations": [],
       "focusLocations": []
     },
