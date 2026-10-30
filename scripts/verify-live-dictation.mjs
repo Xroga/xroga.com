@@ -14,6 +14,8 @@ assert.equal(identity.release,expectedSource,'The live frontend must match the v
 const fixture = new Uint8Array(await (await fetch('https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac', {signal:AbortSignal.timeout(30000)})).arrayBuffer());
 const wavPath = path.join(tmpdir(),'xroga-public-speech.wav');
 let browser;
+let diagnosticPage;
+const networkFailures = [], voiceStages = [], runtimeFailures = [];
 try {
   browser = await chromium.launch({channel:'msedge',headless:true});
   const decode = await browser.newPage();
@@ -30,7 +32,50 @@ try {
   await writeFile(wavPath,Uint8Array.from(wav.bytes)); await browser.close();
   browser = await chromium.launch({channel:'msedge',headless:true,args:['--use-fake-device-for-media-stream','--use-fake-ui-for-media-stream',`--use-file-for-fake-audio-capture=${wavPath}`]});
   const context = await browser.newContext({permissions:['microphone']});
+  context.on('requestfailed', request => {
+    const url = new URL(request.url());
+    networkFailures.push({origin:url.origin,path:url.pathname,error:request.failure()?.errorText});
+  });
+  context.on('response', response => {
+    if (response.status() < 400) return;
+    const url = new URL(response.url());
+    if (url.pathname.startsWith('/voice-runtime/') || /huggingface|cdn\.hf/.test(url.hostname)) networkFailures.push({origin:url.origin,path:url.pathname,status:response.status()});
+  });
+  context.on('console', message => {
+    const text = message.text();
+    if (/PUBLIC_FIXTURE_WORKER_FAILURE|Content Security Policy|Refused to|WebAssembly/.test(text)) {
+      runtimeFailures.push(text.slice(0,1200)); console.log(text.slice(0,1200));
+    }
+  });
+  if (process.argv.includes('--diagnostic-worker')) await context.route('**/voice-runtime/v1/worker.js',async route => {
+    const response = await route.fetch();
+    const body = await response.text();
+    const pattern = /\}catch\{([A-Za-z_$][\w$]*)\(\{type:"error"\}\)\}\}\};/g;
+    assert.equal([...body.matchAll(pattern)].length,1,'Diagnostic must change only the final public-fixture error handler');
+    await route.fulfill({response,body:body.replace(pattern,'}catch(failure){console.info("PUBLIC_FIXTURE_WORKER_FAILURE",String(failure));$1({type:"error"})}}};')});
+  });
   const page = await context.newPage();
+  diagnosticPage = page;
+  await page.addInitScript(() => {
+    const diagnostic = window.__publicVoiceDiagnostic = {decodes:[],workers:[],events:[]};
+    const originalDecode = OfflineAudioContext.prototype.decodeAudioData;
+    OfflineAudioContext.prototype.decodeAudioData = function(...args) {
+      const item = {bytes:args[0].byteLength}; diagnostic.decodes.push(item);
+      return originalDecode.apply(this,args).then(audio => {
+        let peak=0;
+        for(let channel=0;channel<audio.numberOfChannels;channel++) for(const value of audio.getChannelData(channel)) peak=Math.max(peak,Math.abs(value));
+        Object.assign(item,{duration:audio.duration,rate:audio.sampleRate,channels:audio.numberOfChannels,peak}); return audio;
+      },error => {item.error=String(error); throw error;});
+    };
+    const OriginalWorker=window.Worker;
+    window.Worker = class extends OriginalWorker {
+      constructor(...args) {
+        super(...args); diagnostic.workers.push(String(args[0]));
+        this.addEventListener('message',event => diagnostic.events.push({type:event.data?.type,stage:event.data?.stage}));
+        this.addEventListener('error',event => diagnostic.events.push({error:event.message}));
+      }
+    };
+  });
   const automaticSubmissions = [], errors = [];
   await page.route('https://api.xroga.com/**',async route => {
     const request=route.request(), url=new URL(request.url());
@@ -49,7 +94,12 @@ try {
   await page.getByRole('button',{name:'Stop recording',exact:true}).waitFor({state:'visible',timeout:30000});
   await page.waitForTimeout(wav.durationMs+200);
   await page.getByRole('button',{name:'Stop recording',exact:true}).click();
-  await page.waitForFunction(() => /ask not what your country can do for you/i.test(document.querySelector('textarea[data-terminal-composer]')?.value ?? ''),undefined,{timeout:600000});
+  await Promise.race([
+    page.waitForFunction(() => /ask not what your country can do for you/i.test(document.querySelector('textarea[data-terminal-composer]')?.value ?? ''),undefined,{timeout:600000}),
+    page.getByTestId('xroga-voice-session').getByRole('alert').waitFor({state:'visible',timeout:600000}).then(async () => {
+      throw new Error('Live voice control reported: '+await page.getByTestId('xroga-voice-session').getByRole('alert').innerText());
+    }),
+  ]);
   const transcript = await draft.inputValue();
   assert.ok(transcript.startsWith('Editable fixture.'));
   assert.match(transcript,/what you can do for your country/i);
@@ -61,4 +111,12 @@ try {
   const evidence={scope:'DEPLOYED_GUEST_WORKSPACE_REAL_LOCAL_ASR_WITH_PUBLIC_SYNTHETIC_MIC_NOT_PHYSICAL_DEVICE_OR_AUTHENTICATED_SPEECH',origin,source:identity.release,browser:browser.version(),recordStopTranscribeEdit:'PASS',manualSendEnabled:true,sendExecuted:false,automaticSubmissions,paidModelRequests:0,pageErrorNames:errors};
   await writeFile(path.join(tmpdir(),'voice-live.json'),JSON.stringify(evidence,null,2));
   console.log(JSON.stringify(evidence));
+} catch (error) {
+  const status = diagnosticPage ? await diagnosticPage.getByTestId('xroga-voice-session').allTextContents().catch(()=>[]) : [];
+  const capture = diagnosticPage ? await diagnosticPage.evaluate(()=>window.__publicVoiceDiagnostic).catch(()=>null) : null;
+  await diagnosticPage?.locator('.xv-terminal-dock').screenshot({path:path.join(tmpdir(),'voice-live.png')}).catch(()=>{});
+  const evidence={scope:'CONTROLLED_PUBLIC_AUDIO_DIAGNOSTIC_NO_CUSTOMER_SESSION',origin,expectedSource,result:'FAIL',error:error instanceof Error ? error.message : 'Unknown error',status,capture,networkFailures,voiceStages,runtimeFailures,diagnosticWorker:process.argv.includes('--diagnostic-worker')};
+  await writeFile(path.join(tmpdir(),'voice-live.json'),JSON.stringify(evidence,null,2));
+  console.log(JSON.stringify(evidence));
+  throw error;
 } finally {await browser?.close();}

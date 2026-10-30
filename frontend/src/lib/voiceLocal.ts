@@ -66,6 +66,12 @@ export async function transcribeVoiceLocally(audio: Blob, signal: AbortSignal, p
       values.fill(0);
     }
     if (decoded.sampleRate !== VOICE_SAMPLE_RATE) throw new Error('Unsupported voice sample rate.');
+    // Lossy browser codecs can overshoot nominal PCM amplitude slightly. Normalize
+    // decoded audio before the worker boundary, retaining rejection of nonfinite data.
+    for (let frame = 0; frame < samples.length; frame++) {
+      if (!Number.isFinite(samples[frame])) throw new Error('Invalid decoded voice sample.');
+      samples[frame] = Math.max(-1, Math.min(1, samples[frame]));
+    }
     return await recognizeVoiceSamples(samples, signal, progress);
   } finally {
     clearTimeout(timer);
