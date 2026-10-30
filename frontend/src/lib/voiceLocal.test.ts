@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { recognizeVoiceSamples } from './voiceLocal';
+import { recognizeVoiceSamples, transcribeVoiceLocally } from './voiceLocal';
 import { VOICE_MAX_SECONDS, VOICE_SAMPLE_RATE, validateVoiceSamples, selectVoiceLanguage, voiceCompletionGuard, voiceSegments } from './voiceLocalProtocol';
 
 test('long speech partitions cover all audio once, retain the tail and prefer quiet boundaries', () => {
@@ -49,6 +49,39 @@ test('invalid, oversized, nonfinite and clipped samples never start a worker', (
   validateVoiceSamples(new Float32Array(VOICE_SAMPLE_RATE * 180));
   for (const samples of [null, new Float32Array(1), new Float32Array(VOICE_SAMPLE_RATE * VOICE_MAX_SECONDS + 1), new Float32Array(16000).fill(NaN), new Float32Array(16000).fill(2)]) {
     assert.throws(() => validateVoiceSamples(samples));
+  }
+});
+
+test('browser codec overshoot is normalized before strict worker admission', async () => {
+  const originals = ['OfflineAudioContext', 'Worker'].map(key => [key, Object.getOwnPropertyDescriptor(globalThis,key)] as const);
+  const decoded = new Float32Array(16000).fill(0.1);
+  decoded[0] = 1.015005350112915; decoded[1] = -1.025;
+  let posted: Float32Array | undefined;
+  class Decoder {
+    async decodeAudioData() { return { duration: 1, sampleRate: 16000, numberOfChannels: 1, length: decoded.length, getChannelData: () => decoded }; }
+  }
+  class LocalWorker {
+    onmessage: ((event: {data: unknown}) => void) | null = null;
+    onerror = null; onmessageerror = null;
+    terminate() {}
+    postMessage(samples: Float32Array) {
+      posted = samples.slice();
+      queueMicrotask(() => this.onmessage?.({data:{type:'complete',text:'Preserved speech.'}}));
+    }
+  }
+  Object.defineProperty(globalThis,'OfflineAudioContext',{configurable:true,value:Decoder});
+  Object.defineProperty(globalThis,'Worker',{configurable:true,value:LocalWorker});
+  try {
+    assert.equal(await transcribeVoiceLocally(new Blob([new Uint8Array(1024)]),new AbortController().signal,()=>{}),'Preserved speech.');
+    assert.equal(posted?.[0],1); assert.equal(posted?.[1],-1);
+    assert.ok(decoded.every(value => value === 0));
+    decoded.fill(NaN);
+    await assert.rejects(transcribeVoiceLocally(new Blob([new Uint8Array(1024)]),new AbortController().signal,()=>{}));
+  } finally {
+    for(const [key,descriptor] of originals) {
+      if(descriptor) Object.defineProperty(globalThis,key,descriptor);
+      else Reflect.deleteProperty(globalThis,key);
+    }
   }
 });
 test('language detection selects only model language tokens and never silently defaults to English', () => {
