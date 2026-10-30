@@ -1,0 +1,96 @@
+{
+  "xroga-batch1-operator-20261031": {
+    "protected-fence-restore-receipt.json": {
+      "startedAtUtc": "2026-10-30T21:51:55.078196+00:00",
+      "productionSqlApplied": false,
+      "productionConnections": false,
+      "customerProviderDispatch": false,
+      "backupPrefix": "gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/",
+      "draftHashes": {
+        "cutover-fence-upgrade.DRAFT.sql": "3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed",
+        "cutover-fence-rollback.DRAFT.sql": "a188225ef4e9b3bbc8c2216e22f85ec3d0e4e2b9dc81d1ff794ee8fd1c508be2"
+      },
+      "stages": [
+        "NO_SWAP_LOCAL_DOCKER_AND_EXACT_DRAFT_HASHES_PASS",
+        "PINNED_ENCRYPTED_BACKUP_GENERATION_AND_HASHES_PASS",
+        "NETWORK_NONE_TMPFS_NO_LOGS_NO_SWAP_CONTAINER_PASS",
+        "FULL_BACKUP_ROLES_DATABASE_OWNERS_ACLS_RESTORED"
+      ],
+      "restore": {
+        "authenticatedDumpBytes": 12575408,
+        "eventTriggerCount": 7
+      },
+      "status": "BLOCKED_ISOLATED_RESTORE_OR_FENCE",
+      "errorCategory": "ISOLATED_SQL_FAILED",
+      "cleanupVerified": true,
+      "completedAtUtc": "2026-10-30T21:52:49.793802+00:00"
+    },
+    "restore-cleanup.json": {
+      "atUtc": "2026-10-30T21:52:49.793466+00:00",
+      "containerRemoved": true,
+      "tmpfsDestroyed": true,
+      "encryptedRecoveryAssetsPreserved": true
+    },
+    "temporaryCiphertextCopiesRemoved": true
+  },
+  "xroga-batch1-operator-20261031b": {
+    "protected-fence-restore-receipt.json": {
+      "startedAtUtc": "2026-10-30T21:56:38.463352+00:00",
+      "productionSqlApplied": false,
+      "productionConnections": false,
+      "customerProviderDispatch": false,
+      "backupPrefix": "gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/",
+      "draftHashes": {
+        "cutover-fence-upgrade.DRAFT.sql": "3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed",
+        "cutover-fence-rollback.DRAFT.sql": "a188225ef4e9b3bbc8c2216e22f85ec3d0e4e2b9dc81d1ff794ee8fd1c508be2",
+        "released-google-canonical-deliveries.sql": "1fca51799370f969165de860091591984b84198217488d19df98c591a4ce160d"
+      },
+      "stages": [
+        "NO_SWAP_LOCAL_DOCKER_AND_EXACT_DRAFT_HASHES_PASS",
+        "PINNED_ENCRYPTED_BACKUP_GENERATION_AND_HASHES_PASS",
+        "NETWORK_NONE_TMPFS_NO_LOGS_NO_SWAP_CONTAINER_PASS",
+        "FULL_BACKUP_ROLES_DATABASE_OWNERS_ACLS_RESTORED",
+        "RELEASED_TRANSPORT_EXPANSION_APPLIED_ONLY_TO_OLD_ISOLATED_FIXTURE",
+        "EXACT_FENCE_UPGRADE_ON_FULL_RESTORE_PASS",
+        "FULL_RESTORE_FENCE_WAITS_FOR_INFLIGHT_ADMISSION_PASS",
+        "FULL_RESTORE_PAUSE_SOURCE_TENANT_AND_GATE_PRIVILEGES_PASS",
+        "FULL_RESTORE_GUARDED_ROLLBACK_EXACT_FUNCTION_PASS"
+      ],
+      "restore": {
+        "authenticatedDumpBytes": 12575408,
+        "eventTriggerCount": 7
+      },
+      "retainedSnapshotCanonicalObjects": {
+        "deliveryTable": false,
+        "enqueue": false
+      },
+      "restoredEnqueueMd5": "9014766f51e6d9fd878cc5d4724383c2",
+      "status": "PASS_ISOLATED_FULL_RESTORE_FENCE_AND_ROLLBACK_NOT_PRODUCTION_ACCEPTANCE",
+      "cleanupVerified": true,
+      "completedAtUtc": "2026-10-30T21:57:30.054431+00:00"
+    },
+    "restore-cleanup.json": {
+      "atUtc": "2026-10-30T21:57:30.054191+00:00",
+      "containerRemoved": true,
+      "tmpfsDestroyed": true,
+      "encryptedRecoveryAssetsPreserved": true
+    },
+    "temporaryCiphertextCopiesRemoved": true
+  },
+  "clients": {
+    "pg_dump": {
+      "path": "/usr/bin/pg_dump",
+      "version": "pg_dump (PostgreSQL) 16.15 (Ubuntu 16.15-1.pgdg24.04+2)"
+    },
+    "pg_restore": {
+      "path": "/usr/bin/pg_restore",
+      "version": "pg_restore (PostgreSQL) 16.15 (Ubuntu 16.15-1.pgdg24.04+2)"
+    },
+    "psql": {
+      "path": "/usr/bin/psql",
+      "version": "psql (PostgreSQL) 16.15 (Ubuntu 16.15-1.pgdg24.04+2)"
+    }
+  },
+  "supabaseCaPresent": true,
+  "noProductionSqlApplied": true
+}
