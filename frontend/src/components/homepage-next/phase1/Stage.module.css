@@ -39,6 +39,8 @@
   row-gap: 10px;
   justify-items: center;
 }
+/* the work object is 318px wide: on phones narrower than 350px it scales to fit the gutters */
+@media (max-width: 349px) { .stage[data-mode='mobile'] { --wk: 0.9; } }
 .stage[data-mode='mobile'] .left,
 .stage[data-mode='mobile'] .right { justify-self: center; transform: none; width: 100%; display: grid; justify-items: center; }
 
