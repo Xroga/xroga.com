@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `9cf6ce1ec89d37a83afce1fe762a3eeb889fe38a`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `7326fcd366947b9d05d406bb15ac93d578f82cc1`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -16,6 +16,7 @@ Source SHA: `9cf6ce1ec89d37a83afce1fe762a3eeb889fe38a`; exact current source/con
 | browserbase | Browserbase | LEGACY | www.browserbase.com | NOT_INDEPENDENTLY_VERIFIED |
 | google-delivery | Google Cloud Tasks and Cloud Run Jobs | ACTIVE | cloudtasks.googleapis.com, run.googleapis.com | Observed evidence explicitly scoped below; not full journey certification |
 | cloudflare-workers-proposal | Cloudflare Workers | PROPOSED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
+| cloudflare-voice | Cloudflare Workers AI, Workers Free | PROPOSED | api.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-127-0-0-1 | Source-defined endpoint 127.0.0.1 | LOCAL_ONLY | 127.0.0.1 | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-about-meta-com | Source-defined endpoint about.meta.com | CONFIGURED_BUT_UNVERIFIED | about.meta.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-accounts-google-com | Source-defined endpoint accounts.google.com | CONFIGURED_BUT_UNVERIFIED | accounts.google.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -229,4 +230,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-904 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+902 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

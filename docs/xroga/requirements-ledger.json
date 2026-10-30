@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8ce54f2421039d724571bb727ecce234bcc02a03",
+  "source_sha": "6bd3ba87ab1d6c23c7f6bb504ecf23e6be55da6f",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -3496,6 +3496,7 @@
         "scripts/security/schema-catalog.mjs",
         "scripts/security/staging-preflight.mjs",
         "scripts/security/tenant-acceptance.mjs",
+        "scripts/security/verify-free-voice-ledger.ts",
         "scripts/security/verify-oci-federation.ts",
         "scripts/security/verify-oci-kms.ts",
         "scripts/security/verify-oci-wrong-workflow.ts"

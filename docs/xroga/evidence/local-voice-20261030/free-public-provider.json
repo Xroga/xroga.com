@@ -1,0 +1,55 @@
+{
+  "scope": "APPROVED_REAL_CLOUDFLARE_FREE_PUBLIC_ENGLISH_HINDI_URDU_NOT_PRODUCTION_UI",
+  "model": "@cf/openai/whisper-large-v3-turbo",
+  "results": [
+    {
+      "language": "en",
+      "audioSha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "audioSeconds": 11.0,
+      "httpStatus": 200,
+      "requestId": "a52a977a09523d3a-KHI",
+      "recognitionMs": 5500,
+      "withinSixSeconds": true,
+      "reference": "And so my fellow Americans ask not what your country can do for you ask what you can do for your country",
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country.",
+      "wordErrorRate": 0.0,
+      "providerLanguage": "en",
+      "providerDuration": 11,
+      "accountingDurationCompatible": true
+    },
+    {
+      "language": "hi_in",
+      "audioSha256": "eaf505bbf7f4ce5543af9242678b0a992f11d933a4878685b7bbfd817c4e422d",
+      "audioSeconds": 12.24,
+      "httpStatus": 200,
+      "requestId": "a52a979c6854fbb9-KHI",
+      "recognitionMs": 3938,
+      "withinSixSeconds": true,
+      "reference": "मेजरकेन खाना भूमध्य सागर में समान क्षेत्रों की तरह रोटी सब्जियों और मांस विशेष रूप से सूअर का मांस पर आधारित है और जैतून के तेल का उपयोग करता है।",
+      "transcript": "میجر کن کھانا بھوم ادیساگر میں سامان شیطروں کی طرح روٹی سبجیوں اور ماس وشیش روپ سے سور کا ماس پر آدھارت ہے اور جہتون کے تیل کا اپیوک کرتا ہے",
+      "wordErrorRate": 1.0333333333333334,
+      "providerLanguage": "ur",
+      "providerDuration": 12.24,
+      "accountingDurationCompatible": true
+    },
+    {
+      "language": "ur_pk",
+      "audioSha256": "5e5bd3f594a86ab334f10c4878e748227c9ba344f058de8efce69eac7d7a0d20",
+      "audioSeconds": 12.24,
+      "httpStatus": 200,
+      "requestId": "a52a97b4e968c4c3-KHI",
+      "recognitionMs": 3781,
+      "withinSixSeconds": true,
+      "reference": "ان کے دور میں خفیف تلوُّث ایزا مسئلہ نہیں تھا جیسا کہ وہ آج ہے ان کی سکونت ایسے شہروں یا حوزات میں ہے جہا ں تک بآسانی پہنچا جا سکتا ہے بہ نسبت ان مقامات کے جو ماڈرن زمانے میں تعمیر کئے گئے",
+      "transcript": "ان کے دور میں خفیب تلویس ایزا مسئلہ نہیں تھا جیسا کہ وہ آج ہے ان کی سکونت ایسے شہروں یا حوزات میں ہے جہاں تک بہتسانی پہنچا جا سکتا ہے بنسبت ان مقامات کے جو مادرن زمانے میں تعمیر کیے گئے",
+      "wordErrorRate": 0.20454545454545456,
+      "providerLanguage": "ur",
+      "providerDuration": 12.24,
+      "accountingDurationCompatible": true
+    }
+  ],
+  "paidFallback": false,
+  "customerAudio": false,
+  "audioSeconds": 35.480000000000004,
+  "status": "PASS_REAL_PUBLIC_FIXTURES"
+}

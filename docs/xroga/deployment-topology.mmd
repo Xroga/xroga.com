@@ -12,6 +12,7 @@ flowchart LR
   browserbase["Browserbase - LEGACY"]
   google_delivery["Google Cloud Tasks and Cloud Run Jobs - ACTIVE"]
   cloudflare_workers_proposal["Cloudflare Workers - PROPOSED"]
+  cloudflare_voice["Cloudflare Workers AI, Workers Free - PROPOSED"]
   endpoint_127_0_0_1["Source-defined endpoint 127.0.0.1 - LOCAL_ONLY"]
   endpoint_about_meta_com["Source-defined endpoint about.meta.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_accounts_google_com["Source-defined endpoint accounts.google.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -198,6 +199,7 @@ flowchart LR
   api --> google_execution
   api --> google_delivery
   api --> credential_store
+  api --> cloudflare_voice
   credential_store --> supabase
   api -. "source host/reference; unverified" .-> endpoint_127_0_0_1
   frontend -. "source host/reference; unverified" .-> endpoint_about_meta_com

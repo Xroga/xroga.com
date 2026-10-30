@@ -39,10 +39,10 @@ const current={
   api:{provider:'Google Cloud Run',hosts:['api.xroga.com'],resource:'xroga-api-google',region:'us-east4',
     sources:['Dockerfile.api','backend/src/index.ts','backend/src/config/platformEnvironment.ts','scripts/infrastructure/cloud-run-release-gate.mjs',receiptPath],
     keys:/^(PORT|NODE_ENV|API_PUBLIC_URL|FRONTEND_URL|XROGA_RELEASE_SHA|GITHUB_SHA|XROGA_PLATFORM_)/,
-    outbound:['supabase','r2','google-execution','google-delivery','credential-store'],evidence:[googleEvidence.id],
+    outbound:['supabase','r2','google-execution','google-delivery','credential-store','cloudflare-voice'],evidence:[googleEvidence.id],
     auth:'Native dedicated Google service identity, protected Secret Manager bundle, existing issued Supabase tenant context and canonical authority. No Fly federation or personal developer identity.',
     health:'Accepted dated /health and /ready plus authenticated production infrastructure acceptance. Future Phase4 source still requires its own release gates.'},
-  r2:{state:'ACTIVE',resource:'xroga-private-files',region:'Existing Cloudflare account, private R2 bucket',evidence:[googleEvidence.id],
+  r2:{state:'ACTIVE',resource:'xroga-private-files',region:'Existing Cloudflare account, private R2 bucket',keys:/^(?:CLOUDFLARE_(?!VOICE_)|FILE_DELIVERY_)/,evidence:[googleEvidence.id],
     health:'Dated production private write/read/hash/owner denial and synthetic cleanup passed. Optional signed-link key was explicitly unconfigured, not accepted. Drive quota/activation is separate.'},
   'fly-sandbox':{id:'google-execution',provider:'Google Compute Engine private execution slots',state:'ACTIVE',hosts:['compute.googleapis.com','oslogin.googleapis.com'],
     resource:'Two bounded private execution slots',region:'us-central1-a',sources:['backend/src/sandbox/google/googleSandbox.ts','backend/src/sandbox/google/gceMachineControl.ts','backend/src/sandbox/google/gceSshTransport.ts','backend/src/synthesis/projectRuntime/googleFactory.ts',receiptPath],
@@ -61,4 +61,9 @@ const current={
     auth:'Native scoped identities, authenticated OIDC delivery, canonical durable claims and generation fencing.',
     health:'Accepted real production Tasks delivery204, durable result, duplicate denial, cancellation and recovery. Queue was RUNNING and empty at the dated acceptance.'},
 };
-export const coreServices=historicalCoreServices.map(fact=>({...fact,...current[fact.id]}));
+export const coreServices=[...historicalCoreServices.map(fact=>({...fact,...current[fact.id]})),
+  {id:'cloudflare-voice',provider:'Cloudflare Workers AI, Workers Free',purpose:'Optional authenticated manual Whisper dictation, no paid-model fallback',state:'PROPOSED',
+    hosts:['api.cloudflare.com'],sources:['backend/src/routes/voiceFree.ts','backend/src/ai/voiceBudget.ts','docs/operations/voice-free-provider-approval-20261030.md'],
+    keys:/^CLOUDFLARE_VOICE_/,region:'Cloudflare-hosted inference; no customer storage selected',auth:'Separate account-owned Workers AI Read token, server-only. Issued Xroga tenant context, owner, reservation and zero-cost settlement required.',
+    outbound:[],evidence:[],health:'Disabled until scoped credential authorization, exact-source CI and real provider acceptance. Model latency and physical mobile coverage are not verified.'},
+];
