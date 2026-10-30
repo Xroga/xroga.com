@@ -4534,6 +4534,19 @@
     min-width: 0;
     scroll-snap-align: start;
   }
+  /* the tool chips are one scrollable row instead of two or three wrapped rows */
+  .tools {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    min-height: 44px;
+  }
+  .tools::-webkit-scrollbar {
+    display: none;
+  }
+  .tools > * {
+    flex: none;
+  }
   /* the two mode buttons are one compact row: art beside the title; the line under it repeats the lede above */
   .mode {
     grid-template-columns: auto minmax(0, 1fr);

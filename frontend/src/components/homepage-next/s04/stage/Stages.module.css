@@ -1892,9 +1892,13 @@
   .fgShots small {
     grid-column: 1 / -1;
   }
-  .chAssets,
-  .cwsMedia {
+  .chAssets {
     grid-template-columns: minmax(0, 1fr);
+  }
+  /* the store page keeps its desktop proportion (screenshot beside the tile and facts) so the listing is not a tall stack */
+  .cwsMedia {
+    padding: 0 12px;
+    gap: 10px;
   }
   .artboard {
     grid-template-columns: minmax(0, 1fr);
