@@ -1,20 +1,20 @@
 # Xroga repository truth map
 
-Source SHA: `a6384750e20fc4fd5f7d2f1e6100bddadf439208`. Branch observed: `claude/homepage-mobile-polish2`. Audit started: 2026-10-30T14:22:09.221Z.
+Source SHA: `b1a228b76a5cfcb4090fc81232dc0724618c6c90`. Branch observed: `voice-rebuild`. Audit started: 2026-10-30T16:15:00.886Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1781
+- surfaces: 1792
 - routeRegistrations: 379
 - routes: 318
 - reachableRoutes: 235
-- queues: 4
+- queues: 5
 - migrations: 159
 - workflows: 21
-- testSuites: 1032
-- declaredTests: 7064
+- testSuites: 1038
+- declaredTests: 7096
 - classifiedMarkers: 398
 - reachableMarkers: 333
 - absentRequiredPaths: 5
@@ -66,6 +66,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Queue processing
 
+- **<dynamic>**: NO_PRODUCER_FOUND; CONSUMER_CODE_PRESENT; registration must be verified. Definitions: frontend/src/lib/voiceEngine.ts:10, frontend/src/lib/voiceLocal.ts:8. Producer/consumer source recorded; runtime connectivity unverified.
 - **email-jobs**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:36. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **notifications**: PRODUCER_CODE_PRESENT; caller activation must be verified; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:18. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **swarm-tasks**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/redis.ts:22. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
