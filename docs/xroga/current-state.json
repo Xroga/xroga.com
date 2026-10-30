@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "C:/xr-mob",
-    "branch": "claude/homepage-mobile-final",
-    "sha": "b96aac4a6dcd6d2fefa21586e8bdfccab75b4507",
-    "sourceTimestampUtc": "2026-10-30T17:29:04+05:00",
-    "auditStartedUtc": "2026-10-30T12:29:31.848Z",
+    "branch": "claude/homepage-mobile-polish2",
+    "sha": "a6384750e20fc4fd5f7d2f1e6100bddadf439208",
+    "sourceTimestampUtc": "2026-10-30T19:20:48+05:00",
+    "auditStartedUtc": "2026-10-30T14:22:09.221Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -70774,7 +70774,7 @@
       "id": "surface:08747fa04a36352c09bc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s03/growth/Art.tsx",
-      "sha256": "a7a4bbafc464b58e315de430cef2503409c087f7a93741108e9ca457cac39f32",
+      "sha256": "c0bb1e416e72501de8119645125399560dee5282e3ad712c80696192633cff6d",
       "symbols": [
         "Bag",
         "Beans",
@@ -71262,7 +71262,7 @@
       "id": "surface:0fe1afb1a95013a9ba53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s03/search/Health.tsx",
-      "sha256": "12c39e04094d1689e49472bf5f96311a0ae287f149b64d09bf8589fee4020304",
+      "sha256": "015f3633b1e1b1c5c43706fdd6b3877f15b6895729a344f694afd564b38f15b8",
       "symbols": [
         "Box",
         "HealthInspector",
@@ -143291,14 +143291,14 @@
     {
       "id": "test-suite:e5363972ca71eff9cf74",
       "sourcePath": "frontend/src/components/homepage-next/s03/s03.test.ts",
-      "declaredTests": 39,
+      "declaredTests": 40,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:3fc0ed1a95cfc8c5098f",
       "sourcePath": "frontend/src/components/homepage-next/s04/s04.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 19,
       "skipLocations": [],
       "focusLocations": []
     },
