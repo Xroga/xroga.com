@@ -53,6 +53,12 @@ and protected restoration when an approved cheaper environment cannot meet its
 security conditions. Reuse accepted source-bound evidence when semantics have
 not changed. Never weaken required verification to reduce cost.
 
+Before a production traffic shift, frontend promotion or worker activation, also
+complete [pre-traffic-shift verification](pre-traffic-shift-verification.md).
+Cost review is mandatory alongside source, functional, runtime, security,
+compatibility and recovery evidence. A cheap candidate with missing proof is not
+ready for promotion, and a paid production revision is not a unit-test environment.
+
 ## Before a cloud mutation
 
 Record the exact task, source SHA, resources, region, existing approval and why

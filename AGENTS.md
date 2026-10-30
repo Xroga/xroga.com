@@ -63,6 +63,25 @@ enable paid fallbacks or exceed approved spending. Separate gross usage, credits
 and cash cost. Budget alerts are not hard caps. This principle grants no new IAM,
 production deployment or batch activation authority and lifts no specific hold.
 
+## Mandatory pre-traffic-shift verification
+
+Follow `docs/operations/pre-traffic-shift-verification.md` before a production
+traffic shift, frontend promotion, endpoint routing change or worker activation.
+Before requesting promotion approval, require source, tests, security, runtime,
+compatibility and cost review PASS, with a verified compatible rollback ready.
+Provide the exact source/image, CI, actual changed-flow evidence, current and
+candidate configuration, compatibility, cost, rollout, rollback and cleanup.
+Known blocking defects or missing mandatory proof prevent promotion.
+
+Use local/CI first and approved isolated or zero-production-traffic candidates
+where necessary. Zero default traffic does not prevent startup side effects.
+Preserve startup guards and canonical API/Job source pairing. Use a canary only
+when safe for that protocol. Check measured gates before each increase, and use
+controlled authenticated synthetic cases when natural traffic is insufficient.
+On failure, recover compatibly and diagnose before another rollout. Verify final
+allocations and retire temporary tags within their approved cleanup scope.
+This policy grants no production or spending authority and lifts no batch hold.
+
 ## Cursor Cloud specific instructions
 
 Xroga is an npm-workspaces monorepo ("AI Swarm OS"):
