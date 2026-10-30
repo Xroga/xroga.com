@@ -111258,6 +111258,90 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:dbab0ac46c1afd3009c0",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/verify-free-voice-ledger.ts",
+      "sha256": "590785dc0e8230b287781f47fe56a1f1f106108697547984570d1ed1b5f0fa20",
+      "symbols": [
+        "access",
+        "address",
+        "admin",
+        "app",
+        "at",
+        "audio",
+        "authorization",
+        "cleaned",
+        "created",
+        "dbUrl",
+        "done",
+        "email",
+        "endpoint",
+        "events",
+        "express",
+        "guest",
+        "hold",
+        "main",
+        "original",
+        "owner",
+        "password",
+        "phase",
+        "proof",
+        "providerCalls",
+        "require",
+        "response",
+        "server",
+        "signed",
+        "url"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/verify-free-voice-ledger.ts"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [
+        "production_audit_log",
+        "xroga_provider_reservations"
+      ],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1",
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [
+        "scripts/security/verify-free-voice-ledger.ts#authorization"
+      ],
+      "tenantBoundary": [
+        "scripts/security/verify-free-voice-ledger.ts:64 (user_id)"
+      ],
+      "approvalBoundary": [
+        "scripts/security/verify-free-voice-ledger.ts#authorization"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/verify-free-voice-ledger.ts#events"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:b0ecb2b4dffc411987ec",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/verify-oci-federation.ts",
@@ -125432,7 +125516,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "80485bdce7a538581d903a747eecd604749f845113bab42dc24ee739b830e339",
+      "sha256": "935691df3a6964515ae42fb60c9052b3d487fa2c33b5b1fd7c57988ccb45d7d7",
       "sourceEntrypoints": [
         "frontend/e2e/phase4-admin-share.security.mjs",
         "frontend/e2e/phase4-api-clients.security.mjs",
@@ -125443,6 +125527,7 @@
         "scripts/security/disposable-supabase.test.mjs",
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/proxy-origin-fixture.test.mjs",
+        "scripts/security/verify-free-voice-ledger.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "hasSchedule": false
@@ -129636,100 +129721,100 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:690ce669fd05adf9be8f",
+      "id": "frontend-call:fbe36057e42a40d5c03b",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 41,
+      "line": 49,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:09d7c7f230cfa3f528e9",
+      "id": "frontend-call:212ae676ec7ee51b6b82",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 43,
+      "line": 51,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:5ab40220a88035df0a47",
+      "id": "frontend-call:722e8b96b0a1c5105717",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 55,
+      "line": 64,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:37b4a93f189dced8e78a",
+      "id": "frontend-call:0d6581065540ae9ccb21",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 55,
+      "line": 64,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:ea5ead61d6407b335a66",
+      "id": "frontend-call:8b6d46a6222fed12de4f",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 68,
+      "line": 77,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:d85df066f5c6547bcc2d",
+      "id": "frontend-call:3f73bde20f110699f347",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 70,
+      "line": 79,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:ad984890bdac6fda0fa2",
+      "id": "frontend-call:a34c8024804cd8fc0dbc",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 85,
+      "line": 95,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:0544e6eede1d618c81a1",
+      "id": "frontend-call:d04d172cdfe58c9fe08f",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 85,
+      "line": 95,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:56e71b8e33f36fd27a6c",
+      "id": "frontend-call:61c9c6587a2162807e79",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 87,
+      "line": 97,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:e1d15ae69363513b541b",
+      "id": "frontend-call:c24d6186f276cccb4a7d",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 87,
+      "line": 97,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:77bb865ce7284e56ceba",
-      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 94,
-      "callee": "api.listen",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:8dd829d0390a26910703",
-      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 98,
-      "callee": "api.address",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:9c8b473dd466a2cedcf5",
+      "id": "frontend-call:851c18cee43280c2f57c",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
       "line": 104,
+      "callee": "api.listen",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:f6eb753eddb266591c86",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 108,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:64f18dfd747e08d485ca",
+      "id": "frontend-call:7ea4805c15da3927e5dd",
       "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
-      "line": 106,
+      "line": 114,
+      "callee": "api.address",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c50395338475aaf5e82d",
+      "sourcePath": "frontend/e2e/phase4-api-clients.security.mjs",
+      "line": 116,
       "callee": "api.closeAllConnections",
       "reachable": false
     },

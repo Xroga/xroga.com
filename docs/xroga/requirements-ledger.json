@@ -3496,6 +3496,7 @@
         "scripts/security/schema-catalog.mjs",
         "scripts/security/staging-preflight.mjs",
         "scripts/security/tenant-acceptance.mjs",
+        "scripts/security/verify-free-voice-ledger.ts",
         "scripts/security/verify-oci-federation.ts",
         "scripts/security/verify-oci-kms.ts",
         "scripts/security/verify-oci-wrong-workflow.ts"

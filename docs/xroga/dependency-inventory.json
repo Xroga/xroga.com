@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ec3279530696328108aacfdbd5cc4dfb66bb963e",
+  "source_sha": "b83e8114f7dba1f31991cd0a12d254ec4d5e1a01",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15298,7 +15298,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "80485bdce7a538581d903a747eecd604749f845113bab42dc24ee739b830e339"
+      "sha256": "935691df3a6964515ae42fb60c9052b3d487fa2c33b5b1fd7c57988ccb45d7d7"
     },
     {
       "path": ".github/workflows/command4-authority.yml",

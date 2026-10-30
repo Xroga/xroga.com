@@ -120,8 +120,8 @@
     }
   ],
   "counts": {
-    "total": 148,
-    "reviewed": 148,
+    "total": 149,
+    "reviewed": 149,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
   },
@@ -902,5 +902,17 @@
   "currentMainIntegration": {
     "evidence": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
     "scope": "CURRENT_SOURCE_BINDINGS_AND_INDIVIDUAL_NEW_CALLER_REVIEW_NOT_PRODUCTION_ACCEPTANCE"
+  },
+  "beforeFreeVoiceCallerCounts": {
+    "source": "b83e8114f7dba1f31991cd0a12d254ec4d5e1a01",
+    "total": 148,
+    "reviewed": 148,
+    "pending": 0,
+    "unresolvedHighRiskReviewCandidates": 0
+  },
+  "freeVoiceCallerContinuation": {
+    "callerId": "19343161fc1afbd3f2fb",
+    "proof": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
+    "scope": "One newly reviewed authenticated free voice transport. Historical tests and acceptance claims are unchanged."
   }
 }

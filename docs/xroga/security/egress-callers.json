@@ -4536,7 +4536,8 @@
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
-          "sha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
+          "sha256": "88aaee722508dfa7e46ee9db1886aa6adeeb534b44c6ba554c456b2eabbf85c7",
+          "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
         }
       ]
     },

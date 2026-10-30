@@ -149,6 +149,8 @@ jobs:
         run: node scripts/security/disposable-supabase.mjs
       - name: Full migration history and sanitized upgrade compatibility
         run: node scripts/security/full-supabase-history.mjs
+      - name: Free dictation with real isolated identity and canonical zero-cost ledger
+        run: node --import tsx scripts/security/verify-free-voice-ledger.ts
       # A spec that does not parse is currently only discovered *after* two production
       # builds and a browser download — several minutes to learn that a file has a
       # syntax error. `--list` compiles every spec and runs none of them, so it reports
