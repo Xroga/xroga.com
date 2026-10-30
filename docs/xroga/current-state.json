@@ -3,9 +3,9 @@
   "identity": {
     "repository": "C:/xr-mob",
     "branch": "claude/homepage-mobile-responsive",
-    "sha": "fb64e673a312419c7551ba6eeff79d1457a41e52",
-    "sourceTimestampUtc": "2026-10-30T15:03:58+05:00",
-    "auditStartedUtc": "2026-10-30T10:07:56.240Z",
+    "sha": "0b4b88699b97e8633072d69f96f781859b8a5d75",
+    "sourceTimestampUtc": "2026-10-30T16:24:55+05:00",
+    "auditStartedUtc": "2026-10-30T11:25:43.208Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -70398,7 +70398,7 @@
       "id": "surface:bf7e17a49c3db65f545f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
-      "sha256": "65c1c3e532496b78fcab588c0ad307cfdee6405ace7a78dcef45204631a405d2",
+      "sha256": "ea866014c30a9a824e07e9510b6afb2ff365042fa1eb7162cf1161cafd09aa53",
       "symbols": [
         "FEEDS",
         "GrowthStudio",
@@ -143291,7 +143291,7 @@
     {
       "id": "test-suite:e5363972ca71eff9cf74",
       "sourcePath": "frontend/src/components/homepage-next/s03/s03.test.ts",
-      "declaredTests": 38,
+      "declaredTests": 39,
       "skipLocations": [],
       "focusLocations": []
     },
