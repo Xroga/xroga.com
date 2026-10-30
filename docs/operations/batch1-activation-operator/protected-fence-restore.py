@@ -21,7 +21,8 @@ OLD = 'ca94c2f8a813524e47f5f7abc868acb1618a1c45'
 NEW = '85f83e3f1dcbb057d4a28d8a696dae8396d45114'
 PREFIX = 'gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/'
 HASHES = {'cutover-fence-upgrade.DRAFT.sql':'3b4b28cba0f76714feb9758b4d4917ef619593895d296d7b1af958f9a2dddeed',
-          'cutover-fence-rollback.DRAFT.sql':'a188225ef4e9b3bbc8c2216e22f85ec3d0e4e2b9dc81d1ff794ee8fd1c508be2'}
+          'cutover-fence-rollback.DRAFT.sql':'a188225ef4e9b3bbc8c2216e22f85ec3d0e4e2b9dc81d1ff794ee8fd1c508be2',
+          'released-google-canonical-deliveries.sql':'1fca51799370f969165de860091591984b84198217488d19df98c591a4ce160d'}
 
 def cmd(args, data=None, timeout=120):
     return subprocess.run(args, input=data, capture_output=True, timeout=timeout)
@@ -55,7 +56,13 @@ def sql(text, user=ADMIN, db=DB, expected=True):
     r = docker('exec','-i','--env','PGPASSWORD=synthetic-isolated-restore-only',NAME,'psql',
                '--host=127.0.0.1','--username='+user,'--dbname='+db,'-X','-qAt','-v','ON_ERROR_STOP=1',data=text.encode())
     if expected:
-        assert r.returncode == 0, 'ISOLATED_SQL_FAILED'
+        if r.returncode:
+            error=r.stderr.lower()
+            category=next((name for needle,name in [(b'does not exist','UNDEFINED_OBJECT'),
+                (b'permission denied','PERMISSION_DENIED'),(b'must be owner','OWNERSHIP_REQUIRED'),
+                (b'violates','CONSTRAINT'),(b'canonical_fence_preflight_mismatch','FENCE_PREFLIGHT_MISMATCH')]
+                if needle in error),'OTHER')
+            raise AssertionError('ISOLATED_SQL_'+category)
     return r
 
 def main():
@@ -167,10 +174,20 @@ def main():
         state['restore']=decrypt('database.dump.gpg',restore)
         secret[:]=b'\0'*len(secret)
         mark('FULL_BACKUP_ROLES_DATABASE_OWNERS_ACLS_RESTORED')
+        shape=json.loads(sql("SELECT json_build_object('deliveryTable',to_regclass('public.google_canonical_deliveries') IS NOT NULL,'enqueue',to_regprocedure('public.enqueue_google_canonical_run(uuid,uuid,uuid,uuid,jsonb,text)') IS NOT NULL);").stdout)
+        state['retainedSnapshotCanonicalObjects']=shape
+        if shape=={'deliveryTable':False,'enqueue':False}:
+            # This fixture predates the already released Google transport SQL.
+            # Reproduce that exact expansion only in the isolated restored DB.
+            sql('SET ROLE postgres; '+(ROOT/'released-google-canonical-deliveries.sql').read_text())
+            mark('RELEASED_TRANSPORT_EXPANSION_APPLIED_ONLY_TO_OLD_ISOLATED_FIXTURE')
+        else:
+            assert all(shape.values()),'PARTIAL_CANONICAL_SCHEMA_REFUSED'
         original=sql("SELECT md5(prosrc) FROM pg_proc WHERE oid='public.enqueue_google_canonical_run(uuid,uuid,uuid,uuid,jsonb,text)'::regprocedure;").stdout.strip().decode()
         state['restoredEnqueueMd5']=original
         assert original=='9014766f51e6d9fd878cc5d4724383c2','RETAINED_SCHEMA_REQUIRES_RELEASED_COMPATIBILITY_UPGRADE'
-        sql((ROOT/'cutover-fence-upgrade.DRAFT.sql').read_text())
+        assert sql("SELECT NOT rolsuper AND rolbypassrls FROM pg_roles WHERE rolname='postgres';").stdout.strip()==b't','PRODUCTION_POSTGRES_ROLE_SHAPE_MISMATCH'
+        sql('SET ROLE postgres; '+(ROOT/'cutover-fence-upgrade.DRAFT.sql').read_text())
         mark('EXACT_FENCE_UPGRADE_ON_FULL_RESTORE_PASS')
         exercise_fence(sql,mark)
         state['status']='PASS_ISOLATED_FULL_RESTORE_FENCE_AND_ROLLBACK_NOT_PRODUCTION_ACCEPTANCE'
@@ -217,7 +234,7 @@ def exercise_fence(sql,mark):
     sql(enqueue(NEW))
     assert sql(enqueue(NEW,foreign),expected=False).returncode!=0,'FOREIGN_OWNER_ADMITTED'
     mark('FULL_RESTORE_PAUSE_SOURCE_TENANT_AND_GATE_PRIVILEGES_PASS')
-    rollback=(ROOT/'cutover-fence-rollback.DRAFT.sql').read_text()
+    rollback='SET ROLE postgres; '+(ROOT/'cutover-fence-rollback.DRAFT.sql').read_text()
     assert sql(rollback,expected=False).returncode!=0,'ROLLBACK_WITH_OPEN_GATE_ACCEPTED'
     sql("BEGIN; SELECT pg_advisory_xact_lock(hashtextextended('xroga-canonical-admission',0)); UPDATE public.xroga_release_fence SET allowed_source=NULL WHERE singleton; COMMIT;")
     assert sql(rollback,expected=False).returncode!=0,'ROLLBACK_WITH_ACTIVE_WORK_ACCEPTED'
