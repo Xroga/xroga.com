@@ -150,7 +150,7 @@ def main():
         sql('DROP DATABASE '+DB+' WITH (FORCE);',db='postgres')
         sql('CREATE DATABASE '+DB+' OWNER postgres TEMPLATE template0;',db='postgres')
         def restore(data):
-            toc=cmd(['/usr/lib/postgresql/17/bin/pg_restore','--list'],data=data)
+            toc=docker('exec','-i',NAME,'pg_restore','--list',data=data)
             assert toc.returncode==0,'AUTHENTICATED_DUMP_LIST_FAILED'
             lines=toc.stdout.decode().splitlines()
             events=[x for x in lines if ' EVENT TRIGGER ' in x]
@@ -187,7 +187,7 @@ def main():
 def exercise_fence(sql,mark):
     # Use new synthetic identities only. Never inspect or change customer rows.
     owner,project,foreign=[str(uuid.uuid4()) for _ in range(3)]
-    sql("INSERT INTO auth.users(id,aud,role,email,raw_app_meta_data,raw_user_meta_data) VALUES ('"+owner+"','authenticated','authenticated','fence-'+owner+"@example.invalid','{}','{}'); INSERT INTO public.projects(id,user_id,name,type) VALUES('"+project+"','"+owner+"','isolated fence fixture','app');")
+    sql(f"INSERT INTO auth.users(id,aud,role,email,raw_app_meta_data,raw_user_meta_data) VALUES ('{owner}','authenticated','authenticated','fence-{owner}@example.invalid','{{}}','{{}}'); INSERT INTO public.projects(id,user_id,name,type) VALUES('{project}','{owner}','isolated fence fixture','app');")
     deliveries=[]
     runs=[]
     def enqueue(source=OLD,user=owner):
