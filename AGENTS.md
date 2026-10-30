@@ -31,6 +31,26 @@ personal files or WSL virtual disks. Existing leftovers require exact-path,
 content, Git and active-use verification. Preserve ambiguous files for review.
 This is local development hygiene, not a product scheduler or runtime dependency.
 
+## Mandatory cloud usage and cost containment
+
+Follow `docs/operations/cloud-usage-policy.md` before every cloud operation.
+Use local development or existing CI for code, lint, types, unit tests, repository
+audits and documentation. Cloud Shell is an interface, not free runtime capacity.
+Record the cloud-specific reason, exact approval, source, billing mode, instance
+bounds, lifetime, retry limit, retained cost and verified cleanup.
+
+Inspect every tagged revision. Zero-percent traffic does not stop revision-level
+minimum instances. Temporary candidates must explicitly use minimum zero and
+request-based CPU unless an exact exception is approved. Preserve startup guards,
+canonical API/Job source pairing, customer work and cold recovery assets.
+
+The founder's October 31 spending investigation is read-only. Pause nonessential
+new cloud activity. Production scaling, billing mode, routing, workers, queues
+and scheduler changes need a dependency assessment and explicit authorization.
+Never stop production automatically, enable paid monitoring to audit costs, or
+claim budget alerts are hard caps. Measure allocation and later posted SKU usage
+before claiming savings. Preserve the existing local storage cleanup rule.
+
 ## Cursor Cloud specific instructions
 
 Xroga is an npm-workspaces monorepo ("AI Swarm OS"):
