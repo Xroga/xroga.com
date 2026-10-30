@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b96aac4a6dcd6d2fefa21586e8bdfccab75b4507",
+  "source_sha": "1cae9b79f783be7610ec1dad01da2e5b19a3273b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19887,7 +19887,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/growth/Art.tsx",
-      "sha256": "a7a4bbafc464b58e315de430cef2503409c087f7a93741108e9ca457cac39f32"
+      "sha256": "c0bb1e416e72501de8119645125399560dee5282e3ad712c80696192633cff6d"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/growth/Launch.tsx",
@@ -19923,7 +19923,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/search/Health.tsx",
-      "sha256": "12c39e04094d1689e49472bf5f96311a0ae287f149b64d09bf8589fee4020304"
+      "sha256": "015f3633b1e1b1c5c43706fdd6b3877f15b6895729a344f694afd564b38f15b8"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/search/Links.tsx",
