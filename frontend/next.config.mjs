@@ -107,7 +107,7 @@ const PREVIEW_SOURCE = '/showcase/:slug/preview';
 const CRYPTO_SHOWCASE_SOURCE = '/showcase/black-hole-vinfinity-crypto';
 const CLARITY_DEMO_SOURCE = '/demos/xroga-clarity-workflow.html';
 const BROWSER_EMPLOYEES_DEMO_SOURCE = '/demos/xroga-browser-employees-exact.html';
-const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|api/(?:browser-view|image-fetch)/?$|voice-runtime/.*|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$|demos/xroga-clarity-workflow[.]html$|demos/xroga-browser-employees-exact[.]html$)).*)';
+const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|api/(?:browser-view|image-fetch)/?$|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$|demos/xroga-clarity-workflow[.]html$|demos/xroga-browser-employees-exact[.]html$)).*)';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -135,12 +135,6 @@ const nextConfig = {
   },
   async headers() {
     return [
-      { source: '/voice-runtime/:path*', headers: [
-        ...baseSecurityHeaders,
-        // Only this isolated worker may compile WASM or fetch pinned public weights.
-        { key: 'Content-Security-Policy', value: "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://huggingface.co/onnx-community/whisper-small/resolve/36050c46d777d46dc4b5f43f6d90574fc38f8732/ https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-small/ https://us.aws.cdn.hf.co/xet-bridge-us/6650c62b74664a42ddfb297a/; worker-src 'none'" },
-        { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
-      ] },
       { source: '/', headers: freshMarketingHeaders },
       { source: '/about', headers: freshMarketingHeaders },
       { source: '/api/browser-view', headers: proxySecurityHeaders(browserProxyHeaders) },

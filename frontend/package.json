@@ -8,9 +8,7 @@
     "build": "node ../backend/scripts/security-dependency-patches.mjs --check && next build",
     "test": "cd .. && tsx --tsconfig frontend/tsconfig.json --test \"frontend/src/**/*.test.ts\"",
     "start": "next start",
-    "lint": "next lint",
-    "prebuild": "node ../scripts/prepare-voice-runtime.mjs",
-    "predev": "node ../scripts/prepare-voice-runtime.mjs"
+    "lint": "next lint"
   },
   "dependencies": {
     "@huggingface/transformers": "3.8.1",

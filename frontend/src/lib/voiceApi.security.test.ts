@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import ts from 'typescript';
 import {voiceClientAwait, isTerminalVoiceFailure} from './voiceRequestPolicy';
 
-function actualVoiceApi(mode: string) {
+function actualVoiceApi(mode: string, freeOnly = false) {
   let token: string | null = 'original-user-token', requests = 0;
   class ApiError extends Error {constructor(message: string, public status: number, public data: unknown = {}) {super(message);}}
   const context: Record<string, unknown> = {exports: {}, AbortSignal, Blob, Response, TextDecoder, Uint8Array, Error,
@@ -18,7 +18,7 @@ function actualVoiceApi(mode: string) {
       }};
       if (name === '@/lib/api') return {API_URL: 'https://api.xroga.com', ApiError, getAccessToken: async () => token,
         fetchApiResponse: async (url: string, init: RequestInit) => {
-          requests++; assert.equal(url, 'https://api.xroga.com/api/voice/transcribe');
+          requests++; assert.equal(url, 'https://api.xroga.com/api/voice/' + (freeOnly ? 'transcribe-free' : 'transcribe'));
           assert.equal(new Headers(init.headers).get('authorization'), 'Bearer original-user-token');
           assert.equal(new Headers(init.headers).get('content-type'), 'audio/wav'); assert.ok(init.signal);
           if (mode === 'changeAfterResponse') token = 'different-account-token';
@@ -31,7 +31,8 @@ function actualVoiceApi(mode: string) {
     }};
   const source = readFileSync(new URL('./voiceApi.ts', import.meta.url), 'utf8');
   vm.runInNewContext(ts.transpileModule(source, {compilerOptions: {target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS}}).outputText, context, {timeout: 1000});
-  return {requests: () => requests, run: (signal?: AbortSignal) => (context.exports as {transcribeVoiceAudio: (audio: Blob, signal?: AbortSignal) => Promise<string>}).transcribeVoiceAudio(new Blob([new Uint8Array(1024)]), signal)};
+  return {requests: () => requests, run: (signal?: AbortSignal) => (context.exports as {transcribeVoiceAudio: (audio: Blob, signal?: AbortSignal, options?: {freeOnly: true; preparedPcm: true; expectedToken: string}) => Promise<string>}).transcribeVoiceAudio(new Blob([new Uint8Array(1024)]), signal,
+    freeOnly ? {freeOnly: true, preparedPcm: true, expectedToken: 'original-user-token'} : undefined)};
 }
 
 test('actual voice API pins the original session through local decoding and publication', async t => {
@@ -54,4 +55,14 @@ test('actual voice API pins the original session through local decoding and publ
   await t.test('authorized current user receives the verified transcript once', async () => {
     const api = actualVoiceApi('ok'); assert.equal(await api.run(), 'Verified owned transcript'); assert.equal(api.requests(), 1);
   });
+});
+
+test('prepared PCM uses only the free endpoint and pins the original session', async () => {
+  const positive = actualVoiceApi('ok', true);
+  assert.equal(await positive.run(), 'Verified owned transcript'); assert.equal(positive.requests(), 1);
+  const changed = actualVoiceApi('changeAfterResponse', true);
+  await assert.rejects(changed.run(), error => (error as {data?: {code?: string}}).data?.code === 'VOICE_SESSION_CHANGED');
+  assert.equal(changed.requests(), 1);
+  const denied = actualVoiceApi('denial', true);
+  await assert.rejects(denied.run()); assert.equal(denied.requests(), 1);
 });

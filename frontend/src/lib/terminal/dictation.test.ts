@@ -248,14 +248,15 @@ test('a speech start failure reports failed instead of throwing', () => {
 
 const read = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
 
-test('the workspace mic records for local Whisper and only falls back to browser speech when the device cannot run it', () => {
+test('the workspace mic records for Cloudflare Whisper and only falls back to browser speech when the browser cannot capture audio', () => {
   const control = read('../../components/terminal/XrogaVoiceControl.tsx');
-  assert.match(control, /function localWhisperSupported\(\)/);
-  assert.match(control, /if\(!localWhisperSupported\(\) && Recognition\)\{startSpeechFallback\(Recognition\);return;\}/);
+  assert.match(control, /const cloudSupported = \(\) =>/);
+  assert.match(control, /if \(!cloudSupported\(\)\) \{\s+if \(Recognition\) \{ startSpeechFallback\(Recognition\); return; \}/);
   assert.match(control, /new DictationController\(\{/);
   assert.match(control, /speech\.current\?\.abort\(\)/);
   // Dictated text goes through the composer's own draft handler; nothing submits.
   assert.match(control, /publish\.current\(snapshot\.final\)/);
+  assert.match(control, /publish\.current\(result\.text\)/);
   assert.doesNotMatch(control, /requestSubmit|onVoiceSend/);
 });
 
