@@ -1,0 +1,6 @@
+{
+  "source": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+  "checkedEpoch": 1793399609.6465294,
+  "checkedAtUtc": "2026-10-30T22:33:29.646529+00:00",
+  "evidence": "actual production SELECT allowed_source after reviewed allow85 SQL"
+}

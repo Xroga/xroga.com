@@ -1,0 +1,8 @@
+{
+  "closed": true,
+  "nonterminalCanonical": 0,
+  "activeWorkerLeases": 0,
+  "checkedEpoch": 1793399353.6318364,
+  "checkedAtUtc": "2026-10-30T22:29:13.631836+00:00",
+  "source": "actual production read-only fence_drain result"
+}

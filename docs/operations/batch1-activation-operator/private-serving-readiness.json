@@ -1,0 +1,16 @@
+{
+  "status": "PASS_PRIVATE_CANDIDATE_READINESS",
+  "atUtc": "2026-10-30T22:32:09.982728+00:00",
+  "revision": "xroga-api-batch1-85f-serving-1031",
+  "requestResults": [
+    {
+      "status": 200,
+      "latency": "1.174841426s",
+      "timestamp": "2026-10-30T22:31:54.934469Z"
+    }
+  ],
+  "defaultTrafficChanged": false,
+  "jobChanged": false,
+  "productionSqlApplied": false,
+  "exactProbeTaskRemoved": true
+}

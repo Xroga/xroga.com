@@ -1,0 +1,153 @@
+[
+  {
+    "atUtc": "2026-10-30T22:59:10.640Z",
+    "fixtureOnly": true,
+    "check": "NATIVE_KMS_STARTUP_PASS",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "kind": "batch1-source85-production-fixture",
+    "modelCalls": 0
+  },
+  {
+    "kind": "batch1-source85-production-fixture",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "atUtc": "2026-10-30T22:59:10.946Z",
+    "modelCalls": 0,
+    "check": "FABRICATED_CONTEXT_AND_FOREIGN_PROJECT_DENIED_BEFORE_DISPATCH",
+    "fixtureOnly": true
+  },
+  {
+    "kind": "batch1-source85-production-fixture",
+    "fixtureOnly": true,
+    "check": "NATIVE_ISSUED_CLAIM_AND_DUPLICATE_DENIAL_PASS",
+    "generation": "1adc61b5-7f87-4432-97db-46613e52eb55",
+    "atUtc": "2026-10-30T22:59:15.724Z",
+    "runId": "74838176-1a0b-46bb-bfb5-b19caad82d72",
+    "modelCalls": 0,
+    "deliveryId": "25cfa44f-c5e0-45f3-b762-b5fdd976ad9d",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab"
+  },
+  {
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "status": "success",
+    "stage": "runtime.started",
+    "kind": "batch1-source85-production-fixture",
+    "fixtureOnly": true,
+    "check": "PREVIEW_STAGE",
+    "atUtc": "2026-10-30T23:00:37.498Z",
+    "modelCalls": 0
+  },
+  {
+    "atUtc": "2026-10-30T23:00:57.265Z",
+    "fixtureOnly": true,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "modelCalls": 0,
+    "check": "PREVIEW_STAGE",
+    "stage": "process.started",
+    "kind": "batch1-source85-production-fixture",
+    "status": "success"
+  },
+  {
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "kind": "batch1-source85-production-fixture",
+    "check": "PRIVATE_WORKER_OWNERSHIP_AND_PREVIEW_READY_PASS",
+    "modelCalls": 0,
+    "runId": "74838176-1a0b-46bb-bfb5-b19caad82d72",
+    "fixtureOnly": true,
+    "sessionId": "f0aef09d-b9d0-4c22-8833-55407de959b8",
+    "atUtc": "2026-10-30T23:01:05.908Z"
+  },
+  {
+    "fixtureOnly": true,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "modelCalls": 0,
+    "check": "OFFLINE_HTTP_WEBSOCKET_PROCESS_START",
+    "atUtc": "2026-10-30T23:01:05.910Z",
+    "kind": "batch1-source85-production-fixture"
+  },
+  {
+    "status": 200,
+    "kind": "batch1-source85-production-fixture",
+    "fixtureOnly": true,
+    "check": "LIVE_PREVIEW_HTTP_RESULT",
+    "modelCalls": 0,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "atUtc": "2026-10-30T23:01:42.741Z"
+  },
+  {
+    "runId": "74838176-1a0b-46bb-bfb5-b19caad82d72",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "check": "LIVE_PREVIEW_HTTP_AND_WEBSOCKET_PASS",
+    "fixtureOnly": true,
+    "kind": "batch1-source85-production-fixture",
+    "modelCalls": 0,
+    "atUtc": "2026-10-30T23:01:48.092Z",
+    "sessionId": "f0aef09d-b9d0-4c22-8833-55407de959b8"
+  },
+  {
+    "kind": "batch1-source85-production-fixture",
+    "httpStatus": 410,
+    "modelCalls": 0,
+    "atUtc": "2026-10-30T23:01:49.836Z",
+    "fixtureOnly": true,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "check": "LIVE_GRANT_REVOCATION_HTTP_AND_OPEN_WEBSOCKET_PASS",
+    "sessionId": "f0aef09d-b9d0-4c22-8833-55407de959b8"
+  },
+  {
+    "atUtc": "2026-10-30T23:02:49.140Z",
+    "modelCalls": 0,
+    "sessionId": "f0aef09d-b9d0-4c22-8833-55407de959b8",
+    "kind": "batch1-source85-production-fixture",
+    "check": "PRIVATE_WORKER_TERMINATION_AND_SAVED_STATE_PASS",
+    "fixtureOnly": true,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab"
+  },
+  {
+    "runId": "74838176-1a0b-46bb-bfb5-b19caad82d72",
+    "check": "DURABLE_SYNTHETIC_COMPLETION_PASS",
+    "fixtureOnly": true,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "deliveryId": "25cfa44f-c5e0-45f3-b762-b5fdd976ad9d",
+    "atUtc": "2026-10-30T23:02:50.802Z",
+    "kind": "batch1-source85-production-fixture",
+    "modelCalls": 0
+  },
+  {
+    "fixtureOnly": true,
+    "modelCalls": 0,
+    "generation": "c8bb3db1-2c27-4b1c-a55e-04343228c08b",
+    "runId": "81969ba3-ed9d-4297-ba3c-72b6dd74e58c",
+    "atUtc": "2026-10-30T23:03:01.253Z",
+    "check": "REAL_PROCESS_KILL_DURABLE_RECOVERY_AND_STALE_GENERATION_DENIAL_PASS",
+    "kind": "batch1-source85-production-fixture",
+    "contentSha256": "ccc281487d3c8b1f32cc9c838b8bcdc5a643f5b2138e40d7ceea6a55029fdf76",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab"
+  },
+  {
+    "check": "CANCELLATION_OWNERSHIP_RETRY_DENIAL_AND_REAL_TASK_SUBMISSION_PASS",
+    "atUtc": "2026-10-30T23:03:04.754Z",
+    "taskName": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/queues/xroga-canonical-production/tasks/28a056cd049c5ae6b2a87ce7ef0f7d1bfc43a1c823461bdb392ebad2c1b85895",
+    "runId": "3244b8ea-adee-4e1e-ab05-a9e911006ab5",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "modelCalls": 0,
+    "deliveryId": "30aaacdc-052a-46d1-8dcd-dcdb969d8397",
+    "fixtureOnly": true,
+    "kind": "batch1-source85-production-fixture"
+  },
+  {
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "fixtureOnly": true,
+    "atUtc": "2026-10-30T23:03:04.988Z",
+    "check": "NO_MODEL_CALLS_NO_FABRICATED_TOKEN_USAGE_PASS",
+    "kind": "batch1-source85-production-fixture",
+    "modelCalls": 0
+  },
+  {
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "fixtureOnly": true,
+    "atUtc": "2026-10-30T23:03:04.989Z",
+    "check": "ALL_BOUNDED_MODEL_FREE_CHECKS_PASS",
+    "modelCalls": 0,
+    "kind": "batch1-source85-production-fixture"
+  }
+]

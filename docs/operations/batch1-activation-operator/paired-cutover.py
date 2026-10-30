@@ -126,6 +126,7 @@ elif MODE in ['job','recover-job']:
   if MODE=='job':
    job_config(job,OLD_IMAGE,OLD_SHA)
    t=copy.deepcopy(job['template']);labels=copy.deepcopy(job['labels']);labels['xroga-source-sha']=NEW_SHA
+   t.setdefault('labels',{})['xroga-source-sha']=NEW_SHA
    c=t['template']['containers'][0];c['image']=NEW_IMAGE
    for e in c['env']:
     if e['name']=='XROGA_GOOGLE_WORKER_IMAGE':e['value']=NEW_IMAGE

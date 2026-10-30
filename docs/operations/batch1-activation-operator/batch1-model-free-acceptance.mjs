@@ -3,23 +3,24 @@
 import assert from 'node:assert/strict';
 import {randomUUID,createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
+import {createRequire} from 'node:module';
 const bootEnvironment={...process.env};
-await import('/app/dist/runtime/installSafeLogging.js');
-await import('/app/dist/loadPlatformEnvironment.js');
+await import('file:///app/dist/runtime/installSafeLogging.js');
+await import('file:///app/dist/loadPlatformEnvironment.js');
 assert.equal(process.env.XROGA_RELEASE_SHA,'85f83e3f1dcbb057d4a28d8a696dae8396d45114');
 assert.equal(process.env.CLOUD_RUN_JOB,'xroga-canonical-production');
 assert.equal(process.env.SUPABASE_URL.replace(/\/$/,''),'https://nzenxdfumxrnsmybazmo.supabase.co');
-const {getSupabaseAdmin}=await import('/app/dist/config/supabase.js');
-const {createTenantContext}=await import('/app/dist/security/tenantContext.js');
-const {initializeCredentialVaultForServer}=await import('/app/dist/services/integrations/credentialVaultStartup.js');
-const {GoogleDeliveryStore,requireCanonicalDeliveryClaim}=await import('/app/dist/workers/googleDeliveryStore.js');
-const {googleDispatchConfiguration,GoogleCanonicalDispatch}=await import('/app/dist/workers/googleDispatch.js');
-const runs=await import('/app/dist/ai/runStore.js');
-const {failInFlightRuns}=await import('/app/dist/ai/runReconciler.js');
-const {SupabaseProjectRuntimeStore,createProjectRuntimeManager}=await import('/app/dist/synthesis/projectRuntime/index.js');
-const {startOrRefreshLivePreview}=await import('/app/dist/synthesis/livePreview/coordinator.js');
-const {revokeLivePreviewGrants}=await import('/app/dist/synthesis/livePreview/store.js');
-const checkpoints=await import('/app/dist/ai/softwareAgent/softwareAgentCheckpoint.js');
+const {getSupabaseAdmin}=await import('file:///app/dist/config/supabase.js');
+const {createTenantContext}=await import('file:///app/dist/security/tenantContext.js');
+const {initializeCredentialVaultForServer}=await import('file:///app/dist/services/integrations/credentialVaultStartup.js');
+const {GoogleDeliveryStore,requireCanonicalDeliveryClaim}=await import('file:///app/dist/workers/googleDeliveryStore.js');
+const {googleDispatchConfiguration,GoogleCanonicalDispatch}=await import('file:///app/dist/workers/googleDispatch.js');
+const runs=await import('file:///app/dist/ai/runStore.js');
+const {failInFlightRuns}=await import('file:///app/dist/ai/runReconciler.js');
+const {SupabaseProjectRuntimeStore,createProjectRuntimeManager}=await import('file:///app/dist/synthesis/projectRuntime/index.js');
+const {startOrRefreshLivePreview}=await import('file:///app/dist/synthesis/livePreview/coordinator.js');
+const {revokeLivePreviewGrants}=await import('file:///app/dist/synthesis/livePreview/store.js');
+const checkpoints=await import('file:///app/dist/ai/softwareAgent/softwareAgentCheckpoint.js');
 const db=getSupabaseAdmin();
 const selected=await db.from('projects').select('id,user_id,name').eq('name','Google migration acceptance 20261027 synthetic only');
 assert.equal(selected.error,null);assert.equal(selected.data.length,1);
@@ -27,6 +28,29 @@ const project=selected.data[0],context=createTenantContext({userId:project.user_
 let lastCheck='START';
 const emit=(check,detail={})=>{lastCheck=check;console.log(JSON.stringify({kind:'batch1-source85-production-fixture',fixtureOnly:true,modelCalls:0,check,atUtc:new Date().toISOString(),projectId:project.id,...detail}));};
 const deliveries=new GoogleDeliveryStore(googleDispatchConfiguration());
+const SUPABASE_CA="-----BEGIN CERTIFICATE-----\nMIIDxDCCAqygAwIBAgIUbLxMod62P2ktCiAkxnKJwtE9VPYwDQYJKoZIhvcNAQEL\nBQAwazELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0RlbHdhcmUxEzARBgNVBAcMCk5l\ndyBDYXN0bGUxFTATBgNVBAoMDFN1cGFiYXNlIEluYzEeMBwGA1UEAwwVU3VwYWJh\nc2UgUm9vdCAyMDIxIENBMB4XDTIxMDQyODEwNTY1M1oXDTMxMDQyNjEwNTY1M1ow\nazELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0RlbHdhcmUxEzARBgNVBAcMCk5ldyBD\nYXN0bGUxFTATBgNVBAoMDFN1cGFiYXNlIEluYzEeMBwGA1UEAwwVU3VwYWJhc2Ug\nUm9vdCAyMDIxIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqQXW\nQyHOB+qR2GJobCq/CBmQ40G0oDmCC3mzVnn8sv4XNeWtE5XcEL0uVih7Jo4Dkx1Q\nDmGHBH1zDfgs2qXiLb6xpw/CKQPypZW1JssOTMIfQppNQ87K75Ya0p25Y3ePS2t2\nGtvHxNjUV6kjOZjEn2yWEcBdpOVCUYBVFBNMB4YBHkNRDa/+S4uywAoaTWnCJLUi\ncvTlHmMw6xSQQn1UfRQHk50DMCEJ7Cy1RxrZJrkXXRP3LqQL2ijJ6F4yMfh+Gyb4\nO4XajoVj/+R4GwywKYrrS8PrSNtwxr5StlQO8zIQUSMiq26wM8mgELFlS/32Uclt\nNaQ1xBRizkzpZct9DwIDAQABo2AwXjALBgNVHQ8EBAMCAQYwHQYDVR0OBBYEFKjX\nuXY32CztkhImng4yJNUtaUYsMB8GA1UdIwQYMBaAFKjXuXY32CztkhImng4yJNUt\naUYsMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAB8spzNn+4VU\ntVxbdMaX+39Z50sc7uATmus16jmmHjhIHz+l/9GlJ5KqAMOx26mPZgfzG7oneL2b\nVW+WgYUkTT3XEPFWnTp2RJwQao8/tYPXWEJDc0WVQHrpmnWOFKU/d3MqBgBm5y+6\njB81TU/RG2rVerPDWP+1MMcNNy0491CTL5XQZ7JfDJJ9CCmXSdtTl4uUQnSuv/Qx\nCea13BX2ZgJc7Au30vihLhub52De4P/4gonKsNHYdbWjg7OWKwNv/zitGDVDB9Y2\nCMTyZKG3XEu5Ghl1LEnI3QmEKsqaCLv12BnVjbkSeZsMnevJPs1Ye6TjjJwdik5P\no/bKiIz+Fq8=\n-----END CERTIFICATE-----\n";
+// Atomic fixture admission prevents the ordinary maintenance sweep from
+// dispatching a deterministic fixture to an LLM worker between two RPCs.
+// It calls the same reviewed production functions under service_role.
+async function admitReserved(runId,input){
+ const {requireTenantContext}=await import('file:///app/dist/security/tenantContext.js');
+ assert.equal(requireTenantContext(context).userId,project.user_id);
+ const require=createRequire('file:///app/package.json'),{Client}=require('pg');
+ const u=new URL(process.env.DATABASE_URL);if(u.port==='6543')u.port='5432';
+ for(const n of ['ssl','sslmode','sslcert','sslkey','sslrootcert'])u.searchParams.delete(n);
+ const client=new Client({connectionString:u.href,ssl:{ca:SUPABASE_CA,rejectUnauthorized:true},connectionTimeoutMillis:15000,statement_timeout:15000});
+ await client.connect();
+ try{
+  await client.query('BEGIN');await client.query('SET LOCAL ROLE service_role');
+  const deliveryId=randomUUID();
+  const enq=await client.query('SELECT public.enqueue_google_canonical_run($1::uuid,$2::uuid,$3::uuid,$4::uuid,$5::jsonb,$6::text) AS receipt',[deliveryId,runId,project.user_id,project.id,JSON.stringify(input),process.env.XROGA_RELEASE_SHA]);
+  assert.equal(enq.rows[0].receipt.userId,project.user_id);assert.equal(enq.rows[0].receipt.runId,runId);
+  const reserved=await client.query('SELECT public.reserve_google_canonical_launch($1::uuid,$2::text,$3::uuid) AS receipt',[enq.rows[0].receipt.deliveryId,process.env.XROGA_RELEASE_SHA,randomUUID()]);
+  assert.equal(reserved.rows[0].receipt.state,'reserved');
+  await client.query('COMMIT');return enq.rows[0].receipt.deliveryId;
+ }catch(e){await client.query('ROLLBACK');throw e;}finally{await client.end();}
+}
+
 const store=new SupabaseProjectRuntimeStore();
 const runtime=createProjectRuntimeManager(project.user_id,context);
 const ownedRuns=[];
@@ -43,9 +67,8 @@ try{
  emit('FABRICATED_CONTEXT_AND_FOREIGN_PROJECT_DENIED_BEFORE_DISPATCH');
  const runId=randomUUID();ownedRuns.push(runId);
  const input={projectId:project.id,prompt:'Synthetic Batch 1 source85 Preview, no AI generation'};
- const deliveryId=await deliveries.enqueue(context,runId,input);
+ const deliveryId=await admitReserved(runId,input);
  assert.equal(await deliveries.enqueue(context,runId,input),deliveryId);
- assert.equal((await deliveries.reserve(deliveryId)).state,'reserved');
  await runs.withRunAttempt(async()=>{
   const claim=await deliveries.claim(deliveryId,runs.currentRunWorkerId());assert.ok(claim);
   assert.equal(requireCanonicalDeliveryClaim(claim).context.userId,project.user_id);
@@ -69,7 +92,7 @@ try{
   const active=session.processes.filter(p=>p.status==='running'&&p.port===3000);assert.equal(active.length,1);
   emit('OFFLINE_HTTP_WEBSOCKET_PROCESS_START');
   await runtime.stopProcess(sessionId,active[0].processId);
-  await runtime.startProcess(sessionId,{command:'node',args:['server.js'],cwd:'/work',networkPolicy:'isolated',port:3000,restartPolicy:'never',secretScopes:[]});
+  await runtime.startProcess(sessionId,{command:'node',args:['server.js'],cwd:active[0].cwd||'.',networkPolicy:active[0].networkPolicy,port:3000,restartPolicy:'never',secretScopes:[]});
   let response;
   for(let n=0;n<6;n++){
    response=await fetch(result.preview.url,{signal:AbortSignal.timeout(20000)});
@@ -100,9 +123,8 @@ try{
  // explicitly under a new native claim. No VM or external action is replayed.
  const recoveryRun=randomUUID();ownedRuns.push(recoveryRun);
  const nonce=randomUUID(),prompt='Synthetic Batch 1 process-loss '+nonce;
- const lostDelivery=await deliveries.enqueue(context,recoveryRun,{projectId:project.id,prompt});
- assert.equal((await deliveries.reserve(lostDelivery)).state,'reserved');
- const childSource=String.raw`import assert from 'node:assert/strict';await import('/app/dist/runtime/installSafeLogging.js');await import('/app/dist/loadPlatformEnvironment.js');const {GoogleDeliveryStore}=await import('/app/dist/workers/googleDeliveryStore.js');const {googleDispatchConfiguration}=await import('/app/dist/workers/googleDispatch.js');const r=await import('/app/dist/ai/runStore.js');const c=await import('/app/dist/ai/softwareAgent/softwareAgentCheckpoint.js');process.once('message',async input=>{try{await r.withRunAttempt(async()=>{const d=new GoogleDeliveryStore(googleDispatchConfiguration());const claim=await d.claim(input.deliveryId,r.currentRunWorkerId());assert.ok(claim);await r.adoptQueuedRunDurable(claim);const cap=r.captureAdmittedRunAttempt(claim.runId,claim.userId);const checkpoint={schemaVersion:'1.0.0',runId:claim.runId,projectId:input.projectId,repository:null,baseFingerprint:c.softwareAgentBaseFingerprint([]),changes:[{path:'batch1-recovery.txt',kind:'created',content:input.content}],evidence:{changedFiles:[],checks:[]},status:'active',blockers:[],failureCode:null,updatedAt:new Date().toISOString()};await new c.SupabaseSoftwareAgentCheckpointStore(claim.userId,cap).save(checkpoint);process.send({ready:true,claim,checkpoint});setInterval(()=>{},1000);});}catch{process.send({ready:false});process.exitCode=1;}});`;
+ const lostDelivery=await admitReserved(recoveryRun,{projectId:project.id,prompt});
+ const childSource=String.raw`import assert from 'node:assert/strict';await import('file:///app/dist/runtime/installSafeLogging.js');await import('file:///app/dist/loadPlatformEnvironment.js');const {GoogleDeliveryStore}=await import('file:///app/dist/workers/googleDeliveryStore.js');const {googleDispatchConfiguration}=await import('file:///app/dist/workers/googleDispatch.js');const r=await import('file:///app/dist/ai/runStore.js');const c=await import('file:///app/dist/ai/softwareAgent/softwareAgentCheckpoint.js');process.once('message',async input=>{try{await r.withRunAttempt(async()=>{const d=new GoogleDeliveryStore(googleDispatchConfiguration());const claim=await d.claim(input.deliveryId,r.currentRunWorkerId());assert.ok(claim);await r.adoptQueuedRunDurable(claim);const cap=r.captureAdmittedRunAttempt(claim.runId,claim.userId);const checkpoint={schemaVersion:'1.0.0',runId:claim.runId,projectId:input.projectId,repository:null,baseFingerprint:c.softwareAgentBaseFingerprint([]),changes:[{path:'batch1-recovery.txt',kind:'created',content:input.content}],evidence:{changedFiles:[],checks:[]},status:'active',blockers:[],failureCode:null,updatedAt:new Date().toISOString()};await new c.SupabaseSoftwareAgentCheckpointStore(claim.userId,cap).save(checkpoint);process.send({ready:true,claim,checkpoint});setInterval(()=>{},1000);});}catch{process.send({ready:false});process.exitCode=1;}});`;
  child=spawn(process.execPath,['--input-type=module','-e',childSource],{env:{...bootEnvironment,NODE_OPTIONS:''},stdio:['ignore','ignore','ignore','ipc']});
  const content='Synthetic durable source '+nonce+'\n';
  const ready=new Promise((resolve,reject)=>{child.once('message',v=>v.ready?resolve(v):reject(new Error('CHILD_CHECKPOINT_DENIED')));child.once('error',reject);});
@@ -111,8 +133,7 @@ try{
  const terminated=new Promise(resolve=>child.once('exit',(code,signal)=>resolve({code,signal})));
  child.kill('SIGKILL');assert.equal((await terminated).signal,'SIGKILL');child=null;
  assert.equal(await failInFlightRuns([recoveryRun],'worker_lost',{workerId:saved.claim.workerId}),1);
- const resumed=await deliveries.enqueue(context,recoveryRun,{projectId:project.id,prompt,clientMeta:{resumeRun:true}});
- assert.equal((await deliveries.reserve(resumed)).state,'reserved');
+ const resumed=await admitReserved(recoveryRun,{projectId:project.id,prompt,clientMeta:{resumeRun:true}});
  await runs.withRunAttempt(async()=>{
   const claim=await deliveries.claim(resumed,runs.currentRunWorkerId());assert.ok(claim);assert.notEqual(claim.generation,saved.claim.generation);
   await runs.adoptQueuedRunDurable(claim);
@@ -131,7 +152,7 @@ try{
   emit('REAL_PROCESS_KILL_DURABLE_RECOVERY_AND_STALE_GENERATION_DENIAL_PASS',{runId:recoveryRun,generation:claim.generation,contentSha256:createHash('sha256').update(content).digest('hex')});
  });
  const cancelledRun=randomUUID();ownedRuns.push(cancelledRun);
- const cancelledDelivery=await deliveries.enqueue(context,cancelledRun,{projectId:project.id,prompt:'Synthetic cancellation before external dispatch'});
+ const cancelledDelivery=await admitReserved(cancelledRun,{projectId:project.id,prompt:'Synthetic cancellation before external dispatch'});
  assert.equal(await runs.requestRunCancellation(cancelledRun,randomUUID()),false);
  assert.equal(await runs.requestRunCancellation(cancelledRun,project.user_id),true);
  assert.equal((await deliveries.reserve(cancelledDelivery)).state,'acknowledged');

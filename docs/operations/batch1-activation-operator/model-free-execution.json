@@ -1,0 +1,15 @@
+{
+  "status": "SUCCEEDED",
+  "startedAtUtc": "2026-10-30T22:58:50.410007+00:00",
+  "nonce": "bfaeb409-ec46-4667-986f-2dbbc06a21be",
+  "fixtureSourceSha256": "7332bd25ff310e685c37e6fcb4ef3331ef5a8736004949d4441858fd7628d40f",
+  "jobFingerprintBefore": "0f244a7bbb60caccf716051943b2a1b0bb58bd7b821b37f98a2dde5550bc6773",
+  "modelCalls": 0,
+  "execution": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/jobs/xroga-canonical-production/executions/xroga-canonical-production-f4jz7",
+  "operation": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/operations/ce985f5d-8b2e-497f-8ba8-227357eadd7a",
+  "completionTime": "2026-10-30T23:03:09.701903Z",
+  "runningCount": 0,
+  "succeededCount": 1,
+  "failedCount": 0,
+  "canonicalJobTemplateUnchanged": true
+}

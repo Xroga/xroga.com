@@ -1,0 +1,16 @@
+{
+  "status": "PASS_ROLLBACK_ONLY_PRODUCTION_ACCOUNTING",
+  "atUtc": "2026-10-30T23:14:41.655282+00:00",
+  "cases": [
+    "valid_zero_cost_receipt",
+    "same_receipt_idempotent_replay",
+    "changed_evidence_denial",
+    "unknown_owner_denial",
+    "test_receipt_absent_after_rollback"
+  ],
+  "sqlSha256": "badedbd241df489f95a5973d02cd202f66b4caa76b8e18cd409ce1faa6d4305e",
+  "modelCalls": 0,
+  "chargedUsd": 0,
+  "testWritesRolledBack": true,
+  "credentialsPersisted": false
+}

@@ -1,5 +1,14 @@
 # Batch 1 operator runbook
 
+Release completed: `PASS_BATCH1_ONLY_PRODUCTION_ACTIVATION`. Source85 API and
+canonical Job are paired and live, the queue is running and the source fence is
+enabled. Use [the final report](FINAL-BATCH1-PRODUCTION-ACCEPTANCE.md) for current
+identifiers and guarded recovery order. The preparation sequence below is
+historical. Do not replay it or reuse expired gate receipts. Later batches and
+Claude's microphone work remain outside this release.
+
+## Historical preparation checkpoint
+
 Current checkpoint, October 31: full protected fresh-backup restore, fence/source-transition tests, exact function rollback and guarded candidate readiness passed. Production SQL and the API/Job cutover remain pending exact owner approval. See `STATUS-20261031.md` and `PRODUCTION-FENCE-AND-CUTOVER-APPROVAL.md` before using the historical preparation steps below. Batch 1.5 and later batches remain on hold, and Claude owns microphone work.
 
 ## Known release identifiers

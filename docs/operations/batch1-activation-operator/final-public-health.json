@@ -1,0 +1,13 @@
+{
+  "health": {
+    "status": "ok",
+    "release": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+    "atUtc": "2026-10-30T23:19:40.255Z"
+  },
+  "readiness": {
+    "status": "ready",
+    "release": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+    "atUtc": "2026-10-30T23:19:42.331Z"
+  },
+  "transport": "HTTPS certificate validation enabled; existing Google load balancer IP resolved explicitly"
+}

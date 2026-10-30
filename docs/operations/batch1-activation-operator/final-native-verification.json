@@ -1,0 +1,45 @@
+{
+  "status": "PASS_FINAL_GOOGLE_RUNTIME_AND_CLEANUP",
+  "atUtc": "2026-10-30T23:08:48.304911+00:00",
+  "traffic": [
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-batch1-85f-serving-1031",
+      "percent": 100
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4"
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-9f62bba5",
+      "tag": "voice-9f62bba5"
+    }
+  ],
+  "jobImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+  "queue": "RUNNING",
+  "cancelledTaskRemoved": true,
+  "cancelledDispatchRequests": [
+    {
+      "atUtc": "2026-10-30T23:05:05.085678Z",
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/business-automations/tick",
+      "status": 204
+    },
+    {
+      "atUtc": "2026-10-30T23:03:04.670603Z",
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/canonical-dispatch",
+      "status": 204
+    }
+  ],
+  "remainingExecutionWorkers": [],
+  "fixtureBootDiskRemoved": true,
+  "lastJobExecution": {
+    "name": "xroga-canonical-production-f4jz7",
+    "createTime": "2026-10-30T22:58:51.946709Z",
+    "completionTime": "2026-10-30T23:03:09.701903Z",
+    "completionStatus": "EXECUTION_SUCCEEDED"
+  },
+  "modelCalls": 0
+}

@@ -1,0 +1,14 @@
+{
+  "allowedSource": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+  "rlsEnabled": true,
+  "anonRead": false,
+  "authenticatedRead": false,
+  "serviceRead": true,
+  "serviceUpdate": false,
+  "observedAtUtc": "2026-10-30T23:20:43.591132+00:00",
+  "advisor": {
+    "name": "rls_enabled_no_policy",
+    "level": "INFO",
+    "disposition": "Expected fail-closed service-only table. No client policy added. Direct role privileges verified."
+  }
+}

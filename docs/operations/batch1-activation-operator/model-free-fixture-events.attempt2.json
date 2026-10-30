@@ -1,0 +1,88 @@
+[
+  {
+    "check": "NATIVE_KMS_STARTUP_PASS",
+    "modelCalls": 0,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "atUtc": "2026-10-30T22:52:13.782Z",
+    "fixtureOnly": true,
+    "kind": "batch1-source85-production-fixture"
+  },
+  {
+    "kind": "batch1-source85-production-fixture",
+    "check": "FABRICATED_CONTEXT_AND_FOREIGN_PROJECT_DENIED_BEFORE_DISPATCH",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "fixtureOnly": true,
+    "modelCalls": 0,
+    "atUtc": "2026-10-30T22:52:14.469Z"
+  },
+  {
+    "fixtureOnly": true,
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "generation": "1e4abd9f-6d45-425e-99f7-6608c9fedb91",
+    "runId": "5ee2c140-5f13-4fc0-894d-863c2c353ad5",
+    "deliveryId": "6e6ca17d-9443-4e5e-a466-ca40ee405bee",
+    "atUtc": "2026-10-30T22:52:19.062Z",
+    "check": "NATIVE_ISSUED_CLAIM_AND_DUPLICATE_DENIAL_PASS",
+    "modelCalls": 0,
+    "kind": "batch1-source85-production-fixture"
+  },
+  {
+    "status": "success",
+    "atUtc": "2026-10-30T22:54:21.601Z",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "modelCalls": 0,
+    "kind": "batch1-source85-production-fixture",
+    "stage": "runtime.started",
+    "fixtureOnly": true,
+    "check": "PREVIEW_STAGE"
+  },
+  {
+    "fixtureOnly": true,
+    "check": "PREVIEW_STAGE",
+    "kind": "batch1-source85-production-fixture",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "atUtc": "2026-10-30T22:54:38.636Z",
+    "modelCalls": 0,
+    "stage": "process.started",
+    "status": "success"
+  },
+  {
+    "runId": "5ee2c140-5f13-4fc0-894d-863c2c353ad5",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "fixtureOnly": true,
+    "check": "PRIVATE_WORKER_OWNERSHIP_AND_PREVIEW_READY_PASS",
+    "kind": "batch1-source85-production-fixture",
+    "modelCalls": 0,
+    "sessionId": "5acdc91e-7f5c-4cbd-9f53-fa2b827f67c6",
+    "atUtc": "2026-10-30T22:54:45.915Z"
+  },
+  {
+    "atUtc": "2026-10-30T22:54:45.916Z",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "kind": "batch1-source85-production-fixture",
+    "fixtureOnly": true,
+    "modelCalls": 0,
+    "check": "OFFLINE_HTTP_WEBSOCKET_PROCESS_START"
+  },
+  {
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "message": "GCE_NETWORK_POLICY_NOT_ADMITTED",
+    "kind": "batch1-source85-production-fixture",
+    "lastCheck": "OFFLINE_HTTP_WEBSOCKET_PROCESS_START",
+    "check": "STOPPED",
+    "errorCode": "GCE_NETWORK_POLICY_NOT_ADMITTED",
+    "errorName": "GceControlError",
+    "atUtc": "2026-10-30T22:55:01.340Z",
+    "fixtureOnly": true,
+    "modelCalls": 0
+  },
+  {
+    "fixtureOnly": true,
+    "modelCalls": 0,
+    "sessionId": "5acdc91e-7f5c-4cbd-9f53-fa2b827f67c6",
+    "atUtc": "2026-10-30T22:55:57.476Z",
+    "kind": "batch1-source85-production-fixture",
+    "projectId": "b99fd9fc-37bd-429e-a3de-0dcde2bd56ab",
+    "check": "FAILURE_WORKER_CLEANUP_PASS"
+  }
+]

@@ -1,0 +1,267 @@
+{
+  "status": "PASS_BATCH1_ONLY_PRODUCTION_ACTIVATION",
+  "recordedAtUtc": "2026-10-30T23:20:43.586650+00:00",
+  "applicationSource": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+  "revision": "xroga-api-batch1-85f-serving-1031",
+  "imageDigest": "sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+  "canonicalJob": "xroga-canonical-production",
+  "queue": "RUNNING",
+  "sourceFence": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+  "phase4": {
+    "criteriaPassed": 12,
+    "criteriaTotal": 12,
+    "strictAudit": {
+      "total": 148,
+      "reviewed": 148,
+      "pending": 0,
+      "unresolvedHighRiskBypasses": 0,
+      "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
+      "auditorModified": false
+    },
+    "criteria": [
+      {
+        "id": "XB01-C010-AC01",
+        "originalText": "All arbitrary outbound URL callers are inventoried.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "docs/xroga/security/egress-callers.json",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC02",
+        "originalText": "High-risk URL callers use central URL policy.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "docs/xroga/security/egress-caller-reviews.json",
+          "backend/src/security/boundedPublicGet.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC03",
+        "originalText": "All consequential external data egress passes egressPolicy.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "docs/xroga/security/egress-caller-reviews.json",
+          "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+          "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC04",
+        "originalText": "businessAction integrates authority + egress before provider execution.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/egress/egress.integration.test.ts",
+          "backend/src/services/integrations/composioProvenance.security.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC05",
+        "originalText": "Tool descriptions cannot create authority.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/egress/egress.integration.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC06",
+        "originalText": "Malicious document/web/tool-output tests cannot override policy.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/egress/egress.integration.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC07",
+        "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/boundedPublicGet.test.ts",
+          "backend/src/security/egress/egress.integration.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC08",
+        "originalText": "Redirect-to-private test passes.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/egress/egress.integration.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC09",
+        "originalText": "Cross-tenant external upload test passes.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/egress/fileEgress.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC10",
+        "originalText": "Credential-secret egress test passes.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/egress/heldCredentialFloor.test.ts",
+          "backend/src/services/integrations/githubPublication.security.test.ts",
+          "docs/xroga/evidence/command-010/BROWSER-INPUT-CREDENTIAL-FLOOR-20261028.json",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC11",
+        "originalText": "Security decision evidence contains no raw credential.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "backend/src/security/egress/egress.integration.test.ts",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      },
+      {
+        "id": "XB01-C010-AC12",
+        "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
+        "result": "PASS_PRESERVED_SOURCE_ACCEPTANCE_DEPLOYED",
+        "evidence": [
+          "docs/xroga/security/egress-callers.json",
+          "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+        ],
+        "liveRetest": "Not individually repeated. Accepted source unchanged except the separately tested Preview admission timeout."
+      }
+    ],
+    "auditReexecutedThisRelease": false
+  },
+  "liveFixture": {
+    "status": "SUCCEEDED",
+    "startedAtUtc": "2026-10-30T22:58:50.410007+00:00",
+    "nonce": "bfaeb409-ec46-4667-986f-2dbbc06a21be",
+    "fixtureSourceSha256": "7332bd25ff310e685c37e6fcb4ef3331ef5a8736004949d4441858fd7628d40f",
+    "jobFingerprintBefore": "0f244a7bbb60caccf716051943b2a1b0bb58bd7b821b37f98a2dde5550bc6773",
+    "modelCalls": 0,
+    "execution": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/jobs/xroga-canonical-production/executions/xroga-canonical-production-f4jz7",
+    "operation": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/operations/ce985f5d-8b2e-497f-8ba8-227357eadd7a",
+    "completionTime": "2026-10-30T23:03:09.701903Z",
+    "runningCount": 0,
+    "succeededCount": 1,
+    "failedCount": 0,
+    "canonicalJobTemplateUnchanged": true
+  },
+  "liveEvents": 16,
+  "accounting": {
+    "status": "PASS_ROLLBACK_ONLY_PRODUCTION_ACCOUNTING",
+    "atUtc": "2026-10-30T23:14:41.655282+00:00",
+    "cases": [
+      "valid_zero_cost_receipt",
+      "same_receipt_idempotent_replay",
+      "changed_evidence_denial",
+      "unknown_owner_denial",
+      "test_receipt_absent_after_rollback"
+    ],
+    "sqlSha256": "badedbd241df489f95a5973d02cd202f66b4caa76b8e18cd409ce1faa6d4305e",
+    "modelCalls": 0,
+    "chargedUsd": 0,
+    "testWritesRolledBack": true,
+    "credentialsPersisted": false
+  },
+  "runtimeCleanup": {
+    "status": "PASS_FINAL_GOOGLE_RUNTIME_AND_CLEANUP",
+    "atUtc": "2026-10-30T23:08:48.304911+00:00",
+    "traffic": [
+      {
+        "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+        "revision": "xroga-api-batch1-85f-serving-1031",
+        "percent": 100
+      },
+      {
+        "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+        "revision": "xroga-api-voice-054d7ae4",
+        "tag": "voice-054d7ae4"
+      },
+      {
+        "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+        "revision": "xroga-api-voice-9f62bba5",
+        "tag": "voice-9f62bba5"
+      }
+    ],
+    "jobImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+    "queue": "RUNNING",
+    "cancelledTaskRemoved": true,
+    "cancelledDispatchRequests": [
+      {
+        "atUtc": "2026-10-30T23:05:05.085678Z",
+        "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/business-automations/tick",
+        "status": 204
+      },
+      {
+        "atUtc": "2026-10-30T23:03:04.670603Z",
+        "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/canonical-dispatch",
+        "status": 204
+      }
+    ],
+    "remainingExecutionWorkers": [],
+    "fixtureBootDiskRemoved": true,
+    "lastJobExecution": {
+      "name": "xroga-canonical-production-f4jz7",
+      "createTime": "2026-10-30T22:58:51.946709Z",
+      "completionTime": "2026-10-30T23:03:09.701903Z",
+      "completionStatus": "EXECUTION_SUCCEEDED"
+    },
+    "modelCalls": 0
+  },
+  "exactSourceCi": {
+    "runId": 40898491952,
+    "conclusion": "success",
+    "unit": "success",
+    "integratedCandidate": "skipped",
+    "restarted": false
+  },
+  "modelDependentFunctionality": "KNOWN_LIMITATIONS_NOT_RETESTED_NO_MODEL_CALLS",
+  "otherBatchesActivated": false,
+  "microphoneChanged": false,
+  "productionBlockingItems": [],
+  "recovery": {
+    "revision": "xroga-api-batch1-ca94-serving3",
+    "imageDigest": "sha256:49505ef989f3c686ca443d2fa6a7265175e35d7a8440f75c6b0773e2d5862888",
+    "backupPrefix": "gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261030T220451Z/",
+    "restoredAndFenceRollbackTested": true,
+    "liveRollbackTrafficDrillPerformed": false
+  },
+  "cost": {
+    "approvedVerificationCeilingUsd": 0.25,
+    "modelSpendUsd": 0,
+    "actualCloudInvoiceSettled": false,
+    "estimatedVerificationUse": "Below approved $0.25 ceiling. Two sequential temporary VM incarnations, one concurrent logical slot. Both VMs and boot disks deleted.",
+    "noNewRecurringService": true
+  },
+  "scopeLimit": "Batch 1 source enforcement and listed model-free live checks. No claim of paid-provider task completion or later-batch activation."
+}

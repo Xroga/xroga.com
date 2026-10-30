@@ -1,0 +1,192 @@
+{
+  "template": {
+    "labels": {
+      "xroga-source-sha": "ca94c2f8a813524e47f5f7abc868acb1618a1c45"
+    },
+    "parallelism": 1,
+    "taskCount": 1,
+    "template": {
+      "containers": [
+        {
+          "name": "worker",
+          "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:49505ef989f3c686ca443d2fa6a7265175e35d7a8440f75c6b0773e2d5862888",
+          "command": [
+            "node",
+            "dist/scripts/runCanonicalWorker.js"
+          ],
+          "env": [
+            {
+              "name": "NODE_ENV",
+              "value": "production"
+            },
+            {
+              "name": "XROGA_PROJECT_RUNTIME_PROVIDER",
+              "value": "google-gce"
+            },
+            {
+              "name": "XROGA_BACKGROUND_EXECUTION_PROVIDER",
+              "value": "google-jobs"
+            },
+            {
+              "name": "XROGA_CREDENTIAL_KMS_PROVIDER",
+              "value": "google_cloud"
+            },
+            {
+              "name": "XROGA_GOOGLE_CLOUD_AUTH_MODE",
+              "value": "metadata_adc"
+            },
+            {
+              "name": "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+              "value": "projects/project-c40d4821-e647-4fa2-92d/locations/us-central1/keyRings/xroga-p3-verify-20261023/cryptoKeys/xroga-production-credentials"
+            },
+            {
+              "name": "XROGA_PLATFORM_CONFIG_FILE",
+              "value": "/secrets/xroga-platform/config.json"
+            },
+            {
+              "name": "XROGA_GCE_PROJECT",
+              "value": "project-c40d4821-e647-4fa2-92d"
+            },
+            {
+              "name": "XROGA_GCE_ZONE",
+              "value": "us-central1-a"
+            },
+            {
+              "name": "XROGA_GCE_SUBNET",
+              "value": "projects/project-c40d4821-e647-4fa2-92d/regions/us-central1/subnetworks/xroga-verify-subnet"
+            },
+            {
+              "name": "XROGA_GCE_BASE_IMAGE",
+              "value": "xroga-exec-base-20261026"
+            },
+            {
+              "name": "XROGA_GCE_BASE_IMAGE_ID",
+              "value": "5308884476316794212"
+            },
+            {
+              "name": "XROGA_GCE_SERVICE_ACCOUNT",
+              "value": "xroga-api-runtime@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com"
+            },
+            {
+              "name": "XROGA_GCE_ADMITTED_IMAGES",
+              "value": "node@sha256:25b3eb23a00590b7499f2a2ce939322727fcce1b15fdd69754fcd09536a3ae2c,mcr.microsoft.com/playwright@sha256:baed2032d533817f3dbe6425de795788430ba345e819a1201337009ba17c9d07,registry-1.docker.io/library/python@sha256:aa679aa4eed6eb56c1dc6ad3f1b98b7d2d788fd961596779d188fdedad97fb38,registry-1.docker.io/library/rust@sha256:c5d6b2e15a5d94ee3ec8494c1ab0cbb8a12440bbe4dc9e5e3b4b0624d2efd668"
+            },
+            {
+              "name": "XROGA_GCE_MAX_INSTANCES",
+              "value": "2"
+            },
+            {
+              "name": "XROGA_GCE_DEFAULT_IMAGE",
+              "value": "node@sha256:25b3eb23a00590b7499f2a2ce939322727fcce1b15fdd69754fcd09536a3ae2c"
+            },
+            {
+              "name": "XROGA_GCE_NODE_IMAGE",
+              "value": "node@sha256:25b3eb23a00590b7499f2a2ce939322727fcce1b15fdd69754fcd09536a3ae2c"
+            },
+            {
+              "name": "XROGA_GCE_PYTHON_IMAGE",
+              "value": "registry-1.docker.io/library/python@sha256:aa679aa4eed6eb56c1dc6ad3f1b98b7d2d788fd961596779d188fdedad97fb38"
+            },
+            {
+              "name": "XROGA_GCE_RUST_IMAGE",
+              "value": "registry-1.docker.io/library/rust@sha256:c5d6b2e15a5d94ee3ec8494c1ab0cbb8a12440bbe4dc9e5e3b4b0624d2efd668"
+            },
+            {
+              "name": "XROGA_SANDBOX_BROWSER_IMAGE",
+              "value": "mcr.microsoft.com/playwright@sha256:baed2032d533817f3dbe6425de795788430ba345e819a1201337009ba17c9d07"
+            },
+            {
+              "name": "XROGA_GOOGLE_DISPATCH_REGION",
+              "value": "us-east4"
+            },
+            {
+              "name": "XROGA_GOOGLE_TASK_QUEUE",
+              "value": "xroga-canonical-production"
+            },
+            {
+              "name": "XROGA_GOOGLE_WORKER_JOB",
+              "value": "xroga-canonical-production"
+            },
+            {
+              "name": "XROGA_GOOGLE_DISPATCH_URL",
+              "value": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/canonical-dispatch"
+            },
+            {
+              "name": "XROGA_GOOGLE_DISPATCH_ACCOUNT",
+              "value": "xroga-canonical-dispatch@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com"
+            },
+            {
+              "name": "XROGA_GOOGLE_WORKER_IMAGE",
+              "value": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:49505ef989f3c686ca443d2fa6a7265175e35d7a8440f75c6b0773e2d5862888"
+            },
+            {
+              "name": "XROGA_AUTOMATION_SCHEDULER_MODE",
+              "value": "cloud"
+            },
+            {
+              "name": "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+              "value": "https://xroga-api-422lt7eujq-uk.a.run.app"
+            },
+            {
+              "name": "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
+              "value": "xroga-automation-scheduler@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com"
+            },
+            {
+              "name": "XROGA_PREVIEW_BASE_DOMAIN",
+              "value": "preview.xroga.com"
+            },
+            {
+              "name": "XROGA_RUNTIME_ROLE",
+              "value": "canonical-worker"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "1",
+              "memory": "1Gi"
+            }
+          },
+          "volumeMounts": [
+            {
+              "name": "xroga-platform",
+              "mountPath": "/secrets/xroga-platform"
+            }
+          ]
+        }
+      ],
+      "volumes": [
+        {
+          "name": "xroga-platform",
+          "secret": {
+            "secret": "projects/project-c40d4821-e647-4fa2-92d/secrets/xroga-platform-production",
+            "items": [
+              {
+                "path": "config.json",
+                "version": "3",
+                "mode": 292
+              }
+            ]
+          }
+        }
+      ],
+      "maxRetries": 0,
+      "timeout": "3600s",
+      "serviceAccount": "xroga-api-runtime@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+      "executionEnvironment": "EXECUTION_ENVIRONMENT_GEN2",
+      "vpcAccess": {
+        "egress": "PRIVATE_RANGES_ONLY",
+        "networkInterfaces": [
+          {
+            "network": "projects/project-c40d4821-e647-4fa2-92d/global/networks/xroga-verify-net",
+            "subnetwork": "projects/project-c40d4821-e647-4fa2-92d/regions/us-east4/subnetworks/xroga-api-private"
+          }
+        ]
+      }
+    },
+    "client": "gcloud",
+    "clientVersion": "591.0.0"
+  },
+  "labels": {
+    "xroga-source-sha": "ca94c2f8a813524e47f5f7abc868acb1618a1c45"
+  }
+}

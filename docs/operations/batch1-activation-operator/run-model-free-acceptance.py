@@ -36,14 +36,15 @@ else:
  assert execution.startswith(JOB+'/executions/'),'EXECUTION_NAME_MISSING_INSPECT_OPERATION'
  state.update(status='RUNNING',execution=execution,operation=op['name']);save(journal.name,state)
  print(json.dumps({'execution':execution,'fixtureSourceSha256':state['fixtureSourceSha256'],'templateUnchanged':True}),flush=True)
-seen=set();events=[];end=time.monotonic()+1230
+seen=set();events=[];end=time.monotonic()+1230;completed_observed=None
 try:
  while time.monotonic()<end:
   result=run(state['execution'])
   logs=api('https://logging.googleapis.com/v2/entries:list','POST',{'resourceNames':['projects/'+P],
-   'filter':'resource.type="cloud_run_job" AND labels."run.googleapis.com/execution_name"="'+state['execution'].rsplit('/',1)[-1]+'"',
+   'filter':'resource.type="cloud_run_job" AND resource.labels.job_name="xroga-canonical-production" AND timestamp>="'+state['startedAtUtc']+'"',
    'pageSize':300,'orderBy':'timestamp asc'})
   for entry in logs.get('entries',[]):
+   if entry.get('labels',{}).get('run.googleapis.com/execution_name')!=state['execution'].rsplit('/',1)[-1]:continue
    identity=entry.get('insertId')
    if identity in seen:continue
    seen.add(identity)
@@ -55,6 +56,9 @@ try:
     events.append(value);print(json.dumps(value),flush=True)
   save('model-free-fixture-events.json',events)
   if result.get('completionTime'):
+   if completed_observed is None:completed_observed=time.monotonic()
+   if not events and time.monotonic()-completed_observed<40:
+    time.sleep(5);continue
    state.update(status='SUCCEEDED' if result.get('succeededCount')==1 else 'FAILED',completionTime=result['completionTime'],
     runningCount=result.get('runningCount',0),succeededCount=result.get('succeededCount',0),failedCount=result.get('failedCount',0))
    save(journal.name,state);break
