@@ -65755,7 +65755,7 @@
       "id": "surface:bf7e17a49c3db65f545f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
-      "sha256": "65c1c3e532496b78fcab588c0ad307cfdee6405ace7a78dcef45204631a405d2",
+      "sha256": "ea866014c30a9a824e07e9510b6afb2ff365042fa1eb7162cf1161cafd09aa53",
       "symbols": [
         "FEEDS",
         "GrowthStudio",
@@ -137010,7 +137010,7 @@
     {
       "id": "test-suite:e5363972ca71eff9cf74",
       "sourcePath": "frontend/src/components/homepage-next/s03/s03.test.ts",
-      "declaredTests": 38,
+      "declaredTests": 39,
       "skipLocations": [],
       "focusLocations": []
     },

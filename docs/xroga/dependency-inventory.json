@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1e1ec970a5afc9a016ffb5974e6da463185f8007",
+  "source_sha": "b9625af9fdc6691d7b198ff28d236c1f10f0e203",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19398,7 +19398,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
-      "sha256": "65c1c3e532496b78fcab588c0ad307cfdee6405ace7a78dcef45204631a405d2"
+      "sha256": "ea866014c30a9a824e07e9510b6afb2ff365042fa1eb7162cf1161cafd09aa53"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
