@@ -39,6 +39,19 @@
   row-gap: 10px;
   justify-items: center;
 }
+/* phones: the server HTML renders the desktop stage before the page knows it is on a phone; on a phone-width screen it already lays out like the phone stage (orb first, the work object and tools appended below once the page is ready), so the orb never jumps */
+@media (max-width: 639px) {
+  .stage[data-mode='desk'] {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'centre';
+    row-gap: 10px;
+    justify-items: center;
+  }
+  .stage[data-mode='desk'] .left,
+  .stage[data-mode='desk'] .right {
+    display: none;
+  }
+}
 /* the work object is 318px wide: on phones narrower than 350px it scales to fit the gutters */
 @media (max-width: 349px) { .stage[data-mode='mobile'] { --wk: 0.9; } }
 .stage[data-mode='mobile'] .left,
