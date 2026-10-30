@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "736a7deee9fa6b0194d8abf241f4ee7ba9b5fd51",
+  "source_sha": "fa42d372e3b30e674b9fbce2137a6e21569a497b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15156,7 +15156,7 @@
     },
     {
       "path": ".vercel/project.json",
-      "presence": "PRESENT",
+      "presence": "ABSENT",
       "role": "Existing runtime/build/verification configuration"
     },
     {
@@ -15359,10 +15359,6 @@
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
       "sha256": "90ee08666139cde99e0856ef27832e8e1b7473bd698fc7cae285f9fe48b46417"
-    },
-    {
-      "path": ".vercel/project.json",
-      "sha256": "978867a51bff89f97ca84a99eb20eb76980bb1c8fb7e4a71b6aac71a78d26c48"
     },
     {
       "path": "Dockerfile.api",
@@ -20974,7 +20970,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "c697b19e889aad80ad6294667ae7cc453889a38be9a4f7cef1dace8828a3ff07"
+      "sha256": "07e2ab8504794e1316f4e932b422fe20c9ccc6659cdb1b083fccc580aecf008d"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",

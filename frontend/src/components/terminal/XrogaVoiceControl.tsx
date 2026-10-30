@@ -261,16 +261,15 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
   const listening = mode === 'listening';
   const bar = mode !== 'idle' ? (<div className="xv-voice-capture-wrap">
       <div className={`xv-voice-capture-bar${mode === 'finalizing' ? ' is-transcribing' : ''}`} data-testid="xroga-voice-session">
-        <button type="button" className="xv-voice-capture-button xv-voice-capture-cancel" aria-label="Cancel voice typing" onClick={cancel}><X className="h-4 w-4" aria-hidden /></button>
-        <div className="xv-voice-capture-middle" role="status" aria-live="polite">
+        <button type="button" className="xv-voice-capture-button xv-voice-capture-cancel" aria-label="Cancel voice typing" onClick={cancel}><X aria-hidden /></button>
+        <div className="xv-voice-capture-middle" role="status" aria-live="polite" title="Your voice is sent to Cloudflare to be transcribed.">
           {mode === 'finalizing' ? <span className="xv-voice-capture-label">{notice ? 'Finishing transcription…' : 'Transcribing…'}</span>
             : mode === 'requesting_permission' ? <span className="xv-voice-capture-label">Allow microphone access</span>
             : speech.current ? <span className="xv-voice-capture-label">{heard ? `Listening… ${heard}` : 'Listening…'}</span>
             : <VoiceWaveform levels={levels} active={listening} />}
         </div>
-        <button type="button" className="xv-voice-capture-button xv-voice-capture-send" aria-label="Stop dictation" disabled={!listening} onClick={stop}><Square className="h-3.5 w-3.5" aria-hidden fill="currentColor" /></button>
+        <button type="button" className="xv-voice-capture-button xv-voice-capture-send" aria-label="Stop dictation" disabled={!listening} onClick={stop}><Square aria-hidden fill="currentColor" /></button>
       </div>
-      {!speech.current ? <p className="xv-voice-v8-hint" data-testid="xroga-voice-disclosure">Your voice is sent to Cloudflare to be transcribed.</p> : null}
       {notice && mode !== 'finalizing' ? <p role="status" className="xv-voice-v8-hint">{notice}</p> : null}
     </div>) : null;
   const problem = (mode === 'idle' && error) ? (<div className="xv-voice-v8-session">

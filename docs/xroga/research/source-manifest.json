@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "736a7deee9fa6b0194d8abf241f4ee7ba9b5fd51",
+  "source_sha": "fa42d372e3b30e674b9fbce2137a6e21569a497b",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5467,9 +5467,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "f1d87924f8876fd53f1eb2e8e7357a1966d2580cf19e3d034a3f54464a445ff2",
+      "sha256": "601ea81de865f33d866defcdd5b2346ab6926e55f7099e210e5c6fcf9c1e4627",
       "byte_size": 5080369,
-      "modified_timestamp": "2026-10-30T22:25:58.867Z",
+      "modified_timestamp": "2026-10-30T22:44:27.257Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -22653,9 +22653,9 @@
       "source_id": "SRC-41e3e1a7bd535ee1",
       "filename": "XrogaVoiceControl.tsx",
       "path_or_url": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "c697b19e889aad80ad6294667ae7cc453889a38be9a4f7cef1dace8828a3ff07",
-      "byte_size": 15249,
-      "modified_timestamp": "2026-10-30T22:20:46.358Z",
+      "sha256": "07e2ab8504794e1316f4e932b422fe20c9ccc6659cdb1b083fccc580aecf008d",
+      "byte_size": 15107,
+      "modified_timestamp": "2026-10-30T22:38:04.016Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

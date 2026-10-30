@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "release/mic-narrow-20261031",
-    "sha": "736a7deee9fa6b0194d8abf241f4ee7ba9b5fd51",
-    "sourceTimestampUtc": "2026-10-31T03:24:51+05:00",
-    "auditStartedUtc": "2026-10-30T22:25:56.147Z",
+    "sha": "fa42d372e3b30e674b9fbce2137a6e21569a497b",
+    "sourceTimestampUtc": "2026-10-31T03:28:25+05:00",
+    "auditStartedUtc": "2026-10-30T22:44:26.646Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -88279,7 +88279,7 @@
       "id": "surface:41e3e1a7bd535ee1f059",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "c697b19e889aad80ad6294667ae7cc453889a38be9a4f7cef1dace8828a3ff07",
+      "sha256": "07e2ab8504794e1316f4e932b422fe20c9ccc6659cdb1b083fccc580aecf008d",
       "symbols": [
         "CaptureSession",
         "Mode",
@@ -132187,21 +132187,21 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:f7b9af211b1e4bb7b24f",
+      "id": "frontend-call:07ccbfeb6ba144abb110",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
       "line": 36,
       "callee": "api.slice",
       "reachable": false
     },
     {
-      "id": "frontend-call:60859d1053d6607e225e",
+      "id": "frontend-call:99204761154e343d67f0",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
       "line": 36,
       "callee": "api.indexOf",
       "reachable": false
     },
     {
-      "id": "frontend-call:5b44dcf71daeb9c6c4e2",
+      "id": "frontend-call:8d94223a0617b6313d1e",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
       "line": 36,
       "callee": "api.indexOf",

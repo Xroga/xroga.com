@@ -4449,7 +4449,7 @@
         {
           "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
           "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
-          "sha256": "a0df5b28bcc4e7df3116bdf4648060984ffc85bba7be25cf61827b9797191908"
+          "sha256": "05d099ddd7199328a25e566b678cf96dcc916d81fb42fe62fc9b5e6881dde5fa"
         }
       ]
     }

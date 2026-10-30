@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "c5391f33a89a1d8c777c0b5893e6bae923a7374b8cc448a3207b482928a2455d",
+  "sourceTreeDigest": "1a8f7de3e75b6cab71f4c7c906e6d83e39397c8e5cbfe6849e2f18296ddfc220",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4763,7 +4763,7 @@
         {
           "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
           "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
-          "sha256": "a0df5b28bcc4e7df3116bdf4648060984ffc85bba7be25cf61827b9797191908"
+          "sha256": "05d099ddd7199328a25e566b678cf96dcc916d81fb42fe62fc9b5e6881dde5fa"
         }
       ]
     },
