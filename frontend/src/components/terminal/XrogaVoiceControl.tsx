@@ -16,6 +16,7 @@ import {
   type DictationConstructor,
 } from '@/lib/terminal/dictation';
 import { AudioLinesIcon, type AudioLinesIconHandle } from '../icons/animated/AudioLinesIcon';
+import { VoiceWaveform, voiceLevel, WAVE_HISTORY } from './VoiceWaveform';
 
 interface CaptureSession {
   abort: AbortController;
@@ -71,8 +72,19 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
   const speech = useRef<DictationController | null>(null);
   const [heard, setHeard] = useState('');
   const retryExpiry = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const publish = useRef(onVoiceDraft);
-  publish.current = onVoiceDraft;
+  const levels = useRef<number[]>([]);
+  const publish = useRef((text: string) => onVoiceDraft(text));
+  publish.current = (text: string) => {
+    onVoiceDraft(text);
+    // Hand the finished text back to the original editor, cursor at the end, ready to edit.
+    const root = trigger.current?.closest('form') ?? trigger.current?.parentElement;
+    window.setTimeout(() => {
+      const editor = root?.querySelector<HTMLTextAreaElement>('textarea');
+      if (!editor) return;
+      editor.focus();
+      editor.setSelectionRange(editor.value.length, editor.value.length);
+    }, 60);
+  };
 
   const release = useCallback((target: CaptureSession | null) => {
     if (!target) return;
@@ -87,6 +99,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
     speech.current?.abort(); speech.current = null; setHeard('');
     clearTimeout(retryExpiry.current);
     setRetryable(false); setError(''); setNotice('');
+    levels.current = [];
     setMode('idle');
   }, [release]);
 
@@ -215,7 +228,10 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
         pipeline.add(segment);
         if (pipeline.overloaded) finish(current, 'Your connection is too slow to keep up. Recording stopped; transcribing what was captured.');
       });
+      levels.current = [];
       await capture.begin(samples => {
+        levels.current.push(voiceLevel(samples));
+        if (levels.current.length > WAVE_HISTORY) levels.current.splice(0, levels.current.length - WAVE_HISTORY);
         current.segmenter?.push(samples);
         if ((current.segmenter?.seconds ?? 0) >= MAX_RECORDING_SECONDS) finish(current, 'Reached the 30-minute recording limit. Transcribing now.');
       });
@@ -242,17 +258,25 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
   };
 
   const listening = mode === 'listening';
-  const feedback = (mode !== 'idle' || error) ? (<div className="xv-voice-v8-session" data-testid="xroga-voice-session">
-      <div className="xv-voice-v8-primary">
-        {mode !== 'idle' ? <button type="button" className="xv-voice-v8-control" aria-label="Cancel voice typing" onClick={cancel}><X className="h-4 w-4" aria-hidden /></button> : null}
-        <span role="status" className="xv-voice-v8-status">{listening ? (heard ? `Listening… ${heard}` : 'Listening…') : mode === 'finalizing' ? 'Transcribing…' : mode === 'requesting_permission' ? 'Allow microphone access' : 'Voice input'}</span>
-        {listening ? <button type="button" className="xv-voice-v8-control" aria-label="Stop recording" onClick={stop}><Square className="h-4 w-4" aria-hidden /></button> : null}
+  const bar = mode !== 'idle' ? (<div className="xv-voice-capture-wrap">
+      <div className={`xv-voice-capture-bar${mode === 'finalizing' ? ' is-transcribing' : ''}`} data-testid="xroga-voice-session">
+        <button type="button" className="xv-voice-capture-button xv-voice-capture-cancel" aria-label="Cancel voice typing" onClick={cancel}><X className="h-4 w-4" aria-hidden /></button>
+        <div className="xv-voice-capture-middle" role="status" aria-live="polite">
+          {mode === 'finalizing' ? <span className="xv-voice-capture-label">{notice ? 'Finishing transcription…' : 'Transcribing…'}</span>
+            : mode === 'requesting_permission' ? <span className="xv-voice-capture-label">Allow microphone access</span>
+            : speech.current ? <span className="xv-voice-capture-label">{heard ? `Listening… ${heard}` : 'Listening…'}</span>
+            : <VoiceWaveform levels={levels} active={listening} />}
+        </div>
+        <button type="button" className="xv-voice-capture-button xv-voice-capture-send" aria-label="Stop dictation" disabled={!listening} onClick={stop}><Square className="h-3.5 w-3.5" aria-hidden fill="currentColor" /></button>
       </div>
-      {mode !== 'idle' && !speech.current ? <p className="xv-voice-v8-status" data-testid="xroga-voice-disclosure">Your voice is sent to Cloudflare to be transcribed.</p> : null}
-      {notice ? <p role="status" className="xv-voice-v8-status">{notice}</p> : null}
-      {error ? <p role="alert" className="xv-voice-v8-error">{error}</p> : null}
-      {retryable && mode === 'idle' ? <div className="xv-voice-v8-primary"><button type="button" className="xv-voice-v8-control xv-voice-v8-action" aria-label="Retry transcription" onClick={() => void retry()}>Retry</button><button type="button" className="xv-voice-v8-control xv-voice-v8-action" aria-label="Discard voice recording" onClick={cancel}>Discard</button></div> : null}
+      {!speech.current ? <p className="xv-voice-v8-hint" data-testid="xroga-voice-disclosure">Your voice is sent to Cloudflare to be transcribed.</p> : null}
+      {notice && mode !== 'finalizing' ? <p role="status" className="xv-voice-v8-hint">{notice}</p> : null}
     </div>) : null;
+  const problem = (mode === 'idle' && error) ? (<div className="xv-voice-v8-session">
+      <p role="alert" className="xv-voice-v8-error">{error}</p>
+      {retryable ? <div className="xv-voice-v8-primary"><button type="button" className="xv-voice-v8-control xv-voice-v8-action" aria-label="Retry transcription" onClick={() => void retry()}>Retry</button><button type="button" className="xv-voice-v8-control xv-voice-v8-action" aria-label="Discard voice recording" onClick={cancel}>Discard</button></div> : null}
+    </div>) : null;
+  const feedback = bar ?? problem;
   return <>
     <button ref={trigger} type="button" className={`xv-voice-icon-only xv-mic-btn${listening ? ' is-listening' : ''}`}
       disabled={disabled || mode === 'requesting_permission' || mode === 'finalizing'}

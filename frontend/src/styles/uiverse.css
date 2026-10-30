@@ -6298,3 +6298,13 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 }
 
 .xv-voice-icon-only:focus-visible, .xv-voice-v8-control:focus-visible { outline: 2px solid currentColor !important; outline-offset: 3px; }
+
+/* Dictation bar: cancel, live waveform and stop replace the composer row while recording. */
+.xv-voice-capture-wrap { width: 100%; min-width: 0; }
+.xv-voice-capture-bar { min-height: 52px; border-radius: 26px; padding: 6px 8px; }
+.xv-voice-capture-bar .xv-voice-capture-button { width: 36px; height: 36px; flex-basis: 36px; }
+.xv-voice-capture-bar .xv-voice-capture-send { color: #111; background: #fff; border-color: transparent; }
+.xv-voice-capture-bar .xv-voice-capture-send:hover:not(:disabled) { color: #111; background: #e6e6e6; }
+.xv-voice-capture-middle { display: flex; min-width: 0; height: 36px; align-items: center; color: var(--muted); }
+.xv-voice-live-wave { display: block; width: 100%; height: 100%; color: color-mix(in srgb, var(--foreground) 70%, var(--muted)); }
+.xv-voice-capture-label { font-size: 13px; font-weight: 600; color: var(--foreground); padding-inline: 6px; }

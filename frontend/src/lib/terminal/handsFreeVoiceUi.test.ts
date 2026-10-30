@@ -6,7 +6,7 @@ const source=(p:string)=>fs.readFileSync(path.resolve(__dirname,p),'utf8');
 test('single manual dictation control has no spoken commands, auto-send or conversation restart',()=>{
  const voice=source('../../components/terminal/XrogaVoiceControl.tsx');
  assert.doesNotMatch(voice,/SEND_COMMANDS|onVoiceSend|autoSendTimerRef|speechSynthesis|new SpeechRecognition|webkitSpeechRecognition\(|conversationRef|optionsOpen|speechLanguage|ChevronDown/);
- assert.match(voice,/Stop recording/);assert.match(voice,/Cancel voice typing/);
+ assert.match(voice,/Stop dictation/);assert.match(voice,/VoiceWaveform/);assert.match(voice,/editor.focus\(\)/);assert.match(voice,/Cancel voice typing/);
  assert.match(voice,/startSpeechFallback/);assert.match(voice,/DictationController/);assert.match(voice,/pagehide/);assert.match(voice,/session.current !== current/);
 });
 test('dictation uses Cloudflare through the authenticated Xroga voice API only, with no on-device model',()=>{
