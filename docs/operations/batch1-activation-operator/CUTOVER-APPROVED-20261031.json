@@ -1,0 +1,9 @@
+{
+  "approved": true,
+  "packageCommit": "ca01136f77da1e930559159e1a08f437d0027652",
+  "answer": "Approve this exact Batch 1 cutover package",
+  "recordedAtUtc": "2026-10-30T22:27:35.586275+00:00",
+  "maintenanceCeilingMinutes": 60,
+  "testConsumptionCeilingUsd": 0.25,
+  "noModelCalls": true
+}
