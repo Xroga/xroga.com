@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "74f7fe40d7a8757c7c5bd8d7e53bcce484d30579e2687ebafa89fb3a53022cc7",
+  "reviewRegistrySha256": "96896b6eaaaa8a3655c2cb34e08f24e05814e01ffd5b7023090bb52c56edcc55",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -4496,7 +4496,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "cdd9ea7347ceabed4ac5"
+        "id": "3cb110b5eb024dc522c2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -8276,7 +8276,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cdd9ea7347ceabed4ac5"
+        "id": "3cb110b5eb024dc522c2"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -20001,15 +20001,15 @@
       }
     },
     {
-      "id": "cdd9ea7347ceabed4ac5",
+      "id": "3cb110b5eb024dc522c2",
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 41,
+      "line": 44,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501",
+      "sourceSha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver: a built-in Buffer copy of the request body, with no database or Storage client receiver. Provider admission and settlement happen in beginVoiceRequest, which is reviewed separately.",
         "reason": "Only this built-in conversion is excluded. Free voice transport and accounting remain separately reviewed and tested.",

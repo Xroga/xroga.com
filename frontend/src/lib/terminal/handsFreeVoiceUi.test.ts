@@ -12,7 +12,7 @@ test('single manual dictation control has no spoken commands, auto-send or conve
 test('dictation uses Cloudflare through the authenticated Xroga voice API only, with no on-device model',()=>{
  const voice=source('../../components/terminal/XrogaVoiceControl.tsx');
  assert.match(voice,/transcribeVoiceAudio\(wav, signal, \{ freeOnly: true, preparedPcm: true, expectedToken: token \}\)/);
- assert.match(voice,/Your voice is sent to Cloudflare to be transcribed\./);
+ assert.match(voice,/title="Your voice is sent to Cloudflare to be transcribed\."/);assert.doesNotMatch(voice,/xroga-voice-disclosure/);assert.match(voice,/warmVoiceBackend\(\);/);
  assert.doesNotMatch(voice,/fetch\(|huggingface|onnx|transformers|voiceLocal|voiceEngine|new Worker/);
  const api=source('../voiceApi.ts');
  assert.match(api,/transcribe-free/);assert.doesNotMatch(api,/api\.cloudflare\.com|CLOUDFLARE/);
@@ -30,4 +30,10 @@ test('protected server routes keep language auto-detection and canonical account
  const free=source('../../../../backend/src/routes/voiceFree.ts');
  assert.match(free,/@cf\/openai\/whisper-large-v3-turbo|FREE_VOICE_MODEL/);assert.match(free,/task: 'transcribe'/);
  assert.doesNotMatch(free,/\blanguage:\s*['"]/);
+});
+test('voice backend wake-up request carries no credentials, body or user data and its response is ignored',()=>{
+ const api=source('../voiceApi.ts');
+ const warm=api.slice(api.indexOf('export function warmVoiceBackend'),api.indexOf('export async function transcribeVoiceAudio'));
+ assert.match(warm,/method: 'GET'/);assert.match(warm,/mode: 'no-cors'/);assert.match(warm,/credentials: 'omit'/);
+ assert.doesNotMatch(warm,/Authorization|getAccessToken|body:|JSON|Blob|token/);
 });

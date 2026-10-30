@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import express from 'express';
 import voice from './voice.js';
+import {VOICE_VOCABULARY} from './voiceFree.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {FREE_VOICE_MODEL} from '../ai/voiceBudget.js';
 
@@ -71,7 +72,7 @@ test('free speech route preserves original actor, credential, reservation and pu
     assert.equal(url.href, `https://api.cloudflare.com/client/v4/accounts/${account}/ai/run/${FREE_VOICE_MODEL}`);
     assert.equal(init?.redirect, 'manual'); assert.ok(init?.signal);
     assert.equal(new Headers(init.headers).get('authorization'), `Bearer ${token}`);
-    const body = JSON.parse(String(init.body)); assert.equal(body.task, 'transcribe'); assert.equal(body.vad_filter, true);
+    const body = JSON.parse(String(init.body)); assert.equal(body.task, 'transcribe'); assert.equal(body.vad_filter, true); assert.equal(body.initial_prompt, VOICE_VOCABULARY);
     assert.equal(body.condition_on_previous_text, false); assert.equal(body.language, undefined);
     assert.deepEqual(Buffer.from(body.audio, 'base64'), wav()); dispatches++; events.push('provider');
     if (mode === 'redirect') return new Response(null, {status: 307, headers: {location: 'https://untrusted.invalid'}});
