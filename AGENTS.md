@@ -33,23 +33,35 @@ This is local development hygiene, not a product scheduler or runtime dependency
 
 ## Mandatory cloud usage and cost containment
 
-Follow `docs/operations/cloud-usage-policy.md` before every cloud operation.
-Use local development or existing CI for code, lint, types, unit tests, repository
-audits and documentation. Cloud Shell is an interface, not free runtime capacity.
-Record the cloud-specific reason, exact approval, source, billing mode, instance
-bounds, lifetime, retry limit, retained cost and verified cleanup.
+Follow `docs/operations/cloud-usage-policy.md` for every cloud operation.
+Build the full Xroga execution platform. Prefer suitable existing infrastructure,
+open source, local processing, included CI and free quotas. Use paid resources
+when required for capability, security, reliability or isolation. Do not weaken
+the product or substitute an inadequate free option merely to lower the bill.
 
-Inspect every tagged revision. Zero-percent traffic does not stop revision-level
-minimum instances. Temporary candidates must explicitly use minimum zero and
-request-based CPU unless an exact exception is approved. Preserve startup guards,
-canonical API/Job source pairing, customer work and cold recovery assets.
+Keep ordinary code, types, lint, tests, repository audits and documentation on
+local or existing CI resources. Before material new spending, record the actual
+need, alternatives and their limitations, expected benefit, one-time/recurring/
+usage and idle costs, scaling bounds, owner, lifetime, cleanup and rollback.
+Normal operations within existing permissions, scope and budgets may continue
+without repeating approval requests for already-authorized steps.
 
-The founder's October 31 spending investigation is read-only. Pause nonessential
-new cloud activity. Production scaling, billing mode, routing, workers, queues
-and scheduler changes need a dependency assessment and explicit authorization.
-Never stop production automatically, enable paid monitoring to audit costs, or
-claim budget alerts are hard caps. Measure allocation and later posted SKU usage
-before claiming savings. Preserve the existing local storage cleanup rule.
+Prefer demand-driven workers, browser sessions and heavy execution where safe.
+Inspect every tagged revision. Zero-percent traffic does not stop a revision's
+minimum instances. Explicitly bound temporary candidates and verify cleanup.
+Retain cold recovery images instead of silently accumulating warm old tags.
+Preserve startup guards, canonical API/Job pairing and local storage cleanup.
+
+Claude and Codex must inspect shared resources and ownership before provisioning,
+use existing mission/release records, designate one operator for a shared change
+window and avoid duplicated infrastructure or competing orchestration paths.
+Measure cost per verified successful task, idle cost, completion time, failures,
+retries and utilization together. Missing evidence is not a zero value or PASS.
+
+Do not stop critical production to save money, add paid monitoring unnecessarily,
+enable paid fallbacks or exceed approved spending. Separate gross usage, credits
+and cash cost. Budget alerts are not hard caps. This principle grants no new IAM,
+production deployment or batch activation authority and lifts no specific hold.
 
 ## Cursor Cloud specific instructions
 
