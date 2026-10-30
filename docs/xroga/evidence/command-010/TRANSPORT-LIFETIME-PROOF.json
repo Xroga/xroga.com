@@ -120,10 +120,20 @@
     }
   ],
   "counts": {
+    "total": 149,
+    "reviewed": 149,
+    "pending": 0,
+    "unresolvedHighRiskReviewCandidates": 0
+  },
+  "beforeFreeVoiceCallerCounts": {
     "total": 148,
     "reviewed": 148,
     "pending": 0,
     "unresolvedHighRiskReviewCandidates": 0
+  },
+  "freeVoiceCallerContinuation": {
+    "callerId": "19343161fc1afbd3f2fb",
+    "scope": "One newly reviewed authenticated free voice transport to the pinned Cloudflare account and model. Historical tests and acceptance claims are unchanged."
   },
   "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",

@@ -6,7 +6,7 @@ const read = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const dock = read('../components/terminal/TerminalDock.tsx');
 const starter = read('../components/dashboard/WorkspaceNewTerminal.tsx');
 const voice = read('../components/terminal/XrogaVoiceControl.tsx');
-const audio = read('../components/terminal/AudioLinesIcon.tsx');
+const audio = read('../components/icons/animated/AudioLinesIcon.tsx');
 const shell = read('../components/ui/AnchoredPortalPopover.tsx');
 const sidebar = read('../components/layout/Sidebar.tsx');
 const profile = read('../components/ui/ProfileQuickMenu.tsx');
@@ -15,8 +15,9 @@ const model = read('../components/terminal/BlackHoleVButton.tsx');
 test('an actionable model selector and live voice remain after removing decorative chevrons', () => {
   assert.match(model, /onClick=\{\(\) => setOpen\(value => !value\)\}/);
   assert.doesNotMatch(model, /<ChevronDown/);
-  assert.match(audio, /scaleY: \[1, scale, 1\]/);
-  assert.match(voice, /<AudioLinesIcon size=\{22\}/);
+  assert.match(voice, /from '\.\.\/icons\/animated\/AudioLinesIcon'/);
+  assert.match(audio, /scaleY: \[1, 1\.4, 0\.6, 1\]/);
+  assert.match(voice, /<AudioLinesIcon\b[^>]*size=\{22\}/);
   assert.match(dock, /aria-label=\{showJumpToLatest/);
   assert.doesNotMatch(dock, /data-short-tip|data-tooltip/);
 });
@@ -46,6 +47,6 @@ test('New Work and active conversations share one bordered composer with inline 
   assert.match(chatbar, /aria-label="Projects"/);
   assert.match(chatbar, /aria-label="Plugins"/);
   assert.doesNotMatch(shell, /<CompactAppTooltip/);
-  assert.match(audio, /LazyMotion features=\{domMin\}/);
+  assert.match(audio, /<IconMotion>/);
   assert.match(starter, /TASK_ACCEPTANCE\[label\]/);
 });

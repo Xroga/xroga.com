@@ -6,8 +6,10 @@ import {AuthorityError} from '../security/authority/enforce.js';
 import {beginVoiceRequest, VOICE_MODELS, voiceAwait} from '../ai/voiceBudget.js';
 import {requireVoicePcm} from '../ai/voicePcm.js';
 import {isTerminalModelFailure} from '../ai/providerRuntime.js';
+import freeVoice from './voiceFree.js';
 
 const router = Router();
+router.use(freeVoice);
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
 async function boundedVoiceResponse(response: Response, signal: AbortSignal): Promise<unknown> {
   const reader = response.body?.getReader(); if (!reader) throw new Error('Missing speech receipt.');

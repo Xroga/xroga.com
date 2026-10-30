@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "8d67dc7d97ea557070b9035c16b7e734bae94bb40799ae05793dd1391a2ae463",
+  "sourceTreeDigest": "de9614e8ce3434eeef73876d5db55a758ef16ab96cfea0969488304d7833bf00",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -2158,7 +2158,7 @@
     {
       "id": "fcbe4c75dea0e59bcb3a",
       "file": "backend/src/routes/voice.ts",
-      "line": 55,
+      "line": 57,
       "entryPoint": "<module-or-callback>",
       "transport": "fetch",
       "callee": "fetch",
@@ -2179,6 +2179,28 @@
           "path": "backend/src/routes/voice.security.test.ts",
           "marker": "actual voice route requires original actor and budget",
           "sha256": "677f058c8ff884dc8cbefd7ac7b869072d1ef08a1876045388703688ca0075df"
+        }
+      ]
+    },
+    {
+      "id": "19343161fc1afbd3f2fb",
+      "file": "backend/src/routes/voiceFree.ts",
+      "line": 58,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
+      "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voiceFree.security.test.ts",
+          "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
+          "sha256": "a3594573c1fd3b89c30e2bcc2ea9aac259cd4bca9be696e91fd669165b7f52ea"
         }
       ]
     },
@@ -4509,7 +4531,7 @@
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
-          "sha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
+          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481"
         }
       ]
     },
@@ -4819,6 +4841,7 @@
         "35923d1b52d197c378e1",
         "807c2948cdfa16e19b84",
         "fcbe4c75dea0e59bcb3a",
+        "19343161fc1afbd3f2fb",
         "e166bef56274bbddc0ad",
         "a7a8d74128349a90e3e8",
         "fcad57247cfb79779f95",
@@ -4989,8 +5012,8 @@
     }
   ],
   "counts": {
-    "total": 148,
-    "reviewed": 148,
+    "total": 149,
+    "reviewed": 149,
     "pending": 0,
     "unresolvedHighRiskBypasses": 0
   }

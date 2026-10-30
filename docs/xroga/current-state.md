@@ -1,21 +1,21 @@
 # Xroga repository truth map
 
-Source SHA: `a6384750e20fc4fd5f7d2f1e6100bddadf439208`. Branch observed: `claude/homepage-mobile-polish2`. Audit started: 2026-10-30T14:22:09.221Z.
+Source SHA: `f7ab2ef4bf922a7e547ae63b810965bd4aa6b7c5`. Branch observed: `voice-rebuild`. Audit started: 2026-10-30T20:22:55.075Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1781
-- routeRegistrations: 379
-- routes: 318
-- reachableRoutes: 235
+- surfaces: 1788
+- routeRegistrations: 381
+- routes: 319
+- reachableRoutes: 236
 - queues: 4
 - migrations: 159
 - workflows: 21
-- testSuites: 1032
-- declaredTests: 7064
-- classifiedMarkers: 398
+- testSuites: 1035
+- declaredTests: 7088
+- classifiedMarkers: 399
 - reachableMarkers: 333
 - absentRequiredPaths: 5
 - duplicateIds: 0

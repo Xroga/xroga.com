@@ -9421,76 +9421,6 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
-      "path": "backend/src/ai/voiceBudget.ts",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
-      "callIds": [
-        "c409db19505bbca8b298"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
-      "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
-      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
-      "evidence": [
-        {
-          "path": "backend/src/routes/voice.security.test.ts",
-          "marker": "actual voice route requires original actor and budget"
-        },
-        {
-          "path": "backend/src/ai/voiceBudget.ts",
-          "marker": "export async function beginVoiceRequest"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
-        "callIds": [
-          "c409db19505bbca8b298"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
-      "path": "backend/src/ai/voiceBudget.ts",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
-      "callIds": [
-        "a81f276b5c7cea8999c9",
-        "594ea07f9af5118c4266",
-        "12ad44841e8b80ce48f1",
-        "d5b54d745f6c26ee0c56",
-        "fe2129cb990345403b26",
-        "0b3f1d6b2ab5818b8c56"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
-      "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
-      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
-      "evidence": [
-        {
-          "path": "backend/src/routes/voice.security.test.ts",
-          "marker": "actual voice route requires original actor and budget"
-        },
-        {
-          "path": "backend/src/ai/voiceBudget.ts",
-          "marker": "export async function beginVoiceRequest"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
-        "callIds": [
-          "a81f276b5c7cea8999c9",
-          "594ea07f9af5118c4266",
-          "12ad44841e8b80ce48f1",
-          "d5b54d745f6c26ee0c56",
-          "fe2129cb990345403b26",
-          "0b3f1d6b2ab5818b8c56"
-        ],
-        "disposition": "SCOPED_BOUNDARY"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "backend/src/ai/webBudget.ts",
       "sourceSha256": "0970dd0edfcf52dfd97e0ce6b7397d8be00777491d2dcffb29a0baf864738d2d",
       "callIds": [
@@ -15959,36 +15889,6 @@
           "c9362c0020f645f8eada"
         ],
         "disposition": "SCOPED_BOUNDARY"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
-      "path": "backend/src/routes/voice.ts",
-      "sourceSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
-      "callIds": [
-        "e6afd0a34a779ea6aa43"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
-      "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
-      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
-      "evidence": [
-        {
-          "path": "backend/src/routes/voice.security.test.ts",
-          "marker": "actual voice route requires original actor and budget"
-        },
-        {
-          "path": "backend/src/routes/voice.ts",
-          "marker": "router.post('/transcribe'"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
-        "callIds": [
-          "e6afd0a34a779ea6aa43"
-        ],
-        "disposition": "NOT_PERSISTENCE"
       },
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
@@ -27692,9 +27592,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
       "callIds": [
-        "18f7c2043f2ceb0ebac3"
+        "01fce3ee8703d9146072"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
@@ -27735,38 +27635,6 @@
         "sourceSha256": "456bcddeced123a22c4655c4f3837357c7092158f6b5af677414daa32bdc92fa",
         "callIds": [
           "8e9b157c7d4fd26ad135"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
-      "callIds": [
-        "19d3d07d6723c7afb8b6"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-          "marker": "{Array.from({ length: bars }, (_, index) => {"
-        }
-      ],
-      "beforeVoiceSecurityCorrection": {
-        "sourceSha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad",
-        "callIds": [
-          "8f3c7995974f0b7357a6"
-        ]
-      },
-      "unchangedFunctionSha256": "bcaf1eb379e7bdaaaf780bef2cd4b979f53defaf835730db0744a1e011bde5de",
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
-        "callIds": [
-          "19d3d07d6723c7afb8b6"
         ],
         "disposition": "NOT_PERSISTENCE"
       },
@@ -28359,31 +28227,6 @@
       "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
     },
     {
-      "path": "frontend/src/lib/terminal/voiceConversation.ts",
-      "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
-      "callIds": [
-        "f69fd1fcf672d0451697"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in acceptMicStream, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/lib/terminal/voiceConversation.ts",
-          "marker": "Array.from(tracks).forEach((track) => track.stop());"
-        }
-      ],
-      "beforeCurrentMainIntegration": {
-        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
-        "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
-        "callIds": [
-          "f69fd1fcf672d0451697"
-        ],
-        "disposition": "NOT_PERSISTENCE"
-      },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
-    },
-    {
       "path": "frontend/src/lib/voicePcm.ts",
       "sourceSha256": "afa17f8408cdc3197e46530e6f64239e34c3093c82c6dccbc53c1e83e2034fa0",
       "callIds": [
@@ -28546,6 +28389,152 @@
         {
           "path": "backend/src/sandbox/google/orphanReconciler.test.ts",
           "marker": "the inventory is read across pages, and one that cannot be completed deletes nothing"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/voiceBudget.ts",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
+      "callIds": [
+        "61600830c3d15535bdf4"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
+      "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
+      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget"
+        },
+        {
+          "path": "backend/src/ai/voiceBudget.ts",
+          "marker": "export async function beginVoiceRequest"
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+        "callIds": [
+          "c409db19505bbca8b298"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "beforeFreeVoiceBoundary": {
+        "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+        "callIds": [
+          "c409db19505bbca8b298"
+        ]
+      },
+      "freeVoiceBoundary": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json"
+    },
+    {
+      "path": "backend/src/ai/voiceBudget.ts",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
+      "callIds": [
+        "8dffca2b73bf49be9aa4",
+        "8925fb06f1d131ef9c3b",
+        "7504554c19ee2f35906e",
+        "d90aaa6ec506e059489a",
+        "1b515d5b94f3c13e2117",
+        "155b1cf63a7e2ace5408"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
+      "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
+      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget"
+        },
+        {
+          "path": "backend/src/ai/voiceBudget.ts",
+          "marker": "export async function beginVoiceRequest"
+        },
+        {
+          "path": "backend/src/routes/voiceFree.security.test.ts",
+          "marker": "free speech route preserves original actor, credential, reservation and publication boundaries"
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+        "callIds": [
+          "a81f276b5c7cea8999c9",
+          "594ea07f9af5118c4266",
+          "12ad44841e8b80ce48f1",
+          "d5b54d745f6c26ee0c56",
+          "fe2129cb990345403b26",
+          "0b3f1d6b2ab5818b8c56"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "beforeFreeVoiceBoundary": {
+        "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+        "callIds": [
+          "a81f276b5c7cea8999c9",
+          "594ea07f9af5118c4266",
+          "12ad44841e8b80ce48f1",
+          "d5b54d745f6c26ee0c56",
+          "fe2129cb990345403b26",
+          "0b3f1d6b2ab5818b8c56"
+        ]
+      },
+      "freeVoiceBoundary": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json"
+    },
+    {
+      "path": "backend/src/routes/voice.ts",
+      "sourceSha256": "15ec0ebcfabdfa9d3a664020aaab07fa1b5f8ae626e00cd4f64976725eef916d",
+      "callIds": [
+        "20c9e87145ae5dc93476"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
+      "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
+      "documentationTrace": "docs/xroga/evidence/command-010/VOICE-BOUNDARY-20261028.json",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voice.security.test.ts",
+          "marker": "actual voice route requires original actor and budget"
+        },
+        {
+          "path": "backend/src/routes/voice.ts",
+          "marker": "router.post('/transcribe'"
+        }
+      ],
+      "beforeCurrentMainIntegration": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
+        "callIds": [
+          "e6afd0a34a779ea6aa43"
+        ],
+        "disposition": "NOT_PERSISTENCE"
+      },
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "beforeFreeVoiceBoundary": {
+        "sourceSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
+        "callIds": [
+          "e6afd0a34a779ea6aa43"
+        ]
+      },
+      "freeVoiceBoundary": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json"
+    },
+    {
+      "path": "backend/src/routes/voiceFree.ts",
+      "sourceSha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501",
+      "callIds": [
+        "cdd9ea7347ceabed4ac5"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver: a built-in Buffer copy of the request body, with no database or Storage client receiver. Provider admission and settlement happen in beginVoiceRequest, which is reviewed separately.",
+      "reason": "Only this built-in conversion is excluded. Free voice transport and accounting remain separately reviewed and tested.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/voiceFree.ts",
+          "marker": "Buffer.from(req.body)"
         }
       ]
     }

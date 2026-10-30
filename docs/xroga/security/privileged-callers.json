@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "76400b1861d675c90d75e3251610267051ba68fe0dfa6fa6a0081f5e151af04f",
+  "reviewRegistrySha256": "74f7fe40d7a8757c7c5bd8d7e53bcce484d30579e2687ebafa89fb3a53022cc7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 224,
-    "persistenceCandidates": 981,
+    "persistenceCandidates": 980,
     "ownerPredicateCandidates": 262,
     "reviewRequired": 134,
-    "reviewedCandidates": 847,
+    "reviewedCandidates": 846,
     "unresolvedSafetyCandidates": 167,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 134,
     "SCOPED_BOUNDARY": 558,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 203,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -28,7 +28,7 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 81,
+    "verifiedCandidateBoundaries": 80,
     "unresolvedCandidateBoundaries": 900,
     "criteria": [
       {
@@ -1485,6 +1485,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-fc10f05d3f3b6a53"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-154dee0c03517ddb"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-154dee0c03517ddb"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-154dee0c03517ddb"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -3820,31 +3832,31 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c409db19505bbca8b298"
+        "id": "61600830c3d15535bdf4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a81f276b5c7cea8999c9"
+        "id": "8dffca2b73bf49be9aa4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "594ea07f9af5118c4266"
+        "id": "8925fb06f1d131ef9c3b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "12ad44841e8b80ce48f1"
+        "id": "7504554c19ee2f35906e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d5b54d745f6c26ee0c56"
+        "id": "d90aaa6ec506e059489a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fe2129cb990345403b26"
+        "id": "1b515d5b94f3c13e2117"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0b3f1d6b2ab5818b8c56"
+        "id": "155b1cf63a7e2ace5408"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4480,7 +4492,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e6afd0a34a779ea6aa43"
+        "id": "20c9e87145ae5dc93476"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "cdd9ea7347ceabed4ac5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5980,7 +5996,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "18f7c2043f2ceb0ebac3"
+        "id": "01fce3ee8703d9146072"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5989,10 +6005,6 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "8e9b157c7d4fd26ad135"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
-        "id": "19d3d07d6723c7afb8b6"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7184,31 +7196,31 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c409db19505bbca8b298"
+        "id": "61600830c3d15535bdf4"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a81f276b5c7cea8999c9"
+        "id": "8dffca2b73bf49be9aa4"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "594ea07f9af5118c4266"
+        "id": "8925fb06f1d131ef9c3b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "12ad44841e8b80ce48f1"
+        "id": "7504554c19ee2f35906e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d5b54d745f6c26ee0c56"
+        "id": "d90aaa6ec506e059489a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fe2129cb990345403b26"
+        "id": "1b515d5b94f3c13e2117"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "0b3f1d6b2ab5818b8c56"
+        "id": "155b1cf63a7e2ace5408"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8260,7 +8272,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e6afd0a34a779ea6aa43"
+        "id": "20c9e87145ae5dc93476"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "cdd9ea7347ceabed4ac5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9652,15 +9668,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "18f7c2043f2ceb0ebac3"
+        "id": "01fce3ee8703d9146072"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "8e9b157c7d4fd26ad135"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "19d3d07d6723c7afb8b6"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9689,12 +9701,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 981,
-    "structuredVerified": 81,
+    "currentCallers": 980,
+    "structuredVerified": 80,
     "structuredUnproven": 900,
     "manualUnresolved": 167,
     "manualUnsupported": 733,
-    "agreedVerified": 81,
+    "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -12929,15 +12941,15 @@
       }
     },
     {
-      "id": "c409db19505bbca8b298",
+      "id": "61600830c3d15535bdf4",
       "path": "backend/src/ai/voiceBudget.ts",
-      "line": 36,
+      "line": 37,
       "enclosing": "beginVoiceRequest",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
       "semanticReview": {
         "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
         "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
@@ -12954,15 +12966,15 @@
       }
     },
     {
-      "id": "a81f276b5c7cea8999c9",
+      "id": "8dffca2b73bf49be9aa4",
       "path": "backend/src/ai/voiceBudget.ts",
-      "line": 44,
+      "line": 52,
       "enclosing": "beginVoiceRequest",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
       "semanticReview": {
         "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
         "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
@@ -12974,20 +12986,24 @@
           {
             "path": "backend/src/ai/voiceBudget.ts",
             "marker": "export async function beginVoiceRequest"
+          },
+          {
+            "path": "backend/src/routes/voiceFree.security.test.ts",
+            "marker": "free speech route preserves original actor, credential, reservation and publication boundaries"
           }
         ]
       }
     },
     {
-      "id": "594ea07f9af5118c4266",
+      "id": "8925fb06f1d131ef9c3b",
       "path": "backend/src/ai/voiceBudget.ts",
-      "line": 51,
+      "line": 60,
       "enclosing": "beginVoiceRequest",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
       "semanticReview": {
         "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
         "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
@@ -12999,20 +13015,24 @@
           {
             "path": "backend/src/ai/voiceBudget.ts",
             "marker": "export async function beginVoiceRequest"
+          },
+          {
+            "path": "backend/src/routes/voiceFree.security.test.ts",
+            "marker": "free speech route preserves original actor, credential, reservation and publication boundaries"
           }
         ]
       }
     },
     {
-      "id": "12ad44841e8b80ce48f1",
+      "id": "7504554c19ee2f35906e",
       "path": "backend/src/ai/voiceBudget.ts",
-      "line": 56,
+      "line": 65,
       "enclosing": "beginVoiceRequest",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
       "semanticReview": {
         "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
         "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
@@ -13024,20 +13044,24 @@
           {
             "path": "backend/src/ai/voiceBudget.ts",
             "marker": "export async function beginVoiceRequest"
+          },
+          {
+            "path": "backend/src/routes/voiceFree.security.test.ts",
+            "marker": "free speech route preserves original actor, credential, reservation and publication boundaries"
           }
         ]
       }
     },
     {
-      "id": "d5b54d745f6c26ee0c56",
+      "id": "d90aaa6ec506e059489a",
       "path": "backend/src/ai/voiceBudget.ts",
-      "line": 71,
+      "line": 80,
       "enclosing": "beginVoiceRequest",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_audit_log",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
       "semanticReview": {
         "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
         "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
@@ -13049,20 +13073,24 @@
           {
             "path": "backend/src/ai/voiceBudget.ts",
             "marker": "export async function beginVoiceRequest"
+          },
+          {
+            "path": "backend/src/routes/voiceFree.security.test.ts",
+            "marker": "free speech route preserves original actor, credential, reservation and publication boundaries"
           }
         ]
       }
     },
     {
-      "id": "fe2129cb990345403b26",
+      "id": "1b515d5b94f3c13e2117",
       "path": "backend/src/ai/voiceBudget.ts",
-      "line": 81,
+      "line": 90,
       "enclosing": "beginVoiceRequest",
       "kind": "RPC_CANDIDATE",
       "target": "release_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
       "semanticReview": {
         "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
         "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
@@ -13074,20 +13102,24 @@
           {
             "path": "backend/src/ai/voiceBudget.ts",
             "marker": "export async function beginVoiceRequest"
+          },
+          {
+            "path": "backend/src/routes/voiceFree.security.test.ts",
+            "marker": "free speech route preserves original actor, credential, reservation and publication boundaries"
           }
         ]
       }
     },
     {
-      "id": "0b3f1d6b2ab5818b8c56",
+      "id": "155b1cf63a7e2ace5408",
       "path": "backend/src/ai/voiceBudget.ts",
-      "line": 111,
+      "line": 125,
       "enclosing": "complete",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012",
+      "sourceSha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e",
       "semanticReview": {
         "authority": "Original issued TenantContext and exact owner precede the sole tenant-scoped client. Four canonical RPCs bind p_user_id to that actor and validate reservation/settlement identity. The immutable audit insert pins user_id/actor_id and exact safe metadata readback.",
         "reason": "Only the exact manual-voice owner/budget/audit boundary is reviewed. This does not certify arbitrary upstream payloads, the complete tenant audit, later callers or Phase4 acceptance.",
@@ -13099,6 +13131,10 @@
           {
             "path": "backend/src/ai/voiceBudget.ts",
             "marker": "export async function beginVoiceRequest"
+          },
+          {
+            "path": "backend/src/routes/voiceFree.security.test.ts",
+            "marker": "free speech route preserves original actor, credential, reservation and publication boundaries"
           }
         ]
       }
@@ -19940,15 +19976,15 @@
       }
     },
     {
-      "id": "e6afd0a34a779ea6aa43",
+      "id": "20c9e87145ae5dc93476",
       "path": "backend/src/routes/voice.ts",
-      "line": 33,
+      "line": 35,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921",
+      "sourceSha256": "15ec0ebcfabdfa9d3a664020aaab07fa1b5f8ae626e00cd4f64976725eef916d",
       "semanticReview": {
         "authority": "Inspected these exact built-in Buffer/Array conversions. They clone request audio or enumerate decoded local channels, and are not database, object-storage or provider authorization.",
         "reason": "Exclude only the explicitly inspected conversion expressions from persistence, preserving the distinct audio provenance, accounting, network, secret and cancellation obligations.",
@@ -19960,6 +19996,27 @@
           {
             "path": "backend/src/routes/voice.ts",
             "marker": "router.post('/transcribe'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cdd9ea7347ceabed4ac5",
+      "path": "backend/src/routes/voiceFree.ts",
+      "line": 41,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501",
+      "semanticReview": {
+        "authority": "Manually inspected the candidate receiver: a built-in Buffer copy of the request body, with no database or Storage client receiver. Provider admission and settlement happen in beginVoiceRequest, which is reviewed separately.",
+        "reason": "Only this built-in conversion is excluded. Free voice transport and accounting remain separately reviewed and tested.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/voiceFree.ts",
+            "marker": "Buffer.from(req.body)"
           }
         ]
       }
@@ -30902,15 +30959,15 @@
       "sourceSha256": "ad90f5eb688b6cb0cc72fa129cd1c2a27a2fc1d9caaadef64cfc7a26577acfb9"
     },
     {
-      "id": "18f7c2043f2ceb0ebac3",
+      "id": "01fce3ee8703d9146072",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 426,
+      "line": 413,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
+      "sourceSha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -30950,27 +31007,6 @@
           {
             "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
             "marker": "const metricKeys = useMemo(() => Array.from(new Set(block.options.flatMap((option) => Object.keys(option.metrics)))), [block.options]);"
-          }
-        ]
-      }
-    },
-    {
-      "id": "19d3d07d6723c7afb8b6",
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 162,
-      "enclosing": "VoiceWave",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-            "marker": "{Array.from({ length: bars }, (_, index) => {"
           }
         ]
       }
@@ -31612,27 +31648,6 @@
           {
             "path": "supabase/migrations/20260729192159_community_platform.sql",
             "marker": "where id = (select auth.uid())"
-          }
-        ]
-      }
-    },
-    {
-      "id": "f69fd1fcf672d0451697",
-      "path": "frontend/src/lib/terminal/voiceConversation.ts",
-      "line": 31,
-      "enclosing": "acceptMicStream",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in acceptMicStream, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/lib/terminal/voiceConversation.ts",
-            "marker": "Array.from(tracks).forEach((track) => track.stop());"
           }
         ]
       }

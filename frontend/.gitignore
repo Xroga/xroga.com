@@ -38,3 +38,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Regenerable pinned local speech runtime, built by predev/prebuild.
+/public/voice-runtime/

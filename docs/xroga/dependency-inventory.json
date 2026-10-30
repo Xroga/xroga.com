@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a6384750e20fc4fd5f7d2f1e6100bddadf439208",
+  "source_sha": "f7ab2ef4bf922a7e547ae63b810965bd4aa6b7c5",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -31,6 +31,7 @@
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPPORT_PHONE",
         "NEXT_PUBLIC_VERCEL_ENV",
+        "NEXT_PUBLIC_VOICE_ENGINE",
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
@@ -278,7 +279,10 @@
         "CLOUDFLARE_R2_BUCKET",
         "CLOUDFLARE_R2_METADATA_READ_TOKEN",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
-        "CLOUDFLARE_R2_SECRET_KEY"
+        "CLOUDFLARE_R2_SECRET_KEY",
+        "CLOUDFLARE_VOICE_ACCOUNT_ID",
+        "CLOUDFLARE_VOICE_API_TOKEN",
+        "CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -8465,6 +8469,63 @@
       ]
     },
     {
+      "name": "CLOUDFLARE_VOICE_ACCOUNT_ID",
+      "consuming_sources": [
+        "backend/src/ai/voiceBudget.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "PUBLIC_IDENTIFIER",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
+      "name": "CLOUDFLARE_VOICE_API_TOKEN",
+      "consuming_sources": [
+        "backend/src/ai/voiceBudget.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
+      "name": "CLOUDFLARE_VOICE_FREE_PLAN_CONFIRMED",
+      "consuming_sources": [
+        "backend/src/ai/voiceBudget.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
       "name": "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE",
       "consuming_sources": [
         "backend/src/sandbox/google/gceMachineControl.ts",
@@ -10579,6 +10640,25 @@
       "name": "NEXT_PUBLIC_VERCEL_ENV",
       "consuming_sources": [
         "frontend/src/components/homepage-next/s04/useScene.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_VOICE_ENGINE",
+      "consuming_sources": [
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx"
       ],
       "environments": [
         "frontend build/browser/SSR"
@@ -16083,7 +16163,7 @@
     },
     {
       "path": "backend/src/ai/voiceBudget.ts",
-      "sha256": "03382ab5ef58d92741b37d206c467edd62821d26324fe6e2a437591c95c70012"
+      "sha256": "cecb2a38317bda5f3606a8c4ac5d2f47ef4ff008469bd3992fa08fb0ce8e8a9e"
     },
     {
       "path": "backend/src/ai/voicePcm.ts",
@@ -17247,7 +17327,11 @@
     },
     {
       "path": "backend/src/routes/voice.ts",
-      "sha256": "ff0448423ccb3b0f5b41e20a8c563ebfaa93830f6b797398bb55e73375d73921"
+      "sha256": "15ec0ebcfabdfa9d3a664020aaab07fa1b5f8ae626e00cd4f64976725eef916d"
+    },
+    {
+      "path": "backend/src/routes/voiceFree.ts",
+      "sha256": "6d5b2ee7eb0472afa21cf3faf6bded061acc8842b95324929b45c0cfa21b6501"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -21019,7 +21103,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
-      "sha256": "4f56cb2cde8876000fa39e4b3e7a7d181098e7a84d6e878ea02eb7938f38a846"
+      "sha256": "6693290f2ac88415d4c9d85ecbfca77179528fd3ff98c320839704b493534f03"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarFileGrid.tsx",
@@ -21091,7 +21175,7 @@
     },
     {
       "path": "frontend/src/components/terminal/HomepageChatBar.tsx",
-      "sha256": "4af65a1afbd2fc9f664d7a9630ed4b838224a86f1a5614f3d24244958df0148e"
+      "sha256": "d36419a6ba177bbdeb0a1e088259120a86b7e1e89de91849ee8e7de2ee350581"
     },
     {
       "path": "frontend/src/components/terminal/ImageEditModal.tsx",
@@ -21199,7 +21283,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860"
+      "sha256": "959ecdbdfe4da3c4cee1a79e2e4684f638df3ded77cf7ed9002bdafbd2ee8d0c"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -21240,6 +21324,10 @@
     {
       "path": "frontend/src/components/terminal/VercelDeployButton.tsx",
       "sha256": "ee912b3954c930fb717c475660015075aa84994c09fed435eb3ab985ce742507"
+    },
+    {
+      "path": "frontend/src/components/terminal/VoiceWaveform.tsx",
+      "sha256": "a3709982dbdc423229b105d170fd6f806978a1cb05f1a89cf1c717243adfae3c"
     },
     {
       "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
@@ -21311,7 +21399,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "315907fe42f81b824206adcd3a74fc82bfd3f89d514c6dd11a4c3687a9f4d26a"
+      "sha256": "215bac3fe7e9b0b58d69fc074e6834c1e514eea9efb20e32c03c84e42c27c1af"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -22286,6 +22374,10 @@
       "sha256": "9691f43d3dd244e8ab5b7d4c27eedae9ab41f4e4d1ca530476ef86d1bca388f6"
     },
     {
+      "path": "frontend/src/lib/terminal/dictation.ts",
+      "sha256": "5e60fdb6908c8a06cc876720ca8f95c9920a79cb17e69c35c472720486b59fe8"
+    },
+    {
       "path": "frontend/src/lib/terminal/executionIntent.ts",
       "sha256": "f0ec2bd7ec9a5e9c460e33be29a83f45faec46588d29c54b06d858df225df487"
     },
@@ -22306,8 +22398,8 @@
       "sha256": "ee217fbea21cf0a9f5eddd180160ccf932c21b8d7067a3df31df68b46aa612af"
     },
     {
-      "path": "frontend/src/lib/terminal/voiceConversation.ts",
-      "sha256": "c1994b036c070efc77940c78408a9206f3cf84a407aa86ea0315b91cc06c7278"
+      "path": "frontend/src/lib/terminal/voiceRecording.ts",
+      "sha256": "e3e408b1a74111cdb2863b2de3ddf3dd60a4e9859e81e9895ba3d4dd7f35e632"
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
@@ -22371,7 +22463,15 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "a8dca12f52c75799b62ea0249742b102d7f8eb3557d6f14d19a1c0c359c85fcd"
+      "sha256": "3ab1bee74b63323a85c22d82045898f03bca3dd9fd95288c8e14a5403cc486b2"
+    },
+    {
+      "path": "frontend/src/lib/voiceCapture.ts",
+      "sha256": "7f8c3b44cee5c881e214a1792dcc1590a3131ef84974813015954e4363881d08"
+    },
+    {
+      "path": "frontend/src/lib/voiceDictation.ts",
+      "sha256": "1e04bcd6669d67b7f5baa5491d60b1990000f3dfab0ea02c2a22551f653c75b7"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -22380,6 +22480,10 @@
     {
       "path": "frontend/src/lib/voiceRequestPolicy.ts",
       "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
+    },
+    {
+      "path": "frontend/src/lib/voiceSegmenter.ts",
+      "sha256": "82a82cc0f56469442ede2894df3727538ae827c2f9fdd49b285d1cda46530cfc"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -24385,7 +24489,14 @@
       "hostname": "api.openai.com",
       "protocol": "https:",
       "path": "backend/src/routes/voice.ts",
-      "line": 55,
+      "line": 57,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.cloudflare.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/voiceFree.ts",
+      "line": 56,
       "credentialsInUrl": false
     },
     {
@@ -33275,8 +33386,15 @@
     },
     {
       "path": "backend/src/routes/voice.ts",
-      "line": 38,
+      "line": 40,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/routes/voiceFree.ts",
+      "line": 13,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -36256,34 +36374,6 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 49,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 62,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 75,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "line": 88,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
       "path": "frontend/src/context/TerminalChatContext.tsx",
       "line": 1998,
       "scope": "FUNCTION_LOCAL",
@@ -36777,6 +36867,13 @@
       "path": "frontend/src/lib/uploadCoalescing.ts",
       "line": 56,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/voiceDictation.ts",
+      "line": 32,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

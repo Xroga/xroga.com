@@ -11,11 +11,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@xyflow/react": "12.12.0",
+    "@huggingface/transformers": "3.8.1",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.13",
+    "@xyflow/react": "12.12.0",
     "clsx": "^2.1.1",
     "cobe": "^0.6.4",
     "date-fns": "^4.4.0",
@@ -54,7 +55,9 @@
     "typescript": "5.9.3"
   },
   "overrides": {
-    "pptxgenjs": { "image-size": "2.0.4" },
+    "pptxgenjs": {
+      "image-size": "2.0.4"
+    },
     "next": {
       "postcss": "8.5.24",
       "sharp": "0.35.5"

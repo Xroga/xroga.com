@@ -49,7 +49,7 @@ test('each first-party client refuses API redirects without forwarding private r
       ['Builder download',()=>load('builderApiPhase2').builderPhase2Api.downloadSource('owned-project')],
       ['delivery status',()=>load('projectDeliveryApi').projectDeliveryApi.status('owned-project')],
       ['delivery download',()=>load('projectDeliveryApi').projectDeliveryApi.download('owned-project')],
-      ['voice',()=>load('voiceApi').transcribeVoiceAudio(new Blob(['private audio'],{type:'audio/webm'}))],
+      ['voice',()=>load('voiceApi').transcribeVoiceAudio(new Blob([new Uint8Array(1024)],{type:'audio/webm'}))],
       ['guest',()=>load('runGuestLaneChat').runGuestLaneChat({prompt:'private fixture',history:[],signal:new AbortController().signal,onPartial(){}})]];
     for(const[name,invoke]of cases)await t.test(name,async()=>{forwarded=0;await assert.rejects(invoke());assert.equal(forwarded,0,'No private request follows an API redirect');});
   }finally{api.closeAllConnections();sink.closeAllConnections();await Promise.all([new Promise(r=>api.close(r)),new Promise(r=>sink.close(r))]);}
@@ -76,7 +76,7 @@ test('API polling treats redirect refusal as terminal and authorized requests re
     await load('projectDeliveryApi').projectDeliveryApi.download('owned-project');
     assert.equal((await load('builderApi').builderApi.create({prompt:'owned',requestKey:'fixture-request-key'})).fixture,true);
     assert.equal((await load('builderApiPhase2').builderPhase2Api.downloadSource('owned-project')).filename,'project.zip');
-    assert.equal(await load('voiceApi').transcribeVoiceAudio(new Blob(['synthetic audio'])),'owned transcript');
+    assert.equal(await load('voiceApi').transcribeVoiceAudio(new Blob([new Uint8Array(1024)])),'owned transcript');
     assert.equal((await load('runGuestLaneChat').runGuestLaneChat({prompt:'owned',history:[],signal:new AbortController().signal,onPartial(){}})).response,'owned fixture');
     assert.equal(await core.waitForPersistedSwarmRun('owned-run','synthetic-browser-access',{},''),'owned fixture');
     requests=0;mode='redirect';
