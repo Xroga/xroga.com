@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9cf6ce1ec89d37a83afce1fe762a3eeb889fe38a",
+  "source_sha": "b9625af9fdc6691d7b198ff28d236c1f10f0e203",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18466,7 +18466,7 @@
     },
     {
       "path": "frontend/src/app/blog/[slug]/page.tsx",
-      "sha256": "453b970c967e139cf466cafb2f5b162e95df7b6b92b8da225e0abbc94c1b7707"
+      "sha256": "30884d7df978aeec36d5a08c0f1280c096fbdb19ff153ff6839ffd152efda0ee"
     },
     {
       "path": "frontend/src/app/blog/feed.xml/route.ts",
@@ -18474,7 +18474,7 @@
     },
     {
       "path": "frontend/src/app/blog/page.tsx",
-      "sha256": "1ac92bdca080405b4ec7c9132b09dbd3b3dca3f5ae34626ea2418229bb8ad107"
+      "sha256": "fac176abc5b0981729ddc01577b4214ff9fba11b753a7a8883caaad314736d0c"
     },
     {
       "path": "frontend/src/app/build-saas-with-ai/page.tsx",
@@ -18622,7 +18622,7 @@
     },
     {
       "path": "frontend/src/app/llms.txt/route.ts",
-      "sha256": "b494e9c8742842e9e91ffb4b3664e39744c53e99e0c84b20fd469462e8c6c6b9"
+      "sha256": "2b89e2f0eb28ca125717769404a7c41a684e8c0075855e3669bd27dc414b0c86"
     },
     {
       "path": "frontend/src/app/manifest.ts",
@@ -19346,7 +19346,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s02/S02Work.tsx",
-      "sha256": "80e59b4b18fff55d356d107ee19a090d4525435f1ebd0f9d3e10c8ebe71609ae"
+      "sha256": "b629586f6c6331cd4ac46faeea39d86a9ad9aafa6a8ee00e05bab6be749c5a92"
     },
     {
       "path": "frontend/src/components/homepage-next/s02/Theater.tsx",
@@ -19382,7 +19382,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s02/script.ts",
-      "sha256": "ed968a7ce41cf92e38ea309004c52517f7c543024fbe242b849b9528d62e98cc"
+      "sha256": "91f914b2577a1639c797738642de69a6c521a873db9fbe736aead4af75cbe416"
     },
     {
       "path": "frontend/src/components/homepage-next/s02/team.ts",
@@ -19398,11 +19398,11 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
-      "sha256": "65c1c3e532496b78fcab588c0ad307cfdee6405ace7a78dcef45204631a405d2"
+      "sha256": "ea866014c30a9a824e07e9510b6afb2ff365042fa1eb7162cf1161cafd09aa53"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
-      "sha256": "b6e8883db1951f9b10e88b9318f4f3db2e319d66a2f18cb7cd0f113c23394ef3"
+      "sha256": "1ce6c1bdddaf9c8c521533a5e0250bfb27c8e311cf3196cc7b055ed8cfb84d80"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/SearchStudio.tsx",
@@ -19478,7 +19478,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s04/S04Publish.tsx",
-      "sha256": "11981f6481222ae470abddc343bed0d7e181d48ee12c6f9f90eecb17baff491b"
+      "sha256": "e853404f2aebe23e9008b2adfcac749423c8a6b3f0bd6dab0de4e6506eb92ef8"
     },
     {
       "path": "frontend/src/components/homepage-next/s04/StoreMark.tsx",
@@ -19498,7 +19498,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s04/publish.ts",
-      "sha256": "3e4355fcf35db42aa81b79f862c1557cff3588c258ac56412d35dc5d5d56bd41"
+      "sha256": "7d9b4eaf5ed0ddfd385b654a439e1535af501229a7fbc664d9cfd5de2827289a"
     },
     {
       "path": "frontend/src/components/homepage-next/s04/stage/Handoff.tsx",
@@ -20370,7 +20370,7 @@
     },
     {
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "sha256": "5cc7eb6549990d8055097856495dcda4359283264a3edbf92f33d86f32517bbd"
+      "sha256": "a9d81de600db885c7283ca25e57838fad01f5673b7a368df19a3a0cd4daf76ad"
     },
     {
       "path": "frontend/src/components/seo/FeatureJsonLd.tsx",
@@ -20382,7 +20382,7 @@
     },
     {
       "path": "frontend/src/components/seo/GrowthEvidence.tsx",
-      "sha256": "463367b2325376bf57f6236a20bf884651f8f89dcfeb36dcc38113b364eeea38"
+      "sha256": "c592f3e0122f6e93c8cf0ca2623f3ecc6323052815316b0de8a4750f0481ab46"
     },
     {
       "path": "frontend/src/components/seo/PageJsonLd.tsx",
@@ -21586,7 +21586,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "30c3a17e1f6737f0226ba1ce6b5652631eb8ba487ef2b2ad8f4255e1a927ab87"
+      "sha256": "c2d4bdf086e8412c25992be4e7cdbdea7a84678f6bead5ebb34bb734676f9989"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -21678,7 +21678,7 @@
     },
     {
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "09a9e105197a70a3efae67019239245dd78ffc1c245cc0caeec4d74c641919e3"
+      "sha256": "93c3327231328af16661937b1cc1f35baef8915d0e6815e93f2a9bca24bccbd2"
     },
     {
       "path": "frontend/src/lib/seoPhase2Content.ts",
@@ -27307,14 +27307,14 @@
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "line": 27,
+      "line": 28,
       "credentialsInUrl": false
     },
     {
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "line": 37,
+      "line": 39,
       "credentialsInUrl": false
     },
     {
@@ -28679,154 +28679,154 @@
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 75,
+      "line": 77,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 79,
+      "line": 81,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 83,
+      "line": 85,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 87,
+      "line": 89,
       "credentialsInUrl": false
     },
     {
       "hostname": "lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 91,
+      "line": 93,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 122,
+      "line": 124,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 126,
+      "line": 128,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 130,
+      "line": 132,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 134,
+      "line": 136,
       "credentialsInUrl": false
     },
     {
       "hostname": "support.bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 138,
+      "line": 140,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 152,
+      "line": 154,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 152,
+      "line": 154,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 152,
+      "line": 154,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 163,
+      "line": 165,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 163,
+      "line": 165,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 163,
+      "line": 165,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 174,
+      "line": 176,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 174,
+      "line": 176,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 174,
+      "line": 176,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 185,
+      "line": 187,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 185,
+      "line": 187,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 185,
+      "line": 187,
       "credentialsInUrl": false
     },
     {
