@@ -17,6 +17,7 @@
     "docs/xroga/research/source-manifest.json",
     "docs/xroga/runtime-contract.md",
     "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/egress-callers.json",
     "frontend/public/assets/blog/app-building/ai-app-builder-prompts.webp",
     "frontend/public/assets/blog/app-building/build-an-app-with-ai.webp",
     "frontend/public/assets/blog/app-building/choose-an-app-builder.webp",
@@ -25,6 +26,12 @@
     "frontend/src/app/blog/[slug]/page.tsx",
     "frontend/src/app/blog/page.tsx",
     "frontend/src/app/llms.txt/route.ts",
+    "frontend/src/components/homepage-next/phase1/Stage.module.css",
+    "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
+    "frontend/src/components/homepage-next/s03/S03.module.css",
+    "frontend/src/components/homepage-next/s03/s03.test.ts",
+    "frontend/src/components/homepage-next/s04/s04.test.ts",
+    "frontend/src/components/homepage-next/s04/stage/Stages.module.css",
     "frontend/src/components/seo/EditorialPage.tsx",
     "frontend/src/components/seo/GrowthEvidence.tsx",
     "frontend/src/lib/appBuildingEditorialContent.json",
@@ -39,7 +46,8 @@
   "decisions": {
     "keep": [
       "Existing blog registry, sitemap inventory, RSS, crawler exclusions and preview noindex",
-      "Existing hosting and release pathway; no provider or DNS migration"
+      "Existing hosting and release pathway; no provider or DNS migration",
+      "Preserve the six homepage fixes from current hotfix f81c9436c93613f5cca40d9def522e6735fbe4e0; no blog release rolls them back."
     ],
     "extend": [
       "Five distinct editorial articles, source citations, internal links, visible organization byline and long-form reading layout"
@@ -72,7 +80,7 @@
     },
     "egress": {
       "changed": false,
-      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only. Refresh source-tree digest only; all 148 reviewed callers and their dispositions remain unchanged."
     },
     "cost": {
       "changed": false,
