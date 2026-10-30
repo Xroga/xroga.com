@@ -1,0 +1,49 @@
+# One approved voice-only image. No cloud credentials or deployment.
+name: voice-free-image-build
+on:
+  push:
+    branches: ['codex/voice-free-image-20261030']
+    paths: ['.github/workflows/voice-free-image-build.yml']
+permissions:
+  contents: read
+  packages: write
+env:
+  RELEASE_SHA: 054d7ae4b66a213dbdf8fa48f09ef2005178caec
+  IMAGE: ghcr.io/xroga/xroga-api-release
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+          fetch-depth: 0
+      - name: Verify exact approved release source
+        run: |
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          git merge-base --is-ancestor ca94c2f8a813524e47f5f7abc868acb1618a1c45 "$RELEASE_SHA"
+          test -f backend/src/routes/voiceFree.ts
+          test -f Dockerfile.api
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push exact source
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.api
+          push: true
+          provenance: false
+          build-args: XROGA_RELEASE_SHA=${{ env.RELEASE_SHA }}
+          tags: ${{ env.IMAGE }}:${{ env.RELEASE_SHA }}
+      - name: Verify immutable source identity
+        run: |
+          docker pull "$IMAGE@${{ steps.build.outputs.digest }}"
+          test "$(docker image inspect "$IMAGE@${{ steps.build.outputs.digest }}" --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')" = "$RELEASE_SHA"
+          test "$(docker run --rm --entrypoint node "$IMAGE@${{ steps.build.outputs.digest }}" -e 'process.stdout.write(process.env.XROGA_RELEASE_SHA)')" = "$RELEASE_SHA"
+          echo "image=$IMAGE@${{ steps.build.outputs.digest }}" >> "$GITHUB_STEP_SUMMARY"
