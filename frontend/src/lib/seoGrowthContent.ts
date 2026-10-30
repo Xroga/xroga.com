@@ -2,11 +2,13 @@ export type ContentSection = {
   heading: string;
   paragraphs: string[];
   bullets?: string[];
+  links?: SourceLink[];
   table?: { caption: string; columns: string[]; rows: string[][] };
 };
 export type SourceLink = { label: string; href: string };
 import { SEO_PHASE2_ARTICLES } from './seoPhase2Content';
 import { CRYPTO_EDITORIAL_ARTICLES } from './cryptoEditorialContent';
+import APP_BUILDING_ARTICLES from './appBuildingEditorialContent.json';
 
 /** Reserved URL contracts. They stay unpublished until a complete, evidence-backed record exists. */
 export const FUTURE_SEO_FACTORIES = {
@@ -189,7 +191,9 @@ export const COMPARISONS: ComparisonPage[] = [
 export type GuidePage = {
   slug: string; title: string; description: string; eyebrow: string; intro: string;
   sections: ContentSection[]; related: string[]; sources?: SourceLink[]; updated?: string;
-  visual?: { src: string; alt: string; caption: string };
+  visual?: { src: string; alt: string; caption: string; width?: number; height?: number };
+  authorName?: string;
+  readingMinutes?: number;
 };
 
 const BUILD_GUIDE_ROWS: Array<[string, string, string, string, string, ...Array<[string, string]>]> = [
@@ -217,6 +221,7 @@ const INTEGRATION_GUIDE_ROWS: Array<[string, string, string]> = [
 export const INTEGRATION_GUIDES: GuidePage[] = INTEGRATION_GUIDE_ROWS.map(([slug,title,description]) => ({slug,title,description,eyebrow:'Integration guide',intro:`${title} means treating the provider as an authorised external system—not a decorative logo. Xroga reports what the connected account allowed and what evidence the operation returned.`,sections:[{heading:'What belongs in the project',paragraphs:['Keep code, configuration names, and provider-facing adapters reviewable in the repository. Keep secret values in the provider or deployment environment.']},{heading:'What must be verified',paragraphs:['Confirm permissions, environment selection, failure behaviour, and the user-visible result. A successful API response and a working product are separate checks.']},{heading:'What Xroga will not assume',paragraphs:['Xroga does not invent credentials, bypass provider policy, or report a deployment or integration as live without evidence from the authorised account.']}],related:['/integrations','/security','/docs']}));
 
 export const BLOG_ARTICLES: GuidePage[] = [
+  ...APP_BUILDING_ARTICLES,
   ...CRYPTO_EDITORIAL_ARTICLES,
   ...SEO_PHASE2_ARTICLES,
   {slug:'replit-alternatives',title:'Replit alternatives: choose by workflow, not a generic ranking',description:'Compare legitimate alternatives to Replit across cloud IDEs, browser app builders, AI editors, and repository-oriented agents.',eyebrow:'Alternatives guide · updated September 9, 2026',intro:'A useful Replit alternative depends on which part you are replacing: the cloud development environment, AI agent, hosting, collaboration, or the path from a prompt to a deployed app.',sections:[{heading:'For browser-first app generation',paragraphs:['Lovable, Bolt, and v0 offer product-building flows in the browser with different documented GitHub and deployment models. Compare supported stacks and import paths against your actual project.']},{heading:'For editor-based coding',paragraphs:['Cursor and Windsurf put agents inside an IDE, with codebase tools and terminal workflows designed for developers who want to stay close to the code.']},{heading:'For repository-centred delivery',paragraphs:['Xroga is designed around a connected repository and a visible trail from request through changes, validation, and authorised publishing. It is a different fit from an all-in-one cloud runtime.']},{heading:'How to decide',paragraphs:['Run the same bounded task in the candidates. Verify repository behaviour, build output, deployment state, pricing mechanics, and recovery after a failed change.']}],related:['/alternatives/replit-alternative','/compare/xroga-vs-replit','/blog/best-vibe-coding-tools']},
