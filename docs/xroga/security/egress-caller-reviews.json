@@ -4437,6 +4437,21 @@
           "sha256": "4715d07866813f677ef2eee7beca59c63adc0878e4d3df213b88aadb9f4b8f04"
         }
       ]
+    },
+    {
+      "id": "eb39e5759b146603faf0",
+      "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
+      "sourceFileSha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIRST_PARTY_API_ORIGIN_WAKE_UP_NO_CREDENTIAL_NO_BODY_RESPONSE_IGNORED",
+      "tenantAuthority": "NONE_REQUIRED_NO_USER_DATA_OR_AUTHORITY_SENT_BEST_EFFORT_ONLY",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+          "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
+          "sha256": "a0df5b28bcc4e7df3116bdf4648060984ffc85bba7be25cf61827b9797191908"
+        }
+      ]
     }
   ]
 }

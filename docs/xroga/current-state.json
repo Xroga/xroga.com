@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "release/mic-narrow-20261031",
-    "sha": "519b6697354f546033ab75d61f68a76db6b68b70",
-    "sourceTimestampUtc": "2026-10-31T03:23:10+05:00",
-    "auditStartedUtc": "2026-10-30T22:23:51.186Z",
+    "sha": "736a7deee9fa6b0194d8abf241f4ee7ba9b5fd51",
+    "sourceTimestampUtc": "2026-10-31T03:24:51+05:00",
+    "auditStartedUtc": "2026-10-30T22:25:56.147Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -132187,6 +132187,27 @@
       "reachable": false
     },
     {
+      "id": "frontend-call:f7b9af211b1e4bb7b24f",
+      "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "line": 36,
+      "callee": "api.slice",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:60859d1053d6607e225e",
+      "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "line": 36,
+      "callee": "api.indexOf",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:5b44dcf71daeb9c6c4e2",
+      "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "line": 36,
+      "callee": "api.indexOf",
+      "reachable": false
+    },
+    {
       "id": "frontend-call:5b31a29885be2c49fc99",
       "sourcePath": "frontend/src/lib/vercelConnect.ts",
       "line": 52,
@@ -138610,7 +138631,7 @@
     {
       "id": "test-suite:cdfc35393b38a687a42a",
       "sourcePath": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

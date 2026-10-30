@@ -4754,12 +4754,18 @@
       "callee": "fetch",
       "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIRST_PARTY_API_ORIGIN_WAKE_UP_NO_CREDENTIAL_NO_BODY_RESPONSE_IGNORED",
+      "tenantAuthority": "NONE_REQUIRED_NO_USER_DATA_OR_AUTHORITY_SENT_BEST_EFFORT_ONLY",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+          "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
+          "sha256": "a0df5b28bcc4e7df3116bdf4648060984ffc85bba7be25cf61827b9797191908"
+        }
+      ]
     },
     {
       "id": "e1ddea7115498d92341b",
@@ -5036,8 +5042,8 @@
   ],
   "counts": {
     "total": 150,
-    "reviewed": 149,
-    "pending": 1,
-    "unresolvedHighRiskBypasses": 1
+    "reviewed": 150,
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0
   }
 }

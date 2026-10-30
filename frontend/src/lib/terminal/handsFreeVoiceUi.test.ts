@@ -31,3 +31,9 @@ test('protected server routes keep language auto-detection and canonical account
  assert.match(free,/@cf\/openai\/whisper-large-v3-turbo|FREE_VOICE_MODEL/);assert.match(free,/task: 'transcribe'/);
  assert.doesNotMatch(free,/\blanguage:\s*['"]/);
 });
+test('voice backend wake-up request carries no credentials, body or user data and its response is ignored',()=>{
+ const api=source('../voiceApi.ts');
+ const warm=api.slice(api.indexOf('export function warmVoiceBackend'),api.indexOf('export async function transcribeVoiceAudio'));
+ assert.match(warm,/method: 'GET'/);assert.match(warm,/mode: 'no-cors'/);assert.match(warm,/credentials: 'omit'/);
+ assert.doesNotMatch(warm,/Authorization|getAccessToken|body:|JSON|Blob|token/);
+});
