@@ -1,0 +1,127 @@
+{
+  "version": "1.0",
+  "missionId": "APP-BUILDING-BLOG-GUIDES-20261030",
+  "baseSha": "1e1ec970a5afc9a016ffb5974e6da463185f8007",
+  "requirementIds": [
+    "XR-FAMILY-seo"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Publish five original approximately 5,000-word app-building guides and five editorial illustrations under the existing public blog, using existing canonical sitemap/feed discovery. User explicitly authorized live publication to xroga.com/blog. Production release is based on the independently observed live hotfix source, preserving unrelated unreleased main changes.",
+  "changedFiles": [
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/missions/app-building-blog-guides-20261030.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "frontend/public/assets/blog/app-building/ai-app-builder-prompts.webp",
+    "frontend/public/assets/blog/app-building/build-an-app-with-ai.webp",
+    "frontend/public/assets/blog/app-building/choose-an-app-builder.webp",
+    "frontend/public/assets/blog/app-building/free-ai-app-builder.webp",
+    "frontend/public/assets/blog/app-building/launch-an-ai-built-mvp.webp",
+    "frontend/src/app/blog/[slug]/page.tsx",
+    "frontend/src/app/blog/page.tsx",
+    "frontend/src/app/llms.txt/route.ts",
+    "frontend/src/components/seo/EditorialPage.tsx",
+    "frontend/src/components/seo/GrowthEvidence.tsx",
+    "frontend/src/lib/appBuildingEditorialContent.json",
+    "frontend/src/lib/appBuildingEditorialContent.test.ts",
+    "frontend/src/lib/publicUrlInventory.ts",
+    "frontend/src/lib/seoGrowthContent.ts",
+    "frontend/src/styles/seo-editorial.css",
+    "growth/research/app-building-keywords-20261030.csv",
+    "growth/research/app-building-master-keywords-20261030.json",
+    "growth/research/app-building-research-20261030.md"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing blog registry, sitemap inventory, RSS, crawler exclusions and preview noindex",
+      "Existing hosting and release pathway; no provider or DNS migration"
+    ],
+    "extend": [
+      "Five distinct editorial articles, source citations, internal links, visible organization byline and long-form reading layout"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Static public content and optional presentation fields only.",
+    "rollback": "Revert the blog publication commit and restore the previously verified frontend deployment."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No change to this authority or runtime boundary; public editorial content and ordinary hyperlinks only."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test frontend/src/lib/appBuildingEditorialContent.test.ts frontend/src/lib/seoGrowthContent.test.ts",
+      "scope": "Article completeness, unique discovery URLs, real image paths, source links, sitemap/feed registration, private-route exclusion and crosslinks.",
+      "negative": true,
+      "reference": "frontend/src/lib/appBuildingEditorialContent.test.ts"
+    },
+    {
+      "command": "node --test tests/mission-policy/mission-policy.test.mjs",
+      "scope": "Positive and adversarial structured mission policy.",
+      "negative": true,
+      "reference": "tests/mission-policy/mission-policy.test.mjs"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends existing static blog registry and shared editorial renderer. No execution system or control plane added.",
+    "rfc": null
+  },
+  "rollout": "Validate content, production build and browser reading flow; publish bounded branch/PR through existing GitHub/Vercel workflow; require relevant CI; verify all five canonical production pages, images, sitemap, feed and llms directory.",
+  "rollback": "Revert only this publication and restore the previous known-good Vercel deployment; no database changes exist.",
+  "knownGaps": [
+    "Keyword volume/difficulty and competitor virality are not measured. Search indexing, rankings and AI citations are external outcomes."
+  ],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Final source production build, browser checks, required CI and live deployment verification remain pending."
+    ],
+    "authenticatedE2e": "NOT_APPLICABLE",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "growth/research/app-building-research-20261030.md",
+    "frontend/src/lib/appBuildingEditorialContent.test.ts"
+  ]
+}
