@@ -242,3 +242,15 @@ test('motion is bounded: pauses offscreen, honours reduced motion, never loops, 
   }
   for (const [f, s] of sources) assert.doesNotMatch(s, /scrollIntoView|window\.scrollTo|scrollBy\(/, f);
 });
+
+test('phones: the iPhone, Xroga\'s work and the store page are one snapping swipe row, never three stacked screens', () => {
+  const stages = src('stage/Stages.module.css');
+  const phones = stages.slice(stages.indexOf('@media (max-width: 760px) {\n  .ios,'));
+  const rule = phones.match(/\n  \.ios \{[^}]*\}/)?.[0] ?? '';
+  assert.match(rule, /display: flex;/);
+  assert.match(rule, /overflow-x: auto;/);
+  assert.match(rule, /scroll-snap-type: x mandatory;/);
+  // the row contains its own horizontal scrolling so a sideways swipe never drags the page
+  assert.match(rule, /overscroll-behavior-x: contain;/);
+  assert.match(phones, /\.iosStore \{\s*flex: 0 0 min\(82%, 300px\);/);
+});
