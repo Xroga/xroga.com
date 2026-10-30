@@ -329,3 +329,35 @@ body .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-copy h2 em {
     -webkit-text-fill-color: currentColor;
   }
 }
+
+/* Phones: the closing call to action and the footer cards keep their composition with less empty height. */
+@media (max-width: 640px) {
+  .xv-home-coding .xv-closing-frame > .xv-hc-mid-cta {
+    padding-block: 1.25rem;
+  }
+  .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner {
+    min-height: 224px;
+  }
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-footer__brand-card {
+    min-height: 0;
+    padding: 1.35rem;
+    gap: 1.1rem;
+  }
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-footer__brand-card > p {
+    margin: 0;
+  }
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-footer__subscribe {
+    padding-top: 1.5rem;
+  }
+}
+@media (max-width: 640px) {
+  /* the three link groups sit side by side on phones instead of leaving Trust alone on a row */
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-footer__nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem 0.7rem;
+  }
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-footer__nav a {
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+}
