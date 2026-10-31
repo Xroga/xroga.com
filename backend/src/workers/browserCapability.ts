@@ -40,6 +40,8 @@ export interface BrowserRunRequest {
   allowedOrigins: string[];
   /** an explicit plan; when absent the configured planner derives one from the goal (its output is parsed like any plan) */
   plan?: unknown;
+  /** Explicit fresh-session stages, each bounded by the original attempt ceiling. */
+  continuations?: { startUrl: string; plan: unknown }[];
   /** allow the planner to use AI (Stagehand) steps; needs limits.maxModelCostMicros > 0 */
   allowAiSteps?: boolean;
   limits?: Partial<BrowserJobLimits>;
@@ -92,7 +94,27 @@ function taskFor(goal: string, plan: BrowserPlan, limits: BrowserJobLimits): Exe
   };
 }
 
-interface BuiltRun { actor: StorageActor; runId: string; runProject: string; driveProject: string | null; limits: BrowserJobLimits; plan: BrowserPlan; state: ReturnType<typeof createCanonicalExecutionState>; request: BrowserRunRequest }
+interface BuiltRun { actor: StorageActor; runId: string; runProject: string; driveProject: string | null; limits: BrowserJobLimits; plan: BrowserPlan; continuations?: {startUrl:string;plan:BrowserPlan}[]; state: ReturnType<typeof createCanonicalExecutionState>; request: BrowserRunRequest }
+
+function parseContinuations(input: unknown, job: BrowserJob): {startUrl:string;plan:BrowserPlan}[] | undefined {
+  if(input===undefined)return undefined;
+  if(!Array.isArray(input)||input.length<1||input.length>11||job.limits.maxModelCostMicros!==0)
+    throw new BrowserRunError(400,'RUN_INVALID','Continuation requires 1-11 explicit model-free stages.');
+  return input.map((stage,index)=>{
+    if(!stage||typeof stage!=='object'||Object.keys(stage).some(k=>!['startUrl','plan'].includes(k)))throw new BrowserRunError(400,'RUN_INVALID','Invalid continuation stage.');
+    assertBrowserInput(stage);
+    const nextJob=parseBrowserJob({...job,taskId:`browser-${index+2}`,startUrl:stage.startUrl});
+    const plan=parseBrowserPlan(stage.plan,nextJob);
+    if(plan.writeGrant)throw new BrowserRunError(400,'RUN_INVALID','Continuation cannot carry action authority.');
+    return {startUrl:nextJob.startUrl,plan};
+  });
+}
+
+function stageTasks(goal:string,plan:BrowserPlan,limits:BrowserJobLimits,continuations?:{startUrl:string;plan:BrowserPlan}[]) {
+  return [plan,...(continuations??[]).map(stage=>stage.plan)].map((item,index)=>({
+    ...taskFor(goal,item,limits),id:`browser-${index+1}`,dependencies:index?[`browser-${index}`]:[],
+  }));
+}
 
 /** Validates the request against the issued context and builds the run. Nothing is stored or started here. */
 async function buildRun(context: TenantContext, request: BrowserRunRequest, deps: BrowserCapabilityDeps,signal:AbortSignal=new AbortController().signal): Promise<BuiltRun> {
@@ -130,18 +152,32 @@ async function buildRun(context: TenantContext, request: BrowserRunRequest, deps
   // Serialized plans never issue consequential authority, including recovered plans.
   if(trustedPlan.writeGrant)throw new BrowserRunError(400,'RUN_INVALID','Consequential browser execution requires canonical approval and cannot use a supplied write grant.');
 
-  const state = createCanonicalExecutionState({ projectId: runProject, runId, requiredCapabilities: ['browser_automation'], tasks: [taskFor(request.goal, trustedPlan, limits)] });
-  return { actor, runId, runProject, driveProject, limits, plan: trustedPlan, state, request };
+  const continuations=parseContinuations(request.continuations,job!);
+  const state = createCanonicalExecutionState({ projectId: runProject, runId, requiredCapabilities: ['browser_automation'], tasks: stageTasks(request.goal,trustedPlan,limits,continuations) });
+  return { actor, runId, runProject, driveProject, limits, plan: trustedPlan, continuations, state, request };
 }
 
-function handlerFor(context:TenantContext, spec: { allowedOrigins: string[]; startUrl: string; limits: BrowserJobLimits; plan: BrowserPlan; driveProject: string | null }, deps: BrowserCapabilityDeps,revalidate?:()=>Promise<void>) {
+function handlerFor(context:TenantContext, spec: { allowedOrigins: string[]; startUrl: string; limits: BrowserJobLimits; plan: BrowserPlan; continuations?:{startUrl:string;plan:BrowserPlan}[]; driveProject: string | null }, deps: BrowserCapabilityDeps,revalidate?:()=>Promise<void>) {
   const actor=actorFromTenantContext(requireTenantContext(context));
+  const stages=[{startUrl:spec.startUrl,plan:spec.plan},...(spec.continuations??[])];
+  const stageFor=(id:string)=>{const index=stages.findIndex((_,i)=>id===`browser-${i+1}`);if(index<0)throw new BrowserTaskError('PERMISSION_REVOKED','unknown browser stage');return stages[index]!;};
   return createBrowserTaskHandler({
     actor,tenantContext:context, drive: deps.drive, leases: deps.leases, worker: deps.worker, workerId: deps.workerId, admission: deps.admission,
     // the run's own project key is authorised by construction (it is the issued user's); a Drive project is re-checked every time
     authorise: async (a,projectId)=>{await revalidate?.();return projectId===`user:${actor.userId}`?a.userId===actor.userId:deps.authoriseProject(a,projectId);},
-    scopeFor: () => ({ allowedOrigins: spec.allowedOrigins, startUrl: spec.startUrl, limits: spec.limits }),
-    planFor: () => spec.plan,
+    scopeFor: (task,state) => {
+      const limits={...spec.limits};
+      if(stages.length>1){
+        // Storage/network ceilings remain run-wide, rather than multiplying them
+        // when one workflow is split into independently checkpointed stages.
+        for(const key of ['maxResponseBytes','maxArtifactBytes','maxNavigations'] as const)limits[key]=Math.floor(limits[key]/stages.length);
+        const remaining=Date.parse(state.createdAt)+120*60_000-Date.now();
+        if(!Number.isFinite(remaining)||remaining<=0)throw new BrowserTaskError('PERMISSION_REVOKED','browser workflow authorization expired');
+        limits.maxDurationMs=Math.min(limits.maxDurationMs,remaining);
+      }
+      return {allowedOrigins:spec.allowedOrigins,startUrl:stageFor(task.id).startUrl,limits};
+    },
+    planFor: (task) => stageFor(task.id).plan,
     driveProjectFor: () => spec.driveProject,
   });
 }
@@ -153,7 +189,7 @@ function handlerFor(context:TenantContext, spec: { allowedOrigins: string[]; sta
  */
 export async function runBrowserTask(context: TenantContext, request: BrowserRunRequest, deps: BrowserCapabilityDeps, signal?: AbortSignal) {
   const built = await buildRun(context, request, deps,signal);
-  const handler = handlerFor(context, { allowedOrigins: built.request.allowedOrigins, startUrl: built.request.startUrl, limits: built.limits, plan: built.plan, driveProject: built.driveProject }, deps);
+  const handler = handlerFor(context, { allowedOrigins: built.request.allowedOrigins, startUrl: built.request.startUrl, limits: built.limits, plan: built.plan, continuations:built.continuations, driveProject: built.driveProject }, deps);
   const finished = await new ExecutionScheduler(deps.storeFor(built.actor.userId)).run(built.state, { browser_automation: handler }, signal);
   return { runId: built.runId, task: finished.tasks[0]!, state: finished };
 }
@@ -168,7 +204,7 @@ export const BROWSER_MAX_ACTIVE_PER_TENANT = 4;
 export async function prepareBrowserRun(context: TenantContext, request: BrowserRunRequest, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }): Promise<{ runId: string }> {
   const built = await buildRun(context, request, deps);
   if (await deps.runs.countActive(built.actor.tenantId) >= BROWSER_MAX_ACTIVE_PER_TENANT) throw new BrowserRunError(429, 'RUN_LIMIT', 'too many browser runs are active; wait for one to finish');
-  await deps.runs.create({ tenantId: built.actor.tenantId, userId: built.actor.userId, state: built.state, spec: { goal: built.request.goal, startUrl: built.request.startUrl, allowedOrigins: built.request.allowedOrigins, limits: built.limits as unknown as Record<string, number>, plan: built.plan, driveProject: built.driveProject } });
+  await deps.runs.create({ tenantId: built.actor.tenantId, userId: built.actor.userId, state: built.state, spec: { goal: built.request.goal, startUrl: built.request.startUrl, allowedOrigins: built.request.allowedOrigins, limits: built.limits as unknown as Record<string, number>, plan: built.plan, ...(built.continuations?{continuations:built.continuations}:{}), driveProject: built.driveProject } });
   return { runId: built.runId };
 }
 
@@ -200,7 +236,7 @@ export async function executeBrowserRun(runId: string, deps: BrowserCapabilityDe
     // Re-read under the lease: another executor may have finished the run between the first read and the lease.
     const fresh = await deps.runs.loadInternal(runId);
     if (!fresh || isTerminalRunStatus(fresh.status)) return 'already_finished';
-    if (await deps.leases.holder({ tenantId: record.tenantId, runId, taskId: task.id })) return 'held_by_live_worker';
+    for(const candidate of fresh.state.tasks)if (await deps.leases.holder({ tenantId: record.tenantId, runId, taskId: candidate.id })) return 'held_by_live_worker';
     return await executeWithLease(fresh, runId, deps, options, () => lease, (next) => { lease = next; });
   } finally {
     await deps.leases.release(lease).catch(() => undefined);
@@ -222,10 +258,14 @@ async function executeWithLease(record: BrowserRunRecord, runId: string, deps: B
   const context=createTenantContext({userId:owned.userId,via:'persisted_owner'});
   const spec=owned.spec;
   let plan: BrowserPlan;
+  let continuations: {startUrl:string;plan:BrowserPlan}[] | undefined;
   try {
     assertBrowserInput({goal:spec.goal,startUrl:spec.startUrl,allowedOrigins:spec.allowedOrigins,plan:spec.plan});
     const job=parseBrowserJob({version:1,userId:context.userId,tenantId:context.tenantId,projectId:project,runId,taskId:'browser-1',attempt:Math.max(1,owned.state.tasks[0]?.attempts??1),allowedOrigins:spec.allowedOrigins,startUrl:spec.startUrl,limits:spec.limits});
     plan=parseBrowserPlan(spec.plan,job);
+    continuations=parseContinuations(spec.continuations,job);
+    const expected=stageTasks(spec.goal,plan,job.limits,continuations);
+    if(owned.state.tasks.length!==expected.length||owned.state.tasks.some((task,index)=>task.id!==expected[index]!.id||!isDeepStrictEqual(task.dependencies,expected[index]!.dependencies)))throw new Error('stage graph changed');
     if(plan.writeGrant)throw new BrowserTaskError('PERMISSION_REVOKED','durable browser plans cannot supply action authority');
   } catch {
     // A legacy queued spec is data, not authority. Preserve its recovery record
@@ -239,7 +279,7 @@ async function executeWithLease(record: BrowserRunRecord, runId: string, deps: B
     await deps.runs.stateStore(owner,current).save(state);
     return 'finished';
   }
-  const handler=handlerFor(context,{allowedOrigins:spec.allowedOrigins,startUrl:spec.startUrl,limits:spec.limits as unknown as BrowserJobLimits,plan,driveProject:spec.driveProject},deps,async()=>{
+  const handler=handlerFor(context,{allowedOrigins:spec.allowedOrigins,startUrl:spec.startUrl,limits:spec.limits as unknown as BrowserJobLimits,plan,continuations,driveProject:spec.driveProject},deps,async()=>{
     const row=await ownedRun();if(row.cancelRequested)throw new BrowserTaskError('CANCELLED','the run was cancelled');if(isTerminalRunStatus(row.status))throw new BrowserTaskError('PERMISSION_REVOKED','the run is no longer active');
   });
 

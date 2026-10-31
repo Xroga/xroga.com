@@ -33,6 +33,7 @@ const body = z.object({
   startUrl: z.string().min(1).max(2_048),
   allowedOrigins: z.array(z.string().min(1).max(300)).min(1).max(20),
   plan: z.record(z.string(), z.unknown()).optional(),
+  continuations: z.array(z.object({startUrl:z.string().min(1).max(2_048),plan:z.record(z.string(),z.unknown())}).strict()).min(1).max(11).optional(),
   allowAiSteps: z.boolean().optional(),
   limits: z.record(z.string(), z.number().int().nonnegative()).optional(),
   projectId: z.string().uuid().nullish(),

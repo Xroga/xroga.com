@@ -27,6 +27,8 @@ export interface BrowserRunSpec {
   limits: Record<string, number>;
   /** the parsed, trusted plan */
   plan: unknown;
+  /** Explicit fresh-session continuation stages. No cookies or browser profile is persisted here. */
+  continuations?: { startUrl: string; plan: unknown }[];
   /** the Drive project the evidence goes to, or null for the user's own objects */
   driveProject: string | null;
 }
@@ -63,12 +65,14 @@ export interface BrowserRunStore {
   markDispatched(runId: string): Promise<void>;
 }
 
-/** The run's status is derived from its single browser task, the same way every canonical store derives it. */
+/** A completed stage cannot prematurely finalize a durable multi-stage run. */
 export function runStatusOf(state: CanonicalExecutionState): BrowserRunStatus {
-  const task = state.tasks[0];
-  if (!task) return 'failed';
-  if (task.status === 'completed' || task.status === 'failed' || task.status === 'blocked' || task.status === 'cancelled') return task.status;
-  return task.status === 'running' ? 'running' : 'queued';
+  if (!state.tasks.length) return 'failed';
+  for (const status of ['cancelled', 'failed', 'blocked'] as const) {
+    if (state.tasks.some(task => task.status === status)) return status;
+  }
+  if (state.tasks.every(task => task.status === 'completed')) return 'completed';
+  return state.tasks.some(task => task.status === 'running' || task.status === 'completed') ? 'running' : 'queued';
 }
 
 export class MemoryBrowserRunStore implements BrowserRunStore {

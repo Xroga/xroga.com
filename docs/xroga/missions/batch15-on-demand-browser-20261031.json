@@ -1,0 +1,123 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH15-ON-DEMAND-BROWSER-20261031",
+  "baseSha": "3abc33a0cc108ace6efa0ab282137e10081513cf",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Issue 898 and PR904 comment6546660699. Batch1.5 only. Bounded on-demand process entrypoint, canonical BrowserWorkerPort transport lifecycle and explicit durable read-only continuation stages. No live activation claim.",
+  "changedFiles": [
+    "backend/src/routes/browserRuns.ts",
+    "backend/src/workers/browserCapability.ts",
+    "backend/src/workers/browserRunStore.ts",
+    "backend/src/workers/browserRunDurability.test.ts",
+    "backend/src/workers/jobBrowserWorker.ts",
+    "backend/src/workers/jobBrowserWorker.test.ts",
+    "deploy/browser-worker/Dockerfile.job",
+    "deploy/browser-worker/jobEnvelope.mjs",
+    "deploy/browser-worker/jobEnvelope.test.mjs",
+    "deploy/browser-worker/runCloudJob.mjs",
+    "deploy/browser-worker/runCloudJob.test.mjs",
+    "docs/infra/batch-1.5/on-demand-runtime-checkpoint.md"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing scheduler, authorization, Drive, model ledger, container fallback, production and microphone"
+    ],
+    "extend": [
+      "BrowserWorkerPort execution/termination contract",
+      "Durable sequential fresh-session stages",
+      "Signed model-free non-Docker process entrypoint"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "Optional continuation stages use the existing browser_runs JSON spec. No SQL.",
+    "rollback": "Disable new stage admission and drain active staged runs before reverting to a single-task reader. Do not send staged runs to an old executor."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Preserve canonical controls. Revalidate durable ownership and current task lease, deny supplied action grants/model use, require cleanup and resource receipt. Network containment and live provider transport remain unverified."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Preserve canonical controls. Revalidate durable ownership and current task lease, deny supplied action grants/model use, require cleanup and resource receipt. Network containment and live provider transport remain unverified."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Preserve canonical controls. Revalidate durable ownership and current task lease, deny supplied action grants/model use, require cleanup and resource receipt. Network containment and live provider transport remain unverified."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Preserve canonical controls. Revalidate durable ownership and current task lease, deny supplied action grants/model use, require cleanup and resource receipt. Network containment and live provider transport remain unverified."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Preserve canonical controls. Revalidate durable ownership and current task lease, deny supplied action grants/model use, require cleanup and resource receipt. Network containment and live provider transport remain unverified."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Preserve canonical controls. Revalidate durable ownership and current task lease, deny supplied action grants/model use, require cleanup and resource receipt. Network containment and live provider transport remain unverified."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Preserve canonical controls. Revalidate durable ownership and current task lease, deny supplied action grants/model use, require cleanup and resource receipt. Network containment and live provider transport remain unverified."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --test deploy/browser-worker/jobEnvelope.test.mjs deploy/browser-worker/runCloudJob.test.mjs",
+      "scope": "12 passing local tests including actual child processes. Not Chromium or Cloud Run acceptance.",
+      "negative": true,
+      "reference": "deploy/browser-worker/runCloudJob.test.mjs"
+    },
+    {
+      "command": "node --import tsx --test backend/src/workers/browserRunDurability.test.ts backend/src/workers/browserInputSecret.security.test.ts backend/src/routes/browserRunInternal.test.ts backend/src/workers/jobBrowserWorker.test.ts",
+      "scope": "18 durable/security fixture checks and six transport lifecycle checks passed in two focused invocations. No remote browser.",
+      "negative": true,
+      "reference": "backend/src/workers/jobBrowserWorker.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Same scheduler, task leases, run store, BrowserWorkerPort and Drive handler. No second scheduler.",
+    "rfc": null
+  },
+  "rollout": "Not ready to deploy. Finish provider transport and network containment, exact-source CI and isolated founder-only execution before enabling the path. No production mutation performed.",
+  "rollback": "Production unchanged. Preserve existing container implementation. A future staged-run rollout must drain staged runs before any rollback to a single-task executor.",
+  "knownGaps": [
+    "Provider-specific Cloud Run launch/private handoff/result transport not connected to runtime yet.",
+    "Cloud Run network containment and Chromium sandbox compatibility not executed. Google sandbox mode is Preview.",
+    "Cloudflare suitable-task adapter and guarded CDP execution not implemented.",
+    "Authenticated session sealing/consent, consequential continuation and UI continuation entry remain incomplete.",
+    "Local full backend typecheck blocked by incomplete shared dependency installation, including missing @types/express. No final CI or live acceptance yet."
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch1.5 browser activation is not claimed. Local tests are explicitly distinguished from live acceptance."
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Provider-specific Cloud Run launch/private handoff/result transport not connected to runtime yet.",
+      "Cloud Run network containment and Chromium sandbox compatibility not executed. Google sandbox mode is Preview.",
+      "Cloudflare suitable-task adapter and guarded CDP execution not implemented.",
+      "Authenticated session sealing/consent, consequential continuation and UI continuation entry remain incomplete.",
+      "Local full backend typecheck blocked by incomplete shared dependency installation, including missing @types/express. No final CI or live acceptance yet."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "docs/infra/batch-1.5/on-demand-runtime-checkpoint.md"
+  ]
+}

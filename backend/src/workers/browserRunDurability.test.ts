@@ -43,6 +43,55 @@ function setup() {
 const status = async (runs: MemoryBrowserRunStore, userId: string, runId: string) => (await runs.load(userId, runId))!;
 
 describe('durable browser runs', () => {
+  it('continues ordered stages under fresh task leases without completing after the first stage', async () => {
+    const t=setup(), first=request();
+    const {runId}=await prepareBrowserRun(t.ctx(t.h.alice.userId),{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]},t.instance('a'));
+    const deps=t.instance('b'), calls:string[]=[];
+    const original=deps.worker.run;
+    deps.worker={run:async(job,ctx)=>{
+      calls.push(job.taskId);
+      if(job.taskId==='browser-2')assert.equal((await status(t.runs,t.h.alice.userId,runId)).status,'running');
+      return original(job,ctx);
+    }};
+    await executeBrowserRun(runId,deps);
+    assert.deepEqual(calls,['browser-1','browser-2']);
+    assert.equal((await status(t.runs,t.h.alice.userId,runId)).status,'completed');
+  });
+
+  it('recovery skips completed stages and checks the next stage lease',async()=>{
+    const t=setup(), first=request();
+    const {runId}=await prepareBrowserRun(t.ctx(t.h.alice.userId),{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]},t.instance('a'));
+    const record=await status(t.runs,t.h.alice.userId,runId);
+    record.state.tasks[0]!.status='completed';
+    record.state.tasks[1]!.status='running';record.state.tasks[1]!.attempts=1;
+    await t.runs.stateStore(t.h.alice.userId).save(record.state);
+    const held=await t.instance('live').leases.acquire({tenantId:t.h.alice.tenantId,runId,taskId:'browser-2'},'live',60000);
+    assert.ok(held);
+    assert.equal(await executeBrowserRun(runId,t.instance('b')),'held_by_live_worker');
+    await t.instance('live').leases.release(held!);
+    await executeBrowserRun(runId,t.instance('b'));
+    assert.equal(t.calls.started,1);
+    assert.equal((await status(t.runs,t.h.alice.userId,runId)).status,'completed');
+  });
+
+  it('cancellation after the first stage prevents continuation dispatch',async()=>{
+    const t=setup(),first=request();
+    const {runId}=await prepareBrowserRun(t.ctx(t.h.alice.userId),{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]},t.instance('a'));
+    const record=await status(t.runs,t.h.alice.userId,runId);
+    record.state.tasks[0]!.status='completed';await t.runs.stateStore(t.h.alice.userId).save(record.state);
+    await t.runs.requestCancel(t.h.alice.userId,runId);
+    await executeBrowserRun(runId,t.instance('b'));
+    assert.equal(t.calls.started,0);
+    assert.equal((await status(t.runs,t.h.alice.userId,runId)).status,'cancelled');
+  });
+
+  it('refuses out-of-scope and credential-bearing continuation stages before admission',async()=>{
+    const t=setup(),first=request();
+    for(const stage of [{startUrl:'https://other.example/',plan:first.plan},{startUrl:first.startUrl,plan:{...first.plan,writeGrant:{id:'fake'}}}]){
+      await assert.rejects(prepareBrowserRun(t.ctx(t.h.alice.userId),{...first,continuations:[stage]},t.instance('a')));
+    }
+    assert.equal(t.calls.started,0);
+  });
   it('a run accepted by one instance is executed by another, because it is a stored record and not a promise in the request process', async () => {
     const t = setup();
     const { runId } = await prepareBrowserRun(t.ctx(t.h.alice.userId), request(), t.instance('instance-a'));
