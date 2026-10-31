@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "1a0d4c78b169e57bfcdd1fc3f717ffbdf30376910bd6cb1cf4f1638ffe68f1ad",
+  "reviewRegistrySha256": "b2885d1a828c829775e75fafeaba0a8a2111d2066b0a148b15db75a79f182801",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 917,
+    "persistenceCandidates": 918,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 121,
-    "reviewedCandidates": 796,
+    "reviewedCandidates": 797,
     "unresolvedSafetyCandidates": 154,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 121,
-    "SCOPED_BOUNDARY": 520,
+    "SCOPED_BOUNDARY": 521,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 203,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 835,
+    "unresolvedCandidateBoundaries": 836,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -5572,6 +5572,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "acf62cadb93d2dd4a3af"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "2922acfd42156496680f"
       },
       {
@@ -9008,6 +9012,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "acf62cadb93d2dd4a3af"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "83779ac5d4b86b4ed00a"
       },
       {
@@ -9085,11 +9093,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 917,
+    "currentCallers": 918,
     "structuredVerified": 82,
-    "structuredUnproven": 835,
+    "structuredUnproven": 836,
     "manualUnresolved": 154,
-    "manualUnsupported": 681,
+    "manualUnsupported": 682,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
@@ -27870,6 +27878,31 @@
           {
             "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
             "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
+          }
+        ]
+      }
+    },
+    {
+      "id": "acf62cadb93d2dd4a3af",
+      "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+      "line": 21,
+      "enclosing": "WorkspacePage",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8",
+      "semanticReview": {
+        "authority": "Request-scoped SSR public client retains authenticated cookie identity. No-argument current_community_role reads only auth.uid role. Verified confirmed founder, owner role and AAL2 are required before returning the opt-in founder ID. No customer-data query, mutation, service-role access or action approval is introduced.",
+        "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+            "marker": "client.rpc('current_community_role')"
+          },
+          {
+            "path": "frontend/src/components/response-experience-v2/document.test.ts",
+            "marker": "server flag, opt-in, confirmed founder role and MFA all required"
           }
         ]
       }

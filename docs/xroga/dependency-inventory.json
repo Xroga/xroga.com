@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1bd8f5c1ff7789bdd174c54df4a4d0f88d1a0901",
+  "source_sha": "6c479b82faccca904a5144171652413eb039909f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -18560,7 +18560,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "9adf8c812a579475162dbbd0b1c2cad35d433128b2f49cd1d3c99ee54e3de362"
+      "sha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8"
     },
     {
       "path": "frontend/src/app/about/page.tsx",
@@ -20584,7 +20584,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/access.ts",
-      "sha256": "f350ad66008caeed432583e3ff8914840bb4931bf883f1d76bcec0b1f0e3c62a"
+      "sha256": "68944d6a79df7453c571dda3b73f154b60dd9b54d762a1f2dbcd2da7a762e5d1"
     },
     {
       "path": "frontend/src/components/response-experience-v2/calculations.ts",

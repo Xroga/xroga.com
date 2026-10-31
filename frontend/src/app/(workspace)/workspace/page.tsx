@@ -18,6 +18,8 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
       const { data: { user } } = await client.auth.getUser();
       const decision = await responseV2Decision(enabled, true, {
         getUser: async () => user,
+        getRole: async () => { const { data, error } = await client.rpc('current_community_role'); return error ? null : data; },
+        getAal: async () => { const { data, error } = await client.auth.mfa.getAuthenticatorAssuranceLevel(); return error ? null : data.currentLevel; },
       });
       if (decision.allowed) founderId = user?.id ?? null;
       else reviewStatus = `V2 review unavailable: ${decision.reason}. The original response experience remains active.`;

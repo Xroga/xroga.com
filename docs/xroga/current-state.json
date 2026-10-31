@@ -52851,7 +52851,7 @@
       "id": "surface:561ec9ad9b6b0a62a37e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sha256": "9adf8c812a579475162dbbd0b1c2cad35d433128b2f49cd1d3c99ee54e3de362",
+      "sha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8",
       "symbols": [
         "WorkspacePage",
         "client",
@@ -81068,17 +81068,17 @@
       "id": "surface:5e0cb377ac7ec123d3d5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/access.ts",
-      "sha256": "f350ad66008caeed432583e3ff8914840bb4931bf883f1d76bcec0b1f0e3c62a",
+      "sha256": "68944d6a79df7453c571dda3b73f154b60dd9b54d762a1f2dbcd2da7a762e5d1",
       "symbols": [
-        "PresentationIdentity",
         "responseV2Access",
-        "responseV2Decision",
-        "user"
+        "responseV2Decision"
       ],
       "imports": [
         "@/lib/osFounderAccess"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/lib/osFounderAccess.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
@@ -81090,11 +81090,12 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [
-        "frontend/src/components/response-experience-v2/access.ts#FounderIdentity",
-        "frontend/src/components/response-experience-v2/access.ts#PresentationIdentity"
+        "frontend/src/components/response-experience-v2/access.ts#authorizeFounderRequest"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/components/response-experience-v2/access.ts#authorizeFounderRequest"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
@@ -98224,6 +98225,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/admin/feedback/page.tsx",
         "frontend/src/app/os-preview/founder/page.tsx",
         "frontend/src/app/os-preview/layout.tsx",
@@ -98231,6 +98233,7 @@
       ],
       "callers": [
         "frontend/src/app/admin/feedback/page.tsx:7",
+        "frontend/src/components/response-experience-v2/access.ts:1",
         "frontend/src/lib/osFounderAccess.test.ts:3",
         "frontend/src/lib/osFounderSession.ts:3",
         "frontend/src/lib/supabase/middleware.ts:6"

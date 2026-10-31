@@ -50,7 +50,7 @@
   "securityImpact": {
     "auth": {
       "changed": true,
-      "description": "Presentation flag requires server getUser confirmed founder identity and matching client profile. No role, permission, customer-data or action access is granted. Existing owner/AAL2 operations policy unchanged."
+      "description": "Founder Preview requires server-verified confirmed founder identity, owner role and AAL2, plus matching client profile. No account permissions changed."
     },
     "tenant": {
       "changed": false,
@@ -81,7 +81,7 @@
     {
       "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/document.test.ts frontend/src/components/response-experience-v2/mathSyntax.test.ts",
       "negative": true,
-      "scope": "16 focused adapter, input, calculator, presentation-identity and standard math parser tests. Conflicting stream/completion text regression reproduced before correction.",
+      "scope": "Focused adapter, input, calculator, owner/AAL2 founder gate and standard math parser tests. Conflicting stream/completion text regression reproduced before correction.",
       "reference": "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
     }
   ],
