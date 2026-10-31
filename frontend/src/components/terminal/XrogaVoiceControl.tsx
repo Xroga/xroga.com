@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, getAccessToken } from '@/lib/api';
 import { transcribeVoiceAudio, warmVoiceBackend } from '@/lib/voiceApi';
-import { openVoiceCapture, voiceCaptureSupported, type VoiceCapture } from '@/lib/voiceCapture';
+import { openVoiceCapture, prepareVoiceAudioContext, voiceCaptureSupported, type VoiceCapture } from '@/lib/voiceCapture';
 import { createVoiceSegmenter } from '@/lib/voiceSegmenter';
 import { createDictationPipeline, MAX_RECORDING_SECONDS, type DictationPipeline } from '@/lib/voiceDictation';
 import {
@@ -48,6 +48,7 @@ function describeFailure(failure: unknown): string {
   const code = (failure as { data?: { code?: unknown } } | null)?.data?.code;
   if (name === 'NotAllowedError' || name === 'SecurityError') return 'Allow microphone access in your browser to start recording.';
   if (name === 'NotFoundError') return 'No microphone was found. Connect one and try again.';
+  if (name === 'NotReadableError') return 'The microphone is busy or unavailable. Close other apps using it and try again.';
   if (status === 401 || code === 'VOICE_SESSION_CHANGED') return 'Please sign in again to use voice input. Your typed text is unchanged.';
   if (status === 429 && failure instanceof Error) return failure.message;
   if (failure instanceof TypeError) return 'Connection lost. Your recording is kept for a few minutes; retry when you are back online.';
@@ -207,6 +208,8 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       setError('This browser cannot record audio. Try Chrome, Edge or Safari, or type instead.');
       return;
     }
+    // iOS Safari starts an audio context only from the tap itself, so create it before the first await.
+    const prepared = prepareVoiceAudioContext();
     clearTimeout(retryExpiry.current); release(kept.current); kept.current = null; setRetryable(false); setError(''); setNotice('');
     const current: CaptureSession = { abort: new AbortController(), clickAt: performance.now() };
     session.current = current;
@@ -214,10 +217,10 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
     try {
       const token = await getAccessToken();
       if (!token) throw new ApiError('Please sign in to use voice input.', 401);
-      if (session.current !== current) return;
+      if (session.current !== current) { void prepared?.close().catch(() => {}); return; }
       warmVoiceBackend();
       const capture = await openVoiceCapture(
-        () => finish(current, 'Recording was interrupted. Transcribing what was captured.'), current.abort.signal);
+        () => finish(current, 'Recording was interrupted. Transcribing what was captured.'), current.abort.signal, prepared);
       if (session.current !== current) { capture.stop(); return; }
       current.capture = capture;
       const pipeline = createDictationPipeline({
@@ -240,6 +243,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
       current.recordingAt = performance.now();
       if (!current.stopping) setMode('listening');
     } catch (failure) {
+      void prepared?.close().catch(() => {});
       if (session.current !== current || current.abort.signal.aborted) return;
       session.current = null;
       release(current);
@@ -262,7 +266,7 @@ export function XrogaVoiceControl({ onVoiceDraft, disabled = false }: {
   const bar = mode !== 'idle' ? (<div className="xv-voice-capture-wrap">
       <div className={`xv-voice-capture-bar${mode === 'finalizing' ? ' is-transcribing' : ''}`} data-testid="xroga-voice-session">
         <button type="button" className="xv-voice-capture-button xv-voice-capture-cancel" aria-label="Cancel voice typing" onClick={cancel}><X aria-hidden /></button>
-        <div className="xv-voice-capture-middle" role="status" aria-live="polite" title="Your voice is sent to Cloudflare to be transcribed.">
+        <div className="xv-voice-capture-middle" role="status" aria-live="polite">
           {mode === 'finalizing' ? <span className="xv-voice-capture-label">{notice ? 'Finishing transcription…' : 'Transcribing…'}</span>
             : mode === 'requesting_permission' ? <span className="xv-voice-capture-label">Allow microphone access</span>
             : speech.current ? <span className="xv-voice-capture-label">{heard ? `Listening… ${heard}` : 'Listening…'}</span>

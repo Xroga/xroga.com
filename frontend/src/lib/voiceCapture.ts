@@ -10,14 +10,32 @@ export function voiceCaptureSupported(): boolean {
     && !!navigator.mediaDevices?.getUserMedia;
 }
 
+/** Safari on iOS only lets an audio context start from the user's tap itself, so it is created and
+ * started synchronously in the click handler, before any await. Returns undefined when unsupported. */
+export function prepareVoiceAudioContext(): AudioContext | undefined {
+  try {
+    if (typeof AudioContext === 'undefined') return undefined;
+    const context = new AudioContext({ latencyHint: 'interactive' });
+    void context.resume().catch(() => {});
+    return context;
+  } catch {
+    return undefined;
+  }
+}
+
 async function microphone(): Promise<MediaStream> {
   try {
     return await navigator.mediaDevices.getUserMedia({
       audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: { ideal: 1 } },
     });
   } catch (error) {
-    // Unsupported preferences are not a reason to refuse dictation.
-    if ((error as { name?: string })?.name === 'OverconstrainedError') return navigator.mediaDevices.getUserMedia({ audio: true });
+    // Unsupported preferences are not a reason to refuse dictation. Safari and some Android
+    // builds reject unknown constraints with an overconstrained or type error; permission and
+    // device errors are real and are passed on unchanged.
+    const name = (error as { name?: string })?.name;
+    if (name === 'OverconstrainedError' || name === 'TypeError' || name === 'ConstraintNotSatisfiedError') {
+      return navigator.mediaDevices.getUserMedia({ audio: true });
+    }
     throw error;
   }
 }
@@ -29,9 +47,10 @@ export interface VoiceCapture {
   stop(): void;
 }
 
-export async function openVoiceCapture(onInterrupted: () => void, signal: AbortSignal): Promise<VoiceCapture> {
-  const stream = await microphone();
-  let context: AudioContext | undefined, stopped = false;
+export async function openVoiceCapture(onInterrupted: () => void, signal: AbortSignal, prepared?: AudioContext): Promise<VoiceCapture> {
+  let context: AudioContext | undefined = prepared, stopped = false;
+  let stream: MediaStream;
+  try { stream = await microphone(); } catch (error) { void prepared?.close().catch(() => {}); throw error; }
   const stop = () => {
     if (stopped) return;
     stopped = true;
@@ -40,7 +59,7 @@ export async function openVoiceCapture(onInterrupted: () => void, signal: AbortS
   };
   try {
     if (signal.aborted) throw new DOMException('Voice typing cancelled.', 'AbortError');
-    context = new AudioContext({ latencyHint: 'interactive' });
+    context = context ?? new AudioContext({ latencyHint: 'interactive' });
     await context.resume();
     await context.audioWorklet.addModule(VOICE_WORKLET_PATH);
     if (signal.aborted) throw new DOMException('Voice typing cancelled.', 'AbortError');
