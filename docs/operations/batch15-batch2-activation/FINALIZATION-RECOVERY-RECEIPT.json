@@ -22,5 +22,12 @@
     "Process-local close retry only, not complete process-loss recovery.",
     "Synthetic storage failure injection, not a live database outage.",
     "No full Batch1.5 or Batch2 acceptance claim."
-  ]
+  ],
+  "ciFirstCommit": "218c147582c42b9d6385b71de849c338380a22e6",
+  "ciCorrections": {
+    "unit": "Frozen Phase2 register passed; generated current-state inventory drift prevented unit execution. Regenerated inventory, not review dispositions.",
+    "database": "16/17 engineering ledger tests passed; one 40P01 deadlock while the parallel suite reapplied schema. Serialize the two files, retain their internal six-process race and SIGKILL tests unchanged.",
+    "build": "Exact-source build passed on 218c1475.",
+    "workflowChange": ".github/workflows/xroga-tenant-security.yml"
+  }
 }

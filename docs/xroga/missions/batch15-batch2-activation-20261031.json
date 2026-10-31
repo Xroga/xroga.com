@@ -40,7 +40,8 @@
     "docs/operations/batch15-batch2-activation/BUILDER-CANCELLATION-RECEIPT.json",
     "backend/src/builder/swarmBridge.ts",
     "backend/src/builder/finalizationRecovery.test.ts",
-    "docs/operations/batch15-batch2-activation/FINALIZATION-RECOVERY-RECEIPT.json"
+    "docs/operations/batch15-batch2-activation/FINALIZATION-RECOVERY-RECEIPT.json",
+    ".github/workflows/xroga-tenant-security.yml"
   ],
   "decisions": {
     "keep": [

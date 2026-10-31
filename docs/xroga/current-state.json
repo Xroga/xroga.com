@@ -15565,6 +15565,7 @@
         "backend/src/builder/cancel.test.ts",
         "backend/src/builder/conversation.test.ts",
         "backend/src/builder/data/data.test.ts",
+        "backend/src/builder/finalizationRecovery.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/hosting/hosting.test.ts",
         "backend/src/builder/iteration.test.ts",
@@ -15976,6 +15977,7 @@
         "backend/src/builder/cancel.test.ts:15",
         "backend/src/builder/conversation.test.ts:9",
         "backend/src/builder/data/data.test.ts:7",
+        "backend/src/builder/finalizationRecovery.test.ts:4",
         "backend/src/builder/github/github.test.ts:8",
         "backend/src/builder/hosting/hosting.test.ts:7",
         "backend/src/builder/iteration.test.ts:9",
@@ -16022,6 +16024,7 @@
         "backend/src/builder/cancel.test.ts",
         "backend/src/builder/conversation.test.ts",
         "backend/src/builder/data/data.test.ts",
+        "backend/src/builder/finalizationRecovery.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/hosting/hosting.test.ts",
         "backend/src/builder/iteration.test.ts",
@@ -16042,16 +16045,20 @@
       "id": "surface:0576bf3489c187a1470e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/swarmBridge.ts",
-      "sha256": "8bc674b86b3d241d3292e7469174910a2012296658ca031c0f04653623ebe314",
+      "sha256": "696b9ad1a84f16b63f315ed549ebe8a660af0615da06fd9278861843f51b5eb4",
       "symbols": [
         "BuilderRunResult",
         "builderProjectExists",
         "builderServiceFor",
         "closeBuilderRun",
         "closedRuns",
+        "closing",
+        "closingRuns",
         "context",
         "error",
         "openBuilderRun",
+        "pending",
+        "persistBuilderClose",
         "saved",
         "store"
       ],
@@ -16077,6 +16084,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/finalizationRecovery.test.ts:5",
         "backend/src/routes/builder.ts:5",
         "backend/src/routes/swarm.ts:8",
         "backend/src/scripts/runCanonicalWorker.ts:13"
@@ -16089,7 +16097,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/builder/finalizationRecovery.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -33554,6 +33564,7 @@
         "backend/src/ai/voiceBudget.ts:3",
         "backend/src/builder/cancel.test.ts:12",
         "backend/src/builder/conversation.test.ts:7",
+        "backend/src/builder/finalizationRecovery.test.ts:3",
         "backend/src/builder/hosting/authority.ts:3",
         "backend/src/builder/phase2Bridge.ts:6",
         "backend/src/builder/phase2Store.ts:4",
@@ -33836,6 +33847,7 @@
         "backend/src/ai/usageAccounting.test.ts",
         "backend/src/builder/cancel.test.ts",
         "backend/src/builder/conversation.test.ts",
+        "backend/src/builder/finalizationRecovery.test.ts",
         "backend/src/builder/providerBoundary.security.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/existingSource/change/canonical.test.ts",
@@ -131289,7 +131301,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "c1c34123f29e073d2bf814d5ac4140b04895c350af18b70656d7ddaf475af9a4",
+      "sha256": "40766dedca3ccc9021b3539f0c3dc41e515f395ace48156f2415ad3df42ca087",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -139677,6 +139689,13 @@
       "id": "test-suite:d383866bf75707b9c922",
       "sourcePath": "backend/src/builder/export/archive.test.ts",
       "declaredTests": 15,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bbb101f960f942f8950d",
+      "sourcePath": "backend/src/builder/finalizationRecovery.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
