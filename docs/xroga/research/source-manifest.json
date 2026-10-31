@@ -3943,6 +3943,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-c09c0c8af98b7dc8",
+      "filename": "APPROVED-WINDOW.json",
+      "path_or_url": "docs/operations/batch15-batch2-activation/APPROVED-WINDOW.json",
+      "sha256": "eb186f60a05d9152af68e4e3e691b4380ac986aaa9cb8df55364eb70a112dacc",
+      "byte_size": 511,
+      "modified_timestamp": "2026-10-31T08:38:47.203Z",
+      "parse_status": "PARSED_JSON",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-256f1b0c663a1f32",
       "filename": "CHECKPOINT.md",
       "path_or_url": "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
