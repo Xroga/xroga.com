@@ -10,17 +10,29 @@
   "scope": "Issue 898: activate Batch 1.5 before Batch 2. This checkpoint closes production coordinator packaging and signed expired-lease admission before any cloud mutation.",
   "changedFiles": [
     "backend/src/workers/browserCoordinator.ts",
-    "backend/src/workers/browserCoordinatorHost.ts",
     "backend/src/workers/browserCoordinatorHost.test.ts",
-    "scripts/browser/browser-coordinator.mts",
+    "backend/src/workers/browserCoordinatorHost.ts",
+    "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
+    "docs/operations/batch15-batch2-activation/ISOLATED-VERIFICATION-APPROVAL.md",
+    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
+    "docs/operations/batch15-batch2-activation/PERSISTENCE-CONVERSION-REVIEW.json",
+    "docs/operations/batch15-batch2-activation/live-runtime-preflight.json",
+    "docs/operations/batch15-batch2-activation/network-inventory.json",
+    "docs/operations/batch15-batch2-activation/resource-inventory.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/missions/batch15-batch2-activation-20261031.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
     "docs/xroga/security/egress-caller-reviews.json",
     "docs/xroga/security/egress-callers.json",
-    "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
-    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
-    "docs/operations/batch15-batch2-activation/live-runtime-preflight.json",
-    "docs/operations/batch15-batch2-activation/resource-inventory.json",
-    "docs/operations/batch15-batch2-activation/network-inventory.json",
-    "docs/xroga/missions/batch15-batch2-activation-20261031.json"
+    "docs/xroga/security/privileged-callers.json",
+    "scripts/browser/browser-coordinator.mts"
   ],
   "decisions": {
     "keep": [
@@ -87,7 +99,7 @@
   "rollback": "Keep healthy source85 API/Job and current voice/frontend. Stop unaccepted host activation. A future release must close the source fence, drain work, pair recovery API/Job, verify readiness and reopen only the matching source.",
   "knownGaps": [
     "Specific host/IAM/secret/network/cost approval pending",
-    "Frozen-dependency exact-source CI pending; shared local install lacks development declarations",
+    "Required exact-source CI remains pending. API Docker build compiled successfully, local shared install lacks development declarations.",
     "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
     "Live browser/Drive and disposable-provider acceptance remain pending"
   ],
@@ -100,7 +112,7 @@
     "state": "BLOCKED",
     "blockers": [
       "Specific host/IAM/secret/network/cost approval pending",
-      "Frozen-dependency exact-source CI pending; shared local install lacks development declarations",
+      "Required exact-source CI remains pending. API Docker build compiled successfully, local shared install lacks development declarations.",
       "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
       "Live browser/Drive and disposable-provider acceptance remain pending"
     ],
@@ -111,6 +123,7 @@
   },
   "evidenceRefs": [
     "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
-    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json"
+    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
+    "docs/operations/batch15-batch2-activation/PERSISTENCE-CONVERSION-REVIEW.json"
   ]
 }

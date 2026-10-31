@@ -62,6 +62,14 @@
       "exitCode": 0,
       "logSha256": "3f50a57eb0700d47ce68ebe8832c18e9bf679366100e99f74ddd1233d19a7ec4",
       "cloudCalls": false
+    },
+    {
+      "label": "GREEN_SOURCE_BINDINGS_CLOSURE_AND_VIRTUAL_MERGE_TESTS",
+      "job": "22ebacd2-6b88-4cd9-922c-dc65cd6c68cb",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "216212af40f1fb7c55ffb9a6ac7cb788e9adcbac9c46f670bee2565082366b3e",
+      "cloudCalls": false
     }
   ],
   "modelCalls": 0,
@@ -79,5 +87,14 @@
     "backend/src/workers/browserCoordinator.ts": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
     "backend/src/workers/browserCoordinatorHost.ts": "98f570e48b5a8fd90a60afb587870191d83f26b1e0c8731756821d2366f74f39",
     "backend/src/workers/browserCoordinatorHost.test.ts": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
+  },
+  "ciCheckpoint": {
+    "head": "1e6cb7ca7c72de62e4359079c59fa539d8b223ce",
+    "apiDockerBuild": "PASS",
+    "authenticatedBrowser": "PASS",
+    "deterministicGolden": "PASS",
+    "missionPolicy": "PASS",
+    "unitAndIntegratedCandidate": "FAILED_METADATA_BINDINGS_CORRECTED_PENDING_FINAL_CI",
+    "disposablePolicyDatabase": "FAILED_METADATA_BINDINGS_CORRECTED_PENDING_FINAL_CI"
   }
 }

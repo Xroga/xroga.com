@@ -26094,11 +26094,11 @@
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
-      "sourceSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sourceSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "callIds": [
         "0c1f299ca46782708a80",
-        "7d95df757a672842a01e",
-        "a50f1b5fac8114e6973e"
+        "1f14463400589fcbae34",
+        "1a0b0a9100f6e81cb05c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Exactly the listed native Buffer.from conversions calculate source/Git hashes, encode source for the approved provider request or decode bounded provider JSON. They do not select a database, bucket, tenant, grant or table.",
@@ -26111,9 +26111,14 @@
         {
           "path": "backend/src/builder/providerBoundary.security.test.ts",
           "marker": "production Builder wiring retains exact approved GitHub publication"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch"
         }
       ],
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "activationContinuation": "docs/operations/batch15-batch2-activation/PERSISTENCE-CONVERSION-REVIEW.json"
     },
     {
       "path": "backend/src/workers/browserRunDispatch.ts",

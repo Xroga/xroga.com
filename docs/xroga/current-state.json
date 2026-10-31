@@ -52930,7 +52930,7 @@
       "id": "surface:ff684d3fa5d05b2f891d",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserCoordinator.ts",
-      "sha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "symbols": [
         "CoordinatorOptions",
         "MAX_BODY",
@@ -53024,9 +53024,11 @@
         "backend/src/builder/qa/remoteQa.ts:23",
         "backend/src/routes/browserRuns.ts:22",
         "backend/src/workers/browserCoordinator.test.ts:6",
+        "backend/src/workers/browserCoordinatorHost.test.ts:6",
+        "backend/src/workers/browserCoordinatorHost.ts:7",
         "backend/src/workers/browserCoordinatorProtocol.security.test.ts:3",
         "backend/src/workers/browserModelLifetime.security.test.ts:8",
-        "scripts/browser/browser-coordinator.mts:12"
+        "scripts/browser/browser-coordinator.mts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -53050,6 +53052,7 @@
         "backend/src/builder/qa/qaHostMain.test.ts",
         "backend/src/builder/qa/remoteQa.test.ts",
         "backend/src/workers/browserCoordinator.test.ts",
+        "backend/src/workers/browserCoordinatorHost.test.ts",
         "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
         "backend/src/workers/browserModelLifetime.security.test.ts"
       ],
@@ -53058,6 +53061,65 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0144d4534469344ac7e8",
+      "subsystem": "browser_sandbox",
+      "sourcePath": "backend/src/workers/browserCoordinatorHost.ts",
+      "sha256": "98f570e48b5a8fd90a60afb587870191d83f26b1e0c8731756821d2366f74f39",
+      "symbols": [
+        "bind",
+        "boundedInteger",
+        "browserHostConfiguration",
+        "browserImage",
+        "config",
+        "createBrowserCoordinatorHost",
+        "image",
+        "privateV4",
+        "proxyImage",
+        "secret",
+        "server",
+        "stop",
+        "text",
+        "worker"
+      ],
+      "imports": [
+        "./browserCoordinator.js",
+        "./browserTaskHandler.js",
+        "./containerBrowserWorker.js",
+        "node:net",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "backend/src/workers/browserCoordinator.ts",
+        "backend/src/workers/containerBrowserWorker.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/workers/browserCoordinatorHost.test.ts:5"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:net",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/workers/browserCoordinatorHost.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -53987,11 +54049,12 @@
       ],
       "callers": [
         "backend/src/workers/browserCoordinator.ts:20",
+        "backend/src/workers/browserCoordinatorHost.ts:8",
         "backend/src/workers/browserModelLifetime.security.test.ts:7",
         "backend/src/workers/browserReadOnlyTransport.security.test.ts:9",
         "backend/src/workers/containerOrphanCleanup.security.test.ts:4",
         "backend/src/workers/containerWorkerProtocol.security.test.ts:7",
-        "scripts/browser/browser-coordinator.mts:13",
+        "scripts/browser/browser-coordinator.mts:16",
         "scripts/browser/run-browser-job.mts:17",
         "scripts/browser/run-workflows.mts:24"
       ],
@@ -112247,7 +112310,7 @@
       "id": "surface:36bc1457b5e0e3fd724a",
       "subsystem": "browser_sandbox",
       "sourcePath": "scripts/browser/browser-coordinator.mts",
-      "sha256": "964b221aefa5bf3258079ba2b6435d9997a0eb5ac38829bf1b63aac5a5baf200",
+      "sha256": "d73bcb558355a17cda4a8f390da7360b50bdb3b798260486c8ec57464b044157",
       "symbols": [
         "arg",
         "host",
@@ -143265,6 +143328,13 @@
       "id": "test-suite:c438878f49512b824148",
       "sourcePath": "backend/src/workers/browserCoordinator.test.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b36a0413535f24aa9be0",
+      "sourcePath": "backend/src/workers/browserCoordinatorHost.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

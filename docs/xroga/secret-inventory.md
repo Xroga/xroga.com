@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `1e6cb7ca7c72de62e4359079c59fa539d8b223ce`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -229,7 +229,12 @@ Values are forbidden. Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Na
 | XROGA_BROWSER_EXECUTE_AUDIENCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_BROWSER_HOST_BIND | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_HOST_MAX_CONCURRENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_PLANNER_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_PROXY_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_REPO_ROOT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_TASKS_LOCATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_TASKS_PROJECT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_TASKS_QUEUE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
