@@ -1,0 +1,28 @@
+{
+  "scope": "FOCUSED_SOURCE_CORRECTION_NOT_LIVE_ACCEPTANCE",
+  "base": "3d56868618c096d13e6a5c63a489d7f15143b0e7",
+  "correctionCommit": "ba43e31666ecfaa15293e73946b59732a32ae750",
+  "defect": "A delayed canonical cancellation acknowledgement could cause cancelRun to re-read and cancel a replacement run.",
+  "correction": "Require the server-captured expected run ID and preserve the replacement slot. No schema or accounting changes.",
+  "tests": [
+    {
+      "label": "RED_DELAYED_STOP_CANCELS_REPLACEMENT",
+      "job": "4aa7c1cf-bb49-4214-8087-1ccf3faa6bdb",
+      "status": "failed-as-expected",
+      "logSha256": "7a6fe6d016ec6bf19b4eb1ec4f702159dd88a3a0ad25d4277357058e509d9a8c"
+    },
+    {
+      "label": "GREEN_FINAL_19_TESTS",
+      "job": "f15f81fc-61e2-4ddf-b37a-8f05328fa4c1",
+      "status": "passed",
+      "logSha256": "ef79f9296fb3051bde7122969d3aa9864b34f508e6a8c51c12c3845b344f204b"
+    }
+  ],
+  "productionMutations": false,
+  "modelCalls": 0,
+  "remaining": [
+    "Source-bound integration gates",
+    "Provider usage evidence for real saved revision",
+    "Terminal crash recovery and live acceptance"
+  ]
+}

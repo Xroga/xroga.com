@@ -7,7 +7,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Issue 898: activate Batch 1.5 before Batch 2. This checkpoint closes production coordinator packaging and signed expired-lease admission before any cloud mutation.",
+  "scope": "Issue 898 and founder comment 6541922149. Preserve passing PR899, reuse live Drive, and repair the demonstrated delayed Builder cancellation race. No browser-harness expansion, cloud window, production mutation or model call.",
   "changedFiles": [
     "backend/src/workers/browserCoordinator.ts",
     "backend/src/workers/browserCoordinatorHost.test.ts",
@@ -33,7 +33,11 @@
     "docs/xroga/security/egress-caller-reviews.json",
     "docs/xroga/security/egress-callers.json",
     "docs/xroga/security/privileged-callers.json",
-    "scripts/browser/browser-coordinator.mts"
+    "scripts/browser/browser-coordinator.mts",
+    "backend/src/builder/service.ts",
+    "backend/src/builder/store.ts",
+    "backend/src/builder/cancel.test.ts",
+    "docs/operations/batch15-batch2-activation/BUILDER-CANCELLATION-RECEIPT.json"
   ],
   "decisions": {
     "keep": [
@@ -42,7 +46,8 @@
     ],
     "extend": [
       "Compiled dedicated host entrypoint with strict config and immutable images",
-      "Reject expired or nonpositive signed worker leases before dispatch"
+      "Reject expired or nonpositive signed worker leases before dispatch",
+      "Bind Builder slot cancellation to the same server-captured run whose canonical cancellation was requested."
     ],
     "replace": [],
     "deprecate": []
@@ -59,8 +64,8 @@
       "description": "Coordinator rejects expired/missing expiry and nonpositive fencing tokens before dispatch. HMAC remains mandatory."
     },
     "tenant": {
-      "changed": false,
-      "description": "Existing boundary preserved. No production operation or spend performed."
+      "changed": true,
+      "description": "Stricter expected-run guard prevents a delayed Stop response from clearing a replacement build. Existing issued tenant context and owner predicates remain mandatory."
     },
     "approval": {
       "changed": false,
@@ -89,6 +94,12 @@
       "scope": "Real loopback signed HTTP admission, config denial and deterministic protocol/durability regression. Not live host acceptance.",
       "negative": true,
       "reference": "backend/src/workers/browserCoordinatorHost.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/builder/cancel.test.ts backend/src/builder/audit.verification.test.ts backend/src/builder/audit.delivery.test.ts",
+      "scope": "19 focused cancellation, verification and delivery tests passed. Delayed response reproduced red before the correction. No live provider, model, database or production mutation.",
+      "negative": true,
+      "reference": "backend/src/builder/cancel.test.ts"
     }
   ],
   "architecture": {
@@ -96,13 +107,13 @@
     "reason": "Same browser coordinator and container worker, compiled production packaging only. No new scheduler or control plane.",
     "rfc": null
   },
-  "rollout": "Required CI, approved isolated host, live security acceptance, then source-paired gated Batch 1.5 activation. Batch 2 stays disabled until Batch 1.5 live acceptance.",
+  "rollout": "Preserve live Batch1 and microphone. Reuse verified live Drive independently of the held Browser Worker. Review and integrate the small Builder correction, then obtain exact-source release gates and the specific authorizations required for bounded real-model production acceptance.",
   "rollback": "Keep healthy source85 API/Job and current voice/frontend. Stop unaccepted host activation. A future release must close the source fence, drain work, pair recovery API/Job, verify readiness and reopen only the matching source.",
   "knownGaps": [
-    "Exact isolated resource window approved at package fa9e90d6, execution awaits CI and immutable artifacts. Production activation and SQL remain separately controlled.",
-    "Required exact-source CI remains pending. API Docker build compiled successfully, local shared install lacks development declarations.",
-    "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
-    "Live browser/Drive and disposable-provider acceptance remain pending"
+    "Browser package held by founder comment 6541922149, no test window or resources started. Retained production browser host remains unapproved.",
+    "PR899 source 3d568686 passed all seven required checks. The dependent Builder cancellation correction still requires final integration CI.",
+    "Provider zero-usage accounting and terminal crash recovery remain unaccepted. Never fabricate usage or release uncertain holds.",
+    "Full Batch1.5/2 production acceptance and any SQL/frontend promotion retain their explicit owner gates."
   ],
   "placeholderClaimsRemaining": [
     "No Batch 1.5 or Batch 2 activation PASS is claimed"
@@ -112,10 +123,10 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact isolated resource window approved at package fa9e90d6, execution awaits CI and immutable artifacts. Production activation and SQL remain separately controlled.",
-      "Required exact-source CI remains pending. API Docker build compiled successfully, local shared install lacks development declarations.",
-      "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
-      "Live browser/Drive and disposable-provider acceptance remain pending"
+      "Browser package held by founder comment 6541922149, no test window or resources started. Retained production browser host remains unapproved.",
+      "PR899 source 3d568686 passed all seven required checks. The dependent Builder cancellation correction still requires final integration CI.",
+      "Provider zero-usage accounting and terminal crash recovery remain unaccepted. Never fabricate usage or release uncertain holds.",
+      "Full Batch1.5/2 production acceptance and any SQL/frontend promotion retain their explicit owner gates."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
@@ -125,6 +136,7 @@
   "evidenceRefs": [
     "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
     "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
-    "docs/operations/batch15-batch2-activation/PERSISTENCE-CONVERSION-REVIEW.json"
+    "docs/operations/batch15-batch2-activation/PERSISTENCE-CONVERSION-REVIEW.json",
+    "docs/operations/batch15-batch2-activation/BUILDER-CANCELLATION-RECEIPT.json"
   ]
 }

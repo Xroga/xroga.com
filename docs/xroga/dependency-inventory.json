@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+  "source_sha": "ba43e31666ecfaa15293e73946b59732a32ae750",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16449,7 +16449,7 @@
     },
     {
       "path": "backend/src/builder/service.ts",
-      "sha256": "d015f04de6912fd8a0aa6f2ccbff892522d8284ab2540a0ce35ea7e31aea2cdd"
+      "sha256": "dfabe73e93c98f1b0be59bba906d00c229c04e4398fdc9107d0ddffe430a0fad"
     },
     {
       "path": "backend/src/builder/servicesFixture.testsupport.ts",
@@ -16469,7 +16469,7 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066"
+      "sha256": "5075ce93bb216850fb577a3b2dbd022dd71d334e568d433c56cda3be9131e26e"
     },
     {
       "path": "backend/src/builder/swarmBridge.ts",
@@ -31618,14 +31618,14 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 96,
+      "line": 97,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 97,
+      "line": 98,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
