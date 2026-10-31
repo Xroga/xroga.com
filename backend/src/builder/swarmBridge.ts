@@ -45,36 +45,48 @@ export interface BuilderRunResult {
  * so "verified" here is derived from that, and then confirmed against the running preview.
  */
 const closedRuns = new WeakSet<BuilderRunBinding>();
+const closingRuns = new WeakMap<BuilderRunBinding, Promise<void>>();
 
 export async function closeBuilderRun(tenant: TenantContext, run: BuilderRunBinding, result: BuilderRunResult): Promise<void> {
-  // A run is closed once: a late cancellation after a successful close must not relabel a saved, tested project.
-  if (closedRuns.has(run)) return;
-  closedRuns.add(run);
   const context = requireTenantContext(tenant);
-  const store = new SupabaseBuilderStore(context);
+  // Only a durable close is final. Concurrent callers await the same write, and
+  // a failed write remains retryable without replaying generation or provider work.
+  if (closedRuns.has(run)) return;
+  const pending = closingRuns.get(run);
+  if (pending) return pending.catch(() => undefined);
+  const closing = persistBuilderClose(context, run, result);
+  closingRuns.set(run, closing);
   try {
-    // Every write below is guarded by the run slot: a run the user already cancelled, or a newer build, keeps its own state.
-    if (result.cancelled) {
-      await store.setStateForRun(context.userId, run.projectId, run.runId, 'cancelled', 'The build was cancelled.', null);
-      return;
-    }
-    const saved = run.saved();
-    if (!saved && !run.noChange()) {
-      await store.setStateForRun(context.userId, run.projectId, run.runId, result.blocked ? 'blocked' : 'failed', (result.reason ?? 'The build did not produce a saved revision.').slice(0, 300), null);
-      return;
-    }
-    await builderServiceFor(context).completeRun(
-      context.userId,
-      run,
-      { outcome: result.ok ? 'completed' : 'failed', verified: result.ok, reason: result.reason ?? 'Canonical validation accepted the build.', files: [] },
-      (revision) => canonicalPreviewPort.verify({ userId: context.userId, projectId: run.projectId, revision }),
-    );
-    // Rerun the browser tests against the new revision. Best effort and detached: a failure here
-    // never changes the build result, and the outcome is recorded against the revision it tested.
-    if (result.ok) {
-      void phase2ServicesFor(context).qa.runQa(context.userId, run.projectId).catch(() => undefined);
-    }
+    await closing;
+    closedRuns.add(run);
   } catch {
-    // The project keeps its last recorded state; nothing is reported as verified.
+    // Preserve the canonical result. A later close may retry the owner/run-fenced write.
+  } finally {
+    closingRuns.delete(run);
+  }
+}
+
+async function persistBuilderClose(context: TenantContext, run: BuilderRunBinding, result: BuilderRunResult): Promise<void> {
+  const store = new SupabaseBuilderStore(context);
+  // Every write below is guarded by the run slot: a run the user already cancelled, or a newer build, keeps its own state.
+  if (result.cancelled) {
+    await store.setStateForRun(context.userId, run.projectId, run.runId, 'cancelled', 'The build was cancelled.', null);
+    return;
+  }
+  const saved = run.saved();
+  if (!saved && !run.noChange()) {
+    await store.setStateForRun(context.userId, run.projectId, run.runId, result.blocked ? 'blocked' : 'failed', (result.reason ?? 'The build did not produce a saved revision.').slice(0, 300), null);
+    return;
+  }
+  await builderServiceFor(context).completeRun(
+    context.userId,
+    run,
+    { outcome: result.ok ? 'completed' : 'failed', verified: result.ok, reason: result.reason ?? 'Canonical validation accepted the build.', files: [] },
+    (revision) => canonicalPreviewPort.verify({ userId: context.userId, projectId: run.projectId, revision }),
+  );
+  // Rerun the browser tests against the new revision. Best effort and detached: a failure here
+  // never changes the build result, and the outcome is recorded against the revision it tested.
+  if (result.ok) {
+    void phase2ServicesFor(context).qa.runQa(context.userId, run.projectId).catch(() => undefined);
   }
 }

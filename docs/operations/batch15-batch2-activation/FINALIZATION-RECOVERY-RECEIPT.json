@@ -1,0 +1,26 @@
+{
+  "baseSha": "3abc33a0cc108ace6efa0ab282137e10081513cf",
+  "defect": "closedRuns was marked before durable finalization, making failed writes permanently non-retryable for that binding",
+  "correction": "Mark closed only after successful persistence and share concurrent in-flight close promises. A failed close remains retryable. Existing owner/run CAS preserved.",
+  "red": {
+    "tests": 3,
+    "passed": 0,
+    "failed": 3,
+    "localJob": "3ffc550b-add8-4bd3-8909-abc9ba9f63a8"
+  },
+  "green": {
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "localJob": "cc889d8a-b362-43ea-b226-12ad9d6fb303"
+  },
+  "typeCheck": "LOCAL_BLOCKED_SHARED_DEPENDENCIES_MISSING_TYPES; new test callback annotations corrected; clean CI required",
+  "productionChanged": false,
+  "modelCalls": 0,
+  "newCloudResources": 0,
+  "limitations": [
+    "Process-local close retry only, not complete process-loss recovery.",
+    "Synthetic storage failure injection, not a live database outage.",
+    "No full Batch1.5 or Batch2 acceptance claim."
+  ]
+}
