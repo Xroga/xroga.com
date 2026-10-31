@@ -21189,7 +21189,7 @@
       "id": "surface:c20200a666b149a045e3",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/index.ts",
-      "sha256": "e7a3f001f37ace01be498e93f19b3cf6fcb1b4847d67b22e83354c46e8adbb5f",
+      "sha256": "b062ce27a40145f293271908a325c44f740dd62d457b7c5be830acf2eb32b7c6",
       "symbols": [
         "active",
         "allowedOrigins",
@@ -119705,7 +119705,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1768b9fef64cae158fb5",
+      "id": "registration:9a6120de4ba7a55cbc45",
       "sourcePath": "backend/src/index.ts",
       "line": 195,
       "receiver": "app",
@@ -119719,7 +119719,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:be46d51cd14657f9d731",
+      "id": "registration:976893cf40a7f15a7def",
       "sourcePath": "backend/src/index.ts",
       "line": 206,
       "receiver": "app",
@@ -119731,7 +119731,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fec6c99c39edc812a984",
+      "id": "registration:9a156fd98a554b120c73",
       "sourcePath": "backend/src/index.ts",
       "line": 210,
       "receiver": "app",
@@ -119743,7 +119743,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:bfb8a3eb9ac85c11aa44",
+      "id": "registration:75bb7409e52199bafde8",
       "sourcePath": "backend/src/index.ts",
       "line": 219,
       "receiver": "app",
@@ -119757,7 +119757,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:cf0c10c46d7ec99ab9a0",
+      "id": "registration:3ffee3e53d8a68730ec2",
       "sourcePath": "backend/src/index.ts",
       "line": 221,
       "receiver": "app",
@@ -119772,7 +119772,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c9f09c0af8b450a8fe4e",
+      "id": "registration:025542d1c7251cf8ac84",
       "sourcePath": "backend/src/index.ts",
       "line": 222,
       "receiver": "app",
@@ -119787,7 +119787,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0b8cd78159a7c9eb53dd",
+      "id": "registration:d95c1bf541484cddc2bb",
       "sourcePath": "backend/src/index.ts",
       "line": 223,
       "receiver": "app",
@@ -119804,7 +119804,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:f0832463d083bc06fa03",
+      "id": "registration:371e4cbd78f0ea7f9add",
       "sourcePath": "backend/src/index.ts",
       "line": 230,
       "receiver": "app",
@@ -119819,7 +119819,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:34af506500763c4603e8",
+      "id": "registration:163662ea5cd51b7ed1a6",
       "sourcePath": "backend/src/index.ts",
       "line": 231,
       "receiver": "app",
@@ -119834,7 +119834,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d7980f6d2cfe6a99d839",
+      "id": "registration:c5446865e9a00d49772c",
       "sourcePath": "backend/src/index.ts",
       "line": 232,
       "receiver": "app",
@@ -119849,7 +119849,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:214054f06895b1a5c003",
+      "id": "registration:2e0f9e8150c25dadcc69",
       "sourcePath": "backend/src/index.ts",
       "line": 233,
       "receiver": "app",
@@ -119863,7 +119863,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:fdba22e23c7f58824a30",
+      "id": "registration:61e9cf1be83dedfc4f2a",
       "sourcePath": "backend/src/index.ts",
       "line": 235,
       "receiver": "app",
@@ -119877,7 +119877,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:23ac839d9566853029ec",
+      "id": "registration:82a81f7adb6a988b34d5",
       "sourcePath": "backend/src/index.ts",
       "line": 236,
       "receiver": "app",
@@ -119892,7 +119892,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d4f2dc723442871f6b02",
+      "id": "registration:b1ce42c079b7dd7cc98e",
       "sourcePath": "backend/src/index.ts",
       "line": 237,
       "receiver": "app",
@@ -119907,7 +119907,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6afd2f65809cb17db179",
+      "id": "registration:e4cc20f2bf3f1751cfbb",
       "sourcePath": "backend/src/index.ts",
       "line": 238,
       "receiver": "app",
@@ -119922,7 +119922,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:00fd52e92ba8e74670f5",
+      "id": "registration:fb5e97295309c8d5d8c4",
       "sourcePath": "backend/src/index.ts",
       "line": 239,
       "receiver": "app",
@@ -119937,7 +119937,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:415c0b459c2cdf7268e7",
+      "id": "registration:127bff3b35e465b9ae25",
       "sourcePath": "backend/src/index.ts",
       "line": 240,
       "receiver": "app",
@@ -119953,7 +119953,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2f66b245c427cfa0f5d0",
+      "id": "registration:71c4d80e770c6032195b",
       "sourcePath": "backend/src/index.ts",
       "line": 243,
       "receiver": "app",
@@ -119968,7 +119968,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9f3e9a482538eb489351",
+      "id": "registration:a368783c2a3d5c3ce9d1",
       "sourcePath": "backend/src/index.ts",
       "line": 244,
       "receiver": "app",
@@ -119983,7 +119983,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:820dd6bc99adae12ba5f",
+      "id": "registration:418b46e0d6283c08b00d",
       "sourcePath": "backend/src/index.ts",
       "line": 245,
       "receiver": "app",
@@ -119998,7 +119998,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fa64d481a2d499607cc0",
+      "id": "registration:4c0ac810126a6a206aee",
       "sourcePath": "backend/src/index.ts",
       "line": 249,
       "receiver": "app",
@@ -120013,7 +120013,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:f4c48cc979e32b6179b3",
+      "id": "registration:e656e0864e6bdbf0f9b1",
       "sourcePath": "backend/src/index.ts",
       "line": 250,
       "receiver": "app",
@@ -120028,7 +120028,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4d0accf98ec4c7054778",
+      "id": "registration:bb03e8b3469c6654c61c",
       "sourcePath": "backend/src/index.ts",
       "line": 251,
       "receiver": "app",
@@ -120043,7 +120043,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:10919be7c541f311088e",
+      "id": "registration:d73dc1c8399d3885376f",
       "sourcePath": "backend/src/index.ts",
       "line": 252,
       "receiver": "app",
@@ -120058,7 +120058,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b66acee1d3979d90e7e0",
+      "id": "registration:6e94ae6afeb2b3f76e27",
       "sourcePath": "backend/src/index.ts",
       "line": 253,
       "receiver": "app",
@@ -120073,7 +120073,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a7dba1bfc8f1198b042c",
+      "id": "registration:36090015b71e04667cdf",
       "sourcePath": "backend/src/index.ts",
       "line": 255,
       "receiver": "app",
@@ -120088,7 +120088,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8b9c4df00a40d80bfd96",
+      "id": "registration:423d292e7a6a44838a51",
       "sourcePath": "backend/src/index.ts",
       "line": 256,
       "receiver": "app",
@@ -120103,7 +120103,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e182c87f2c4e97b624a9",
+      "id": "registration:fc180e55022508f60a47",
       "sourcePath": "backend/src/index.ts",
       "line": 257,
       "receiver": "app",
@@ -120118,7 +120118,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4de0576b435578930232",
+      "id": "registration:290f1c620c800adf24d7",
       "sourcePath": "backend/src/index.ts",
       "line": 258,
       "receiver": "app",
@@ -120133,7 +120133,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3009b845840f45bbb3e7",
+      "id": "registration:19c95eedb459b28c5500",
       "sourcePath": "backend/src/index.ts",
       "line": 259,
       "receiver": "app",
@@ -120148,7 +120148,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:20b7a1254597125ca2f5",
+      "id": "registration:c989faf630f716e72d24",
       "sourcePath": "backend/src/index.ts",
       "line": 260,
       "receiver": "app",
@@ -120163,7 +120163,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1e13b92f09cbb74e246c",
+      "id": "registration:56299722d763bbaaa562",
       "sourcePath": "backend/src/index.ts",
       "line": 261,
       "receiver": "app",
@@ -120178,7 +120178,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3ca8c7e2613f55e6d2e9",
+      "id": "registration:8c4a6fa90a80311dc128",
       "sourcePath": "backend/src/index.ts",
       "line": 262,
       "receiver": "app",
@@ -120193,7 +120193,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:bf11cb0b724ebacf4649",
+      "id": "registration:54c644e115756500a2f7",
       "sourcePath": "backend/src/index.ts",
       "line": 263,
       "receiver": "app",
@@ -120208,7 +120208,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9563bbff8c45a43257cc",
+      "id": "registration:b71b7b350fee292bd7a5",
       "sourcePath": "backend/src/index.ts",
       "line": 264,
       "receiver": "app",
@@ -120223,7 +120223,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:28d1064393ee0afc9b25",
+      "id": "registration:b5ee77eb82f6c3a69107",
       "sourcePath": "backend/src/index.ts",
       "line": 265,
       "receiver": "app",
@@ -120238,7 +120238,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ea9b8a9f6b4c7b4a550b",
+      "id": "registration:7ccf7484addc5171093a",
       "sourcePath": "backend/src/index.ts",
       "line": 266,
       "receiver": "app",
@@ -120253,7 +120253,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:97cebb6faf7ee0218062",
+      "id": "registration:c30638b0838e2a6b2e68",
       "sourcePath": "backend/src/index.ts",
       "line": 267,
       "receiver": "app",
@@ -120268,7 +120268,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:dfad3482401a0ed157ae",
+      "id": "registration:be008c6e24ecea7235f2",
       "sourcePath": "backend/src/index.ts",
       "line": 268,
       "receiver": "app",
@@ -120283,7 +120283,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:092ba62fe358f4298e86",
+      "id": "registration:aaccd991befa75285e43",
       "sourcePath": "backend/src/index.ts",
       "line": 269,
       "receiver": "app",
@@ -120297,7 +120297,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:95672abec7480cc434ba",
+      "id": "registration:0ff0800cee052106865e",
       "sourcePath": "backend/src/index.ts",
       "line": 273,
       "receiver": "app",
@@ -120312,7 +120312,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:248faaadfb605c96daac",
+      "id": "registration:8901a21ce87bde33d876",
       "sourcePath": "backend/src/index.ts",
       "line": 274,
       "receiver": "app",
@@ -120327,7 +120327,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ddfe7c32f13466e2ae74",
+      "id": "registration:01c402bc5f2ce1f1b1a1",
       "sourcePath": "backend/src/index.ts",
       "line": 276,
       "receiver": "app",
@@ -120339,7 +120339,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:dc04f4541b92b432cd3d",
+      "id": "registration:353e89f1ce69945e3e1f",
       "sourcePath": "backend/src/index.ts",
       "line": 280,
       "receiver": "app",
@@ -124694,8 +124694,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d075c6ac5f3816cb0291",
-      "registrationId": "registration:1768b9fef64cae158fb5",
+      "id": "route:ab84696c87744ca65819",
+      "registrationId": "registration:9a6120de4ba7a55cbc45",
       "sourcePath": "backend/src/index.ts",
       "line": 195,
       "method": "GET",
@@ -124707,8 +124707,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:bac596fdb1aaa0c3cc4a",
-      "registrationId": "registration:be46d51cd14657f9d731",
+      "id": "route:00590e14f6567758fdb9",
+      "registrationId": "registration:976893cf40a7f15a7def",
       "sourcePath": "backend/src/index.ts",
       "line": 206,
       "method": "GET",
@@ -124720,8 +124720,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a25f7583598da5027ef1",
-      "registrationId": "registration:fec6c99c39edc812a984",
+      "id": "route:046bbe26b5d563ea759b",
+      "registrationId": "registration:9a156fd98a554b120c73",
       "sourcePath": "backend/src/index.ts",
       "line": 210,
       "method": "GET",
@@ -126455,8 +126455,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d31b1ed35e7d6079c695",
-      "registrationId": "registration:820dd6bc99adae12ba5f",
+      "id": "route:8241216b38db9f0b3ce5",
+      "registrationId": "registration:418b46e0d6283c08b00d",
       "sourcePath": "backend/src/index.ts",
       "line": 245,
       "method": "GET",
@@ -128898,8 +128898,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1802199e385e61732c02",
-      "registrationId": "registration:092ba62fe358f4298e86",
+      "id": "route:a81bdf6d04760ab22ee8",
+      "registrationId": "registration:aaccd991befa75285e43",
       "sourcePath": "backend/src/index.ts",
       "line": 269,
       "method": "GET",

@@ -200,7 +200,7 @@ app.get('/ready', credentialVaultReadinessMiddleware(credentialVaultReadiness), 
     return;
   }
   const failing = result.checks.find(check => check.status === 'fail');
-  res.status(503).json({ status: 'not_ready', reason: failing?.reason ?? 'not_ready', checks: result.checks });
+  res.status(503).json({ status: 'not_ready', reason: failing?.reason ?? 'not_ready' });
 });
 
 app.get('/api/health', (_req, res) => {
