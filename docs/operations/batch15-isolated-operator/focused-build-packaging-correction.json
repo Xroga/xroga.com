@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-10-31T12:12:12.561594+00:00",
+  "failedBuild": "29eba360-4e2b-47b9-90a1-b024671e83de",
+  "status": "FAILURE",
+  "cause": "Source archive omitted tracked .dockerignore. Standalone API included browser test sources requiring root-only Playwright types.",
+  "correction": "Include exact tracked .dockerignore as in passing CI. No application source or dependency changes.",
+  "retryMaximum": 1,
+  "sourceSha": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "productionChanged": false,
+  "estimatedFirstBuildUsd": 0.013
+}

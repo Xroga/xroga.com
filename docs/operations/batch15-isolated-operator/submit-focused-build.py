@@ -7,7 +7,7 @@ P='project-c40d4821-e647-4fa2-92d'
 IMAGE=f'us-east4-docker.pkg.dev/{P}/cloud-run-source-deploy/xroga-api-release:b15b2-ac8168-1031'
 PS=r'C:/Users/hp/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
 GC=r'C:/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.ps1'
-J=ROOT/'focused-build-journal.json'
+J=ROOT/'focused-build-journal.retry1.json'
 a=json.loads((ROOT/'FOCUSED-RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
 assert a['approved'] and a['packageCommit']=='41a5b936b9a7bc96c84d26ef905b36eeb20b013f' and a['sourceSha']==SHA
 assert os.environ.get('XROGA_CLEANUP_JOB_ID'),'OWNED_LOCAL_RUNNER_REQUIRED'
@@ -18,7 +18,7 @@ def record(state,**more):
 assert subprocess.check_output(['git','rev-parse',SHA],cwd=APP,text=True).strip()==SHA
 work=pathlib.Path(os.environ['TEMP'])/'focused-source-build';work.mkdir()
 archive=work/'context.tar'
-subprocess.run(['git','archive','--format=tar','--output='+str(archive),SHA,'--','Dockerfile.api','backend'],cwd=APP,check=True,timeout=45)
+subprocess.run(['git','archive','--format=tar','--output='+str(archive),SHA,'--','Dockerfile.api','.dockerignore','backend'],cwd=APP,check=True,timeout=45)
 context=work/'context';context.mkdir()
 with tarfile.open(archive) as t:t.extractall(context,filter='data')
 assert (context/'Dockerfile.api').is_file()
@@ -37,4 +37,4 @@ if r.returncode:
  record('SUBMISSION_FAILED_OR_UNKNOWN_INSPECT_CLOUD_BUILD',exitCode=r.returncode)
  raise RuntimeError('Build submission failed; no automatic resubmit. Inspect scoped build metadata.')
 b=json.loads(r.stdout)
-record('SUBMITTED',buildId=b['id'],status=b.get('status'),source=b.get('source',{}).get('storageSource',{}))
+record('SUBMITTED',buildId=b['id'],status=b.get('status'),sourceStorage=b.get('source',{}).get('storageSource',{}))

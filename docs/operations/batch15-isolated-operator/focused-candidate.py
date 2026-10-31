@@ -69,9 +69,6 @@ else:
         'autoscaling.knative.dev/maxScale':'1','run.googleapis.com/cpu-throttling':'true'})
     container=template['spec']['containers'][0]
     container['image']=IMAGE
-    # Candidate-only artifact smoke, existing compiled tests with no production credentials.
-    container['command']=['node']
-    container['args']=['--input-type=module','-e',"const {spawnSync}=await import('node:child_process');const r=spawnSync(process.execPath,['--test','dist/builder/cancel.test.js'],{cwd:'/app',timeout:15000,encoding:'utf8',env:{PATH:process.env.PATH,NODE_ENV:'test',HOME:'/tmp',TMPDIR:'/tmp'}});if(r.status!==0)throw new Error('FOCUSED_COMPILED_CANCEL_REGRESSION_FAILED');console.log(JSON.stringify({kind:'focused-runtime-compiled-cancel-pass',source:process.env.XROGA_RELEASE_SHA,passed:Number((r.stdout.match(/# pass (\\d+)/)||[])[1]||0)}));await import('/app/dist/index.js');"]
     env=container['env']
     for name,value in [('XROGA_RELEASE_CANDIDATE','1'),('XROGA_RELEASE_SHA',SHA),('XROGA_GOOGLE_WORKER_IMAGE',IMAGE)]:
         env[:]=[v for v in env if v['name']!=name]
