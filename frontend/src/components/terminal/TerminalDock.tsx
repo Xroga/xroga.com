@@ -86,8 +86,10 @@ export function TerminalDock() {
     sessionRestoring,
   } = useTerminalChat();
 
+  const responsePreviewActive = useThemeStore((state) => state.responsePreviewActive);
   const emptyWorkspace =
     hydrated &&
+    !responsePreviewActive &&
     !sessionRestoring &&
     messages.length === 0 &&
     !loading;

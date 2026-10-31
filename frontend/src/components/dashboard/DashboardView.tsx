@@ -49,6 +49,10 @@ export function DashboardView({ responsePreview }: { responsePreview?: { message
   const profile = useAppStore((state) => state.profile);
   // Specimens never replace, persist into, or dispatch a real conversation.
   const specimen = hydrated && profile && !messages.length && !loading && !sessionRestoring ? responsePreview : undefined;
+  useEffect(() => {
+    useThemeStore.setState({ responsePreviewActive: Boolean(specimen) });
+    return () => { useThemeStore.setState({ responsePreviewActive: false }); };
+  }, [specimen]);
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
