@@ -9,6 +9,14 @@ export type CalculatorOperation =
   | 'minimum'
   | 'maximum';
 
+/** Empty, non-finite and out-of-range input must never silently become zero. */
+export function calculatorInputValue(value: string, min?: number, max?: number): number {
+  if (!value.trim()) return Number.NaN;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || (min !== undefined && parsed < min) || (max !== undefined && parsed > max)) return Number.NaN;
+  return parsed;
+}
+
 /** Executes only allowlisted arithmetic operations; AI content is never evaluated as code. */
 export function calculateValues(operation: CalculatorOperation, values: number[]): number {
   if (!values.length || values.some((value) => !Number.isFinite(value))) return Number.NaN;

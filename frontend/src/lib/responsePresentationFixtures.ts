@@ -32,7 +32,13 @@ export function responsePresentationFixture(name: string): ChatMessage[] | undef
     calculator: { type: 'calculator', title: 'Illustrative budget calculator', description: 'Assumption: budget equals hours multiplied by hourly cost. No account access or financial action.', operation: 'product', inputs: [{ id: 'hours', label: 'Hours', value: 20, min: 0, max: 120, step: 1, unit: 'hours' }, { id: 'rate', label: 'Hourly cost', value: 25, min: 0, max: 100, step: 1, unit: 'USD/hour' }], resultLabel: 'Illustrative budget', resultUnit: 'USD', precision: 2 },
     diagram: { type: 'graph', title: 'Review before publishing', description: 'Illustrative workflow, not a running task.', nodes: [{ id: 'input', label: 'Input', detail: 'Preserve the request' }, { id: 'review', label: 'Review', detail: 'Verify the evidence' }, { id: 'approval', label: 'Approval', detail: 'Ask before consequential actions' }], edges: [{ source: 'input', target: 'review' }, { source: 'review', target: 'approval' }] },
   };
-  const raw = rich[name] ? 'Synthetic presentation fixture.\n\n```xroga-ui\n' + JSON.stringify(rich[name]) + '\n```' : prose[name];
+  const richPayload = name === 'calculator' ? [rich.calculator, {
+    type: 'tabs', title: 'About this illustration', tabs: [
+      { id: 'formula', label: 'Formula', content: 'Budget = hours × hourly cost. Change an input to recalculate locally.' },
+      { id: 'limits', label: 'Limits', content: 'Synthetic values only. This does not reserve funds or execute work.' },
+    ],
+  }] : rich[name];
+  const raw = richPayload ? 'Synthetic presentation fixture.\n\n```xroga-ui\n' + JSON.stringify(richPayload) + '\n```' : prose[name];
   const enhanced = name === 'streaming' ? { content: raw } : enhanceAiResponse(raw, `response-preview-${name}`);
   return [{ id: `response-preview-${name}-user`, role: 'user', content: `Presentation check: ${name}. Synthetic data, no model call.` }, { id: `response-preview-${name}-assistant`, role: 'assistant', content: enhanced.content, featureOutput: enhanced.output ? { type: 'xroga.output', ...enhanced.output } : undefined }];
 }

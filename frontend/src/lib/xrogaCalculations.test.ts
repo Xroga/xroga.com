@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { calculateValues } from './xrogaCalculations';
+import { calculateValues, calculatorInputValue } from './xrogaCalculations';
+
+test('calculator input validates blanks, finite values and declared bounds', () => {
+  for (const value of ['', ' ', 'Infinity', 'NaN', 'alert(1)', '-1', '121']) assert.ok(Number.isNaN(calculatorInputValue(value, 0, 120)));
+  assert.equal(calculatorInputValue('0', 0, 120), 0);
+  assert.equal(calculatorInputValue('120', 0, 120), 120);
+  assert.equal(calculatorInputValue('2.5', 0, 120), 2.5);
+  assert.ok(Number.isNaN(calculateValues('product', [calculatorInputValue(''), 25])));
+});
 
 test('allowlisted calculator operations return deterministic values', () => {
   assert.equal(calculateValues('sum', [10, 5, 2]), 17);

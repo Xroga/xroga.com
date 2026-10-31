@@ -9,7 +9,7 @@ test('ordinary answers stay lightweight text', () => {
   assert.equal(result.output, undefined);
 });
 
-test('markdown data becomes a searchable table and a chart', () => {
+test('mixed numeric units remain a table instead of a misleading shared-axis chart', () => {
   const result = enhanceAiResponse([
     '## Monthly revenue',
     'The latest measured values are below.',
@@ -21,13 +21,20 @@ test('markdown data becomes a searchable table and a chart', () => {
     '| Mar | $18,000 | 171 |',
   ].join('\n'), 'message-2');
 
-  assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'table', 'chart']);
+  assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'table']);
   assert.doesNotMatch(result.content, /\| Month \|/);
   const table = result.output?.blocks.find((block) => block.type === 'table');
   assert.equal(table?.rows[0]?.revenue, 12000);
   const chart = result.output?.blocks.find((block) => block.type === 'chart');
+  assert.equal(chart, undefined);
+});
+
+test('a single numeric series retains an exact data-backed chart', () => {
+  const result = enhanceAiResponse('| Month | Revenue (USD) |\n| --- | ---: |\n| Jan | 12 |\n| Feb | 15 |\n| Mar | 18 |', 'one-series');
+  const chart = result.output?.blocks.find((block) => block.type === 'chart');
   assert.equal(chart?.chartType, 'line');
-  assert.deepEqual(chart?.series.map((series) => series.key), ['revenue', 'orders']);
+  assert.equal(chart?.series.length, 1);
+  assert.deepEqual(chart?.data.map((row) => row[chart.series[0].key]), [12, 15, 18]);
 });
 
 test('validated xroga-ui blocks become live rich output without leaking protocol text', () => {
