@@ -23,13 +23,15 @@
     "frontend/src/components/response-experience-v2/response-v2.module.css",
     "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
     "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
-    "frontend/src/components/response-experience-v2/ReviewPanelV2.tsx",
     "frontend/src/components/response-experience-v2/specimens.ts",
     "frontend/package.json",
     "package-lock.json",
     "frontend/src/components/response-experience-v2/mathSyntax.ts",
     "frontend/src/components/response-experience-v2/mathSyntax.test.ts",
-    "frontend/package-lock.json"
+    "frontend/package-lock.json",
+    "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
+    "frontend/src/components/response-experience-v2/review/review.css",
+    "scripts/xroga/response-v2-preview.mjs"
   ],
   "decisions": {
     "keep": [

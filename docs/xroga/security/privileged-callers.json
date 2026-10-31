@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b2885d1a828c829775e75fafeaba0a8a2111d2066b0a148b15db75a79f182801",
+  "reviewRegistrySha256": "af40847c47f9894e8c3ee3877be7a63536c0c34de1a65dbe0d4bd1f943ef2476",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 918,
+    "persistenceCandidates": 919,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 121,
-    "reviewedCandidates": 797,
+    "reviewedCandidates": 798,
     "unresolvedSafetyCandidates": 154,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 121,
     "SCOPED_BOUNDARY": 521,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 203,
+    "NOT_PERSISTENCE": 204,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 836,
+    "unresolvedCandidateBoundaries": 837,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -5632,6 +5632,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "637d9bad8b881a1fed33"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "8204b932fb1d657bcf51"
       },
       {
@@ -9056,6 +9060,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "637d9bad8b881a1fed33"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "8204b932fb1d657bcf51"
       },
       {
@@ -9093,11 +9101,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 918,
+    "currentCallers": 919,
     "structuredVerified": 82,
-    "structuredUnproven": 836,
+    "structuredUnproven": 837,
     "manualUnresolved": 154,
-    "manualUnsupported": 682,
+    "manualUnsupported": 683,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
@@ -28798,6 +28806,27 @@
           {
             "path": "frontend/src/components/projects/ProjectDetailView.tsx",
             "marker": "? Array.from(new Set(project.project_files.map((f) => f.version))).sort((a, b) => b - a)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "637d9bad8b881a1fed33",
+      "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+      "line": 15,
+      "enclosing": "CalculatorV2",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "1575a9738e6ccb081f83c40e0603fb34974d17c322f161651b24ddbb0bc97b35",
+      "semanticReview": {
+        "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
+        "reason": "Reviewed exact receiver and surrounding data flow. This is local chart data derivation, not a database or bucket call. No upstream authorization or persistence boundary is certified.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+            "marker": "Array.from({ length: 21 }"
           }
         ]
       }

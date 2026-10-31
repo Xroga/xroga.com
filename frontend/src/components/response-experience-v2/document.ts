@@ -101,9 +101,39 @@ export function boundedData(value: unknown, depth = 0, budget = { remaining: 60_
   return Object.entries(value).every(([key, item]) => !['__proto__', 'prototype', 'constructor'].includes(key) && boundedData(item, depth + 1, budget));
 }
 
-/** Shape-driven composition only. A numeric table is never a license to invent a chart. */
-export function planPresentationV2(document: ResponseDocumentV2) {
-  return document.nodes.map(node => ({ node, width: ['chart', 'table', 'graph'].includes(node.kind) ? 'wide' as const : 'prose' as const }));
+/** Hide generated UI captions, never alter the source document or infer a title. */
+export function displayTitleV2(title?: string): string | undefined {
+  const value = title?.trim();
+  return !value || /^(?:(?:data )?table|chart|output|widget)\s+\d+$/i.test(value) || /^untitled(?: block)?$/i.test(value) ? undefined : title;
+}
+export type PresentationGroupV2 = { id: string; kind: 'reading' | 'evidence' | 'scenario' | 'content'; width: 'wide' | 'prose'; nodes: ResponseNodeV2[] };
+export function sameChartTableV2(chart: Extract<ResponseNodeV2, {kind:'chart'}>, table: Extract<ResponseNodeV2, {kind:'table'}>) {
+  const keys = [chart.xKey, ...chart.series.map(s => s.key)];
+  return table.columns.length === keys.length && table.columns.every((c, i) => c.key === keys[i]) && table.rows.length === chart.rows.length && table.rows.every((r, i) => keys.every(k => r[k] === chart.rows[i][k]));
+}
+/** Preserve ordering and wording. Only group adjacent, structurally related
+ * content. No topic guessing, generated metrics, model calls or hidden actions. */
+export function planPresentationV2(document: ResponseDocumentV2): PresentationGroupV2[] {
+  const groups: PresentationGroupV2[] = [];
+  for (const node of document.nodes) {
+    const last = groups[groups.length - 1];
+    const previous = last?.nodes[last.nodes.length - 1];
+    if (node.kind === 'table' && previous?.kind === 'chart' && sameChartTableV2(previous, node)) {
+      last.nodes.push(node); last.kind = 'evidence'; continue;
+    }
+    if (node.kind === 'tabs' && previous?.kind === 'calculator') {
+      last.nodes.push(node); last.kind = 'scenario'; continue;
+    }
+    const kind = node.kind === 'prose' ? 'reading' : node.kind === 'chart' || node.kind === 'table' ? 'evidence' : node.kind === 'calculator' ? 'scenario' : 'content';
+    groups.push({ id: node.id, kind, width: ['chart', 'table', 'graph', 'calculator'].includes(node.kind) ? 'wide' : 'prose', nodes: [node] });
+  }
+  return groups;
+}
+export function presentationFamilyV2(document: ResponseDocumentV2) {
+  if (document.nodes.some(n => n.kind === 'calculator')) return 'interactive';
+  if (document.nodes.some(n => n.kind === 'chart' || n.kind === 'table')) return 'data';
+  if (document.sources.length) return 'research';
+  return document.nodes.every(n => n.kind === 'prose') && document.originalText.length < 240 ? 'brief' : 'editorial';
 }
 
 export function safeLinkV2(value: string): string | undefined {

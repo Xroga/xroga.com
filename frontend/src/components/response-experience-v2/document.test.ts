@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { adaptResponseV2, boundedData, planPresentationV2, safeLinkV2 } from './document';
+import { adaptResponseV2, boundedData, planPresentationV2, safeLinkV2, displayTitleV2, presentationFamilyV2 } from './document';
 import { calculateV2, type CalculatorNode } from './calculations';
 import { responseV2Access } from './access';
 import { readFileSync } from 'node:fs';
@@ -69,7 +69,7 @@ test('server flag, opt-in, confirmed founder role and MFA all required', async (
 });
 test('new canvas does not import legacy renderers and scoped tokens retain responsive and motion rules', () => {
   const css = readFileSync(new URL('./response-v2.module.css', import.meta.url), 'utf8');
-  assert.match(css, /74ch/); assert.match(css, /prefers-reduced-motion/); assert.match(css, /max-width:640px/);
+  assert.match(css, /72ch/); assert.match(css, /prefers-reduced-motion/); assert.match(css, /max-width:640px/);
   for (const file of ['ResponseCanvasV2.tsx', 'ProseV2.tsx', 'DataV2.tsx', 'InteractiveV2.tsx']) {
     assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), 'utf8'), /FormattedAiMarkdown|XrogaBlockView|fetch\(|apiFetch\(/);
   }
@@ -87,4 +87,35 @@ test('aggregate text payload is bounded', () => {
 test('different canonical chat text cannot be silently discarded', () => {
   const message = { id: 'different', content: 'Partial answer', featureOutput: { type: 'chat', content: 'Complete answer with additional facts' } };
   assert.equal(adaptResponseV2(message).supported, false);
+});
+
+
+test('composition groups matching evidence and adjacent controls without changing node order or text', () => {
+  const result = adaptResponseV2(specimensV2.calculator);
+  assert.ok(result.supported);
+  const groups = planPresentationV2(result.document);
+  assert.deepEqual(groups.map(g => g.kind), ['reading', 'scenario']);
+  assert.deepEqual(groups.flatMap(g => g.nodes), result.document.nodes);
+  assert.equal(presentationFamilyV2(result.document), 'interactive');
+  const research = adaptResponseV2(specimensV2.sources);
+  assert.ok(research.supported); assert.equal(presentationFamilyV2(research.document), 'research');
+  for (const title of ['Data table 1','Chart 2','Widget 3','Untitled block']) assert.equal(displayTitleV2(title), undefined);
+  assert.equal(displayTitleV2('Monthly operating costs'), 'Monthly operating costs');
+});
+
+test('only exact adjacent chart/table data are composed as one evidence group', () => {
+  const chart = { ...block, type:'chart', chartType:'line', xKey:'sample', series:[{key:'minutes',label:'Minutes'}], data:[{sample:'A',minutes:10}], summary:'Supplied measurements' };
+  const table = { ...block, id:'t', type:'table', columns:[{key:'sample',label:'Sample'},{key:'minutes',label:'Minutes'}], rows:chart.data };
+  const result = adaptResponseV2(input(output([chart,table]))); assert.ok(result.supported);
+  assert.equal(planPresentationV2(result.document).length,1);
+  assert.equal(planPresentationV2(result.document)[0].nodes.length,2);
+  const different = adaptResponseV2(input(output([chart,{...table,rows:[{sample:'A',minutes:11}]}]))); assert.ok(different.supported);
+  assert.equal(planPresentationV2(different.document).length,2);
+});
+
+test('customer message path never imports a synthetic review panel', () => {
+  const source = readFileSync(new URL('../terminal/SwarmMessageLog.tsx', import.meta.url), 'utf8');
+  assert.doesNotMatch(source,/ResponseExperienceReview|ReviewPanelV2|specimensV2/);
+  const gate = readFileSync(new URL('./ResponseExperienceGate.tsx', import.meta.url), 'utf8');
+  assert.doesNotMatch(gate,/ReviewPanelV2|specimensV2/);
 });

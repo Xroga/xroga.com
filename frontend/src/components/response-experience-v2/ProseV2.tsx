@@ -1,6 +1,6 @@
 'use client';
 
-import { isValidElement, lazy, Suspense, useState, type ReactNode } from 'react';
+import { isValidElement, lazy, Suspense, useState, useEffect, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -14,6 +14,7 @@ const MathV2 = lazy(() => import('./MathV2'));
 export function CodeV2({ text, language }: { text: string; language?: string }) {
   const [copied, setCopied] = useState(false);
   const [failed, setFailed] = useState(false);
+  useEffect(() => { setCopied(false); setFailed(false); }, [text]);
   return <figure className={styles.code}><figcaption><span>{language || 'Code'}</span><button type="button" onClick={async () => {
     try { await navigator.clipboard.writeText(text); setCopied(true); setFailed(false); } catch { setFailed(true); }
   }}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? 'Copied' : 'Copy code'}</button></figcaption><pre tabIndex={0}><code>{text}</code></pre>{failed && <p role="status">Copy unavailable. Select the code to copy it.</p>}</figure>;
@@ -26,7 +27,7 @@ export function ProseV2({ text, sources = [] }: { text: string; sources?: Citati
     components={{
       p: ({ children }) => <p dir="auto">{children}</p>,
       li: ({ children }) => <li dir="auto">{children}</li>,
-      a: ({ href, children }) => href ? <a href={href} target="_blank" rel="noopener noreferrer">{children}</a> : <span>{children}</span>,
+      a: ({ href, children }) => href ? <a href={href} className={/^\[\d+\]$/.test(String(children)) ? styles.citation : undefined} target="_blank" rel="noopener noreferrer">{children}</a> : <span>{children}</span>,
       img: ({ alt, src }) => <span>{alt || 'Image'}{src && <a href={src} target="_blank" rel="noopener noreferrer"> View image <ExternalLink size={12} /></a>}</span>,
       pre: ({ children }) => {
         if (!isValidElement<{ children?: ReactNode; className?: string }>(children)) return <pre>{children}</pre>;

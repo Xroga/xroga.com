@@ -1,7 +1,7 @@
 'use client';
 import { lazy, Suspense } from 'react';
 import { ExternalLink } from 'lucide-react';
-import { planPresentationV2, safeLinkV2, type ResponseDocumentV2, type ResponseNodeV2 } from './document';
+import { planPresentationV2, presentationFamilyV2, displayTitleV2, safeLinkV2, type ResponseDocumentV2, type ResponseNodeV2 } from './document';
 import { ProseV2, CodeV2 } from './ProseV2';
 import styles from './response-v2.module.css';
 const Chart = lazy(() => import('./ChartV2'));
@@ -10,12 +10,12 @@ const Graph = lazy(() => import('./DataV2').then(m => ({ default: m.GraphV2 })))
 const Calculator = lazy(() => import('./InteractiveV2').then(m => ({ default: m.CalculatorV2 })));
 const Tabs = lazy(() => import('./InteractiveV2').then(m => ({ default: m.TabsV2 })));
 
-function NodeView({ node, document }: { node: ResponseNodeV2; document: ResponseDocumentV2 }) {
+function NodeView({ node, document, grouped = false }: { node: ResponseNodeV2; document: ResponseDocumentV2; grouped?: boolean }) {
   switch (node.kind) {
     case 'prose': return <ProseV2 text={node.text} sources={document.sources} />;
     case 'code': return <><h3 className={styles.blockTitle}>{node.title}</h3><CodeV2 text={node.text} language={node.language} /></>;
     case 'table': return <Table node={node} />;
-    case 'chart': return <Chart node={node} />;
+    case 'chart': return <Chart node={node} showSourceData={!grouped} />;
     case 'calculator': return <Calculator key={JSON.stringify([node.operation, node.inputs])} node={node} />;
     case 'tabs': return <Tabs key={JSON.stringify(node.items.map(item => item.id))} node={node} />;
     case 'graph': return <Graph node={node} />;
@@ -29,8 +29,10 @@ function NodeView({ node, document }: { node: ResponseNodeV2; document: Response
 }
 
 export default function ResponseCanvasV2({ document }: { document: ResponseDocumentV2 }) {
-  return <article className={styles.canvas} data-response-v2="true" aria-label="Xroga response" aria-busy={document.streaming}>
-    {planPresentationV2(document).map(({ node, width }) => <div className={width === 'wide' ? styles.wide : styles.measure} key={node.id}><Suspense fallback={<p className={styles.loading} role="status">Loading presentation…</p>}><NodeView node={node} document={document} /></Suspense></div>)}
+  return <article className={styles.canvas} data-response-v2="true" data-composition={presentationFamilyV2(document)} aria-label="Xroga response" aria-busy={document.streaming}>
+    {planPresentationV2(document).map(group => <div className={`${group.width === 'wide' ? styles.wide : styles.measure} ${styles.group}`} data-group={group.kind} key={group.id}>
+      {group.nodes.map(node => <div key={node.id}><Suspense fallback={<p className={styles.loading} role="status">Loading presentation...</p>}>{node.kind === 'table' && group.nodes[0].kind === 'chart' ? <details className={styles.disclosure}><summary>View source data</summary><Table node={{ ...node, title: displayTitleV2(node.title) === displayTitleV2(group.nodes[0].title) ? undefined : displayTitleV2(node.title) }} /></details> : <NodeView node={{ ...node, title: displayTitleV2(node.title) }} document={document} grouped={group.nodes.length > 1} />}</Suspense></div>)}
+    </div>)}
     {document.sources.length > 0 && <details className={`${styles.sources} ${styles.measure}`}><summary>Sources · {document.sources.length}</summary><ol>{document.sources.map((source, index) => <li key={`${index}:${source.url}`}><span>{index + 1}</span><div>{safeLinkV2(source.url) ? <a href={safeLinkV2(source.url)} target="_blank" rel="noopener noreferrer">{source.title} <ExternalLink size={13} /></a> : source.title}{source.snippet && <p>{source.snippet}</p>}</div></li>)}</ol></details>}
     {document.streaming && <span className={styles.streaming} role="status">Receiving response</span>}
   </article>;

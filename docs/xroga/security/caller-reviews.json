@@ -28330,6 +28330,22 @@
           "marker": "server flag, opt-in, confirmed founder role and MFA all required"
         }
       ]
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+      "sourceSha256": "1575a9738e6ccb081f83c40e0603fb34974d17c322f161651b24ddbb0bc97b35",
+      "callIds": [
+        "637d9bad8b881a1fed33"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
+      "reason": "Reviewed exact receiver and surrounding data flow. This is local chart data derivation, not a database or bucket call. No upstream authorization or persistence boundary is certified.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+          "marker": "Array.from({ length: 21 }"
+        }
+      ]
     }
   ],
   "retiredSourceReviews": [

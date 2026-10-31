@@ -3,13 +3,7 @@ import { Component, createContext, lazy, Suspense, useContext, useMemo, type Rea
 import { useAppStore } from '@/store/useAppStore';
 import { adaptResponseV2, type ResponseInputV2 } from './document';
 const Canvas = lazy(() => import('./ResponseCanvasV2'));
-const ReviewPanel = lazy(() => import('./ReviewPanelV2'));
 const FounderContext = createContext<string | null>(null);
-export function ResponseExperienceReview() {
-  const founderId = useContext(FounderContext);
-  const profileId = useAppStore(s => s.profile?.id);
-  return founderId && founderId === profileId ? <Suspense fallback={null}><ReviewPanel /></Suspense> : null;
-}
 
 /** The ID comes only from request-scoped server authorization, never a query ID. */
 export function ResponseExperienceProvider({ founderId, children }: { founderId: string | null; children: ReactNode }) {

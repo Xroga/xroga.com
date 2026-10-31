@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6c479b82faccca904a5144171652413eb039909f",
+  "source_sha": "d7be7eaa45acf3e6e8ff3af70936ac79c5cdb0d6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20552,15 +20552,15 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ChartV2.tsx",
-      "sha256": "2b8435c05284a5c80392e06c4ebc5e23f4fe5ed5bb1b94daa8d26444f2bd0c17"
+      "sha256": "3f63bdd8ebc231c34f269bbe9dc4d354bdd047d263f8f092fb19b958372881e6"
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "984f0b34cb9d4b3179bd84885209f099dec4eebfa476236393b58ae9979bb0f0"
+      "sha256": "d993b34084fc569d37fb04f3f5c56b1f13a388ccbfdc4b57783c87fbc92c90a7"
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "6d2c8e039112796b8eed29ed2c79c2be59b6a06ff253f412e9f1d3aae7c7ff0c"
+      "sha256": "1575a9738e6ccb081f83c40e0603fb34974d17c322f161651b24ddbb0bc97b35"
     },
     {
       "path": "frontend/src/components/response-experience-v2/MathV2.tsx",
@@ -20568,19 +20568,15 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "eeca7fea786315054c4cdcb401391f7c8c58e089f14582789383dc11345fc6cc"
+      "sha256": "a21d4c1c2ba9bd02b5da7687d5d69778b9c1fe6d307c3801def51f4f9b5627d9"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "cb1ad133404e1d85c1e81c5d4069b8faea5f6300f3f5a06aab7b8165a919e756"
+      "sha256": "64e9bb8825f80b6a6623a749c93093972abb0c41fc545b37a81a0d9bcaf052c1"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
-      "sha256": "64c1b7228c7cd24fd974b12b7bcecc7f298e59260ad792fca6832cf019645ed2"
-    },
-    {
-      "path": "frontend/src/components/response-experience-v2/ReviewPanelV2.tsx",
-      "sha256": "b562bd89b45595f77336cc09b24c77d32b71b9839561cb1df5cfbd80a203caf5"
+      "sha256": "24f4df5478734bb4c7fd0a453a86cef57bd63858e4fd929bc9110b602e1cdd01"
     },
     {
       "path": "frontend/src/components/response-experience-v2/access.ts",
@@ -20592,15 +20588,19 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "995433fbe52bfa450d09516408029ff40e6b5771942412efa51158290c591998"
+      "sha256": "bd0d259b1034c5073fdf723bd42531def22d85eb82b53b06a39e2553bee325a1"
     },
     {
       "path": "frontend/src/components/response-experience-v2/mathSyntax.ts",
       "sha256": "7d1f058bba6bfd0653ac9ee5e00d5bdf8be7a74d18f37718d2e52b35112ac544"
     },
     {
+      "path": "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
+      "sha256": "78b440cf9e5dbb7811bfefb1e73f0a16cc840bcaabde463a77577c1d6aad204a"
+    },
+    {
       "path": "frontend/src/components/response-experience-v2/specimens.ts",
-      "sha256": "901e0a043045ec2ac8a4807c344655c8d8bd8ec96dcf4a60864cce18e302fae6"
+      "sha256": "8e3265b58da62412a8f171a61674997f24e2c3d1421a19928c337651f8c25b4f"
     },
     {
       "path": "frontend/src/components/seo/EditorialPage.tsx",
@@ -20956,7 +20956,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "3e70f4f532b777b1e10dfaf4201acc87ffe02a368b5ffa76d5ff9152521ce2df"
+      "sha256": "6171a11259dbc09f17a5ea33c55207b5f08f3170381f973d6847b377ea41a033"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
