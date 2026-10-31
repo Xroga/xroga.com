@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "cd056ce2aadbe008a6dbafe0e30f8e26db1191e742f7fc5e4110675064470dd5",
+  "sourceTreeDigest": "6730b614388d0ee2a9d135f4f20cf86cbe019062b6da1eb39070893b70efc144",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -3834,7 +3834,7 @@
     {
       "id": "f6a75877b1bf49789cea",
       "file": "backend/src/workers/browserRunDispatch.ts",
-      "line": 80,
+      "line": 82,
       "entryPoint": "dispatch",
       "transport": "fetch",
       "callee": "this.deps.fetch",
@@ -3849,7 +3849,7 @@
         {
           "path": "backend/src/workers/browserRunDispatch.test.ts",
           "marker": "redirect",
-          "sha256": "95387ffd28abe1f9ae7c4bf4d981f97fe0fa7f8e3ba2883b60cace91ad4e5686"
+          "sha256": "7dcf7b5a35fb767e793bd9ac6ffc01c871e439208132035ad6cf4bfdee67ef6b"
         },
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",

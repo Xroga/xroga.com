@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1e6cb7ca7c72de62e4359079c59fa539d8b223ce",
+  "source_sha": "e41e6cdbbdf1a273200a0afe73c9871733191be8",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4757,6 +4757,7 @@
         "CLOUD_RUN_EXECUTION",
         "CLOUD_RUN_JOB",
         "XROGA_BROWSER_DISPATCH",
+        "XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS",
         "XROGA_BROWSER_EXECUTE_AUDIENCE",
         "XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT",
         "XROGA_BROWSER_EXECUTE_URL",
@@ -13160,6 +13161,25 @@
       ]
     },
     {
+      "name": "XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
       "name": "XROGA_BROWSER_EXECUTE_AUDIENCE",
       "consuming_sources": [
         "backend/src/workers/browserRunDispatch.ts"
@@ -18748,7 +18768,7 @@
     },
     {
       "path": "backend/src/workers/browserRunDispatch.ts",
-      "sha256": "e758f39d7594810fc1f13553f0545256f5631d3263c69401e8d2a8c33806f5c6"
+      "sha256": "562d935f4f322b905cd31cdd830c103eff9ea6125f4e4b13c26c757b1f101e39"
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
@@ -26579,7 +26599,7 @@
       "hostname": "cloudtasks.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/workers/browserRunDispatch.ts",
-      "line": 80,
+      "line": 82,
       "credentialsInUrl": false
     },
     {

@@ -55,6 +55,33 @@ describe('browser run dispatch', () => {
     const full = { XROGA_BROWSER_DISPATCH: 'cloud-tasks', XROGA_BROWSER_TASKS_PROJECT: 'p', XROGA_BROWSER_TASKS_LOCATION: 'us-central1', XROGA_BROWSER_TASKS_QUEUE: 'q', XROGA_BROWSER_EXECUTE_URL: 'https://api.example/internal/browser/execute', XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT: 's@p.iam.gserviceaccount.com', XROGA_BROWSER_EXECUTE_AUDIENCE: 'https://api.example/internal/browser/execute' };
     assert.equal(dispatcherFromEnv(full, async () => undefined, () => undefined).mode, 'cloud-tasks');
   });
+
+  it('uses the configured bounded delivery deadline and refuses invalid limits before acquiring credentials', async () => {
+    let body = '';
+    let credentials = 0;
+    const deps = { accessToken: async () => { credentials++; return 'synthetic'; }, fetch: (async (_url, init) => {
+      body = String(init?.body); return new Response('{}');
+    }) as typeof fetch };
+    await new CloudTasksDispatcher({ ...config, dispatchDeadlineSeconds: 900 }, deps).dispatch(RUN);
+    assert.equal(JSON.parse(body).task.dispatchDeadline, '900s');
+    for (const dispatchDeadlineSeconds of [0, 14, 1801, NaN, Infinity, 900.5]) {
+      assert.throws(() => new CloudTasksDispatcher({ ...config, dispatchDeadlineSeconds }, deps), /deadline/);
+    }
+    assert.equal(credentials, 1);
+    const env = { XROGA_BROWSER_DISPATCH: 'cloud-tasks', XROGA_BROWSER_TASKS_PROJECT: 'p', XROGA_BROWSER_TASKS_LOCATION: 'us-east4',
+      XROGA_BROWSER_TASKS_QUEUE: 'q', XROGA_BROWSER_EXECUTE_URL: config.targetUrl,
+      XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT: config.serviceAccountEmail, XROGA_BROWSER_EXECUTE_AUDIENCE: config.audience,
+      XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS: '900' };
+    const network = (async (url, init) => {
+      if (String(url).includes('metadata.google.internal')) return Response.json({ access_token: 'synthetic' });
+      body = String(init?.body); return Response.json({});
+    }) as typeof fetch;
+    await dispatcherFromEnv(env, async () => undefined, () => undefined, network).dispatcher.dispatch(RUN);
+    assert.equal(JSON.parse(body).task.dispatchDeadline, '900s');
+    for (const value of ['', '0', '1801', '900.5', 'garbage']) {
+      assert.throws(() => dispatcherFromEnv({ ...env, XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS: value }, async () => undefined, () => undefined, network), /deadline/);
+    }
+  });
 });
 
 it('Cloud Tasks never follows a redirect carrying the runtime service token',async()=>{

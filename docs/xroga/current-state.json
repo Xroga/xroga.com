@@ -53612,7 +53612,7 @@
       "id": "surface:7273f6e5840066fbddc9",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserRunDispatch.ts",
-      "sha256": "e758f39d7594810fc1f13553f0545256f5631d3263c69401e8d2a8c33806f5c6",
+      "sha256": "562d935f4f322b905cd31cdd830c103eff9ea6125f4e4b13c26c757b1f101e39",
       "symbols": [
         "BrowserRunDispatcher",
         "CloudTasksConfig",
@@ -53625,6 +53625,7 @@
         "body",
         "bucket",
         "c",
+        "deadline",
         "dispatcherFromEnv",
         "metadataAccessToken",
         "parent",
@@ -143404,7 +143405,7 @@
     {
       "id": "test-suite:dc485cac443328b36661",
       "sourcePath": "backend/src/workers/browserRunDispatch.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

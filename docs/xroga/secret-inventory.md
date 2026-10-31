@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `1e6cb7ca7c72de62e4359079c59fa539d8b223ce`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `e41e6cdbbdf1a273200a0afe73c9871733191be8`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -226,6 +226,7 @@ Values are forbidden. Source SHA: `1e6cb7ca7c72de62e4359079c59fa539d8b223ce`. Na
 | XROGA_BROWSER_AI_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_COORDINATOR_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_DISPATCH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_AUDIENCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |

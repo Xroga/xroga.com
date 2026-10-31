@@ -4355,7 +4355,7 @@
     {
       "id": "f6a75877b1bf49789cea",
       "callSha256": "1c9d0e6c836968b727356c939c9c52f0a95dca5fe4ab44e787d970f8f9f2e244",
-      "sourceFileSha256": "e758f39d7594810fc1f13553f0545256f5631d3263c69401e8d2a8c33806f5c6",
+      "sourceFileSha256": "562d935f4f322b905cd31cdd830c103eff9ea6125f4e4b13c26c757b1f101e39",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "INDIVIDUALLY_TRACED_CURRENT_MAIN_INTEGRATION_CALLER",
       "tenantAuthority": "Browser Cloud Tasks dispatch receives an already persisted owned run ID from the authorized route. Fixed Google metadata recipient supplies only native service token. Trusted deployment queue/target and OIDC identity are server configuration. Task payload contains run ID, no raw authority, credentials or browser content. Authenticated worker re-reads owner-bound durable row and lease. Redirect is terminal, duplicate task name is deduplicated, half-configured transport never falls back in process. Execution/cancellation/accounting remain in the existing scheduler.",
@@ -4363,7 +4363,7 @@
         {
           "path": "backend/src/workers/browserRunDispatch.test.ts",
           "marker": "redirect",
-          "sha256": "95387ffd28abe1f9ae7c4bf4d981f97fe0fa7f8e3ba2883b60cace91ad4e5686"
+          "sha256": "7dcf7b5a35fb767e793bd9ac6ffc01c871e439208132035ad6cf4bfdee67ef6b"
         },
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
