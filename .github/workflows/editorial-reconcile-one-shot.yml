@@ -1,0 +1,33 @@
+name: One-shot source reconciliation for published blog sync
+on:
+  push:
+    branches:
+      - sync/blog-editorial-main-20261031
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    if: github.actor == 'Xroga'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: sync/blog-editorial-main-20261031
+          persist-credentials: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - name: Reconcile the canonical source ledger without retaining this workflow
+        run: |
+          set -euo pipefail
+          git rm -- .github/workflows/editorial-reconcile-one-shot.yml
+          node scripts/xroga/reconcile-requirements.mjs
+          node scripts/xroga/validate-requirements-ledger.mjs
+      - name: Commit reconciled tracked documents and self-remove
+        run: |
+          set -euo pipefail
+          git add -u docs/xroga
+          git -c user.name='Xroga Audit Bot' -c user.email='noreply@github.com' commit -m 'chore(audit): reconcile source manifest with editorial release'
+          git push origin HEAD:sync/blog-editorial-main-20261031
