@@ -28,7 +28,8 @@ test('planned capabilities stay clickable as informative sections', () => {
   assert.doesNotMatch(NAV, /aria-disabled="true"/);
   assert.doesNotMatch(NAV, /href: '#'/);
   assert.match(NAV, /href: '\/dashboard\/automations#workflows'/);
-  assert.match(NAV, /href: '\/dashboard\/library#xroga-drive'/);
+  assert.match(NAV, /href: DRIVE_ENABLED \? '\/drive' : '\/dashboard\/library#xroga-drive'/);
+  assert.match(NAV, /planned: !DRIVE_ENABLED/);
   assert.match(NAV, /href: '\/showcase', label: 'Templates'/);
   for (const label of ['Workflows', 'Scheduled Tasks', 'AI Employees', 'Work Packs', 'Run History',
     'My Files', 'Artifacts', 'Skills', 'Xroga Drive']) {

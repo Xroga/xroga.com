@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "missionId": "B15-WORKSPACE-DRIVE-ACTIVATION-20261031",
+  "baseSha": "0d270ec69bdcf130ff85ce27f524e1d0d1e59e23",
+  "requirementIds": [
+    "XR-FAMILY-user-intent-relevance"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Issue 898 scope freeze: expose the existing private Drive from Workspace and Library. No browser runtime implementation, Batch 2, API/Job release or new infrastructure.",
+  "changedFiles": [
+    "frontend/src/components/layout/Sidebar.tsx",
+    "frontend/src/components/library/LibraryWorkspace.tsx",
+    "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
+    "frontend/src/lib/sidebarCompactNav.test.ts",
+    "docs/xroga/missions/b15-workspace-drive-activation-20261031.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing Drive flag, authenticated route, private storage and backend controls",
+      "Live microphone and research source behavior",
+      "Browser Worker flag remains disabled"
+    ],
+    "extend": [
+      "Existing Workspace and Library navigation to /drive when enabled"
+    ],
+    "replace": [
+      "Incorrect Drive unavailable copy"
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL.",
+    "rollback": "No data changes."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing controls and configuration preserved."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing controls and configuration preserved."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Existing controls and configuration preserved."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing controls and configuration preserved."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Existing controls and configuration preserved."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Existing controls and configuration preserved."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing controls and configuration preserved."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/sidebarCompactNav.test.ts frontend/src/lib/driveApiContract.test.ts",
+      "scope": "22 focused navigation, Drive API contract, CSP, compact controls and auth-gate tests PASS. Local receipt 889971e3-177e-42aa-b00a-433f4e2d40a5. Changed-component lint PASS receipt 297461f0-09b8-4e0d-900c-5ed6d4488682. Mission policy PASS receipt c047e5ff-6347-40f2-97ba-07d79cb9eac7.",
+      "negative": true,
+      "reference": "frontend/src/lib/driveApiContract.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Navigation to existing storage route only.",
+    "rfc": null
+  },
+  "rollout": "Verify narrow source and Preview, then promote only this frontend. Preserve API/Job and browser flag.",
+  "rollback": "Restore Vercel deployment AFieb6wDdFosSFt5hW2Ufa2rctL4 at 0d270ec69bdcf130ff85ce27f524e1d0d1e59e23.",
+  "knownGaps": [
+    "Browser Worker production host has not been demonstrated through Xroga. Advanced browser implementation deferred by founder."
+  ],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Frontend checks and preview/live navigation verification pending"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "frontend/src/lib/driveApiContract.test.ts",
+    "frontend/src/lib/sidebarCompactNav.test.ts"
+  ]
+}

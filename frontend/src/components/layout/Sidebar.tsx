@@ -38,6 +38,7 @@ import {
   HardDrive,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DRIVE_ENABLED } from '@/lib/driveApi';
 import { WorkflowIcon as LucideWorkflowIcon } from '@/components/icons/animated/lucide-animated/workflow';
 import { ClockIcon as LucideClockIcon } from '@/components/icons/animated/lucide-animated/clock';
 import { BotIcon as LucideBotIcon } from '@/components/icons/animated/lucide-animated/bot';
@@ -175,13 +176,13 @@ const navItems: NavEntry[] = [
   { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
   {
     id: 'library', href: '/dashboard/library', label: 'Library', icon: Library, animated: LucideFoldersIcon, newSection: true,
-    tip: 'Files, artifacts, skills and Xroga Drive will arrive here.',
+    tip: 'Project files, templates, skills and private storage.',
     children: [
       { href: '/dashboard/library#my-files', label: 'My Files', icon: Files, animated: LucideFolderOpenIcon, tip: 'Coming soon · Stored files', planned: true },
       { href: '/dashboard/library#artifacts', label: 'Artifacts', icon: FileText, animated: LucideFileTextIcon, tip: 'Coming soon · Saved deliverables', planned: true },
       { href: '/showcase', label: 'Templates', icon: LayoutTemplate, animated: LucideLayersIcon, tip: 'Browse existing Xroga templates.' },
       { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: 'Coming soon · Reusable capabilities', planned: true },
-      { href: '/dashboard/library#xroga-drive', label: 'Xroga Drive', icon: HardDrive, animated: LucideHardDriveIcon, tip: 'Coming soon · Persistent personal storage', planned: true },
+      { href: DRIVE_ENABLED ? '/drive' : '/dashboard/library#xroga-drive', label: 'Xroga Drive', icon: HardDrive, animated: LucideHardDriveIcon, tip: DRIVE_ENABLED ? 'Upload and retrieve your private files.' : 'Private storage is not enabled on this deployment.', planned: !DRIVE_ENABLED },
     ],
   },
   { href: '/dashboard/publish', motion: 'launch' as const, label: 'Publish', icon: Rocket, animated: RocketIcon, tip: 'Ship web, extensions, desktop and mobile through your accounts.' },
@@ -718,6 +719,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
+              {DRIVE_ENABLED && <Link href="/drive" aria-label="Xroga Drive" title="Xroga Drive" onClick={(event) => handleNavEntryClick(event, '/drive')} className={cn(isActive('/drive') && 'is-active')}><HardDrive size={16} aria-hidden="true" /></Link>}
               <button type="button" onClick={handleNewChat} aria-label="New Work">
                 <AnimatedIcon icon={NewTerminalIcon} />
               </button>
@@ -852,6 +854,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             className="xv-mobile-workspace-logo"
           />
           <div className="xv-mobile-workspace-actions" aria-label="Workspace shortcuts">
+          {DRIVE_ENABLED && <Link href="/drive" aria-label="Xroga Drive" onClick={(event) => handleNavEntryClick(event, '/drive')}><HardDrive size={16} aria-hidden="true" /></Link>}
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
