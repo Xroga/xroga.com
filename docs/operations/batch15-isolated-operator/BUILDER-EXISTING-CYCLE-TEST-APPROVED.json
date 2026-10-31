@@ -9,7 +9,8 @@
   "topUpAllowed": false,
   "productionSqlAllowed": false,
   "newInfrastructureAllowed": false,
-  "dispatchStarted": false,
-  "modelCalls": 0,
-  "status": "APPROVED_FRONTEND_BINDING_BLOCKED"
+  "dispatchStarted": true,
+  "modelCalls": 27,
+  "status": "SINGLE_ATTEMPT_CONSUMED_FAILED",
+  "modelCallCountBasis": "settled provider reservation rows; one additional reservation was released"
 }

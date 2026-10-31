@@ -1,5 +1,5 @@
 {
-  "status": "SUBMITTED_RUNNING",
+  "status": "FAIL_PREVIEW_PERSISTENCE_FINALIZATION",
   "atUtc": "2026-10-31T15:21:31.565541+00:00",
   "marker": "XROGA-B2-CAPPED-20261031-ONE",
   "maximumModelUsd": 1.65,
@@ -15,5 +15,28 @@
   "cancelDeadlineUtc": "2026-10-31T15:43:41Z",
   "initialRevisionOrigin": "starter",
   "generatedRevisionVerified": false,
-  "manualRetries": 0
+  "manualRetries": 0,
+  "completedAtUtc": "2026-10-31T15:31:35.220Z",
+  "failureCode": "RESOURCE_ACCESS_UNAVAILABLE",
+  "failureDetail": "Live preview persistence did not finish before finalization.",
+  "settledModelUsd": 0.929968,
+  "settledProviderReservations": 27,
+  "releasedProviderReservations": 1,
+  "newPendingReconciliationReservations": 0,
+  "settledUsagePresent": true,
+  "builderActiveRunCleared": true,
+  "starterRevisionRetained": true,
+  "runtimeRevisionsRetained": true,
+  "workerCleanup": {
+    "instanceName": "xroga-exec-slot-1",
+    "instanceId": "6744203177304503920",
+    "sessionId": "1f747e15-69db-471f-936b-287d37d9eda9",
+    "instanceAbsentVerified": true,
+    "bootDiskAbsentVerified": true,
+    "databaseRuntimeSessionReconciliation": "Not mutated manually; last read was running, automatic expiry/reconciliation remains to be verified"
+  },
+  "finalizationFixPr": 903,
+  "finalizationFixMerge": "1ffb718ae51c67375eaf07e57757a97d0ff90b3c",
+  "googleSettledCost": "not measured",
+  "finishedReceiptAtUtc": "2026-10-31T15:47:27.914918+00:00"
 }
