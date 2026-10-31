@@ -4,8 +4,8 @@ ROOT=pathlib.Path(__file__).resolve().parent
 kind=sys.argv[1];assert kind in ['candidate','serving']
 sys.argv=[str(ROOT/'focused-cutover.py'),'status']
 h=runpy.run_path(str(ROOT/'focused-cutover.py'));api=h['api'];run=h['run'];task=h['task'];P=h['P'];QUEUE=h['QUEUE']
-revision='xroga-api-b15b2-ac8168-check-1031' if kind=='candidate' else h['NEW']
-tag='b15b2-ac8168-check' if kind=='candidate' else h['TAG']
+revision='xroga-api-b15b2-ac8168-check-1031b' if kind=='candidate' else h['NEW']
+tag='b15b2-ac8168-check-b' if kind=='candidate' else h['TAG']
 service=api(h['V1']+'/services/xroga-api')
 uri=next(v['url'] for v in service['status']['traffic'] if v.get('tag')==tag)
 audience=service['status']['url']

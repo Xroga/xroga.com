@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-10-31T12:23:33.544785+00:00",
+  "failedCandidate": "xroga-api-b15b2-ac8168-check-1031",
+  "reason": "environment_unclassified",
+  "correction": "Set XROGA_DEPLOYMENT_ENVIRONMENT=production explicitly on candidate, serving revision and Job. Keep candidate startup guard. No DDL.",
+  "replacementCandidate": "xroga-api-b15b2-ac8168-check-1031b",
+  "immutableNameReason": "Cloud Run revision specifications are immutable. Preserve the failed revision; remove its own zero-traffic tag when replacement is created.",
+  "sameImage": true,
+  "productionTrafficChanged": false,
+  "productionSqlApplied": false,
+  "newIamOrService": false
+}

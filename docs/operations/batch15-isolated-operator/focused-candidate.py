@@ -7,8 +7,8 @@ P='project-c40d4821-e647-4fa2-92d'
 SHA='ac8168f940d6e56079bbeb5e717ef33001b8b171'
 DIGEST=json.loads((pathlib.Path(__file__).resolve().parent/'focused-image.json').read_text())['digest']
 IMAGE='us-east4-docker.pkg.dev/'+P+'/cloud-run-source-deploy/xroga-api-release@'+DIGEST
-NAME='xroga-api-b15b2-ac8168-check-1031'
-TAG='b15b2-ac8168-check'
+NAME='xroga-api-b15b2-ac8168-check-1031b'
+TAG='b15b2-ac8168-check-b'
 OLD='xroga-api-batch1-85f-serving-1031'
 RUN='https://us-east4-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/'+P
 ROOT=pathlib.Path(__file__).resolve().parent
@@ -70,7 +70,7 @@ else:
     container=template['spec']['containers'][0]
     container['image']=IMAGE
     env=container['env']
-    for name,value in [('XROGA_RELEASE_CANDIDATE','1'),('XROGA_RELEASE_SHA',SHA),('XROGA_GOOGLE_WORKER_IMAGE',IMAGE)]:
+    for name,value in [('XROGA_RELEASE_CANDIDATE','1'),('XROGA_DEPLOYMENT_ENVIRONMENT','production'),('XROGA_RELEASE_SHA',SHA),('XROGA_GOOGLE_WORKER_IMAGE',IMAGE)]:
         env[:]=[v for v in env if v['name']!=name]
         env.append({'name':name,'value':value})
     metadata={k:copy.deepcopy(service['metadata'][k]) for k in ['name','namespace','resourceVersion','labels','annotations'] if k in service['metadata']}
@@ -78,15 +78,16 @@ else:
         metadata.get('annotations',{}).pop(key,None)
     spec=copy.deepcopy(service['spec'])
     spec['template']=template
-    spec['traffic']=[v for v in spec['traffic'] if v.get('tag')!=TAG]+[{'revisionName':NAME,'tag':TAG,'percent':0}]
+    spec['traffic']=[v for v in spec['traffic'] if v.get('tag') not in [TAG,'b15b2-ac8168-check']]+[{'revisionName':NAME,'tag':TAG,'percent':0}]
     journal={'atUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'state':'SUBMITTING_INSPECT_BEFORE_RETRY',
              'revision':NAME,'source':SHA,'digest':DIGEST,'defaultTrafficChanged':False,'jobChanged':False}
-    (ROOT/'focused-candidate-operation-journal.json').write_text(json.dumps(journal,indent=2)+'\n')
+    (ROOT/'focused-candidate-operation-journal.configfix.json').write_text(json.dumps(journal,indent=2)+'\n')
     rest('/services/xroga-api','PUT',{'apiVersion':'serving.knative.dev/v1','kind':'Service','metadata':metadata,'spec':spec})
 end=time.monotonic()+240
 while True:
     revision=rest('/revisions/'+NAME)
     if any(v.get('type')=='Ready' and v.get('status')=='True' for v in revision.get('status',{}).get('conditions',[])):break
+    assert not any(v.get('type')=='Ready' and v.get('status')=='False' for v in revision.get('status',{}).get('conditions',[])),'CANDIDATE_UNREADY_INSPECT_CONFIG'
     assert time.monotonic()<end,'READINESS_TIMEOUT_INSPECT_DO_NOT_REDEPLOY'
     time.sleep(4)
 verify(revision)

@@ -90,7 +90,7 @@ elif MODE=='pause':
  record('QUEUE_PAUSED_AFTER_DATABASE_FENCE_AND_DRAIN')
 elif MODE=='serving':
  candidate=json.loads((ROOT/'focused-candidate-private-ready.json').read_text())
- assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']=='xroga-api-b15b2-ac8168-check-1031','GUARDED_CANDIDATE_PROOF_REQUIRED'
+ assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']=='xroga-api-b15b2-ac8168-check-1031b','GUARDED_CANDIDATE_PROOF_REQUIRED'
  fenced();live(service,OLD);assert queue['state']=='PAUSED';no_executions()
  try:v=api(V1+'/revisions/'+NEW)
  except urllib.error.HTTPError as e:
@@ -105,7 +105,7 @@ elif MODE=='serving':
   template['metadata']['labels']['xroga-source-sha']=NEW_SHA
   template['metadata']['annotations'].update({'autoscaling.knative.dev/minScale':'1','autoscaling.knative.dev/maxScale':'1','run.googleapis.com/cpu-throttling':'false'})
   c=template['spec']['containers'][0];c['image']=NEW_IMAGE
-  c['env']=[e for e in c['env'] if e['name'] not in ['XROGA_RELEASE_CANDIDATE','XROGA_GOOGLE_WORKER_IMAGE','XROGA_RELEASE_SHA']]+[{'name':'XROGA_GOOGLE_WORKER_IMAGE','value':NEW_IMAGE},{'name':'XROGA_RELEASE_SHA','value':NEW_SHA}]
+  c['env']=[e for e in c['env'] if e['name'] not in ['XROGA_RELEASE_CANDIDATE','XROGA_GOOGLE_WORKER_IMAGE','XROGA_RELEASE_SHA','XROGA_DEPLOYMENT_ENVIRONMENT']]+[{'name':'XROGA_GOOGLE_WORKER_IMAGE','value':NEW_IMAGE},{'name':'XROGA_RELEASE_SHA','value':NEW_SHA},{'name':'XROGA_DEPLOYMENT_ENVIRONMENT','value':'production'}]
   meta={k:copy.deepcopy(current['metadata'][k]) for k in ['name','namespace','resourceVersion','labels','annotations'] if k in current['metadata']}
   for k in ['run.googleapis.com/urls','run.googleapis.com/ingress-status','run.googleapis.com/operation-id','serving.knative.dev/creator','serving.knative.dev/lastModifier']:meta.get('annotations',{}).pop(k,None)
   spec=copy.deepcopy(current['spec']);spec['template']=template
@@ -136,6 +136,7 @@ elif MODE in ['job','recover-job']:
    for e in c['env']:
     if e['name']=='XROGA_GOOGLE_WORKER_IMAGE':e['value']=NEW_IMAGE
     if e['name']=='XROGA_RELEASE_SHA':e['value']=NEW_SHA
+   c['env']=[e for e in c['env'] if e['name']!='XROGA_DEPLOYMENT_ENVIRONMENT']+[{'name':'XROGA_DEPLOYMENT_ENVIRONMENT','value':'production'}]
   else:
    saved=json.loads((ROOT/'focused-85f-job-recovery.json').read_text());t=saved['template'];labels=saved['labels']
   record('SUBMITTING_JOB_IMAGE',image=target)
@@ -155,7 +156,7 @@ elif MODE in ['promote','recover-traffic']:
  job_config(job,NEW_IMAGE if MODE=='promote' else OLD_IMAGE,NEW_SHA if MODE=='promote' else OLD_SHA)
  if MODE=='promote':serving_config(api(V1+'/revisions/'+NEW))
  traffic=[{'type':'TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION','revision':target,'percent':100}]
- traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'b15b2-ac8168-check']]
+ traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'b15b2-ac8168-check','b15b2-ac8168-check-b']]
  if service['traffic']!=traffic:
   record('SUBMITTING_DEFAULT_TRAFFIC_WITH_ADMISSION_CLOSED',revision=target)
   wait(run(SERVICE+'?updateMask=traffic','PATCH',{'name':SERVICE,'etag':service['etag'],'traffic':traffic}))
