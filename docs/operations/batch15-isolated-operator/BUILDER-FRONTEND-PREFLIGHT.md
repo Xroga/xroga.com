@@ -1,5 +1,13 @@
 # Approved Builder attempt, frontend prerequisite
 
+## Continuation
+
+The frontend prerequisite was resolved without production promotion. Branch `codex/builder-internal-activation-20261031` points to the unchanged live source `0d270ec69bdcf130ff85ce27f524e1d0d1e59e23`. Vercel Config `NEXT_PUBLIC_XROGA_BUILDER=1` is restricted to that Preview branch only. Deployment `4x1MraYdNhFqq3ix3u6PjenYrTJs` is Ready, with custom-domain assignment skipped. Unauthenticated access redirects through protection. The owner signed in directly to the Preview and the genuine account identity was verified. No production flag, domain, microphone source or traffic changed.
+
+The one approved request was submitted at 15:23:41 UTC on October 31. Run `eef8ea19-a402-4f1c-bb32-c02898630d5c` is bound to Builder project `577dedfe-2748-4d47-904e-75b2c24f63ce`. The initial persisted revision is a starter and is not counted as generated-source acceptance. See `BUILDER-SINGLE-ATTEMPT-20261031.json` for execution outcome and the 15:43:41 UTC cancellation deadline. No manual retry is permitted.
+
+All seven required CI jobs passed on `dc46054206293404b7c9ccb944996771be6e52f5`, including the complete integrated baseline. PR 903 merged as `1ffb718ae51c67375eaf07e57757a97d0ff90b3c`. The production API/Job remains ac8168. The following paragraphs preserve the earlier preflight observations and are superseded by this continuation where explicitly stated.
+
 The founder approved one attempt capped at $1.65 from the existing balance. No submission or model request was made. The authenticated workspace account matches the reviewed owner, whose existing billing cycle expires beyond the observation window and has a $1.65 total entitlement. Existing settlements and reservations reduce that allowance. No entitlement or hold was changed.
 
 The public workspace JavaScript asset `https://xroga.com/_next/static/chunks/2068-1d366f8a40eba15b.js` contains Builder module 67045 with `u="1"===a.env.NEXT_PUBLIC_XROGA_BUILDER`. The variable was not replaced with an enabled build-time value. Its project resolver returns before creating a durable project when this flag is false. A general chat response is not evidence of Builder generation and persistence.

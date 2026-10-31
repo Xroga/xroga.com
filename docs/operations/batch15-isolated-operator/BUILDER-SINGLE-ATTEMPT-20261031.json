@@ -1,0 +1,19 @@
+{
+  "status": "SUBMITTED_RUNNING",
+  "atUtc": "2026-10-31T15:21:31.565541+00:00",
+  "marker": "XROGA-B2-CAPPED-20261031-ONE",
+  "maximumModelUsd": 1.65,
+  "maximumSubmissions": 1,
+  "frontendSource": "0d270ec69bdcf130ff85ce27f524e1d0d1e59e23",
+  "frontendDeployment": "4x1MraYdNhFqq3ix3u6PjenYrTJs",
+  "apiJobSource": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "productionTrafficChanged": false,
+  "submissionArmedAtUtc": "2026-10-31T15:22:19.476005+00:00",
+  "runId": "eef8ea19-a402-4f1c-bb32-c02898630d5c",
+  "builderProjectId": "577dedfe-2748-4d47-904e-75b2c24f63ce",
+  "submittedAtUtc": "2026-10-31T15:23:41.842942Z",
+  "cancelDeadlineUtc": "2026-10-31T15:43:41Z",
+  "initialRevisionOrigin": "starter",
+  "generatedRevisionVerified": false,
+  "manualRetries": 0
+}
