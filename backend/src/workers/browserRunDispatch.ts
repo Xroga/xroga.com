@@ -16,7 +16,7 @@
 
 export interface BrowserRunDispatcher {
   /** Hands the run to a worker. Resolves when the hand-off is accepted, not when the run finishes. */
-  dispatch(runId: string): Promise<void>;
+  dispatch(runId: string, checkpoint?: string): Promise<void>;
 }
 
 export class InProcessDispatcher implements BrowserRunDispatcher {
@@ -73,8 +73,9 @@ export class CloudTasksDispatcher implements BrowserRunDispatcher {
     if (!Number.isInteger(deadline) || deadline < 15 || deadline > 1_800) throw new Error('Cloud Tasks dispatch deadline must be an integer from 15 to 1800 seconds');
   }
 
-  async dispatch(runId: string): Promise<void> {
+  async dispatch(runId: string, checkpoint?: string): Promise<void> {
     if (!RUN_ID.test(runId)) throw new Error('invalid run id');
+    if(checkpoint!==undefined&&!/^[a-f0-9]{32}$/.test(checkpoint))throw new Error('invalid checkpoint');
     const c = this.config;
     const bucket = Math.floor((this.deps.now?.() ?? Date.now()) / DEDUPE_WINDOW_MS);
     const parent = `projects/${c.project}/locations/${c.location}/queues/${c.queue}`;
@@ -84,7 +85,7 @@ export class CloudTasksDispatcher implements BrowserRunDispatcher {
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         task: {
-          name: `${parent}/tasks/${runId}-${bucket}`,
+          name: `${parent}/tasks/${runId}-${bucket}${checkpoint?'-'+checkpoint:''}`,
           dispatchDeadline: `${c.dispatchDeadlineSeconds ?? 1_800}s`,
           httpRequest: {
             url: c.targetUrl, httpMethod: 'POST', headers: { 'Content-Type': 'application/json' },

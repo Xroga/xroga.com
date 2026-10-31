@@ -70,3 +70,21 @@ checkpoint is zero. Existing shared infrastructure still has its existing costs.
 Rollback requires disabling new staged admissions and draining staged runs
 before deploying an older single-task reader. Existing API/Job pairing, Drive,
 microphone and recovery assets remain untouched.
+
+## Founder scope freeze, 2026-10-31 23:13 PKT
+
+Issue 898 now defers advanced Browser Worker implementation. Preserve this
+branch, do not merge or deploy it as Workspace activation. New network channel,
+native sandbox entrypoint and bounded per-stage delivery are source candidates.
+Backend compilation passed in the isolated locked-dependency checkout, receipt
+34058d1b-9ca8-487a-a99d-3727f59ba519. The earlier shared-junction typecheck issue
+is resolved by that isolated installation, not by suppressing diagnostics.
+27 stage/delivery/internal route tests passed in e4895e57-3ec7-45ce-9b75-4cca9b1f164c.
+Process/proxy tests passed in 417aef33-6c6f-44b4-b9b3-2d164e3dcdee, including a
+real child-process 1 MiB proxy transfer, cancellation and private-address denial.
+No hosted Chromium execution, production provider transport or Xroga run exists.
+The strict register needs reviewed source/evidence rebinding for changed
+browserRunDispatch.ts and its tests. Last audit correctly refused evidence drift
+for f6a75877b1bf49789cea. No rules or dispositions were weakened.
+Do not launch the new probe or workflow under the narrowed activation task.
+All production services and microphone remain unchanged. New cloud/model spend $0.

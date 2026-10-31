@@ -58,6 +58,31 @@ describe('durable browser runs', () => {
     assert.equal((await status(t.runs,t.h.alice.userId,runId)).status,'completed');
   });
 
+  it('bounded delivery yields a durable stage and another process resumes without replay',async()=>{
+    const t=setup(),first=request();
+    const {runId}=await prepareBrowserRun(t.ctx(t.h.alice.userId),{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]},t.instance('a'));
+    assert.equal(await executeBrowserRun(runId,t.instance('b'),{yieldAfterStage:true}),'yielded');
+    assert.equal(t.calls.started,1);
+    const saved=await status(t.runs,t.h.alice.userId,runId);
+    assert.equal(saved.status,'running');
+    assert.equal(saved.state.tasks[0]!.status,'completed');
+    assert.equal(saved.state.tasks[1]!.attempts,0);
+    assert.equal(await t.instance('observer').leases.holder({tenantId:t.h.alice.tenantId,runId,taskId:'execute'}),null);
+    assert.equal(await executeBrowserRun(runId,t.instance('new-process'),{yieldAfterStage:true}),'finished');
+    assert.equal(t.calls.started,2);
+    assert.equal((await status(t.runs,t.h.alice.userId,runId)).status,'completed');
+  });
+
+  it('cancel between bounded deliveries never acquires the next browser',async()=>{
+    const t=setup(),first=request();
+    const {runId}=await prepareBrowserRun(t.ctx(t.h.alice.userId),{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]},t.instance('a'));
+    await executeBrowserRun(runId,t.instance('b'),{yieldAfterStage:true});
+    await t.runs.requestCancel(t.h.alice.userId,runId);
+    assert.equal(await executeBrowserRun(runId,t.instance('c'),{yieldAfterStage:true}),'finished');
+    assert.equal(t.calls.started,1);
+    assert.equal((await status(t.runs,t.h.alice.userId,runId)).status,'cancelled');
+  });
+
   it('recovery skips completed stages and checks the next stage lease',async()=>{
     const t=setup(), first=request();
     const {runId}=await prepareBrowserRun(t.ctx(t.h.alice.userId),{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]},t.instance('a'));

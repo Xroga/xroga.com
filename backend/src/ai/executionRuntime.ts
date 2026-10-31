@@ -470,7 +470,7 @@ export class ExecutionScheduler {
   private readonly providerCalls = new Map<string, Promise<ReturnType<TaskHandler> extends Promise<infer T> ? T : never>>();
   constructor(private readonly store: ExecutionStateStore, private readonly onEvent?: (event: ExecutionEvent) => void) {}
 
-  async run(state: CanonicalExecutionState, handlers: Record<string, TaskHandler>, signal?: AbortSignal): Promise<CanonicalExecutionState> {
+  async run(state: CanonicalExecutionState, handlers: Record<string, TaskHandler>, signal?: AbortSignal, options: { yieldAfterBatch?: boolean } = {}): Promise<CanonicalExecutionState> {
     await this.store.save(state);
     while (true) {
       if (signal?.aborted) {
@@ -491,6 +491,9 @@ export class ExecutionScheduler {
       const mutation = ready.find((task) => !safe.includes(task));
       const batch = safe.length ? safe : mutation ? [mutation] : [];
       await Promise.all(batch.map((task) => this.execute(task, state, handlers[task.operationType], signal)));
+      // A bounded delivery may hand the persisted graph back to its existing
+      // dispatcher. Yielding is not cancellation or completion of pending work.
+      if (options.yieldAfterBatch && !signal?.aborted) break;
     }
     return state;
   }

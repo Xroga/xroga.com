@@ -208,7 +208,7 @@ export async function prepareBrowserRun(context: TenantContext, request: Browser
   return { runId: built.runId };
 }
 
-export type ExecuteOutcome = 'finished' | 'already_finished' | 'held_by_live_worker' | 'not_found';
+export type ExecuteOutcome = 'finished' | 'yielded' | 'already_finished' | 'held_by_live_worker' | 'not_found';
 
 const CANCEL_POLL_MS = 500;
 const EXECUTE_LEASE_TASK = 'execute';
@@ -220,7 +220,7 @@ const EXECUTE_LEASE_TTL_MS = 60_000;
  * which never starts a second copy of a task a live worker still holds. The durable cancel flag is polled, so a cancel set on another
  * instance reaches the browser.
  */
-export async function executeBrowserRun(runId: string, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }, options: { signal?: AbortSignal; cancelPollMs?: number } = {}): Promise<ExecuteOutcome> {
+export async function executeBrowserRun(runId: string, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }, options: { signal?: AbortSignal; cancelPollMs?: number; yieldAfterStage?: boolean } = {}): Promise<ExecuteOutcome> {
   const record = await deps.runs.loadInternal(runId);
   if (!record) return 'not_found';
   if (isTerminalRunStatus(record.status)) return 'already_finished';
@@ -243,7 +243,7 @@ export async function executeBrowserRun(runId: string, deps: BrowserCapabilityDe
   }
 }
 
-async function executeWithLease(record: BrowserRunRecord, runId: string, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }, options: { signal?: AbortSignal; cancelPollMs?: number }, current: () => Lease, setLease: (l: Lease) => void): Promise<ExecuteOutcome> {
+async function executeWithLease(record: BrowserRunRecord, runId: string, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }, options: { signal?: AbortSignal; cancelPollMs?: number; yieldAfterStage?: boolean }, current: () => Lease, setLease: (l: Lease) => void): Promise<ExecuteOutcome> {
   const source=structuredClone(record.spec),owner=record.userId,tenant=record.tenantId,project=record.projectKey;
   const ownedRun=async()=>{
     await deps.leases.assertCurrent(current());
@@ -296,8 +296,8 @@ async function executeWithLease(record: BrowserRunRecord, runId: string, deps: B
   renewer.unref?.();
   try {
     const resumed = await recoverRunWithLeases(record.state, deps.leases, record.tenantId);
-    await new ExecutionScheduler(deps.runs.stateStore(record.userId,current)).run(resumed.state, { browser_automation: handler }, abort.signal);
-    return 'finished';
+    const state=await new ExecutionScheduler(deps.runs.stateStore(record.userId,current)).run(resumed.state, { browser_automation: handler }, abort.signal,{yieldAfterBatch:options.yieldAfterStage});
+    return state.tasks.some(task=>['pending','ready','running'].includes(task.status))?'yielded':'finished';
   } finally {
     clearInterval(timer); clearInterval(renewer);
     outer?.removeEventListener('abort', forward);

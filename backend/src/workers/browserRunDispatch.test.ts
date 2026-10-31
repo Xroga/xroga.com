@@ -6,6 +6,19 @@ const RUN = '11111111-2222-4333-8444-555555555555';
 const config = { project: 'xroga-prod', location: 'us-central1', queue: 'browser-runs', targetUrl: 'https://api.example/internal/browser/execute', serviceAccountEmail: 'tasks@xroga-prod.iam.gserviceaccount.com', audience: 'https://api.example/internal/browser/execute' };
 
 describe('browser run dispatch', () => {
+  it('new checkpoints dispatch immediately and repeated checkpoints retain the same queue identity',async()=>{
+    const names:string[]=[];
+    const d=new CloudTasksDispatcher(config,{now:()=>6_000_000,accessToken:async()=> 'tok',fetch:(async(_url,init)=>{
+      names.push(JSON.parse(String(init?.body)).task.name);return new Response('{}');
+    }) as typeof fetch});
+    await d.dispatch(RUN);
+    await d.dispatch(RUN,'a'.repeat(32));
+    await d.dispatch(RUN,'a'.repeat(32));
+    await d.dispatch(RUN,'b'.repeat(32));
+    assert.notEqual(names[0],names[1]);assert.equal(names[1],names[2]);assert.notEqual(names[2],names[3]);
+    await assert.rejects(d.dispatch(RUN,'../../other'),/checkpoint/);
+    assert.equal(names.length,4);
+  });
   it('Cloud Tasks: enqueues an authenticated HTTP task naming the run, signed as the execute service account', async () => {
     const seen: { url: string; init: RequestInit }[] = [];
     const d = new CloudTasksDispatcher(config, { now: () => 6_000_000, accessToken: async () => 'tok', fetch: (async (url: string, init: RequestInit) => { seen.push({ url, init }); return new Response('{}', { status: 200 }); }) as unknown as typeof fetch });

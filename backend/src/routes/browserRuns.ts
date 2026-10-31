@@ -116,9 +116,11 @@ export function createBrowserRunsRouter(resolve: () => BrowserRunRuntime | null 
       const runId = z.string().uuid().parse(req.params.runId);
       // the canonical store is owner-scoped: another user's run id loads as nothing
       const record = await deps.runs.load(context.userId, runId);
-      const task = record?.state.tasks.find((t) => t.operationType === 'browser_automation');
+      const stages = record?.state.tasks.filter((t) => t.operationType === 'browser_automation') ?? [];
+      const task = stages.find(t=>t.status!=='completed') ?? stages.at(-1);
       if (!record || !task) { res.status(404).json({ error: 'Run not found', code: 'RUN_NOT_FOUND' }); return; }
-      res.json({ runId, status: task.status, attempts: task.attempts, output: task.output ?? null, evidence: task.evidence, blocker: task.blocker ?? null, running: record.status === 'running', cancelRequested: record.cancelRequested, updatedAt: record.state.updatedAt });
+      res.json({ runId, status: stages.length>1?record.status:task.status, attempts: stages.reduce((sum,t)=>sum+t.attempts,0), output: task.output ?? null, evidence: stages.flatMap(t=>t.evidence), blocker: task.blocker ?? null, running: record.status === 'running', cancelRequested: record.cancelRequested, updatedAt: record.state.updatedAt,
+        ...(stages.length>1?{stages:stages.map(t=>({taskId:t.id,status:t.status,attempts:t.attempts,output:t.output??null}))}:{}) });
     } catch (e) { fail(res, e); }
   });
 

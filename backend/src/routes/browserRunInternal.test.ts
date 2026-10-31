@@ -72,6 +72,21 @@ describe('internal browser execution and recovery', () => {
     assert.equal((await post('/execute', 'tasks-token', { runId, extra: 1 })).status, 400);
   });
 
+  it('hands a completed stage back to the queue and resumes the saved next stage',async()=>{
+    enable();
+    const first=request();
+    const {runId}=await prepareBrowserRun(createTenantContext({userId:h.alice.userId,via:'local_jwt'}),{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]},runtime!);
+    const before=executed;
+    dispatched.length=0;
+    assert.deepEqual(await (await post('/execute','tasks-token',{runId})).json(),{outcome:'yielded'});
+    assert.equal(executed,before+1);
+    assert.deepEqual(dispatched,[runId]);
+    assert.equal((await runs.load(h.alice.userId,runId))!.status,'running');
+    assert.deepEqual(await (await post('/execute','tasks-token',{runId})).json(),{outcome:'finished'});
+    assert.equal(executed,before+2);
+    assert.equal((await runs.load(h.alice.userId,runId))!.status,'completed');
+  });
+
   it('the recovery sweep re-dispatches stale unfinished runs and returns counts only', async () => {
     enable();
     let clock = Date.now();

@@ -69,6 +69,17 @@ const finished = async (user: string, runId: string) => {
 };
 
 describe('/api/browser/runs', () => {
+  it('returns all stage evidence and final workflow status through the existing owner-scoped API',async()=>{
+    behaviour='ok';const first=request();
+    const start=await call(h.alice.userId,'POST','',{...first,continuations:[{startUrl:first.startUrl,plan:first.plan}]});
+    assert.equal(start.status,202);
+    const result=await finished(h.alice.userId,start.json.runId);
+    assert.equal(result.status,'completed');
+    assert.equal(result.stages.length,2);
+    assert.ok(result.stages.every((stage:{status:string;output:{outcomeVerified:boolean}})=>stage.status==='completed'&&stage.output.outcomeVerified));
+    assert.equal(result.evidence.filter((e:{kind:string})=>e.kind==='drive_artifact').length,2);
+    assert.equal((await call(h.bob.userId,'GET',`/${start.json.runId}`)).status,404);
+  });
   it('runs on the canonical scheduler, verifies the outcome, stores private evidence, and shows it only to its owner', async () => {
     behaviour = 'ok';
     const start = await call(h.alice.userId, 'POST', '', request({ projectId: h.aliceProject }));

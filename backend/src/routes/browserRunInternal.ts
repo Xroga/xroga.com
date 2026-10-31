@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import { z } from 'zod';
+import { createHash } from 'node:crypto';
 
 import { executeBrowserRun, type ExecuteOutcome } from '../workers/browserCapability.js';
 import { verifyBusinessAutomationSchedulerToken } from './businessAutomationScheduler.js';
@@ -48,7 +49,15 @@ export function createBrowserRunInternalRouter(deps: BrowserInternalDeps = { run
     const parsed = bodySchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: 'Invalid request.' });
     try {
-      const outcome: ExecuteOutcome = await executeBrowserRun(parsed.data.runId, runtime);
+      const outcome: ExecuteOutcome = await executeBrowserRun(parsed.data.runId, runtime,{yieldAfterStage:true});
+      if(outcome==='yielded'){
+        const record=await runtime.runs.loadInternal(parsed.data.runId);
+        if(!record)throw new Error('Browser continuation checkpoint missing.');
+        // Derived only from the persisted graph, never supplied by a client.
+        // A new completed stage must not collide with the prior queue task.
+        const checkpoint=createHash('sha256').update(JSON.stringify(record.state.tasks.map(task=>[task.id,task.status,task.attempts]))).digest('hex').slice(0,32);
+        await runtime.dispatcher.dispatch(record.runId,checkpoint);
+      }
       // 200 for every outcome that needs no retry (finished, already finished, someone else is on it, unknown run): the queue must
       // not retry those. A held run is picked up by the recovery sweep if its holder dies.
       return res.json({ outcome });

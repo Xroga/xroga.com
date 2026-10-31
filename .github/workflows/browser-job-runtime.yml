@@ -1,0 +1,28 @@
+name: Browser Job runtime
+on:
+  pull_request:
+    paths:
+      - 'deploy/browser-worker/**'
+      - 'backend/src/workers/**'
+      - 'backend/src/routes/browserRun*'
+      - '.github/workflows/browser-job-runtime.yml'
+permissions:
+  contents: read
+jobs:
+  process-and-proxy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+      - run: npm ci --workspace backend --include-workspace-root=false --ignore-scripts --no-audit --no-fund
+      - name: Test bounded process and proxy channel without cloud credentials
+        run: node --import tsx --test deploy/browser-worker/jobEnvelope.test.mjs deploy/browser-worker/runCloudJob.test.mjs deploy/browser-worker/proxyChannel.test.mjs deploy/browser-worker/proxyChannel.security.test.mjs
+      - name: Verify the compiled Job policy modules
+        run: |
+          node node_modules/typescript/bin/tsc --project backend/tsconfig.json
+          for module in browserJob browserPlan chromiumLaunch egressProxy; do test -s "backend/dist/workers/$module.js"; done
+          test -s backend/dist/security/boundedPublicGet.js
