@@ -1,0 +1,16 @@
+{
+  "approved": true,
+  "founderReply": "Approve this exact temporary egress addition",
+  "amendmentCommit": "15609b320122ba5112f14e1e7ce8d8297fd684e3",
+  "project": "project-c40d4821-e647-4fa2-92d",
+  "region": "us-central1",
+  "router": "xroga-b15-stage-router-20261031",
+  "nat": "xroga-b15-stage-nat-20261031",
+  "address": "xroga-b15-stage-nat-ip-20261031",
+  "subnet": "xroga-verify-subnet",
+  "maximumWithinExistingUsd": 0.25,
+  "maximumTotalUsd": 2,
+  "newWindow": false,
+  "clockStarted": false,
+  "productionChange": false
+}

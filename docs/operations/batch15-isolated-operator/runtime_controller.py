@@ -54,7 +54,8 @@ def api(url, method='GET', body=None, missing=False):
     parsed = urllib.parse.urlsplit(url)
     allowed = {'compute.googleapis.com', 'secretmanager.googleapis.com', 'iam.googleapis.com',
                'run.googleapis.com', 'cloudtasks.googleapis.com', 'cloudkms.googleapis.com', 'artifactregistry.googleapis.com'}
-    if parsed.scheme != 'https' or parsed.netloc not in allowed or f'/projects/{plan.PROJECT}/' not in parsed.path:
+    same_project = f'/projects/{plan.PROJECT}/' in parsed.path or (method == 'GET' and '/projects/574998934848/' in parsed.path)
+    if parsed.scheme != 'https' or parsed.netloc not in allowed or not same_project:
         raise RuntimeError('UNAPPROVED_GOOGLE_ORIGIN_OR_PROJECT')
     if method != 'GET':
         window = read('active-window.json')
@@ -66,7 +67,7 @@ def api(url, method='GET', body=None, missing=False):
         approved = [G + '/zones/' + plan.ZONE + '/instances',
             G + '/zones/' + plan.ZONE + '/networkEndpointGroups', G + '/global/backendServices',
             G + '/global/healthChecks', G + '/global/firewalls', R + '/services', R + '/jobs',
-            S, I, T.rsplit('/', 1)[0]]
+            S, I, T.rsplit('/', 1)[0], G + '/regions/us-central1/routers', G + '/regions/us-central1/addresses']
         existing = {
             (K + ':getIamPolicy', 'POST'), (K + ':setIamPolicy', 'POST'),
             (A + ':setIamPolicy', 'POST'), (S + '/' + plan.CONFIG + ':setIamPolicy', 'POST'),
@@ -75,7 +76,7 @@ def api(url, method='GET', body=None, missing=False):
             (G + '/global/urlMaps/xroga-api-url-map', 'PUT')}
         exact_names = [plan.VM, plan.API, plan.JOB, plan.QUEUE, plan.SIGNING,
             'xroga-b15-host-stage', 'xroga-b15-stage-verifier', 'xroga-b15-host-stage-neg',
-            'xroga-b15-host-stage-backend', 'xroga-b15-host-stage-health', 'xroga-b15-host-stage-lb']
+            'xroga-b15-host-stage-backend', 'xroga-b15-host-stage-health', 'xroga-b15-host-stage-lb', plan.NAT_ROUTER, plan.NAT_IP]
         collection = url.split('?', 1)[0] in approved and method == 'POST'
         if collection:
             identifier = (body or {}).get('accountId') or (body or {}).get('name', '').split('/')[-1]
@@ -116,6 +117,7 @@ def mutate(name, url, method, body=None):
         'status': 'INTENT', 'bodySha256': hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest()}
     window['operations'].append(record)
     save('active-window.json', window)
+    print(json.dumps({'operation': name, 'status': 'INTENT_RECORDED'}), flush=True)
     result = api(url, method, body)
     window = read('active-window.json')
     window['operations'][-1].update(status='SUBMITTED', operation=result.get('name') or result.get('selfLink'))
@@ -174,6 +176,9 @@ def validate_stage_bundle(raw):
 
 
 def preflight():
+    key = api(K)
+    if key.get('primary', {}).get('state') != 'ENABLED' or key.get('purpose') != 'ENCRYPT_DECRYPT':
+        raise RuntimeError('EXISTING_STAGING_KEY_NOT_ENABLED')
     image = api(G + '/global/images/xroga-exec-base-20261026')
     if image.get('id') != plan.IMAGE_ID or image.get('status') != 'READY':
         raise RuntimeError('BASE_IMAGE_ID_OR_STATE_MISMATCH')
@@ -184,8 +189,12 @@ def preflight():
     if api_subnet['ipCidrRange'] != '10.91.0.0/26' or not api_subnet['network'].endswith('/xroga-verify-net'):
         raise RuntimeError('API_NETWORK_MISMATCH')
     routers = api(G + '/regions/us-central1/routers').get('items', [])
-    if not any(r['network'].endswith('/xroga-verify-net') and r.get('nats') for r in routers):
-        raise RuntimeError('EXISTING_PRIVATE_WORKER_EGRESS_MISSING_NO_NEW_NAT_AUTHORIZED')
+    existing_egress = any(r['network'].endswith('/xroga-verify-net') and r.get('nats') for r in routers)
+    if not existing_egress:
+        amendment = read('PRIVATE-EGRESS-APPROVED.json')
+        if not (amendment.get('approved') is True and amendment.get('amendmentCommit') == '15609b320122ba5112f14e1e7ce8d8297fd684e3'
+                and amendment.get('maximumWithinExistingUsd') == 0.25 and amendment.get('newWindow') is False):
+            raise RuntimeError('EXISTING_PRIVATE_WORKER_EGRESS_MISSING_NO_NEW_NAT_AUTHORIZED')
     original = api(G + '/global/urlMaps/xroga-api-url-map')
     plan.add_routes(original)
     version = api(S + '/' + plan.CONFIG + '/versions/2')
@@ -196,11 +205,14 @@ def preflight():
         S + '/' + plan.SIGNING, I + '/' + plan.HOST_SA, I + '/' + plan.STAGE_SA,
         G + '/global/backendServices/xroga-b15-host-stage-backend',
         G + '/global/healthChecks/xroga-b15-host-stage-health', G + '/global/firewalls/xroga-b15-host-stage-lb',
-        G + '/zones/' + plan.ZONE + '/networkEndpointGroups/xroga-b15-host-stage-neg']
+        G + '/zones/' + plan.ZONE + '/networkEndpointGroups/xroga-b15-host-stage-neg',
+        G + '/regions/us-central1/routers/' + plan.NAT_ROUTER,
+        G + '/regions/us-central1/addresses/' + plan.NAT_IP]
     if any(api(url, missing=True) is not None for url in candidates):
         raise RuntimeError('TEMPORARY_NAME_ALREADY_IN_USE_INSPECT')
     receipt = {'atUtc': timestamp(), 'baseImageId': image['id'], 'network': subnet['network'],
-        'stageConfigurationState': version['state'], 'privateEgressPresent': True, 'temporaryNamesFree': True,
+        'stageConfigurationState': version['state'], 'privateEgressPresent': existing_egress,
+        'temporaryEgressAdditionApproved': not existing_egress, 'temporaryNamesFree': True,
         'windowClockStarted': False, 'productionMutations': False}
     save('native-preflight.json', receipt)
     save('original-url-map.json', original)
@@ -257,6 +269,151 @@ def begin():
     print('ISOLATED_IDENTITIES_READY_NO_PRODUCTION_CHANGE')
 
 
+def provision_host():
+    window = read('active-window.json')
+    if time.time() + 1800 >= window['cleanupEpoch']:
+        raise RuntimeError('INSUFFICIENT_TIME_FOR_HOST_VERIFICATION')
+    images = plan.image_map(read('immutable-images.json'), window['source'])
+    if not read('native-preflight.json')['privateEgressPresent']:
+        result = mutate('create-nat-ip', G + '/regions/us-central1/addresses', 'POST',
+            {'name': plan.NAT_IP, 'addressType': 'EXTERNAL', 'ipVersion': 'IPV4', 'networkTier': 'PREMIUM'})
+        wait_operation(result)
+        result = mutate('create-nat-router', G + '/regions/us-central1/routers', 'POST',
+            plan.nat_body(plan.COMPUTE + '/regions/us-central1/addresses/' + plan.NAT_IP))
+        wait_operation(result)
+    body = plan.vm_body(window['source'], images, window['cleanupEpoch'])
+    result = mutate('create-host-vm', G + '/zones/' + plan.ZONE + '/instances', 'POST', body)
+    wait_operation(result)
+    vm = api(G + '/zones/' + plan.ZONE + '/instances/' + plan.VM)
+    disk = api(vm['disks'][0]['source'].replace('https://www.googleapis.com/compute/', 'https://compute.googleapis.com/compute/'))
+    if disk.get('sourceImageId') != plan.IMAGE_ID or vm['networkInterfaces'][0].get('accessConfigs'):
+        raise RuntimeError('CREATED_VM_IMAGE_OR_PRIVATE_BOUNDARY_MISMATCH')
+    save('host-instance.json', {'name': vm['name'], 'id': vm['id'], 'sourceImageId': disk['sourceImageId'],
+        'privateIp': vm['networkInterfaces'][0]['networkIP'], 'externalIps': [], 'source': window['source'],
+        'scheduling': vm['scheduling'], 'createdAtUtc': timestamp()})
+    print('PRIVATE_HOST_CREATED_BOOTSTRAP_RUNNING')
+
+
+def host_status():
+    serial = api(G + '/zones/' + plan.ZONE + '/instances/' + plan.VM + '/serialPort?port=1')
+    import zlib
+    records = []
+    for line in serial.get('contents', '').splitlines():
+        marker = 'XROGA_B15_HOST_EVIDENCE='
+        if marker in line:
+            encoded = line.split(marker, 1)[1].strip()
+            value = json.loads(zlib.decompress(base64.b64decode(encoded, validate=True)))
+            records.append(value)
+    save('host-evidence.json', {'atUtc': timestamp(), 'records': records,
+        'bootstrapFailed': 'XROGA_B15_HOST_BOOTSTRAP_FAILED' in serial.get('contents', '')})
+    print(json.dumps({'records': [r.get('status') for r in records],
+        'bootstrapFailed': 'XROGA_B15_HOST_BOOTSTRAP_FAILED' in serial.get('contents', ''),
+        'fixedErrorCodes': [line.strip() for line in serial.get('contents', '').splitlines()
+                            if line.strip().startswith(('HOST_', 'ERROR_TYPE='))]}))
+
+
+def route_body(value):
+    writable = {'name', 'description', 'defaultService', 'defaultRouteAction', 'defaultUrlRedirect',
+                'hostRules', 'pathMatchers', 'headerAction', 'tests', 'fingerprint'}
+    return {key: item for key, item in value.items() if key in writable}
+
+
+def provision_transport():
+    window = read('active-window.json')
+    if time.time() + 1200 >= window['cleanupEpoch']:
+        raise RuntimeError('INSUFFICIENT_TIME_FOR_API_TRANSPORT')
+    evidence = read('host-evidence.json')
+    if evidence['bootstrapFailed'] or not any(row.get('status') == 'COORDINATOR_READY' for row in evidence['records']):
+        raise RuntimeError('HOST_ACCEPTANCE_REQUIRED_BEFORE_ROUTING')
+    host = read('host-instance.json')
+    instance = api(G + '/zones/' + plan.ZONE + '/instances/' + plan.VM)
+    if instance['id'] != host['id']:
+        raise RuntimeError('HOST_INSTANCE_REPLACED')
+    fw = {'name': 'xroga-b15-host-stage-lb', 'network': plan.NETWORK, 'direction': 'INGRESS', 'priority': 1000,
+        'sourceRanges': ['35.191.0.0/16', '130.211.0.0/22'], 'targetTags': ['xroga-b15-host-stage'],
+        'allowed': [{'IPProtocol': 'tcp', 'ports': ['8080']}]}
+    wait_operation(mutate('create-host-firewall', G + '/global/firewalls', 'POST', fw))
+    health = {'name': 'xroga-b15-host-stage-health', 'type': 'TCP', 'checkIntervalSec': 5,
+        'timeoutSec': 5, 'healthyThreshold': 2, 'unhealthyThreshold': 2, 'tcpHealthCheck': {'port': 8080}}
+    wait_operation(mutate('create-host-health', G + '/global/healthChecks', 'POST', health))
+    neg_name = G + '/zones/' + plan.ZONE + '/networkEndpointGroups/xroga-b15-host-stage-neg'
+    neg_body = {'name': 'xroga-b15-host-stage-neg', 'network': plan.NETWORK, 'subnetwork': plan.SUBNET,
+        'networkEndpointType': 'GCE_VM_IP_PORT', 'defaultPort': 8080}
+    wait_operation(mutate('create-host-neg', neg_name.rsplit('/', 1)[0], 'POST', neg_body))
+    wait_operation(mutate('attach-host-neg', neg_name + '/attachNetworkEndpoints', 'POST',
+        {'networkEndpoints': [{'instance': plan.VM, 'ipAddress': host['privateIp'], 'port': 8080}]}))
+    existing = api(G + '/global/backendServices/xroga-api-google-backend')
+    if existing['loadBalancingScheme'] not in ('EXTERNAL', 'EXTERNAL_MANAGED'):
+        raise RuntimeError('EXISTING_HTTPS_SCHEME_NOT_REVIEWED')
+    backend_body = {'name': 'xroga-b15-host-stage-backend', 'protocol': 'HTTP',
+        'loadBalancingScheme': existing['loadBalancingScheme'], 'timeoutSec': 900,
+        'healthChecks': [plan.COMPUTE + '/global/healthChecks/xroga-b15-host-stage-health'],
+        'backends': [{'group': plan.COMPUTE + '/zones/' + plan.ZONE + '/networkEndpointGroups/xroga-b15-host-stage-neg',
+            'balancingMode': 'RATE', 'maxRatePerEndpoint': 1, 'capacityScaler': 1}]}
+    wait_operation(mutate('create-host-backend', G + '/global/backendServices', 'POST', backend_body))
+    current = api(G + '/global/urlMaps/xroga-api-url-map')
+    changed = plan.add_routes(current)
+    wait_operation(mutate('add-host-routes', G + '/global/urlMaps/xroga-api-url-map', 'PUT', route_body(changed)))
+    actual = api(G + '/global/urlMaps/xroga-api-url-map')
+    if plan.remove_routes(actual)['pathMatchers'] != current['pathMatchers']:
+        raise RuntimeError('ROUTE_PRESERVATION_READBACK_MISMATCH')
+    save('host-transport-readback.json', {'atUtc': timestamp(), 'backend': plan.BACKEND,
+        'paths': sorted(plan.PATHS), 'defaultAndVoicePreserved': True, 'newDns': False})
+    print('HOST_HTTPS_PATHS_ADDED_DEFAULT_AND_VOICE_PRESERVED')
+
+
+def provision_api():
+    window = read('active-window.json')
+    images = plan.image_map(read('immutable-images.json'), window['source'])
+    if time.time() + 1200 >= window['cleanupEpoch']:
+        raise RuntimeError('INSUFFICIENT_API_VERIFICATION_TIME')
+    # No queue or public invoker exists during URI discovery, so the initial
+    # private revision cannot receive user or browser work.
+    body = plan.api_body(window['source'], images['api'], 'https://not-routed.invalid')
+    operation = mutate('create-stage-api', R + '/services?serviceId=' + plan.API, 'POST', body)
+    wait_operation(operation, deadline=300)
+    service = api(R + '/services/' + plan.API)
+    url = service.get('uri')
+    if not url or not urllib.parse.urlsplit(url).hostname.endswith('.run.app'):
+        raise RuntimeError('PRIVATE_API_NATIVE_URI_MISSING')
+    corrected = plan.api_body(window['source'], images['api'], url)
+    corrected['name'] = R.split('/v2/', 1)[1] + '/services/' + plan.API
+    wait_operation(mutate('pin-native-stage-api-uri', R + '/services/' + plan.API + '?updateMask=template', 'PATCH', corrected), deadline=300)
+    grant(R + '/services/' + plan.API, 'roles/run.invoker', plan.STAGE_SA)
+    queue = {'name': T.split('/v2/', 1)[1], 'rateLimits': {'maxDispatchesPerSecond': 1, 'maxConcurrentDispatches': 2},
+        'retryConfig': {'maxAttempts': 3, 'maxRetryDuration': '900s', 'minBackoff': '10s', 'maxBackoff': '60s', 'maxDoublings': 2}}
+    mutate('create-stage-queue', T.rsplit('/', 1)[0], 'POST', queue)
+    grant(T, 'roles/cloudtasks.enqueuer', plan.STAGE_SA)
+    service = api(R + '/services/' + plan.API)
+    iam = api(R + '/services/' + plan.API + ':getIamPolicy?options.requestedPolicyVersion=3')
+    if any(member in ('allUsers', 'allAuthenticatedUsers') for binding in iam.get('bindings', []) for member in binding.get('members', [])):
+        raise RuntimeError('PRIVATE_API_PUBLIC_INVOKER_REFUSED')
+    save('stage-api-readback.json', {'atUtc': timestamp(), 'uri': url,
+        'service': service['name'], 'revision': service.get('latestReadyRevision'), 'source': window['source'],
+        'image': images['api'], 'publicInvoker': False, 'temporaryStageIdentity': plan.STAGE_SA})
+    print('PRIVATE_API_AND_BROWSER_QUEUE_READY')
+
+
+def run_verification():
+    window = read('active-window.json')
+    if time.time() + 1200 >= window['cleanupEpoch']:
+        raise RuntimeError('INSUFFICIENT_TIME_FOR_BOUNDED_VERIFICATION')
+    import uuid
+    session = str(uuid.uuid4())
+    images = plan.image_map(read('immutable-images.json'), window['source'])
+    url = read('stage-api-readback.json')['uri']
+    body = plan.verification_job(window['source'], images['api'], url, session)
+    save('fixture-session.json', {'session': session, 'modelsAllowed': False,
+        'fixtureSha256': hashlib.sha256((ROOT / 'stage_fixture.mjs').read_bytes()).hexdigest(),
+        'source': window['source'], 'createdAtUtc': timestamp()})
+    operation = mutate('create-verification-job', R + '/jobs?jobId=' + plan.JOB, 'POST', body)
+    wait_operation(operation, deadline=180)
+    result = mutate('run-acceptance-job', R + '/jobs/' + plan.JOB + ':run', 'POST', {})
+    save('verification-execution.json', {'operation': result.get('name'), 'session': session,
+        'source': window['source'], 'startedAtUtc': timestamp(), 'status': 'SUBMITTED_NOT_ACCEPTED'})
+    print('BOUNDED_MODEL_FREE_VERIFICATION_SUBMITTED_NOT_ACCEPTED')
+
+
 def cleanup():
     if not (ROOT / 'active-window.json').exists():
         return
@@ -269,6 +426,26 @@ def cleanup():
             action()
         except Exception as error:
             errors.append({'step': name, 'errorType': type(error).__name__})
+    if any(o['name'] == 'run-acceptance-job' for o in window['operations']):
+        def fixture_cleanup():
+            # Pausing only our queue prevents fresh dispatch while fixture cleanup
+            # reconstructs exact session ownership from protected staging metadata.
+            api(T + ':pause', 'POST', {})
+            executions = api(R + '/jobs/' + plan.JOB + '/executions')
+            for execution in executions.get('executions', []):
+                if execution.get('runningCount', 0) or not execution.get('completionTime'):
+                    wait_operation(api('https://run.googleapis.com/v2/' + execution['name'] + ':cancel', 'POST', {}))
+            # Stop the private API and its browser host before deleting fixtures.
+            # The cleanup Job itself uses the canonical storage service directly.
+            for url in (R + '/services/' + plan.API, G + '/zones/' + plan.ZONE + '/instances/' + plan.VM):
+                if api(url, missing=True) is not None:
+                    wait_operation(api(url, 'DELETE'), deadline=300)
+            overrides = {'overrides': {'taskCount': 1, 'timeout': '1200s',
+                'containerOverrides': [{'env': [{'name': 'XROGA_B15_FIXTURE_MODE', 'value': 'cleanup'}]}]}}
+            done = wait_operation(api(R + '/jobs/' + plan.JOB + ':run', 'POST', overrides), deadline=1200)
+            if done.get('response', {}).get('failedCount', 0) or done.get('response', {}).get('succeededCount') != 1:
+                raise RuntimeError('FIXTURE_RECOVERY_CLEANUP_FAILED')
+        attempt('recover-only-session-fixtures', fixture_cleanup)
     # Remove only our two routes from CURRENT map, preserving concurrent voice
     # and default API edits. Fingerprint protects read/modify/write races.
     if any(o['name'] == 'add-host-routes' for o in window['operations']):
@@ -276,7 +453,7 @@ def cleanup():
             current = api(G + '/global/urlMaps/xroga-api-url-map')
             changed = plan.remove_routes(current)
             if changed != current:
-                api(G + '/global/urlMaps/xroga-api-url-map', 'PUT', changed)
+                wait_operation(api(G + '/global/urlMaps/xroga-api-url-map', 'PUT', route_body(changed)))
         attempt('remove-only-approved-host-paths', routes)
     # Delete dependent objects before identities and secret. DELETE requests are
     # idempotent only after ownership has been established by our intent journal.
@@ -287,7 +464,9 @@ def cleanup():
         ('create-host-neg', G + '/zones/' + plan.ZONE + '/networkEndpointGroups/xroga-b15-host-stage-neg'),
         ('create-host-health', G + '/global/healthChecks/xroga-b15-host-stage-health'),
         ('create-host-firewall', G + '/global/firewalls/xroga-b15-host-stage-lb'),
-        ('create-host-vm', G + '/zones/' + plan.ZONE + '/instances/' + plan.VM)]
+        ('create-host-vm', G + '/zones/' + plan.ZONE + '/instances/' + plan.VM),
+        ('create-nat-router', G + '/regions/us-central1/routers/' + plan.NAT_ROUTER),
+        ('create-nat-ip', G + '/regions/us-central1/addresses/' + plan.NAT_IP)]
     for name, url in resources:
         if any(o['name'] == name for o in window['operations']):
             def remove(url=url):
@@ -313,9 +492,13 @@ def cleanup():
         if any(o['name'] == name for o in window['operations']):
             attempt(name, lambda url=url: api(url, 'DELETE') if api(url, missing=True) is not None else None)
     if window['originalStageSecretState'] == 'DISABLED':
-        attempt('restore-stage-version-disabled', lambda: api(S + '/' + plan.CONFIG + '/versions/2:disable', 'POST', {}))
+        def disable_stage():
+            api(S + '/' + plan.CONFIG + '/versions/2:disable', 'POST', {})
+            if api(S + '/' + plan.CONFIG + '/versions/2')['state'] != 'DISABLED':
+                raise RuntimeError('SECRET_DISABLED_STATE_NOT_VERIFIED')
+        attempt('restore-stage-version-disabled', disable_stage)
     save('cleanup-receipt.json', {'atUtc': timestamp(), 'status': 'FAILED' if errors else 'PASS_RESOURCE_CLEANUP',
-        'errors': errors, 'fixtureCleanup': 'NOT_CREATED_BY_BEGIN', 'productionChanged': False})
+        'errors': errors, 'fixtureCleanup': 'RECOVERY_JOB_REQUESTED' if any(o['name'] == 'run-acceptance-job' for o in window['operations']) else 'NOT_CREATED', 'productionChanged': False})
     if errors:
         raise RuntimeError('CLEANUP_HAS_REMAINING_OBLIGATIONS')
 
@@ -345,7 +528,7 @@ def wait_operation(result, deadline=180):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('mode', choices=['preflight', 'begin', 'cleanup', 'watchdog'])
+    parser.add_argument('mode', choices=['preflight', 'begin', 'host', 'host-status', 'transport', 'stage-api', 'verify', 'cleanup', 'watchdog'])
     args = parser.parse_args()
     if args.mode == 'preflight':
         preflight()
@@ -357,6 +540,20 @@ def main():
             raise
     elif args.mode == 'cleanup':
         cleanup()
+    elif args.mode == 'host':
+        try:
+            provision_host()
+        except Exception:
+            cleanup()
+            raise
+    elif args.mode == 'host-status':
+        host_status()
+    elif args.mode in ('transport', 'stage-api', 'verify'):
+        try:
+            {'transport': provision_transport, 'stage-api': provision_api, 'verify': run_verification}[args.mode]()
+        except Exception:
+            cleanup()
+            raise
     else:
         while time.time() < read('active-window.json')['cleanupEpoch']:
             if (ROOT / 'cleanup-receipt.json').exists():

@@ -34,6 +34,21 @@ IMAGE = COMPUTE + '/global/images/xroga-exec-base-20261026'
 IMAGE_ID = '5308884476316794212'
 BACKEND = COMPUTE + '/global/backendServices/xroga-b15-host-stage-backend'
 PATHS = {'/v1/jobs', '/v1/jobs/*'}
+NAT_ROUTER = 'xroga-b15-stage-router-20261031'
+NAT_IP = 'xroga-b15-stage-nat-ip-20261031'
+NAT = 'xroga-b15-stage-nat-20261031'
+
+
+def nat_body(address):
+    expected = COMPUTE + '/regions/us-central1/addresses/' + NAT_IP
+    if address != expected:
+        raise RuntimeError('NAT_ADDRESS_SCOPE_MISMATCH')
+    return {'name': NAT_ROUTER, 'network': NETWORK, 'nats': [{
+        'name': NAT, 'natIpAllocateOption': 'MANUAL_ONLY', 'natIps': [address],
+        'sourceSubnetworkIpRangesToNat': 'LIST_OF_SUBNETWORKS',
+        'subnetworks': [{'name': SUBNET, 'sourceIpRangesToNat': ['PRIMARY_IP_RANGE']}],
+        'minPortsPerVm': 1024, 'enableDynamicPortAllocation': False,
+        'logConfig': {'enable': False}}]}
 
 
 def image_map(receipt, source):
@@ -63,7 +78,7 @@ def helper_assets():
     manifest = json.loads((ROOT / 'host-helpers/MANIFEST.json').read_text())
     result = []
     for row in manifest['files']:
-        raw = (ROOT / 'host-helpers' / row['name']).read_bytes()
+        raw = (ROOT / 'host-helpers' / row['name']).read_bytes().replace(b'\r\n', b'\n')
         if hashlib.sha256(raw).hexdigest() != row['sha256']:
             raise RuntimeError('PUBLIC_HELPER_HASH_MISMATCH')
         result.append({'name': row['name'], 'sha256': row['sha256'],
@@ -144,7 +159,9 @@ const urls=resolveDatabaseUrls();
 if(!urls.length||urls.some(value=>{const u=new URL(value);return !u.hostname.includes('dqxnatoessviphudbhei')&&!decodeURIComponent(u.username).includes('dqxnatoessviphudbhei');}))throw Error('STAGE_DATABASE_CONNECTION_MISMATCH');
 Object.assign(process.env,{NODE_ENV:'production',XROGA_DEPLOYMENT_ENVIRONMENT:'staging',RUN_SWARM_WORKER:'false',
 XROGA_RELEASE_CANDIDATE:'1',STORAGE_WRITE_MODE:'r2',STORAGE_READ_ORDER:'r2',STORAGE_QUOTA_BYTES:'500000000',
-XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS:'900'});
+STORAGE_SINGLE_PUT_MAX_BYTES:'1048576',STORAGE_MULTIPART_PART_BYTES:'5242880',XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS:'900'});
+delete process.env.XROGA_BROWSER_AI_MODEL;
+delete process.env.XROGA_BROWSER_PLANNER_MODEL;
 await import('./dist/index.js');"""
 
 
@@ -170,3 +187,21 @@ def api_body(source, image, url):
                     [{'name': 'XROGA_BROWSER_COORDINATOR_SECRET', 'valueSource': {'secretKeyRef': {'secret': SIGNING, 'version': '1'}}}],
                 'volumeMounts': [{'name': 'platform', 'mountPath': '/secrets/xroga-platform'}]}],
             'volumes': [{'name': 'platform', 'secret': {'secret': CONFIG, 'items': [{'version': '2', 'path': 'config.json'}]}}]}}
+
+
+def verification_job(source, image, url, session):
+    if not re.fullmatch('[a-f0-9-]{36}', session):
+        raise RuntimeError('FIXTURE_SESSION_INVALID')
+    template = api_body(source, image, url)['template']
+    bootstrap = api_entrypoint().rsplit("await import('./dist/index.js');", 1)[0]
+    container = template['containers'][0]
+    container.pop('ports')
+    container['resources'].pop('cpuIdle')
+    container['args'] = ['--input-type=module', '-e', bootstrap + '\n' + (ROOT / 'stage_fixture.mjs').read_text()]
+    container['env'] += [{'name': 'XROGA_B15_API_URL', 'value': url},
+        {'name': 'XROGA_B15_SESSION', 'value': session}, {'name': 'XROGA_B15_CHILD_BOOTSTRAP', 'value': bootstrap}]
+    for key in ('scaling', 'maxInstanceRequestConcurrency'):
+        template.pop(key)
+    template.update(timeout='1200s', maxRetries=0)
+    return {'labels': {'xroga-owner': 'b15-isolated-20261031'},
+            'template': {'taskCount': 1, 'parallelism': 1, 'template': template}}

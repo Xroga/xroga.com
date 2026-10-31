@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-10-31T09:26:58.173328+00:00",
+  "baseImageId": "5308884476316794212",
+  "network": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/networks/xroga-verify-net",
+  "stageConfigurationState": "DISABLED",
+  "privateEgressPresent": false,
+  "temporaryEgressAdditionApproved": true,
+  "temporaryNamesFree": true,
+  "windowClockStarted": false,
+  "productionMutations": false
+}

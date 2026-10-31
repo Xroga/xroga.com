@@ -7,7 +7,7 @@
   },
   "tags": [
     "xroga-b15-isolated-20261031",
-    "2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354"
+    "3d56868618c096d13e6a5c63a489d7f15143b0e7"
   ],
   "steps": [
     {
@@ -37,7 +37,7 @@
         "--depth",
         "1",
         "origin",
-        "2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354"
+        "3d56868618c096d13e6a5c63a489d7f15143b0e7"
       ]
     },
     {
@@ -47,7 +47,7 @@
         "/workspace/src",
         "checkout",
         "--detach",
-        "2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354"
+        "3d56868618c096d13e6a5c63a489d7f15143b0e7"
       ]
     },
     {
@@ -56,11 +56,11 @@
       "args": [
         "build",
         "--build-arg",
-        "XROGA_RELEASE_SHA=2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+        "XROGA_RELEASE_SHA=3d56868618c096d13e6a5c63a489d7f15143b0e7",
         "-f",
         "Dockerfile.api",
         "-t",
-        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-api-stage:2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-api-stage:3d56868618c096d13e6a5c63a489d7f15143b0e7",
         "."
       ]
     },
@@ -70,9 +70,9 @@
       "args": [
         "build",
         "--label",
-        "org.opencontainers.image.revision=2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+        "org.opencontainers.image.revision=3d56868618c096d13e6a5c63a489d7f15143b0e7",
         "-t",
-        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-browser-stage:2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-browser-stage:3d56868618c096d13e6a5c63a489d7f15143b0e7",
         "."
       ]
     },
@@ -90,16 +90,16 @@
       "args": [
         "build",
         "--label",
-        "org.opencontainers.image.revision=2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+        "org.opencontainers.image.revision=3d56868618c096d13e6a5c63a489d7f15143b0e7",
         "-t",
-        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-proxy-stage:2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-proxy-stage:3d56868618c096d13e6a5c63a489d7f15143b0e7",
         "/workspace/proxy"
       ]
     }
   ],
   "images": [
-    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-api-stage:2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
-    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-browser-stage:2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
-    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-proxy-stage:2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354"
+    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-api-stage:3d56868618c096d13e6a5c63a489d7f15143b0e7",
+    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-browser-stage:3d56868618c096d13e6a5c63a489d7f15143b0e7",
+    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-proxy-stage:3d56868618c096d13e6a5c63a489d7f15143b0e7"
   ]
 }

@@ -1,0 +1,75 @@
+{
+  "kind": "compute#urlMap",
+  "id": "2312125419816347369",
+  "creationTimestamp": "2026-10-27T00:51:35.463-07:00",
+  "name": "xroga-api-url-map",
+  "selfLink": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/urlMaps/xroga-api-url-map",
+  "hostRules": [
+    {
+      "hosts": [
+        "api.xroga.com"
+      ],
+      "pathMatcher": "xroga-voice-only"
+    }
+  ],
+  "pathMatchers": [
+    {
+      "name": "xroga-voice-only",
+      "defaultService": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend",
+      "pathRules": [
+        {
+          "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-voice-free-backend",
+          "paths": [
+            "/api/voice/transcribe-free"
+          ]
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "description": "Only free dictation uses candidate",
+      "host": "api.xroga.com",
+      "path": "/api/voice/transcribe-free",
+      "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-voice-free-backend"
+    },
+    {
+      "description": "Preserve /health",
+      "host": "api.xroga.com",
+      "path": "/health",
+      "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend"
+    },
+    {
+      "description": "Preserve /ready",
+      "host": "api.xroga.com",
+      "path": "/ready",
+      "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend"
+    },
+    {
+      "description": "Preserve /api/swarm/execute",
+      "host": "api.xroga.com",
+      "path": "/api/swarm/execute",
+      "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend"
+    },
+    {
+      "description": "Preserve /internal/canonical-dispatch",
+      "host": "api.xroga.com",
+      "path": "/internal/canonical-dispatch",
+      "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend"
+    },
+    {
+      "description": "Preserve /api/voice/transcribe",
+      "host": "api.xroga.com",
+      "path": "/api/voice/transcribe",
+      "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend"
+    },
+    {
+      "description": "Preserve /api/projects",
+      "host": "api.xroga.com",
+      "path": "/api/projects",
+      "service": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend"
+    }
+  ],
+  "defaultService": "https://www.googleapis.com/compute/v1/projects/project-c40d4821-e647-4fa2-92d/global/backendServices/xroga-api-google-backend",
+  "fingerprint": "10yqoL2BYoc="
+}

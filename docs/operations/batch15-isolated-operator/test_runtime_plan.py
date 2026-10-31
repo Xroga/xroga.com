@@ -11,6 +11,33 @@ import runtime_controller as runtime
 
 
 class RuntimePlanTests(unittest.TestCase):
+    def test_nat_has_one_approved_address_and_only_worker_subnet(self):
+        expected = plan.COMPUTE + '/regions/us-central1/addresses/' + plan.NAT_IP
+        body = plan.nat_body(expected)
+        self.assertEqual(body['network'], plan.NETWORK)
+        self.assertEqual(body['nats'][0]['natIps'], [expected])
+        self.assertEqual(body['nats'][0]['subnetworks'], [{'name': plan.SUBNET, 'sourceIpRangesToNat': ['PRIMARY_IP_RANGE']}])
+        self.assertNotIn('xroga-api-private', json.dumps(body))
+        with self.assertRaises(RuntimeError):
+            plan.nat_body(plan.COMPUTE + '/regions/us-east4/addresses/production')
+
+    def test_job_has_one_no_retry_bounded_task_and_explicit_synthetic_destinations(self):
+        body = plan.verification_job('a' * 40, 'immutable-fixture', 'https://xroga-b15-activation-stage-20261031-fixture.run.app', 'a' * 36)
+        task = body['template']['template']
+        self.assertEqual(body['template']['taskCount'], 1)
+        self.assertEqual(body['template']['parallelism'], 1)
+        self.assertEqual(task['timeout'], '1200s')
+        self.assertEqual(task['maxRetries'], 0)
+        self.assertEqual(task['serviceAccount'], plan.STAGE_SA)
+        self.assertEqual(task['containers'][0]['resources']['limits'], {'cpu': '1', 'memory': '1Gi'})
+        self.assertNotIn('ports', task['containers'][0])
+        script = task['containers'][0]['args'][-1]
+        self.assertIn("process.env.SUPABASE_URL, 'https://dqxnatoessviphudbhei.supabase.co'", script)
+        self.assertIn("process.env.XROGA_DRIVE_R2_BUCKET, 'xroga-drive-test'", script)
+        self.assertIn("child.kill('SIGKILL')", script)
+        self.assertIn('REAL_EXECUTOR_PROCESS_LOSS_NOT_VM_TERMINATION', script)
+        self.assertNotIn('nzenxdfumxrnsmybazmo', script)
+
     def test_vm_is_single_private_bounded_and_contains_no_credential(self):
         source = 'a' * 40
         images = {kind: f'us-east4-docker.pkg.dev/{plan.PROJECT}/cloud-run-source-deploy/xroga-b15-{kind}-stage@sha256:' + 'b' * 64 for kind in ('api', 'browser', 'proxy')}
