@@ -12,6 +12,7 @@
     "backend/src/workers/browserCoordinator.ts",
     "backend/src/workers/browserCoordinatorHost.test.ts",
     "backend/src/workers/browserCoordinatorHost.ts",
+    "docs/operations/batch15-batch2-activation/APPROVED-WINDOW.json",
     "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
     "docs/operations/batch15-batch2-activation/ISOLATED-VERIFICATION-APPROVAL.md",
     "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
@@ -98,7 +99,7 @@
   "rollout": "Required CI, approved isolated host, live security acceptance, then source-paired gated Batch 1.5 activation. Batch 2 stays disabled until Batch 1.5 live acceptance.",
   "rollback": "Keep healthy source85 API/Job and current voice/frontend. Stop unaccepted host activation. A future release must close the source fence, drain work, pair recovery API/Job, verify readiness and reopen only the matching source.",
   "knownGaps": [
-    "Specific host/IAM/secret/network/cost approval pending",
+    "Exact isolated resource window approved at package fa9e90d6, execution awaits CI and immutable artifacts. Production activation and SQL remain separately controlled.",
     "Required exact-source CI remains pending. API Docker build compiled successfully, local shared install lacks development declarations.",
     "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
     "Live browser/Drive and disposable-provider acceptance remain pending"
@@ -111,7 +112,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Specific host/IAM/secret/network/cost approval pending",
+      "Exact isolated resource window approved at package fa9e90d6, execution awaits CI and immutable artifacts. Production activation and SQL remain separately controlled.",
       "Required exact-source CI remains pending. API Docker build compiled successfully, local shared install lacks development declarations.",
       "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
       "Live browser/Drive and disposable-provider acceptance remain pending"
