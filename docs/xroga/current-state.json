@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "release/mic-mobile-20261031",
-    "sha": "fe2c6486f4c60fae0757f79a535f43286ee4a02f",
-    "sourceTimestampUtc": "2026-10-31T03:46:21+05:00",
-    "auditStartedUtc": "2026-10-31T01:26:00.463Z",
+    "sha": "6a33d8f247e99502f8b19de348ea8175cd08622b",
+    "sourceTimestampUtc": "2026-10-31T06:27:28+05:00",
+    "auditStartedUtc": "2026-10-31T01:52:15.160Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -104490,7 +104490,8 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaVoiceControl.tsx:8"
+        "frontend/src/components/terminal/XrogaVoiceControl.tsx:8",
+        "frontend/src/lib/voiceCapture.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -104500,7 +104501,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/voiceCapture.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -104737,6 +104740,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/XrogaVoiceControl.tsx:9",
+        "frontend/src/lib/voiceSegmenter.pause.test.ts:3",
         "frontend/src/lib/voiceSegmenter.test.ts:3"
       ],
       "reachable": true,
@@ -104749,6 +104753,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/lib/voiceDictation.test.ts",
+        "frontend/src/lib/voiceSegmenter.pause.test.ts",
         "frontend/src/lib/voiceSegmenter.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -138793,6 +138798,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:ad9e3983a37151398e1d",
+      "sourcePath": "frontend/src/lib/voiceCapture.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d401376d58d11ccb7ea7",
       "sourcePath": "frontend/src/lib/voiceDictation.test.ts",
       "declaredTests": 9,
@@ -138803,6 +138815,13 @@
       "id": "test-suite:999a7357fc00e21a91cc",
       "sourcePath": "frontend/src/lib/voicePcm.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b6f5b85e2b28cbcc7dd1",
+      "sourcePath": "frontend/src/lib/voiceSegmenter.pause.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
