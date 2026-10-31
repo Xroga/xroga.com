@@ -1,0 +1,12 @@
+{
+  "approved": true,
+  "founderReply": "Approve this staging-key permission",
+  "amendmentCommit": "b9362e42adc461489bf76ebf92462caffa6dc99d",
+  "keyName": "projects/project-c40d4821-e647-4fa2-92d/locations/us-central1/keyRings/xroga-p3-verify-20261023/cryptoKeys/xroga-p3-staging-20261024",
+  "principal": "xroga-b15-stage-verifier@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+  "role": "roles/cloudkms.cryptoKeyEncrypterDecrypter",
+  "recordedAtUtc": "2026-10-31T09:01:34.149807+00:00",
+  "sameWindow": true,
+  "newWindow": false,
+  "clockStarted": false
+}

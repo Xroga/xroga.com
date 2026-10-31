@@ -1,0 +1,20 @@
+{
+  "source": "e41e6cdbbdf1a273200a0afe73c9871733191be8",
+  "bundler": "0.28.1",
+  "files": [
+    {
+      "name": "run-sandbox-probe.mjs",
+      "bytes": 17079,
+      "sha256": "189f8198eabd3b91696ad4505884a8a7cd15574e4f5b72cc9be36e3e8dbe9117"
+    },
+    {
+      "name": "verify-egress-isolation.mjs",
+      "bytes": 18396,
+      "sha256": "b336262f850821d8157b89c0cae3b467a417d73bf70738bce9ae3a6a381b2320"
+    }
+  ],
+  "modelCalls": 0,
+  "cloudCalls": 0,
+  "applicationSource": "2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
+  "sourceNote": "Public helper inputs unchanged from e41; API readiness and dispatch changes do not alter these bundles."
+}

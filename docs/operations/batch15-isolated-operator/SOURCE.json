@@ -1,5 +1,5 @@
 {
-  "applicationSource": "8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+  "applicationSource": "2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
   "applicationPr": 899,
   "approvalCommit": "fa9e90d62f92a1961983d0b7e1f3cd2fa6836d6c",
   "packageSha256": "62d2d10a6b8d170cccd9cb3939c74547916cb8de8d2967e222db2bc16a3967d5",
@@ -7,5 +7,9 @@
   "clockStarted": false,
   "productionSqlApproved": false,
   "productionActivationByThisWindow": false,
-  "operatorPhase": "PREPARE_BUILD_TRANSPORT_ONLY"
+  "operatorPhase": "PREPARE_ISOLATED_RUNTIME_PENDING_CI_AND_EGRESS",
+  "stagingKmsApproved": true,
+  "stageConfigurationVersion2ObservedState": "DISABLED",
+  "stageConfigurationReadback": "NOT_ACCESSED_DISABLED_VERSION",
+  "privateWorkerEgress": "BLOCKED_NO_EXISTING_NAT_OR_PROXY"
 }
