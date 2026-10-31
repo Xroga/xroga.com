@@ -2,6 +2,13 @@ import { API_URL, ApiError, getAccessToken,fetchApiResponse } from '@/lib/api';
 import {normalizeVoiceAudio} from './voicePcm';
 import {voiceClientAwait} from './voiceRequestPolicy';
 
+/** Starts the voice backend while the user is still speaking. Scale-to-zero means the first request after
+ * idle waits for a cold start; a simple no-credential request lets that happen during recording.
+ * The response is ignored and nothing is sent. */
+export function warmVoiceBackend(): void {
+  try { void fetch(`${API_URL}/api/voice/transcribe-free`, {method: 'GET', mode: 'no-cors', cache: 'no-store', credentials: 'omit'}).catch(() => {}); } catch { /* best effort */ }
+}
+
 export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSignal,
   options?: {freeOnly: true; preparedPcm: true; expectedToken: string}): Promise<string> {
   const signal = AbortSignal.any([AbortSignal.timeout(60000), ...(cancellation ? [cancellation] : [])]);
@@ -58,6 +65,6 @@ export async function transcribeVoiceAudio(audio: Blob, cancellation?: AbortSign
   }
 
   const text = typeof payload?.text === 'string' ? payload.text.trim() : '';
-  if (!text || text.length > 16000) throw new ApiError('No verified speech was received.', 422, {code: 'VOICE_TRANSCRIPTION_DENIED'});
+  if (text.length > 16000 || !text && !options?.freeOnly) throw new ApiError('No verified speech was received.', 422, {code: 'VOICE_TRANSCRIPTION_DENIED'});
   return text;
 }

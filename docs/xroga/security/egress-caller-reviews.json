@@ -2951,7 +2951,7 @@
         {
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
-          "sha256": "88aaee722508dfa7e46ee9db1886aa6adeeb534b44c6ba554c456b2eabbf85c7",
+          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481",
           "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
         }
       ],
@@ -4420,8 +4420,8 @@
     },
     {
       "id": "19343161fc1afbd3f2fb",
-      "callSha256": "42b774bd1417b016a93f2ecf40b88b6a5c9c2fa582a4ed10ff3195134a8119ad",
-      "sourceFileSha256": "762cbe62c9cba93a6b66e360351a3ea18c2fa4b9f0fce65774985df4d947c3ad",
+      "callSha256": "93e31a05032e016a8c6cf393fee960363d7115eaf59892ae3f1e5bcffecd6580",
+      "sourceFileSha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_AUTHENTICATED_MANUAL_PCM_TO_PINNED_FREE_CLOUDFLARE_ACCOUNT_AND_MODEL_ONLY",
       "tenantAuthority": "ISSUED_ACTOR_OWNER_RESERVATION_AUDIT_REVOCATION_CANCELLATION_AND_ZERO_SETTLEMENT_BEFORE_PUBLICATION_NO_PAID_FALLBACK",
@@ -4429,12 +4429,27 @@
         {
           "path": "backend/src/routes/voiceFree.security.test.ts",
           "marker": "free speech route preserves original actor, credential, reservation and publication boundaries",
-          "sha256": "553b196e893ce2bee2dca7299f60a5eaa6ac59e8e2a0dc5d2916d4e3ee750975"
+          "sha256": "77da96d82d190edc1a625db5d0c8e2e5af896624b520dc610545ae587f424ddc"
         },
         {
           "path": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
           "marker": "ONLY_EXACT_FREE_VOICE_ADMISSION_AND_CHANGED_VOICE_NATIVE_CONVERSIONS",
           "sha256": "4715d07866813f677ef2eee7beca59c63adc0878e4d3df213b88aadb9f4b8f04"
+        }
+      ]
+    },
+    {
+      "id": "eb39e5759b146603faf0",
+      "callSha256": "b7de7d8baaceeb3d667da23d6269cd0b28044250d9ce7e272275698162245500",
+      "sourceFileSha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIRST_PARTY_API_ORIGIN_WAKE_UP_NO_CREDENTIAL_NO_BODY_RESPONSE_IGNORED",
+      "tenantAuthority": "NONE_REQUIRED_NO_USER_DATA_OR_AUTHORITY_SENT_BEST_EFFORT_ONLY",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+          "marker": "voice backend wake-up request carries no credentials, body or user data and its response is ignored",
+          "sha256": "f7739c339fd6f7e17feba6ef782c476b4b73f7de4b9022a811897ad933029bfc"
         }
       ]
     }

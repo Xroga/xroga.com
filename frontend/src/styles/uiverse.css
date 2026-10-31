@@ -6298,3 +6298,42 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 }
 
 .xv-voice-icon-only:focus-visible, .xv-voice-v8-control:focus-visible { outline: 2px solid currentColor !important; outline-offset: 3px; }
+
+/* Dictation bar: compact pill with a small cancel icon, slim live waveform and a small stop icon. */
+.xv-voice-capture-wrap { width: 100%; min-width: 0; }
+.xv-voice-capture-bar {
+  grid-template-columns: 30px minmax(0, 1fr) 30px;
+  gap: 8px;
+  height: 42px;
+  min-height: 42px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--card));
+  box-shadow: none;
+}
+.xv-voice-capture-bar .xv-voice-capture-button {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 22%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--foreground);
+}
+/* The visible control stays small; this keeps a comfortable 44 px touch target. */
+.xv-voice-capture-bar .xv-voice-capture-button::after { content: ''; position: absolute; inset: -7px; }
+.xv-voice-capture-bar .xv-voice-capture-button:hover:not(:disabled) {
+  transform: none;
+  background: color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+.xv-voice-capture-bar .xv-voice-capture-button:focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 2px; }
+.xv-voice-capture-bar .xv-voice-capture-cancel svg { width: 14px; height: 14px; }
+.xv-voice-capture-bar .xv-voice-capture-send svg { width: 10px; height: 10px; border-radius: 2px; }
+.xv-voice-capture-middle { display: flex; min-width: 0; height: 30px; align-items: center; color: var(--muted); }
+.xv-voice-live-wave { display: block; width: 100%; height: 100%; color: color-mix(in srgb, var(--foreground) 55%, var(--muted)); }
+.xv-voice-capture-label { font-size: 12px; font-weight: 500; color: color-mix(in srgb, var(--foreground) 80%, var(--muted)); padding-inline: 6px; }
+/* Same arrangement in right-to-left pages; finger-friendly without double-tap zoom. */
+.xv-voice-capture-bar { direction: ltr; }
+.xv-voice-capture-bar .xv-voice-capture-button { touch-action: manipulation; }

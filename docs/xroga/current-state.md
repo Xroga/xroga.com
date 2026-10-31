@@ -1,21 +1,21 @@
 # Xroga repository truth map
 
-Source SHA: `6bd3ba87ab1d6c23c7f6bb504ecf23e6be55da6f`. Branch observed: `codex/voice-only-production-20261030`. Audit started: 2026-10-29T22:56:07.897Z.
+Source SHA: `6a33d8f247e99502f8b19de348ea8175cd08622b`. Branch observed: `release/mic-mobile-20261031`. Audit started: 2026-10-31T01:52:15.160Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1732
+- surfaces: 1727
 - routeRegistrations: 351
 - routes: 294
 - reachableRoutes: 236
-- queues: 5
+- queues: 4
 - migrations: 153
 - workflows: 21
-- testSuites: 999
-- declaredTests: 6679
-- classifiedMarkers: 390
+- testSuites: 997
+- declaredTests: 6695
+- classifiedMarkers: 391
 - reachableMarkers: 328
 - absentRequiredPaths: 5
 - duplicateIds: 0
@@ -66,7 +66,6 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Queue processing
 
-- **<dynamic>**: NO_PRODUCER_FOUND; CONSUMER_CODE_PRESENT; registration must be verified. Definitions: frontend/src/lib/voiceEngine.ts:10, frontend/src/lib/voiceLocal.ts:8. Producer/consumer source recorded; runtime connectivity unverified.
 - **email-jobs**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:36. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **notifications**: PRODUCER_CODE_PRESENT; caller activation must be verified; NO_CONSUMER_FOUND. Definitions: backend/src/config/jobQueues.ts:18. Queue definition is not proof of active processing; no Worker consumer found in inspected source.
 - **swarm-tasks**: NO_PRODUCER_FOUND; NO_CONSUMER_FOUND. Definitions: backend/src/config/redis.ts:22. Queue definition is not proof of active processing; no Worker consumer found in inspected source.

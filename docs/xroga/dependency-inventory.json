@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8db36c5b82203610048159c8b558a16c1e6a31ad",
+  "source_sha": "6a33d8f247e99502f8b19de348ea8175cd08622b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -31,7 +31,7 @@
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPPORT_PHONE",
         "NEXT_PUBLIC_VERCEL_ENV",
-        "NEXT_PUBLIC_VOICE_TRANSCRIPTION_MODE",
+        "NEXT_PUBLIC_VOICE_ENGINE",
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
@@ -10671,7 +10671,7 @@
       ]
     },
     {
-      "name": "NEXT_PUBLIC_VOICE_TRANSCRIPTION_MODE",
+      "name": "NEXT_PUBLIC_VOICE_ENGINE",
       "consuming_sources": [
         "frontend/src/components/terminal/XrogaVoiceControl.tsx"
       ],
@@ -16942,7 +16942,7 @@
     },
     {
       "path": "backend/src/routes/voiceFree.ts",
-      "sha256": "762cbe62c9cba93a6b66e360351a3ea18c2fa4b9f0fce65774985df4d947c3ad"
+      "sha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827"
     },
     {
       "path": "backend/src/routes/wellbeing.ts",
@@ -19542,7 +19542,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/growth/Art.tsx",
-      "sha256": "a7a4bbafc464b58e315de430cef2503409c087f7a93741108e9ca457cac39f32"
+      "sha256": "c0bb1e416e72501de8119645125399560dee5282e3ad712c80696192633cff6d"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/growth/Launch.tsx",
@@ -19578,7 +19578,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/search/Health.tsx",
-      "sha256": "12c39e04094d1689e49472bf5f96311a0ae287f149b64d09bf8589fee4020304"
+      "sha256": "015f3633b1e1b1c5c43706fdd6b3877f15b6895729a344f694afd564b38f15b8"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/search/Links.tsx",
@@ -20897,6 +20897,10 @@
       "sha256": "ee912b3954c930fb717c475660015075aa84994c09fed435eb3ab985ce742507"
     },
     {
+      "path": "frontend/src/components/terminal/VoiceWaveform.tsx",
+      "sha256": "a3709982dbdc423229b105d170fd6f806978a1cb05f1a89cf1c717243adfae3c"
+    },
+    {
       "path": "frontend/src/components/terminal/WebSourcesPanel.tsx",
       "sha256": "a5e5e7a7ed3189f9fc3fd66e46df99560b9b7cd4a88c45c472d21648e5c3a64b"
     },
@@ -20966,7 +20970,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "222da10a1d827e4396c2231735f8d8c0b598b94a9c372b1bc37ee1194b2e2538"
+      "sha256": "bfad45774e4c9cba5da59da9711b9bd956a18357469def835e81c7165581d0b2"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -21937,6 +21941,10 @@
       "sha256": "9691f43d3dd244e8ab5b7d4c27eedae9ab41f4e4d1ca530476ef86d1bca388f6"
     },
     {
+      "path": "frontend/src/lib/terminal/dictation.ts",
+      "sha256": "5e60fdb6908c8a06cc876720ca8f95c9920a79cb17e69c35c472720486b59fe8"
+    },
+    {
       "path": "frontend/src/lib/terminal/executionIntent.ts",
       "sha256": "f0ec2bd7ec9a5e9c460e33be29a83f45faec46588d29c54b06d858df225df487"
     },
@@ -21958,7 +21966,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/voiceRecording.ts",
-      "sha256": "ac264885f8c571166e26106cfe00ee9f07298d450dfd4a4a5f913985d9e44f99"
+      "sha256": "e3e408b1a74111cdb2863b2de3ddf3dd60a4e9859e81e9895ba3d4dd7f35e632"
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
@@ -22022,27 +22030,15 @@
     },
     {
       "path": "frontend/src/lib/voiceApi.ts",
-      "sha256": "5823e7e6f7a5993a40e8d24bd2208e6194276661f8442b909f907b316e79bec3"
+      "sha256": "236afeb38215ed1279bdf8acb3041877bb84e30cae989068e226f386f33bc44d"
     },
     {
-      "path": "frontend/src/lib/voiceEngine.ts",
-      "sha256": "407d1c68e67647ddbab600033c894ad162715cac1499948a450e0221cdfb7196"
+      "path": "frontend/src/lib/voiceCapture.ts",
+      "sha256": "43b394ec936088ee3de7aa7f29d09aed9a40e339dc1ae6e4ba1b28a6038edab0"
     },
     {
-      "path": "frontend/src/lib/voiceFree.ts",
-      "sha256": "e6e91de0741e63b0207390d1d9904d0e5275bae48d9fb47715f0ea7bfea81db3"
-    },
-    {
-      "path": "frontend/src/lib/voiceLocal.ts",
-      "sha256": "d44613c95de297cf5257775ffd57db316b7145acc3d56ccb3203a56c6574631f"
-    },
-    {
-      "path": "frontend/src/lib/voiceLocalProtocol.ts",
-      "sha256": "c7f0127e9f9f51dd4b170607f2b3d960ee660a3277fa105d62e876f0e596fdc2"
-    },
-    {
-      "path": "frontend/src/lib/voiceModelLoading.ts",
-      "sha256": "5e47eba6887ecd80f8385c0373e9cd16614eec1a9b0f975f07c725916ea1c56b"
+      "path": "frontend/src/lib/voiceDictation.ts",
+      "sha256": "1e04bcd6669d67b7f5baa5491d60b1990000f3dfab0ea02c2a22551f653c75b7"
     },
     {
       "path": "frontend/src/lib/voicePcm.ts",
@@ -22053,8 +22049,8 @@
       "sha256": "39d5b47f4f9bb6eeb7fc8444a814a33c9329811ee0d61f66cd2e7b9b046c4b9b"
     },
     {
-      "path": "frontend/src/lib/voiceTranscription.worker.ts",
-      "sha256": "6321f593e5c40f9c50017660fa4fffbeaba94cd82c05479ef1eec03ce50507fe"
+      "path": "frontend/src/lib/voiceSegmenter.ts",
+      "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
@@ -24046,7 +24042,7 @@
       "hostname": "api.cloudflare.com",
       "protocol": "https:",
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 48,
+      "line": 59,
       "credentialsInUrl": false
     },
     {
@@ -32074,6 +32070,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/voiceFree.ts",
+      "line": 16,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/runtime/safeLogging.ts",
       "line": 48,
       "scope": "FUNCTION_LOCAL",
@@ -35539,15 +35542,8 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "frontend/src/lib/voiceEngine.ts",
-      "line": 13,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/lib/voiceTranscription.worker.ts",
-      "line": 29,
+      "path": "frontend/src/lib/voiceDictation.ts",
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

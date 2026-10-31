@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "1dc9e27e6a3c38a98d4b37adf75845a7e1ddde7ee194498fb9d310ba7425c4e9",
+  "reviewRegistrySha256": "3e23d6e5e243b81b834154491c331f7c8f5e1f6f6bd9fa18fc7ee775ffb96b3e",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 916,
+    "persistenceCandidates": 917,
     "ownerPredicateCandidates": 259,
-    "reviewRequired": 120,
+    "reviewRequired": 121,
     "reviewedCandidates": 796,
-    "unresolvedSafetyCandidates": 153,
+    "unresolvedSafetyCandidates": 154,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 120,
+    "REVIEW_REQUIRED": 121,
     "SCOPED_BOUNDARY": 520,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 203,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 834,
+    "unresolvedCandidateBoundaries": 835,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4152,7 +4152,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "490439c117222cf136f2"
+        "id": "3cb110b5eb024dc522c2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5739,6 +5739,10 @@
         "id": "19bac69e5470fee649fa"
       },
       {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3a7aa1dbe9ba47ad2c75"
+      },
+      {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "45b3d2d19b57580957f7"
       },
@@ -6349,6 +6353,10 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "19a37b099336607193eb"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3a7aa1dbe9ba47ad2c75"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7676,7 +7684,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "490439c117222cf136f2"
+        "id": "3cb110b5eb024dc522c2"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9077,10 +9085,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 916,
+    "currentCallers": 917,
     "structuredVerified": 82,
-    "structuredUnproven": 834,
-    "manualUnresolved": 153,
+    "structuredUnproven": 835,
+    "manualUnresolved": 154,
     "manualUnsupported": 681,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
@@ -18101,15 +18109,15 @@
       }
     },
     {
-      "id": "490439c117222cf136f2",
+      "id": "3cb110b5eb024dc522c2",
       "path": "backend/src/routes/voiceFree.ts",
-      "line": 37,
+      "line": 44,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "762cbe62c9cba93a6b66e360351a3ea18c2fa4b9f0fce65774985df4d947c3ad",
+      "sourceSha256": "ca50e347e4c57de9ff84de22454522b6550770f1a75ac1e45463887a16d98827",
       "semanticReview": {
         "authority": "The exact Buffer.from(req.body) clones validated request bytes in RAM. It is not a database, bucket or provider client.",
         "reason": "Only this built-in conversion is excluded. Free voice transport and accounting remain separately reviewed and tested.",
@@ -29616,6 +29624,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "3a7aa1dbe9ba47ad2c75",
+      "path": "frontend/src/lib/voiceSegmenter.ts",
+      "line": 50,
+      "enclosing": "pauseCutIndex",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
       "id": "53953a7522a9f4a6ec38",
