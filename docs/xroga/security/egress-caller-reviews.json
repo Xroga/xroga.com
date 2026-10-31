@@ -2269,7 +2269,7 @@
     {
       "id": "029dd2519ec9f725ab50",
       "callSha256": "53ad4f44fec25d2cd18b30ca1f1f780d7d470e2badcc67ec0373325fe6c346bc",
-      "sourceFileSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sourceFileSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2288,13 +2288,18 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
     {
       "id": "ca7da3b05f176d7343a1",
       "callSha256": "578dde1b1ba179793df564db7c0d684323474feedcae590d393f59074e400228",
-      "sourceFileSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sourceFileSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2313,13 +2318,18 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
     {
       "id": "54a477bc6105cf4a0615",
       "callSha256": "8784120aef6382e1029e61bef7e64257f4e84ba75f679270609786b9f6511075",
-      "sourceFileSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sourceFileSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2338,6 +2348,11 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
@@ -4340,7 +4355,7 @@
     {
       "id": "f6a75877b1bf49789cea",
       "callSha256": "1c9d0e6c836968b727356c939c9c52f0a95dca5fe4ab44e787d970f8f9f2e244",
-      "sourceFileSha256": "e758f39d7594810fc1f13553f0545256f5631d3263c69401e8d2a8c33806f5c6",
+      "sourceFileSha256": "562d935f4f322b905cd31cdd830c103eff9ea6125f4e4b13c26c757b1f101e39",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "INDIVIDUALLY_TRACED_CURRENT_MAIN_INTEGRATION_CALLER",
       "tenantAuthority": "Browser Cloud Tasks dispatch receives an already persisted owned run ID from the authorized route. Fixed Google metadata recipient supplies only native service token. Trusted deployment queue/target and OIDC identity are server configuration. Task payload contains run ID, no raw authority, credentials or browser content. Authenticated worker re-reads owner-bound durable row and lease. Redirect is terminal, duplicate task name is deduplicated, half-configured transport never falls back in process. Execution/cancellation/accounting remain in the existing scheduler.",
@@ -4348,7 +4363,7 @@
         {
           "path": "backend/src/workers/browserRunDispatch.test.ts",
           "marker": "redirect",
-          "sha256": "95387ffd28abe1f9ae7c4bf4d981f97fe0fa7f8e3ba2883b60cace91ad4e5686"
+          "sha256": "7dcf7b5a35fb767e793bd9ac6ffc01c871e439208132035ad6cf4bfdee67ef6b"
         },
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",

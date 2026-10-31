@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -181,7 +181,7 @@ Values are forbidden. Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Na
 | SUPABASE_OAUTH_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | supabase, endpoint-127-0-0-1, endpoint-api-supabase-com, endpoint-localhost |
 | SUPABASE_POOLER_HOST | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
-| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-parallel-ai, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-localhost, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
+| SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-parallel-ai, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid |
 | SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-open-bigmodel-cn, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | SystemRoot | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TERM | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -226,10 +226,16 @@ Values are forbidden. Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Na
 | XROGA_BROWSER_AI_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_COORDINATOR_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_DISPATCH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_AUDIENCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_EXECUTE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
+| XROGA_BROWSER_HOST_BIND | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_HOST_MAX_CONCURRENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_PLANNER_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_PROXY_IMAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| XROGA_BROWSER_REPO_ROOT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_BROWSER_TASKS_LOCATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_TASKS_PROJECT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |
 | XROGA_BROWSER_TASKS_QUEUE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-metadata-google-internal |

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "129d6ec13dedb49af4996ab7912de4aec8c1d73871de8036f9e34371cca291ea",
+  "sourceTreeDigest": "3d4d5492d42b7fcdf9aec0ff5aa823505f905cf649b39f111e86f05f6eabbcff",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -3681,7 +3681,7 @@
     {
       "id": "029dd2519ec9f725ab50",
       "file": "backend/src/workers/browserCoordinator.ts",
-      "line": 109,
+      "line": 110,
       "entryPoint": "createCoordinatorServer",
       "transport": "send",
       "callee": "send",
@@ -3707,13 +3707,18 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
     {
       "id": "ca7da3b05f176d7343a1",
       "file": "backend/src/workers/browserCoordinator.ts",
-      "line": 115,
+      "line": 116,
       "entryPoint": "createCoordinatorServer",
       "transport": "send",
       "callee": "send",
@@ -3739,13 +3744,18 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
     {
       "id": "54a477bc6105cf4a0615",
       "file": "backend/src/workers/browserCoordinator.ts",
-      "line": 117,
+      "line": 118,
       "entryPoint": "createCoordinatorServer",
       "transport": "send",
       "callee": "send",
@@ -3771,6 +3781,11 @@
           "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+          "marker": "rejects invalid jobs before container dispatch",
+          "sha256": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
         }
       ]
     },
@@ -3819,7 +3834,7 @@
     {
       "id": "f6a75877b1bf49789cea",
       "file": "backend/src/workers/browserRunDispatch.ts",
-      "line": 80,
+      "line": 82,
       "entryPoint": "dispatch",
       "transport": "fetch",
       "callee": "this.deps.fetch",
@@ -3834,7 +3849,7 @@
         {
           "path": "backend/src/workers/browserRunDispatch.test.ts",
           "marker": "redirect",
-          "sha256": "95387ffd28abe1f9ae7c4bf4d981f97fe0fa7f8e3ba2883b60cace91ad4e5686"
+          "sha256": "7dcf7b5a35fb767e793bd9ac6ffc01c871e439208132035ad6cf4bfdee67ef6b"
         },
         {
           "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",

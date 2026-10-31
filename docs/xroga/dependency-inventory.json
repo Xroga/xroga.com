@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c6b2f05ed5f07ee188bdbaa7afd29891070b584f",
+  "source_sha": "2ed3478a16c51551abe8a1b5a9e3f4f5fb14c354",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4529,7 +4529,6 @@
         "SUPABASE_OAUTH_CALLBACK_URL",
         "SUPABASE_OAUTH_CLIENT_ID",
         "SUPABASE_OAUTH_CLIENT_SECRET",
-        "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
         "VERCEL_CLIENT_ID",
         "VERCEL_CLIENT_SECRET",
@@ -4757,6 +4756,7 @@
         "CLOUD_RUN_EXECUTION",
         "CLOUD_RUN_JOB",
         "XROGA_BROWSER_DISPATCH",
+        "XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS",
         "XROGA_BROWSER_EXECUTE_AUDIENCE",
         "XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT",
         "XROGA_BROWSER_EXECUTE_URL",
@@ -7511,7 +7511,6 @@
         "FRONTEND_URL",
         "NODE_ENV",
         "PORT",
-        "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
         "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
@@ -7586,7 +7585,6 @@
         "FRONTEND_URL",
         "NODE_ENV",
         "PORT",
-        "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
         "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
@@ -7695,6 +7693,7 @@
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
         "backend/src/synthesis/universalCommit.ts",
+        "backend/src/workers/browserCoordinatorHost.ts",
         "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/api/showcase/aura/chat/route.ts"
@@ -7820,7 +7819,12 @@
         "XROGA_BACKGROUND_EXECUTION_PROVIDER",
         "XROGA_BROWSER_AI_MODEL",
         "XROGA_BROWSER_COORDINATOR_SECRET",
+        "XROGA_BROWSER_HOST_BIND",
+        "XROGA_BROWSER_HOST_MAX_CONCURRENT",
+        "XROGA_BROWSER_IMAGE",
         "XROGA_BROWSER_PLANNER_MODEL",
+        "XROGA_BROWSER_PROXY_IMAGE",
+        "XROGA_BROWSER_REPO_ROOT",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_BUILDER_INPROCESS_QA",
         "XROGA_BUILDER_QA_HOST_SECRET",
@@ -7932,6 +7936,7 @@
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
         "backend/src/synthesis/universalCommit.ts",
+        "backend/src/workers/browserCoordinatorHost.ts",
         "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts",
         "frontend/src/app/api/showcase/aura/chat/route.ts"
@@ -11034,7 +11039,8 @@
       "name": "PORT",
       "consuming_sources": [
         "backend/src/builder/qa/qaHostMain.ts",
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "backend/src/workers/browserCoordinatorHost.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -11893,7 +11899,6 @@
         "backend/src/ai/webBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/supabase.ts",
-        "backend/src/index.ts",
         "backend/src/lib/capabilityRegistry.ts",
         "backend/src/lib/platformReady.ts",
         "backend/src/lib/resolveIdentity.ts",
@@ -11937,11 +11942,8 @@
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-github-com",
-        "endpoint-localhost",
         "endpoint-public-example-invalid",
-        "endpoint-supabase-management-tests-invalid",
-        "endpoint-xroga-api-fly-dev",
-        "endpoint-xrogaaicom-vercel-app"
+        "endpoint-supabase-management-tests-invalid"
       ]
     },
     {
@@ -13115,7 +13117,8 @@
     {
       "name": "XROGA_BROWSER_COORDINATOR_SECRET",
       "consuming_sources": [
-        "backend/src/routes/browserRuns.ts"
+        "backend/src/routes/browserRuns.ts",
+        "backend/src/workers/browserCoordinatorHost.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -13133,6 +13136,25 @@
     },
     {
       "name": "XROGA_BROWSER_DISPATCH",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS",
       "consuming_sources": [
         "backend/src/workers/browserRunDispatch.ts"
       ],
@@ -13208,9 +13230,104 @@
       ]
     },
     {
+      "name": "XROGA_BROWSER_HOST_BIND",
+      "consuming_sources": [
+        "backend/src/workers/browserCoordinatorHost.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_HOST_MAX_CONCURRENT",
+      "consuming_sources": [
+        "backend/src/workers/browserCoordinatorHost.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_IMAGE",
+      "consuming_sources": [
+        "backend/src/workers/browserCoordinatorHost.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_BROWSER_PLANNER_MODEL",
       "consuming_sources": [
         "backend/src/routes/browserRuns.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_PROXY_IMAGE",
+      "consuming_sources": [
+        "backend/src/workers/browserCoordinatorHost.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_REPO_ROOT",
+      "consuming_sources": [
+        "backend/src/workers/browserCoordinatorHost.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -14922,7 +15039,8 @@
     {
       "name": "XROGA_RUNTIME_ROLE",
       "consuming_sources": [
-        "backend/src/scripts/runCanonicalWorker.ts"
+        "backend/src/scripts/runCanonicalWorker.ts",
+        "backend/src/workers/browserCoordinatorHost.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -16711,7 +16829,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "b2c66cd4f4a9c713352180176a1c6678a8c55358a042219e17b719bec8b49b30"
+      "sha256": "b062ce27a40145f293271908a325c44f740dd62d457b7c5be830acf2eb32b7c6"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -18611,7 +18729,11 @@
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
-      "sha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3"
+      "sha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinatorHost.ts",
+      "sha256": "98f570e48b5a8fd90a60afb587870191d83f26b1e0c8731756821d2366f74f39"
     },
     {
       "path": "backend/src/workers/browserJob.ts",
@@ -18639,7 +18761,7 @@
     },
     {
       "path": "backend/src/workers/browserRunDispatch.ts",
-      "sha256": "e758f39d7594810fc1f13553f0545256f5631d3263c69401e8d2a8c33806f5c6"
+      "sha256": "562d935f4f322b905cd31cdd830c103eff9ea6125f4e4b13c26c757b1f101e39"
     },
     {
       "path": "backend/src/workers/browserRunStore.ts",
@@ -23887,42 +24009,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 114,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 115,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 116,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 117,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 118,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xrogaaicom.vercel.app",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 119,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 120,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 213,
+      "line": 212,
       "credentialsInUrl": false
     },
     {
@@ -26470,7 +26592,7 @@
       "hostname": "cloudtasks.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/workers/browserRunDispatch.ts",
-      "line": 80,
+      "line": 82,
       "credentialsInUrl": false
     },
     {
@@ -35535,7 +35657,7 @@
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
-      "line": 99,
+      "line": 100,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

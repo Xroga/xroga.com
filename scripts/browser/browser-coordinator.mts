@@ -1,5 +1,8 @@
 /**
- * The browser host service (runs on the Compute Engine browser host, not in the API):
+ * Historical isolated host harness (runs on the Compute Engine browser host, not in the API).
+ * Production packaging uses dist/workers/browserCoordinatorHost.js, which
+ * requires an explicit dedicated role and immutable image digests. Both use
+ * the same coordinator protocol and ContainerBrowserWorker below.
  *
  *   XROGA_BROWSER_COORDINATOR_SECRET=<>=32 bytes> tsx scripts/browser/browser-coordinator.mts [--port 8787] [--host 127.0.0.1] [--max 2]
  *

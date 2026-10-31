@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "96896b6eaaaa8a3655c2cb34e08f24e05814e01ffd5b7023090bb52c56edcc55",
+  "reviewRegistrySha256": "b5639151ece4c1b77f1bc3dd14b38fb9d2d6ee934d3acc79956ed2881aa2c209",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -5856,15 +5856,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7d95df757a672842a01e"
+        "id": "1f14463400589fcbae34"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a50f1b5fac8114e6973e"
+        "id": "1a0b0a9100f6e81cb05c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "54a6c3e06a3b44dd1ad2"
+        "id": "c6f8a9fecfe3f0f5c2de"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9596,15 +9596,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7d95df757a672842a01e"
+        "id": "1f14463400589fcbae34"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a50f1b5fac8114e6973e"
+        "id": "1a0b0a9100f6e81cb05c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "54a6c3e06a3b44dd1ad2"
+        "id": "c6f8a9fecfe3f0f5c2de"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -29521,7 +29521,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sourceSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "semanticReview": {
         "authority": "Exactly the listed native Buffer.from conversions calculate source/Git hashes, encode source for the approved provider request or decode bounded provider JSON. They do not select a database, bucket, tenant, grant or table.",
         "reason": "Individually inspected local byte conversions. Provider admission, durable ownership and approval are independently exercised by the integration security tests. No upstream caller is automatically certified.",
@@ -29533,20 +29533,24 @@
           {
             "path": "backend/src/builder/providerBoundary.security.test.ts",
             "marker": "production Builder wiring retains exact approved GitHub publication"
+          },
+          {
+            "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+            "marker": "rejects invalid jobs before container dispatch"
           }
         ]
       }
     },
     {
-      "id": "7d95df757a672842a01e",
+      "id": "1f14463400589fcbae34",
       "path": "backend/src/workers/browserCoordinator.ts",
-      "line": 115,
+      "line": 116,
       "enclosing": "createCoordinatorServer",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sourceSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "semanticReview": {
         "authority": "Exactly the listed native Buffer.from conversions calculate source/Git hashes, encode source for the approved provider request or decode bounded provider JSON. They do not select a database, bucket, tenant, grant or table.",
         "reason": "Individually inspected local byte conversions. Provider admission, durable ownership and approval are independently exercised by the integration security tests. No upstream caller is automatically certified.",
@@ -29558,20 +29562,24 @@
           {
             "path": "backend/src/builder/providerBoundary.security.test.ts",
             "marker": "production Builder wiring retains exact approved GitHub publication"
+          },
+          {
+            "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+            "marker": "rejects invalid jobs before container dispatch"
           }
         ]
       }
     },
     {
-      "id": "a50f1b5fac8114e6973e",
+      "id": "1a0b0a9100f6e81cb05c",
       "path": "backend/src/workers/browserCoordinator.ts",
-      "line": 219,
+      "line": 220,
       "enclosing": "run",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "sourceSha256": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
       "semanticReview": {
         "authority": "Exactly the listed native Buffer.from conversions calculate source/Git hashes, encode source for the approved provider request or decode bounded provider JSON. They do not select a database, bucket, tenant, grant or table.",
         "reason": "Individually inspected local byte conversions. Provider admission, durable ownership and approval are independently exercised by the integration security tests. No upstream caller is automatically certified.",
@@ -29583,20 +29591,24 @@
           {
             "path": "backend/src/builder/providerBoundary.security.test.ts",
             "marker": "production Builder wiring retains exact approved GitHub publication"
+          },
+          {
+            "path": "backend/src/workers/browserCoordinatorHost.test.ts",
+            "marker": "rejects invalid jobs before container dispatch"
           }
         ]
       }
     },
     {
-      "id": "54a6c3e06a3b44dd1ad2",
+      "id": "c6f8a9fecfe3f0f5c2de",
       "path": "backend/src/workers/browserRunDispatch.ts",
-      "line": 89,
+      "line": 91,
       "enclosing": "dispatch",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e758f39d7594810fc1f13553f0545256f5631d3263c69401e8d2a8c33806f5c6",
+      "sourceSha256": "562d935f4f322b905cd31cdd830c103eff9ea6125f4e4b13c26c757b1f101e39",
       "semanticReview": {
         "authority": "Exactly the listed native Buffer.from conversions calculate source/Git hashes, encode source for the approved provider request or decode bounded provider JSON. They do not select a database, bucket, tenant, grant or table.",
         "reason": "Individually inspected local byte conversions. Provider admission, durable ownership and approval are independently exercised by the integration security tests. No upstream caller is automatically certified.",

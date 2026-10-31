@@ -69,6 +69,8 @@ export class CloudTasksDispatcher implements BrowserRunDispatcher {
     }
     if (!/^https:\/\//.test(config.targetUrl)) throw new Error('the Cloud Tasks target must be an https URL');
     if (!config.serviceAccountEmail || !config.audience) throw new Error('the Cloud Tasks target needs a service account and an audience');
+    const deadline = config.dispatchDeadlineSeconds ?? 1_800;
+    if (!Number.isInteger(deadline) || deadline < 15 || deadline > 1_800) throw new Error('Cloud Tasks dispatch deadline must be an integer from 15 to 1800 seconds');
   }
 
   async dispatch(runId: string): Promise<void> {
@@ -105,7 +107,9 @@ export function dispatcherFromEnv(env: NodeJS.ProcessEnv, execute: (runId: strin
   if (env.XROGA_BROWSER_DISPATCH === 'cloud-tasks') {
     const { XROGA_BROWSER_TASKS_PROJECT: project, XROGA_BROWSER_TASKS_LOCATION: location, XROGA_BROWSER_TASKS_QUEUE: queue, XROGA_BROWSER_EXECUTE_URL: targetUrl, XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT: serviceAccountEmail, XROGA_BROWSER_EXECUTE_AUDIENCE: audience } = env;
     if (project && location && queue && targetUrl && serviceAccountEmail && audience) {
-      return { mode: 'cloud-tasks', dispatcher: new CloudTasksDispatcher({ project, location, queue, targetUrl, serviceAccountEmail, audience }, { fetch: fetchImpl, accessToken: () => metadataAccessToken(fetchImpl) }) };
+      const deadline = env.XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS;
+      return { mode: 'cloud-tasks', dispatcher: new CloudTasksDispatcher({ project, location, queue, targetUrl, serviceAccountEmail, audience,
+        dispatchDeadlineSeconds: deadline === undefined ? undefined : Number(deadline) }, { fetch: fetchImpl, accessToken: () => metadataAccessToken(fetchImpl) }) };
     }
     // Misconfigured cloud dispatch must be loud, not a silent fall back to the mode that stalls on Cloud Run.
     throw new Error('XROGA_BROWSER_DISPATCH=cloud-tasks needs XROGA_BROWSER_TASKS_PROJECT, _LOCATION, _QUEUE, XROGA_BROWSER_EXECUTE_URL, _SERVICE_ACCOUNT and _AUDIENCE');
