@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 224,
-    "persistenceCandidates": 980,
+    "persistenceCandidates": 981,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 134,
+    "reviewRequired": 135,
     "reviewedCandidates": 846,
-    "unresolvedSafetyCandidates": 167,
+    "unresolvedSafetyCandidates": 168,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 134,
+    "REVIEW_REQUIRED": 135,
     "SCOPED_BOUNDARY": 558,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 203,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 900,
+    "unresolvedCandidateBoundaries": 901,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -6099,6 +6099,10 @@
         "id": "19bac69e5470fee649fa"
       },
       {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3a7aa1dbe9ba47ad2c75"
+      },
+      {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "45b3d2d19b57580957f7"
       },
@@ -6765,6 +6769,10 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "19a37b099336607193eb"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3a7aa1dbe9ba47ad2c75"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9701,10 +9709,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 980,
+    "currentCallers": 981,
     "structuredVerified": 80,
-    "structuredUnproven": 900,
-    "manualUnresolved": 167,
+    "structuredUnproven": 901,
+    "manualUnresolved": 168,
     "manualUnsupported": 733,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
@@ -31676,6 +31684,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "3a7aa1dbe9ba47ad2c75",
+      "path": "frontend/src/lib/voiceSegmenter.ts",
+      "line": 50,
+      "enclosing": "pauseCutIndex",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
       "id": "53953a7522a9f4a6ec38",
