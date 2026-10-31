@@ -13,7 +13,11 @@
     "frontend/src/components/library/LibraryWorkspace.tsx",
     "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
     "frontend/src/lib/sidebarCompactNav.test.ts",
-    "docs/xroga/missions/b15-workspace-drive-activation-20261031.json"
+    "docs/xroga/missions/b15-workspace-drive-activation-20261031.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/evidence/b15-workspace-activation-20261031/array-conversion-binding.json"
   ],
   "decisions": {
     "keep": [
@@ -22,7 +26,8 @@
       "Browser Worker flag remains disabled"
     ],
     "extend": [
-      "Existing Workspace and Library navigation to /drive when enabled"
+      "Existing Workspace and Library navigation to /drive when enabled",
+      "Refresh generated inventory and bind one unchanged native array conversion using existing projection validator. No audit rule or disposition changes."
     ],
     "replace": [
       "Incorrect Drive unavailable copy"
@@ -68,7 +73,7 @@
   "tests": [
     {
       "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/sidebarCompactNav.test.ts frontend/src/lib/driveApiContract.test.ts",
-      "scope": "22 focused navigation, Drive API contract, CSP, compact controls and auth-gate tests PASS. Local receipt 889971e3-177e-42aa-b00a-433f4e2d40a5. Changed-component lint PASS receipt 297461f0-09b8-4e0d-900c-5ed6d4488682. Mission policy PASS receipt c047e5ff-6347-40f2-97ba-07d79cb9eac7.",
+      "scope": "22 focused navigation, Drive API contract, CSP, compact controls and auth-gate tests PASS. Local receipt 889971e3-177e-42aa-b00a-433f4e2d40a5. Changed-component lint PASS receipt 297461f0-09b8-4e0d-900c-5ed6d4488682. Mission policy PASS receipt c047e5ff-6347-40f2-97ba-07d79cb9eac7. Frontend typecheck PASS receipt 29a3e1b5-c83e-42bf-a975-ac082e79fc9d. Exact frontend build passed GitHub run 41229848958 at a32411fa; subsequent changes are audit metadata only.",
       "negative": true,
       "reference": "frontend/src/lib/driveApiContract.test.ts"
     }
@@ -98,6 +103,7 @@
   },
   "evidenceRefs": [
     "frontend/src/lib/driveApiContract.test.ts",
-    "frontend/src/lib/sidebarCompactNav.test.ts"
+    "frontend/src/lib/sidebarCompactNav.test.ts",
+    "docs/xroga/evidence/b15-workspace-activation-20261031/array-conversion-binding.json"
   ]
 }
