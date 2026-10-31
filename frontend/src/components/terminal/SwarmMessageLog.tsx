@@ -1,7 +1,7 @@
 'use client';
 
 import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
-import { useTerminalChat } from '@/context/TerminalChatContext';
+import { useTerminalChat, type ChatMessage } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -59,6 +59,8 @@ const AGENT_STYLES: Record<string, string> = {
 };
 
 interface SwarmMessageLogProps {
+  /** Read-only specimens from the server-gated Preview page. */
+  previewMessages?: ChatMessage[];
   compact?: boolean;
   incognito?: boolean;
   /**
@@ -89,9 +91,10 @@ function transcriptScrollRoot(): HTMLElement {
   );
 }
 
-export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
-  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+export function SwarmMessageLog({ compact, incognito = false, chromeless = false, previewMessages }: SwarmMessageLogProps) {
+  const { messages: liveMessages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
+  const messages = previewMessages ?? liveMessages;
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
   const workspaceCommitSha = useProjectWorkspaceStore((s) => s.commitSha);
@@ -443,7 +446,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
 
           {renderedMessages.map((msg) => {
             const isLastAssistant = msg.id === lastAssistantId && !loading;
-            const showSuggestions = isLastAssistant && msg.role === 'assistant';
+            const showSuggestions = !previewMessages && isLastAssistant && msg.role === 'assistant';
             const isImageOutput =
               msg.featureOutput != null &&
               (msg.featureOutput as { type?: string }).type === 'image';
@@ -491,11 +494,11 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   {msg.role === 'user' ? (
                     <>
                       <UserPromptBubble content={msg.content} />
-                      <MessageBubbleActions
+                      {!previewMessages && <MessageBubbleActions
                         role="user"
                         content={msg.content}
                         messageId={msg.id}
-                      />
+                      />}
                     </>
                   ) : msg.role === 'system' ? (
                     <p className="py-0.5 text-xs xv-swarm-agent-line">{msg.content}</p>
@@ -600,7 +603,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                               discoveryBlock={discoveryBlock}
                               messageId={msg.id}
                               onDelete={() => deleteTurn(msg.id)}
-                              onPreviewUpdate={updateFeatureOutput}
+                              onPreviewUpdate={previewMessages ? undefined : updateFeatureOutput}
                             />
                           </ChatErrorBoundary>
                         ) : heavyBuildActive &&
@@ -638,14 +641,14 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                                     })()
                                   : msg.content
                             }
-                            streaming={msg.id === animatingId && loading}
+                            streaming={previewMessages ? msg.id === 'response-preview-streaming-assistant' : msg.id === animatingId && loading}
                           />
                         )}
                         {msg.webSources && msg.webSources.length > 0 ? (
                           <ResponseSources sources={msg.webSources} />
                         ) : null}
                       </div>
-                      {msg.content && (
+                      {!previewMessages && msg.content && (
                         <MessageBubbleActions
                           role="assistant"
                           content={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
@@ -654,7 +657,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           prompt={promptByAssistantId.get(msg.id)}
                         />
                       )}
-                      {!msg.content && msg.featureOutput && (
+                      {!previewMessages && !msg.content && msg.featureOutput && (
                         <MessageBubbleActions
                           role="assistant"
                           content={shareableDocumentText(msg.featureOutput)}
@@ -679,7 +682,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
         </div>
 
       </div>
-      {!isIncognito && (
+      {!isIncognito && !previewMessages && (
         <ChatTurnRail
           key={sessionId}
           conversationKey={`${profile?.id ?? 'guest'}:${sessionId}`}
