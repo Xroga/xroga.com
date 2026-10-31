@@ -1,0 +1,116 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH15-2-ACTIVATION-20261031",
+  "baseSha": "b86a037700631ab3a237da5c5d7da4f6034afd5d",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Issue 898: activate Batch 1.5 before Batch 2. This checkpoint closes production coordinator packaging and signed expired-lease admission before any cloud mutation.",
+  "changedFiles": [
+    "backend/src/workers/browserCoordinator.ts",
+    "backend/src/workers/browserCoordinatorHost.ts",
+    "backend/src/workers/browserCoordinatorHost.test.ts",
+    "scripts/browser/browser-coordinator.mts",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
+    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
+    "docs/operations/batch15-batch2-activation/live-runtime-preflight.json",
+    "docs/operations/batch15-batch2-activation/resource-inventory.json",
+    "docs/operations/batch15-batch2-activation/network-inventory.json",
+    "docs/xroga/missions/batch15-batch2-activation-20261031.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, tenant/approval/accounting boundaries, current Batch 1 and microphone releases",
+      "Existing coordinator protocol, hardened ContainerBrowserWorker and historical host harness"
+    ],
+    "extend": [
+      "Compiled dedicated host entrypoint with strict config and immutable images",
+      "Reject expired or nonpositive signed worker leases before dispatch"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No production SQL. Reconcile hosted schema before proposing any missing expansion.",
+    "rollback": "No schema rollback needed for this source change."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Coordinator rejects expired/missing expiry and nonpositive fencing tokens before dispatch. HMAC remains mandatory."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Dedicated coordinator configuration refuses API/model/database credentials. Only the shared signing secret is accepted."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/workers/browserCoordinatorHost.test.ts backend/src/workers/browserCoordinator.test.ts backend/src/workers/browserRunDurability.test.ts backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+      "scope": "Real loopback signed HTTP admission, config denial and deterministic protocol/durability regression. Not live host acceptance.",
+      "negative": true,
+      "reference": "backend/src/workers/browserCoordinatorHost.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Same browser coordinator and container worker, compiled production packaging only. No new scheduler or control plane.",
+    "rfc": null
+  },
+  "rollout": "Required CI, approved isolated host, live security acceptance, then source-paired gated Batch 1.5 activation. Batch 2 stays disabled until Batch 1.5 live acceptance.",
+  "rollback": "Keep healthy source85 API/Job and current voice/frontend. Stop unaccepted host activation. A future release must close the source fence, drain work, pair recovery API/Job, verify readiness and reopen only the matching source.",
+  "knownGaps": [
+    "Specific host/IAM/secret/network/cost approval pending",
+    "Frozen-dependency exact-source CI pending; shared local install lacks development declarations",
+    "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
+    "Live browser/Drive and disposable-provider acceptance remain pending"
+  ],
+  "placeholderClaimsRemaining": [
+    "No Batch 1.5 or Batch 2 activation PASS is claimed"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Specific host/IAM/secret/network/cost approval pending",
+      "Frozen-dependency exact-source CI pending; shared local install lacks development declarations",
+      "Historical Batch 2 accounting and stranded-run failures still require diagnosis",
+      "Live browser/Drive and disposable-provider acceptance remain pending"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
+    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json"
+  ]
+}

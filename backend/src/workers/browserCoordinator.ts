@@ -93,7 +93,8 @@ export function createCoordinatorServer(opts: CoordinatorOptions): Server {
         const m = JSON.parse(body);
         job = parseBrowserJob(m.job); plan = parseBrowserPlan(m.plan, job);
         lease = { tenantId: job.tenantId, runId: job.runId, taskId: job.taskId, workerId: String(m.lease?.workerId ?? ''), token: Number(m.lease?.token), expiresAt: Number(m.lease?.expiresAt) };
-        if (!Number.isSafeInteger(lease.token) || !lease.workerId) throw new Error('lease');
+        if (!Number.isSafeInteger(lease.token) || lease.token < 1 || !lease.workerId ||
+            !Number.isSafeInteger(lease.expiresAt) || lease.expiresAt <= Date.now()) throw new Error('lease');
       } catch { return deny(res, 400); }
       if (running.size >= max) return deny(res, 429);
       const id = randomUUID(); const abort = new AbortController(); const llm = new Map<number, (m: unknown) => void>();

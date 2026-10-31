@@ -1,0 +1,169 @@
+{
+  "observedAtUtc": "2026-10-31T07:52:48.037723+00:00",
+  "traffic": [
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-batch1-85f-serving-1031",
+      "percent": 100
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4"
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-fe2c6486c",
+      "tag": "voice-9f62bba5"
+    }
+  ],
+  "api": {
+    "revision": "xroga-api-batch1-85f-serving-1031",
+    "containers": [
+      {
+        "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+        "env": [
+          {
+            "name": "NODE_ENV",
+            "value": "production",
+            "configured": true
+          },
+          {
+            "name": "XROGA_PROJECT_RUNTIME_PROVIDER",
+            "value": "google-gce",
+            "configured": true
+          },
+          {
+            "name": "XROGA_BACKGROUND_EXECUTION_PROVIDER",
+            "value": "google-jobs",
+            "configured": true
+          },
+          {
+            "name": "XROGA_SANDBOX_BROWSER_IMAGE",
+            "value": null,
+            "configured": true
+          },
+          {
+            "name": "XROGA_DRIVE_R2_ACCOUNT_ID",
+            "value": null,
+            "configured": true
+          },
+          {
+            "name": "XROGA_DRIVE_R2_BUCKET",
+            "value": null,
+            "configured": true
+          },
+          {
+            "name": "STORAGE_QUOTA_BYTES",
+            "value": null,
+            "configured": true
+          },
+          {
+            "name": "STORAGE_WRITE_MODE",
+            "value": null,
+            "configured": true
+          },
+          {
+            "name": "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+            "value": null,
+            "configured": true
+          },
+          {
+            "name": "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+            "value": null,
+            "configured": true
+          }
+        ]
+      }
+    ],
+    "identity": "xroga-api-runtime@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+    "scaling": {
+      "minInstanceCount": 1,
+      "maxInstanceCount": 1
+    },
+    "conditions": [
+      {
+        "type": "Ready",
+        "state": "CONDITION_SUCCEEDED",
+        "message": "Updating revision scaling succeeded.",
+        "lastTransitionTime": "2026-10-30T22:33:04.160635Z"
+      },
+      {
+        "type": "Active",
+        "state": "CONDITION_SUCCEEDED",
+        "lastTransitionTime": "2026-10-30T22:30:10.057230Z",
+        "severity": "INFO"
+      },
+      {
+        "type": "ResourcesAvailable",
+        "state": "CONDITION_SUCCEEDED",
+        "message": "Provisioning imported containers completed in 1.66s. Checking container health. This will wait for up to 2m for the configured startup probe, including an initial delay of 0s.",
+        "lastTransitionTime": "2026-10-30T22:29:48.694550Z"
+      },
+      {
+        "type": "ContainerReady",
+        "state": "CONDITION_SUCCEEDED",
+        "message": "Container image import completed.",
+        "lastTransitionTime": "2026-10-30T22:29:47.028869Z"
+      },
+      {
+        "type": "ContainerHealthy",
+        "state": "CONDITION_SUCCEEDED",
+        "message": "Containers became healthy in 20.29s.",
+        "lastTransitionTime": "2026-10-30T22:30:09.754193Z"
+      },
+      {
+        "type": "MinInstancesProvisioned",
+        "state": "CONDITION_SUCCEEDED",
+        "message": "Min instances provisioned successfully .",
+        "lastTransitionTime": "2026-10-30T22:33:04.102721Z"
+      }
+    ]
+  },
+  "job": {
+    "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+    "labels": {
+      "xroga-source-sha": "85f83e3f1dcbb057d4a28d8a696dae8396d45114"
+    },
+    "identity": "xroga-api-runtime@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+    "env": [
+      {
+        "name": "NODE_ENV",
+        "value": "production",
+        "configured": true
+      },
+      {
+        "name": "XROGA_PROJECT_RUNTIME_PROVIDER",
+        "value": "google-gce",
+        "configured": true
+      },
+      {
+        "name": "XROGA_BACKGROUND_EXECUTION_PROVIDER",
+        "value": "google-jobs",
+        "configured": true
+      },
+      {
+        "name": "XROGA_SANDBOX_BROWSER_IMAGE",
+        "value": null,
+        "configured": true
+      }
+    ]
+  },
+  "queue": "RUNNING",
+  "services": [
+    {
+      "name": "xroga-api-universal-staging",
+      "uri": "https://xroga-api-universal-staging-422lt7eujq-uk.a.run.app",
+      "scaling": {
+        "maxInstanceCount": 3
+      }
+    },
+    {
+      "name": "xroga-api",
+      "uri": "https://xroga-api-422lt7eujq-uk.a.run.app",
+      "scaling": {
+        "maxInstanceCount": 3
+      }
+    }
+  ]
+}

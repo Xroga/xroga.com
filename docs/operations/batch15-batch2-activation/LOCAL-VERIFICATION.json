@@ -1,0 +1,83 @@
+{
+  "scope": "LOCAL_COMPONENT_PROOF_NOT_PRODUCTION_ACCEPTANCE",
+  "atUtc": "2026-10-31T08:09:56.674149+00:00",
+  "tests": [
+    {
+      "label": "RED_MISSING_COMPILED_HOST_ENTRYPOINT",
+      "job": "9a50e4cd-96c9-4f02-8b93-14e6e44c3fd0",
+      "status": "failed",
+      "exitCode": 1,
+      "logSha256": "4c3020fc6a3ceccb35b843c325c7d6b57e87233347a65debcda35ee3ca948b36",
+      "stopReason": null,
+      "cloudCalls": false
+    },
+    {
+      "label": "RED_EXPIRED_SIGNED_LEASE_REACHED_WORKER",
+      "job": "28cb8f95-2b29-4191-9513-d1deba8bdcb9",
+      "status": "failed",
+      "exitCode": 1,
+      "logSha256": "f27ef5fb437ad3694fff3a592ebdfaefbad76503475db46b57af2a5cfa8cfc53",
+      "stopReason": null,
+      "cloudCalls": false
+    },
+    {
+      "label": "GREEN_PROTOCOL_DURABILITY_28_TESTS",
+      "job": "5ece043d-9535-40ea-9c58-0f936cd3f049",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "3349549de56b9cb3015abde6173ffdf77158e0f0d5ee8e094e0d39f29ce3ecd5",
+      "stopReason": null,
+      "cloudCalls": false
+    },
+    {
+      "label": "GREEN_CONTAINER_PROTOCOL_AND_HOST",
+      "job": "2225b2b2-bec2-41c4-a864-2a9035599f25",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "6e7acf7a912f57271124414de7e68bb59382fc2d673c979232c98cd81f1563a0",
+      "stopReason": null,
+      "cloudCalls": false
+    },
+    {
+      "label": "LOCAL_TYPES_FAILED_MISSING_DEV_DECLARATIONS",
+      "job": "9b567311-5ac5-44c0-a261-89720f41e0c8",
+      "status": "failed",
+      "exitCode": 2,
+      "logSha256": "fe2044ebeba04e3a4ca116cc4e7c55bbde1190a1da039f9a172c6cbce92ca151",
+      "stopReason": null,
+      "cloudCalls": false
+    },
+    {
+      "label": "GREEN_FINAL_HOST_CONFIG_4_TESTS",
+      "job": "7641769f-8cfd-40ff-b327-d0320531034b",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "42cedc17ab6542082fc293284fbf161a6a6b3a0c798d5a025063364949d31be7",
+      "cloudCalls": false
+    },
+    {
+      "label": "STRICT_AUDIT_150_REVIEWED_ZERO_PENDING",
+      "job": "f0ddf5b2-d1b9-4614-9e58-c2f4de7b3f35",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "3f50a57eb0700d47ce68ebe8832c18e9bf679366100e99f74ddd1233d19a7ec4",
+      "cloudCalls": false
+    }
+  ],
+  "modelCalls": 0,
+  "productionMutations": false,
+  "cloudShellSessions": 0,
+  "strictAudit": {
+    "total": 150,
+    "reviewed": 150,
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0,
+    "auditorModified": false
+  },
+  "missionPolicy": "PASS",
+  "sourceFiles": {
+    "backend/src/workers/browserCoordinator.ts": "2351c2114aff76b4538d4e53608f629ed2782fc216599ff5a581f85ef1638df0",
+    "backend/src/workers/browserCoordinatorHost.ts": "98f570e48b5a8fd90a60afb587870191d83f26b1e0c8731756821d2366f74f39",
+    "backend/src/workers/browserCoordinatorHost.test.ts": "c52f6316185bd1981492c62caa8f36d9f110a60dc3499a817086765d5d2c7efe"
+  }
+}
