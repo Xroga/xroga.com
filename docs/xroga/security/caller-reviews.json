@@ -28333,9 +28333,9 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sourceSha256": "aa002825ed5550011ed1584d1d23c6c6f78da42fc70005a1c0038144e0e73cfe",
+      "sourceSha256": "eac91769db4f84414c48f952d415ba4987ad7a2c2e24f54869233a1b1bc45946",
       "callIds": [
-        "637d9bad8b881a1fed33"
+        "a4d209b595a78e8c6293"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",

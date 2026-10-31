@@ -69,7 +69,7 @@ test('server flag, opt-in, confirmed founder role and MFA all required', async (
 });
 test('new canvas does not import legacy renderers and scoped tokens retain responsive and motion rules', () => {
   const css = readFileSync(new URL('./response-v2.module.css', import.meta.url), 'utf8');
-  assert.match(css, /72ch/); assert.match(css, /prefers-reduced-motion/); assert.match(css, /max-width:640px/);
+  assert.match(css, /70ch/); assert.match(css, /prefers-reduced-motion/); assert.match(css, /max-width:640px/);
   for (const file of ['ResponseCanvasV2.tsx', 'ProseV2.tsx', 'DataV2.tsx', 'InteractiveV2.tsx']) {
     assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), 'utf8'), /FormattedAiMarkdown|XrogaBlockView|fetch\(|apiFetch\(/);
   }
@@ -133,7 +133,8 @@ test('released read-only presentation supports authenticated users without privi
 test('essential answer sections and tables are not hidden in disclosure controls', () => {
   const canvas = readFileSync(new URL('./ResponseCanvasV2.tsx', import.meta.url), 'utf8');
   const interactions = readFileSync(new URL('./InteractiveV2.tsx', import.meta.url), 'utf8');
-  assert.doesNotMatch(canvas, /<details|View source data/);
+  assert.doesNotMatch(canvas.slice(0, canvas.indexOf('registry.size > 0')), /<details|View source data/);
+  assert.match(canvas, /<summary>References/);
   assert.doesNotMatch(interactions, /node\.items\[selected\]|hidden=/);
   assert.match(interactions, /node\.items\.map/);
 });

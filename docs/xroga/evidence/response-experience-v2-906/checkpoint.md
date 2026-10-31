@@ -80,3 +80,15 @@ Authority: PR #909 comment 6549571336. Controlled production release is authoriz
 - Local real-renderer calculator interaction changes 500 USD to 1,000 USD for risk 1 to 2. Desktop cited-answer screenshot saved under outputs/response-experience-v2-906/release-review. This is synthetic local visual evidence, not authenticated production acceptance.
 
 Outstanding: exact final-source CI, authenticated real Workspace history/stream and responsive acceptance, Vercel source-pinned candidate verification and controlled production promotion. Production remains unchanged. Batch 1.5/2 remain paused.
+
+## Founder rejection follow-up, 2026-11-01
+
+PR comment 6549942767 rejects visual acceptance. Production promotion remains held and PR remains draft. The Production presentation flag was prepared before this rejection but no new production deployment or traffic promotion occurred.
+
+- Real signed-in Preview at 0808ea21 rendered a persisted conversation through V2 at 390 CSS pixels without a founder bypass. This exposed inherited decorative typography. The current revision isolates normal-weight Inter prose, heading/strong/table fonts, mobile line spacing and independently scrollable tables.
+- Added a page-URL source registry shared by inline chips and rich resources. Fragment references deduplicate while different paths and query-selected documents remain distinct. Original numeric citation indices and evidence URLs remain unchanged. Adjacent duplicate citation clusters collapse, citations beside separate claims remain. The unconditional repeated full source list is replaced by optional deduplicated references. Essential answer sections remain visible.
+- Diagrams place actual outbound connections beside their nodes rather than in a disconnected connection list. No inferred edges, invented facts or extra provider calls.
+- 24 focused tests and frontend TypeScript passed in job a1930b55-0168-435d-8fc3-bc2a5291f73d. Source-register generation passed in 7b5369f8-1006-4275-96d2-0b262e18e874. Earlier full CI is evidence for its exact source only.
+- Local source fixture visibly renders two claim-adjacent chips and one optional page reference. This is synthetic renderer evidence, not real research or complete Workspace product acceptance.
+
+Still required: final-source CI, full-size same-data Workspace before/after for the five founder acceptance scenarios, current-source desktop/mobile interaction checks, visual acceptance and controlled production deployment. No claim of LIVE or finished redesign. No model spend or other batch activation.

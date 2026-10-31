@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "717e94e00b4f1514127fd06e9f1e9eb2e9ed81a728a5d24235796069a7deb1fe",
+  "reviewRegistrySha256": "0e7a167d10269f9cabb928b3523b30911a1d7df32dc73d790dd81e01adeae631",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -5632,7 +5632,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "637d9bad8b881a1fed33"
+        "id": "a4d209b595a78e8c6293"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9060,7 +9060,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "637d9bad8b881a1fed33"
+        "id": "a4d209b595a78e8c6293"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -28811,15 +28811,15 @@
       }
     },
     {
-      "id": "637d9bad8b881a1fed33",
+      "id": "a4d209b595a78e8c6293",
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "line": 15,
+      "line": 16,
       "enclosing": "CalculatorV2",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "aa002825ed5550011ed1584d1d23c6c6f78da42fc70005a1c0038144e0e73cfe",
+      "sourceSha256": "eac91769db4f84414c48f952d415ba4987ad7a2c2e24f54869233a1b1bc45946",
       "semanticReview": {
         "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
         "reason": "Reviewed exact receiver and surrounding data flow. This is local chart data derivation, not a database or bucket call. No upstream authorization or persistence boundary is certified.",

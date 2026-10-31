@@ -2,6 +2,7 @@
 import { useId, useState, lazy, Suspense, type CSSProperties } from 'react';
 import { RotateCcw } from 'lucide-react';
 import type { ResponseNodeV2 } from './document';
+import type { CitationSource } from '@/lib/xrogaCitations';
 import { calculateV2, type CalculatorNode } from './calculations';
 import { ProseV2 } from './ProseV2';
 import styles from './response-v2.module.css';
@@ -32,11 +33,11 @@ export function CalculatorV2({ node }: { node: CalculatorNode }) {
 }
 
 /** All authored sections remain visible. Navigation only moves focus. */
-export function TabsV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'tabs' }> }) {
+export function TabsV2({ node, sources = [] }: { node: Extract<ResponseNodeV2, { kind: 'tabs' }>; sources?: CitationSource[] }) {
   const id = useId();
   return <section className={styles.tabSection}>
     {node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}
     <nav aria-label={node.title || 'Response sections'} className={styles.tabs}>{node.items.map((item, index) => <button key={item.id} type="button" onClick={() => document.getElementById(`${id}-${index}`)?.focus()}>{item.label}</button>)}</nav>
-    {node.items.map((item, index) => <section key={item.id} id={`${id}-${index}`} tabIndex={-1} className={styles.answerSection}><h4>{item.label}</h4><ProseV2 text={item.content} /></section>)}
+    {node.items.map((item, index) => <section key={item.id} id={`${id}-${index}`} tabIndex={-1} className={styles.answerSection}><h4>{item.label}</h4><ProseV2 text={item.content} sources={sources} /></section>)}
   </section>;
 }

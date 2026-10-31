@@ -80683,8 +80683,8 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/InteractiveV2.tsx:8",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9"
+        "frontend/src/components/response-experience-v2/InteractiveV2.tsx:9",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80708,7 +80708,7 @@
       "id": "surface:7408bdfee403df48ceaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "d993b34084fc569d37fb04f3f5c56b1f13a388ccbfdc4b57783c87fbc92c90a7",
+      "sha256": "ad1b139406636f751e9a6a3372f5bc99b1b5394a0fed884af8990a0bc7011a1c",
       "symbols": [
         "DataTableV2",
         "GraphV2",
@@ -80736,8 +80736,8 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80762,7 +80762,7 @@
       "id": "surface:611cf58543cb117c4017",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "aa002825ed5550011ed1584d1d23c6c6f78da42fc70005a1c0038144e0e73cfe",
+      "sha256": "eac91769db4f84414c48f952d415ba4987ad7a2c2e24f54869233a1b1bc45946",
       "symbols": [
         "CalculatorV2",
         "Chart",
@@ -80781,6 +80781,7 @@
         "./calculations",
         "./document",
         "./response-v2.module.css",
+        "@/lib/xrogaCitations",
         "lucide-react",
         "react"
       ],
@@ -80794,8 +80795,8 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80837,7 +80838,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:13"
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80862,7 +80863,7 @@
       "id": "surface:c37a54594bd9bc390b5b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "eef993134839bf5e7ad34ebeb6ad08fa38d84b413b7aa5b120aced1aead77559",
+      "sha256": "dee2402c4e742c08005d82ee0650fe99ecbaee54728191e6e0163705a3af5952",
       "symbols": [
         "CodeV2",
         "MathV2",
@@ -80877,6 +80878,7 @@
         "./document",
         "./mathSyntax",
         "./response-v2.module.css",
+        "./sourceRegistry",
         "@/lib/xrogaCitations",
         "lucide-react",
         "react",
@@ -80890,13 +80892,13 @@
         "frontend/src/components/response-experience-v2/document.ts",
         "frontend/src/components/response-experience-v2/mathSyntax.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css",
-        "frontend/src/lib/xrogaCitations.ts"
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/InteractiveV2.tsx:6",
+        "frontend/src/components/response-experience-v2/InteractiveV2.tsx:7",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:5"
       ],
       "reachable": true,
@@ -80946,7 +80948,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:8"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80968,7 +80970,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "0983f40f19672da81c9b85371dcf7e47d790833efc4c0d64af61ca8fc3262561",
+      "sha256": "96d21c8781dae3fa11f683cd5890696b475806308f08927c9e37104becd1dc35",
       "symbols": [
         "Calculator",
         "Chart",
@@ -80976,7 +80978,8 @@
         "NodeView",
         "ResponseCanvasV2",
         "Table",
-        "Tabs"
+        "Tabs",
+        "registry"
       ],
       "imports": [
         "./ChartV2",
@@ -80987,6 +80990,7 @@
         "./SourceV2",
         "./document",
         "./response-v2.module.css",
+        "./sourceRegistry",
         "lucide-react",
         "react"
       ],
@@ -80998,7 +81002,8 @@
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
         "frontend/src/components/response-experience-v2/SourceV2.tsx",
         "frontend/src/components/response-experience-v2/document.ts",
-        "frontend/src/components/response-experience-v2/response-v2.module.css"
+        "frontend/src/components/response-experience-v2/response-v2.module.css",
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -81086,27 +81091,33 @@
       "id": "surface:f8646cfeb40e43123392",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "a9d312d54d6f6d0345167531c326809d160d94a3eb0c9177c0c6dc0036c70dc2",
+      "sha256": "ec07a5a11d5749d6269d6b757b29fdd026610264a8ed06a8793afe7acac3f12b",
       "symbols": [
         "InlineImageV2",
         "SourceLinkV2",
         "SourceMarkV2",
+        "SourceRegistryContextV2",
         "domain",
+        "entry",
         "mark",
         "marks",
+        "registry",
         "safe",
         "sourceDomainV2"
       ],
       "imports": [
         "./document",
         "./response-v2.module.css",
+        "./sourceRegistry",
+        "@/lib/xrogaCitations",
         "lucide-react",
         "react",
         "simple-icons"
       ],
       "runtimeImports": [
         "frontend/src/components/response-experience-v2/document.ts",
-        "frontend/src/components/response-experience-v2/response-v2.module.css"
+        "frontend/src/components/response-experience-v2/response-v2.module.css",
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -81203,7 +81214,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/InteractiveV2.tsx:5",
+        "frontend/src/components/response-experience-v2/InteractiveV2.tsx:6",
         "frontend/src/components/response-experience-v2/document.test.ts:4"
       ],
       "reachable": true,
@@ -81283,13 +81294,15 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/DataV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:4",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:4",
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:4",
-        "frontend/src/components/response-experience-v2/SourceV2.tsx:5",
+        "frontend/src/components/response-experience-v2/SourceV2.tsx:7",
         "frontend/src/components/response-experience-v2/document.test.ts:3",
-        "frontend/src/components/response-experience-v2/review/LocalReview.tsx:4"
+        "frontend/src/components/response-experience-v2/review/LocalReview.tsx:4",
+        "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:4",
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts:2"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81302,7 +81315,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "frontend/src/components/response-experience-v2/document.test.ts"
+        "frontend/src/components/response-experience-v2/document.test.ts",
+        "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -81398,6 +81412,62 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:fee428dd693a0255629e",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/sourceRegistry.ts",
+      "sha256": "a426e70bb1039dcd84fe4381388e2f27fadfc4b139794c90b0c079696d5f71f0",
+      "symbols": [
+        "SourceTree",
+        "add",
+        "item",
+        "key",
+        "node",
+        "numeric",
+        "pages",
+        "remarkCitationsV2",
+        "safe",
+        "seen",
+        "sourceKeyV2",
+        "sourceRegistryV2",
+        "url",
+        "visit"
+      ],
+      "imports": [
+        "./document",
+        "@/lib/xrogaCitations"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/lib/xrogaCitations.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:8",
+        "frontend/src/components/response-experience-v2/SourceV2.tsx:4",
+        "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -106259,7 +106329,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:10",
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts:1",
         "frontend/src/components/terminal/ResponseSources.tsx:7",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:6",
         "frontend/src/lib/formatAiMarkdown.tsx:19",
@@ -138561,6 +138631,13 @@
       "id": "test-suite:cc6bd4d38d23693519cc",
       "sourcePath": "frontend/src/components/response-experience-v2/mathSyntax.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:da1d74c4b89f9a7b7e58",
+      "sourcePath": "frontend/src/components/response-experience-v2/sourceRegistry.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

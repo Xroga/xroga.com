@@ -1,5 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+import type { CitationSource } from '@/lib/xrogaCitations';
+import { sourceKeyV2 } from './sourceRegistry';
 import { Globe } from 'lucide-react';
 import { siGithub, siNextdotjs, siSupabase, siStripe, siCloudflare, siReact, siTypescript } from 'simple-icons';
 import { safeLinkV2 } from './document';
@@ -8,6 +10,7 @@ import styles from './response-v2.module.css';
 // Existing simple-icons dependency, CC0 artwork. Trademarks belong to their owners.
 // Exact domain matches only, never infer an organization from model prose.
 const marks = { 'github.com': siGithub, 'nextjs.org': siNextdotjs, 'supabase.com': siSupabase, 'stripe.com': siStripe, 'cloudflare.com': siCloudflare, 'react.dev': siReact, 'typescriptlang.org': siTypescript };
+export const SourceRegistryContextV2 = createContext<ReadonlyMap<string, CitationSource>>(new Map());
 export function sourceDomainV2(url: string): string {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
 }
@@ -17,6 +20,9 @@ export function SourceMarkV2({ url }: { url: string }) {
   return mark ? <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={mark.path} /></svg> : <Globe size={13} aria-hidden="true" />;
 }
 export function SourceLinkV2({ url, title, number }: { url: string; title: string; number?: number }) {
+  const registry = useContext(SourceRegistryContextV2);
+  const entry = registry.get(sourceKeyV2(url) ?? '');
+  title = entry?.title || title;
   const safe = safeLinkV2(url);
   if (!safe) return <span>{title}</span>;
   return <a className={styles.citation} href={safe} target="_blank" rel="noopener noreferrer" title={`${title}\n${safe}`} aria-label={`${number ? `Source ${number}: ` : ''}${title}. ${sourceDomainV2(safe)}`}><SourceMarkV2 url={safe} /><span>{sourceDomainV2(safe) || title}</span>{number && <span className={styles.visuallyHidden}> [{number}]</span>}</a>;

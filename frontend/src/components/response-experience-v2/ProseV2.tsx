@@ -7,7 +7,8 @@ import remarkMath from 'remark-math';
 import { normalizeMathDelimitersV2, remarkMathPresentationV2 } from './mathSyntax';
 import { Copy, Check } from 'lucide-react';
 import { InlineImageV2, SourceLinkV2, SourceMarkV2 } from './SourceV2';
-import { remarkSourceCitations, type CitationSource } from '@/lib/xrogaCitations';
+import type { CitationSource } from '@/lib/xrogaCitations';
+import { remarkCitationsV2 } from './sourceRegistry';
 import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
 const MathV2 = lazy(() => import('./MathV2'));
@@ -23,7 +24,7 @@ export function CodeV2({ text, language }: { text: string; language?: string }) 
 
 export function ProseV2({ text, sources = [] }: { text: string; sources?: CitationSource[] }) {
   return <div className={styles.prose} dir="auto"><ReactMarkdown skipHtml
-    remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }], remarkMathPresentationV2, ...(sources.length ? [remarkSourceCitations(sources)] : [])]}
+    remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }], remarkMathPresentationV2, ...(sources.length ? [remarkCitationsV2(sources)] : [])]}
     urlTransform={url => safeLinkV2(url) ?? ''}
     components={{
       p: ({ children }) => <p dir="auto">{children}</p>,
