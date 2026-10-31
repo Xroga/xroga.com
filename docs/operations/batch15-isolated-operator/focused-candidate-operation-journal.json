@@ -1,0 +1,9 @@
+{
+  "atUtc": "2026-10-31T12:18:34.488858+00:00",
+  "state": "SUBMITTING_INSPECT_BEFORE_RETRY",
+  "revision": "xroga-api-b15b2-ac8168-check-1031",
+  "source": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "digest": "sha256:7b3551559fa0585c2efb422397163fc796dd0e287b9f833936df98046944d549",
+  "defaultTrafficChanged": false,
+  "jobChanged": false
+}

@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-31T15:25:09.846694+05:00",
+  "atUtc": "2026-10-31T12:57:21.355920+00:00",
   "founderComment": "https://github.com/Xroga/xroga.com/pull/899#issuecomment-6541922149",
   "pr899Source": "3d56868618c096d13e6a5c63a489d7f15143b0e7",
   "requiredChecks": [
@@ -39,9 +39,8 @@
       "state": "SUCCESS"
     }
   ],
-  "cloudWindow": "NOT_STARTED",
+  "cloudWindow": "FOCUSED_RELEASE_COMPLETED_BROWSER_WINDOW_NOT_STARTED",
   "browserPackage": "HELD_NO_NEW_KEY_NAT_HOST_WORK",
-  "newCloudResources": 0,
   "newIamBindings": 0,
   "modelCalls": 0,
   "modelSpendUsd": 0,
@@ -54,35 +53,70 @@
     "liveVerified": [
       "Authenticated production Drive listing",
       "Private R2 readback of existing synthetic acceptance file, exact byte/hash match",
-      "New 108-byte synthetic production upload and exact private readback matched stored SHA-256"
+      "New 108-byte synthetic production upload and exact private readback matched stored SHA-256",
+      "Matched canonical Google API/Job released with private/public TLS readiness and preserved opaque custody/configuration"
     ],
     "fileBytes": 2053,
     "verifiedSha256": "8743831fc94731bb00b76af0c42ac342bd7f0f0e480390689f3dd254e7e10457",
     "newUploadThisTurn": true,
     "remainingBrowserWorker": "BLOCKED_NO_APPROVED_RETAINED_HOST",
-    "fullAcceptance": "NOT_CLAIMED"
+    "fullAcceptance": "NOT_CLAIMED",
+    "storageHousekeepingWarning": "storage_reconcile_not_scheduled is reported as nonrequired by existing readiness policy. Full Batch1.5 acceptance is not claimed."
   },
   "batch2": {
-    "liveAcceptance": "NOT_VERIFIED",
+    "liveAcceptance": "BLOCKED_NOT_FULLY_ACCEPTED",
     "cancellationFixCommit": "ba43e31666ecfaa15293e73946b59732a32ae750",
     "reviewCheckpoint": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
     "branch": "codex/batch2-cancellation-fence-20261031",
     "focusedTestsPassed": 19,
     "focusedTestsFailed": 0,
-    "integrationCi": "ONE_NEW_REQUIRED_RUN_IN_PROGRESS_FOR_CHANGED_BUILDER_SOURCE",
-    "remainingGate": "Provider-supplied nonzero usage and accounted saved revision, plus terminal recovery/live acceptance. The isolated package allows zero model spend.",
+    "integrationCi": "SEVEN_REQUIRED_CHECKS_SUCCESS",
+    "remainingGate": "Approved model test cap is not bound to the ordinary Builder attempt. Real accounted generated/saved revision and stop/resume/preview/export acceptance remain unproven.",
     "correctionPr": "https://github.com/Xroga/xroga.com/pull/902",
-    "correctionPrBase": "codex/batch15-batch2-activation-20261031"
+    "correctionPrBase": "codex/batch15-batch2-activation-20261031",
+    "backendRelease": "LIVE_AC8168"
   },
   "production": {
-    "revision": "xroga-api-batch1-85f-serving-1031",
-    "source": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
-    "apiAndJobDigest": "sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+    "revision": "xroga-api-b15b2-ac8168-serving-1031",
+    "source": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+    "apiAndJobDigest": "sha256:7b3551559fa0585c2efb422397163fc796dd0e287b9f833936df98046944d549",
     "voiceRevision": "xroga-api-voice-fe2c6486c",
-    "releaseChanged": false,
-    "rollbackChanged": false
+    "releaseChanged": true,
+    "rollbackChanged": false,
+    "queue": "RUNNING",
+    "admissionSource": "ac8168f940d6e56079bbeb5e717ef33001b8b171"
   },
-  "nextActivationAction": "Finish the small Builder correction integration gate, then prepare one consolidated bounded real-provider/saved-revision acceptance decision under the existing release controls. Do not reopen the browser infrastructure path to block Drive.",
+  "nextActivationAction": "Bind an actual Builder attempt to an existing authoritative per-action ceiling before exactly one approved generation/save attempt. Do not invent tokens, create another ledger, activate Batch3 or exceed the approved limit.",
   "latestFounderComment": "https://github.com/Xroga/xroga.com/pull/902#issuecomment-6542353939",
-  "pr899MergedCommit": "3584eaf9f4b4f00c494101189ad434c35212080b"
+  "pr899MergedCommit": "3584eaf9f4b4f00c494101189ad434c35212080b",
+  "browserCloudWindow": "NOT_STARTED",
+  "operatorModelCalls": 0,
+  "resourceChanges": {
+    "cloudBuildExecutions": 2,
+    "successfulImages": 1,
+    "cloudRunRevisions": 3,
+    "newServices": 0,
+    "newIamBindings": 0,
+    "newVmOrDisk": 0,
+    "probeTasksCreatedAndRemoved": 2
+  },
+  "focusedRelease": {
+    "approvedPackage": "41a5b936b9a7bc96c84d26ef905b36eeb20b013f",
+    "result": "PASS_FOCUSED_BACKEND_RELEASE",
+    "proof": "focused-final-runtime-proof.json",
+    "oneTimeGoogleCeilingUsd": 0.5,
+    "monthlyImageCeilingUsd": 0.1,
+    "conservativeUsageEstimateUsdLessThan": 0.1,
+    "postedInvoiceDelta": "NOT_MEASURED",
+    "agentApiSpend": "NOT_MEASURED",
+    "modelSpendUsd": 0,
+    "maintenanceSeconds": 650.6
+  },
+  "pr902": {
+    "state": "MERGED",
+    "source": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+    "mergeCommit": "3abc33a0cc108ace6efa0ab282137e10081513cf",
+    "requiredChecks": "SEVEN_SUCCESS",
+    "noCiRerunThisRelease": true
+  }
 }

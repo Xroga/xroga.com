@@ -1,0 +1,12 @@
+{
+  "state": "PASS_PRIVATE_READINESS",
+  "revision": "xroga-api-b15b2-ac8168-check-1031b",
+  "task": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/queues/xroga-canonical-production/tasks/focused-ready-ac8168-candidate-01657e21e3",
+  "startedAtUtc": "2026-10-31T12:25:15.210278+00:00",
+  "urlPath": "/ready",
+  "defaultTrafficChanged": false,
+  "httpStatus": 200,
+  "latency": "0.670640678s",
+  "observedAt": "2026-10-31T12:25:16.339920Z",
+  "exactProbeTaskRemoved": true
+}

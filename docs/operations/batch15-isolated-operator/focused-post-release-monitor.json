@@ -1,0 +1,7 @@
+{
+  "checkedAtUtc": "2026-10-31T12:50:48.3273290+00:00",
+  "revision": "xroga-api-b15b2-ac8168-serving-1031",
+  "sinceUtc": "2026-10-31T12:31:42Z",
+  "observedHttp5xx": 0,
+  "scope": "Bounded request-log check, not full application acceptance"
+}

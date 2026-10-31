@@ -59,12 +59,15 @@ def no_executions():
  assert not values.get('nextPageToken'),'EXECUTION_PAGINATION_REVIEW_REQUIRED'
  assert not any(v.get('runningCount',0)>0 for v in values.get('executions',[])),'ACTIVE_JOB_PRESENT'
 def fenced():
+ window=json.loads((ROOT/'focused-maintenance-window.json').read_text(encoding='utf-8-sig'))
+ assert datetime.datetime.now(datetime.timezone.utc)<datetime.datetime.fromisoformat(window['deadlineUtc']),'MAINTENANCE_DEADLINE_REACHED_RECOVER_ONLY'
  receipt=json.loads((ROOT/'focused-gate-closed-live.json').read_text())
  assert receipt['closed'] is True and receipt['nonterminalCanonical']==0,'LIVE_FENCE_PROOF_REQUIRED'
  assert time.time()-receipt['checkedEpoch']<1200,'LIVE_FENCE_PROOF_EXPIRED'
 def serving_config(v):
  s=v['spec'];c=s['containers'][0];e={x['name']:x for x in c.get('env',[])}
  assert c['image']==NEW_IMAGE and v['metadata']['labels']['xroga-source-sha']==NEW_SHA,'SERVING_IMAGE_DRIFT'
+ assert e['XROGA_DEPLOYMENT_ENVIRONMENT']['value']=='production','EXPLICIT_ENVIRONMENT_REQUIRED'
  assert e['XROGA_GOOGLE_WORKER_IMAGE']['value']==NEW_IMAGE and e.get('XROGA_RELEASE_CANDIDATE',{}).get('value')!='1','SERVING_CONTROLS_DRIFT'
  assert s['serviceAccountName']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','SERVING_IDENTITY_DRIFT'
 

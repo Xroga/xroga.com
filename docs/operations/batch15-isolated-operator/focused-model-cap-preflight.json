@@ -1,0 +1,15 @@
+{
+  "atUtc": "2026-10-31T12:57:21.355920+00:00",
+  "result": "BLOCKED_APPROVED_CAP_NOT_BOUND_TO_ORDINARY_BUILDER_ATTEMPT",
+  "approvedMaximumUsd": 0.1,
+  "maximumAttempts": 1,
+  "modelCalls": 0,
+  "modelSpendUsd": 0,
+  "existingActiveOwnerCycle": true,
+  "ownerLifetimeAllowanceWithinApprovedTestCap": false,
+  "evidence": "Read-only current production comparison returned false. Ordinary Builder withTenantModelReservation calls owner-cycle withProviderReservation; the existing admitted Operations per-action ceiling is a separate path.",
+  "source": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "noBudgetIncrease": true,
+  "noUncertainHoldsReleased": true,
+  "requiredNextAction": "Bind an actual Builder attempt to an existing authoritative per-action ceiling before exactly one approved generation/save attempt. Do not invent tokens, create another ledger, activate Batch3 or exceed the approved limit."
+}

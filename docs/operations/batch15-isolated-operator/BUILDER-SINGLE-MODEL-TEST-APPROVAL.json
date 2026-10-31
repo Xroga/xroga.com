@@ -16,5 +16,5 @@
   "modelCalls": 0,
   "modelSpendUsd": 0,
   "onMissingUsage": "STOP_NO_RETRY_PRESERVE_UNCERTAIN_HOLD",
-  "status": "APPROVED_PENDING_CAP_ENFORCEMENT_PROOF"
+  "status": "BLOCKED_AGGREGATE_CAP_PRECONDITION_NOT_SATISFIED"
 }

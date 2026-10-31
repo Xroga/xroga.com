@@ -1,0 +1,6 @@
+{
+  "source": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "checkedEpoch": 1793450256,
+  "checkedAtUtc": "2026-10-31T12:37:36.7156354+00:00",
+  "evidence": "Actual production guarded transaction reopened singleton only after drained matching API/Job and HTTP readiness PASS"
+}

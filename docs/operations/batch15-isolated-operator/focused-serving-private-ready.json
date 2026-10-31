@@ -1,0 +1,13 @@
+{
+  "state": "PASS_PRIVATE_READINESS",
+  "revision": "xroga-api-b15b2-ac8168-serving-1031",
+  "task": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/queues/xroga-canonical-production/tasks/focused-ready-ac8168-serving-6d4ff2d5d2",
+  "startedAtUtc": "2026-10-31T12:30:24.967522+00:00",
+  "urlPath": "/ready",
+  "defaultTrafficChanged": false,
+  "exactProbeForceRunWhileQueuePaused": true,
+  "httpStatus": 200,
+  "latency": "1.228904263s",
+  "observedAt": "2026-10-31T12:30:28.198749Z",
+  "exactProbeTaskRemoved": true
+}

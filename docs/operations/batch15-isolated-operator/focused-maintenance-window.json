@@ -1,0 +1,12 @@
+{
+  "state": "RELEASE_COMPLETED_ADMISSION_OPEN_QUEUE_RUNNING",
+  "startedAtUtc": "2026-10-31T12:27:01.069834+00:00",
+  "deadlineUtc": "2026-10-31T13:27:01.069834+00:00",
+  "drainDeadlineUtc": "2026-10-31T12:47:01.069834+00:00",
+  "source": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "rollbackSource": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+  "maximumWindowSeconds": 3600,
+  "modelCalls": 0,
+  "completedAtUtc": "2026-10-31T12:37:51.664995+00:00",
+  "elapsedSeconds": 650.6
+}

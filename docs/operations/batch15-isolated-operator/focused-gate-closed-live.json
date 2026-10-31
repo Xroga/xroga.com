@@ -1,0 +1,8 @@
+{
+  "closed": true,
+  "nonterminalCanonical": 0,
+  "checkedEpoch": 1793449675,
+  "checkedAtUtc": "2026-10-31T12:27:55.1802025+00:00",
+  "evidence": "Actual production transaction: singleton admission NULL and all-status nonterminal canonical count 0",
+  "sourceBefore": "85f83e3f1dcbb057d4a28d8a696dae8396d45114"
+}

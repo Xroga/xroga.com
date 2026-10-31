@@ -1,0 +1,35 @@
+{
+  "atUtc": "2026-10-31T12:49:07.221907+00:00",
+  "scope": "FOCUSED_BACKEND_RELEASE_PASS_NOT_FULL_BATCH_ACTIVATION",
+  "source": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "revision": "xroga-api-b15b2-ac8168-serving-1031",
+  "digest": "sha256:7b3551559fa0585c2efb422397163fc796dd0e287b9f833936df98046944d549",
+  "defaultPercent": 100,
+  "apiJobImageSourcePairVerified": true,
+  "canonicalQueue": "RUNNING",
+  "opaqueApiConfigSecretsAndCustodyPreserved": true,
+  "opaqueJobConfigSecretsAndCustodyPreserved": true,
+  "runtimeIdentityNetworkAndLimitsPreserved": true,
+  "temporaryReleaseTagsRemoved": true,
+  "voiceTags": [
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4"
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-fe2c6486c",
+      "tag": "voice-9f62bba5"
+    }
+  ],
+  "rollbackRevision": "xroga-api-batch1-85f-serving-1031",
+  "rollbackImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+  "maintenanceSeconds": 650.6,
+  "newVmCreated": false,
+  "newIamBindings": 0,
+  "newServices": 0,
+  "operatorModelCalls": 0,
+  "fullBatch15Acceptance": false,
+  "fullBatch2Acceptance": false
+}

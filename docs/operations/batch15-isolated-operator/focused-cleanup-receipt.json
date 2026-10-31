@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-10-31T12:57:21.355920+00:00",
+  "localTaskTemps": "Owned local runner cleanup completed for each operation. Required redacted logs retained.",
+  "privateProbeTasksRemoved": 2,
+  "temporaryReleaseTrafficTagsRemoved": true,
+  "verificationVmOrDiskCreated": false,
+  "sourceUploadsRetained": "Immutable forward-build input and failed-build packaging provenance retained with native build logs. No deletion of voice, source, recovery or customer artifacts.",
+  "cleanupPreview": "Unsupported gcloud storage rm --dry-run flag rejected during argument parsing. No object deletion occurred.",
+  "newIdleCandidateMinimumInstances": 0,
+  "newPersistentServices": 0,
+  "newIam": 0,
+  "cloudShellSessionsStarted": 0
+}

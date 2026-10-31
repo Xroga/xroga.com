@@ -1,0 +1,9 @@
+{
+  "atUtc": "2026-10-31T12:33:50.2660915+00:00",
+  "health": null,
+  "ready": null,
+  "reason": null,
+  "checks": null,
+  "state": "LOCAL_RESOLVER_FAILURE_NO_API_RESPONSE",
+  "supersededBy": "focused-public-tls-readiness-proof.json"
+}

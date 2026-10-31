@@ -1,0 +1,42 @@
+{
+  "checkedAtUtc": "2026-10-31T12:36:25.1359357+00:00",
+  "localResolver": "NXDOMAIN",
+  "publicDnsStatus": 0,
+  "publicA": "8.232.138.199",
+  "ownedGoogleForwardingRule": "xroga-api-https",
+  "ownedGoogleIpMatch": true,
+  "tlsVerificationEnabled": true,
+  "temporaryCurlResolveOnly": true,
+  "systemDnsChanged": false,
+  "health": {
+    "status": "ok",
+    "checks": null
+  },
+  "ready": {
+    "status": "ready",
+    "checks": [
+      {
+        "name": "environment",
+        "status": "ok"
+      },
+      {
+        "name": "database",
+        "status": "ok"
+      },
+      {
+        "name": "storage",
+        "status": "ok"
+      },
+      {
+        "name": "storage_quota",
+        "status": "ok"
+      },
+      {
+        "name": "storage_housekeeping",
+        "status": "fail",
+        "reason": "storage_reconcile_not_scheduled"
+      }
+    ]
+  },
+  "unauthenticatedBuilderStatus": 401
+}

@@ -19,6 +19,9 @@ save()
 try:
  body={'task':{'name':name,'dispatchDeadline':'60s','httpRequest':{'httpMethod':'GET','url':uri+'/ready','oidcToken':{'serviceAccountEmail':'xroga-api-runtime@'+P+'.iam.gserviceaccount.com','audience':audience}}}}
  api('https://cloudtasks.googleapis.com/v2/'+QUEUE+'/tasks','POST',body)
+ if task(QUEUE)['state']=='PAUSED':
+  api('https://cloudtasks.googleapis.com/v2/'+name+':run','POST',{})
+  state['exactProbeForceRunWhileQueuePaused']=True
  state['state']='DISPATCHED';save();end=time.monotonic()+180
  while time.monotonic()<end:
   result=api('https://logging.googleapis.com/v2/entries:list','POST',{'resourceNames':['projects/'+P],
