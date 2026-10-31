@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { parseXrogaOutput } from '@/lib/xrogaBlocks';
 import type { CitationSource } from '@/lib/xrogaCitations';
+import { xrogaRichResultSchema } from '@/lib/xrogaRichResults';
 
 const text = z.string().max(200_000);
 const label = z.string().max(500);
@@ -10,6 +11,8 @@ const base = z.object({ id: z.string().min(1).max(200), title: label.optional(),
 const column = z.object({ key: label, label });
 const series = z.object({ key: label, label });
 export const nodeSchema = z.discriminatedUnion('kind', [
+  base.extend({ kind: z.literal('resources'), items: z.array(xrogaRichResultSchema).min(1).max(35) }),
+  base.extend({ kind: z.literal('images'), items: z.array(z.object({ id: label, label, url: text, caption: text.optional() })).max(40) }),
   base.extend({ kind: z.literal('prose'), text }),
   base.extend({ kind: z.literal('code'), text, language: label.optional() }),
   base.extend({ kind: z.literal('table'), columns: z.array(column).min(1).max(40), rows: z.array(row).max(10_000) }),
@@ -52,6 +55,10 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
         for (const b of output.blocks) {
           const common = { id: b.id, title: b.title, description: 'description' in b ? b.description : undefined };
           switch (b.type) {
+            case 'rich-results': nodes.push({ ...common, kind: 'resources', items: b.items }); break;
+            case 'image': nodes.push({ ...common, kind: 'images', items: [b.image] }); break;
+            case 'gallery': nodes.push({ ...common, kind: 'images', items: b.items }); break;
+            case 'source-list': for (const source of b.sources) nodes.push({ id: `${b.id}:${source.id}`, kind: 'citation', label: source.title, url: source.url, excerpt: source.excerpt, description: source.publishedAt }); break;
             case 'narrative': if (b.text !== input.content) nodes.push({ ...common, kind: 'prose', text: b.text }); break;
             case 'document': nodes.push({ ...common, kind: 'prose', text: b.content }); break;
             case 'code': case 'diff': case 'terminal': case 'file': nodes.push({ ...common, kind: 'code', title: b.path ?? b.title, text: b.content, language: b.language ?? b.type }); break;

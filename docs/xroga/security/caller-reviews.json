@@ -28313,12 +28313,12 @@
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sourceSha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8",
+      "sourceSha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195",
       "callIds": [
-        "acf62cadb93d2dd4a3af"
+        "16c2383298e67ee3f47a"
       ],
       "disposition": "SCOPED_BOUNDARY",
-      "authority": "Request-scoped SSR public client retains authenticated cookie identity. No-argument current_community_role reads only auth.uid role. Verified confirmed founder, owner role and AAL2 are required before returning the opt-in founder ID. No customer-data query, mutation, service-role access or action approval is introduced.",
+      "authority": "Request-scoped SSR public client retains verified cookie identity. The no-argument current_community_role reads only auth.uid role for the unchanged founder owner/AAL2 review gate. Explicit authenticated/canary presentation mode uses server getUser and grants no role, data, or execution access. No customer-data query, mutation or service-role access is introduced.",
       "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
       "evidence": [
         {
@@ -28333,7 +28333,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sourceSha256": "1575a9738e6ccb081f83c40e0603fb34974d17c322f161651b24ddbb0bc97b35",
+      "sourceSha256": "aa002825ed5550011ed1584d1d23c6c6f78da42fc70005a1c0038144e0e73cfe",
       "callIds": [
         "637d9bad8b881a1fed33"
       ],

@@ -66,3 +66,17 @@ Remaining: valid founder owner/AAL2 session for real Workspace visual, saved-his
 Source/register maintenance passed after reviewing the only new conservative persistence candidate: native Array.from creates 21 in-memory sensitivity points. It has a source-bound NOT_PERSISTENCE disposition, not an authorization exemption. Job 8d13504b-997d-44a3-92a7-398c1b78fa1b. Strict egress audit: 150 total, 150 reviewed, 0 pending, 0 unexplained high-risk bypasses. Tenant audit integrity passed and retains its pre-existing broader criterion blockers, not blanket tenant acceptance.
 
 Code-copy interaction returned exactly the supplied TypeScript function. The synthetic review server and its disposable bundle are shut down after evidence capture. No paid resources were created.
+
+## Complete-answer release preparation, 2026-11-01
+
+Authority: PR #909 comment 6549571336. Controlled production release is authorized only after source-pinned CI and authenticated Workspace acceptance. No deployment or production activation is claimed by this checkpoint.
+
+- Corrected two existing frontend test expectations to include the renderer's existing utm_source=xroga.com link attribution. CI artifacts identified these as the actual unit/integrated failures. Legacy renderer source remains unchanged.
+- Essential sections, assumptions, chart tables and source lists are visible directly. Section navigation moves focus without hiding content.
+- Added exact-domain local brand marks, named inline citations, supplied-image rendering through the existing bounded public image proxy, and read-only rich-result presentation preserving source, price qualifiers, route, evidence and limitations. The canonical rich-result image permission policy remains intact.
+- Added explicit server-verified authenticated/canary presentation modes. No account role, MFA, tenant policy, backend action or founder-review permission changed. Default remains legacy until configured.
+- 31 focused tests pass. Full frontend suite: 1,332 passed, zero failed/skipped. TypeScript passes. Scoped ESLint passes with two native-image optimization warnings. No model calls.
+- Strict egress register: 150 reviewed of 150, zero pending/high-risk bypasses. Tenant register integrity passes but retains its existing broader criterion-evidence blockers, not blanket tenant acceptance. Generated requirement integrity passes.
+- Local real-renderer calculator interaction changes 500 USD to 1,000 USD for risk 1 to 2. Desktop cited-answer screenshot saved under outputs/response-experience-v2-906/release-review. This is synthetic local visual evidence, not authenticated production acceptance.
+
+Outstanding: exact final-source CI, authenticated real Workspace history/stream and responsive acceptance, Vercel source-pinned candidate verification and controlled production promotion. Production remains unchanged. Batch 1.5/2 remain paused.

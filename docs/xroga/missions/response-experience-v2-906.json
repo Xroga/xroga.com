@@ -7,7 +7,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "low",
-  "scope": "Founder override: isolated greenfield response presentation with read-only canonical adapter and server-verified founder opt-in. Legacy UI preserved.",
+  "scope": "Independent response V2 with complete visible answers and source-backed rich presentation. Founder-authorized controlled authenticated-user rollout. Legacy renderer retained.",
   "changedFiles": [
     "frontend/src/app/(workspace)/workspace/page.tsx",
     "frontend/src/components/terminal/SwarmMessageLog.tsx",
@@ -31,14 +31,17 @@
     "frontend/package-lock.json",
     "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
     "frontend/src/components/response-experience-v2/review/review.css",
-    "scripts/xroga/response-v2-preview.mjs"
+    "scripts/xroga/response-v2-preview.mjs",
+    "frontend/src/components/response-experience-v2/SourceV2.tsx",
+    "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
+    "frontend/src/lib/formatAiMarkdown.test.ts"
   ],
   "decisions": {
     "keep": [
       "Legacy renderer untouched as fallback, existing streaming and persistence, production unchanged"
     ],
     "extend": [
-      "Workspace opt-in integration only"
+      "Read-only presentation audience and existing Workspace streaming contract"
     ],
     "replace": [],
     "deprecate": []
@@ -52,7 +55,7 @@
   "securityImpact": {
     "auth": {
       "changed": true,
-      "description": "Founder Preview requires server-verified confirmed founder identity, owner role and AAL2, plus matching client profile. No account permissions changed."
+      "description": "Server getUser validates the session for an explicit authenticated or canary presentation rollout. This grants no backend or admin access. Founder-only opt-in review retains confirmed identity, owner role and AAL2."
     },
     "tenant": {
       "changed": false,
@@ -68,7 +71,7 @@
     },
     "egress": {
       "changed": false,
-      "description": "Existing boundary preserved, no provider calls or authorization change."
+      "description": "Inline supplied public HTTPS images reuse the existing bounded SSRF-protected image proxy. Rich-result images retain the canonical image permission policy. No new proxy or provider."
     },
     "cost": {
       "changed": false,
@@ -92,12 +95,12 @@
     "reason": "Independent presentation module only, no backend or execution architecture changes",
     "rfc": null
   },
-  "rollout": "Preview review only, production promotion withheld",
+  "rollout": "Controlled source-pinned Vercel release authorized in PR #909 comment 6549571336 after exact CI and authenticated Workspace verification. RESPONSE_EXPERIENCE_V2=authenticated enables ordinary verified sessions, off restores legacy.",
   "rollback": "Keep production 0d270ec6 and revert frontend changes if required",
   "knownGaps": [
-    "Founder-authenticated Preview and visual acceptance pending",
-    "Private artifacts and approval shapes deliberately retain original renderer",
-    "Streaming math and full chart/diagram visual validation pending"
+    "Exact-source CI and authenticated Workspace visual/reload acceptance pending",
+    "Unsupported action and private artifact contracts retain the original authorization-aware renderer",
+    "No new model requests or live-fact verification claimed by presentation"
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [

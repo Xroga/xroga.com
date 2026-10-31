@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "af40847c47f9894e8c3ee3877be7a63536c0c34de1a65dbe0d4bd1f943ef2476",
+  "reviewRegistrySha256": "717e94e00b4f1514127fd06e9f1e9eb2e9ed81a728a5d24235796069a7deb1fe",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -5572,7 +5572,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "acf62cadb93d2dd4a3af"
+        "id": "16c2383298e67ee3f47a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9016,7 +9016,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "acf62cadb93d2dd4a3af"
+        "id": "16c2383298e67ee3f47a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -27891,17 +27891,17 @@
       }
     },
     {
-      "id": "acf62cadb93d2dd4a3af",
+      "id": "16c2383298e67ee3f47a",
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "line": 21,
+      "line": 25,
       "enclosing": "WorkspacePage",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8",
+      "sourceSha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195",
       "semanticReview": {
-        "authority": "Request-scoped SSR public client retains authenticated cookie identity. No-argument current_community_role reads only auth.uid role. Verified confirmed founder, owner role and AAL2 are required before returning the opt-in founder ID. No customer-data query, mutation, service-role access or action approval is introduced.",
+        "authority": "Request-scoped SSR public client retains verified cookie identity. The no-argument current_community_role reads only auth.uid role for the unchanged founder owner/AAL2 review gate. Explicit authenticated/canary presentation mode uses server getUser and grants no role, data, or execution access. No customer-data query, mutation or service-role access is introduced.",
         "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
         "evidence": [
           {
@@ -28819,7 +28819,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1575a9738e6ccb081f83c40e0603fb34974d17c322f161651b24ddbb0bc97b35",
+      "sourceSha256": "aa002825ed5550011ed1584d1d23c6c6f78da42fc70005a1c0038144e0e73cfe",
       "semanticReview": {
         "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
         "reason": "Reviewed exact receiver and surrounding data flow. This is local chart data derivation, not a database or bucket call. No upstream authorization or persistence boundary is certified.",

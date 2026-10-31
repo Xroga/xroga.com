@@ -31,10 +31,12 @@ export function CalculatorV2({ node }: { node: CalculatorNode }) {
   </section>;
 }
 
+/** All authored sections remain visible. Navigation only moves focus. */
 export function TabsV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'tabs' }> }) {
-  const [selected, setSelected] = useState(0); const id = useId();
-  return <section className={styles.tabSection}><div role="tablist" aria-label={node.title || 'Response sections'} className={styles.tabs}>{node.items.map((item, index) => <button key={item.id} type="button" role="tab" id={`${id}-${index}`} aria-controls={`${id}-panel`} aria-selected={selected === index} tabIndex={selected === index ? 0 : -1} onClick={() => setSelected(index)} onKeyDown={event => {
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? node.items.length - 1 : event.key === 'ArrowRight' ? (selected + 1) % node.items.length : event.key === 'ArrowLeft' ? (selected + node.items.length - 1) % node.items.length : null;
-    if (next != null) { event.preventDefault(); setSelected(next); document.getElementById(`${id}-${next}`)?.focus(); }
-  }}>{item.label}</button>)}</div><div id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={`${id}-${selected}`}><ProseV2 text={node.items[selected].content} /></div></section>;
+  const id = useId();
+  return <section className={styles.tabSection}>
+    {node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}
+    <nav aria-label={node.title || 'Response sections'} className={styles.tabs}>{node.items.map((item, index) => <button key={item.id} type="button" onClick={() => document.getElementById(`${id}-${index}`)?.focus()}>{item.label}</button>)}</nav>
+    {node.items.map((item, index) => <section key={item.id} id={`${id}-${index}`} tabIndex={-1} className={styles.answerSection}><h4>{item.label}</h4><ProseV2 text={item.content} /></section>)}
+  </section>;
 }

@@ -119,3 +119,45 @@ test('customer message path never imports a synthetic review panel', () => {
   const gate = readFileSync(new URL('./ResponseExperienceGate.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(gate,/ReviewPanelV2|specimensV2/);
 });
+
+
+test('released read-only presentation supports authenticated users without privileged role grants', async () => {
+  const { responseV2Audience } = await import('./access');
+  assert.equal(responseV2Audience('authenticated', 'member'), true);
+  assert.equal(responseV2Audience('authenticated', null), false);
+  assert.equal(responseV2Audience('canary', 'member', ' other, member '), true);
+  assert.equal(responseV2Audience('canary', 'member', 'other'), false);
+  for (const mode of [undefined, 'off', 'true', 'founder']) assert.equal(responseV2Audience(mode, 'member', 'member'), false);
+});
+
+test('essential answer sections and tables are not hidden in disclosure controls', () => {
+  const canvas = readFileSync(new URL('./ResponseCanvasV2.tsx', import.meta.url), 'utf8');
+  const interactions = readFileSync(new URL('./InteractiveV2.tsx', import.meta.url), 'utf8');
+  assert.doesNotMatch(canvas, /<details|View source data/);
+  assert.doesNotMatch(interactions, /node\.items\[selected\]|hidden=/);
+  assert.match(interactions, /node\.items\.map/);
+});
+
+test('source-backed resources preserve supplied evidence without inventing price or availability', () => {
+  const item = { id: 'resource', domain: 'business', kind: 'reference', title: 'Official reference', status: 'search-result', source: { title: 'Documentation', url: 'https://example.com/docs' }, summary: 'Supplied summary' };
+  const result = adaptResponseV2(input(output([{ ...block, type: 'rich-results', items: [item] }])));
+  assert.ok(result.supported);
+  const node = result.document.nodes[0];
+  assert.equal(node.kind, 'resources');
+  if (node.kind === 'resources') {
+    assert.deepEqual(node.items[0], item);
+    assert.equal(node.items[0].price, undefined);
+    assert.equal(node.items[0].availabilityEvidence, undefined);
+  }
+  assert.equal(adaptResponseV2(input(output([{ ...block, type: 'rich-results', items: [{ ...item, source: undefined }] }]))).supported, false);
+});
+
+test('image captions and source lists survive adaptation and persisted reload', () => {
+  const message = input(output([{ ...block, type: 'image', image: { id: 'image', label: 'Supplied image', url: 'https://example.com/image.png', caption: 'Original caption' } }, { ...block, id: 'sources', type: 'source-list', sources: [{ id: 's', title: 'Source title', url: 'https://example.com/source', excerpt: 'Original excerpt', publishedAt: '2026-01-01' }] }]));
+  const live = adaptResponseV2(message, true);
+  const saved = adaptResponseV2(JSON.parse(JSON.stringify(message)));
+  assert.ok(live.supported && saved.supported);
+  assert.deepEqual(live.document.nodes, saved.document.nodes);
+  assert.equal(saved.document.nodes[0].kind, 'images');
+  assert.equal(saved.document.nodes[1].description, '2026-01-01');
+});
