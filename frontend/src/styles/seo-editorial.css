@@ -16,3 +16,92 @@
 .xv-seo-context-links a{color:var(--seo-blue);text-decoration:underline;text-underline-offset:3px}
 .xv-seo-longform a:focus-visible{outline:3px solid var(--seo-blue);outline-offset:5px}
 @media(max-width:760px){.xv-seo-longform .xv-seo-toc{position:static;display:flex;max-height:260px;margin-bottom:36px;padding:20px;border:1px solid var(--seo-line);border-radius:14px}.xv-seo-longform .xv-seo-content p{font-size:17px;line-height:1.8}.xv-seo-longform .xv-seo-hero{padding-top:24px}}
+
+
+/* Shared blog and guide dark theme: neutral black, legible text, no navy surfaces. */
+.xv-seo-page.xv-seo-dark-editorial{
+  --seo-ink:#f7f7f8;
+  --seo-blue:#f7f7f8;
+  --seo-line:rgba(255,255,255,.15);
+  background:#000;
+  color:#f7f7f8;
+  color-scheme:dark;
+}
+.xv-seo-dark-editorial .xv-seo-crumbs a,
+.xv-seo-dark-editorial .xv-seo-updated,
+.xv-seo-dark-editorial .xv-seo-card-grid small{color:#b5b5bb}
+.xv-seo-dark-editorial .xv-seo-dek,
+.xv-seo-dark-editorial .xv-seo-content p,
+.xv-seo-dark-editorial .xv-seo-content li,
+.xv-seo-dark-editorial .xv-seo-sources p,
+.xv-seo-dark-editorial .xv-seo-card-grid p,
+.xv-seo-dark-editorial .xv-seo-growth-figure figcaption,
+.xv-seo-dark-editorial .xv-growth-figure figcaption,
+.xv-seo-dark-editorial .xv-growth-workflow article p,
+.xv-seo-dark-editorial .xv-readiness-tool p,
+.xv-seo-dark-editorial .xv-seo-tool-method p,
+.xv-seo-dark-editorial .xv-changelog p,
+.xv-seo-dark-editorial .xv-changelog li{color:#c8c8cc}
+.xv-seo-dark-editorial .xv-seo-eyebrow,
+.xv-seo-dark-editorial .xv-seo-section-number,
+.xv-seo-dark-editorial .xv-seo-card-grid span,
+.xv-seo-dark-editorial .xv-direct-answer strong,
+.xv-seo-dark-editorial .xv-readiness-summary strong,
+.xv-seo-dark-editorial .xv-readiness-tool label small,
+.xv-seo-dark-editorial .xv-changelog time,
+.xv-seo-dark-editorial .xv-changelog a,
+.xv-seo-dark-editorial .xv-growth-workflow article>span{color:#ededed}
+.xv-seo-dark-editorial .xv-seo-note,
+.xv-seo-dark-editorial .xv-seo-sources,
+.xv-seo-dark-editorial .xv-seo-card-grid>a,
+.xv-seo-dark-editorial .xv-readiness-tool,
+.xv-seo-dark-editorial .xv-direct-answer,
+.xv-seo-dark-editorial .xv-growth-figure{background:#101010;color:#f7f7f8;border-color:var(--seo-line);box-shadow:none}
+.xv-seo-dark-editorial .xv-seo-note strong{color:#fff}
+.xv-seo-dark-editorial .xv-seo-sources a,
+.xv-seo-dark-editorial .xv-seo-context-links a{color:#f5f5f5;text-decoration:underline;text-underline-offset:3px}
+.xv-seo-dark-editorial .xv-seo-actions a{border-color:rgba(255,255,255,.7);color:#fff}
+.xv-seo-dark-editorial .xv-seo-actions a:first-child,
+.xv-seo-dark-editorial .xv-readiness-tool button{background:#fff;border-color:#fff;color:#000}
+.xv-seo-dark-editorial .xv-seo-card-grid>a:hover{border-color:rgba(255,255,255,.55);background:#171717}
+.xv-seo-dark-editorial .xv-seo-table-wrap{background:#0d0d0d;border-color:var(--seo-line)}
+.xv-seo-dark-editorial .xv-seo-table-wrap caption{color:#c8c8cc}
+.xv-seo-dark-editorial .xv-seo-table-wrap thead th{background:#1b1b1b}
+.xv-seo-dark-editorial .xv-seo-table-wrap th,
+.xv-seo-dark-editorial .xv-seo-table-wrap td{border-color:var(--seo-line)}
+.xv-seo-dark-editorial .xv-seo-table-wrap tbody tr:nth-child(even){background:rgba(255,255,255,.035)}
+.xv-seo-dark-editorial .xv-direct-answer{border-left-color:#efefef}
+.xv-seo-dark-editorial .xv-direct-answer p{color:#d4d4d4}
+.xv-seo-dark-editorial .xv-growth-chart>div span{color:#c8c8cc}
+
+/* Related links: white, high-contrast action pills on every guide. */
+.xv-seo-dark-editorial .xv-seo-related>div{display:flex;flex-wrap:wrap;gap:12px}
+.xv-seo-dark-editorial .xv-seo-related a{
+  display:inline-flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:44px;padding:12px 18px;border-radius:999px;
+  background:#fff;border:1px solid #fff;color:#000;
+  font-weight:700;text-transform:none;line-height:1.35;
+  transition:background .18s ease,transform .18s ease;
+}
+.xv-seo-dark-editorial .xv-seo-related a:hover{background:#ededed;color:#000;transform:translateY(-1px)}
+.xv-seo-dark-editorial .xv-seo-related a:focus-visible,
+.xv-seo-dark-editorial a:focus-visible{outline:2px solid #fff;outline-offset:4px}
+
+/* Desktop and mobile contents list: thin thumb, invisible track, no white arrows. */
+.xv-seo-dark-editorial .xv-seo-toc{
+  scrollbar-width:thin;
+  scrollbar-color:#717171 transparent;
+  overscroll-behavior:contain;
+}
+.xv-seo-dark-editorial .xv-seo-toc::-webkit-scrollbar{width:7px}
+.xv-seo-dark-editorial .xv-seo-toc::-webkit-scrollbar-track{background:transparent}
+.xv-seo-dark-editorial .xv-seo-toc::-webkit-scrollbar-thumb{background:#717171;border:1px solid #101010;border-radius:999px}
+.xv-seo-dark-editorial .xv-seo-toc::-webkit-scrollbar-thumb:hover{background:#aaa}
+.xv-seo-dark-editorial .xv-seo-toc::-webkit-scrollbar-button{display:none;width:0;height:0}
+.xv-seo-dark-editorial .xv-seo-toc a{color:#c3c3c8;transition:color .15s ease}
+.xv-seo-dark-editorial .xv-seo-toc a:hover,
+.xv-seo-dark-editorial .xv-seo-toc a:focus-visible{color:#fff}
+@media(prefers-reduced-motion:reduce){
+  .xv-seo-dark-editorial .xv-seo-related a,
+  .xv-seo-dark-editorial .xv-seo-toc a{transition:none}
+}

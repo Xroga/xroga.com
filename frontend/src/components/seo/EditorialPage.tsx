@@ -43,7 +43,7 @@ export function EditorialPage({
   };
 
   return (
-    <main className={`xv-seo-page${readingMinutes ? ' xv-seo-longform' : ''}`}>
+    <main className={`xv-seo-page xv-seo-dark-editorial${readingMinutes ? ' xv-seo-longform' : ''}`}>
       <JsonLd data={pageSchema} />
       {article && <JsonLd data={buildWebPageJsonLd({ path, name: title, description })} />}
       <JsonLd data={breadcrumbSchema} />
@@ -113,7 +113,7 @@ export function EditorialHub({
   breadcrumbs?: Crumb[];
 }) {
   return (
-    <main className="xv-seo-page">
+    <main className="xv-seo-page xv-seo-dark-editorial">
       <JsonLd data={buildWebPageJsonLd({ path, name: title, description, type: 'CollectionPage' })} />
       <div className="xv-seo-shell">
         <nav className="xv-seo-crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link>{breadcrumbs.map((crumb) => <span key={crumb.href}><i>/</i><Link href={crumb.href}>{crumb.label}</Link></span>)}</nav>

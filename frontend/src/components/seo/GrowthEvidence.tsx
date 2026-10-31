@@ -17,7 +17,7 @@ export function EvidenceFigure({ visual }: { visual: GrowthVisual }) {
   return (
     <figure className="xv-growth-figure">
       <Image src={visual.src} alt={visual.alt} width={visual.width ?? 1600} height={visual.height ?? 900} sizes="(max-width: 760px) 100vw, 1040px" />
-      <figcaption>{visual.caption}<small>{visual.type === 'EDITORIAL_IMAGE' ? 'Editorial illustration' : `Evidence verified ${visual.verified}`}</small></figcaption>
+      {visual.type !== 'EDITORIAL_IMAGE' && <figcaption>{visual.caption}<small>{`Evidence verified ${visual.verified}`}</small></figcaption>}
     </figure>
   );
 }
