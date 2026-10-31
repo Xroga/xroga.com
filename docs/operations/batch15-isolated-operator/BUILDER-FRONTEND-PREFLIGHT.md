@@ -1,0 +1,13 @@
+# Approved Builder attempt, frontend prerequisite
+
+The founder approved one attempt capped at $1.65 from the existing balance. No submission or model request was made. The authenticated workspace account matches the reviewed owner, whose existing billing cycle expires beyond the observation window and has a $1.65 total entitlement. Existing settlements and reservations reduce that allowance. No entitlement or hold was changed.
+
+The public workspace JavaScript asset `https://xroga.com/_next/static/chunks/2068-1d366f8a40eba15b.js` contains Builder module 67045 with `u="1"===a.env.NEXT_PUBLIC_XROGA_BUILDER`. The variable was not replaced with an enabled build-time value. Its project resolver returns before creating a durable project when this flag is false. A general chat response is not evidence of Builder generation and persistence.
+
+Vercel's production overview identifies source `0d270ec69bdcf130ff85ce27f524e1d0d1e59e23`, branch `release/research-source-attribution-20261031`, deployment `AFieb6wDdFosSFt5hW2Ufa2rctL4`, serving xroga.com. Preserve this frontend and Claude's microphone work. No frontend setting or deployment was changed.
+
+The approved test explicitly excludes frontend promotion. Founder comment 6542353939 also requires internal allowlisting instead of broad Builder UI exposure. Therefore do not enable the global production flag merely to run this test. The next functional prerequisite is a protected internal frontend with Builder binding enabled, using the existing production API and genuine owner authentication. Review that exact frontend release scope before promotion. No session tokens were exported, no actor context was fabricated, and no fallback chat request consumed the single attempt.
+
+PR 903 finalization-recovery implementation passed its focused 15 tests. CI exposed generated manifest drift after the implementation and workflow changes. Requirements and runtime manifests were regenerated without changing validators, caller dispositions or acceptance rules. Requirements, runtime and golden-contract validators passed locally. Latest pushed correction is `dc460542`; its CI remains required before merge. Earlier complete suites are preserved as exact-source evidence, not claimed as final CI.
+
+Live status remains partial: Drive/private R2 and the ac8168 API/Job pair were verified previously. Browser Worker has no approved retained host. Builder generation, saved source and accounted completion remain unverified. This preflight incurred no model spend, cloud resource creation, production SQL or deployment.

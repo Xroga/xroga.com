@@ -1,6 +1,6 @@
 {
   "approved": true,
-  "founderReply": "Approve the single .65-capped test",
+  "founderReply": "Approve the single $1.65-capped test",
   "atUtc": "2026-10-31T14:22:19.083699+00:00",
   "packageCommit": "4005753d",
   "maximumModelUsd": 1.65,
@@ -11,5 +11,5 @@
   "newInfrastructureAllowed": false,
   "dispatchStarted": false,
   "modelCalls": 0,
-  "status": "APPROVED_PREFLIGHT_PENDING"
+  "status": "APPROVED_FRONTEND_BINDING_BLOCKED"
 }
