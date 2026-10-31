@@ -40,6 +40,8 @@ if (typeof window !== 'undefined') {
 }
 
 interface ThemeState {
+  /** Transient visual-test state. Never persisted and never authorizes execution. */
+  responsePreviewActive: boolean;
   theme: ThemeId;
   sidebarOpen: boolean;
   sidebarPinned: boolean;
@@ -107,6 +109,7 @@ export const useThemeStore = create<ThemeState>()(
       slideshowEnabled: false,
       slideshowFrozenIndex: 0,
       terminalFullscreen: false,
+      responsePreviewActive: false,
       chatbarHidden: false,
       terminalSkin: 'dark',
       terminalSkinAuto: true,

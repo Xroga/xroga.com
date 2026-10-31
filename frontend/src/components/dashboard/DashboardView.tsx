@@ -11,6 +11,7 @@ import {
   WORKSPACE_MIN_WIDTH,
 } from '@/store/useThemeStore';
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -24,6 +25,8 @@ import { markFreshTerminalIntent } from '@/lib/repoContext';
 import { BillingSuccessExperience } from '@/components/billing/BillingSuccessExperience';
 import startStyles from './WorkspaceNewTerminal.module.css';
 import { RepoContextBar } from '@/components/terminal/RepoContextBar';
+import type { ChatMessage } from '@/context/TerminalChatContext';
+import { useAppStore } from '@/store/useAppStore';
 
 
 /**
@@ -41,9 +44,16 @@ import { RepoContextBar } from '@/components/terminal/RepoContextBar';
  * scroll offset. Opening the workspace animates the body's grid columns rather than
  * mounting a card next to it.
  */
-export function DashboardView() {
+export function DashboardView({ responsePreview }: { responsePreview?: { messages: ChatMessage[]; cases: string[]; selected: string } } = {}) {
   const hydrated = useHydrated();
   const { messages, startNewChat, loading, sessionRestoring } = useTerminalChat();
+  const profile = useAppStore((state) => state.profile);
+  // Specimens never replace, persist into, or dispatch a real conversation.
+  const specimen = hydrated && profile && !messages.length && !loading && !sessionRestoring ? responsePreview : undefined;
+  useEffect(() => {
+    useThemeStore.setState({ responsePreviewActive: Boolean(specimen) });
+    return () => { useThemeStore.setState({ responsePreviewActive: false }); };
+  }, [specimen]);
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
@@ -201,7 +211,7 @@ export function DashboardView() {
    * stylesheet drop the reservation and the scrollbar together until there is
    * something to scroll.
    */
-  const hasConversation = messages.length > 0;
+  const hasConversation = messages.length > 0 || Boolean(specimen);
   const showNewTerminal = hydrated && !hasConversation && !loading && !sessionRestoring && !workspaceOpen && !incognito;
 
   const terminalPane = (
@@ -210,7 +220,11 @@ export function DashboardView() {
       data-testid="terminal-scroll"
       data-conversation={hasConversation ? 'true' : 'false'}
     >
-      <SwarmMessageLog chromeless incognito={incognito} />
+      {specimen ? <nav aria-label="Response presentation fixtures" className="mb-5 space-y-2 text-sm">
+        <p>Presentation preview. Synthetic fixtures, no model calls, no saved conversation.</p>
+        <div className="flex flex-wrap gap-2">{specimen.cases.map((name) => <Link key={name} prefetch={false} href={`?responsePreview=${name}`} aria-current={name === specimen.selected ? 'page' : undefined} className="rounded border border-[var(--border)] px-2 py-1 underline-offset-4 hover:underline">{name}</Link>)}<Link prefetch={false} href="/workspace" className="px-2 py-1 underline">Exit preview</Link></div>
+      </nav> : null}
+      <SwarmMessageLog chromeless incognito={incognito} previewMessages={specimen?.messages} />
     </div>
   );
 

@@ -79,7 +79,7 @@ function TextRenderer({ block, sources, afterIntro }: { block: XrogaBlock; sourc
       <div>
         {block.title ? <h3 className="font-medium">{block.title}</h3> : null}
         {block.type === 'narrative' ? (
-          <div className="xv-response-text"><FormattedAiMarkdown content={block.text.replace(/[—–]/g, '-')} sources={sources} afterIntro={afterIntro} /></div>
+          <div className="xv-response-text min-w-0"><FormattedAiMarkdown content={block.text} sources={sources} afterIntro={afterIntro} /></div>
         ) : (
           <p className="whitespace-pre-wrap leading-6">{'text' in block ? block.text : ''}</p>
         )}
@@ -187,6 +187,6 @@ export function XrogaOutputView({ output, onChange, sources }: { output: XrogaOu
       if (next) onChange(next);
     } : undefined;
     const afterIntro = embeddedRich && candidate.id === firstNarrative?.id ? <Suspense fallback={null}><RichResultsRenderer block={embeddedRich} sourcePreviews={sources} /></Suspense> : undefined;
-    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block && block.type !== 'rich-results' && block.type !== 'narrative' ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument, sources, afterIntro)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
+    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block && ['notice', 'status', 'error', 'empty-state'].includes(block.type) ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument, sources, afterIntro)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
   })}</section>;
 }

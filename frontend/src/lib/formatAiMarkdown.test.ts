@@ -35,22 +35,32 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /<h3/);
   assert.match(html, /<strong[^>]*>strong<\/strong>/);
   assert.match(html, /<em[^>]*>emphasized<\/em>/);
-  assert.match(html, /href="https:\/\/example\.com\/source"/);
+  assert.match(html, /href="https:\/\/example\.com\/source\?utm_source=xroga.com"/);
   assert.match(html, /language-ts/);
   assert.match(html, /const ready = true;/);
   assert.match(html, /<td[^>]*><\/td>/, 'the empty GFM cell must remain in the table');
   assert.doesNotMatch(html, /onerror|<img/);
 });
 
-test('long answers present the opening once as a brief lead while preserving sections', () => {
+test('long answers preserve the opening once without inventing a summary label', () => {
   const opening = 'The direct answer is to keep the existing connection and improve how its verified results are presented.';
   const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, {
     content: `${opening}\n\n## Details\n\n${'Evidence belongs beside the claim, with clear limits and no invented prices. '.repeat(9)}\n\n## Takeaway\n\nKeep the verified result.`,
   }));
-  assert.match(html, /The short answer/);
+  assert.doesNotMatch(html, /The short answer/);
   assert.match(html, /Details/);
   assert.match(html, /Takeaway/);
   assert.equal(html.split(opening).length - 1, 1, 'the lead must not be duplicated');
+});
+
+test('completion preserves streamed paragraph structure, punctuation and international text', () => {
+  const content = 'Exact value: 1.25 — range 2–4. اردو متن हिन्दी पाठ. ' + 'Keep `A. B` and [1] in their original paragraph. '.repeat(14);
+  const completed = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content }));
+  const streaming = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content, streaming: true }));
+  assert.equal(completed, streaming);
+  assert.match(completed, /1.25 — range 2–4/);
+  assert.match(completed, /اردو متن हिन्दी पाठ/);
+  assert.equal((completed.match(/<p[ >]/g) ?? []).length, 1);
 });
 
 test('dense legacy prose is divided into readable paragraphs without changing words or code', () => {
@@ -66,5 +76,5 @@ test('ordinary external links also get the compact resource-preview affordance',
   const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content: 'Read the [original guide](https://example.com/guide).' }));
   assert.match(html, /xv-resource-link/);
   assert.match(html, /Open link: original guide/);
-  assert.match(html, /href="https:\/\/example\.com\/guide"/);
+  assert.match(html, /href="https:\/\/example\.com\/guide\?utm_source=xroga.com"/);
 });

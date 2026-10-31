@@ -80,8 +80,12 @@ test('assistant response and execution evidence use the compact professional rea
   const uiverse = source('../../styles/uiverse.css');
   const sources = source('../../components/terminal/WebSourcesPanel.tsx');
 
-  assert.match(uiverse, /\.xv-response-text,[\s\S]*?\.xv-xroga-response[\s\S]*?font-size:\s*16px\s*!important/);
-  assert.match(uiverse, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-response-text,[\s\S]*?font-size:\s*17px\s*!important/);
+  const answer = source('../../styles/answerExperience.css');
+  assert.match(answer, /--answer-body:\s*1rem/);
+  assert.match(answer, /--answer-measure:\s*72ch/);
+  assert.match(answer, /font-size:\s*var\(--answer-body\)/);
+  assert.match(answer, /max-width:\s*639px[\s\S]*--answer-body:\s*\.9375rem/);
+  assert.doesNotMatch(uiverse, /\.xv-response-text,[\s\S]*?font-size:\s*17px\s*!important/);
   assert.match(uiverse, /\.xv-exec-header__state\s*\{[\s\S]*?font-size:\s*15px\s*!important/);
   assert.match(uiverse, /\.xv-exec-row-label\s*\{[\s\S]*?font-size:\s*13px\s*!important/);
   assert.match(uiverse, /\.xv-ai-output-block \.xv-response-surface\s*\{/);
