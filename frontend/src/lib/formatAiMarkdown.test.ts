@@ -35,7 +35,7 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /<h3/);
   assert.match(html, /<strong[^>]*>strong<\/strong>/);
   assert.match(html, /<em[^>]*>emphasized<\/em>/);
-  assert.match(html, /href="https:\/\/example\.com\/source"/);
+  assert.match(html, /href="https:\/\/example\.com\/source\?utm_source=xroga\.com"/);
   assert.match(html, /language-ts/);
   assert.match(html, /const ready = true;/);
   assert.match(html, /<td[^>]*><\/td>/, 'the empty GFM cell must remain in the table');
@@ -66,5 +66,5 @@ test('ordinary external links also get the compact resource-preview affordance',
   const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, { content: 'Read the [original guide](https://example.com/guide).' }));
   assert.match(html, /xv-resource-link/);
   assert.match(html, /Open link: original guide/);
-  assert.match(html, /href="https:\/\/example\.com\/guide"/);
+  assert.match(html, /href="https:\/\/example\.com\/guide\?utm_source=xroga\.com"/);
 });
