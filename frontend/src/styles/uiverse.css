@@ -6334,3 +6334,6 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 .xv-voice-capture-middle { display: flex; min-width: 0; height: 30px; align-items: center; color: var(--muted); }
 .xv-voice-live-wave { display: block; width: 100%; height: 100%; color: color-mix(in srgb, var(--foreground) 55%, var(--muted)); }
 .xv-voice-capture-label { font-size: 12px; font-weight: 500; color: color-mix(in srgb, var(--foreground) 80%, var(--muted)); padding-inline: 6px; }
+/* Same arrangement in right-to-left pages; finger-friendly without double-tap zoom. */
+.xv-voice-capture-bar { direction: ltr; }
+.xv-voice-capture-bar .xv-voice-capture-button { touch-action: manipulation; }

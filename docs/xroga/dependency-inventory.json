@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "adcfc53e2ec5710040fbee50d355c91926009f7b",
+  "source_sha": "c6b2f05ed5f07ee188bdbaa7afd29891070b584f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21399,7 +21399,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "07e2ab8504794e1316f4e932b422fe20c9ccc6659cdb1b083fccc580aecf008d"
+      "sha256": "bfad45774e4c9cba5da59da9711b9bd956a18357469def835e81c7165581d0b2"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
@@ -22467,7 +22467,7 @@
     },
     {
       "path": "frontend/src/lib/voiceCapture.ts",
-      "sha256": "7f8c3b44cee5c881e214a1792dcc1590a3131ef84974813015954e4363881d08"
+      "sha256": "43b394ec936088ee3de7aa7f29d09aed9a40e339dc1ae6e4ba1b28a6038edab0"
     },
     {
       "path": "frontend/src/lib/voiceDictation.ts",
@@ -22483,7 +22483,7 @@
     },
     {
       "path": "frontend/src/lib/voiceSegmenter.ts",
-      "sha256": "82a82cc0f56469442ede2894df3727538ae827c2f9fdd49b285d1cda46530cfc"
+      "sha256": "c73176a55e776661d1374be102e9b46b42fbd160122407941203a059408f5b47"
     },
     {
       "path": "frontend/src/lib/workLanes.ts",
