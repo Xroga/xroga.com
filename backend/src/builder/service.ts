@@ -319,7 +319,7 @@ export class BuilderService {
         throw new BuilderError('storage_failed', 'Stopping the build could not be saved. Try again.');
       }
     }
-    const result = await this.deps.store.cancelRun(userId, projectId, 'You stopped the build. Work saved before you stopped is kept.');
+    const result = await this.deps.store.cancelRun(userId, projectId, 'You stopped the build. Work saved before you stopped is kept.', active);
     if (!result) throw new BuilderError('not_found', 'Project not found.');
     return { cancelled: result.kind === 'cancelled', state: await this.getState(userId, projectId) };
   }

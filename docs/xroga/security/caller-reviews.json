@@ -9836,22 +9836,22 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
+      "sourceSha256": "5075ce93bb216850fb577a3b2dbd022dd71d334e568d433c56cda3be9131e26e",
       "callIds": [
-        "51d39f5c3f760ecb39f5",
-        "1a6139bdddedeb5a1795",
-        "9f2490f1e3f534dfadad",
-        "6886c922a4c101968be1",
-        "e1edc10f1751f85083d1",
-        "900357d31249946fc433",
-        "af707c4841d7baa8e560",
-        "8d5d6a62f2c9f72ef31b",
-        "d125622c64a6be11b20d",
-        "fd54c15c376787e27b0e",
-        "ab049c75d5786382eeb0",
-        "827cb3fd74d0a30e8688",
-        "b78ccfdb63b6748ca8b3",
-        "7b4686fd0573bfc6f051"
+        "249a22b64e973ab5de90",
+        "057985a02096f2ec40a1",
+        "3202eba1fdbfb28433e8",
+        "a1e4e230ec3ba476e363",
+        "0500524a31b18caa260c",
+        "39793eff48e85bc33235",
+        "68dfb2d5d896b0324b9e",
+        "e4caf0b60364cb09d3af",
+        "6b1e13520b33c1178864",
+        "296cf791da2edc989fce",
+        "702b63edd738f3b1873a",
+        "920bc039678be02f033d",
+        "8f3534e8f46f646e0d61",
+        "2505468ec09cb187b08d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
@@ -9891,10 +9891,10 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
+      "sourceSha256": "5075ce93bb216850fb577a3b2dbd022dd71d334e568d433c56cda3be9131e26e",
       "callIds": [
-        "ba63cf83b819157deec5",
-        "aad7490a26c83a07f018"
+        "30190ae5483d92f94a78",
+        "387ca164f4895e7daed1"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",
