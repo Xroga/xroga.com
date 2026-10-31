@@ -67,6 +67,7 @@ flowchart LR
   endpoint_developer_apple_com["Source-defined endpoint developer.apple.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developer_chrome_com["Source-defined endpoint developer.chrome.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developer_godaddy_com["Source-defined endpoint developer.godaddy.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_developer_mozilla_org["Source-defined endpoint developer.mozilla.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_brevo_com["Source-defined endpoint developers.brevo.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_cloudflare_com["Source-defined endpoint developers.cloudflare.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_google_com["Source-defined endpoint developers.google.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -255,6 +256,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_developer_apple_com
   frontend -. "source host/reference; unverified" .-> endpoint_developer_chrome_com
   api -. "source host/reference; unverified" .-> endpoint_developer_godaddy_com
+  frontend -. "source host/reference; unverified" .-> endpoint_developer_mozilla_org
   frontend -. "source host/reference; unverified" .-> endpoint_developers_brevo_com
   api -. "source host/reference; unverified" .-> endpoint_developers_cloudflare_com
   frontend -. "source host/reference; unverified" .-> endpoint_developers_google_com

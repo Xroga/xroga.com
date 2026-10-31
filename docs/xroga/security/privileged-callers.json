@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3e23d6e5e243b81b834154491c331f7c8f5e1f6f6bd9fa18fc7ee775ffb96b3e",
+  "reviewRegistrySha256": "b2885d1a828c829775e75fafeaba0a8a2111d2066b0a148b15db75a79f182801",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 917,
+    "persistenceCandidates": 918,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 121,
-    "reviewedCandidates": 796,
+    "reviewedCandidates": 797,
     "unresolvedSafetyCandidates": 154,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 121,
-    "SCOPED_BOUNDARY": 520,
+    "SCOPED_BOUNDARY": 521,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 203,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 835,
+    "unresolvedCandidateBoundaries": 836,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -5572,6 +5572,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "acf62cadb93d2dd4a3af"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "2922acfd42156496680f"
       },
       {
@@ -5632,7 +5636,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "de5d65e2da91e7b0a418"
+        "id": "4fe92c7afdea034fa58b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5660,7 +5664,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f40cf50a136b33e64174"
+        "id": "cdc742944930c390a470"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6272,7 +6276,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "de5d65e2da91e7b0a418"
+        "id": "4fe92c7afdea034fa58b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -9008,6 +9012,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "acf62cadb93d2dd4a3af"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "83779ac5d4b86b4ed00a"
       },
       {
@@ -9068,7 +9076,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f40cf50a136b33e64174"
+        "id": "cdc742944930c390a470"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9085,11 +9093,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 917,
+    "currentCallers": 918,
     "structuredVerified": 82,
-    "structuredUnproven": 835,
+    "structuredUnproven": 836,
     "manualUnresolved": 154,
-    "manualUnsupported": 681,
+    "manualUnsupported": 682,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
@@ -27875,6 +27883,31 @@
       }
     },
     {
+      "id": "acf62cadb93d2dd4a3af",
+      "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+      "line": 21,
+      "enclosing": "WorkspacePage",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8",
+      "semanticReview": {
+        "authority": "Request-scoped SSR public client retains authenticated cookie identity. No-argument current_community_role reads only auth.uid role. Verified confirmed founder, owner role and AAL2 are required before returning the opt-in founder ID. No customer-data query, mutation, service-role access or action approval is introduced.",
+        "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+            "marker": "client.rpc('current_community_role')"
+          },
+          {
+            "path": "frontend/src/components/response-experience-v2/document.test.ts",
+            "marker": "server flag, opt-in, confirmed founder role and MFA all required"
+          }
+        ]
+      }
+    },
+    {
       "id": "83779ac5d4b86b4ed00a",
       "path": "frontend/src/app/admin/community/page.tsx",
       "line": 14,
@@ -28896,7 +28929,7 @@
       }
     },
     {
-      "id": "de5d65e2da91e7b0a418",
+      "id": "4fe92c7afdea034fa58b",
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
       "line": 57,
       "enclosing": "ResponseSources",
@@ -28904,7 +28937,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ad90f5eb688b6cb0cc72fa129cd1c2a27a2fc1d9caaadef64cfc7a26577acfb9"
+      "sourceSha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
     },
     {
       "id": "01fce3ee8703d9146072",
@@ -29133,7 +29166,7 @@
       }
     },
     {
-      "id": "f40cf50a136b33e64174",
+      "id": "cdc742944930c390a470",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 635,
       "enclosing": "decodeBase64UrlUtf8",
@@ -29141,7 +29174,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+      "sourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",

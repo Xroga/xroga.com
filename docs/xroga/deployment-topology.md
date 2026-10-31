@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `fe2c6486f4c60fae0757f79a535f43286ee4a02f`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `20577c898baa10220f689456275b69f5742c7b78`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -71,6 +71,7 @@ Source SHA: `fe2c6486f4c60fae0757f79a535f43286ee4a02f`; exact current source/con
 | endpoint-developer-apple-com | Source-defined endpoint developer.apple.com | CONFIGURED_BUT_UNVERIFIED | developer.apple.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-chrome-com | Source-defined endpoint developer.chrome.com | CONFIGURED_BUT_UNVERIFIED | developer.chrome.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-godaddy-com | Source-defined endpoint developer.godaddy.com | CONFIGURED_BUT_UNVERIFIED | developer.godaddy.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-developer-mozilla-org | Source-defined endpoint developer.mozilla.org | CONFIGURED_BUT_UNVERIFIED | developer.mozilla.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-brevo-com | Source-defined endpoint developers.brevo.com | CONFIGURED_BUT_UNVERIFIED | developers.brevo.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-cloudflare-com | Source-defined endpoint developers.cloudflare.com | CONFIGURED_BUT_UNVERIFIED | developers.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-google-com | Source-defined endpoint developers.google.com | CONFIGURED_BUT_UNVERIFIED | developers.google.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -230,4 +231,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-902 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+908 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

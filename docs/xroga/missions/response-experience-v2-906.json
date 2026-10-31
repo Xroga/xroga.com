@@ -24,7 +24,11 @@
     "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
     "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
     "frontend/src/components/response-experience-v2/ReviewPanelV2.tsx",
-    "frontend/src/components/response-experience-v2/specimens.ts"
+    "frontend/src/components/response-experience-v2/specimens.ts",
+    "frontend/package.json",
+    "package-lock.json",
+    "frontend/src/components/response-experience-v2/mathSyntax.ts",
+    "frontend/src/components/response-experience-v2/mathSyntax.test.ts"
   ],
   "decisions": {
     "keep": [
@@ -44,8 +48,8 @@
   },
   "securityImpact": {
     "auth": {
-      "changed": false,
-      "description": "Existing boundary preserved, no provider calls or authorization change."
+      "changed": true,
+      "description": "New presentation opt-in reuses canonical confirmed founder, owner role and AAL2 checks. No authorization expansion. Denial preserves original renderer."
     },
     "tenant": {
       "changed": false,
@@ -74,9 +78,9 @@
   },
   "tests": [
     {
-      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/document.test.ts",
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/document.test.ts frontend/src/components/response-experience-v2/mathSyntax.test.ts",
       "negative": true,
-      "scope": "13 focused adapter, input, calculator and founder-policy tests passed. Browser acceptance pending.",
+      "scope": "15 focused adapter, input, calculator, founder-policy and standard math parser tests passed. Browser acceptance pending.",
       "reference": "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
     }
   ],

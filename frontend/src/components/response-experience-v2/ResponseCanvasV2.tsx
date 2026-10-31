@@ -16,8 +16,8 @@ function NodeView({ node, document }: { node: ResponseNodeV2; document: Response
     case 'code': return <><h3 className={styles.blockTitle}>{node.title}</h3><CodeV2 text={node.text} language={node.language} /></>;
     case 'table': return <Table node={node} />;
     case 'chart': return <Chart node={node} />;
-    case 'calculator': return <Calculator node={node} />;
-    case 'tabs': return <Tabs node={node} />;
+    case 'calculator': return <Calculator key={JSON.stringify([node.operation, node.inputs])} node={node} />;
+    case 'tabs': return <Tabs key={JSON.stringify(node.items.map(item => item.id))} node={node} />;
     case 'graph': return <Graph node={node} />;
     case 'citation': return <details className={styles.source}><summary>{node.label}</summary>{node.excerpt && <p>{node.excerpt}</p>}{safeLinkV2(node.url) ? <a href={safeLinkV2(node.url)} target="_blank" rel="noopener noreferrer">Open source <ExternalLink size={14} /></a> : <p>Source URL unavailable.</p>}</details>;
     case 'metrics': return <dl className={styles.metrics}>{node.items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value == null ? 'Unavailable' : String(item.value)}{item.unit ? ` ${item.unit}` : ''}</dd></div>)}</dl>;

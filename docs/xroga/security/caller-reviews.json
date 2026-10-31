@@ -17421,9 +17421,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+      "sourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
       "callIds": [
-        "f40cf50a136b33e64174"
+        "cdc742944930c390a470"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28308,6 +28308,26 @@
         {
           "path": "backend/src/routes/voiceFree.ts",
           "marker": "Buffer.from(req.body)"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+      "sourceSha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8",
+      "callIds": [
+        "acf62cadb93d2dd4a3af"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Request-scoped SSR public client retains authenticated cookie identity. No-argument current_community_role reads only auth.uid role. Verified confirmed founder, owner role and AAL2 are required before returning the opt-in founder ID. No customer-data query, mutation, service-role access or action approval is introduced.",
+      "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+          "marker": "client.rpc('current_community_role')"
+        },
+        {
+          "path": "frontend/src/components/response-experience-v2/document.test.ts",
+          "marker": "server flag, opt-in, confirmed founder role and MFA all required"
         }
       ]
     }

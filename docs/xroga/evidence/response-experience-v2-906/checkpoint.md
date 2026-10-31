@@ -18,10 +18,12 @@ The founder review panel contains clearly labelled deterministic examples inside
 
 ## Verification
 
-- 13 focused tests PASS, job d056b11a-4bf9-4916-ac03-d4eada3e9995.
-- Initial V2 frontend typecheck PASS, job 7ad824ce-24fa-4be6-a948-ad259c253448. Later additions still need final typecheck.
+- 15 focused tests PASS, latest job 61e13cc2-1443-432c-9385-a8deaed2844c.
+- V2 frontend typecheck PASS, latest job 583e0138-7a41-4c01-97d9-7034f8564c3d.
 - Payload size/depth, unsafe URLs, prototype keys, malformed output, duplicate IDs, graph edges, numeric chart values, local calculation limits and founder-policy negative cases tested.
-- No legacy renderer internals or styles changed. No new dependency or lockfile change.
+- No legacy renderer internals or styles changed. Pinned remark-math 6.0.0 parses math rather than a custom parser. Currency and code remain intact. Existing dependency security patches PASS, job a5cdfcf6-8f66-418e-9879-b527df3cd0e3.
+- Initial Preview build, deterministic golden, static contracts and mission CI passed at 20577c89. Unit/integrated/database workflows stopped on stale baseline source inventory/review bindings, before their acceptance tests. Reviewed binding repair and generated inventory are included in the follow-up, with no evaluator change.
+- Founder reported sign-in completed. Workspace loads authenticated, but V2 is not visible yet. Added an opt-in-only denial reason to distinguish identity, role and assurance failures without weakening the gate. No live V2 acceptance claimed.
 
 ## Remaining acceptance work
 
