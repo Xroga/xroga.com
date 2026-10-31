@@ -1,0 +1,23 @@
+{
+  "scope": "Existing native Uint8Array conversion only. No new security acceptance.",
+  "source": "a32411faf92747a083701d03c7863fc092bc2fd2",
+  "baseline": "0d270ec69bdcf130ff85ce27f524e1d0d1e59e23",
+  "rebound": [
+    {
+      "path": "frontend/src/lib/formatAiMarkdown.tsx",
+      "originalCallIds": [
+        "f40cf50a136b33e64174"
+      ],
+      "integratedCallIds": [
+        "cdc742944930c390a470"
+      ],
+      "originalSourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+      "integratedSourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
+      "unchangedFunctionSha256": [
+        "6ec75e19c4a80af8ab4ceafca3da5895fe75d7950d832bda437f3539967cb5f0"
+      ],
+      "reviewedChangedFunctions": [],
+      "scope": "ONLY_BYTE_IDENTICAL_NATIVE_ARRAY_CONVERSION_NOT_SECURITY_CERTIFICATION"
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Link from 'next/link';
+import { DRIVE_ENABLED } from '@/lib/driveApi';
 import { ArrowUpRight, Bot, Bug, Check, ChevronRight, Command, FolderOpen, Globe2, Library, ListChecks, Paperclip, Plus, Puzzle, ScrollText, Sparkles, TerminalSquare, Workflow, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
@@ -279,6 +281,11 @@ export function ChatBarActionsMenu({
                 <button type="button" onClick={() => setOpen(false)} aria-label="Close"><X className="h-3.5 w-3.5" aria-hidden="true" /></button>
               </div>
               <p className="xv-cba-note">{activeWork.description} Choose an example to edit. Nothing runs until you send.</p>
+              {activeWork.id === 'library' && DRIVE_ENABLED && <Link href="/drive" className="xv-cba-item" onClick={() => setOpen(false)}>
+                <Library className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text"><b>Open Xroga Drive</b><i>Upload, download and manage your private files.</i></span>
+                <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              </Link>}
               <div className="xv-cba-command-list" role="group" aria-label={activeWork.label + ' examples'}>
                 {activeWork.examples.map(([label, prompt]) => (
                   <button key={label} type="button" className="xv-cba-item xv-cba-work-example"

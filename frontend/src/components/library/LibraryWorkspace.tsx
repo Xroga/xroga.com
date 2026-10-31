@@ -11,13 +11,14 @@ import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityConte
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import styles from './LibraryWorkspace.module.css';
 import { LibraryFilePreview } from './LibraryFilePreview';
+import { DRIVE_ENABLED } from '@/lib/driveApi';
 
 const sections = [
   { id: 'my-files', label: 'My Files', icon: FolderOpen, summary: 'Browse files already saved to a Xroga project.' },
   { id: 'artifacts', label: 'Artifacts', icon: FileText, summary: 'Find saved documents and other non-code project files.' },
   { id: 'templates', label: 'Templates', icon: Layers3, summary: 'Start from a real, interactive Xroga Showcase template.' },
   { id: 'skills', label: 'Skills', icon: Sparkles, summary: 'Turn on reusable instructions for your next prompt.' },
-  { id: 'xroga-drive', label: 'Xroga Drive', icon: HardDrive, summary: 'Durable private storage is planned, but not available yet.' },
+  { id: 'xroga-drive', label: 'Xroga Drive', icon: HardDrive, summary: DRIVE_ENABLED ? 'Upload and retrieve files in your private Xroga Drive.' : 'Private storage is not enabled on this deployment.' },
 ] as const;
 type SectionId = (typeof sections)[number]['id'];
 const isSection = (value: string): value is SectionId => sections.some(section => section.id === value);
@@ -80,10 +81,10 @@ function AccountLibraryWorkspace() {
     <main className={styles.root}>
       <header className={styles.hero}>
         <div className={styles.heroIcon}><BookOpen size={21} aria-hidden="true" /></div>
-        <div><p className={styles.eyebrow}>WORKSPACE LIBRARY</p><h1>Everything worth keeping.</h1><p className={styles.heroCopy}>Project files, saved results, templates and reusable skills in one calm place. Your project files still live under Projects; Xroga Drive is planned.</p></div>
+        <div><p className={styles.eyebrow}>WORKSPACE LIBRARY</p><h1>Everything worth keeping.</h1><p className={styles.heroCopy}>Project files, saved results, templates and reusable skills in one calm place. Your project files still live under Projects.{DRIVE_ENABLED ? ' Xroga Drive stores your private uploads.' : ''}</p></div>
       </header>
       <nav className={styles.tabs} aria-label="Library sections">
-        {sections.map(item => { const Icon = item.icon; return <a key={item.id} href={`#${item.id}`} aria-current={section === item.id ? 'page' : undefined} className={section === item.id ? styles.activeTab : ''} onClick={() => { setSection(item.id); setSearch(''); setSelectedFile(null); }}><Icon size={15} aria-hidden="true" />{item.label}{item.id === 'xroga-drive' && <span className={styles.soon}>Soon</span>}</a>; })}
+        {sections.map(item => { const Icon = item.icon; return <a key={item.id} href={`#${item.id}`} aria-current={section === item.id ? 'page' : undefined} className={section === item.id ? styles.activeTab : ''} onClick={() => { setSection(item.id); setSearch(''); setSelectedFile(null); }}><Icon size={15} aria-hidden="true" />{item.label}{item.id === 'xroga-drive' && !DRIVE_ENABLED && <span className={styles.soon}>Soon</span>}</a>; })}
       </nav>
       <section className={styles.section} aria-labelledby="library-section-title">
         <div className={styles.sectionHead}><div className={styles.sectionIdentity}><span className={styles.sectionIcon}><CurrentIcon size={19} aria-hidden="true" /></span><div><p className={styles.eyebrow}>LIBRARY / {current.label.toUpperCase()}</p><h2 id="library-section-title">{current.label}</h2><p>{current.summary}</p></div></div>{section === 'templates' && <Link href="/showcase" className={styles.textLink}>Full Showcase <ArrowUpRight size={14} /></Link>}</div>
@@ -109,7 +110,8 @@ function AccountLibraryWorkspace() {
 
         {section === 'skills' && <><p className={styles.sourceNote}>These instruction packs are saved in this browser and attached to your next Workspace prompt. They do not install external tools or run on their own.</p><div className={styles.skillGrid}>{visibleSkills.map(skill => { const enabled = hydrated && enabledSkills.includes(skill.id); return <article key={skill.id} className={styles.skillCard}><span className={styles.skillIcon}><Sparkles size={18} /></span><div><h3>{skill.label}</h3><p>{skill.description}</p><button type="button" aria-pressed={enabled} className={enabled ? styles.enabledButton : styles.enableButton} onClick={() => toggleSkill(skill.id)}>{enabled ? <><Check size={14} /> Enabled</> : 'Enable for prompts'}</button></div></article>; })}</div>{!visibleSkills.length && <Empty icon={Sparkles} title="No matching skills" copy="Try a different search." action={<button type="button" onClick={() => setSearch('')}>Clear search</button>} />}</>}
 
-        {section === 'xroga-drive' && <div className={styles.drive}><span className={styles.driveOrbit}><Cloud size={30} /></span><span className={styles.soon}>PLANNED</span><h3>A home for work beyond a project.</h3><p>Xroga Drive is intended to hold durable private files across workspaces. It has no upload, sync or storage API yet, so there is nothing to connect or turn on here today.</p><div className={styles.driveSteps}><span><Check size={15} /> Project files are available now</span><span><Cloud size={15} /> Cross-project private storage is planned</span></div><Link href="/dashboard/projects">Browse your Projects <ArrowRight size={15} /></Link></div>}
+        {section === 'xroga-drive' && DRIVE_ENABLED && <div className={styles.drive}><span className={styles.driveOrbit}><Cloud size={30} /></span><h3>Your private Xroga Drive</h3><p>Upload files, check their storage status and retrieve them from your account. Files stay private and are verified before being marked stored.</p><Link href="/drive">Open Xroga Drive <ArrowRight size={15} /></Link></div>}
+        {section === 'xroga-drive' && !DRIVE_ENABLED && <div className={styles.drive}><span className={styles.driveOrbit}><Cloud size={30} /></span><span className={styles.soon}>PLANNED</span><h3>A home for work beyond a project.</h3><p>Private Drive storage is not enabled on this deployment. Your existing project files remain available under Projects.</p><div className={styles.driveSteps}><span><Check size={15} /> Project files are available now</span><span><Cloud size={15} /> Private storage is disabled here</span></div><Link href="/dashboard/projects">Browse your Projects <ArrowRight size={15} /></Link></div>}
       </section>
       <footer className={styles.footer}><span>Library surfaces only saved account data and existing features.</span><Link href="/workspace">Return to Workspace <ArrowRight size={14} /></Link></footer>
     </main>
