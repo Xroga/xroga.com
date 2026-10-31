@@ -3,7 +3,7 @@
 import { ExternalLink, Play } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { safeSourceUrl } from '@/lib/xrogaCitations';
+import { safeSourceUrl, sourceClickUrl } from '@/lib/xrogaCitations';
 
 export interface WebSourceItem {
   title: string;
@@ -45,7 +45,7 @@ function SourceCard({ item, number }: { item: WebSourceItem; number: number }) {
 
   return (
     <a
-      href={safeSourceUrl(item.url) ?? undefined}
+      href={sourceClickUrl(item.url) ?? undefined}
       target="_blank"
       rel="noopener noreferrer"
       className="xv-web-source-card group flex gap-4 rounded-xl border border-[var(--card-border)]/80 bg-[var(--card)]/70 p-4 hover:border-[var(--accent)]/45 hover:bg-[var(--accent)]/[0.04] transition-all shadow-sm"
