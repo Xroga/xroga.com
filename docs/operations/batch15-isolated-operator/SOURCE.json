@@ -1,0 +1,11 @@
+{
+  "applicationSource": "8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+  "applicationPr": 899,
+  "approvalCommit": "fa9e90d62f92a1961983d0b7e1f3cd2fa6836d6c",
+  "packageSha256": "62d2d10a6b8d170cccd9cb3939c74547916cb8de8d2967e222db2bc16a3967d5",
+  "approvalRecorded": true,
+  "clockStarted": false,
+  "productionSqlApproved": false,
+  "productionActivationByThisWindow": false,
+  "operatorPhase": "PREPARE_BUILD_TRANSPORT_ONLY"
+}

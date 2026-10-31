@@ -1,0 +1,105 @@
+{
+  "serviceAccount": "projects/project-c40d4821-e647-4fa2-92d/serviceAccounts/574998934848-compute@developer.gserviceaccount.com",
+  "timeout": "1800s",
+  "queueTtl": "600s",
+  "options": {
+    "logging": "CLOUD_LOGGING_ONLY"
+  },
+  "tags": [
+    "xroga-b15-isolated-20261031",
+    "8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2"
+  ],
+  "steps": [
+    {
+      "name": "gcr.io/cloud-builders/git",
+      "args": [
+        "init",
+        "/workspace/src"
+      ]
+    },
+    {
+      "name": "gcr.io/cloud-builders/git",
+      "args": [
+        "-C",
+        "/workspace/src",
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/Xroga/xroga.com.git"
+      ]
+    },
+    {
+      "name": "gcr.io/cloud-builders/git",
+      "args": [
+        "-C",
+        "/workspace/src",
+        "fetch",
+        "--depth",
+        "1",
+        "origin",
+        "8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2"
+      ]
+    },
+    {
+      "name": "gcr.io/cloud-builders/git",
+      "args": [
+        "-C",
+        "/workspace/src",
+        "checkout",
+        "--detach",
+        "8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2"
+      ]
+    },
+    {
+      "name": "gcr.io/cloud-builders/docker",
+      "dir": "src",
+      "args": [
+        "build",
+        "--build-arg",
+        "XROGA_RELEASE_SHA=8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+        "-f",
+        "Dockerfile.api",
+        "-t",
+        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-api-stage:8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+        "."
+      ]
+    },
+    {
+      "name": "gcr.io/cloud-builders/docker",
+      "dir": "src/deploy/browser-worker",
+      "args": [
+        "build",
+        "--label",
+        "org.opencontainers.image.revision=8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+        "-t",
+        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-browser-stage:8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+        "."
+      ]
+    },
+    {
+      "name": "node:22.21.1-bookworm-slim",
+      "dir": "src",
+      "entrypoint": "bash",
+      "args": [
+        "-ceu",
+        "npm ci --ignore-scripts --no-audit --no-fund\nnode --input-type=module - <<'XROGA_BUNDLE'\nimport {build} from 'esbuild';\nimport {mkdirSync,copyFileSync} from 'node:fs';\nmkdirSync('/workspace/proxy/dist',{recursive:true});\nawait build({entryPoints:['backend/src/workers/proxySidecar.ts'],outfile:'/workspace/proxy/dist/egress-proxy-sidecar.mjs',bundle:true,platform:'node',format:'esm',target:'node22',logLevel:'warning',banner:{js:'import { createRequire as __cr } from \"node:module\"; const require = __cr(import.meta.url);'}});\ncopyFileSync('deploy/browser-worker/Dockerfile.proxy','/workspace/proxy/Dockerfile');\nXROGA_BUNDLE"
+      ]
+    },
+    {
+      "name": "gcr.io/cloud-builders/docker",
+      "args": [
+        "build",
+        "--label",
+        "org.opencontainers.image.revision=8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+        "-t",
+        "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-proxy-stage:8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+        "/workspace/proxy"
+      ]
+    }
+  ],
+  "images": [
+    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-api-stage:8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-browser-stage:8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2",
+    "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-b15-proxy-stage:8a35ae3e63b92ebde7fa5aeef26ea2d82b4bdbb2"
+  ]
+}
