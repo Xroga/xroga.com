@@ -4166,45 +4166,7 @@ body.theme-black .xv-sidebar-root {
   20% { transform: scale(1.2); }
 }
 
-/* Assistant answer typography stays comfortable on narrow and wide screens. */
-.xv-response-text,
-.xv-xroga-response,
-.xv-response-text .xv-formatted-response,
-.xv-xroga-response .xv-formatted-response {
-  font-size: 16px !important;
-  line-height: 1.6 !important;
-}
-.xv-response-text :where(p, li, blockquote, td, th),
-.xv-xroga-response :where(p, li, blockquote, td, th) {
-  font-size: inherit !important;
-  line-height: inherit !important;
-}
-.xv-xroga-response h2,
-.xv-xroga-response .xv-headline,
-.xv-response-text h3:first-child {
-  font-size: clamp(1.08rem, 2.2vw, 1.28rem) !important;
-  line-height: 1.28 !important;
-  letter-spacing: -.018em;
-}
-.xv-xroga-response h3,
-.xv-response-text h4 {
-  font-size: clamp(1rem, 1.8vw, 1.14rem) !important;
-  line-height: 1.32 !important;
-}
-.xv-xroga-response h4,
-.xv-response-text h5 {
-  font-size: .95rem !important;
-  line-height: 1.35 !important;
-}
-
-@media (min-width: 640px) {
-  .xv-response-text,
-  .xv-xroga-response,
-  .xv-response-text .xv-formatted-response,
-  .xv-xroga-response .xv-formatted-response {
-    font-size: 17px !important;
-  }
-}
+/* Assistant prose typography is owned by answerExperience.css. */
 
 /* Execution evidence uses the same compact hierarchy as the answer. */
 .xv-exec-trace {
@@ -4362,12 +4324,6 @@ body.theme-black .xv-sidebar-root {
 }
 
 @media (max-width: 639px) {
-  .xv-response-text,
-  .xv-xroga-response,
-  .xv-response-text .xv-formatted-response,
-  .xv-xroga-response .xv-formatted-response {
-    font-size: 15px !important;
-  }
   .xv-exec-request__text {
     font-size: 14px;
   }

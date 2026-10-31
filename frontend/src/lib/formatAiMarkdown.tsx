@@ -1749,9 +1749,11 @@ export function FormattedAiMarkdown({
   sources?: CitationSource[];
   afterIntro?: React.ReactNode;
 }) {
-  const normalized = streaming ? content.replace(/\r\n/g, '\n') : structureLongProse(content.replace(/\r\n/g, '\n'));
+  // Keep streamed and completed text identical. Sentence heuristics can split
+  // inline code, citations and international prose, and cause completion reflow.
+  const normalized = content.replace(/\r\n/g, '\n');
   const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
-  const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
+  const lead = afterIntro && !streaming && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
   const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];
   const introCount = introParts.length > 1 && /^#{1,2}\s/.test(introParts[0]) && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[1]) ? 2 : introParts.length > 1 && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[0]) ? 1 : 0;
   const introMarkdown = introCount ? introParts.slice(0, introCount).join('\n\n') : null;
@@ -1781,7 +1783,7 @@ export function FormattedAiMarkdown({
         className,
       )}
     >
-      {lead ? <div className="xv-answer-lead"><span className="xv-answer-lead__label">The short answer</span><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
+      {lead ? <div className="xv-answer-lead"><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
       {introMarkdown ? <ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{introMarkdown}</ReactMarkdown> : null}
       {afterIntro && lead ? afterIntro : null}
       {afterIntro && !lead ? <div className="xv-answer-intro-card">{afterIntro}</div> : null}
