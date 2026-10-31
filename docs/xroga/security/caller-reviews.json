@@ -17421,9 +17421,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+      "sourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
       "callIds": [
-        "f40cf50a136b33e64174"
+        "cdc742944930c390a470"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -28308,6 +28308,42 @@
         {
           "path": "backend/src/routes/voiceFree.ts",
           "marker": "Buffer.from(req.body)"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+      "sourceSha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195",
+      "callIds": [
+        "16c2383298e67ee3f47a"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Request-scoped SSR public client retains verified cookie identity. The no-argument current_community_role reads only auth.uid role for the unchanged founder owner/AAL2 review gate. Explicit authenticated/canary presentation mode uses server getUser and grants no role, data, or execution access. No customer-data query, mutation or service-role access is introduced.",
+      "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+          "marker": "client.rpc('current_community_role')"
+        },
+        {
+          "path": "frontend/src/components/response-experience-v2/document.test.ts",
+          "marker": "server flag, opt-in, confirmed founder role and MFA all required"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+      "sourceSha256": "aa002825ed5550011ed1584d1d23c6c6f78da42fc70005a1c0038144e0e73cfe",
+      "callIds": [
+        "637d9bad8b881a1fed33"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
+      "reason": "Reviewed exact receiver and surrounding data flow. This is local chart data derivation, not a database or bucket call. No upstream authorization or persistence boundary is certified.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+          "marker": "Array.from({ length: 21 }"
         }
       ]
     }

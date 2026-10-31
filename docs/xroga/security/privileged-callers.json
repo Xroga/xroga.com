@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3e23d6e5e243b81b834154491c331f7c8f5e1f6f6bd9fa18fc7ee775ffb96b3e",
+  "reviewRegistrySha256": "717e94e00b4f1514127fd06e9f1e9eb2e9ed81a728a5d24235796069a7deb1fe",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 917,
+    "persistenceCandidates": 919,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 121,
-    "reviewedCandidates": 796,
+    "reviewedCandidates": 798,
     "unresolvedSafetyCandidates": 154,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 121,
-    "SCOPED_BOUNDARY": 520,
+    "SCOPED_BOUNDARY": 521,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 203,
+    "NOT_PERSISTENCE": 204,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 835,
+    "unresolvedCandidateBoundaries": 837,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -5572,6 +5572,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "16c2383298e67ee3f47a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "2922acfd42156496680f"
       },
       {
@@ -5628,11 +5632,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "637d9bad8b881a1fed33"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "8204b932fb1d657bcf51"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "de5d65e2da91e7b0a418"
+        "id": "4fe92c7afdea034fa58b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5660,7 +5668,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f40cf50a136b33e64174"
+        "id": "cdc742944930c390a470"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6272,7 +6280,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "de5d65e2da91e7b0a418"
+        "id": "4fe92c7afdea034fa58b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -9008,6 +9016,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "16c2383298e67ee3f47a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "83779ac5d4b86b4ed00a"
       },
       {
@@ -9048,6 +9060,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "637d9bad8b881a1fed33"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "8204b932fb1d657bcf51"
       },
       {
@@ -9068,7 +9084,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f40cf50a136b33e64174"
+        "id": "cdc742944930c390a470"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9085,11 +9101,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 917,
+    "currentCallers": 919,
     "structuredVerified": 82,
-    "structuredUnproven": 835,
+    "structuredUnproven": 837,
     "manualUnresolved": 154,
-    "manualUnsupported": 681,
+    "manualUnsupported": 683,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
@@ -27875,6 +27891,31 @@
       }
     },
     {
+      "id": "16c2383298e67ee3f47a",
+      "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+      "line": 25,
+      "enclosing": "WorkspacePage",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "adbcbb1f07739cc85785e64c37c89d02fb26a602f29e42f10b49e69825a64195",
+      "semanticReview": {
+        "authority": "Request-scoped SSR public client retains verified cookie identity. The no-argument current_community_role reads only auth.uid role for the unchanged founder owner/AAL2 review gate. Explicit authenticated/canary presentation mode uses server getUser and grants no role, data, or execution access. No customer-data query, mutation or service-role access is introduced.",
+        "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/(workspace)/workspace/page.tsx",
+            "marker": "client.rpc('current_community_role')"
+          },
+          {
+            "path": "frontend/src/components/response-experience-v2/document.test.ts",
+            "marker": "server flag, opt-in, confirmed founder role and MFA all required"
+          }
+        ]
+      }
+    },
+    {
       "id": "83779ac5d4b86b4ed00a",
       "path": "frontend/src/app/admin/community/page.tsx",
       "line": 14,
@@ -28770,6 +28811,27 @@
       }
     },
     {
+      "id": "637d9bad8b881a1fed33",
+      "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+      "line": 15,
+      "enclosing": "CalculatorV2",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "aa002825ed5550011ed1584d1d23c6c6f78da42fc70005a1c0038144e0e73cfe",
+      "semanticReview": {
+        "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
+        "reason": "Reviewed exact receiver and surrounding data flow. This is local chart data derivation, not a database or bucket call. No upstream authorization or persistence boundary is certified.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+            "marker": "Array.from({ length: 21 }"
+          }
+        ]
+      }
+    },
+    {
       "id": "834dfeacf2127b255bdd",
       "path": "frontend/src/components/showcase/ShowcaseBrowser.tsx",
       "line": 46,
@@ -28896,7 +28958,7 @@
       }
     },
     {
-      "id": "de5d65e2da91e7b0a418",
+      "id": "4fe92c7afdea034fa58b",
       "path": "frontend/src/components/terminal/ResponseSources.tsx",
       "line": 57,
       "enclosing": "ResponseSources",
@@ -28904,7 +28966,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ad90f5eb688b6cb0cc72fa129cd1c2a27a2fc1d9caaadef64cfc7a26577acfb9"
+      "sourceSha256": "0fd186c17e5d8ab081a61db58f16e171de43d5d8cc66727caccab5245f1a5fc7"
     },
     {
       "id": "01fce3ee8703d9146072",
@@ -29133,7 +29195,7 @@
       }
     },
     {
-      "id": "f40cf50a136b33e64174",
+      "id": "cdc742944930c390a470",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 635,
       "enclosing": "decodeBase64UrlUtf8",
@@ -29141,7 +29203,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
+      "sourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",

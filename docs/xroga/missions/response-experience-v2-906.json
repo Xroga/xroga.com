@@ -1,0 +1,121 @@
+{
+  "version": "1.0",
+  "missionId": "RESPONSE-EXPERIENCE-V2-906",
+  "baseSha": "0d270ec69bdcf130ff85ce27f524e1d0d1e59e23",
+  "requirementIds": [
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "low",
+  "scope": "Independent response V2 with complete visible answers and source-backed rich presentation. Founder-authorized controlled authenticated-user rollout. Legacy renderer retained.",
+  "changedFiles": [
+    "frontend/src/app/(workspace)/workspace/page.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/response-experience-v2/access.ts",
+    "frontend/src/components/response-experience-v2/calculations.ts",
+    "frontend/src/components/response-experience-v2/ChartV2.tsx",
+    "frontend/src/components/response-experience-v2/DataV2.tsx",
+    "frontend/src/components/response-experience-v2/document.test.ts",
+    "frontend/src/components/response-experience-v2/document.ts",
+    "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+    "frontend/src/components/response-experience-v2/MathV2.tsx",
+    "frontend/src/components/response-experience-v2/ProseV2.tsx",
+    "frontend/src/components/response-experience-v2/response-v2.module.css",
+    "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
+    "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
+    "frontend/src/components/response-experience-v2/specimens.ts",
+    "frontend/package.json",
+    "package-lock.json",
+    "frontend/src/components/response-experience-v2/mathSyntax.ts",
+    "frontend/src/components/response-experience-v2/mathSyntax.test.ts",
+    "frontend/package-lock.json",
+    "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
+    "frontend/src/components/response-experience-v2/review/review.css",
+    "scripts/xroga/response-v2-preview.mjs",
+    "frontend/src/components/response-experience-v2/SourceV2.tsx",
+    "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
+    "frontend/src/lib/formatAiMarkdown.test.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Legacy renderer untouched as fallback, existing streaming and persistence, production unchanged"
+    ],
+    "extend": [
+      "Read-only presentation audience and existing Workspace streaming contract"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No schema changes",
+    "rollback": "Restore previous frontend"
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Server getUser validates the session for an explicit authenticated or canary presentation rollout. This grants no backend or admin access. Founder-only opt-in review retains confirmed identity, owner role and AAL2."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Inline supplied public HTTPS images reuse the existing bounded SSRF-protected image proxy. Rich-result images retain the canonical image permission policy. No new proxy or provider."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/document.test.ts frontend/src/components/response-experience-v2/mathSyntax.test.ts",
+      "negative": true,
+      "scope": "Focused adapter, input, calculator, owner/AAL2 founder gate and standard math parser tests. Conflicting stream/completion text regression reproduced before correction.",
+      "reference": "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Independent presentation module only, no backend or execution architecture changes",
+    "rfc": null
+  },
+  "rollout": "Controlled source-pinned Vercel release authorized in PR #909 comment 6549571336 after exact CI and authenticated Workspace verification. RESPONSE_EXPERIENCE_V2=authenticated enables ordinary verified sessions, off restores legacy.",
+  "rollback": "Keep production 0d270ec6 and revert frontend changes if required",
+  "knownGaps": [
+    "Exact-source CI and authenticated Workspace visual/reload acceptance pending",
+    "Unsupported action and private artifact contracts retain the original authorization-aware renderer",
+    "No new model requests or live-fact verification claimed by presentation"
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Visual acceptance and exact-source CI pending"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

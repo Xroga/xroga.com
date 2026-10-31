@@ -9,6 +9,7 @@ import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
+import { ResponseExperienceGate } from '@/components/response-experience-v2/ResponseExperienceGate';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
@@ -592,6 +593,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             }
                           />
                         ) : null}
+                        <ResponseExperienceGate message={msg} streaming={msg.id === animatingId && loading}>
                         {isRenderedFeature ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
@@ -644,6 +646,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         {msg.webSources && msg.webSources.length > 0 ? (
                           <ResponseSources sources={msg.webSources} />
                         ) : null}
+                        </ResponseExperienceGate>
                       </div>
                       {msg.content && (
                         <MessageBubbleActions
