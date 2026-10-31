@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ba43e31666ecfaa15293e73946b59732a32ae750",
+  "source_sha": "0f825bb73b61d070e48f6957f6f0792038fd6d41",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15673,7 +15673,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "c1c34123f29e073d2bf814d5ac4140b04895c350af18b70656d7ddaf475af9a4"
+      "sha256": "40766dedca3ccc9021b3539f0c3dc41e515f395ace48156f2415ad3df42ca087"
     },
     {
       "path": "Dockerfile.api",
@@ -16473,7 +16473,7 @@
     },
     {
       "path": "backend/src/builder/swarmBridge.ts",
-      "sha256": "8bc674b86b3d241d3292e7469174910a2012296658ca031c0f04653623ebe314"
+      "sha256": "696b9ad1a84f16b63f315ed549ebe8a660af0615da06fd9278861843f51b5eb4"
     },
     {
       "path": "backend/src/builder/types.ts",
