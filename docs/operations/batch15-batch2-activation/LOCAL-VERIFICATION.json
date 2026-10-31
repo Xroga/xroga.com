@@ -70,6 +70,20 @@
       "exitCode": 0,
       "logSha256": "216212af40f1fb7c55ffb9a6ac7cb788e9adcbac9c46f670bee2565082366b3e",
       "cloudCalls": false
+    },
+    {
+      "label": "GREEN_READINESS_STARTUP_AND_BOUNDED_DISPATCH_45_TESTS",
+      "job": "0ff6694a-a2eb-4f35-8b59-b76f02dc7ac5",
+      "status": "passed",
+      "tests": 45,
+      "cloudCalls": false
+    },
+    {
+      "label": "RED_UNBOUNDED_DISPATCH_CONFIGURATION",
+      "job": "906b7335-a08b-4726-9cfc-db17283eb147",
+      "status": "failed",
+      "expectedRed": true,
+      "cloudCalls": false
     }
   ],
   "modelCalls": 0,
@@ -96,5 +110,6 @@
     "missionPolicy": "PASS",
     "unitAndIntegratedCandidate": "FAILED_METADATA_BINDINGS_CORRECTED_PENDING_FINAL_CI",
     "disposablePolicyDatabase": "FAILED_METADATA_BINDINGS_CORRECTED_PENDING_FINAL_CI"
-  }
+  },
+  "newSourceScope": "Wire existing readiness and startup policy for Google deployment, preserve zero-traffic guard, and enforce configurable Cloud Tasks deadline before credentials. No production activation."
 }

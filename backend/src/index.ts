@@ -63,7 +63,9 @@ import {
   currentRunWorkerId,
 } from './ai/runStore.js';
 import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
-import { startupReconciliationAllowed } from './runtime/startupPolicy.js';
+import { decideStartup, startupReconciliationAllowed } from './runtime/startupPolicy.js';
+import { apiProbes, runReadiness } from './runtime/readiness.js';
+import { probeDatabaseTls } from './storage/databaseTls.js';
 import { hydrateProviderHealth } from './ai/providerRuntime.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
@@ -191,17 +193,14 @@ app.get('/health', (_req, res) => {
 });
 
 app.get('/ready', credentialVaultReadinessMiddleware(credentialVaultReadiness), async (_req, res) => {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    res.status(503).json({ status: 'not_ready', reason: 'database_not_configured' });
+  const result = await runReadiness(apiProbes(process.env, { database: probeDatabaseReadiness, databaseTls: probeDatabaseTls }));
+  if (result.ready) {
+    const health = publicHealthPayload();
+    res.json({ status: 'ready', service: 'xroga-api', release: health.release, checks: result.checks, timestamp: new Date().toISOString() });
     return;
   }
-  try {
-    await probeDatabaseReadiness();
-    const health = publicHealthPayload();
-    res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
-  } catch {
-    res.status(503).json({ status: 'not_ready', reason: 'database_unavailable' });
-  }
+  const failing = result.checks.find(check => check.status === 'fail');
+  res.status(503).json({ status: 'not_ready', reason: failing?.reason ?? 'not_ready', checks: result.checks });
 });
 
 app.get('/api/health', (_req, res) => {
@@ -335,9 +334,12 @@ server.listen(port, '0.0.0.0', () => {
   // Reconcile only stale durable worker leases. During a rolling deploy the outgoing
   // API may still own a long build, so a row being old and `running` is not enough.
   if (startupReconciliationAllowed(process.env)) {
-    void reconcileOrphanedRuns().catch((err) => {
-      console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
-    });
+    const startup = decideStartup(process.env);
+    if (startup.duties.reconcileOrphanedRuns) {
+      void reconcileOrphanedRuns().catch((err) => {
+        console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
+      });
+    }
   }
   // Registers a hosted isolation worker only if an operator configured one. With no
   // XROGA_SANDBOX_WORKER_URL this does nothing and costs nothing: the container

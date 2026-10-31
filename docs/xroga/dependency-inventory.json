@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e41e6cdbbdf1a273200a0afe73c9871733191be8",
+  "source_sha": "f5c3ab6389e7818473aea2c200e6cb1283f92efb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4529,7 +4529,6 @@
         "SUPABASE_OAUTH_CALLBACK_URL",
         "SUPABASE_OAUTH_CLIENT_ID",
         "SUPABASE_OAUTH_CLIENT_SECRET",
-        "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
         "VERCEL_CLIENT_ID",
         "VERCEL_CLIENT_SECRET",
@@ -7512,7 +7511,6 @@
         "FRONTEND_URL",
         "NODE_ENV",
         "PORT",
-        "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
         "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
@@ -7587,7 +7585,6 @@
         "FRONTEND_URL",
         "NODE_ENV",
         "PORT",
-        "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
         "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
@@ -11902,7 +11899,6 @@
         "backend/src/ai/webBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/supabase.ts",
-        "backend/src/index.ts",
         "backend/src/lib/capabilityRegistry.ts",
         "backend/src/lib/platformReady.ts",
         "backend/src/lib/resolveIdentity.ts",
@@ -11946,11 +11942,8 @@
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-github-com",
-        "endpoint-localhost",
         "endpoint-public-example-invalid",
-        "endpoint-supabase-management-tests-invalid",
-        "endpoint-xroga-api-fly-dev",
-        "endpoint-xrogaaicom-vercel-app"
+        "endpoint-supabase-management-tests-invalid"
       ]
     },
     {
@@ -16836,7 +16829,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "b2c66cd4f4a9c713352180176a1c6678a8c55358a042219e17b719bec8b49b30"
+      "sha256": "e7a3f001f37ace01be498e93f19b3cf6fcb1b4847d67b22e83354c46e8adbb5f"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -24016,42 +24009,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 114,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 115,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 116,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 117,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 118,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xrogaaicom.vercel.app",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 119,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 120,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 213,
+      "line": 212,
       "credentialsInUrl": false
     },
     {
