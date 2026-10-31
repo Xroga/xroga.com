@@ -1,15 +1,15 @@
 {
   "version": "1.0",
   "identity": {
-    "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "feat/mic-mobile-main-20261031",
-    "sha": "c6b2f05ed5f07ee188bdbaa7afd29891070b584f",
-    "sourceTimestampUtc": "2026-10-31T04:15:58+05:00",
-    "auditStartedUtc": "2026-10-31T01:28:02.145Z",
+    "repository": "https://github.com/Xroga/xroga.com",
+    "branch": "sync/blog-editorial-main-20261031",
+    "sha": "64b155b20202d2f3dfa6684083e1f6b807309b59",
+    "sourceTimestampUtc": "2026-10-31T13:47:59+05:00",
+    "auditStartedUtc": "2026-10-31T08:49:38.238Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v24.18.0",
-    "npm": "11.16.0",
+    "node": "v22.21.1",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
       "deploy/browser-worker/package-lock.json",
@@ -58177,7 +58177,7 @@
       "id": "surface:e4740fd5f297485958dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/blog/[slug]/page.tsx",
-      "sha256": "453b970c967e139cf466cafb2f5b162e95df7b6b92b8da225e0abbc94c1b7707",
+      "sha256": "30884d7df978aeec36d5a08c0f1280c096fbdb19ff153ff6839ffd152efda0ee",
       "symbols": [
         "Page",
         "article",
@@ -58257,7 +58257,7 @@
       "id": "surface:b8b210db970292995b41",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/blog/page.tsx",
-      "sha256": "1ac92bdca080405b4ec7c9132b09dbd3b3dca3f5ae34626ea2418229bb8ad107",
+      "sha256": "fac176abc5b0981729ddc01577b4214ff9fba11b753a7a8883caaad314736d0c",
       "symbols": [
         "Page",
         "metadata"
@@ -59971,7 +59971,7 @@
       "id": "surface:2b0171bdbea3342cb29e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/llms.txt/route.ts",
-      "sha256": "b494e9c8742842e9e91ffb4b3664e39744c53e99e0c84b20fd469462e8c6c6b9",
+      "sha256": "2b89e2f0eb28ca125717769404a7c41a684e8c0075855e3669bd27dc414b0c86",
       "symbols": [
         "GET",
         "body"
@@ -85281,7 +85281,7 @@
       "id": "surface:1bb1312380cf3ecb47fa",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/seo/EditorialPage.tsx",
-      "sha256": "5cc7eb6549990d8055097856495dcda4359283264a3edbf92f33d86f32517bbd",
+      "sha256": "d3c0af9fed15653ada9e4f4676f3d8f97ba47ee19efcf75d6c97158396e786b4",
       "symbols": [
         "Crumb",
         "EditorialHub",
@@ -85459,7 +85459,7 @@
       "id": "surface:0b9fdc67c372c015631f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/seo/GrowthEvidence.tsx",
-      "sha256": "463367b2325376bf57f6236a20bf884651f8f89dcfeb36dcc38113b364eeea38",
+      "sha256": "47a3e563470d9c2ad79ca6f15d8b67b4b2dc93ec850858a9f5763c93e216fdbb",
       "symbols": [
         "AccessibleDataChart",
         "ChartPoint",
@@ -98997,7 +98997,7 @@
         "frontend/src/app/vibe-coding/page.tsx"
       ],
       "callers": [
-        "frontend/src/lib/seoGrowthContent.ts:9"
+        "frontend/src/lib/seoGrowthContent.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -103664,7 +103664,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "30c3a17e1f6737f0226ba1ce6b5652631eb8ba487ef2b2ad8f4255e1a927ab87",
+      "sha256": "c2d4bdf086e8412c25992be4e7cdbdea7a84678f6bead5ebb34bb734676f9989",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -103703,6 +103703,7 @@
       "entryPoints": [],
       "callers": [
         "frontend/src/app/sitemap.ts:2",
+        "frontend/src/lib/appBuildingEditorialContent.test.ts:5",
         "frontend/src/lib/publicUrlInventory.osPreview.test.ts:3",
         "scripts/growth-publishing/core.test.ts:4",
         "scripts/growth-publishing/core.ts:6"
@@ -103718,6 +103719,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/lib/appBuildingEditorialContent.test.ts",
         "frontend/src/lib/publicUrlInventory.osPreview.test.ts",
         "scripts/growth-publishing/core.test.ts"
       ],
@@ -105125,6 +105127,7 @@
         "frontend/src/app/blog/feed.xml/route.ts:1",
         "frontend/src/app/changelog/feed.xml/route.ts:1",
         "frontend/src/app/research/feed.xml/route.ts:1",
+        "frontend/src/lib/appBuildingEditorialContent.test.ts:6",
         "scripts/growth-publishing/core.test.ts:3"
       ],
       "reachable": true,
@@ -105138,6 +105141,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/lib/appBuildingEditorialContent.test.ts",
         "scripts/growth-publishing/core.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -105151,7 +105155,7 @@
       "id": "surface:81ab1aaf9010967cea49",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "09a9e105197a70a3efae67019239245dd78ffc1c245cc0caeec4d74c641919e3",
+      "sha256": "93c3327231328af16661937b1cc1f35baef8915d0e6815e93f2a9bca24bccbd2",
       "symbols": [
         "ALTERNATIVES",
         "BLOG_ARTICLES",
@@ -105168,10 +105172,12 @@
         "verified"
       ],
       "imports": [
+        "./appBuildingEditorialContent.json",
         "./cryptoEditorialContent",
         "./seoPhase2Content"
       ],
       "runtimeImports": [
+        "frontend/src/lib/appBuildingEditorialContent.json",
         "frontend/src/lib/cryptoEditorialContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
@@ -105203,6 +105209,7 @@
         "frontend/src/app/compare/[slug]/page.tsx:22",
         "frontend/src/app/compare/page.tsx:2",
         "frontend/src/app/vibe-coding/page.tsx:1",
+        "frontend/src/lib/appBuildingEditorialContent.test.ts:4",
         "frontend/src/lib/publicUrlInventory.ts:4",
         "frontend/src/lib/seoFeeds.ts:1",
         "frontend/src/lib/seoGrowthContent.test.ts:4"
@@ -105227,6 +105234,7 @@
         "frontend/src/lib/seoGrowthContent.ts#verified"
       ],
       "testCoverage": [
+        "frontend/src/lib/appBuildingEditorialContent.test.ts",
         "frontend/src/lib/seoGrowthContent.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -105270,7 +105278,7 @@
       "callers": [
         "frontend/src/app/build-with/[slug]/page.tsx:1",
         "frontend/src/app/build/[slug]/page.tsx:1",
-        "frontend/src/lib/seoGrowthContent.ts:8"
+        "frontend/src/lib/seoGrowthContent.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -143949,6 +143957,13 @@
       "id": "test-suite:f61033ee5bbb5f5af90c",
       "sourcePath": "frontend/src/lib/apiLocalPort.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f9e0b5b32fa40a8f8cf6",
+      "sourcePath": "frontend/src/lib/appBuildingEditorialContent.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

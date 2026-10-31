@@ -128,7 +128,7 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
       manifestSource: page.slug === 'github' ? 'content/manifests/build-with-github.json' : undefined,
       updatedAt: page.slug === 'github' ? '2026-09-22' : '2026-09-09',
     })),
-    ...BLOG_ARTICLES.map((page) => record(`/blog/${page.slug}`, 'BLOG', 'frontend/src/app/blog/[slug]/page.tsx', ['frontend/src/lib/seoGrowthContent.ts'], {
+    ...BLOG_ARTICLES.map((page) => record(`/blog/${page.slug}`, 'BLOG', 'frontend/src/app/blog/[slug]/page.tsx', ['frontend/src/lib/seoGrowthContent.ts', ...(page.authorName === 'Xroga Editorial' ? ['frontend/src/lib/appBuildingEditorialContent.json'] : [])], {
       publishedAt: page.updated ?? '2026-09-09', updatedAt: page.updated ?? '2026-09-09', feed: 'blog',
     })),
     ...STACK_GUIDES.map((page) => record(`/stack/${page.slug}`, 'STACK', 'frontend/src/app/stack/[slug]/page.tsx', ['frontend/src/lib/seoExpansionContent.ts'], { updatedAt: page.reviewed })),
