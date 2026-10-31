@@ -16,7 +16,7 @@ import ReactMarkdown, {
 } from 'react-markdown';
 
 import remarkGfm from 'remark-gfm';
-import { remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
+import { remarkSourceCitations, safeSourceUrl, sourceClickUrl, type CitationSource } from './xrogaCitations';
 
 import {
   ApiError,
@@ -1685,7 +1685,7 @@ function CitationChip({ number, source, label }: { number?: number; source: Cita
     <span className="inline-flex align-baseline">
       <a
         ref={linkRef}
-        href={url}
+        href={sourceClickUrl(url) ?? url}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={number ? `Open source ${number}: ${source.title}` : `Open link: ${source.title}`}
@@ -1701,7 +1701,7 @@ function CitationChip({ number, source, label }: { number?: number; source: Cita
           <span className="xv-citation-preview__top"><span className="xv-citation-preview__icon"><SourceLogo domain={domain} size={27} /></span><span className="min-w-0"><span className="xv-citation-preview__domain">{domain}</span><span className="xv-citation-preview__eyebrow">Source page · verify on original site</span></span></span>
           <span className="xv-citation-preview__title">{source.title}</span>
           {excerpt ? <span className="xv-citation-preview__excerpt">{excerpt}</span> : null}
-          <span className="xv-citation-preview__actions"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(snippet || source.title); setCopied(true); } catch { setCopied(false); } }}>{copied ? <Check size={13} /> : <Copy size={13} />}{copied ? 'Copied' : 'Copy excerpt'}</button><a href={url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={13} /></a></span>
+          <span className="xv-citation-preview__actions"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(snippet || source.title); setCopied(true); } catch { setCopied(false); } }}>{copied ? <Check size={13} /> : <Copy size={13} />}{copied ? 'Copied' : 'Copy excerpt'}</button><a href={sourceClickUrl(url) ?? url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={13} /></a></span>
         </div>, document.body,
       ) : null}
     </span>
