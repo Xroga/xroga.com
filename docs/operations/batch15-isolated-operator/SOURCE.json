@@ -7,9 +7,11 @@
   "clockStarted": false,
   "productionSqlApproved": false,
   "productionActivationByThisWindow": false,
-  "operatorPhase": "PREPARE_ISOLATED_RUNTIME_PENDING_FINAL_CI",
+  "operatorPhase": "BROWSER_PACKAGE_HELD_FOUNDER_COMMENT_6541922149",
   "stagingKmsApproved": true,
   "stageConfigurationVersion2ObservedState": "DISABLED",
   "stageConfigurationReadback": "NOT_ACCESSED_DISABLED_VERSION",
-  "privateWorkerEgress": "APPROVED_TEMPORARY_NAT_SAME_WINDOW"
+  "privateWorkerEgress": "APPROVED_TEMPORARY_NAT_SAME_WINDOW",
+  "founderComment": "https://github.com/Xroga/xroga.com/pull/899#issuecomment-6541922149",
+  "stageKeyVersion1State": "DESTROY_SCHEDULED_NOT_CHANGED"
 }

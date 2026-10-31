@@ -1,0 +1,14 @@
+{
+  "name": "projects/project-c40d4821-e647-4fa2-92d/locations/us-central1/keyRings/xroga-p3-verify-20261023/cryptoKeys/xroga-p3-staging-20261024",
+  "primary": {
+    "name": "projects/project-c40d4821-e647-4fa2-92d/locations/us-central1/keyRings/xroga-p3-verify-20261023/cryptoKeys/xroga-p3-staging-20261024/cryptoKeyVersions/1",
+    "state": "DESTROY_SCHEDULED",
+    "createTime": "2026-10-24T14:53:48.478561496Z",
+    "destroyTime": "2026-11-25T21:24:48.436276Z",
+    "protectionLevel": "SOFTWARE",
+    "algorithm": "GOOGLE_SYMMETRIC_ENCRYPTION",
+    "generateTime": "2026-10-24T14:53:48.478561496Z"
+  },
+  "destroyScheduledDuration": "2592000s",
+  "stateChanged": false
+}

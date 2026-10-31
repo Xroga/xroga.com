@@ -1,0 +1,83 @@
+{
+  "atUtc": "2026-10-31T10:25:09.846694+00:00",
+  "founderComment": "https://github.com/Xroga/xroga.com/pull/899#issuecomment-6541922149",
+  "pr899Source": "3d56868618c096d13e6a5c63a489d7f15143b0e7",
+  "requiredChecks": [
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/41189170505/job/124502250389",
+      "name": "unit",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/41189170505/job/124502250627",
+      "name": "integrated-candidate",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/41189170556/job/124502191292",
+      "name": "disposable-policy-database",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/41189170598/job/124502191600",
+      "name": "build",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/41189170548/job/124502191485",
+      "name": "deterministic-golden",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/41189170518/job/124502191318",
+      "name": "structured-mission-policy",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Xroga/xroga.com/actions/runs/41189170592/job/124502191524",
+      "name": "authenticated-browser",
+      "state": "SUCCESS"
+    }
+  ],
+  "cloudWindow": "NOT_STARTED",
+  "browserPackage": "HELD_NO_NEW_KEY_NAT_HOST_WORK",
+  "newCloudResources": 0,
+  "newIamBindings": 0,
+  "modelCalls": 0,
+  "modelSpendUsd": 0,
+  "provisioningSpendUsd": 0,
+  "approvedTestCapUsd": 2,
+  "testCapCommittedUsd": 0,
+  "postedInvoiceDelta": "NOT_MEASURED",
+  "ciUsageReceipt": "FINAL-SOURCE-CI-USAGE.json",
+  "batch15": {
+    "liveVerified": [
+      "Authenticated production Drive listing",
+      "Private R2 readback of existing synthetic acceptance file, exact byte/hash match"
+    ],
+    "fileBytes": 2053,
+    "verifiedSha256": "8743831fc94731bb00b76af0c42ac342bd7f0f0e480390689f3dd254e7e10457",
+    "newUploadThisTurn": false,
+    "remainingBrowserWorker": "BLOCKED_NO_APPROVED_RETAINED_HOST",
+    "fullAcceptance": "NOT_CLAIMED"
+  },
+  "batch2": {
+    "liveAcceptance": "NOT_VERIFIED",
+    "cancellationFixCommit": "ba43e31666ecfaa15293e73946b59732a32ae750",
+    "reviewCheckpoint": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+    "branch": "codex/batch2-cancellation-fence-20261031",
+    "focusedTestsPassed": 19,
+    "focusedTestsFailed": 0,
+    "integrationCi": "PENDING_NOT_REPORTED_AS_PR899_CI",
+    "remainingGate": "Provider-supplied nonzero usage and accounted saved revision, plus terminal recovery/live acceptance. The isolated package allows zero model spend."
+  },
+  "production": {
+    "revision": "xroga-api-batch1-85f-serving-1031",
+    "source": "85f83e3f1dcbb057d4a28d8a696dae8396d45114",
+    "apiAndJobDigest": "sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+    "voiceRevision": "xroga-api-voice-fe2c6486c",
+    "releaseChanged": false,
+    "rollbackChanged": false
+  },
+  "nextActivationAction": "Finish the small Builder correction integration gate, then prepare one consolidated bounded real-provider/saved-revision acceptance decision under the existing release controls. Do not reopen the browser infrastructure path to block Drive."
+}

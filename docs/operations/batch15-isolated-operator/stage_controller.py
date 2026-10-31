@@ -45,6 +45,9 @@ def source_identity(value):
 
 
 def approval():
+    hold = ROOT / 'FOUNDER-COURSE-CORRECTION.json'
+    if hold.exists() and json.loads(hold.read_text()).get('browserPackageHeld') is True:
+        raise RuntimeError('BROWSER_PACKAGE_HELD_BY_FOUNDER_6541922149')
     value = json.loads((ROOT / 'APPROVED-WINDOW.json').read_text())
     if not (value['approved'] is True and value['packageCommit'] == PACKAGE
             and value['maximumGrossUsd'] == 2 and value['modelSpendUsd'] == 0

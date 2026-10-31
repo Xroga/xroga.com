@@ -12,6 +12,14 @@ SHA = 'a' * 40
 
 
 class BuildBoundaryTests(unittest.TestCase):
+    def test_founder_hold_prevents_build_before_ci_or_credentials(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch.object(controller, 'ROOT', pathlib.Path(temporary)), \
+                 patch.object(controller, 'ci_gate', side_effect=AssertionError('no new CI work')), \
+                 patch.object(controller, 'api', side_effect=AssertionError('no cloud spending')):
+                controller.save('FOUNDER-COURSE-CORRECTION.json', {'browserPackageHeld': True})
+                with self.assertRaisesRegex(RuntimeError, 'BROWSER_PACKAGE_HELD_BY_FOUNDER'):
+                    controller.submit_build(SHA)
     def test_source_and_build_limits_are_fixed(self):
         for source in ('main', '', 'a' * 39, 'a' * 40 + ';bad', '../production'):
             with self.assertRaises(RuntimeError):

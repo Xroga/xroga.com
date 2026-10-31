@@ -1,0 +1,35 @@
+{
+  "atUtc": "2026-10-31T09:55:16.607657+00:00",
+  "traffic": [
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-batch1-85f-serving-1031",
+      "percent": 100
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4",
+      "uri": "https://voice-054d7ae4---xroga-api-422lt7eujq-uk.a.run.app"
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-fe2c6486c",
+      "tag": "voice-9f62bba5",
+      "uri": "https://voice-9f62bba5---xroga-api-422lt7eujq-uk.a.run.app"
+    }
+  ],
+  "servingRevision": "xroga-api-batch1-85f-serving-1031",
+  "apiImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+  "jobImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:bbade2872d2468188f951c8e9fdaf4b447f52d2b7544a773e243d6a4b4a49a80",
+  "nonSecretFlags": [
+    {
+      "name": "STORAGE_QUOTA_BYTES",
+      "value": "500000000"
+    },
+    {
+      "name": "STORAGE_WRITE_MODE",
+      "value": "dual"
+    }
+  ]
+}
