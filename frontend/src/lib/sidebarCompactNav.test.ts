@@ -64,3 +64,9 @@ test('utility controls retain accessible names without the retired global toolti
   assert.match(LAUNCHER, /data-short-tip=\{chatbarHidden \? 'Show chatbar' : 'Hide chatbar'\}/);
   assert.doesNotMatch(NOTIFICATIONS, /title="Notifications"/);
 });
+
+test('Drive shortcut bypasses only collapsed-rail expansion and keeps destination authorization', () => {
+  assert.match(NAV, /href="\/drive" data-drive-shortcut/);
+  assert.ok(NAV.includes("event.target.closest('[data-drive-shortcut]')"));
+  assert.match(NAV, /handleNavEntryClick\(event, '\/drive'\)/);
+});

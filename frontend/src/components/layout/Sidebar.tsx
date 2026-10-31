@@ -719,7 +719,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
-              {DRIVE_ENABLED && <Link href="/drive" aria-label="Xroga Drive" title="Xroga Drive" onClick={(event) => handleNavEntryClick(event, '/drive')} className={cn(isActive('/drive') && 'is-active')}><HardDrive size={16} aria-hidden="true" /></Link>}
+              {DRIVE_ENABLED && <Link href="/drive" data-drive-shortcut aria-label="Xroga Drive" title="Xroga Drive" onClick={(event) => handleNavEntryClick(event, '/drive')} className={cn(isActive('/drive') && 'is-active')}><HardDrive size={16} aria-hidden="true" /></Link>}
               <button type="button" onClick={handleNewChat} aria-label="New Work">
                 <AnimatedIcon icon={NewTerminalIcon} />
               </button>
@@ -895,7 +895,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
 
       <div
         className={cn(compactStyles.compact, 'xv-sidebar-root relative hidden lg:block shrink-0', !effectiveSidebarOpen && 'is-collapsed')}
-        onClickCapture={event => { if (!effectiveSidebarOpen && !terminalFullscreen) { event.preventDefault(); event.stopPropagation(); toggleSidebar(); } }}
+        onClickCapture={event => { if (!effectiveSidebarOpen && !terminalFullscreen && !(event.target instanceof Element && event.target.closest('[data-drive-shortcut]'))) { event.preventDefault(); event.stopPropagation(); toggleSidebar(); } }}
         style={{ width: asideWidth }}
       >
         <aside

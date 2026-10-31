@@ -75660,7 +75660,7 @@
       "id": "surface:7da6f201c8b9c4811bef",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "2caba1b631c0d020940287f32313c8fc040bbb6e1e7501ba766647d701877f64",
+      "sha256": "31543328150b65738ccec5c1f44f43417862b3317b9ca8cbdc81ae9eabd5e941",
       "symbols": [
         "EDGE_DRAG_THRESHOLD_PX",
         "HOVER_OPEN_DELAY_MS",
@@ -127146,7 +127146,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:57abbd476680b2eb9396",
+      "id": "finding:dcb10fdf279d4125d5ff",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 805,
       "kind": "COMING_SOON",
@@ -138468,7 +138468,7 @@
     {
       "id": "test-suite:474a5f49385e5310152e",
       "sourcePath": "frontend/src/lib/sidebarCompactNav.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
