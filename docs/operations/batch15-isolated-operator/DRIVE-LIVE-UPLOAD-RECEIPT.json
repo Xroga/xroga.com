@@ -1,0 +1,17 @@
+{
+  "atUtc": "2026-10-31T10:50:39.6676706Z",
+  "scope": "LIVE_AUTHENTICATED_SYNTHETIC_DRIVE_UPLOAD_AND_READBACK",
+  "url": "https://xroga.com/drive",
+  "file": "xroga-b15-synthetic-20261031-1040.txt",
+  "objectId": "a7b81d83-8e81-4a8d-a31e-03cf770ed790",
+  "bytes": 108,
+  "sha256": "a830ed54ea379fabe898db465b0c0510c2a77139148be19e6f73d3ecb0695852",
+  "browserExactByteMatch": true,
+  "databaseState": "READY",
+  "databaseVerifiedHashMatch": true,
+  "existingFilesUnchanged": true,
+  "cloudFixtureRetained": "108-byte acceptance evidence, no customer data",
+  "signedUrlSaved": false,
+  "screenshot": "outputs/batch15-batch2-activation-20261031/drive-live-upload-20261031.png",
+  "fullBatch15Acceptance": false
+}

@@ -53,11 +53,12 @@
   "batch15": {
     "liveVerified": [
       "Authenticated production Drive listing",
-      "Private R2 readback of existing synthetic acceptance file, exact byte/hash match"
+      "Private R2 readback of existing synthetic acceptance file, exact byte/hash match",
+      "New 108-byte synthetic production upload and exact private readback matched stored SHA-256"
     ],
     "fileBytes": 2053,
     "verifiedSha256": "8743831fc94731bb00b76af0c42ac342bd7f0f0e480390689f3dd254e7e10457",
-    "newUploadThisTurn": false,
+    "newUploadThisTurn": true,
     "remainingBrowserWorker": "BLOCKED_NO_APPROVED_RETAINED_HOST",
     "fullAcceptance": "NOT_CLAIMED"
   },
@@ -81,5 +82,7 @@
     "releaseChanged": false,
     "rollbackChanged": false
   },
-  "nextActivationAction": "Finish the small Builder correction integration gate, then prepare one consolidated bounded real-provider/saved-revision acceptance decision under the existing release controls. Do not reopen the browser infrastructure path to block Drive."
+  "nextActivationAction": "Finish the small Builder correction integration gate, then prepare one consolidated bounded real-provider/saved-revision acceptance decision under the existing release controls. Do not reopen the browser infrastructure path to block Drive.",
+  "latestFounderComment": "https://github.com/Xroga/xroga.com/pull/902#issuecomment-6542353939",
+  "pr899MergedCommit": "3584eaf9f4b4f00c494101189ad434c35212080b"
 }

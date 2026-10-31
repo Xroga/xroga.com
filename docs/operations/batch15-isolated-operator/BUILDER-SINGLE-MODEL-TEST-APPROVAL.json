@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "approved": true,
+  "founderReply": "Approve this single capped model test",
+  "recordedAtUtc": "2026-10-31T10:50:39.5750062Z",
+  "maximumModelUsd": 0.1,
+  "maximumAttempts": 1,
+  "funding": "EXISTING_MODEL_BALANCE_ONLY",
+  "topUpAllowed": false,
+  "newInfrastructureAllowed": false,
+  "productionSqlAllowed": false,
+  "frontendPromotionAllowed": false,
+  "broadActivationAllowed": false,
+  "dispatchPrerequisite": "Existing reservation controls must enforce aggregate attempt ceiling before dispatch",
+  "dispatchStarted": false,
+  "modelCalls": 0,
+  "modelSpendUsd": 0,
+  "onMissingUsage": "STOP_NO_RETRY_PRESERVE_UNCERTAIN_HOLD",
+  "status": "APPROVED_PENDING_CAP_ENFORCEMENT_PROOF"
+}
