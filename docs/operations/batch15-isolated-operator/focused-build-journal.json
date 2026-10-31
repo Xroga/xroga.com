@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-10-31T12:07:07.875851+00:00",
+  "state": "SUBMITTED",
+  "source": {
+    "bucket": "project-c40d4821-e647-4fa2-92d_cloudbuild",
+    "generation": "1793448426034880",
+    "object": "source/1793448379.944703-d2b01b82f3e44fb4ad7cf5ebee6e31b1.tgz"
+  },
+  "imageTag": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release:b15b2-ac8168-1031",
+  "buildId": "29eba360-4e2b-47b9-90a1-b024671e83de",
+  "status": "QUEUED"
+}
