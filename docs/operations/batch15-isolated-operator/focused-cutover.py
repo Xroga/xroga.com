@@ -1,4 +1,4 @@
-"""Approved Batch 1 GCP operations. SQL fence steps are separate reviewed calls.
+"""Approved focused Batch 1.5 / Batch 2 paired backend operations. SQL fence steps are separate reviewed calls.
 
 Every mutation is one resumable stage. Never auto-open admission or force runs
 terminal. Sensitive service manifests stay in RAM. Preserve unrelated voice tags.
@@ -89,6 +89,8 @@ elif MODE=='pause':
  assert task(QUEUE)['state']=='PAUSED','QUEUE_PAUSE_FAILED'
  record('QUEUE_PAUSED_AFTER_DATABASE_FENCE_AND_DRAIN')
 elif MODE=='serving':
+ candidate=json.loads((ROOT/'focused-candidate-private-ready.json').read_text())
+ assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']=='xroga-api-b15b2-ac8168-check-1031','GUARDED_CANDIDATE_PROOF_REQUIRED'
  fenced();live(service,OLD);assert queue['state']=='PAUSED';no_executions()
  try:v=api(V1+'/revisions/'+NEW)
  except urllib.error.HTTPError as e:
@@ -119,6 +121,9 @@ elif MODE=='serving':
  serving_config(v);live(run(SERVICE),OLD)
  record('NAMED_SERVING_READY_ZERO_DEFAULT_TRAFFIC',revision=NEW)
 elif MODE in ['job','recover-job']:
+ if MODE=='job':
+  ready=json.loads((ROOT/'focused-serving-private-ready.json').read_text())
+  assert ready['state']=='PASS_PRIVATE_READINESS' and ready['revision']==NEW,'ZERO_TRAFFIC_SERVING_PROOF_REQUIRED'
  fenced();assert queue['state']=='PAUSED';no_executions()
  target=NEW_IMAGE if MODE=='job' else OLD_IMAGE
  sha=NEW_SHA if MODE=='job' else OLD_SHA
