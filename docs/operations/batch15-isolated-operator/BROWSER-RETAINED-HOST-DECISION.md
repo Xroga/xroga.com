@@ -1,6 +1,6 @@
 # Batch 1.5 Browser Worker: one consolidated host decision
 
-Status: REQUESTED, NOT APPROVED. No paid provisioning or activation is authorized by this document itself.
+Status: REJECTED by the founder on 2026-10-31. Historical proposal only. Do not provision these resources or present this approval again. Issue #898's updated title/body and comment #6545943076 require Cloudflare Free first, existing resources second, on-demand paid execution only under separate approval. The original proposal is retained below as history, not an active request.
 Founder instruction: https://github.com/Xroga/xroga.com/issues/898#issuecomment-6545735540
 Prepared 2026-10-31. Batch 2 is stopped, including model tests and Builder fixes.
 
