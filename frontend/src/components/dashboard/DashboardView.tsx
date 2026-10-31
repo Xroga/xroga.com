@@ -11,6 +11,7 @@ import {
   WORKSPACE_MIN_WIDTH,
 } from '@/store/useThemeStore';
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -221,7 +222,7 @@ export function DashboardView({ responsePreview }: { responsePreview?: { message
     >
       {specimen ? <nav aria-label="Response presentation fixtures" className="mb-5 space-y-2 text-sm">
         <p>Presentation preview. Synthetic fixtures, no model calls, no saved conversation.</p>
-        <div className="flex flex-wrap gap-2">{specimen.cases.map((name) => <a key={name} href={`?responsePreview=${name}`} aria-current={name === specimen.selected ? 'page' : undefined} className="rounded border border-[var(--border)] px-2 py-1 underline-offset-4 hover:underline">{name}</a>)}<a href="/workspace" className="px-2 py-1 underline">Exit preview</a></div>
+        <div className="flex flex-wrap gap-2">{specimen.cases.map((name) => <Link key={name} prefetch={false} href={`?responsePreview=${name}`} aria-current={name === specimen.selected ? 'page' : undefined} className="rounded border border-[var(--border)] px-2 py-1 underline-offset-4 hover:underline">{name}</Link>)}<Link prefetch={false} href="/workspace" className="px-2 py-1 underline">Exit preview</Link></div>
       </nav> : null}
       <SwarmMessageLog chromeless incognito={incognito} previewMessages={specimen?.messages} />
     </div>
