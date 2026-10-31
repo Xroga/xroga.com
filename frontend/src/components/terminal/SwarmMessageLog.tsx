@@ -9,6 +9,7 @@ import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
+import { ResponseExperienceGate, ResponseExperienceReview } from '@/components/response-experience-v2/ResponseExperienceGate';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
@@ -403,6 +404,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             chromeless ? 'xv-terminal-body--flush' : 'px-4 py-3 overflow-visible rounded-b-xl'
           )}
         >
+          <ResponseExperienceReview />
           {messages.length === 0 && sessionRestoring && (
             <div className="xv-term-empty" role="status" aria-live="polite" data-testid="terminal-restoring">
               <p className="xv-term-emptyline">
@@ -592,6 +594,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             }
                           />
                         ) : null}
+                        <ResponseExperienceGate message={msg} streaming={msg.id === animatingId && loading}>
                         {isRenderedFeature ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
@@ -644,6 +647,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         {msg.webSources && msg.webSources.length > 0 ? (
                           <ResponseSources sources={msg.webSources} />
                         ) : null}
+                        </ResponseExperienceGate>
                       </div>
                       {msg.content && (
                         <MessageBubbleActions

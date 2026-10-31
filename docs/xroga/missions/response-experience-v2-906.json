@@ -1,0 +1,111 @@
+{
+  "version": "1.0",
+  "missionId": "RESPONSE-EXPERIENCE-V2-906",
+  "baseSha": "0d270ec69bdcf130ff85ce27f524e1d0d1e59e23",
+  "requirementIds": [
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "low",
+  "scope": "Founder override: isolated greenfield response presentation with read-only canonical adapter and server-verified founder opt-in. Legacy UI preserved.",
+  "changedFiles": [
+    "frontend/src/app/(workspace)/workspace/page.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/response-experience-v2/access.ts",
+    "frontend/src/components/response-experience-v2/calculations.ts",
+    "frontend/src/components/response-experience-v2/ChartV2.tsx",
+    "frontend/src/components/response-experience-v2/DataV2.tsx",
+    "frontend/src/components/response-experience-v2/document.test.ts",
+    "frontend/src/components/response-experience-v2/document.ts",
+    "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
+    "frontend/src/components/response-experience-v2/MathV2.tsx",
+    "frontend/src/components/response-experience-v2/ProseV2.tsx",
+    "frontend/src/components/response-experience-v2/response-v2.module.css",
+    "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
+    "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
+    "frontend/src/components/response-experience-v2/ReviewPanelV2.tsx",
+    "frontend/src/components/response-experience-v2/specimens.ts"
+  ],
+  "decisions": {
+    "keep": [
+      "Legacy renderer untouched as fallback, existing streaming and persistence, production unchanged"
+    ],
+    "extend": [
+      "Workspace opt-in integration only"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No schema changes",
+    "rollback": "Restore previous frontend"
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing boundary preserved, no provider calls or authorization change."
+    }
+  },
+  "tests": [
+    {
+      "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/document.test.ts",
+      "negative": true,
+      "scope": "13 focused adapter, input, calculator and founder-policy tests passed. Browser acceptance pending.",
+      "reference": "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Independent presentation module only, no backend or execution architecture changes",
+    "rfc": null
+  },
+  "rollout": "Preview review only, production promotion withheld",
+  "rollback": "Keep production 0d270ec6 and revert frontend changes if required",
+  "knownGaps": [
+    "Founder-authenticated Preview and visual acceptance pending",
+    "Private artifacts and approval shapes deliberately retain original renderer",
+    "Streaming math and full chart/diagram visual validation pending"
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Visual acceptance and exact-source CI pending"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
