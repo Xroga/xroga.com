@@ -80970,7 +80970,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "96d21c8781dae3fa11f683cd5890696b475806308f08927c9e37104becd1dc35",
+      "sha256": "677cbefff6406e312764f1dcd475ee8a8dec51b76363cbe5e69f6589860c360b",
       "symbols": [
         "Calculator",
         "Chart",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0808ea21f7146425e7a7b4e7d4b72344301bf4b2",
+  "source_sha": "9b4131716092d2b04903ac7a9aebf71c79fde510",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20596,7 +20596,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "96d21c8781dae3fa11f683cd5890696b475806308f08927c9e37104becd1dc35"
+      "sha256": "677cbefff6406e312764f1dcd475ee8a8dec51b76363cbe5e69f6589860c360b"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
