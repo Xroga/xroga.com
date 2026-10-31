@@ -42,6 +42,9 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
       if (!boundedData(input.featureOutput)) return { supported: false, reason: 'payload-limit' };
       const raw = input.featureOutput as Record<string, unknown>;
       if (raw.type === 'chat' && typeof raw.content === 'string') {
+        // Two different payloads can occur during stream completion. Preserve
+        // the canonical fallback instead of guessing which text to discard.
+        if (input.content && raw.content !== input.content) return { supported: false, reason: 'conflicting-chat-content' };
         if (!input.content) nodes.push({ id: `${input.id}:text`, kind: 'prose', text: raw.content });
       } else {
         const output = parseXrogaOutput(input.featureOutput);

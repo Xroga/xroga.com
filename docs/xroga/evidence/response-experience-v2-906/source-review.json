@@ -13,19 +13,7 @@
   },
   "founderRpc": {
     "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-    "candidates": [
-      {
-        "id": "acf62cadb93d2dd4a3af",
-        "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-        "line": 21,
-        "enclosing": "WorkspacePage",
-        "kind": "RPC_CANDIDATE",
-        "target": "current_community_role",
-        "ownerPredicateCandidate": false,
-        "review": "REVIEW_REQUIRED",
-        "sourceSha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8"
-      }
-    ],
-    "liveVerification": "PENDING"
+    "status": "REMOVED_FROM_V2",
+    "reason": "Read-only presentation does not require operations role. No RPC remains. Original review preserved in commit 9bd45c90. Canonical owner/AAL2 operations policy unchanged."
   }
 }

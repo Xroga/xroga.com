@@ -28,7 +28,8 @@
     "frontend/package.json",
     "package-lock.json",
     "frontend/src/components/response-experience-v2/mathSyntax.ts",
-    "frontend/src/components/response-experience-v2/mathSyntax.test.ts"
+    "frontend/src/components/response-experience-v2/mathSyntax.test.ts",
+    "frontend/package-lock.json"
   ],
   "decisions": {
     "keep": [
@@ -49,7 +50,7 @@
   "securityImpact": {
     "auth": {
       "changed": true,
-      "description": "New presentation opt-in reuses canonical confirmed founder, owner role and AAL2 checks. No authorization expansion. Denial preserves original renderer."
+      "description": "Presentation flag requires server getUser confirmed founder identity and matching client profile. No role, permission, customer-data or action access is granted. Existing owner/AAL2 operations policy unchanged."
     },
     "tenant": {
       "changed": false,
@@ -80,7 +81,7 @@
     {
       "command": "tsx --tsconfig frontend/tsconfig.json --test frontend/src/components/response-experience-v2/document.test.ts frontend/src/components/response-experience-v2/mathSyntax.test.ts",
       "negative": true,
-      "scope": "15 focused adapter, input, calculator, founder-policy and standard math parser tests passed. Browser acceptance pending.",
+      "scope": "16 focused adapter, input, calculator, presentation-identity and standard math parser tests. Conflicting stream/completion text regression reproduced before correction.",
       "reference": "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
     }
   ],

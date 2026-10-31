@@ -12,7 +12,7 @@ Only integration changes outside the module are Workspace server opt-in and one 
 
 ## Flag and security
 
-Preview or development, or explicit server environment RESPONSE_EXPERIENCE_V2=founder, plus /workspace?responseV2=1. The request verifies Supabase getUser, current_community_role=owner, confirmed hello@xroga.com and AAL2 via the existing founder policy. Client profile must still match that server identity. Query alone and email-only checks cannot grant access. Production is off by default.
+Preview or development, or explicit server environment RESPONSE_EXPERIENCE_V2=founder, plus /workspace?responseV2=1. The request verifies Supabase getUser and confirmed hello@xroga.com. Client profile must match that server identity. Query or client email alone cannot grant access. Production is off by default. This flag grants presentation only, never admin, data, credential or action access. The canonical owner/AAL2 operations policy remains unchanged.
 
 The founder review panel contains clearly labelled deterministic examples inside Workspace. It never saves a conversation or submits work. This is review support, not evidence that existing-history, artifact and task flows have passed live acceptance.
 
@@ -23,7 +23,8 @@ The founder review panel contains clearly labelled deterministic examples inside
 - Payload size/depth, unsafe URLs, prototype keys, malformed output, duplicate IDs, graph edges, numeric chart values, local calculation limits and founder-policy negative cases tested.
 - No legacy renderer internals or styles changed. Pinned remark-math 6.0.0 parses math rather than a custom parser. Currency and code remain intact. Existing dependency security patches PASS, job a5cdfcf6-8f66-418e-9879-b527df3cd0e3.
 - Initial Preview build, deterministic golden, static contracts and mission CI passed at 20577c89. Unit/integrated/database workflows stopped on stale baseline source inventory/review bindings, before their acceptance tests. Reviewed binding repair and generated inventory are included in the follow-up, with no evaluator change.
-- Founder reported sign-in completed. Workspace loads authenticated, but V2 is not visible yet. Added an opt-in-only denial reason to distinguish identity, role and assurance failures without weakening the gate. No live V2 acceptance claimed.
+- Founder sign-in and saved-history reopening verified. Read-only diagnosis found the confirmed founder account has member role and no enrolled MFA. The initial V2 implementation incorrectly reused privileged operations admission for presentation. V2 now verifies only its authenticated founder presentation identity. No account role, MFA, RLS or operations policy was changed. No live V2 acceptance claimed yet.
+- Conflicting chat text in stream/completion payloads could be silently ignored. A focused negative test reproduced this before correction. Such payloads now preserve the canonical fallback rather than guessing which text to discard. The 16-test suite passed before the subsequent presentation-gate correction, which is being verified separately.
 
 ## Remaining acceptance work
 

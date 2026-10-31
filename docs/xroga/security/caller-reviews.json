@@ -28310,26 +28310,6 @@
           "marker": "Buffer.from(req.body)"
         }
       ]
-    },
-    {
-      "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-      "sourceSha256": "4ebba452069214f8bcaab0d99f2fa0632c1dc8ddab9436caf6205567dc0cbee8",
-      "callIds": [
-        "acf62cadb93d2dd4a3af"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Request-scoped SSR public client retains authenticated cookie identity. No-argument current_community_role reads only auth.uid role. Verified confirmed founder, owner role and AAL2 are required before returning the opt-in founder ID. No customer-data query, mutation, service-role access or action approval is introduced.",
-      "reason": "Manual source review of the new presentation flag boundary. Existing role policy reused. Negative unit cases passed, live founder acceptance remains pending. This disposition does not certify production acceptance.",
-      "evidence": [
-        {
-          "path": "frontend/src/app/(workspace)/workspace/page.tsx",
-          "marker": "client.rpc('current_community_role')"
-        },
-        {
-          "path": "frontend/src/components/response-experience-v2/document.test.ts",
-          "marker": "server flag, opt-in, confirmed founder role and MFA all required"
-        }
-      ]
     }
   ],
   "retiredSourceReviews": [

@@ -59,13 +59,17 @@ test('local calculator respects ranges, zero, missing and invalid values without
   for (const risk of ['', '6', 'Infinity', 'alert(1)']) assert.equal(calculateV2(calc, { capital: '50000', risk }), null);
   assert.equal(calculateV2({ ...calc, operation: 'quotient' }, { capital: '1', risk: '0' }), null);
 });
-test('server flag, opt-in, confirmed founder role and MFA all required', async () => {
-  const deps = { getUser: async () => ({ id: 'owner', email: 'hello@xroga.com', email_confirmed_at: '2026-01-01' }), getRole: async () => 'owner', getAal: async () => 'aal2' };
+test('presentation opt-in requires server-verified confirmed founder identity without granting admin powers', async () => {
+  const deps = { getUser: async () => ({ id: 'founder', email: 'hello@xroga.com', email_confirmed_at: '2026-01-01' }) };
   assert.equal(await responseV2Access(true, true, deps), true);
   assert.equal(await responseV2Access(false, true, deps), false);
   assert.equal(await responseV2Access(true, false, deps), false);
-  assert.equal(await responseV2Access(true, true, { ...deps, getRole: async () => 'member' }), false);
-  assert.equal(await responseV2Access(true, true, { ...deps, getAal: async () => 'aal1' }), false);
+  assert.equal(await responseV2Access(true, true, { getUser: async () => null }), false);
+  assert.equal(await responseV2Access(true, true, { getUser: async () => ({ id: 'other', email: 'other@example.com', email_confirmed_at: '2026-01-01' }) }), false);
+  assert.equal(await responseV2Access(true, true, { getUser: async () => ({ id: 'founder', email: 'hello@xroga.com', email_confirmed_at: null }) }), false);
+  assert.equal(await responseV2Access(true, true, { getUser: async () => { throw new Error('Unavailable'); } }), false);
+  const source = readFileSync(new URL('./access.ts', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /rpc\(|getRole|service.role|setUser/);
 });
 test('new canvas does not import legacy renderers and scoped tokens retain responsive and motion rules', () => {
   const css = readFileSync(new URL('./response-v2.module.css', import.meta.url), 'utf8');
@@ -82,4 +86,9 @@ test('progress is never clamped into a fabricated valid result', () => {
 });
 test('aggregate text payload is bounded', () => {
   assert.equal(boundedData(Array(20).fill('x'.repeat(200_000))), false);
+});
+
+test('different canonical chat text cannot be silently discarded', () => {
+  const message = { id: 'different', content: 'Partial answer', featureOutput: { type: 'chat', content: 'Complete answer with additional facts' } };
+  assert.equal(adaptResponseV2(message).supported, false);
 });

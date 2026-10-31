@@ -3,7 +3,7 @@
   --v2-line: color-mix(in srgb, var(--v2-ink) 14%, transparent);
   --v2-wash: color-mix(in srgb, var(--v2-ink) 3%, transparent);
   --v2-accent: #648fe5; --v2-body: 1rem; --v2-leading: 1.7;
-  color: var(--v2-ink); font-family: inherit; font-size: var(--v2-body);
+  color: var(--v2-ink); font-family: var(--ui-font, var(--font-inter)), system-ui, sans-serif; font-size: var(--v2-body);
   line-height: var(--v2-leading); width: 100%; min-width: 0; text-align: start;
   isolation: isolate; container-type: inline-size;
 }
