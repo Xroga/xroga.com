@@ -186,7 +186,9 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
 
     const numericKeys = keys.filter((_, column) => columnTypes[column] === 'number');
     const xKey = keys.find((_, column) => columnTypes[column] !== 'number');
-    if (rows.length >= 3 && xKey && numericKeys.length && blocks.length < MAX_RICH_BLOCKS) {
+    // One inferred series avoids putting incompatible units on a shared axis.
+    // Multi-series charts remain available through explicit validated chart blocks.
+    if (rows.length >= 3 && xKey && numericKeys.length === 1 && blocks.length < MAX_RICH_BLOCKS) {
       const timeSeries = rows.every((row) => /(?:^|\b)(?:\d{4}|q[1-4]|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(String(row[xKey])));
       blocks.push({
         schemaVersion: 1,

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
-import { calculateValues } from '@/lib/xrogaCalculations';
+import { calculateValues, calculatorInputValue } from '@/lib/xrogaCalculations';
 import { XrogaStatusBadge } from './XrogaStatusBadge';
 
 type UtilityType =
@@ -103,36 +103,47 @@ function ProgressRenderer({ block }: { block: Extract<UtilityBlock, { type: 'pro
 }
 
 function CalculatorRenderer({ block }: { block: Extract<UtilityBlock, { type: 'calculator' }> }) {
-  const [values, setValues] = useState<Record<string, number>>(() => Object.fromEntries(block.inputs.map((input) => [input.id, input.value])));
-  const result = useMemo(() => calculateValues(block.operation, block.inputs.map((input) => values[input.id] ?? input.value)), [block.inputs, block.operation, values]);
+  const initialValues = () => Object.fromEntries(block.inputs.map((input) => [input.id, String(input.value)]));
+  const [values, setValues] = useState<Record<string, string>>(initialValues);
+  const result = useMemo(() => calculateValues(block.operation, block.inputs.map((input) => calculatorInputValue(values[input.id] ?? String(input.value), input.min, input.max))), [block.inputs, block.operation, values]);
   return (
     <Surface title={block.title ?? 'Calculator'} description={block.description} state={block.state}>
       <div className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_minmax(220px,0.7fr)]">
         <div className="grid gap-3 sm:grid-cols-2">
           {block.inputs.map((input) => (
-            <label key={input.id} className="grid gap-1.5 text-xs font-medium text-[var(--muted)]">
-              {input.label}
-              <span className="flex items-center rounded-lg border border-[var(--border)] bg-black/[0.02] px-3 focus-within:ring-2 focus-within:ring-blue-500 dark:bg-white/[0.025]">
+            <fieldset key={input.id} className="grid min-w-0 gap-1.5 text-xs font-medium text-[var(--muted)]">
+              <legend className="mb-1.5">{input.label}</legend>
+              <label className="flex items-center rounded-lg border border-[var(--border)] bg-black/[0.02] px-3 focus-within:ring-2 focus-within:ring-blue-500 dark:bg-white/[0.025]">
+                <span className="sr-only">{input.label}</span>
                 <input
                   type="number"
-                  value={values[input.id] ?? input.value}
+                  value={values[input.id] ?? String(input.value)}
+                  aria-invalid={!Number.isFinite(calculatorInputValue(values[input.id] ?? String(input.value), input.min, input.max))}
                   min={input.min}
                   max={input.max}
                   step={input.step ?? 'any'}
-                  onChange={(event) => setValues((current) => ({ ...current, [input.id]: Number(event.target.value) }))}
+                  onChange={(event) => setValues((current) => ({ ...current, [input.id]: event.target.value }))}
                   className="h-10 min-w-0 flex-1 bg-transparent text-sm text-[var(--foreground)] outline-none"
                 />
                 {input.unit ? <span className="ml-2 text-xs text-[var(--muted)]">{input.unit}</span> : null}
-              </span>
-            </label>
+              </label>
+              {input.min !== undefined && input.max !== undefined && input.min < input.max ? <input
+                type="range" aria-label={`${input.label} slider`} min={input.min} max={input.max} step={input.step ?? 'any'}
+                value={Number.isFinite(calculatorInputValue(values[input.id] ?? String(input.value), input.min, input.max)) ? Number(values[input.id] ?? input.value) : input.min}
+                onChange={(event) => setValues((current) => ({ ...current, [input.id]: event.target.value }))}
+                className="h-8 w-full accent-[var(--accent)]"
+              /> : null}
+              {input.min !== undefined || input.max !== undefined ? <span>{input.min ?? 'No minimum'} to {input.max ?? 'no maximum'}{input.unit ? ` ${input.unit}` : ''}</span> : null}
+            </fieldset>
           ))}
         </div>
         <div className="flex min-h-28 flex-col justify-center rounded-xl border border-blue-500/25 bg-blue-500/[0.06] p-4">
           <span className="flex items-center gap-2 text-xs font-medium text-[var(--muted)]"><Calculator className="h-4 w-4" aria-hidden="true" />{block.resultLabel}</span>
-          <output className="mt-2 break-words text-3xl font-semibold tracking-tight text-[var(--foreground)]">
+          <output aria-live="polite" aria-atomic="true" className="mt-2 break-words text-3xl font-semibold tracking-tight text-[var(--foreground)]">
             {formatNumber(result, block.precision ?? 2)}{block.resultUnit ? <span className="ml-1 text-sm font-normal text-[var(--muted)]">{block.resultUnit}</span> : null}
           </output>
-          {!Number.isFinite(result) ? <span className="mt-2 text-xs text-red-500">Check the inputs; this operation cannot divide by zero.</span> : null}
+          {!Number.isFinite(result) ? <span className="mt-2 text-xs text-red-500">Enter valid values within the stated limits. Division by zero is unavailable.</span> : null}
+          <button type="button" onClick={() => setValues(initialValues())} className="mt-3 self-start rounded border border-[var(--border)] px-3 py-1.5 text-sm">Reset inputs</button>
         </div>
       </div>
     </Surface>

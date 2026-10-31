@@ -47,7 +47,14 @@ function TabsRenderer({ block }: { block: Extract<OrganizerBlock, { type: 'tabs'
     <Surface title={block.title ?? 'Details'} description={block.description} state={block.state}>
       <div className="overflow-x-auto border-b border-[var(--border)] px-2 pt-2" role="tablist" aria-label={block.title ?? 'Details'}>
         <div className="flex min-w-max gap-1">
-          {block.tabs.map((tab) => <button key={tab.id} id={`${block.id}-${tab.id}-tab`} type="button" role="tab" aria-selected={tab.id === activeId} aria-controls={`${block.id}-${tab.id}-panel`} onClick={() => setActiveId(tab.id)} className="rounded-t-lg border border-transparent px-3 py-2 text-xs font-medium text-[var(--muted)] transition-colors hover:text-[var(--foreground)] aria-selected:border-[var(--border)] aria-selected:border-b-[var(--background)] aria-selected:bg-[var(--background)] aria-selected:text-[var(--foreground)] motion-reduce:transition-none">{tab.label}</button>)}
+          {block.tabs.map((tab) => <button key={tab.id} id={`${block.id}-${tab.id}-tab`} type="button" role="tab" aria-selected={tab.id === active?.id} tabIndex={tab.id === active?.id ? 0 : -1} onKeyDown={(event) => {
+            const index = block.tabs.findIndex((item) => item.id === tab.id);
+            const next = event.key === 'ArrowRight' ? (index + 1) % block.tabs.length : event.key === 'ArrowLeft' ? (index + block.tabs.length - 1) % block.tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? block.tabs.length - 1 : null;
+            if (next === null) return;
+            event.preventDefault();
+            setActiveId(block.tabs[next].id);
+            (event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next])?.focus();
+          }} aria-controls={`${block.id}-${tab.id}-panel`} onClick={() => setActiveId(tab.id)} className="rounded-t-lg border border-transparent px-3 py-2 text-xs font-medium text-[var(--muted)] transition-colors hover:text-[var(--foreground)] aria-selected:border-[var(--border)] aria-selected:border-b-[var(--background)] aria-selected:bg-[var(--background)] aria-selected:text-[var(--foreground)] motion-reduce:transition-none">{tab.label}</button>)}
         </div>
       </div>
       {active ? <div id={`${block.id}-${active.id}-panel`} role="tabpanel" aria-labelledby={`${block.id}-${active.id}-tab`} className="whitespace-pre-wrap p-4 text-sm leading-6">{active.content}</div> : null}
