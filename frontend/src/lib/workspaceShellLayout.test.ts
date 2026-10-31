@@ -378,7 +378,7 @@ test('the terminal pane scrolls when there is something to scroll, and not befor
   // The flag has to be on the element the rule targets, or the rule matches nothing.
   const VIEW = read('../components/dashboard/DashboardView.tsx');
   assert.match(VIEW, /data-conversation=\{hasConversation \? 'true' : 'false'\}/, 'the pane cannot report its state');
-  assert.match(VIEW, /const hasConversation = messages\.length > 0;/, 'the state is not read from the transcript');
+  assert.match(VIEW, /const hasConversation = messages\.length > 0 \|\| Boolean\(specimen\);/, 'real messages or explicit preview specimens determine conversation layout');
 
   // Compact once earned: a thumb, not a groove down the edge of the window.
   assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 4px; \}/, 'the bar is wide again');

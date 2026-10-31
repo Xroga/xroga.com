@@ -124,7 +124,7 @@ test('the current plus menu follows the composer width and stays within the view
 
 test('fullscreen preserves the current empty-workspace starter and one canonical composer', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
-  assert.match(DOCK, /emptyWorkspace\s*=\s*hydrated\s*&&\s*!sessionRestoring\s*&&\s*messages\.length === 0\s*&&\s*!loading/);
+  assert.match(DOCK, /emptyWorkspace\s*=\s*hydrated\s*&&\s*!responsePreviewActive\s*&&\s*!sessionRestoring\s*&&\s*messages\.length === 0\s*&&\s*!loading/);
   assert.match(DOCK, /showStarterExperience\s*=\s*emptyWorkspace\s*&&\s*!workspaceOpen/);
   assert.match(DOCK, /dashboardFullscreen\s*\?\s*'z-\[210\] xv-terminal-dock--fullscreen'/);
   for (const component of ['WorkspaceStartHeader', 'WorkspaceStartCards']) {
