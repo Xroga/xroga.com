@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-31T10:25:09.846694+00:00",
+  "atUtc": "2026-10-31T15:25:09.846694+05:00",
   "founderComment": "https://github.com/Xroga/xroga.com/pull/899#issuecomment-6541922149",
   "pr899Source": "3d56868618c096d13e6a5c63a489d7f15143b0e7",
   "requiredChecks": [
@@ -68,8 +68,10 @@
     "branch": "codex/batch2-cancellation-fence-20261031",
     "focusedTestsPassed": 19,
     "focusedTestsFailed": 0,
-    "integrationCi": "PENDING_NOT_REPORTED_AS_PR899_CI",
-    "remainingGate": "Provider-supplied nonzero usage and accounted saved revision, plus terminal recovery/live acceptance. The isolated package allows zero model spend."
+    "integrationCi": "ONE_NEW_REQUIRED_RUN_IN_PROGRESS_FOR_CHANGED_BUILDER_SOURCE",
+    "remainingGate": "Provider-supplied nonzero usage and accounted saved revision, plus terminal recovery/live acceptance. The isolated package allows zero model spend.",
+    "correctionPr": "https://github.com/Xroga/xroga.com/pull/902",
+    "correctionPrBase": "codex/batch15-batch2-activation-20261031"
   },
   "production": {
     "revision": "xroga-api-batch1-85f-serving-1031",
