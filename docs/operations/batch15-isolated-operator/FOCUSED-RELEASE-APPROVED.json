@@ -1,0 +1,18 @@
+{
+  "approved": true,
+  "packageCommit": "41a5b936b9a7bc96c84d26ef905b36eeb20b013f",
+  "packagePath": "docs/operations/batch15-isolated-operator/FOCUSED-PRODUCTION-RELEASE-APPROVAL.md",
+  "sourceSha": "ac8168f940d6e56079bbeb5e717ef33001b8b171",
+  "founderReply": "i approve",
+  "priorHoldSuperseded": true,
+  "recordedAtUtc": "2026-10-31T12:03:32.0943273Z",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageUsd": 0.1,
+  "maximumImageGiB": 1,
+  "newIamAllowed": false,
+  "newServiceAllowed": false,
+  "frontendPromotionAllowed": false,
+  "browserHostAllowed": false,
+  "maintenanceStarted": false,
+  "modelTestApprovalSeparate": true
+}
