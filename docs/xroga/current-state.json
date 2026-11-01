@@ -6524,7 +6524,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "5db5d8416f4e0831680ed5edf9ace6436f2c523aeeb7f7c35fe4fac3f8f39c9b",
+      "sha256": "54c0dc824badfce11194c7c6f9ec7d8a0f045300715ff05a0fc5d5f3e203d2bf",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -131493,7 +131493,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:08567a62d65011d0b40b",
+      "id": "finding:ff0638e9750b28a58cab",
       "sourcePath": "backend/src/ai/prompts.ts",
       "line": 239,
       "kind": "TODO",
@@ -139286,7 +139286,7 @@
     {
       "id": "test-suite:de9619c7c3ade1d8da4c",
       "sourcePath": "backend/src/ai/richResponsePrompt.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

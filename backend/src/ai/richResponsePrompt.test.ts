@@ -73,6 +73,18 @@ test('security guidance excludes user-editable authorization and distinguishes w
   assert.match(CHAT_SYSTEM, /webhook.*event ID/);
 });
 
+test('the reachable chat guide distinguishes durable receipt from completed webhook effects', () => {
+  const system = chatPresentationSystem('Explain subscription webhooks in a SaaS architecture');
+  assert.match(system, /Receipt is not completion/);
+  assert.match(system, /effects and the processed marker atomically/);
+  assert.match(system, /duplicate pending event still needs recovery/);
+  assert.match(system, /expiring claims and retries/);
+  assert.match(system, /External side effects need provider-supported idempotency/);
+  assert.match(system, /event\.created timestamps are not a reliable ordering guarantee/);
+  assert.match(system, /retrieve current provider state/);
+  assert.doesNotMatch(system, /durably deduplicate the event ID before applying effects/);
+});
+
 test('rich output is composed in the original answer with truthful boundaries', () => {
   assert.match(CHAT_SYSTEM, /at the point in the explanation where it belongs/);
   assert.doesNotMatch(CHAT_SYSTEM, /Add one data-only fenced block labelled xroga-ui after the explanatory prose/);
