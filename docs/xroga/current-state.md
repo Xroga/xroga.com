@@ -91,6 +91,8 @@ The JSON includes every discovered registration, source module, scheduler, migra
 - Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.
 - No production credentials or customer data were read; live behavior remains unverified in this command.
 - Static imports do not prove provider availability or authorization correctness.
+- Unresolved local import frontend/src/app/auth/forgot-password/page.tsx:8 -> @/lib/supabase/authRecovery
+- Unresolved local import frontend/src/components/auth/LoginForm.tsx:32 -> @/lib/supabase/authRecovery
 - Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
 - Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
 - Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs

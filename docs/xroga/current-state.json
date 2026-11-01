@@ -58167,7 +58167,7 @@
       "id": "surface:0f05d38ac59baa354235",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/auth/forgot-password/page.tsx",
-      "sha256": "5009c49978ceb24ba294a4a996d64354ee8c2297109dcb680f76a71f9024bed7",
+      "sha256": "c581249c31352a176528a76eb3541aa2980cdbcf1ab0a81af1b43e7bdfa12132",
       "symbols": [
         "ForgotPasswordPage",
         "requestReset"
@@ -58175,6 +58175,7 @@
       "imports": [
         "@/components/auth/AuthFlowFrame",
         "@/components/auth/AuthModern",
+        "@/lib/supabase/authRecovery",
         "@/lib/supabase/client",
         "lucide-react",
         "react"
@@ -62380,7 +62381,7 @@
         "frontend/src/app/auth/forgot-password/page.tsx:6",
         "frontend/src/app/auth/reset-password/page.tsx:7",
         "frontend/src/components/auth/AuthFlowFrame.tsx:2",
-        "frontend/src/components/auth/LoginForm.tsx:34",
+        "frontend/src/components/auth/LoginForm.tsx:35",
         "frontend/src/components/auth/SignupForm.tsx:62"
       ],
       "reachable": true,
@@ -62516,7 +62517,7 @@
       "id": "surface:73ffd844396db361cdcd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/auth/LoginForm.tsx",
-      "sha256": "81e65b9595865de26c2d1ac8154e492b7b286d8849fafa92e6e54a6f2a530e95",
+      "sha256": "a7752efe3a14567f36d99754beecdd2a2070254cd4a21f9bda469160b4407032",
       "symbols": [
         "LoginForm",
         "err",
@@ -62534,6 +62535,7 @@
         "./AuthModern",
         "@/lib/supabase/authErrors",
         "@/lib/supabase/authProviders",
+        "@/lib/supabase/authRecovery",
         "@/lib/supabase/client",
         "@/lib/supabase/oauthReturn",
         "lucide-react",
@@ -107424,7 +107426,7 @@
       "callers": [
         "frontend/src/app/auth/callback/route.ts:3",
         "frontend/src/app/auth/contact/page.tsx:10",
-        "frontend/src/components/auth/LoginForm.tsx:32",
+        "frontend/src/components/auth/LoginForm.tsx:33",
         "frontend/src/components/auth/SignupForm.tsx:39",
         "frontend/src/lib/supabase/oauthReturn.test.ts:3"
       ],
@@ -132558,9 +132560,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:9e99014e0d260cf4b4cb",
+      "id": "finding:fe778863930e53a32c59",
       "sourcePath": "frontend/src/app/auth/forgot-password/page.tsx",
-      "line": 39,
+      "line": 45,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -132648,9 +132650,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f0754e0923468f1b6b26",
+      "id": "finding:d2cde39e8efe11d7e3fb",
       "sourcePath": "frontend/src/components/auth/LoginForm.tsx",
-      "line": 277,
+      "line": 278,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -132658,9 +132660,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:667c6c6a4bc1603a8889",
+      "id": "finding:5b0ecf8dbeb2b0328478",
       "sourcePath": "frontend/src/components/auth/LoginForm.tsx",
-      "line": 367,
+      "line": 368,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -146222,6 +146224,8 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
+    "Unresolved local import frontend/src/app/auth/forgot-password/page.tsx:8 -> @/lib/supabase/authRecovery",
+    "Unresolved local import frontend/src/components/auth/LoginForm.tsx:32 -> @/lib/supabase/authRecovery",
     "Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"

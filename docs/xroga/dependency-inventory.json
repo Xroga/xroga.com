@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "152fac36da7c664f0f4da5a595f927101f5be033",
+  "source_sha": "959c1778ecd823a505cd736dfe79a527616a6755",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19109,7 +19109,7 @@
     },
     {
       "path": "frontend/src/app/auth/forgot-password/page.tsx",
-      "sha256": "5009c49978ceb24ba294a4a996d64354ee8c2297109dcb680f76a71f9024bed7"
+      "sha256": "c581249c31352a176528a76eb3541aa2980cdbcf1ab0a81af1b43e7bdfa12132"
     },
     {
       "path": "frontend/src/app/auth/github/callback/page.tsx",
@@ -19509,7 +19509,7 @@
     },
     {
       "path": "frontend/src/components/auth/LoginForm.tsx",
-      "sha256": "81e65b9595865de26c2d1ac8154e492b7b286d8849fafa92e6e54a6f2a530e95"
+      "sha256": "a7752efe3a14567f36d99754beecdd2a2070254cd4a21f9bda469160b4407032"
     },
     {
       "path": "frontend/src/components/auth/SignupForm.tsx",
