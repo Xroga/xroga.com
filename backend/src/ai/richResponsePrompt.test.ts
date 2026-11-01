@@ -1,7 +1,21 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { CHAT_SYSTEM } from './prompts.js';
+import { CHAT_SYSTEM, chatPresentationSystem } from './prompts.js';
+
+test('actual chat contract keeps essential schemas and safety without unrelated example overload', () => {
+  const system = chatPresentationSystem('Explain a proposed application architecture with a diagram.');
+  const examples = system.split('\n').filter(line => line.startsWith('{"type":')).map(line => JSON.parse(line));
+  assert.equal(examples.length, 8);
+  assert.equal(new Set(examples.map(example => example.type)).size, examples.length);
+  assert.ok(examples.some(example => example.type === 'graph' && example.edges.length));
+  assert.ok(examples.some(example => example.type === 'calculator'));
+  assert.doesNotMatch(system, /\{"type":"api-request"/);
+  assert.match(system, /Never use user_metadata or raw_user_meta_data for authorization/);
+  assert.match(system, /Do not substitute ASCII/);
+  assert.ok(system.length < CHAT_SYSTEM.length);
+  assert.match(chatPresentationSystem('Explain this calendar'), /\{"type":"calendar"/);
+});
 
 test('chat answers may request safe rich output without fabricating visual data', () => {
   assert.match(CHAT_SYSTEM, /```xroga-ui|labelled xroga-ui/i);

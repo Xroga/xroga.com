@@ -5681,7 +5681,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6524,7 +6524,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "2181ba06754633766992d77774b95117fcf349d6167f4cc843d1007ae35ac0bd",
+      "sha256": "752456582a9b529df72de1a530c7b24110bf6b2aea05582c047222f9dc9c903a",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -6535,18 +6535,24 @@
         "SAFE_RICH_OUTPUT_GUIDE",
         "VISION_SYSTEM",
         "brief",
+        "chatPresentationSystem",
         "content",
         "converterUserPrompt",
+        "core",
         "deleteHint",
+        "example",
         "incrementalUpdateContext",
+        "lines",
         "listing",
         "remaining",
+        "requested",
         "research",
         "researchAnswerMaxTokens",
         "researchSynthesisPrompt",
         "sampleBudget",
         "sampledChars",
         "samples",
+        "seen",
         "selectNote",
         "summaryBlock",
         "truncated"
@@ -131477,7 +131483,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0c043fedb2a46b0bd2cc",
+      "id": "finding:4ccec46a8907b1afe75a",
       "sourcePath": "backend/src/ai/prompts.ts",
       "line": 190,
       "kind": "SIMULATED",
@@ -131487,9 +131493,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0ebfdef9f34d8f97e5e5",
+      "id": "finding:08567a62d65011d0b40b",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 237,
+      "line": 239,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -139280,7 +139286,7 @@
     {
       "id": "test-suite:de9619c7c3ade1d8da4c",
       "sourcePath": "backend/src/ai/richResponsePrompt.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

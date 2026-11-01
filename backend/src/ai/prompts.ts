@@ -266,6 +266,26 @@ Be direct. Prefer concrete next steps over fluff.
 
 ${SAFE_RICH_OUTPUT_GUIDE}`;
 
+/** Keep the answer contract on the actual chat request, without flooding every
+ * ordinary question with examples for calendars, API inspectors and artifacts.
+ * Selection only changes schema documentation, never routing or authority. */
+export function chatPresentationSystem(request: string): string {
+  const core = new Set(['graph', 'card-grid', 'comparison', 'chart', 'calculator', 'steps', 'notice', 'rich-results']);
+  const requested = request.toLowerCase().slice(0, 32_000);
+  const seen = new Set<string>();
+  const lines = CHAT_SYSTEM.split('\n').filter(line => {
+    if (!line.startsWith('{"type":')) return true;
+    const example = JSON.parse(line) as { type: string };
+    if (seen.has(example.type)) return false;
+    if (!core.has(example.type) && !requested.includes(example.type)) return false;
+    seen.add(example.type);
+    return true;
+  });
+  return `${lines.join('\n')}
+Before finishing this same answer, check that every explicitly requested visual is present at its reading position as a valid xroga-ui block. For a conceptual diagram, use the relationships described in your explanation, unique node IDs and edges whose source and target exist. Do not substitute ASCII, an empty heading or a promise. If the information is insufficient, explain that limitation instead of inventing connections.
+All example values are schema illustrations, not facts to reuse. Do not claim execution, source verification or secure implementation without evidence. Keep the substantive explanation complete and do not repeat it in each visual. No separate formatting request is needed.`;
+}
+
 export const VISION_SYSTEM = `You are Xroga Lens — you analyze screenshots and images for builders.
 When the user attaches an image:
 - Describe what you see clearly (UI, errors, design, text in the image).

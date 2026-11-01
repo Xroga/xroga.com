@@ -47,7 +47,7 @@ import {
 } from './builderAttempt.js';
 import {
   BUILDER_SYSTEM,
-  CHAT_SYSTEM,
+  chatPresentationSystem,
   DOC_SYSTEM,
   VISION_SYSTEM,
   incrementalUpdateContext,
@@ -1114,7 +1114,7 @@ export async function runChatPipeline(opts: {
   if (research?.sources.length) truthAuthorities.add('network:public-read');
   const result = await callBuilderStream(
     route.builder,
-    [{ role: 'system', content: `${CHAT_SYSTEM}\n\n${currentPublicProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
+    [{ role: 'system', content: `${chatPresentationSystem(opts.prompt)}\n\n${currentPublicProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
