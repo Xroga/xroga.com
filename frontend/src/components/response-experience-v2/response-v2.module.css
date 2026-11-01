@@ -8,6 +8,8 @@
   isolation: isolate; container-type: inline-size;
 }
 .architecture { margin:0; }
+.diagramConnections { margin:16px 0; padding-inline-start:20px; font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
+.diagramConnections li + li { margin-block-start:8px; }
 .comparisonCards { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:16px; }
 .comparisonCard { min-width:0; padding:18px; border:1px solid var(--v2-line); border-radius:14px; overflow-wrap:anywhere; }
 .comparisonCard header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }

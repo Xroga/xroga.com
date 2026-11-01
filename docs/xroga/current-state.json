@@ -3,12 +3,12 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "4e78eb2a8b2d2994f89f9daf6df7c92ec11b2ce9",
-    "sourceTimestampUtc": "2026-11-01T23:15:19+05:00",
-    "auditStartedUtc": "2026-11-01T18:25:07.416Z",
+    "sha": "9950a882a0b23ca5cdcb734d2a920135c23f69f4",
+    "sourceTimestampUtc": "2026-11-02T01:06:28+05:00",
+    "auditStartedUtc": "2026-11-01T20:28:02.547Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v22.21.1",
+    "node": "v24.18.0",
     "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
@@ -3080,6 +3080,52 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:ef3623f65fc045e92013",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/completionDiagnostics.ts",
+      "sha256": "3859e84227f83566301ad3eb12d65e8f40a2c5afe16ec19a9688bc6a7a1bf6e1",
+      "symbols": [
+        "CompletionDiagnostics",
+        "choice",
+        "choices",
+        "count",
+        "key",
+        "message",
+        "receipt",
+        "requirePublicCompletion",
+        "value"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/completionDiagnostics.test.ts:3",
+        "backend/src/ai/openaiCompat.ts:17"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/completionDiagnostics.ts#receipt"
+      ],
+      "testCoverage": [
+        "backend/src/ai/completionDiagnostics.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:70ccfd81660342e01707",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/contextPreparation.ts",
@@ -4755,7 +4801,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+      "sha256": "44c89cd06d6b7d42e7de4bcb7e4d71c78961cf8f45de4fee2e5ff73de3c777e5",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -4783,6 +4829,7 @@
         "def",
         "delta",
         "deniedResponse",
+        "diagnostics",
         "endpoint",
         "ep",
         "err",
@@ -4809,7 +4856,6 @@
         "pending",
         "providerReasoningControls",
         "providerRequestId",
-        "reasoning",
         "reasoningDelta",
         "referer",
         "requireNonEmptyModelText",
@@ -4831,6 +4877,7 @@
         "../security/egress/dataClassification.js",
         "../security/egress/urlPolicy.js",
         "./builderAttempt.js",
+        "./completionDiagnostics.js",
         "./modelSdkAdmission.js",
         "./models.js",
         "./providerPolicy.js",
@@ -4840,6 +4887,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/builderAttempt.ts",
+        "backend/src/ai/completionDiagnostics.ts",
         "backend/src/ai/modelSdkAdmission.ts",
         "backend/src/ai/models.ts",
         "backend/src/ai/providerPolicy.ts",
@@ -80783,13 +80831,14 @@
       "id": "surface:16d6f2c41ccfbf63f014",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "sha256": "7a743c131de1824f94902875130c958a189192da37d6c0c77346943cbe83d789",
+      "sha256": "229f9bd1c97198dd1948737d28d14f9689297b5e97a21e0577042103cf437757",
       "symbols": [
         "ArchitectureV2",
         "LabeledConnectionV2",
         "canvas",
         "edgeTypes",
         "edges",
+        "element",
         "first",
         "lane",
         "layout",
@@ -80797,6 +80846,7 @@
         "nodes",
         "path",
         "positions",
+        "resize",
         "x",
         "y"
       ],
@@ -81925,7 +81975,7 @@
       "id": "surface:e4f7133e3c2806c74c97",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sha256": "474feb6ff62caf461886fe9cfff937285377d267efead4b1ff863c12be2cd137",
+      "sha256": "0427bc8da2d548892942149a799b33518861bc4e8d4c82c31483d64216abb742",
       "symbols": [
         "base",
         "byId",
@@ -134509,6 +134559,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:3ba52610d111186305bc",
+      "sourcePath": "backend/src/ai/completionDiagnostics.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:cb18326307c062d72d43",
       "sourcePath": "backend/src/ai/contextPreparation.test.ts",
       "declaredTests": 1,
@@ -134693,7 +134750,7 @@
     {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139579,7 +139636,7 @@
     {
       "id": "test-suite:4aaace318211abef1d52",
       "sourcePath": "frontend/src/components/response-experience-v2/graphLayout.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -141319,6 +141376,7 @@
       "id": "candidate:1e714eed4b7b827a610a",
       "family": "completion_semantics",
       "sourcePaths": [
+        "backend/src/ai/completionDiagnostics.ts",
         "backend/src/ai/measuredEvidence.ts",
         "backend/src/ai/softwareAgent/completionGate.ts",
         "backend/src/ai/verificationLifecycle.ts",

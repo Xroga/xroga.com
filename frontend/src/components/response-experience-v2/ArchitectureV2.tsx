@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ReactFlow, MarkerType, Position, BaseEdge, EdgeLabelRenderer, getSmoothStepPath, type EdgeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { ResponseNodeV2 } from './document';
@@ -26,8 +26,16 @@ const edgeTypes = { responseConnection: LabeledConnectionV2 };
 
 /** Data-only graph. No executable actions, remote layout or model calls. */
 export default function ArchitectureV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'graph' }> }) {
-  const layout = useMemo(() => graphCanvasV2(node), [node]);
+  const [compact, setCompact] = useState(false);
+  const layout = useMemo(() => graphCanvasV2(node, compact), [node, compact]);
   const canvas = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = canvas.current;
+    if (!element) return;
+    const resize = new ResizeObserver(entries => setCompact(entries[0].contentRect.width < 550));
+    resize.observe(element);
+    return () => resize.disconnect();
+  }, []);
   useEffect(() => {
     // Start on the first reading-level node instead of a blank routing lane.
     // Preserve user scrolling until the diagram itself changes.
@@ -42,22 +50,22 @@ export default function ArchitectureV2({ node }: { node: Extract<ResponseNodeV2,
     style: { width: layout.nodeWidth, minHeight: layout.nodeHeight, padding: 16, borderRadius: 12, background: 'var(--background, #fff)', color: 'var(--v2-ink)', border: '1px solid var(--v2-line)', fontSize: 14, lineHeight: 1.5, overflowWrap: 'anywhere' as const },
   })), [node, positions, layout]);
   const edges = useMemo(() => node.edges.map((edge, index) => ({
-    id: `${node.id}-edge-${index}`, source: edge.source, target: edge.target, label: edge.label,
+    id: `${node.id}-edge-${index}`, source: edge.source, target: edge.target, label: compact ? undefined : edge.label,
     type: 'responseConnection', data: { lane: layout.edgeLanes[index] }, markerEnd: { type: MarkerType.ArrowClosed, color: '#7890b3' },
     style: { stroke: '#7890b3', strokeWidth: 1.5 },
     labelStyle: { fill: 'var(--v2-ink)', fontSize: 12 },
     labelBgStyle: { fill: 'var(--background, #fff)' }, labelBgPadding: [8, 5] as [number, number],
-  })), [node, layout]);
+  })), [node, layout, compact]);
   return <figure className={styles.architecture}>
     {node.title && <figcaption>{node.title}</figcaption>}
     {node.description && <p>{node.description}</p>}
-    <div ref={canvas} className={styles.architectureCanvas} role="region" tabIndex={0} aria-label={`${node.title || 'Architecture diagram'}. Scroll horizontally to explore the connected diagram.`}>
+    <div ref={canvas} className={styles.architectureCanvas} role="region" tabIndex={0} aria-label={`${node.title || 'Architecture diagram'}. ${compact ? 'Vertical layout. All connections are listed below.' : 'Scroll horizontally to explore the connected diagram.'}`}>
       <div style={{ width: layout.width, height: layout.height, marginInline: 'auto' }}>
         <ReactFlow nodes={nodes} edges={edges} edgeTypes={edgeTypes} defaultViewport={{ x: 0, y: 0, zoom: 1 }} minZoom={1} maxZoom={1}
           nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} zoomOnScroll={false} zoomOnPinch={false} zoomOnDoubleClick={false} panOnDrag={false} panOnScroll={false}
           preventScrolling={false} />
       </div>
     </div>
-    <ul className={styles.visuallyHidden} aria-label="Diagram connections">{node.edges.map((edge, index) => <li key={index}>{node.nodes.find(n => n.id === edge.source)?.label} → {node.nodes.find(n => n.id === edge.target)?.label}{edge.label ? `: ${edge.label}` : ''}</li>)}</ul>
+    <ul className={compact ? styles.diagramConnections : styles.visuallyHidden} aria-label="Diagram connections">{node.edges.map((edge, index) => <li key={index}>{node.nodes.find(n => n.id === edge.source)?.label} → {node.nodes.find(n => n.id === edge.target)?.label}{edge.label ? `: ${edge.label}` : ''}</li>)}</ul>
   </figure>;
 }

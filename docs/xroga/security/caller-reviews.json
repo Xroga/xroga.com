@@ -28423,13 +28423,13 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sourceSha256": "474feb6ff62caf461886fe9cfff937285377d267efead4b1ff863c12be2cd137",
+      "sourceSha256": "0427bc8da2d548892942149a799b33518861bc4e8d4c82c31483d64216abb742",
       "callIds": [
         "b7da7c544e1d23eb4355"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from creates local grid ranks from already validated graph node IDs when the graph contains a cycle. The callback slices and maps an in-memory node array. No database, storage, network, credential or execution API is called.",
-      "reason": "Reviewed graphPositionsV2, graphLayersV2 and graphCanvasV2. Native Array is not shadowed or reassigned. All graph ranking, dimensions and edge lanes are computed from local validated nodes and edges. This disposition covers only local array construction, not upstream validation or any authority boundary.",
+      "reason": "Reviewed graphPositionsV2, graphLayersV2 and graphCanvasV2. Native Array is not shadowed or reassigned. All graph ranking, dimensions and edge lanes are computed from local validated nodes and edges. This disposition covers only local array construction, not upstream validation or any authority boundary. 2026-11-02: compact layout only changes local node positions and edge lanes. The native Array.from expression remains unchanged; no persistence, network or authority added.",
       "evidence": [
         {
           "path": "frontend/src/components/response-experience-v2/graphLayout.ts",

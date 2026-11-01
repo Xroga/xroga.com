@@ -28,6 +28,18 @@ test('continuous diagrams require the supplied edges to prove the full sequence'
   assert.equal(isLinearFlowV2({...graph,nodes:[graph.nodes[1],graph.nodes[0],graph.nodes[2]]}), false);
 });
 
+test('mobile canvas reflows branches vertically at readable scale and preserves every edge', () => {
+  const graph: Extract<ResponseNodeV2,{kind:'graph'}> = {id:'mobile',kind:'graph',nodes:['a','b','c','d'].map(id=>({id,label:id})),edges:[{source:'a',target:'b'},{source:'a',target:'c'},{source:'c',target:'d'},{source:'d',target:'a'}]};
+  const original = JSON.stringify(graph);
+  const layout = graphCanvasV2(graph,true);
+  assert.ok(layout.width <= 340);
+  assert.equal(new Set(layout.positions.map(p=>p.x)).size,1);
+  assert.equal(new Set(layout.positions.map(p=>p.y)).size,graph.nodes.length);
+  assert.equal(layout.edgeLanes.length,graph.edges.length);
+  for (const lane of layout.edgeLanes) if (lane !== null) assert.ok(lane < layout.positions[0].x);
+  assert.equal(JSON.stringify(graph),original);
+});
+
 test('skip-level and cyclic connections have separate lanes outside every node', () => {
   const graph: Extract<ResponseNodeV2, {kind:'graph'}> = { id:'g', kind:'graph', nodes:['a','b','c'].map(id => ({id,label:id})), edges:[{source:'a',target:'b'},{source:'b',target:'c'},{source:'a',target:'c'}] };
   for (const candidate of [graph, {...graph, edges:[...graph.edges,{source:'c',target:'a'}]}]) {

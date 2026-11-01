@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ff2850de6f598563c5b6ff1ff5d484f5b8628b6c",
+  "source_sha": "9950a882a0b23ca5cdcb734d2a920135c23f69f4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15917,6 +15917,10 @@
       "sha256": "fba32cb6703084fd6de14661d92f08baaccaecb1c987e666b72d80ed327032e8"
     },
     {
+      "path": "backend/src/ai/completionDiagnostics.ts",
+      "sha256": "3859e84227f83566301ad3eb12d65e8f40a2c5afe16ec19a9688bc6a7a1bf6e1"
+    },
+    {
       "path": "backend/src/ai/contextPreparation.ts",
       "sha256": "375e05d4bc84d42f2a398a35b2a5f8ec07299b4f421cbf23b8e3d49e4edc721d"
     },
@@ -16006,7 +16010,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
+      "sha256": "44c89cd06d6b7d42e7de4bcb7e4d71c78961cf8f45de4fee2e5ff73de3c777e5"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -20898,7 +20902,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "sha256": "7a743c131de1824f94902875130c958a189192da37d6c0c77346943cbe83d789"
+      "sha256": "229f9bd1c97198dd1948737d28d14f9689297b5e97a21e0577042103cf437757"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ChartV2.tsx",
@@ -20974,7 +20978,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sha256": "474feb6ff62caf461886fe9cfff937285377d267efead4b1ff863c12be2cd137"
+      "sha256": "0427bc8da2d548892942149a799b33518861bc4e8d4c82c31483d64216abb742"
     },
     {
       "path": "frontend/src/components/response-experience-v2/interactionContext.ts",
@@ -23078,7 +23082,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 183,
+      "line": 184,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23697,7 +23701,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 110,
+      "line": 111,
       "credentialsInUrl": false
     },
     {
@@ -30459,7 +30463,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 238,
+      "line": 239,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35527,7 +35531,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "line": 37,
+      "line": 45,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
