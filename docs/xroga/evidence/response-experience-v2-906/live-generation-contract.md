@@ -58,3 +58,9 @@ One new official Next.js documentation research request stopped at the canonical
 Viewport limitations: requested browser overrides did not produce the requested 390 or 1440 CSS-pixel viewport. A measured 580x668 viewport must not be represented as 390px mobile acceptance. Exact desktop/mobile checks and final production verification remain pending. No production promotion was performed.
 
 CI bookkeeping: canonical inventory generation and requirement-source reconciliation repaired the demonstrated stale source-ledger failures. Commit ff9675d1abaa22066a0b36a062b8fad68e9407a1 contains the source-ledger correction. Security and acceptance rules were not changed. Passing individual workflows are not final product acceptance.
+
+## 2026-11-01 exact CI metadata correction after 4c527227
+
+CI run 41301330924 failed runtime-config-integrity because the tracked rich export module was absent from the generated runtime inventory. Regenerated the inventory with that module tracked. check-runtime-config passed in local runner ef06f663-34a1-4e39-ba4b-40755528409b.
+
+baseline-negative-fixtures failed on the guestChat.ts current transport hash. Reviewed the 4c527227 route diff: only SAFE_RICH_OUTPUT_GUIDE import/selection changed to GUEST_RICH_OUTPUT_GUIDE. Preserved the prior binding and historical archive, recorded the prompt-only continuation, and updated the current proof checksum. The unchanged source-lifetime-bindings tests passed in runner 13eaa282-f84b-4a3a-bffb-b17e1ce00d2c. No security policy, test expectation, acceptance claim, provider call or production configuration changed.

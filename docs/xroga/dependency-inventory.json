@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "35f38b032f5e3919f2f7e056ae2fd1d9792dd2d5",
+  "source_sha": "4c527227dd34e9233e46d74422bfb0f29f4b2228",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20671,6 +20671,10 @@
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
       "sha256": "a7e373be62078308246978fcd0ec42dfa94e46a147b48f131216f49427f77816"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/exportText.ts",
+      "sha256": "1fcda6ea49a6339ba449f4346bb425d9ea34a6ef1d602a2f155035b0e2b2991a"
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
