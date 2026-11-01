@@ -18,6 +18,7 @@ export type CompositionV2 = { parts: SemanticPartV2[]; unplacedSourceKeys: strin
 
 const parser = unified().use(remarkParse).use(remarkGfm).use(remarkMath, { singleDollarTextMath: false });
 const roles: Record<ResponseNodeV2['kind'], SemanticRoleV2> = {
+  cards: 'comparison',
   prose: 'narrative', code: 'code', table: 'comparison', chart: 'series', calculator: 'scenario',
   graph: 'workflow', resources: 'resource', images: 'resource', citation: 'evidence',
   metrics: 'comparison', tabs: 'scenario', notice: 'notice', accordion: 'narrative',
@@ -101,7 +102,7 @@ export function composeResponseV2(document: ResponseDocumentV2): CompositionV2 {
       prose.forEach(append); continue;
     }
     const sourceKeys = node.kind === 'citation' ? [sourceKeyV2(node.url)] : node.kind === 'resources' ? node.items.map(item => item.source && sourceKeyV2(item.source.url)) : [];
-    const authoredProse = [node.description ?? '', ...(node.kind === 'notice' ? [node.text] : node.kind === 'tabs' || node.kind === 'accordion' ? node.items.map(item => item.content) : [])];
+    const authoredProse = [node.description ?? '', ...(node.kind === 'notice' ? [node.text] : node.kind === 'tabs' || node.kind === 'accordion' ? node.items.map(item => item.content) : node.kind === 'cards' ? node.items.map(item => item.description ?? '') : [])];
     const keys = [...new Set([...sourceKeys.filter((key): key is string => !!key), ...authoredProse.flatMap(claimKeys)])];
     keys.forEach(key => placed.add(key));
     const related = node.kind === 'chart' ? document.nodes.find(other => other.kind === 'table' && sameChartTableV2(node, other)) : undefined;

@@ -2,11 +2,14 @@ import type { ResponseNodeV2 } from './document';
 
 /** Positions are presentation only. Cycles use a neutral grid, never an invented
  * dependency order. Every supplied edge is retained by the diagram renderer. */
-export function graphPositionsV2(node: Extract<ResponseNodeV2, { kind: 'graph' }>) {
+export function graphPositionsV2(node: Extract<ResponseNodeV2, { kind: 'graph' }>, compact = false, rowHeight = 210) {
   const layers = graphLayersV2(node);
   const ranks = layers ?? Array.from({ length: Math.ceil(node.nodes.length / 2) }, (_, i) => node.nodes.slice(i * 2, i * 2 + 2).map(n => n.id));
   const columns = Math.max(1, ...ranks.map(layer => layer.length));
-  return ranks.flatMap((layer, row) => layer.map((id, column) => ({ id, x: (column + (columns - layer.length) / 2) * 280, y: row * 210 })));
+  // A narrow canvas reflows nodes, not text size. Edges still carry the supplied
+  // topology, including branches and back edges, rather than implying a list.
+  if (compact) return ranks.flat().map((id, row) => ({ id, x: 40, y: row * rowHeight }));
+  return ranks.flatMap((layer, row) => layer.map((id, column) => ({ id, x: (column + (columns - layer.length) / 2) * 280, y: row * rowHeight })));
 }
 
 /** A reading order is not a dependency. Only draw a continuous flow when each

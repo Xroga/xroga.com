@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `1c43f5d8cec48b1dbe10d58dbcbb58ef7772ad9e`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `bc0446bae14c4fc8333a916e39e269766f44f3e2`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -156,6 +156,7 @@ Source SHA: `1c43f5d8cec48b1dbe10d58dbcbb58ef7772ad9e`; exact current source/con
 | endpoint-wa-me | Source-defined endpoint wa.me | CONFIGURED_BUT_UNVERIFIED | wa.me | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-web3-okx-com | Source-defined endpoint web3.okx.com | CONFIGURED_BUT_UNVERIFIED | web3.okx.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-whop-com | Source-defined endpoint whop.com | CONFIGURED_BUT_UNVERIFIED | whop.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-workspace-invalid | Source-defined endpoint workspace.invalid | CONFIGURED_BUT_UNVERIFIED | workspace.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anchor-lang-com | Source-defined endpoint www.anchor-lang.com | CONFIGURED_BUT_UNVERIFIED | www.anchor-lang.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anera-org | Source-defined endpoint www.anera.org | CONFIGURED_BUT_UNVERIFIED | www.anera.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-www-anthropic-com | Source-defined endpoint www.anthropic.com | CONFIGURED_BUT_UNVERIFIED | www.anthropic.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -231,4 +232,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-917 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+919 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

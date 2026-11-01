@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { displayTitleV2, safeLinkV2, type ResponseDocumentV2, type ResponseNodeV2 } from './document';
 import { ProseV2, CodeV2 } from './ProseV2';
 import styles from './response-v2.module.css';
-import { InlineImageV2, SourceLinkV2, SourceRegistryContextV2 } from './SourceV2';
+import { InlineImageV2, SourceLinkV2, SourceMarkV2, SourceRegistryContextV2 } from './SourceV2';
 import { sourceRegistryV2 } from './sourceRegistry';
 import { ResourcesV2 } from './ResourcesV2';
 import { composeResponseV2, layoutUnitV2, type SemanticPartV2 } from './composition';
@@ -16,6 +16,15 @@ const Tabs = lazy(() => loadPresentation(() => import('./InteractiveV2')).then(m
 
 function NodeView({ node, document, grouped = false, stacked = false }: { node: ResponseNodeV2; document: ResponseDocumentV2; grouped?: boolean; stacked?: boolean }) {
   switch (node.kind) {
+    case 'cards': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}<div className={styles.comparisonCards}>{node.items.map(item => <section key={item.id} className={styles.comparisonCard}>
+      {item.imageUrl && <InlineImageV2 src={item.imageUrl} alt={item.title} />}
+      <header><h4>{item.url && safeLinkV2(item.url) ? <a href={safeLinkV2(item.url)} target="_blank" rel="noopener noreferrer"><SourceMarkV2 url={item.url} /> {item.title}</a> : item.title}</h4>{item.badge && <span>{item.badge}</span>}</header>
+      {item.subtitle && <p className={styles.cardSubtitle}>{item.subtitle}</p>}
+      {item.description && <ProseV2 text={item.description} sources={document.sources} />}
+      {item.recommended && <p className={styles.cardSubtitle}>Suggested in this answer</p>}
+      {item.metrics && <dl>{Object.entries(item.metrics).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value == null ? 'Not supplied' : String(value)}</dd></div>)}</dl>}
+      {item.url && item.actionLabel && safeLinkV2(item.url) && <a href={safeLinkV2(item.url)} target="_blank" rel="noopener noreferrer">{item.actionLabel}</a>}
+    </section>)}</div></section>;
     case 'prose': return <>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}<ProseV2 text={node.text} sources={document.sources} /></>;
     case 'resources': return <ResourcesV2 node={node} />;
     case 'images': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}{node.items.map(item => <figure key={item.id}><InlineImageV2 src={item.url} alt={item.label} />{item.caption && <figcaption>{item.caption}</figcaption>}</figure>)}</section>;

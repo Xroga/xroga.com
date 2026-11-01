@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { adaptResponseV2, boundedData, safeLinkV2, displayTitleV2 } from './document';
-import { calculateV2, type CalculatorNode } from './calculations';
+import { calculateV2, formulaV2, type CalculatorNode } from './calculations';
 import { responseV2Access } from './access';
 import { readFileSync } from 'node:fs';
 import { specimensV2 } from './specimens';
@@ -33,6 +33,17 @@ test('incomplete generated visual is explicit, preserved and never executed', ()
 const output = (blocks: unknown[]) => ({ schemaVersion: 1, id: 'out', status: 'completed', blocks });
 const block = { schemaVersion: 1, id: 'b' };
 const input = (featureOutput?: unknown) => ({ id: 'm', content: '', featureOutput });
+test('model-authored role cards and comparisons remain in V2 across save and reopen', () => {
+  const source = ['Overview.', '```xroga-ui', JSON.stringify({type:'card-grid', cards:[{id:'app',title:'Next.js',url:'https://nextjs.org',description:'Application routes'},{id:'data',title:'Supabase',url:'https://supabase.com',description:'Private records'}]}), '```', 'Isolation assumptions.', '```xroga-ui', JSON.stringify({type:'comparison',options:[{id:'a',label:'Tenant A',metrics:{project:'A-only',shared:false}},{id:'b',label:'Tenant B',metrics:{project:'B-only',shared:false}}]}), '```', 'Complete conclusion.'].join('\n');
+  const enhanced = enhanceAiResponse(source, 'roles');
+  const result = adaptResponseV2(JSON.parse(JSON.stringify({id:'roles',content:enhanced.content,featureOutput:enhanced.output})));
+  assert.ok(result.supported);
+  assert.deepEqual(result.document.nodes.map(node=>node.kind),['prose','cards','prose','cards','prose']);
+  const comparison = result.document.nodes[3];
+  assert.ok(comparison.kind === 'cards');
+  assert.equal(comparison.items[0].metrics?.shared,false);
+  assert.equal(enhanced.output?.sourceText,source);
+});
 
 test('plain multilingual words, code, URLs and punctuation remain exact across streaming and saved reload', () => {
   const content = 'Hello — مرحبا اردو 👋\n\n```ts\nconst x = "<script>";\n```\nhttps://example.com/a?x=1';
@@ -88,6 +99,14 @@ test('local calculator respects ranges, zero, missing and invalid values without
   assert.equal(calculateV2(calc, { capital: '0', risk: '1' }), 0);
   for (const risk of ['', '6', 'Infinity', 'alert(1)']) assert.equal(calculateV2(calc, { capital: '50000', risk }), null);
   assert.equal(calculateV2({ ...calc, operation: 'quotient' }, { capital: '1', risk: '0' }), null);
+});
+test('visible calculation follows edited values and refuses invalid results', () => {
+  const revenue: CalculatorNode = { ...calc, operation: 'product', inputs: [{id:'price',label:'Price',value:25,min:0,unit:'USD'},{id:'quantity',label:'Quantity',value:40,min:0}] };
+  assert.equal(calculateV2(revenue, {price:'23',quantity:'4'}), 92);
+  assert.equal(formulaV2(revenue, {price:'23',quantity:'4'}), '23 × 4');
+  assert.equal(formulaV2(calc, {capital:'50000',risk:'1'}), '50000 × 1 ÷ 100');
+  assert.equal(formulaV2(revenue, {price:'',quantity:'4'}), null);
+  assert.equal(formulaV2({...revenue,operation:'quotient'}, {price:'23',quantity:'0'}), null);
 });
 test('server flag, opt-in, confirmed founder role and MFA all required', async () => {
   const deps = { getUser: async () => ({ id: 'owner', email: 'hello@xroga.com', email_confirmed_at: '2026-01-01' }), getRole: async () => 'owner', getAal: async () => 'aal2' };

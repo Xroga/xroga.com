@@ -9,6 +9,8 @@
   "risk": "low",
   "scope": "Independent response V2 with complete visible answers and source-backed rich presentation. Founder-authorized controlled authenticated-user rollout. Legacy renderer retained.",
   "changedFiles": [
+    "backend/src/ai/prompts.ts",
+    "backend/src/ai/richResponsePrompt.test.ts",
     "frontend/src/lib/xrogaBlocks.ts",
     "frontend/src/lib/xrogaResponseDocument.ts",
     "frontend/src/lib/xrogaResponseDocument.test.ts",
@@ -111,7 +113,7 @@
   ],
   "architecture": {
     "change": "none",
-    "reason": "Independent presentation module only, no backend or execution architecture changes",
+    "reason": "Independent presentation module and existing single-answer prompt guidance. No new inference, scheduler, API, schema or execution architecture. Backend prompt activation requires its compatible release gate.",
     "rfc": null
   },
   "rollout": "Controlled source-pinned Vercel release authorized in PR #909 comment 6549571336 after exact CI and authenticated Workspace verification. RESPONSE_EXPERIENCE_V2=authenticated enables ordinary verified sessions, off restores legacy.",

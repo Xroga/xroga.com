@@ -11,6 +11,7 @@ const base = z.object({ id: z.string().min(1).max(200), title: label.optional(),
 const column = z.object({ key: label, label });
 const series = z.object({ key: label, label });
 export const nodeSchema = z.discriminatedUnion('kind', [
+  base.extend({ kind: z.literal('cards'), items: z.array(z.object({ id: label, title: label, subtitle: label.optional(), description: text.optional(), badge: label.optional(), imageUrl: text.optional(), url: text.optional(), actionLabel: label.optional(), metrics: row.optional(), recommended: z.boolean().optional() })).min(1).max(24) }),
   base.extend({ kind: z.literal('resources'), items: z.array(xrogaRichResultSchema).min(1).max(35) }),
   base.extend({ kind: z.literal('images'), items: z.array(z.object({ id: label, label, url: text, caption: text.optional() })).max(40) }),
   base.extend({ kind: z.literal('prose'), text }),
@@ -61,6 +62,8 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
         for (const b of output.blocks) {
           const common = { id: b.id, title: b.title, description: 'description' in b ? b.description : undefined };
           switch (b.type) {
+            case 'card-grid': nodes.push({ ...common, kind: 'cards', items: b.cards }); break;
+            case 'comparison': nodes.push({ ...common, kind: 'cards', items: b.options.map(option => ({ ...option, title: option.label })) }); break;
             case 'rich-results': nodes.push({ ...common, kind: 'resources', items: b.items }); break;
             case 'image': nodes.push({ ...common, kind: 'images', items: [b.image] }); break;
             case 'gallery': nodes.push({ ...common, kind: 'images', items: b.items }); break;
@@ -94,6 +97,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
     const parsed = responseDocumentSchema.safeParse({ version: 2, id: input.id, originalText: input.content, streaming, nodes, sources: input.webSources ?? [] });
     if (!parsed.success || new Set(parsed.data.nodes.map(n => n.id)).size !== parsed.data.nodes.length) return { supported: false, reason: 'invalid-document' };
     for (const n of parsed.data.nodes) {
+      if (n.kind === 'cards' && new Set(n.items.map(item => item.id)).size !== n.items.length) return { supported: false, reason: 'duplicate-cards' };
       if (n.kind === 'tabs' && new Set(n.items.map(v => v.id)).size !== n.items.length) return { supported: false, reason: 'duplicate-tabs' };
       if (n.kind === 'progress' && n.items.some(v => v.value > v.max)) return { supported: false, reason: 'invalid-progress' };
       if (n.kind === 'chart' && (new Set(n.series.map(s => s.key)).size !== n.series.length || n.rows.some(r => !Object.hasOwn(r, n.xKey) || n.series.some(s => r[s.key] !== null && typeof r[s.key] !== 'number')) || (['pie', 'scatter'].includes(n.shape) && n.series.length !== 1) || (n.shape === 'scatter' && n.rows.some(r => typeof r[n.xKey] !== 'number')) || (n.shape === 'pie' && n.rows.some(r => typeof r[n.series[0].key] !== 'number' || Number(r[n.series[0].key]) < 0)))) return { supported: false, reason: 'invalid-chart-data' };

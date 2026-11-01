@@ -8,6 +8,17 @@
   isolation: isolate; container-type: inline-size;
 }
 .architecture { margin:0; }
+.comparisonCards { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:16px; }
+.comparisonCard { min-width:0; padding:18px; border:1px solid var(--v2-line); border-radius:14px; overflow-wrap:anywhere; }
+.comparisonCard header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+.comparisonCard header h4 { font-size:16px; margin:0; }
+.comparisonCard header h4>a { display:flex; align-items:center; gap:8px; color:inherit; }
+.comparisonCard header h4 svg { flex-shrink:0; width:20px; height:20px; }
+.comparisonCard header>span,.cardSubtitle { color:var(--v2-muted); font-size:13px; }
+.comparisonCard .prose>p { margin-block:12px; }
+.comparisonCard dl { margin:16px 0 0; }
+.comparisonCard dl>div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; padding-block:10px; border-block-start:1px solid var(--v2-line); font-size:14px; }
+.comparisonCard dd { margin:0; }
 .architecture figcaption { font-size:16px; font-weight:600; margin-bottom:12px; }
 .architecture > p { font-size:14px; color:var(--v2-muted); }
 .architectureCanvas { height:440px; width:100%; border:1px solid var(--v2-line); border-radius:16px; overflow:hidden; background:var(--v2-wash); }
@@ -77,15 +88,16 @@
 .interactive fieldset { border:0; padding:0; margin:0; min-width:0; }
 .inputHeading { display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-block-end:12px; }
 .inputHeading label { font-size:14px; font-weight:500; }
-.interactive input[type=number] { width:104px; padding:6px 8px; text-align:end; background:transparent; border-color:transparent; font-size:15px; font-weight:600; font-variant-numeric:tabular-nums; }
+.interactive input[type=number] { width:104px; min-height:44px; padding:6px 8px; text-align:end; background:var(--v2-wash); border:1px solid var(--v2-line); border-radius:8px; font-size:15px; font-weight:500; font-variant-numeric:tabular-nums; }
 .interactive input[type=number]:hover,.interactive input[type=number]:focus { border-color:var(--v2-line); }
 .interactive input[type=range] { appearance:none; width:100%; height:8px; padding:0; margin:8px 0; border:0; border-radius:99px; background:linear-gradient(to right,var(--v2-ink) var(--range-fill),var(--v2-line) var(--range-fill)); cursor:pointer; }
 .interactive input[type=range]::-webkit-slider-thumb { appearance:none; width:18px; height:18px; border-radius:50%; background:var(--v2-ink); border:2px solid var(--background); box-shadow:0 0 0 1px var(--v2-line); }
 .interactive input[type=range]::-moz-range-thumb { width:16px; height:16px; border-radius:50%; background:var(--v2-ink); border:2px solid var(--background); }
 .rangeLabels { display:flex; justify-content:space-between; color:var(--v2-muted); font-size:12px; margin-block:8px; font-variant-numeric:tabular-nums; }
 .canvas small { color:var(--v2-muted); font-size:12px; line-height:1.5; }
-.result { display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:0 0 24px; margin:0 0 24px; border-block-end:1px solid var(--v2-line); }
-.result>span { font-size:14px; color:var(--v2-muted); }
+.result { display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:20px 0 0; margin:24px 0 0; border-block-start:1px solid var(--v2-line); }
+.result>div>span { font-size:14px; color:var(--v2-muted); }
+.formula { margin:6px 0 0; font-size:14px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
 .result output { font-size:28px; line-height:1.2; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .result output small { font-size:14px; font-weight:400; }
 .calculationNote { font-size:12px; line-height:1.6; color:var(--v2-muted); margin:16px 0 0; }

@@ -34,3 +34,13 @@ test('every compact rich-output example is strict JSON', () => {
   assert.ok(examples.length >= 10);
   for (const example of examples) assert.doesNotThrow(() => JSON.parse(example));
 });
+
+test('rich output is composed in the original answer with truthful boundaries', () => {
+  assert.match(CHAT_SYSTEM, /at the point in the explanation where it belongs/);
+  assert.doesNotMatch(CHAT_SYSTEM, /Add one data-only fenced block labelled xroga-ui after the explanatory prose/);
+  assert.match(CHAT_SYSTEM, /actual components and directed connections/);
+  assert.match(CHAT_SYSTEM, /complete essential explanation outside optional controls/);
+  assert.match(CHAT_SYSTEM, /privileged server credentials may bypass/);
+  assert.match(CHAT_SYSTEM, /tenant headers are not proof of identity/);
+  assert.match(CHAT_SYSTEM, /fixed scenario rather than the calculator's current inputs/);
+});

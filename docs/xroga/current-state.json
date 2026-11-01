@@ -6394,7 +6394,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "c3c9cdfc288ce155a3f8c0a7e15ab1c8fe20656c1f56e1e6bf51d1090ee68c7a",
+      "sha256": "9f18aecace739254991e9849279e6c6d83730a68bc57250883eaae096a6def53",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -80661,12 +80661,17 @@
       "id": "surface:16d6f2c41ccfbf63f014",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "sha256": "947235c527e024a639f7ac964618992ec67694df09d96cae597aa90c19cfa364",
+      "sha256": "1ef628083952a406bd885e55706ee1f712afefb5b25450ba9a86f3a260db5925",
       "symbols": [
         "ArchitectureV2",
+        "compact",
+        "container",
         "edges",
+        "nodeWidth",
         "nodes",
-        "positions"
+        "observer",
+        "positions",
+        "rowHeight"
       ],
       "imports": [
         "./document",
@@ -80916,7 +80921,7 @@
       "id": "surface:611cf58543cb117c4017",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "57667b5577b0bf1f0601921a4c78a7ee0dbe96f4ef917e778b2ce40fee3a0c4c",
+      "sha256": "157818b7d2bcb011be13bd4f9ce97a3ceb83955a0d56003cea9f559468e64f49",
       "symbols": [
         "CalculatorV2",
         "Chart",
@@ -81133,7 +81138,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "d2f7f7d4e5e9f06de63d381bb810a4ab0fab04a16ad3522a487a9f6dc17a380e",
+      "sha256": "2b30dc4047a09b08d7c2c406ea1023b4cf19a008170a56eebd7906d4f4d9ff25",
       "symbols": [
         "Calculator",
         "Chart",
@@ -81348,7 +81353,7 @@
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
-        "frontend/src/components/response-experience-v2/document.test.ts:137",
+        "frontend/src/components/response-experience-v2/document.test.ts:156",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
       "reachable": true,
@@ -81377,10 +81382,12 @@
       "id": "surface:bc797240d03e041cba52",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "6e39ce8ca727d9445e6825179f1333e0d83436a2afa1f77447506ec9f4a981f5",
+      "sha256": "a2da1f6aaad480712c69cd2c758679cd898c015bf837827dd21a93600bdd1960",
       "symbols": [
         "CalculatorNode",
         "calculateV2",
+        "formulaV2",
+        "inputs",
         "numbers",
         "raw",
         "result",
@@ -81421,7 +81428,7 @@
       "id": "surface:22b5c3c585341331ff1c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/composition.ts",
-      "sha256": "833958be2d38e92e08981b07ecbc1af1a5d4f7299e7cbab8f3f48c0a378e400e",
+      "sha256": "f3897addd0ef61eb6d5631cf44790cd150135561f1581e1be8a1d3f667267fd2",
       "symbols": [
         "CompositionV2",
         "SemanticPartV2",
@@ -81554,7 +81561,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "ae33022b9815f8e42df3fb50ba9d1006f6a608ce81c101c6db984163a37f40ae",
+      "sha256": "a7e373be62078308246978fcd0ec42dfa94e46a147b48f131216f49427f77816",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -81644,7 +81651,7 @@
       "id": "surface:e4f7133e3c2806c74c97",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sha256": "949f15d0ab215822c63c7c9a30fac81ade98a4b7f1e0347233788b31f99d9261",
+      "sha256": "fbc7c82e0bb6e088b0ef2dcda6ef73f91e096d8af5f44aea83418498afa95ba7",
       "symbols": [
         "columns",
         "edge",
@@ -126890,9 +126897,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3bbb163ef395b7f005f9",
+      "id": "finding:0ebfdef9f34d8f97e5e5",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 234,
+      "line": 237,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -134561,7 +134568,7 @@
     {
       "id": "test-suite:de9619c7c3ade1d8da4c",
       "sourcePath": "backend/src/ai/richResponsePrompt.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139160,7 +139167,7 @@
     {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
-      "declaredTests": 23,
+      "declaredTests": 25,
       "skipLocations": [],
       "focusLocations": []
     },

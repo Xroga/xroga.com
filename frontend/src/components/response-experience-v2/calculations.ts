@@ -1,5 +1,22 @@
 import type { ResponseNodeV2 } from './document';
 export type CalculatorNode = Extract<ResponseNodeV2, { kind: 'calculator' }>;
+/** Display the exact supported operation, never a model-authored executable formula. */
+export function formulaV2(node: CalculatorNode, values: Record<string, string>): string | null {
+  if (calculateV2(node, values) == null) return null;
+  const inputs = node.inputs.map(input => values[input.id].trim());
+  const [a, b] = inputs;
+  switch (node.operation) {
+    case 'sum': return inputs.join(' + ');
+    case 'difference': return inputs.join(' − ');
+    case 'product': return inputs.map(value => Number(value) < 0 ? `(${value})` : value).join(' × ');
+    case 'quotient': return `${a} ÷ ${b}`;
+    case 'average': return `(${inputs.join(' + ')}) ÷ ${inputs.length}`;
+    case 'percentage': return `${a} × ${b} ÷ 100`;
+    case 'percentage-change': return `(${b} − ${a}) ÷ ${a} × 100`;
+    case 'minimum': return `min(${inputs.join(', ')})`;
+    case 'maximum': return `max(${inputs.join(', ')})`;
+  }
+}
 export function calculateV2(node: CalculatorNode, values: Record<string, string>): number | null {
   const numbers = node.inputs.map(input => {
     const raw = values[input.id]; const value = typeof raw === 'string' && raw.trim() ? Number(raw) : NaN;

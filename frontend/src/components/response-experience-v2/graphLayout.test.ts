@@ -26,4 +26,8 @@ test('cyclic SaaS graph receives distinct positions without losing nodes or chan
   assert.deepEqual(positions.map(p=>p.id),graph.nodes.map(n=>n.id));
   assert.equal(new Set(positions.map(p=>`${p.x},${p.y}`)).size,4);
   assert.equal(JSON.stringify(graph),original);
+  const mobile = graphPositionsV2(graph, true, 280);
+  assert.equal(new Set(mobile.map(p=>p.x)).size,1);
+  assert.deepEqual(mobile.map(p=>p.y),[0,280,560,840]);
+  assert.equal(JSON.stringify(graph),original);
 });

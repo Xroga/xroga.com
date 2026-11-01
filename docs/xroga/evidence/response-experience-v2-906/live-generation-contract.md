@@ -1,5 +1,17 @@
 # Live generation contract correction, 2026-11-01
 
+## Current integration checkpoint, not production acceptance
+
+The four supplied comparison videos were inspected as one-frame-per-second contact sheets across their full timelines. This is sampled visual review, not uninterrupted video/audio playback. The comparison exposed missing diagram rendering, repeated roles, weak calculator input affordances and a disconnect between inputs, formula and results.
+
+The current development correction adds canonical card-grid/comparison adaptation, preserves their source order and scalar values through JSON persistence, reflows diagrams on narrow containers without inventing edges, and places editable calculator inputs before the exact deterministic formula and result. These are changes to the existing V2 module. The legacy renderer remains the fallback. The existing single-answer prompt now places structured blocks at their relevant explanation point and explicitly qualifies tenant-isolation claims. That prompt change is source-only until a separately verified compatible backend release.
+
+Focused document/graph tests: 28 passed, local runner 0eefdf62-3239-4d46-af6b-89511937eebc. Frontend TypeScript passed in 269980a6-ebc4-41d5-a149-2db9fd8009ad. Prompt contract tests passed in 4ae02936-91db-489e-b0d2-2b7d493b8169. Runtime configuration integrity passed in f21c09ab-e65c-45d6-a1f5-b28ed3cefad7 after canonical inventory regeneration. The previous exact-source CI failure was stale runtime discovery output, including the inert workspace.invalid parsing base and changed V2 file hashes, not a reason to weaken the gate.
+
+Real research remains BLOCKED by a demonstrated integration defect. In session f75e285c-3292-4f82-888d-7e46158beb49, assistant 6eb56608-9984-4b98-9fdd-587708ab824b, confirmation 221fe7f9-f0dd-4b12-b03a-bcb57a13f655 completed once. The search settled 1,000 microUSD at 2026-11-01T10:26:35.769068Z. The confirmation route returned a generic receipt and no research result to the conversation. Code inspection shows the external result returned by native research is not persisted as a chat continuation. Do not retry the provider action or represent its missing results as verified citations. A safe correction needs owner-bound durable result delivery with exactly-once continuation, retaining the existing confirmation and accounting controls.
+
+Still required: full-size actual mobile/desktop visual acceptance of this correction, source-pinned final CI, safe copy/share fidelity for rich blocks, research continuation, real production verification and controlled release. No model calls or production mutations were made for the current local correction. No LIVE claim is made.
+
 Baseline production frontend: 2547ca11524ae91cb874da85dc109132a969ed50, Vercel deployment 9qVigJYwiaa4hgT553mRcH1VeY1d. Backend continues serving xroga-api-b15b2-ac8168-serving-1031. No backend, SQL, routing, microphone or other-batch changes in this correction.
 
 One new authenticated production SaaS explanation was submitted through the existing Workspace. Request logs show plan HTTP 200 at 09:24:05 UTC and chat HTTP 200 at 09:24:09 UTC. No manual generation retry. The owner's ledger in that request window records planner 2,568 input/254 output tokens at $0.000277 and answer 3,841 input/1,880 output at $0.000684, both deepseek_v4_flash. Total recorded cost is $0.000961. These are the existing planner/answer calls, not an extra formatting call. Local rendering tests make no model calls.
