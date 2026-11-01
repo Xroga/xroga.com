@@ -1,5 +1,13 @@
 # Live generation contract correction, 2026-11-01
 
+## Guest admission regression and rich copy fidelity
+
+CI run 41299981228 at source 35f38b032f5e3919f2f7e056ae2fd1d9792dd2d5 passed preparation but failed the actual guest HTTP test: the first ordinary request returned 429 instead of 200. The full rich-output guide had grown beyond the unchanged 16,000-unit conservative guest budget. The correction shares the complete existing schema examples with a compact guest-specific instruction set. It does not raise the allowance, relax admission, bypass accounting or change model routing. A regression asserts that instructions plus a 4,000-byte question and 900-unit output reservation fit. All nine guest tests, including real local HTTP admission and negative egress cases, pass in job 34bc6cb8-af1c-4e4f-acc9-e99282072300.
+
+V2 Copy/Share now serializes the same validated ordered document as the canvas, including diagram edges, table/chart rows, assumptions and source URLs. Calculator exports explicitly identify original inputs rather than claiming to export current local exploration state. Unsupported contracts retain the legacy export. Four focused tests pass in 80561e93-3117-40e1-a3ad-e7c2b6c9cc81. Frontend and backend TypeScript pass in 244e3530-2089-4976-8b06-89628a40e67c and 1fec8a45-94aa-4519-ac9d-b986b1360b65. Scoped frontend ESLint passes in 87553204-4c94-4bbb-9615-aaf8a3bdc450.
+
+No model calls or production mutations occurred in this correction. Research continuation remains unresolved: the confirmation route discards the successful native research body and persists only its receipt digest. Do not retry the completed external action. Owner-bound durable result delivery and conversation correlation are still required. Final exact-source CI and live product acceptance remain pending.
+
 ## Current integration checkpoint, not production acceptance
 
 The four supplied comparison videos were inspected as one-frame-per-second contact sheets across their full timelines. This is sampled visual review, not uninterrupted video/audio playback. The comparison exposed missing diagram rendering, repeated roles, weak calculator input affordances and a disconnect between inputs, formula and results.

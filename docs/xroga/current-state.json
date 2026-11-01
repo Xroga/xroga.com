@@ -6394,13 +6394,14 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "9f18aecace739254991e9849279e6c6d83730a68bc57250883eaae096a6def53",
+      "sha256": "2181ba06754633766992d77774b95117fcf349d6167f4cc843d1007ae35ac0bd",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
         "CHAT_SYSTEM",
         "CONVERTER_SYSTEM",
         "DOC_SYSTEM",
+        "GUEST_RICH_OUTPUT_GUIDE",
         "SAFE_RICH_OUTPUT_GUIDE",
         "VISION_SYSTEM",
         "brief",
@@ -24573,7 +24574,7 @@
       "id": "surface:8dc86af82ef49ffa5017",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/guestChat.ts",
-      "sha256": "8b45327a5f18faa16b9e0aee9fa371bfe00ed91068d375208ad459c769edf78c",
+      "sha256": "590991bb27015afd8d35ab8ab256b50ecffff16fd308ea0b438498e908b290a1",
       "symbols": [
         "GUEST_SYSTEM",
         "active",
@@ -69518,7 +69519,7 @@
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:7",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:9",
         "frontend/src/components/terminal/MessageShareModal.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:53",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:54",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:3",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:12",
@@ -70555,7 +70556,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:10",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:34",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:8",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:54"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:55"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -71530,7 +71531,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:11",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:35",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:9",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:55"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:56"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -73464,7 +73465,7 @@
         "frontend/src/components/dashboard/IncognitoDashboard.tsx:4",
         "frontend/src/components/layout/IncognitoModeButton.tsx:10",
         "frontend/src/components/layout/Sidebar.tsx:76",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:34"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:35"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -79617,7 +79618,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/Sidebar.tsx:70",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:35"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:36"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81248,7 +81249,7 @@
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:16"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81403,6 +81404,7 @@
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:6",
         "frontend/src/components/response-experience-v2/document.test.ts:4",
+        "frontend/src/components/response-experience-v2/exportText.ts:2",
         "frontend/src/components/response-experience-v2/interactionState.ts:1"
       ],
       "reachable": true,
@@ -81537,7 +81539,7 @@
       "callers": [
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:6",
         "frontend/src/components/response-experience-v2/conversation.test.ts:3",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:13"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81619,6 +81621,7 @@
         "frontend/src/components/response-experience-v2/composition.test.ts:3",
         "frontend/src/components/response-experience-v2/composition.ts:5",
         "frontend/src/components/response-experience-v2/document.test.ts:3",
+        "frontend/src/components/response-experience-v2/exportText.ts:1",
         "frontend/src/components/response-experience-v2/review/LocalReview.tsx:4",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:4",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts:2"
@@ -81639,6 +81642,57 @@
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/graphLayout.test.ts",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a979c2e1f1ae5fb4eaf1",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/exportText.ts",
+      "sha256": "1fcda6ea49a6339ba449f4346bb425d9ea34a6ef1d602a2f155035b0e2b2991a",
+      "symbols": [
+        "body",
+        "document",
+        "lines",
+        "nodeText",
+        "responseTextV2",
+        "result",
+        "scalar",
+        "sources",
+        "values"
+      ],
+      "imports": [
+        "./calculations",
+        "./document",
+        "./sourceRegistry"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/calculations.ts",
+        "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/exportText.test.ts:3",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/response-experience-v2/exportText.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -81950,6 +82004,7 @@
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:7",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:4",
         "frontend/src/components/response-experience-v2/composition.ts:6",
+        "frontend/src/components/response-experience-v2/exportText.ts:3",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:3"
       ],
       "reachable": true,
@@ -82852,7 +82907,7 @@
       ],
       "callers": [
         "frontend/src/components/settings/SettingsView.tsx:11",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:32"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:33"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84663,7 +84718,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:19"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85019,7 +85074,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:17"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -85215,7 +85270,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:43",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:44",
         "frontend/src/lib/chatTurnRail.test.ts:4",
         "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:47"
       ],
@@ -87011,7 +87066,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:21",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:22",
         "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx:15"
       ],
       "reachable": true,
@@ -87312,7 +87367,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:18"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -87336,7 +87391,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "3e2e4e01aa07ff4a88b863859dcc8abc33a96518d575c291a2a4b2f7d6b61a0e",
+      "sha256": "3726daf9eb73ba5850181994221d86ebc546a33b61cbbb1f5aa51023a11fdb6a",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -87457,6 +87512,7 @@
         "@/components/response-experience-v2/ResponseExperienceGate",
         "@/components/response-experience-v2/conversation",
         "@/components/response-experience-v2/conversation-v2.module.css",
+        "@/components/response-experience-v2/exportText",
         "@/components/settings/PrivacySettingsPanel",
         "@/context/TerminalChatContext",
         "@/context/TerminalScrollContext",
@@ -87489,6 +87545,7 @@
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
         "frontend/src/components/response-experience-v2/conversation-v2.module.css",
         "frontend/src/components/response-experience-v2/conversation.ts",
+        "frontend/src/components/response-experience-v2/exportText.ts",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx",
         "frontend/src/components/terminal/CapacityUnavailableCard.tsx",
         "frontend/src/components/terminal/ChatErrorBoundary.tsx",
@@ -87957,7 +88014,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:42"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:43"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88084,7 +88141,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:5",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:41"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:42"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88213,7 +88270,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:20"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88640,7 +88697,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:19",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:52"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:53"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88710,7 +88767,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:49"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:50"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88780,7 +88837,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:7",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:36"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:37"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89442,7 +89499,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:23",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:24",
         "frontend/src/components/terminal/XrogaBlockView.tsx:43"
       ],
       "reachable": true,
@@ -93113,7 +93170,7 @@
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:32",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:38",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
         "frontend/src/components/terminal/TerminalChatBar.tsx:10",
         "frontend/src/components/terminal/TerminalDock.tsx:14",
         "frontend/src/components/ui/DownloadAppButton.tsx:8"
@@ -93852,6 +93909,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:5",
+        "frontend/src/components/response-experience-v2/exportText.test.ts:5",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:17",
         "frontend/src/lib/assistantCopy.test.ts:4"
       ],
@@ -93864,6 +93922,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/exportText.test.ts",
         "frontend/src/lib/assistantCopy.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -95177,7 +95236,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:24",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:25",
         "frontend/src/context/TerminalChatContext.tsx:45",
         "frontend/src/lib/workLanes.ts:11"
       ],
@@ -98461,7 +98520,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:33",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:34",
         "frontend/src/components/terminal/TerminalChatBar.tsx:32",
         "frontend/src/context/TerminalChatContext.tsx:65",
         "frontend/src/lib/codeBuildProcessing.ts:3",
@@ -101021,7 +101080,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:25"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:26"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -101158,7 +101217,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:44",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:45",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:23"
       ],
       "reachable": true,
@@ -104158,7 +104217,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:14",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:15",
         "frontend/src/components/terminal/TerminalLiveActivity.tsx:31",
         "frontend/src/context/TerminalChatContext.tsx:14",
         "frontend/src/lib/terminal/activityPresentation.test.ts:4"
@@ -104290,7 +104349,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:27",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:28",
         "frontend/src/lib/terminal/executionIntent.test.ts:3"
       ],
       "reachable": true,
@@ -105578,7 +105637,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:10",
         "frontend/src/components/terminal/SocialShareModal.tsx:6",
         "frontend/src/components/terminal/StoppedBuildResumeCard.tsx:4",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:40",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:41",
         "frontend/src/components/terminal/TerminalBuildReport.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:24",
         "frontend/src/components/terminal/TerminalDock.tsx:16",
@@ -106311,7 +106370,7 @@
         "frontend/src/components/dashboard/SwarmRunHistory.tsx:15",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:58",
         "frontend/src/components/notifications/NotificationBell.tsx:10",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:40",
         "frontend/src/context/TerminalChatContext.tsx:31",
         "frontend/src/lib/projectResume.ts:5",
         "frontend/src/lib/restoreRepoTerminal.ts:9",
@@ -107499,6 +107558,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/document.test.ts:8",
+        "frontend/src/components/response-experience-v2/exportText.test.ts:4",
         "frontend/src/context/TerminalChatContext.tsx:97",
         "frontend/src/lib/xrogaResponseDocument.test.ts:4",
         "frontend/src/lib/xrogaRichResults.test.ts:4"
@@ -107513,6 +107573,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/components/response-experience-v2/document.test.ts",
+        "frontend/src/components/response-experience-v2/exportText.test.ts",
         "frontend/src/lib/xrogaResponseDocument.test.ts",
         "frontend/src/lib/xrogaRichResults.test.ts"
       ],
@@ -107645,7 +107706,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:26",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:27",
         "frontend/src/lib/xrogaShareableOutput.test.ts:3"
       ],
       "reachable": true,
@@ -107697,7 +107758,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:22",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:23",
         "frontend/src/lib/xrogaRichResults.test.ts:7"
       ],
       "reachable": true,
@@ -108190,7 +108251,7 @@
         "frontend/src/components/layout/Sidebar.tsx:74",
         "frontend/src/components/providers/AppProviders.tsx:6",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:5",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:37",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:38",
         "frontend/src/components/terminal/TerminalChatBar.tsx:9",
         "frontend/src/components/terminal/TerminalDock.tsx:12",
         "frontend/src/context/TerminalChatContext.tsx:27"
@@ -108293,7 +108354,7 @@
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:4",
         "frontend/src/components/terminal/RepoContextBar.tsx:32",
         "frontend/src/components/terminal/RuntimeLogsButton.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:48",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:49",
         "frontend/src/components/terminal/TerminalDock.tsx:17",
         "frontend/src/components/terminal/VercelDeployButton.tsx:6",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:24",
@@ -118599,7 +118660,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:66f1f008159ef836a4b6",
+      "id": "registration:ae7b78b9ac1abb8bf9c3",
       "sourcePath": "backend/src/routes/guestChat.ts",
       "line": 125,
       "receiver": "router",
@@ -118614,7 +118675,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6cd03519be3d085f1f64",
+      "id": "registration:49700324af9d769d5e1b",
       "sourcePath": "backend/src/routes/guestChat.ts",
       "line": 140,
       "receiver": "router",
@@ -120506,8 +120567,8 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:4edea2acdd4bf3069e73",
-      "registrationId": "registration:66f1f008159ef836a4b6",
+      "id": "route:375773e6e8b011178c03",
+      "registrationId": "registration:ae7b78b9ac1abb8bf9c3",
       "sourcePath": "backend/src/routes/guestChat.ts",
       "line": 125,
       "method": "POST",
@@ -120523,8 +120584,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:238f986d4ad050901570",
-      "registrationId": "registration:6cd03519be3d085f1f64",
+      "id": "route:2de8b64f3f24b101547a",
+      "registrationId": "registration:49700324af9d769d5e1b",
       "sourcePath": "backend/src/routes/guestChat.ts",
       "line": 140,
       "method": "POST",
@@ -129577,9 +129638,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bafebad935e5df41114b",
+      "id": "finding:c7398e53c895591755e8",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 429,
+      "line": 430,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -136075,7 +136136,7 @@
     {
       "id": "test-suite:34d84e09fcecbb621069",
       "sourcePath": "backend/src/routes/guestChat.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139168,6 +139229,13 @@
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
       "declaredTests": 25,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d9eeccf3b3da58cbd35c",
+      "sourcePath": "frontend/src/components/response-experience-v2/exportText.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

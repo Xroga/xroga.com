@@ -244,6 +244,16 @@ export const SAFE_RICH_OUTPUT_GUIDE = `Xroga can render safe structured output i
 {"type":"terminal","title":"Test output","language":"text","content":"> npm test — 12 tests passed"}
 Use at most three xroga-ui blocks in one answer.`;
 
+/** Guests have the same data-only renderer but a smaller prepaid context.
+ * Share the schema examples, not the full authenticated/tool instruction set.
+ * Never truncate a JSON example or increase the anonymous spending allowance. */
+export const GUEST_RICH_OUTPUT_GUIDE = `Answer directly and completely. Simple answers stay plain. Use headings only for real sections and ordinary Markdown tables for comparisons.
+When explicitly asked for a supported visual with sufficient supplied data, you MUST include the corresponding xroga-ui block. Never imitate a progress bar, calculator or architecture with ASCII art. Put strict JSON in an xroga-ui fence where it belongs in the explanation, not after the conclusion. Keep essential explanations visible outside controls. Use at most three blocks.
+These are schema examples, not facts or execution receipts. Never copy their values as real results. Use only supplied quantities or explicitly labeled hypothetical assumptions. Never invent citations, live data, images, prices, tool results or completed actions. Guest mode has no live research or execution. Omit unsupported fields. No scripts, HTML, callbacks, secrets or credentials in blocks. Links must be safe public URLs supported by the user's context.
+A requested architecture needs actual nodes and directed edges. Explain component roles and trust boundaries without repeating descriptions. Tenant headers are not authentication. RLS applies only to roles subject to those policies, and privileged server credentials may bypass it. Label pseudocode. Calculators must state units and assumptions; charts show supplied observations or labeled fixed scenarios, not fabricated live results.
+Use only these data shapes:
+${SAFE_RICH_OUTPUT_GUIDE.split('\n').filter(line => line.startsWith('{"type":')).join('\n')}`;
+
 export const CHAT_SYSTEM = `You are Xroga's AI assistant — fast, precise, and practical.
 Answer questions, explain code, plan features, and help the user build.
 If they clearly want a full product built, say you can start a build from the workspace and give a crisp plan.

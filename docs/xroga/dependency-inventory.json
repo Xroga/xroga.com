@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bc0446bae14c4fc8333a916e39e269766f44f3e2",
+  "source_sha": "35f38b032f5e3919f2f7e056ae2fd1d9792dd2d5",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15762,7 +15762,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "9f18aecace739254991e9849279e6c6d83730a68bc57250883eaae096a6def53"
+      "sha256": "2181ba06754633766992d77774b95117fcf349d6167f4cc843d1007ae35ac0bd"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -16946,7 +16946,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "8b45327a5f18faa16b9e0aee9fa371bfe00ed91068d375208ad459c769edf78c"
+      "sha256": "590991bb27015afd8d35ab8ab256b50ecffff16fd308ea0b438498e908b290a1"
     },
     {
       "path": "backend/src/routes/influencer.ts",
@@ -21058,7 +21058,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "3e2e4e01aa07ff4a88b863859dcc8abc33a96518d575c291a2a4b2f7d6b61a0e"
+      "sha256": "3726daf9eb73ba5850181994221d86ebc546a33b61cbbb1f5aa51023a11fdb6a"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -35307,7 +35307,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 221,
+      "line": 222,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

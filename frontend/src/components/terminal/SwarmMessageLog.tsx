@@ -10,6 +10,7 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
+import { responseTextV2 } from '@/components/response-experience-v2/exportText';
 import { conversationActivityV2 } from '@/components/response-experience-v2/conversation';
 import { coalesceActivity } from '@/lib/terminal/activityPresentation';
 import conversationStyles from '@/components/response-experience-v2/conversation-v2.module.css';
@@ -610,7 +611,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               >
                 {conversationV2 && msg.role !== 'system' ? (
                   <ConversationTurnV2 role={msg.role} content={msg.content}
-                    copyContent={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                    copyContent={responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
                     controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : undefined}
