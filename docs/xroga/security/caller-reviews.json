@@ -15215,16 +15215,16 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
       "callIds": [
-        "97e6ac3f5cd22355e41a",
-        "1606c380951aa6ff48dc",
-        "513e9d97f392e5aaed6b",
-        "315837313f6ec4f1eaa4"
+        "8b17459285690a49b155",
+        "4bb5cd82397688351d8d",
+        "15290800ba879fff883d",
+        "374ef098d8a33ca2b471"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -15250,14 +15250,14 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
       "callIds": [
-        "461bb34f363365a7f618",
-        "b31e0312443acd703258"
+        "acc2d6ec920ed57add31",
+        "b2954d5c32ecb797fbcb"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
-      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance.",
+      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",

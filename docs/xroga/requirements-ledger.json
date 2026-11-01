@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "de616e08ccd30829b6d245431a536ead461c6c81",
+  "source_sha": "f67e423f4d28d8f46d57b17d509a73167fc75532",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -3806,6 +3806,7 @@
       "classification": "backend",
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
+        "backend/src/ai/completionDiagnostics.ts",
         "backend/src/ai/softwareAgent/completionGate.ts",
         "backend/src/ai/verificationLifecycle.ts",
         "backend/src/lib/shipVerify.ts",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fd3b663290cf150da51768171021860b032df025",
+  "source_sha": "f67e423f4d28d8f46d57b17d509a73167fc75532",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16917,7 +16917,7 @@
     },
     {
       "path": "backend/src/lib/messageShareText.ts",
-      "sha256": "12ba7eb8920d5d04b43ed282087b8ed3c31f82cc01f3243d5b34cf09ecdcfe2e"
+      "sha256": "e443e6f1bc83a8b4f2bf8b95a1f91bc260439145dc6164277620e5d63f0d05e8"
     },
     {
       "path": "backend/src/lib/netlify.ts",
@@ -17365,7 +17365,7 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609"
+      "sha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53"
     },
     {
       "path": "backend/src/routes/notifications.ts",

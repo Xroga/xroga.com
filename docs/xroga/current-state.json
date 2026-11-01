@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-completion-diagnostics-20261102",
-    "sha": "fd3b663290cf150da51768171021860b032df025",
-    "sourceTimestampUtc": "2026-11-01T23:36:09+05:00",
-    "auditStartedUtc": "2026-11-01T20:30:07.930Z",
+    "sha": "f67e423f4d28d8f46d57b17d509a73167fc75532",
+    "sourceTimestampUtc": "2026-11-02T01:31:43+05:00",
+    "auditStartedUtc": "2026-11-01T20:36:19.753Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -22326,7 +22326,7 @@
       "id": "surface:0c4d7faabb2332fd4595",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/messageShareText.ts",
-      "sha256": "12ba7eb8920d5d04b43ed282087b8ed3c31f82cc01f3243d5b34cf09ecdcfe2e",
+      "sha256": "e443e6f1bc83a8b4f2bf8b95a1f91bc260439145dc6164277620e5d63f0d05e8",
       "symbols": [
         "cleanSharedText"
       ],
@@ -28911,7 +28911,7 @@
       "id": "surface:689012372a18e20a2b6f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "sha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "sha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
       "symbols": [
         "ShareRow",
         "authorization",
@@ -28967,7 +28967,7 @@
         "backend/src/routes/messageShares.ts#verifyAccessToken"
       ],
       "tenantBoundary": [
-        "backend/src/routes/messageShares.ts:145 (owner_id)"
+        "backend/src/routes/messageShares.ts:146 (owner_id)"
       ],
       "approvalBoundary": [
         "backend/src/routes/messageShares.ts#authorization"
@@ -123157,9 +123157,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d95df64510b580287180",
+      "id": "registration:11c5e486f0a67daea5ac",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 48,
+      "line": 49,
       "receiver": "router",
       "method": "post",
       "path": "/",
@@ -123171,9 +123171,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0b0e2182bf71ce8cdecf",
+      "id": "registration:b2d518756f7b380632c7",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 89,
+      "line": 90,
       "receiver": "router",
       "method": "get",
       "path": "/:token",
@@ -123183,9 +123183,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5e44674b0a641bcca68a",
+      "id": "registration:eb9873473561385927f1",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 138,
+      "line": 139,
       "receiver": "router",
       "method": "delete",
       "path": "/:token",
@@ -125794,10 +125794,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5db548ca36ba35cc398c",
-      "registrationId": "registration:d95df64510b580287180",
+      "id": "route:45d186ca24e7739fa6a8",
+      "registrationId": "registration:11c5e486f0a67daea5ac",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 48,
+      "line": 49,
       "method": "POST",
       "path": "/api/message-shares",
       "mountChain": [
@@ -125811,10 +125811,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:cd217eec92c3a8c45986",
-      "registrationId": "registration:0b0e2182bf71ce8cdecf",
+      "id": "route:7d6d14cdd2f9beb62db4",
+      "registrationId": "registration:b2d518756f7b380632c7",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 89,
+      "line": 90,
       "method": "GET",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -125826,10 +125826,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a7ad0e8fd2ae6788406a",
-      "registrationId": "registration:5e44674b0a641bcca68a",
+      "id": "route:abaabad585850d392d6a",
+      "registrationId": "registration:eb9873473561385927f1",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 138,
+      "line": 139,
       "method": "DELETE",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -140447,7 +140447,7 @@
     {
       "id": "test-suite:c10c6508d07a3a74b6e7",
       "sourcePath": "backend/src/lib/messageShareText.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

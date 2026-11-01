@@ -14,6 +14,7 @@ const createSchema = z.object({
   scope: z.enum(['response', 'exchange']),
   prompt: z.string().max(20_000).optional().default(''),
   response: z.string().min(1).max(100_000),
+  literalContent: z.boolean().optional().default(false),
 });
 
 type ShareRow = {
@@ -52,13 +53,13 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
     return;
   }
 
-  const response = cleanSharedText(parsed.data.response);
-  const prompt = parsed.data.scope === 'exchange' ? cleanSharedText(parsed.data.prompt) : '';
-  if (!response) {
+  const response = cleanSharedText(parsed.data.response, parsed.data.literalContent);
+  const prompt = parsed.data.scope === 'exchange' ? cleanSharedText(parsed.data.prompt, parsed.data.literalContent) : '';
+  if (!response.trim()) {
     res.status(400).json({ error: 'The response has no shareable text.' });
     return;
   }
-  if (parsed.data.scope === 'exchange' && !prompt) {
+  if (parsed.data.scope === 'exchange' && !prompt.trim()) {
     res.status(400).json({ error: 'A prompt is required for prompt + response sharing.' });
     return;
   }
