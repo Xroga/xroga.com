@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "13b7549cf0d2c6818dfde2ecf6299695285dc9b3",
+  "source_sha": "0d58991367b0c4f0cc3ee283a234ab29fb45d868",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20579,6 +20579,10 @@
       "sha256": "ea8f00b6e56ea1f16317bddaef9de2dc67932d9b17b1b3f8d17661390adad9c8"
     },
     {
+      "path": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+      "sha256": "8a80068c42fe0e64873db82ce0e61a85d669b57934beec4fc11ba445b979f875"
+    },
+    {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
       "sha256": "4b1adad0434724afb3750767bd1609cbf31527f19238ba27b5185ae2be06c621"
     },
@@ -20604,7 +20608,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
-      "sha256": "5d0e2530dbaa76d2e67b8aad6748562b266a782a8c6a28a0839c5beb9739778d"
+      "sha256": "5b03b775c5210208ec2028fd3dce337fbf6e92f02f6f02baecfc80bf686a42e5"
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
@@ -20621,6 +20625,10 @@
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
       "sha256": "9ec8a5ccb6c068b0d09da968d714a85f1dae85ae25d045f496a516144282a89d"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/conversation.ts",
+      "sha256": "f5d8286896e927309f3465ddedfdb0d76778d7a2fdebb8311536b66052d5fa67"
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
@@ -21008,7 +21016,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "6171a11259dbc09f17a5ea33c55207b5f08f3170381f973d6847b377ea41a033"
+      "sha256": "3e2e4e01aa07ff4a88b863859dcc8abc33a96518d575c291a2a4b2f7d6b61a0e"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -35236,7 +35244,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 216,
+      "line": 221,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
