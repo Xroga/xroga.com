@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4c527227dd34e9233e46d74422bfb0f29f4b2228",
+  "source_sha": "7bde084cbb9f3ed93e0ce26b59b6cf37adae8e43",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16978,7 +16978,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8"
+      "sha256": "710ec917c3e9aae4864fd3eaf012fb8e2130066b01508ef5aae2633c301ceb26"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -17466,7 +17466,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+      "sha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7"
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
@@ -17615,6 +17615,10 @@
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
       "sha256": "e2f5003e2bf6f567b9f893812668288e9dfb01e920df0eea7870896cdb3b3b3d"
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "sha256": "c3ce5b1f29cdeb1f15214e35c4a79857235ebfee5ce3154d772752f867746c4d"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -17886,7 +17890,7 @@
     },
     {
       "path": "backend/src/storage/postgresRepository.ts",
-      "sha256": "64c2c976d7f36144d3cf6a8f05d6c983c836821ee1d92a24a96dcdaff7881033"
+      "sha256": "a159f844cac8b7c1b9b366a05c8d4158877e866a4d43441b791c75fb2b7c8d70"
     },
     {
       "path": "backend/src/storage/r2ObjectStore.ts",
@@ -17894,7 +17898,7 @@
     },
     {
       "path": "backend/src/storage/repository.ts",
-      "sha256": "d5f26fe029cf300f7e93ebc6fa8041b7cc8daaeebec636b604e00bf8a3be44fd"
+      "sha256": "6b40e774594697f264986eac4f17eafdd5c83618c41c96746beeb06dcbdd1272"
     },
     {
       "path": "backend/src/storage/runtime.ts",
@@ -17902,7 +17906,7 @@
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "sha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596"
+      "sha256": "9b6fd08f5407c7de10027a0d2b539eb764aac415d083475287419508d8439cd3"
     },
     {
       "path": "backend/src/storage/testing/approvals.ts",
@@ -21394,7 +21398,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "705b47eea65bbd3618e6f578549d240e5a36dbaadb3ea73ead4de971a097e771"
+      "sha256": "f8d9014730d3e4105bd826f5b8daeadae66b3e8e1a5e5ca7ea4debaf6176aad7"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -21971,6 +21975,10 @@
     {
       "path": "frontend/src/lib/repoWorkspaceGate.ts",
       "sha256": "43476886c17dbb478a63e82acc039910e096afaceca1c8fb6dd9d06a37b40dbe"
+    },
+    {
+      "path": "frontend/src/lib/researchHandoff.ts",
+      "sha256": "99f6d221081ecef883538c5dea0f033b69a453d8f6099469b4c4c57d5eb47cb9"
     },
     {
       "path": "frontend/src/lib/researchWait.ts",
@@ -24202,7 +24210,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 176,
+      "line": 177,
       "credentialsInUrl": false
     },
     {
@@ -28052,7 +28060,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3954,
+      "line": 3996,
       "credentialsInUrl": false
     },
     {
@@ -32804,6 +32812,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "line": 50,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
       "line": 8,
       "scope": "MODULE_LIFETIME",
@@ -35395,14 +35410,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1998,
+      "line": 2040,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2031,
+      "line": 2073,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35719,6 +35734,13 @@
       "path": "frontend/src/lib/repoSessionsIndex.ts",
       "line": 44,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/researchHandoff.ts",
+      "line": 59,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

@@ -42,7 +42,7 @@ export interface AuditEvent {
   detail?: Record<string, unknown>;
 }
 
-export interface ListFilter { projectId?: string | null; states?: ObjectState[]; limit?: number; afterId?: string }
+export interface ListFilter { safeFilename?: string; projectId?: string | null; states?: ObjectState[]; limit?: number; afterId?: string }
 
 export interface StorageRepository {
   insertObject(o: NewObject): Promise<StorageObject>;
@@ -144,7 +144,7 @@ export class MemoryStorageRepository implements StorageRepository {
 
   async listObjects(tenantId: string, f: ListFilter) {
     return [...this.objects.values()]
-      .filter((o) => o.tenantId === tenantId && (f.projectId === undefined || o.projectId === f.projectId) && (!f.states || f.states.includes(o.state)) && (!f.afterId || o.id > f.afterId))
+      .filter((o) => o.tenantId === tenantId && (f.safeFilename === undefined || o.safeFilename === f.safeFilename) && (f.projectId === undefined || o.projectId === f.projectId) && (!f.states || f.states.includes(o.state)) && (!f.afterId || o.id > f.afterId))
       .sort((a, b) => (a.id < b.id ? -1 : 1)).slice(0, f.limit ?? 100).map((o) => ({ ...o }));
   }
   async findByKey(provider: string, bucket: string, key: string) {

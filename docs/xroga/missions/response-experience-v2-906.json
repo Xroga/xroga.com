@@ -6,7 +6,7 @@
     "XR-MISSION-055"
   ],
   "state": "IN_PROGRESS",
-  "risk": "low",
+  "risk": "high",
   "scope": "Independent response V2 with complete visible answers and source-backed rich presentation. Founder-authorized controlled authenticated-user rollout. Legacy renderer retained.",
   "changedFiles": [
     "backend/src/ai/prompts.ts",
@@ -53,7 +53,17 @@
     "docs/operations/response-v2-semantic-design.md",
     "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
     "frontend/src/lib/assistantCopy.ts",
-    "frontend/src/lib/assistantCopy.test.ts"
+    "frontend/src/lib/assistantCopy.test.ts",
+    "backend/src/services/integrations/researchResult.ts",
+    "backend/src/services/integrations/researchResult.test.ts",
+    "backend/src/services/integrations/businessActionConfirmations.ts",
+    "backend/src/routes/phase1.ts",
+    "backend/src/storage/repository.ts",
+    "backend/src/storage/postgresRepository.ts",
+    "backend/src/storage/storageService.ts",
+    "frontend/src/lib/researchHandoff.ts",
+    "frontend/src/lib/researchHandoff.test.ts",
+    "frontend/src/context/TerminalChatContext.tsx"
   ],
   "decisions": {
     "keep": [
@@ -79,12 +89,12 @@
       "description": "Server getUser validates the session for an explicit authenticated or canary presentation rollout. This grants no backend or admin access. Founder-only opt-in review retains confirmed identity, owner role and AAL2."
     },
     "tenant": {
-      "changed": false,
-      "description": "Existing boundary preserved, no provider calls or authorization change."
+      "changed": true,
+      "description": "Approved research results are saved through existing private StorageService and returned only after issued actor context, owner-scoped confirmation, consumed receipt digest and project ownership checks. No wider permission or role grant."
     },
     "approval": {
-      "changed": false,
-      "description": "Existing boundary preserved, no provider calls or authorization change."
+      "changed": true,
+      "description": "Research confirmation now requires private result storage before dispatch and persists the body before terminal success. Existing durable claims, approval scope and non-replay failure behavior remain. No automatic provider retry."
     },
     "credentials": {
       "changed": false,
@@ -109,19 +119,26 @@
       "negative": true,
       "scope": "Focused adapter, input, calculator, owner/AAL2 founder gate and standard math parser tests. Conflicting stream/completion text regression reproduced before correction.",
       "reference": "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/researchResult.test.ts frontend/src/lib/researchHandoff.test.ts",
+      "negative": true,
+      "scope": "Private storage receipt matching, cross-owner and revoked-project denial, page deduplication, exact conversation attachment and ordered blocks retained through reopen. Tests run separately within each workspace.",
+      "reference": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md"
     }
   ],
   "architecture": {
     "change": "none",
-    "reason": "Independent presentation module and existing single-answer prompt guidance. No new inference, scheduler, API, schema or execution architecture. Backend prompt activation requires its compatible release gate.",
+    "reason": "Existing single-answer prompt and renderer plus existing confirmation and private storage handoff. No new scheduler, provider, model-formatting call or database schema.",
     "rfc": null
   },
   "rollout": "Controlled source-pinned Vercel release authorized in PR #909 comment 6549571336 after exact CI and authenticated Workspace verification. RESPONSE_EXPERIENCE_V2=authenticated enables ordinary verified sessions, off restores legacy.",
-  "rollback": "Keep production 0d270ec6 and revert frontend changes if required",
+  "rollback": "Keep existing serving API and canonical Job pair, frontend deployment 9qVigJYwiaa4hgT553mRcH1VeY1d and legacy renderer flag. Restore the compatible API/Job pair together through the admission-fence release procedure. Retain private result objects and consumed confirmations, never replay them.",
   "knownGaps": [
     "Exact-source CI and authenticated Workspace visual/reload acceptance pending",
     "Unsupported action and private artifact contracts retain the original authorization-aware renderer",
-    "No new model requests or live-fact verification claimed by presentation"
+    "No new model requests or live-fact verification claimed by presentation",
+    "Historical research results not stored by the prior release cannot be reconstructed from receipt digests. Do not repeat the paid search. Source tests do not prove live delivery or crash-atomic provider/storage completion."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -132,10 +149,11 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Visual acceptance and exact-source CI pending"
+      "Exact-source CI for research handoff, authenticated storage/confirmation integration and compatible backend release remain required",
+      "Real production SaaS, research and calculation acceptance with final source is incomplete"
     ],
     "authenticatedE2e": "BLOCKED",
-    "stagedSecurity": "NOT_APPLICABLE",
+    "stagedSecurity": "BLOCKED",
     "liveUrl": null,
     "deployedSha": null
   }
