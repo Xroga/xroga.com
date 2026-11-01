@@ -1,3 +1,5 @@
+import { PostCompletionAccountingError } from './postCompletionAccounting.js';
+
 /** Content-free receipt. Never include prompts, response text, tool arguments or reasoning. */
 export class CompletionDiagnostics {
   chunks = 0;
@@ -38,4 +40,23 @@ export function requirePublicCompletion(text: string, modelId: string, diagnosti
   throw Object.assign(new Error(`${modelId} returned an empty completion`), {
     code: 'EMPTY_PROVIDER_RESPONSE', retryable: false, completionDiagnostics: receipt,
   });
+}
+
+/** Public completion state, without provider identity or private reasoning. */
+export function publicCompletionState(finishReason: string | null | undefined):
+  { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' } {
+  return finishReason === 'stop' ? { status: 'complete' }
+    : { status: 'partial', reason: finishReason === 'length' ? 'output_limit' : 'unconfirmed_stop' };
+}
+
+/** OpenRouter usage.cost is the charge for the whole request, including reasoning.
+ * Round up only to the existing ledger's integer micro-USD precision. Missing
+ * metadata keeps conservative catalogue accounting. Malformed metadata fails closed. */
+export function providerCostMicroUsd(usage: unknown): number | undefined {
+  if (!usage || typeof usage !== 'object' || !('cost' in usage) || usage.cost == null) return undefined;
+  const cost = usage.cost;
+  if (typeof cost !== 'number' || !Number.isFinite(cost) || cost < 0 || cost * 1_000_000 > Number.MAX_SAFE_INTEGER) {
+    throw new PostCompletionAccountingError();
+  }
+  return Math.ceil(cost * 1_000_000);
 }

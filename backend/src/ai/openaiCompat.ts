@@ -1,4 +1,5 @@
 import OpenAI, {type ClientOptions} from 'openai';
+import { isDeepStrictEqual } from 'node:util';
 import { getSecret } from '../config/envSecrets.js';
 import {
   MODELS,
@@ -14,7 +15,7 @@ import {containsCredentialSecretText} from '../security/egress/dataClassificatio
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH} from './modelSdkAdmission.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
-import { CompletionDiagnostics, requirePublicCompletion } from './completionDiagnostics.js';
+import { CompletionDiagnostics, requirePublicCompletion, providerCostMicroUsd } from './completionDiagnostics.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -26,6 +27,7 @@ export interface ChatMessage {
 }
 
 export interface ChatResult {
+  providerCostMicroUsd?: number;
   text: string;
   /**
    * Why the model stopped. `length` means the reply was cut at the token ceiling.
@@ -75,6 +77,19 @@ export function providerReasoningControls(
     return { reasoning: { effort: 'none', exclude: true } };
   }
   return {};
+}
+
+export function providerPriceControls(modelId: ModelId, provider: string): Record<string, unknown> {
+  if (provider !== 'openrouter' || modelId !== 'deepseek_v4_flash') return {};
+  const model = MODELS[modelId];
+  return { provider: { max_price: { prompt: model.inputUsdPer1M, completion: model.outputUsdPer1M, request: 0 }, require_parameters: true } };
+}
+
+/** Verify controls on the serialized request before any provider bytes leave. */
+export function assertProviderControls(wireBody: string, modelId: ModelId, provider: string, mode?: ReasoningMode): void {
+  const wire = JSON.parse(wireBody) as Record<string, unknown>;
+  const expected = { ...providerPriceControls(modelId, provider), ...providerReasoningControls(provider, mode) };
+  for (const [key, value] of Object.entries(expected)) if (!isDeepStrictEqual(wire[key], value)) modelAdmissionDenied();
 }
 
 export function requireNonEmptyModelText(text: string, modelId: ModelId): string {
@@ -291,6 +306,7 @@ export async function chatCompletion(
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
+      assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
       await opts.beforeDispatch!(wire);checkCancellation();
     });
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
@@ -301,6 +317,7 @@ export async function chatCompletion(
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
           ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+          ...providerPriceControls(modelId, endpoint.provider),
           ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
         },
         opts.signal ? { signal: opts.signal } : undefined,
@@ -329,6 +346,7 @@ export async function chatCompletion(
       outputTokens,
       totalTokens: inputTokens + outputTokens,
       providerRequestId: completion.id,
+      ...(endpoint.provider === 'openrouter' ? { providerCostMicroUsd: providerCostMicroUsd(completion.usage) } : {}),
     };
     admission.complete(result,()=>{},checkCancellation);
     return Object.freeze(result);
@@ -368,6 +386,7 @@ export async function chatCompletionStream(
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
+      assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
       await opts.beforeDispatch!(wire);checkCancellation();
     });
     if (opts.signal?.aborted) {
@@ -385,6 +404,8 @@ export async function chatCompletionStream(
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
           ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+          ...providerPriceControls(modelId, endpoint.provider),
+          ...(endpoint.provider === 'openrouter' ? { stream_options: { include_usage: true } } : {}),
           ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
           stream: true,
         } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
@@ -398,6 +419,7 @@ export async function chatCompletionStream(
     let finishReason: string | null = null;
     let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     let outputTokens = 0;
+    let chargedMicroUsd: number | undefined;
 
     try {
     for await (const chunk of stream) {
@@ -432,6 +454,7 @@ export async function chatCompletionStream(
       if (chunk.usage) {
         inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
         outputTokens = chunk.usage.completion_tokens ?? outputTokens;
+        if (endpoint.provider === 'openrouter') chargedMicroUsd = providerCostMicroUsd(chunk.usage) ?? chargedMicroUsd;
       }
     }
     } catch (error) {
@@ -453,6 +476,7 @@ export async function chatCompletionStream(
       outputTokens,
       totalTokens: inputTokens + outputTokens,
       providerRequestId,
+      providerCostMicroUsd: chargedMicroUsd,
     };
     admission.complete(result,()=>opts.onDelta?.(text),checkCancellation);
     return Object.freeze(result);

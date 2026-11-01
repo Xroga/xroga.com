@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CompletionDiagnostics, requirePublicCompletion } from './completionDiagnostics.js';
+import { CompletionDiagnostics, requirePublicCompletion, publicCompletionState, providerCostMicroUsd } from './completionDiagnostics.js';
 
 test('empty reasoning, tools, filters and missing choices remain failures with content-free receipts', t => {
   t.mock.method(console, 'warn', () => {});
@@ -16,6 +16,23 @@ test('empty reasoning, tools, filters and missing choices remain failures with c
       assert.ok(receipt.includes('gen-synthetic'));
       return true;
     });
+  }
+});
+
+test('token exhaustion and unconfirmed stops cannot claim a complete public answer', () => {
+  assert.deepEqual(publicCompletionState('stop'), {status:'complete'});
+  assert.deepEqual(publicCompletionState('length'), {status:'partial',reason:'output_limit'});
+  for (const reason of [null,undefined,'content_filter','tool_calls','unexpected']) {
+    assert.deepEqual(publicCompletionState(reason), {status:'partial',reason:'unconfirmed_stop'});
+  }
+});
+
+test('provider charges retain sub-cent accuracy at integer ledger precision and malformed costs stop retries', () => {
+  assert.equal(providerCostMicroUsd({cost:0.00198405}),1985);
+  assert.equal(providerCostMicroUsd({cost:0}),0);
+  assert.equal(providerCostMicroUsd({completion_tokens:4096}),undefined);
+  for (const cost of [-1,NaN,Infinity,'0.001',{},Number.MAX_SAFE_INTEGER]) {
+    assert.throws(()=>providerCostMicroUsd({cost}),{code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN',retryable:false,providerCompleted:true});
   }
 });
 

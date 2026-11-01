@@ -268,7 +268,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "b8befeec5736932ded378ac82f0e488d7747dd6c4ce1bd65ee8bc4243802c79c",
+      "sha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
@@ -276,7 +276,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "44c89cd06d6b7d42e7de4bcb7e4d71c78961cf8f45de4fee2e5ff73de3c777e5",
+      "sha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -292,7 +292,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
+      "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -571,7 +571,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "previousGenericSdkBinding": {
         "sha256": "be8bff52c0a19cd2a19c8235902191d954ef6cc1af4f631a3bfc1d2508600fdd",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -619,7 +619,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304",
+      "sha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/tenantModelDispatch.ts",
         "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"

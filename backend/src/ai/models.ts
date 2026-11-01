@@ -176,8 +176,11 @@ export const MODELS: Record<ModelId, ModelDef> = {
     monthlyTokens: 900_000,
     inputTokens: 450_000,
     outputTokens: 450_000,
-    inputUsdPer1M: 0.09,
-    outputUsdPer1M: 0.18,
+    // Conservative routing ceilings across the current OpenRouter endpoints.
+    // The compatible transport enforces these same ceilings. Actual usage.cost,
+    // when supplied, settles the real charge rather than this upper bound.
+    inputUsdPer1M: 0.60,
+    outputUsdPer1M: 1.32,
     contextWindow: 1_000_000,
     modalities: { text: true, images: false },
     tagline: 'Converter & Volume',

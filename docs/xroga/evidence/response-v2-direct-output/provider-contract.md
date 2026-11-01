@@ -1,0 +1,13 @@
+# Provider contract observation, November 2, 2026
+
+This is a correction to the demonstrated output-limit and accounting defects. It is not a model upgrade or a claim of live product acceptance.
+
+The public [OpenRouter model catalogue](https://openrouter.ai/api/v1/models) returned `deepseek/deepseek-v4-flash` with reasoning mandatory false, supported efforts `xhigh`, `high`, `none`, and default effort `high`. The existing direct-output control can therefore be forwarded by the chat path instead of allowing default reasoning to consume the 4,096-token answer limit. The model, route selection, request count and output limit stay unchanged. OpenRouter documents that excluding reasoning alone still consumes and bills those tokens in its [reasoning guide](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
+
+The public [endpoint catalogue](https://openrouter.ai/api/v1/models/deepseek/deepseek-v4-flash/endpoints) showed Relace at $0.05 input and $0.45 output per million tokens. Its actual recorded charge for the failed-length answer was $0.00198405. Xroga's old $0.09/$0.18 estimate undercounted that output cost. Across the returned endpoints the maximum input and output prices were $0.60 and $1.32 per million. These become conservative reservation ceilings and are also enforced on the serialized SDK request through `provider.max_price`. Per-request surcharges are disallowed. `require_parameters` prevents silently ignoring supported request controls. See the official [provider routing contract](https://openrouter.ai/docs/guides/routing/provider-selection#max-price).
+
+When the provider supplies `usage.cost`, settlement uses that total charge rounded up to the existing integer micro-USD precision. Missing cost metadata retains conservative catalogue accounting. Invalid cost metadata or a charge above the reservation retains the existing reconciliation hold and stops retries. The SDK-preserved charge is checked before publishing output and carried into the existing atomic usage receipt. No new ledger, schema or background reconciler is introduced.
+
+The already-settled historical test discrepancy remains recorded and unreconciled. This change does not rewrite financial history or release uncertain reservations. Any historical ledger correction needs its own reviewed authority.
+
+The response API adds a public completion state. A length-limited or unconfirmed stop remains a partial answer, with the original text preserved. The frontend persists a visible warning with the same answer document and includes it in V2 Copy/Share. This does not automatically retry or purchase another answer.

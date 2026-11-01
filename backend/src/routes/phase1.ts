@@ -1582,6 +1582,9 @@ router.post(
           response:
             result.response,
 
+          completion:
+            result.completion,
+
           intent:
             result.intent,
 

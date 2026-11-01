@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2eaf5dc5b898ad6ee99301ebfac007d0ee22f5d6",
+  "source_sha": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15833,7 +15833,7 @@
     },
     {
       "path": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "3859e84227f83566301ad3eb12d65e8f40a2c5afe16ec19a9688bc6a7a1bf6e1"
+      "sha256": "677bb2771f0aef0c07081cd7b6e401089870e483640b5b0fe448bdcfd9b45005"
     },
     {
       "path": "backend/src/ai/contextPreparation.ts",
@@ -15929,11 +15929,11 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "sha256": "ce06bc3f842d59758d5adea1a144c184dda2a3ee4748a59895ce887b7111d952"
+      "sha256": "bfc71690a84aba032ca7685f035e94fdd2a7ca69fdb3f703a0c15cd16929c9ae"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "44c89cd06d6b7d42e7de4bcb7e4d71c78961cf8f45de4fee2e5ff73de3c777e5"
+      "sha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -15961,7 +15961,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a"
+      "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -15981,7 +15981,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086"
+      "sha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -16209,7 +16209,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304"
+      "sha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc"
     },
     {
       "path": "backend/src/ai/universal/artifactWorkspace.ts",
@@ -17377,7 +17377,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "710ec917c3e9aae4864fd3eaf012fb8e2130066b01508ef5aae2633c301ceb26"
+      "sha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -22828,74 +22828,8 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 305,
+      "line": 308,
       "expression": "keys.modelId",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 306,
-      "expression": "keys.inputPrice",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 307,
-      "expression": "keys.outputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
         "DEEPSEEK_FLASH_CONTEXT_WINDOW",
@@ -22928,105 +22862,6 @@
     {
       "path": "backend/src/ai/models.ts",
       "line": 309,
-      "expression": "keys.contextWindow",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 319,
-      "expression": "def.imagesEnv",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 334,
-      "expression": "keys.modelId",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 338,
       "expression": "keys.inputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23059,7 +22894,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 339,
+      "line": 310,
       "expression": "keys.outputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23092,7 +22927,172 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 340,
+      "line": 312,
+      "expression": "keys.contextWindow",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 322,
+      "expression": "def.imagesEnv",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 337,
+      "expression": "keys.modelId",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 341,
+      "expression": "keys.inputPrice",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 342,
+      "expression": "keys.outputPrice",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 343,
       "expression": "keys.contextWindow",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23125,7 +23125,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 184,
+      "line": 199,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23744,7 +23744,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 111,
+      "line": 126,
       "credentialsInUrl": false
     },
     {
@@ -23765,7 +23765,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4033,
+      "line": 4039,
       "credentialsInUrl": false
     },
     {
@@ -30415,7 +30415,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 239,
+      "line": 254,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30576,56 +30576,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 528,
+      "line": 530,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 558,
+      "line": 560,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1112,
+      "line": 1116,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1488,
+      "line": 1494,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2240,
+      "line": 2246,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3799,
+      "line": 3805,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3983,
+      "line": 3989,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4762,
+      "line": 4768,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30660,14 +30660,14 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 59,
+      "line": 60,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 60,
+      "line": 61,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
