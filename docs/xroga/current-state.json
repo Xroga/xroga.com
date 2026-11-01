@@ -2,13 +2,13 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "release/mic-mobile-20261031",
-    "sha": "fe2c6486f4c60fae0757f79a535f43286ee4a02f",
-    "sourceTimestampUtc": "2026-10-31T03:46:21+05:00",
-    "auditStartedUtc": "2026-10-31T01:26:00.463Z",
+    "branch": "codex/response-experience-v2-906",
+    "sha": "7b56e69ea8ea7880e0724f0eea9abe575ba7dc4e",
+    "sourceTimestampUtc": "2026-11-01T14:40:49+05:00",
+    "auditStartedUtc": "2026-11-01T09:41:05.197Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v24.18.0",
+    "node": "v22.21.1",
     "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
@@ -80684,7 +80684,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:11",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80839,8 +80839,8 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80905,8 +80905,8 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81082,7 +81082,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "b61e77d36d6dea7632f78ab12de86419c31abbd321d62658b708a4a6488559a7",
+      "sha256": "e0aa738eb94ee158272ff4769a5d3b3716c10203a7dde4735937dad69981855f",
       "symbols": [
         "Calculator",
         "Chart",
@@ -81112,6 +81112,7 @@
         "./SourceV2",
         "./composition",
         "./document",
+        "./loadPresentation",
         "./response-v2.module.css",
         "./sourceRegistry",
         "react"
@@ -81125,6 +81126,7 @@
         "frontend/src/components/response-experience-v2/SourceV2.tsx",
         "frontend/src/components/response-experience-v2/composition.ts",
         "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/components/response-experience-v2/loadPresentation.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
@@ -81293,7 +81295,7 @@
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
-        "frontend/src/components/response-experience-v2/document.test.ts:107",
+        "frontend/src/components/response-experience-v2/document.test.ts:132",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
       "reachable": true,
@@ -81497,7 +81499,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "8d04b2980d0a35c4d7e00411d96cae2bdbd842c255b062c8ee8188e7a7ab77df",
+      "sha256": "50b918b89e2846f81c15a1756ffd8ebdc8142ec3a60a367651dbebe4223c2128",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -81513,8 +81515,10 @@
         "keys",
         "label",
         "n",
+        "narrative",
         "nodeSchema",
         "nodes",
+        "ordered",
         "output",
         "parsed",
         "raw",
@@ -81707,6 +81711,42 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/components/response-experience-v2/interactionState.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:64337f376bf6eeb51d80",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/loadPresentation.ts",
+      "sha256": "8d08790ca1eb168e6729298b8761061facd0d033c0651493d2e78840976625b1",
+      "symbols": [
+        "error",
+        "loadPresentation"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10",
+        "frontend/src/components/response-experience-v2/loadPresentation.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/response-experience-v2/loadPresentation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -106429,7 +106469,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "5de4e344dcb92947c3148d979a83743962ac01ccabf6c9728c17fc72715ab9e9",
+      "sha256": "1c23fe9911fab4dde99341a79c9adc4f115eccd2fc4e5cde61cd3ec5fd52c349",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -107300,7 +107340,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "0e658010d74320234ae17b5a00b8b1bb70498c31ac76639e57d66b78ab6e1286",
+      "sha256": "0fc49fce082ed32d8208b62cb5be5b18f9f00b5b055e571608e0f15872444d97",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -107309,21 +107349,26 @@
         "TABLE_DIVIDER",
         "UNSAFE_KEYS",
         "XROGA_UI_FENCE",
+        "appendText",
         "base",
         "block",
+        "blockStart",
         "blocks",
         "candidate",
         "candidates",
         "canonicalRichBlock",
         "cells",
+        "codeFence",
         "columnTypes",
         "compactWhitespace",
         "complete",
         "containsUnsafeKey",
+        "cursor",
         "decoded",
         "dividers",
         "end",
         "enhanceAiResponse",
+        "fence",
         "heading",
         "index",
         "input",
@@ -107333,36 +107378,37 @@
         "labels",
         "line",
         "lines",
-        "markdown",
         "match",
-        "multiplier",
         "narrative",
-        "numeric",
+        "number",
         "numericKeys",
         "open",
+        "ordered",
         "parseProtocolBlocks",
+        "parsed",
         "precedingTableTitle",
-        "protocolBlocks",
+        "prose",
         "raw",
         "rawRows",
+        "rejected",
         "removed",
-        "richBlocks",
         "rowIndex",
         "rows",
         "safeIdPart",
         "scalar",
+        "segment",
         "source",
         "splitTableRow",
         "stripXrogaUiProtocol",
         "suffix",
         "tableBlocksFromMarkdown",
+        "tail",
         "timeSeries",
         "title",
         "trimmed",
         "used",
         "value",
         "values",
-        "withoutProtocol",
         "xKey"
       ],
       "imports": [
@@ -107382,6 +107428,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/document.test.ts:8",
         "frontend/src/context/TerminalChatContext.tsx:97",
         "frontend/src/lib/xrogaResponseDocument.test.ts:4",
         "frontend/src/lib/xrogaRichResults.test.ts:4"
@@ -107395,6 +107442,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/lib/xrogaResponseDocument.test.ts",
         "frontend/src/lib/xrogaRichResults.test.ts"
       ],
@@ -139049,7 +139097,7 @@
     {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
-      "declaredTests": 20,
+      "declaredTests": 22,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139064,6 +139112,13 @@
       "id": "test-suite:74ff17ca87518c4882f5",
       "sourcePath": "frontend/src/components/response-experience-v2/interactionState.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9919f21584022de2e0be",
+      "sourcePath": "frontend/src/components/response-experience-v2/loadPresentation.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -140386,7 +140441,7 @@
     {
       "id": "test-suite:4d9cddb74c619162723f",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 15,
       "skipLocations": [],
       "focusLocations": []
     },
