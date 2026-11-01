@@ -2,6 +2,7 @@
 import { Component, createContext, lazy, Suspense, useContext, useMemo, type ReactNode } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { adaptResponseV2, type ResponseInputV2 } from './document';
+import { InteractionScopeV2 } from './interactionContext';
 const Canvas = lazy(() => import('./ResponseCanvasV2'));
 const PresentationAccessContext = createContext<string | null>(null);
 
@@ -20,5 +21,5 @@ export function ResponseExperienceGate({ message, streaming, children }: { messa
   const enabled = Boolean(authorizedUserId && authorizedUserId === profileId);
   const result = useMemo(() => enabled ? adaptResponseV2(message, streaming) : null, [enabled, message, streaming]);
   if (!result?.supported || !result.document.nodes.length) return <>{children}</>;
-  return <PresentationBoundary key={message.id} fallback={children}><Suspense fallback={children}><Canvas document={result.document} /></Suspense></PresentationBoundary>;
+  return <PresentationBoundary key={message.id} fallback={children}><InteractionScopeV2.Provider value={JSON.stringify([authorizedUserId, message.id])}><Suspense fallback={children}><Canvas document={result.document} /></Suspense></InteractionScopeV2.Provider></PresentationBoundary>;
 }

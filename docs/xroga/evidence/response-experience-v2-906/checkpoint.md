@@ -113,3 +113,13 @@ Local verification: composition regression suite 10/10, adapter/source/graph foc
 Three real persisted MIKE responses were found in the signed-in Workspace and captured as the unchanged baseline. They contain no source metadata. Rich research, finance, travel and architecture checks use labeled synthetic fixtures through the actual adapter. The financial interaction changed 500 USD to 1,000 USD and reset to 500 without model dispatch. Local screenshots are evidence of local rendering only. Exact-source Preview, complete responsive/product review and production release remain pending.
 
 Evidence folder: outputs/response-experience-v2-906/semantic-redesign in the parent workspace. Production and legacy renderer remain unchanged. No model calls were submitted.
+
+### Semantic Preview and interaction verification
+
+Preview deployment 2ES6H364unoEk3FG4KTEnjzSjxz6 serves source 13b7549cf0d2c6818dfde2ecf6299695285dc9b3. Three existing persisted Workspace responses render with the semantic composer on desktop and 390px mobile, with exact baseline text retained. They have no source metadata, so citation and rich-data checks remain clearly labeled synthetic fixtures. Twelve fixture shapes were inspected through the actual adapter. The unsupported malformed case correctly retains fallback behavior. The local chart-tablet-light filename was captured at 390px and is not tablet evidence.
+
+Calculator exploration now has optional tab-session persistence scoped to the server-authorized account and message. Only validated numeric strings are retained, with an eight-hour expiry and 32 calculations per message. Schema changes invalidate saved inputs. No response content, credentials or actions are persisted by this feature. Denied storage preserves local functionality. Synthetic local review uses its own explicitly labeled scope and does not alter production authorization.
+
+Four persistence tests and ten composition tests passed in local job 01fd8b0c-be81-468e-beb4-8a350ffcb284. Frontend TypeScript and scoped ESLint passed. Browser interaction changed the synthetic risk from 500 to 1000 USD, reopened the serialized response with 1000 intact, then reset to 500. No model request was submitted. Two earlier test invocations failed due to missing tsconfig alias resolution in the runner, corrected by passing the explicit frontend tsconfig to tsx.
+
+Release remains gated on final exact-source CI and final Preview verification. No production promotion has occurred.

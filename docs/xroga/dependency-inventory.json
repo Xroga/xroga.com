@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "01237130040273be4de30dd2c027dcc365619bc0",
+  "source_sha": "13b7549cf0d2c6818dfde2ecf6299695285dc9b3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20584,7 +20584,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "eac91769db4f84414c48f952d415ba4987ad7a2c2e24f54869233a1b1bc45946"
+      "sha256": "57667b5577b0bf1f0601921a4c78a7ee0dbe96f4ef917e778b2ce40fee3a0c4c"
     },
     {
       "path": "frontend/src/components/response-experience-v2/MathV2.tsx",
@@ -20604,7 +20604,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
-      "sha256": "ed255ddfa452d817ed47c6828ecf43b82e8784bb480256ff51abf92b7909e030"
+      "sha256": "5d0e2530dbaa76d2e67b8aad6748562b266a782a8c6a28a0839c5beb9739778d"
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
@@ -20631,12 +20631,20 @@
       "sha256": "2cfe9d85ffd1cf464a65a248faf7c70611915ddb1f28e1c36426d1c7199a8b99"
     },
     {
+      "path": "frontend/src/components/response-experience-v2/interactionContext.ts",
+      "sha256": "f604e611decf3fcdfac0556f1ddc1319ea58aab47aff14dd4e94a733721c6e1d"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/interactionState.ts",
+      "sha256": "754dc30472a8e62d88ef4989ab083226506bcdba4b6bf50ed0fbd5fd4caaff8e"
+    },
+    {
       "path": "frontend/src/components/response-experience-v2/mathSyntax.ts",
       "sha256": "7d1f058bba6bfd0653ac9ee5e00d5bdf8be7a74d18f37718d2e52b35112ac544"
     },
     {
       "path": "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
-      "sha256": "78b440cf9e5dbb7811bfefb1e73f0a16cc840bcaabde463a77577c1d6aad204a"
+      "sha256": "5ae0edc093f07f6b36631fd14b4c1168dcdaa6649b19595f093707a743a9ad13"
     },
     {
       "path": "frontend/src/components/response-experience-v2/sourceRegistry.ts",
