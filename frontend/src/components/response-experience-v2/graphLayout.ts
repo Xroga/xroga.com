@@ -12,6 +12,23 @@ export function graphPositionsV2(node: Extract<ResponseNodeV2, { kind: 'graph' }
   return ranks.flatMap((layer, row) => layer.map((id, column) => ({ id, x: (column + (columns - layer.length) / 2) * 280, y: row * rowHeight })));
 }
 
+/** Keep branches spatially distinct at a readable 1:1 scale. Narrow containers
+ * scroll the diagram locally instead of shrinking labels or flattening topology. */
+export function graphCanvasV2(node: Extract<ResponseNodeV2, { kind: 'graph' }>) {
+  const nodeWidth = 224;
+  const nodeHeight = Math.max(88, ...node.nodes.map(item =>
+    44 + Math.ceil(item.label.length / 23) * 21 + (item.detail ? 8 + Math.ceil(item.detail.length / 25) * 20 : 0)));
+  const rowHeight = nodeHeight + 112;
+  const base = graphPositionsV2(node, false, rowHeight);
+  const byId = new Map(base.map(p => [p.id, p]));
+  let lanes = 0;
+  const edgeLanes = node.edges.map(edge => byId.get(edge.target)!.y - byId.get(edge.source)!.y === rowHeight ? null : lanes++);
+  const positions = base.map(item => ({ ...item, x: item.x + 48 + lanes * 196, y: item.y + 32 }));
+  return { nodeWidth, nodeHeight, positions, edgeLanes: edgeLanes.map(lane => lane === null ? null : 98 + lane * 196),
+    width: Math.max(320, ...positions.map(item => item.x + nodeWidth + 48)),
+    height: Math.max(240, ...positions.map(item => item.y + nodeHeight + 48)) };
+}
+
 /** A reading order is not a dependency. Only draw a continuous flow when each
  * supplied edge proves that exact sequence. Branches/cycles keep their edges. */
 export function isLinearFlowV2(node: Extract<ResponseNodeV2, { kind: 'graph' }>): boolean {

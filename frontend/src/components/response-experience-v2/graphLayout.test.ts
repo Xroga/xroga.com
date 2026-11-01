@@ -1,7 +1,23 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { isLinearFlowV2, graphLayersV2, graphPositionsV2 } from './graphLayout';
+import { isLinearFlowV2, graphLayersV2, graphPositionsV2, graphCanvasV2 } from './graphLayout';
 import type { ResponseNodeV2 } from './document';
+
+test('readable diagram bounds contain every node and preserve branch topology on narrow screens', () => {
+  const graph: Extract<ResponseNodeV2,{kind:'graph'}> = {id:'g',kind:'graph',nodes:['client','app','auth','billing','data'].map(id=>({id,label:id,detail:'Original detail '.repeat(8)})),edges:[{source:'client',target:'app'},{source:'app',target:'auth'},{source:'app',target:'billing'},{source:'auth',target:'data'}]};
+  const before = JSON.stringify(graph);
+  const layout = graphCanvasV2(graph);
+  for (const p of layout.positions) {
+    assert.ok(p.x >= 0 && p.y >= 0);
+    assert.ok(p.x + layout.nodeWidth <= layout.width);
+    assert.ok(p.y + layout.nodeHeight <= layout.height);
+  }
+  const auth = layout.positions.find(p=>p.id==='auth')!;
+  const billing = layout.positions.find(p=>p.id==='billing')!;
+  assert.equal(auth.y, billing.y);
+  assert.ok(Math.abs(auth.x-billing.x) >= layout.nodeWidth);
+  assert.equal(JSON.stringify(graph),before);
+});
 
 test('continuous diagrams require the supplied edges to prove the full sequence', () => {
   const graph: Extract<ResponseNodeV2, {kind:'graph'}> = { id:'g', kind:'graph', nodes:[{id:'a',label:'Input'},{id:'b',label:'Check'},{id:'c',label:'Result'}], edges:[{source:'b',target:'c'},{source:'a',target:'b'}] };
@@ -10,6 +26,20 @@ test('continuous diagrams require the supplied edges to prove the full sequence'
     assert.equal(isLinearFlowV2({...graph,edges}), false);
   }
   assert.equal(isLinearFlowV2({...graph,nodes:[graph.nodes[1],graph.nodes[0],graph.nodes[2]]}), false);
+});
+
+test('skip-level and cyclic connections have separate lanes outside every node', () => {
+  const graph: Extract<ResponseNodeV2, {kind:'graph'}> = { id:'g', kind:'graph', nodes:['a','b','c'].map(id => ({id,label:id})), edges:[{source:'a',target:'b'},{source:'b',target:'c'},{source:'a',target:'c'}] };
+  for (const candidate of [graph, {...graph, edges:[...graph.edges,{source:'c',target:'a'}]}]) {
+    const original = JSON.stringify(candidate);
+    const layout = graphCanvasV2(candidate);
+    const lanes = layout.edgeLanes.filter((lane): lane is number => lane !== null);
+    assert.ok(lanes.length > 0);
+    assert.equal(new Set(lanes).size, lanes.length);
+    for (const lane of lanes) assert.ok(lane + 86 < Math.min(...layout.positions.map(p => p.x)));
+    assert.equal(layout.edgeLanes.length, candidate.edges.length);
+    assert.equal(JSON.stringify(candidate), original);
+  }
 });
 
 test('branch layout follows actual dependencies and refuses to invent an order for cycles', () => {

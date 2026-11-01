@@ -27,7 +27,7 @@ export function sourceDomainV2(url: string): string {
 export function SourceMarkV2({ url }: { url: string }) {
   const domain = sourceDomainV2(url);
   const mark = Object.hasOwn(marks, domain) ? marks[domain as keyof typeof marks] : null;
-  return mark ? <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={mark.path} /></svg> : <Globe size={13} aria-hidden="true" />;
+  return mark ? <svg width="14" height="14" viewBox="0 0 24 24" fill={/^(000000|FFFFFF)$/i.test(mark.hex) ? 'currentColor' : `#${mark.hex}`} aria-hidden="true"><path d={mark.path} /></svg> : <Globe size={13} aria-hidden="true" />;
 }
 export function SourceLinkV2({ url, title, number }: { url: string; title: string; number?: number }) {
   const registry = useContext(SourceRegistryContextV2);

@@ -1,47 +1,62 @@
 'use client';
-import { useMemo, useRef, useState, useEffect } from 'react';
-import { ReactFlow, Controls, MarkerType, Position } from '@xyflow/react';
+import { useEffect, useMemo, useRef } from 'react';
+import { ReactFlow, MarkerType, Position, BaseEdge, EdgeLabelRenderer, getSmoothStepPath, type EdgeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { ResponseNodeV2 } from './document';
-import { graphPositionsV2 } from './graphLayout';
+import { graphCanvasV2 } from './graphLayout';
+import { leadingEntityV2 } from './entityRegistry';
+import { SourceMarkV2 } from './SourceV2';
 import styles from './response-v2.module.css';
+
+function LabeledConnectionV2(props: EdgeProps) {
+  const lane = props.data?.lane;
+  const middle = (props.sourceY + props.targetY) / 2;
+  const [direct] = getSmoothStepPath({ ...props, centerY: middle });
+  // Skip-level and return connections travel outside all node columns. A direct
+  // center path would run through intervening nodes and hide its meaning.
+  const path = typeof lane === 'number'
+    ? `M ${props.sourceX} ${props.sourceY} V ${props.sourceY + 24} H ${lane} V ${props.targetY - 24} H ${props.targetX} V ${props.targetY}`
+    : direct;
+  const x = typeof lane === 'number' ? lane : props.targetX;
+  const y = middle;
+  return <><BaseEdge path={path} markerEnd={props.markerEnd} style={props.style} />
+    {props.label && <EdgeLabelRenderer><div className={styles.graphEdgeLabel} style={{ transform: `translate(-50%, -50%) translate(${x}px,${y}px)` }}>{props.label}</div></EdgeLabelRenderer>}</>;
+}
+const edgeTypes = { responseConnection: LabeledConnectionV2 };
 
 /** Data-only graph. No executable actions, remote layout or model calls. */
 export default function ArchitectureV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'graph' }> }) {
-  const container = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(720);
+  const layout = useMemo(() => graphCanvasV2(node), [node]);
+  const canvas = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!container.current || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => { if (entry.contentRect.width > 0) setWidth(entry.contentRect.width); });
-    observer.observe(container.current);
-    return () => observer.disconnect();
-  }, []);
-  const compact = width < 560;
-  const nodeWidth = compact ? Math.max(150, width - 100) : 210;
-  const rowHeight = Math.max(210, ...node.nodes.map(item => 100 + Math.ceil(((item.detail?.length ?? 0) + item.label.length) / Math.max(16, (nodeWidth - 32) / 7)) * 21));
-  const positions = useMemo(() => new Map(graphPositionsV2(node, compact, rowHeight).map(p => [p.id, p])), [node, compact, rowHeight]);
+    // Start on the first reading-level node instead of a blank routing lane.
+    // Preserve user scrolling until the diagram itself changes.
+    const first = layout.positions[0];
+    if (canvas.current && first) canvas.current.scrollLeft = Math.max(0, first.x + layout.nodeWidth / 2 - canvas.current.clientWidth / 2);
+  }, [layout]);
+  const positions = useMemo(() => new Map(layout.positions.map(p => [p.id, p])), [layout]);
   const nodes = useMemo(() => node.nodes.map(item => ({
     id: item.id, position: positions.get(item.id)!,
-    data: { label: <><strong>{item.label}</strong>{item.detail && <span>{item.detail}</span>}</> },
-    sourcePosition: compact ? Position.Right : Position.Bottom, targetPosition: compact ? Position.Left : Position.Top,
-    style: { width: nodeWidth, padding: 16, borderRadius: 12, background: 'var(--background, #fff)', color: 'var(--v2-ink)', border: '1px solid var(--v2-line)', fontSize: 14, lineHeight: 1.5, overflowWrap: 'anywhere' as const },
-  })), [node, positions, compact, nodeWidth]);
+    data: { label: <><strong>{leadingEntityV2(item.label) && <SourceMarkV2 url={leadingEntityV2(item.label)!.url} />}{item.label}</strong>{item.detail && <span>{item.detail}</span>}</> },
+    sourcePosition: Position.Bottom, targetPosition: Position.Top,
+    style: { width: layout.nodeWidth, minHeight: layout.nodeHeight, padding: 16, borderRadius: 12, background: 'var(--background, #fff)', color: 'var(--v2-ink)', border: '1px solid var(--v2-line)', fontSize: 14, lineHeight: 1.5, overflowWrap: 'anywhere' as const },
+  })), [node, positions, layout]);
   const edges = useMemo(() => node.edges.map((edge, index) => ({
     id: `${node.id}-edge-${index}`, source: edge.source, target: edge.target, label: edge.label,
-    type: 'smoothstep', markerEnd: { type: MarkerType.ArrowClosed, color: '#7890b3' },
+    type: 'responseConnection', data: { lane: layout.edgeLanes[index] }, markerEnd: { type: MarkerType.ArrowClosed, color: '#7890b3' },
     style: { stroke: '#7890b3', strokeWidth: 1.5 },
     labelStyle: { fill: 'var(--v2-ink)', fontSize: 12 },
     labelBgStyle: { fill: 'var(--background, #fff)' }, labelBgPadding: [8, 5] as [number, number],
-  })), [node]);
+  })), [node, layout]);
   return <figure className={styles.architecture}>
     {node.title && <figcaption>{node.title}</figcaption>}
     {node.description && <p>{node.description}</p>}
-    <div ref={container} className={styles.architectureCanvas} style={compact ? { height: node.nodes.length * rowHeight + 40 } : undefined} role="group" aria-label={node.title || 'Architecture diagram'}>
-      <ReactFlow key={compact ? 'vertical' : 'wide'} nodes={nodes} edges={edges} fitView fitViewOptions={{ padding: .1, minZoom: compact ? .85 : .5, maxZoom: 1 }} minZoom={compact ? .85 : .5} maxZoom={1.5}
-        nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} zoomOnScroll={false} panOnScroll={false}
-        preventScrolling={false} ariaLabelConfig={{ 'controls.zoomIn.ariaLabel': 'Zoom diagram in', 'controls.zoomOut.ariaLabel': 'Zoom diagram out', 'controls.fitView.ariaLabel': 'Fit diagram' }}>
-        <Controls showInteractive={false} />
-      </ReactFlow>
+    <div ref={canvas} className={styles.architectureCanvas} role="region" tabIndex={0} aria-label={`${node.title || 'Architecture diagram'}. Scroll horizontally to explore the connected diagram.`}>
+      <div style={{ width: layout.width, height: layout.height, marginInline: 'auto' }}>
+        <ReactFlow nodes={nodes} edges={edges} edgeTypes={edgeTypes} defaultViewport={{ x: 0, y: 0, zoom: 1 }} minZoom={1} maxZoom={1}
+          nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} zoomOnScroll={false} zoomOnPinch={false} zoomOnDoubleClick={false} panOnDrag={false} panOnScroll={false}
+          preventScrolling={false} />
+      </div>
     </div>
     <ul className={styles.visuallyHidden} aria-label="Diagram connections">{node.edges.map((edge, index) => <li key={index}>{node.nodes.find(n => n.id === edge.source)?.label} → {node.nodes.find(n => n.id === edge.target)?.label}{edge.label ? `: ${edge.label}` : ''}</li>)}</ul>
   </figure>;

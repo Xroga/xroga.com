@@ -3,6 +3,18 @@ import assert from 'node:assert/strict';
 import { responseTextV2 } from './exportText';
 import { enhanceAiResponse } from '@/lib/xrogaResponseDocument';
 import { serializeAssistantCopy } from '@/lib/assistantCopy';
+import { readFileSync } from 'node:fs';
+
+test('real generated database fields survive full V2 export and clipboard conversion', () => {
+  const message = JSON.parse(readFileSync(new URL('./testdata/generated-saas-database.json', import.meta.url), 'utf8'));
+  const exported = responseTextV2(message);
+  assert.ok(exported);
+  const copied = serializeAssistantCopy(exported);
+  for (const field of ['user_id', 'tenant_id', 'stripe_customer_id', 'stripe_subscription_id']) {
+    assert.ok(copied.includes(field), `Lost field ${field}`);
+  }
+  assert.ok(copied.includes('→'));
+});
 
 test('a persisted model answer exports its ordered diagram, dataset and complete explanation', () => {
   const source = ['Intro.', '```xroga-ui', JSON.stringify({ type: 'graph', nodes: [{ id: 'ui', label: 'Client' }, { id: 'db', label: 'Database' }], edges: [{ source: 'ui', target: 'db', label: 'Authorized query' }] }), '```', '## Results', '| Name | Value |', '| --- | --- |', '| Zero | 0 |', '| Disabled | false |', 'Conclusion.'].join('\n');

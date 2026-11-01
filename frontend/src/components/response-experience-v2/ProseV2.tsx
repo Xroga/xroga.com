@@ -12,6 +12,7 @@ import { remarkCitationsV2 } from './sourceRegistry';
 import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
 import { ComparisonV2 } from './ComparisonV2';
+import { remarkEntityRolesV2 } from './entityRegistry';
 const MathV2 = lazy(() => import('./MathV2'));
 
 export function CodeV2({ text, language }: { text: string; language?: string }) {
@@ -25,11 +26,11 @@ export function CodeV2({ text, language }: { text: string; language?: string }) 
 
 export function ProseV2({ text, sources = [] }: { text: string; sources?: CitationSource[] }) {
   return <div className={styles.prose} dir="auto"><ReactMarkdown skipHtml
-    remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }], remarkMathPresentationV2, ...(sources.length ? [remarkCitationsV2(sources)] : [])]}
+    remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }], remarkMathPresentationV2, remarkEntityRolesV2, ...(sources.length ? [remarkCitationsV2(sources)] : [])]}
     urlTransform={url => safeLinkV2(url) ?? ''}
     components={{
       p: ({ children }) => <p dir="auto">{children}</p>,
-      li: ({ children }) => <li dir="auto">{children}</li>,
+      li: ({ children, node }) => <li dir="auto" className={node?.properties?.['data-resource-v2'] === 'true' ? styles.entityRole : undefined}>{children}</li>,
       a: ({ href, children }) => {
         if (!href) return <span>{children}</span>;
         if (href.startsWith('/')) return <a href={href}>{children}</a>;

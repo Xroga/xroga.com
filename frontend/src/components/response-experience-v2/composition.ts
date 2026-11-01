@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { sameChartTableV2, type ResponseDocumentV2, type ResponseNodeV2 } from './document';
 import { sourceKeyV2, remarkCitationsV2 } from './sourceRegistry';
+import { leadingEntityV2 } from './entityRegistry';
 
 type Syntax = { type: string; depth?: number; url?: string; value?: string; position?: { start: { offset?: number }; end: { offset?: number } }; children?: Syntax[] };
 export type SemanticRoleV2 = 'narrative' | 'steps' | 'comparison' | 'series' | 'scenario' | 'resource' | 'workflow' | 'code' | 'mathematics' | 'notice' | 'progress' | 'evidence';
@@ -44,7 +45,11 @@ function proseParts(node: Extract<ResponseNodeV2, { kind: 'prose' }>): SemanticP
     const start = index === 0 ? 0 : syntax.position?.start.offset ?? 0;
     const end = children[index + 1]?.position?.start.offset ?? node.text.length;
     const id = `${node.id}:${start}`;
-    const resourceList = syntax.type === 'list' && !!syntax.children?.length && syntax.children.every(item => {
+    const labeledResources = syntax.type === 'list' && !!syntax.children?.length && syntax.children.every(item => item.children?.[0]?.children?.[0]?.type === 'strong') && syntax.children.filter(item => {
+      const label = item.children?.[0]?.children?.[0]?.children?.[0];
+      return label?.type === 'text' && leadingEntityV2(label.value ?? '');
+    }).length >= 2;
+    const resourceList = labeledResources || syntax.type === 'list' && !!syntax.children?.length && syntax.children.every(item => {
       const first = item.children?.[0]?.children?.[0];
       return first?.type === 'link' && !!first.url && !/^\[?\d+\]?$/.test(first.children?.map(child => child.value ?? '').join('') ?? '');
     });
