@@ -80684,7 +80684,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:9",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80705,10 +80705,57 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:12e663f487f5ea29fede",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
+      "sha256": "ea8f00b6e56ea1f16317bddaef9de2dc67932d9b17b1b3f8d17661390adad9c8",
+      "symbols": [
+        "ComparisonV2",
+        "body",
+        "cells",
+        "compact",
+        "content",
+        "elements",
+        "headers",
+        "plain",
+        "rows"
+      ],
+      "imports": [
+        "./response-v2.module.css",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/response-v2.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:14"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:7408bdfee403df48ceaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "a2160b9fb4080d02efa523bf35f7f1f30a722a6eba36bdb2cc1cf745e0f8ec1b",
+      "sha256": "4b1adad0434724afb3750767bd1609cbf31527f19238ba27b5185ae2be06c621",
       "symbols": [
         "DataTableV2",
         "GraphV2",
@@ -80716,6 +80763,8 @@
         "current",
         "diff",
         "filtered",
+        "item",
+        "layers",
         "linear",
         "names",
         "rows",
@@ -80731,6 +80780,7 @@
       ],
       "runtimeImports": [
         "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/components/response-experience-v2/graphLayout.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
       "entryPoints": [
@@ -80738,8 +80788,8 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80797,8 +80847,8 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80840,7 +80890,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:14"
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80865,7 +80915,7 @@
       "id": "surface:c37a54594bd9bc390b5b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "dee2402c4e742c08005d82ee0650fe99ecbaee54728191e6e0163705a3af5952",
+      "sha256": "c500f1181d96daed23882e24a9839c846d8c6f47ce6a13d2b4d449158e3bd175",
       "symbols": [
         "CodeV2",
         "MathV2",
@@ -80875,6 +80925,7 @@
         "source"
       ],
       "imports": [
+        "./ComparisonV2",
         "./MathV2",
         "./SourceV2",
         "./document",
@@ -80889,6 +80940,7 @@
         "remark-math"
       ],
       "runtimeImports": [
+        "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
         "frontend/src/components/response-experience-v2/MathV2.tsx",
         "frontend/src/components/response-experience-v2/SourceV2.tsx",
         "frontend/src/components/response-experience-v2/document.ts",
@@ -80972,16 +81024,26 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "84165fdd339bf666727ed6f76258124390e80e1295a2a2f11a910e910dd75611",
+      "sha256": "b61e77d36d6dea7632f78ab12de86419c31abbd321d62658b708a4a6488559a7",
       "symbols": [
         "Calculator",
         "Chart",
+        "ComposedPart",
         "Graph",
         "NodeView",
         "ResponseCanvasV2",
         "Table",
         "Tabs",
-        "registry"
+        "composition",
+        "element",
+        "layout",
+        "next",
+        "node",
+        "observer",
+        "references",
+        "registry",
+        "root",
+        "source"
       ],
       "imports": [
         "./ChartV2",
@@ -80990,6 +81052,7 @@
         "./ProseV2",
         "./ResourcesV2",
         "./SourceV2",
+        "./composition",
         "./document",
         "./response-v2.module.css",
         "./sourceRegistry",
@@ -81002,6 +81065,7 @@
         "frontend/src/components/response-experience-v2/ProseV2.tsx",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
         "frontend/src/components/response-experience-v2/SourceV2.tsx",
+        "frontend/src/components/response-experience-v2/composition.ts",
         "frontend/src/components/response-experience-v2/document.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts"
@@ -81091,7 +81155,7 @@
       "id": "surface:f8646cfeb40e43123392",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "ec07a5a11d5749d6269d6b757b29fdd026610264a8ed06a8793afe7acac3f12b",
+      "sha256": "fbd9bb693f337bf1e81b7825fc8be8de81462560a66403976ceb9e357a23f212",
       "symbols": [
         "InlineImageV2",
         "SourceLinkV2",
@@ -81168,7 +81232,7 @@
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
-        "frontend/src/components/response-experience-v2/document.test.ts:125",
+        "frontend/src/components/response-experience-v2/document.test.ts:107",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
       "reachable": true,
@@ -81236,13 +81300,104 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:22b5c3c585341331ff1c",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/composition.ts",
+      "sha256": "9ec8a5ccb6c068b0d09da968d714a85f1dae85ae25d045f496a516144282a89d",
+      "symbols": [
+        "CompositionV2",
+        "SemanticPartV2",
+        "SemanticRoleV2",
+        "SemanticSectionV2",
+        "SemanticUnitV2",
+        "Syntax",
+        "add",
+        "append",
+        "authoredProse",
+        "children",
+        "claimKeys",
+        "composeResponseV2",
+        "end",
+        "first",
+        "flattenCompositionV2",
+        "id",
+        "index",
+        "key",
+        "keys",
+        "layoutUnitV2",
+        "level",
+        "node",
+        "parser",
+        "parts",
+        "placed",
+        "prose",
+        "proseParts",
+        "related",
+        "resourceList",
+        "role",
+        "roles",
+        "root",
+        "section",
+        "sections",
+        "sourceKeys",
+        "stack",
+        "start",
+        "syntax",
+        "tree",
+        "unit",
+        "visit"
+      ],
+      "imports": [
+        "./document",
+        "./sourceRegistry",
+        "remark-gfm",
+        "remark-math",
+        "remark-parse",
+        "unified"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9",
+        "frontend/src/components/response-experience-v2/composition.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "remark-gfm",
+        "remark-math",
+        "remark-parse",
+        "unified"
+      ],
+      "authBoundary": [
+        "frontend/src/components/response-experience-v2/composition.ts#authoredProse"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/response-experience-v2/composition.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "a0138b330beb30c124753fa7284bd564cb07f5c5fda5b7288fd519ebb8aa78ef",
+      "sha256": "8d04b2980d0a35c4d7e00411d96cae2bdbd842c255b062c8ee8188e7a7ab77df",
       "symbols": [
         "AdaptedResponse",
-        "PresentationGroupV2",
         "ResponseDocumentV2",
         "ResponseInputV2",
         "ResponseNodeV2",
@@ -81253,20 +81408,13 @@
         "column",
         "common",
         "displayTitleV2",
-        "groups",
         "keys",
-        "kind",
         "label",
-        "last",
         "n",
-        "node",
         "nodeSchema",
         "nodes",
         "output",
         "parsed",
-        "planPresentationV2",
-        "presentationFamilyV2",
-        "previous",
         "raw",
         "responseDocumentSchema",
         "row",
@@ -81299,6 +81447,8 @@
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:3",
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:4",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:7",
+        "frontend/src/components/response-experience-v2/composition.test.ts:3",
+        "frontend/src/components/response-experience-v2/composition.ts:5",
         "frontend/src/components/response-experience-v2/document.test.ts:3",
         "frontend/src/components/response-experience-v2/review/LocalReview.tsx:4",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:4",
@@ -81315,8 +81465,56 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/composition.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
+        "frontend/src/components/response-experience-v2/graphLayout.test.ts",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e4f7133e3c2806c74c97",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "sha256": "2cfe9d85ffd1cf464a65a248faf7c70611915ddb1f28e1c36426d1c7199a8b99",
+      "symbols": [
+        "edge",
+        "graphLayersV2",
+        "id",
+        "isLinearFlowV2",
+        "item",
+        "layers",
+        "ranks",
+        "ready",
+        "remaining",
+        "visited"
+      ],
+      "imports": [
+        "./document"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/DataV2.tsx:6",
+        "frontend/src/components/response-experience-v2/graphLayout.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/response-experience-v2/graphLayout.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -81450,6 +81648,7 @@
         "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:7",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:4",
+        "frontend/src/components/response-experience-v2/composition.ts:6",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:3"
       ],
       "reachable": true,
@@ -81486,6 +81685,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "frontend/src/components/response-experience-v2/composition.test.ts:5",
         "frontend/src/components/response-experience-v2/document.test.ts:7",
         "frontend/src/components/response-experience-v2/review/LocalReview.tsx:5"
       ],
@@ -81500,6 +81700,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/composition.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -138621,9 +138822,23 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:0fe3fdc59edbe6f5d3d3",
+      "sourcePath": "frontend/src/components/response-experience-v2/composition.test.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
-      "declaredTests": 21,
+      "declaredTests": 20,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4aaace318211abef1d52",
+      "sourcePath": "frontend/src/components/response-experience-v2/graphLayout.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -140357,7 +140572,6 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
-    "Unresolved local import frontend/src/components/response-experience-v2/DataV2.tsx:6 -> ./graphLayout",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"
   ]
 }

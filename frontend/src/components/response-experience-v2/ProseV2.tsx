@@ -11,6 +11,7 @@ import type { CitationSource } from '@/lib/xrogaCitations';
 import { remarkCitationsV2 } from './sourceRegistry';
 import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
+import { ComparisonV2 } from './ComparisonV2';
 const MathV2 = lazy(() => import('./MathV2'));
 
 export function CodeV2({ text, language }: { text: string; language?: string }) {
@@ -42,7 +43,7 @@ export function ProseV2({ text, sources = [] }: { text: string; sources?: Citati
         return <CodeV2 text={String(children.props.children ?? '')} language={children.props.className?.replace(/^language-/, '')} />;
       },
       code: ({ children, className }) => <code className={className}>{children}</code>,
-      table: ({ children }) => <div className={styles.tableScroll} tabIndex={0} role="region" aria-label="Response table"><table>{children}</table></div>,
+      table: ({ children }) => <ComparisonV2>{children}</ComparisonV2>,
       span: ({ children, ...props }) => {
         const data = props as Record<string, unknown>;
         return typeof data['data-math-v2'] === 'string' ? <Suspense fallback={<span>{String(data['data-math-source'])}</span>}><MathV2 formula={data['data-math-v2']} source={String(data['data-math-source'])} display={data['data-display'] === 'true'} /></Suspense> : <span>{children as ReactNode}</span>;

@@ -3,13 +3,23 @@ import { createContext, useContext, useState } from 'react';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { sourceKeyV2 } from './sourceRegistry';
 import { Globe } from 'lucide-react';
-import { siGithub, siNextdotjs, siSupabase, siStripe, siCloudflare, siReact, siTypescript } from 'simple-icons';
+import { siGithub, siNextdotjs, siSupabase, siStripe, siCloudflare, siReact, siTypescript, siMdnwebdocs, siPython, siPostgresql, siNodedotjs, siVercel, siDocker, siN8n, siTemporal, siSentry, siPosthog } from 'simple-icons';
 import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
 
 // Existing simple-icons dependency, CC0 artwork. Trademarks belong to their owners.
 // Exact domain matches only, never infer an organization from model prose.
-const marks = { 'github.com': siGithub, 'nextjs.org': siNextdotjs, 'supabase.com': siSupabase, 'stripe.com': siStripe, 'cloudflare.com': siCloudflare, 'react.dev': siReact, 'typescriptlang.org': siTypescript };
+const marks = {
+  'github.com': siGithub, 'docs.github.com': siGithub, 'nextjs.org': siNextdotjs,
+  'supabase.com': siSupabase, 'stripe.com': siStripe, 'docs.stripe.com': siStripe,
+  'cloudflare.com': siCloudflare, 'developers.cloudflare.com': siCloudflare,
+  'react.dev': siReact, 'typescriptlang.org': siTypescript,
+  'developer.mozilla.org': siMdnwebdocs, 'python.org': siPython, 'docs.python.org': siPython,
+  'postgresql.org': siPostgresql, 'nodejs.org': siNodedotjs, 'vercel.com': siVercel,
+  'docker.com': siDocker, 'docs.docker.com': siDocker, 'n8n.io': siN8n, 'docs.n8n.io': siN8n,
+  'temporal.io': siTemporal, 'docs.temporal.io': siTemporal,
+  'sentry.io': siSentry, 'docs.sentry.io': siSentry, 'posthog.com': siPosthog,
+};
 export const SourceRegistryContextV2 = createContext<ReadonlyMap<string, CitationSource>>(new Map());
 export function sourceDomainV2(url: string): string {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }

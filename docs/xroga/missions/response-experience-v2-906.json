@@ -38,7 +38,11 @@
     "frontend/src/components/response-experience-v2/graphLayout.ts",
     "frontend/src/components/response-experience-v2/graphLayout.test.ts",
     "frontend/src/components/response-experience-v2/sourceRegistry.ts",
-    "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
+    "frontend/src/components/response-experience-v2/sourceRegistry.test.ts",
+    "frontend/src/components/response-experience-v2/composition.ts",
+    "frontend/src/components/response-experience-v2/composition.test.ts",
+    "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
+    "docs/operations/response-v2-semantic-design.md"
   ],
   "decisions": {
     "keep": [
@@ -47,7 +51,9 @@
     "extend": [
       "Read-only presentation audience and existing Workspace streaming contract"
     ],
-    "replace": [],
+    "replace": [
+      "Replace V2 adjacency grouping with syntax-derived sections, explicit evidence relationships and container-aware data layouts. Preserve original content and legacy rendering."
+    ],
     "deprecate": []
   },
   "schemaImpact": {

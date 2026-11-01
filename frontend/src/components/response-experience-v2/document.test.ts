@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { adaptResponseV2, boundedData, planPresentationV2, safeLinkV2, displayTitleV2, presentationFamilyV2 } from './document';
+import { adaptResponseV2, boundedData, safeLinkV2, displayTitleV2 } from './document';
 import { calculateV2, type CalculatorNode } from './calculations';
 import { responseV2Access } from './access';
 import { readFileSync } from 'node:fs';
@@ -16,7 +16,7 @@ test('plain multilingual words, code, URLs and punctuation remain exact across s
   assert.ok(live.supported && saved.supported);
   assert.deepEqual(live.document.nodes, saved.document.nodes);
   assert.equal(saved.document.originalText, content);
-  assert.deepEqual(planPresentationV2(saved.document).map(p => p.width), ['prose']);
+  assert.equal(saved.document.nodes[0].kind, 'prose');
 });
 test('simple answers never infer charts or financial controls from keywords', () => {
   const result = adaptResponseV2({ id: 'm', content: 'Stocks, trading, weather and charts.' });
@@ -90,27 +90,9 @@ test('different canonical chat text cannot be silently discarded', () => {
 });
 
 
-test('composition groups matching evidence and adjacent controls without changing node order or text', () => {
-  const result = adaptResponseV2(specimensV2.calculator);
-  assert.ok(result.supported);
-  const groups = planPresentationV2(result.document);
-  assert.deepEqual(groups.map(g => g.kind), ['reading', 'scenario']);
-  assert.deepEqual(groups.flatMap(g => g.nodes), result.document.nodes);
-  assert.equal(presentationFamilyV2(result.document), 'interactive');
-  const research = adaptResponseV2(specimensV2.sources);
-  assert.ok(research.supported); assert.equal(presentationFamilyV2(research.document), 'research');
-  for (const title of ['Data table 1','Chart 2','Widget 3','Untitled block']) assert.equal(displayTitleV2(title), undefined);
+test('only generated captions are suppressed, source titles are preserved', () => {
+  for (const title of ['Data table 1', 'Chart 2', 'Widget 3', 'Untitled block']) assert.equal(displayTitleV2(title), undefined);
   assert.equal(displayTitleV2('Monthly operating costs'), 'Monthly operating costs');
-});
-
-test('only exact adjacent chart/table data are composed as one evidence group', () => {
-  const chart = { ...block, type:'chart', chartType:'line', xKey:'sample', series:[{key:'minutes',label:'Minutes'}], data:[{sample:'A',minutes:10}], summary:'Supplied measurements' };
-  const table = { ...block, id:'t', type:'table', columns:[{key:'sample',label:'Sample'},{key:'minutes',label:'Minutes'}], rows:chart.data };
-  const result = adaptResponseV2(input(output([chart,table]))); assert.ok(result.supported);
-  assert.equal(planPresentationV2(result.document).length,1);
-  assert.equal(planPresentationV2(result.document)[0].nodes.length,2);
-  const different = adaptResponseV2(input(output([chart,{...table,rows:[{sample:'A',minutes:11}]}]))); assert.ok(different.supported);
-  assert.equal(planPresentationV2(different.document).length,2);
 });
 
 test('customer message path never imports a synthetic review panel', () => {
@@ -133,7 +115,7 @@ test('released read-only presentation supports authenticated users without privi
 test('essential answer sections and tables are not hidden in disclosure controls', () => {
   const canvas = readFileSync(new URL('./ResponseCanvasV2.tsx', import.meta.url), 'utf8');
   const interactions = readFileSync(new URL('./InteractiveV2.tsx', import.meta.url), 'utf8');
-  assert.doesNotMatch(canvas.slice(0, canvas.indexOf('registry.size > 0')), /<details|View source data/);
+  assert.doesNotMatch(canvas.slice(0, canvas.indexOf('references.length > 0')), /<details|View source data/);
   assert.match(canvas, /<summary>References/);
   assert.doesNotMatch(interactions, /node\.items\[selected\]|hidden=/);
   assert.match(interactions, /node\.items\.map/);

@@ -103,3 +103,13 @@ Still required: final-source CI, full-size same-data Workspace before/after for 
 - Source fixture has two links beside separate supported claims and one canonical page in optional references, not two duplicated full source cards. Distinct page/query identity is retained by tests.
 - Existing real signed-in Workspace evidence at 9b413171 includes eight persisted responses whose rendered text matches 0808ea21 exactly, with isolated Inter typography on mobile. No new prompts or model calls were made. This is persistence/rendering evidence, not a new live research or model-quality test.
 - All seven required workflows passed at c0bf38423abab42b10cc3b299dd492fdef54706d. The new focused source changes require their own exact-source CI and Preview verification before production promotion. Production is not yet claimed LIVE with V2.
+
+## Semantic redesign, 2026-11-01, not production accepted
+
+Replaced V2 adjacency grouping with Markdown syntax-derived section trees and exact source ranges. Rich blocks stay in their authored hierarchy across block boundaries. Evidence placement uses canonical page identities and the same citation grammar as visible prose. Compact non-numeric comparisons adapt to labeled rows in narrow containers. Explicit DAG relationships render as layered flows, with cycle fallback. Authored resource lists retain exact text and use local official brand marks.
+
+Local verification: composition regression suite 10/10, adapter/source/graph focused suite passed, frontend TypeScript passed, V2 ESLint passed with existing native-image warnings. Strict egress audit 150 reviewed, zero pending/high-risk. Source inventory, runtime inventory and mission policy passed. These gates are not visual acceptance.
+
+Three real persisted MIKE responses were found in the signed-in Workspace and captured as the unchanged baseline. They contain no source metadata. Rich research, finance, travel and architecture checks use labeled synthetic fixtures through the actual adapter. The financial interaction changed 500 USD to 1,000 USD and reset to 500 without model dispatch. Local screenshots are evidence of local rendering only. Exact-source Preview, complete responsive/product review and production release remain pending.
+
+Evidence folder: outputs/response-experience-v2-906/semantic-redesign in the parent workspace. Production and legacy renderer remain unchanged. No model calls were submitted.

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c0bf38423abab42b10cc3b299dd492fdef54706d",
+  "source_sha": "01237130040273be4de30dd2c027dcc365619bc0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20575,8 +20575,12 @@
       "sha256": "3f63bdd8ebc231c34f269bbe9dc4d354bdd047d263f8f092fb19b958372881e6"
     },
     {
+      "path": "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
+      "sha256": "ea8f00b6e56ea1f16317bddaef9de2dc67932d9b17b1b3f8d17661390adad9c8"
+    },
+    {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "a2160b9fb4080d02efa523bf35f7f1f30a722a6eba36bdb2cc1cf745e0f8ec1b"
+      "sha256": "4b1adad0434724afb3750767bd1609cbf31527f19238ba27b5185ae2be06c621"
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
@@ -20588,7 +20592,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "dee2402c4e742c08005d82ee0650fe99ecbaee54728191e6e0163705a3af5952"
+      "sha256": "c500f1181d96daed23882e24a9839c846d8c6f47ce6a13d2b4d449158e3bd175"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
@@ -20596,7 +20600,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "84165fdd339bf666727ed6f76258124390e80e1295a2a2f11a910e910dd75611"
+      "sha256": "b61e77d36d6dea7632f78ab12de86419c31abbd321d62658b708a4a6488559a7"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
@@ -20604,7 +20608,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "ec07a5a11d5749d6269d6b757b29fdd026610264a8ed06a8793afe7acac3f12b"
+      "sha256": "fbd9bb693f337bf1e81b7825fc8be8de81462560a66403976ceb9e357a23f212"
     },
     {
       "path": "frontend/src/components/response-experience-v2/access.ts",
@@ -20615,8 +20619,16 @@
       "sha256": "6e39ce8ca727d9445e6825179f1333e0d83436a2afa1f77447506ec9f4a981f5"
     },
     {
+      "path": "frontend/src/components/response-experience-v2/composition.ts",
+      "sha256": "9ec8a5ccb6c068b0d09da968d714a85f1dae85ae25d045f496a516144282a89d"
+    },
+    {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "a0138b330beb30c124753fa7284bd564cb07f5c5fda5b7288fd519ebb8aa78ef"
+      "sha256": "8d04b2980d0a35c4d7e00411d96cae2bdbd842c255b062c8ee8188e7a7ab77df"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "sha256": "2cfe9d85ffd1cf464a65a248faf7c70611915ddb1f28e1c36426d1c7199a8b99"
     },
     {
       "path": "frontend/src/components/response-experience-v2/mathSyntax.ts",
@@ -35034,8 +35046,36 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "line": 13,
+      "line": 23,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/composition.ts",
+      "line": 68,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/composition.ts",
+      "line": 82,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/composition.ts",
+      "line": 105,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/composition.ts",
+      "line": 112,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -35070,6 +35110,20 @@
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
       "line": 95,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "line": 14,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "line": 15,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
