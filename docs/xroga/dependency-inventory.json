@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ba43e31666ecfaa15293e73946b59732a32ae750",
+  "source_sha": "de616e08ccd30829b6d245431a536ead461c6c81",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15973,7 +15973,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "c3c9cdfc288ce155a3f8c0a7e15ab1c8fe20656c1f56e1e6bf51d1090ee68c7a"
+      "sha256": "2181ba06754633766992d77774b95117fcf349d6167f4cc843d1007ae35ac0bd"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17341,7 +17341,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "8b45327a5f18faa16b9e0aee9fa371bfe00ed91068d375208ad459c769edf78c"
+      "sha256": "590991bb27015afd8d35ab8ab256b50ecffff16fd308ea0b438498e908b290a1"
     },
     {
       "path": "backend/src/routes/influencer.ts",
@@ -17373,7 +17373,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8"
+      "sha256": "710ec917c3e9aae4864fd3eaf012fb8e2130066b01508ef5aae2633c301ceb26"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -17869,7 +17869,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+      "sha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7"
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
@@ -18018,6 +18018,10 @@
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
       "sha256": "e2f5003e2bf6f567b9f893812668288e9dfb01e920df0eea7870896cdb3b3b3d"
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "sha256": "c3ce5b1f29cdeb1f15214e35c4a79857235ebfee5ce3154d772752f867746c4d"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -18289,7 +18293,7 @@
     },
     {
       "path": "backend/src/storage/postgresRepository.ts",
-      "sha256": "64c2c976d7f36144d3cf6a8f05d6c983c836821ee1d92a24a96dcdaff7881033"
+      "sha256": "a159f844cac8b7c1b9b366a05c8d4158877e866a4d43441b791c75fb2b7c8d70"
     },
     {
       "path": "backend/src/storage/r2ObjectStore.ts",
@@ -18297,7 +18301,7 @@
     },
     {
       "path": "backend/src/storage/repository.ts",
-      "sha256": "d5f26fe029cf300f7e93ebc6fa8041b7cc8daaeebec636b604e00bf8a3be44fd"
+      "sha256": "6b40e774594697f264986eac4f17eafdd5c83618c41c96746beeb06dcbdd1272"
     },
     {
       "path": "backend/src/storage/runtime.ts",
@@ -18305,7 +18309,7 @@
     },
     {
       "path": "backend/src/storage/storageService.ts",
-      "sha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596"
+      "sha256": "9b6fd08f5407c7de10027a0d2b539eb764aac415d083475287419508d8439cd3"
     },
     {
       "path": "backend/src/storage/testing/approvals.ts",
@@ -24562,7 +24566,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 176,
+      "line": 177,
       "credentialsInUrl": false
     },
     {
@@ -34014,6 +34018,13 @@
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "line": 37,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/researchResult.ts",
+      "line": 50,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

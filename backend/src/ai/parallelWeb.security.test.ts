@@ -9,6 +9,8 @@ import { parallelSearch,parallelExtract,parallelResponses } from './parallelWeb.
 import {createTenantContext,type TenantContext} from '../security/tenantContext.js';
 import {isTerminalModelFailure} from './providerRuntime.js';
 import {WEB_PRICE_VERSION} from './webBudget.js';
+import {harness} from '../storage/testing/harness.js';
+import {setStorageServiceForTests} from '../storage/runtime.js';
 import {randomUUID} from 'node:crypto';
 import {executeParallelRequest} from './parallelDispatch.js';
 import {actionPlanDigest} from '../services/integrations/businessAction.js';
@@ -42,6 +44,8 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
   const env={SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-only',PARALLEL_API_KEY:'synthetic-platform-key',NODE_ENV:'test',XROGA_TEST_CREDENTIAL_KEK:Buffer.alloc(32,26).toString('base64url')};
   const prior=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   const confirmations=nativeReleaseFixture(owner);resetCredentialVaultRuntimeForTests();
+  const storage=harness();storage.repo.projects.set(project,owner);
+  setStorageServiceForTests(storage.svc);t.after(()=>setStorageServiceForTests(undefined));
   const reservations=new Map<string,Record<string,unknown>>(),releases:Record<string,unknown>[]=[],events:string[]=[],receipts:unknown[]=[];
   let mode='ok',ownerNow=owner,effects=0,controller:AbortController|undefined,mutate:(()=>void)|undefined;
   let executionRow:Record<string,unknown>|undefined;let publicOpens=0;
@@ -122,6 +126,13 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
         else{if(tamper==='changed-body')(row.plan.arguments.body as Record<string,unknown>).objective='substituted private query';else row.plan.authority!.connectedAccountId='foreign-account';row.plan.planDigest=actionPlanDigest(row.plan);row.plan_digest=row.plan.planDigest;}
         await assert.rejects(confirmBusinessAction(context,row.id));assert.equal(effects,count);
       }
+    });
+    await t.test('unavailable private result storage denies dispatch before a provider charge',async()=>{
+      const count=effects,held=reservations.size;
+      setStorageServiceForTests(undefined);
+      try{await assert.rejects(search(),/Private research result storage is unavailable/);}
+      finally{setStorageServiceForTests(storage.svc);}
+      assert.equal(effects,count);assert.equal(reservations.size,held);
     });
     for(const operation of ['search','extract','low','medium']){
       events.length=0;mode='ok';ownerNow=owner;

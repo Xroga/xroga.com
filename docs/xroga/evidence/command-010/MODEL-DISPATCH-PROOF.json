@@ -4232,7 +4232,7 @@
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
+      "currentSha256": "710ec917c3e9aae4864fd3eaf012fb8e2130066b01508ef5aae2633c301ceb26",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4248,7 +4248,7 @@
         "ebede146c851a085d2b8"
       ],
       "afterIds": [
-        "fb2bffffc91cc072976a"
+        "78696e27dd5c1ca37c3a"
       ],
       "unchangedNearestBlockSha256": [
         "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
@@ -4436,7 +4436,15 @@
           }
         }
       },
-      "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json"
+      "composioBoundaryContinuation": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+      "beforeResearchHandoff": {
+        "reference": "7bde084cbb9f3ed93e0ce26b59b6cf37adae8e43",
+        "currentSha256": "ee77d657398ee4ed6a9322281c46c6ef17fe366e23dbd323c11560dd01cf88a8",
+        "afterIds": [
+          "fb2bffffc91cc072976a"
+        ],
+        "scope": "HISTORICAL_BINDING_ONLY_NO_NEW_ACCEPTANCE"
+      }
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",

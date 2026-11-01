@@ -651,7 +651,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "8b45327a5f18faa16b9e0aee9fa371bfe00ed91068d375208ad459c769edf78c",
+      "sha256": "590991bb27015afd8d35ab8ab256b50ecffff16fd308ea0b438498e908b290a1",
       "previousGenericSdkBinding": {
         "sha256": "a4f476f3e93800fc3d0ce72e88b30484bee3f20dcb8f67233ce213442d2b0b8d",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -662,7 +662,12 @@
         "sha256": "00dd98d8b24bdcd52c2f36e77315037ad4a196aa414f0239529be7656d421941",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforeGuestRichGuideSha256": "8b45327a5f18faa16b9e0aee9fa371bfe00ed91068d375208ad459c769edf78c",
+      "guestRichGuideContinuation": {
+        "sourceCommit": "de616e08ccd30829b6d245431a536ead461c6c81",
+        "scope": "Prompt import and selection only; authorization, dispatch and accounting unchanged; richResponsePrompt.test.ts verifies guidance."
+      }
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
