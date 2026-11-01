@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1eb43682becddb6f3d64fffd80209803f801bc11",
+  "source_sha": "85895d2816baf8c475cab8e5d9f534a3b464d2ad",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20674,7 +20674,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "3ef067dfaf524d2be69353adb6d1bb06a49ac7b64df744785f0e918f49bdd8ac"
+      "sha256": "8a504e929cdbbc73a3c35521accd0cea7a23a1a02e04e681dce0716974ad371a"
     },
     {
       "path": "frontend/src/components/response-experience-v2/exportText.ts",
@@ -27682,7 +27682,7 @@
       "hostname": "workspace.invalid",
       "protocol": "https:",
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "line": 140,
+      "line": 142,
       "credentialsInUrl": false
     },
     {
@@ -35186,21 +35186,14 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "line": 101,
+      "line": 103,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "line": 104,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/response-experience-v2/document.ts",
-      "line": 105,
+      "line": 106,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35214,14 +35207,21 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "line": 108,
+      "line": 109,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "line": 109,
+      "line": 110,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/document.ts",
+      "line": 111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

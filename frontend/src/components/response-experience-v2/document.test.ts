@@ -6,6 +6,37 @@ import { responseV2Access } from './access';
 import { readFileSync } from 'node:fs';
 import { specimensV2 } from './specimens';
 import { enhanceAiResponse } from '@/lib/xrogaResponseDocument';
+import { responseTextV2 } from './exportText';
+
+test('real generated SaaS database block preserves the full ordered answer and export', () => {
+  // Captured from the authorized synthetic new-chat run, not a quality-approved answer.
+  const message = JSON.parse(readFileSync(new URL('./testdata/generated-saas-database.json', import.meta.url), 'utf8'));
+  const result = adaptResponseV2(message);
+  assert.ok(result.supported, result.supported ? '' : result.reason);
+  assert.deepEqual(result.document.nodes.map(node => node.kind), ['prose', 'graph', 'prose', 'table', 'prose', 'timeline', 'prose']);
+  assert.deepEqual(adaptResponseV2(JSON.parse(JSON.stringify(message))), result);
+  assert.equal(result.document.originalText, message.featureOutput.sourceText);
+  const table = result.document.nodes[3];
+  assert.ok(table.kind === 'table');
+  assert.deepEqual(table.rows, message.featureOutput.blocks[3].rows);
+  assert.deepEqual(table.columns, message.featureOutput.blocks[3].columns);
+  const exported = responseTextV2(message)!;
+  assert.ok(exported);
+  for (const node of result.document.nodes) {
+    if (node.kind === 'prose') assert.ok(exported.includes(node.text));
+    if (node.kind === 'graph') for (const vertex of node.nodes) assert.ok(exported.includes(vertex.label));
+    if (node.kind === 'table') for (const row of node.rows) for (const value of Object.values(row)) assert.ok(exported.includes(String(value)));
+  }
+});
+
+test('database presentation still rejects malformed cells and missing columns', () => {
+  const message = JSON.parse(readFileSync(new URL('./testdata/generated-saas-database.json', import.meta.url), 'utf8'));
+  for (const invalid of [{ columns: [] }, { rows: [{ value: { unsafe: true } }] }]) {
+    const changed = structuredClone(message);
+    Object.assign(changed.featureOutput.blocks[3], invalid);
+    assert.equal(adaptResponseV2(changed).supported, false);
+  }
+});
 
 test('generated prose, table and graph retain their positions across persistence and V2 adaptation', () => {
   const source = ['## Components', '| Component | Role |', '| --- | --- |', '| Next.js | UI |', '| Supabase | Storage |',

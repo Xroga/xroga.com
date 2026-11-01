@@ -75,7 +75,9 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
             case 'document': nodes.push({ ...common, kind: 'prose', text: b.content }); break;
             case 'code': case 'diff': case 'terminal': case 'file': nodes.push({ ...common, kind: 'code', title: b.path ?? b.title, text: b.content, language: b.language ?? b.type }); break;
             case 'notice': case 'status': case 'error': case 'empty-state': nodes.push({ ...common, kind: 'notice', text: b.text, tone: b.tone ?? 'neutral' }); break;
-            case 'table': nodes.push({ ...common, kind: 'table', columns: b.columns, rows: b.rows }); break;
+            // Both canonical contracts carry the same read-only table shape.
+            // A generated schema explanation must not demote the whole answer.
+            case 'table': case 'database': nodes.push({ ...common, kind: 'table', columns: b.columns, rows: b.rows }); break;
             case 'chart':
               if (!['line', 'bar', 'area', 'pie', 'scatter'].includes(b.chartType)) return { supported: false, reason: 'chart-shape' };
               nodes.push({ ...common, kind: 'chart', shape: b.chartType, xKey: b.xKey, series: b.series, rows: b.data, summary: b.summary }); break;
