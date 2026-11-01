@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d25c4cad6f4fa225596b6909ef2eeec926f590e1",
+  "source_sha": "55f52c0914c3596723ccd15729242341312b3c48",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17381,7 +17381,7 @@
     },
     {
       "path": "backend/src/routes/profile.ts",
-      "sha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538"
+      "sha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef"
     },
     {
       "path": "backend/src/routes/projectRuntime.ts",
@@ -17649,7 +17649,7 @@
     },
     {
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "sha256": "edbe5bb141e4becaecbb84a5af659782370a5ec01056e6d9d47fb034a00a31d1"
+      "sha256": "26dc7f6fe14bb2c84a827c90138e902061210b0559ee9f64436c45121b8f4155"
     },
     {
       "path": "backend/src/security/genericSdk.local.integration.ts",
@@ -19017,7 +19017,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/layout.tsx",
-      "sha256": "2a1f25f3f48e1f0c05b815f9f7fa8d2973c9b05fc5cda5996d2b85ebe89b48dc"
+      "sha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597"
     },
     {
       "path": "frontend/src/app/(shell)/settings/page.tsx",
@@ -19029,7 +19029,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sha256": "fbca4e61f25ab72ad44f0784b86e9a8124c47e37b3238d908dcf560be9d43488"
+      "sha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
     },
     {
       "path": "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -19101,11 +19101,11 @@
     },
     {
       "path": "frontend/src/app/auth/callback/route.ts",
-      "sha256": "5d50e40da11f4591d95c2f5201cbdcc8ebdd636db997d34a6c52ad4784203d13"
+      "sha256": "f16ff961b78edad5a3a9c3f61ea9673fba786769d1726c86d61521860b1813af"
     },
     {
       "path": "frontend/src/app/auth/contact/page.tsx",
-      "sha256": "8a93497f15a67e8209c44a94471827d36317032072e34a78f74ec268442250f3"
+      "sha256": "8c6a019c44fbd6b6596ab52e95742daaa4ff9cce6e53c4759bdfbc4a152c4b54"
     },
     {
       "path": "frontend/src/app/auth/forgot-password/page.tsx",
@@ -19309,7 +19309,7 @@
     },
     {
       "path": "frontend/src/app/onboarding/page.tsx",
-      "sha256": "74d415a422488dc3f9f1b9ca3f1f2167b7aa208231e12bea4129b2537fe3b92d"
+      "sha256": "8960eec0ab2a91d72c131420ea393359a508f0d3cfc9eb54548f97d602378565"
     },
     {
       "path": "frontend/src/app/opengraph-image.tsx",
@@ -19365,7 +19365,7 @@
     },
     {
       "path": "frontend/src/app/privacy/page.tsx",
-      "sha256": "d6db98f89aa68bda72431c33f174f30ad8d701c69ede3220b0d2952ac0c4a142"
+      "sha256": "cb88a5e3428c167f72092df175137f96e41a115b4ba4489372dd11d91e224cae"
     },
     {
       "path": "frontend/src/app/ref/[code]/page.tsx",
@@ -19513,7 +19513,7 @@
     },
     {
       "path": "frontend/src/components/auth/SignupForm.tsx",
-      "sha256": "30a108fd3fa7bcefd74bae9099244535be699a758a060bff3c491a5e252a1f9e"
+      "sha256": "ed92522151ee8977ae9d928f4ad8617bb50e4d2e2305a33cb43b00c4f80f165e"
     },
     {
       "path": "frontend/src/components/automations/Activity.tsx",
@@ -21105,7 +21105,7 @@
     },
     {
       "path": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "sha256": "aa4d0515158e2b3763ca04696cf3ebe3666592a4d7739247e0de9068ab43902a"
+      "sha256": "de83e455ba7e88645883b9bcfe5edded0a554c9a5a23483b7e0969f6adf5ad62"
     },
     {
       "path": "frontend/src/components/settings/NotificationsSettingsPanel.tsx",

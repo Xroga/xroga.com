@@ -40,6 +40,16 @@ function ContactForm() {
     finally { setPending(false); }
   }
 
+  async function skip() {
+    setError(''); setPending(true);
+    try {
+      const { data, error: skipError } = await createClient().rpc('skip_current_contact_phone_prompt');
+      if (skipError || !data) { setError('Could not save your choice. Please try again.'); return; }
+      router.replace(next); router.refresh();
+    } catch { setError('Could not save your choice. Please try again.'); }
+    finally { setPending(false); }
+  }
+
   async function signOut() {
     const { error: signOutError } = await createClient().auth.signOut();
     if (signOutError) { setError('Could not sign out. Please try again.'); return; }
@@ -47,14 +57,15 @@ function ContactForm() {
     router.refresh();
   }
 
-  return <AuthFlowFrame hideBack title="One contact detail" subtitle="Add a phone number before entering Xroga. We won’t send a verification code or use it to sign you in.">
+  return <AuthFlowFrame hideBack title="Stay in touch" subtitle="Optionally add a contact number. You can skip this once and add one later in Settings. It is not used to sign in.">
     <form onSubmit={save} className="space-y-4">
       <div><AuthModernLabel htmlFor="contact-phone">Contact phone number</AuthModernLabel>
-        <AuthModernInput id="contact-phone" type="tel" required autoComplete="tel" icon={<Phone className="h-4 w-4" />} value={phone} onChange={event => setPhone(event.target.value)} placeholder="+1 412 555 0123" />
-        <p className="mt-2 text-xs text-[var(--auth-muted)]">Required for account contact. This number is unverified and not used for login or marketing consent.</p>
+        <AuthModernInput id="contact-phone" type="tel" autoComplete="tel" icon={<Phone className="h-4 w-4" />} value={phone} onChange={event => setPhone(event.target.value)} placeholder="+1 412 555 0123" />
+        <p className="mt-2 text-xs text-[var(--auth-muted)]">Optional and unverified. Not used for login or marketing consent.</p>
       </div>
       {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
       <AuthGradientButton type="submit" disabled={!ready || pending}>{pending ? 'Saving…' : 'Continue to Xroga'}</AuthGradientButton>
+      <button type="button" onClick={() => void skip()} disabled={!ready || pending} className="w-full text-center text-sm text-[var(--auth-muted)] hover:underline disabled:opacity-50">Skip for now</button>
       <button type="button" onClick={() => void signOut()} className="w-full text-center text-xs text-[var(--auth-muted)] hover:underline">Sign out instead</button>
     </form>
   </AuthFlowFrame>;

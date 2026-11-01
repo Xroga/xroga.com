@@ -15540,14 +15540,14 @@
     },
     {
       "path": "backend/src/routes/profile.ts",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "callIds": [
         "64717458bf109fdf13a6",
         "d32149151d5316c196da",
-        "112876f29808dc73515d",
-        "1e9cad9298b039191655",
-        "5f358bca6c78bcdea0e4",
-        "6bb9f38e1571c40f454f"
+        "aebb56e3d28bf9d915e4",
+        "6bae10b88e7d9de4f344",
+        "0f136a57684d6049cd58",
+        "a0cc691275ff5a5069a1"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
@@ -15575,9 +15575,9 @@
     },
     {
       "path": "backend/src/routes/profile.ts",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "callIds": [
-        "ab2d80d0f7212a9482f2"
+        "09c2429c570684fed7d0"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
@@ -26240,7 +26240,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/layout.tsx",
-      "sourceSha256": "2a1f25f3f48e1f0c05b815f9f7fa8d2973c9b05fc5cda5996d2b85ebe89b48dc",
+      "sourceSha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597",
       "callIds": [
         "3ea0392dbd30934afb02"
       ],
@@ -26339,7 +26339,7 @@
     },
     {
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sourceSha256": "fbca4e61f25ab72ad44f0784b86e9a8124c47e37b3238d908dcf560be9d43488",
+      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0",
       "callIds": [
         "5740af96dff28fda6f3f"
       ],
@@ -26598,9 +26598,9 @@
     },
     {
       "path": "frontend/src/app/onboarding/page.tsx",
-      "sourceSha256": "74d415a422488dc3f9f1b9ca3f1f2167b7aa208231e12bea4129b2537fe3b92d",
+      "sourceSha256": "8960eec0ab2a91d72c131420ea393359a508f0d3cfc9eb54548f97d602378565",
       "callIds": [
-        "a7d608b129d4bebf063f"
+        "7ac0d3fc2c026b9b0919"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",

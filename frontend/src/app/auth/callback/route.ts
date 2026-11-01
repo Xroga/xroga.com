@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
       : await supabase.auth.verifyOtp({ token_hash: tokenHash!, type: 'recovery' });
     if (!error) {
       if (next !== '/auth/reset-password') {
-        const { data: hasPhone, error: phoneError } = await supabase.rpc('has_current_contact_phone');
-        if (phoneError || !hasPhone) {
+        const { data: needsPhonePrompt, error: phonePromptError } = await supabase.rpc('needs_current_contact_phone_prompt');
+        if (!phonePromptError && needsPhonePrompt) {
           const response = NextResponse.redirect(`${origin}/auth/contact?next=${encodeURIComponent(next)}`);
           response.cookies.delete({ name: OAUTH_NEXT_COOKIE, path: '/auth/callback' });
           return response;

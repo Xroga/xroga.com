@@ -25,9 +25,8 @@ export default async function WorkspaceLayout({
   const profile = setup.data;
 
   if (user) {
-    const phone = await supabase.rpc('has_current_contact_phone');
-    if (phone.error) throw new Error('Contact setup unavailable');
-    if (!phone.data) redirect('/auth/contact?next=%2Fworkspace');
+    const phonePrompt = await supabase.rpc('needs_current_contact_phone_prompt');
+    if (!phonePrompt.error && phonePrompt.data) redirect('/auth/contact?next=%2Fworkspace');
     if (profile && shouldRouteToOnboarding(normalizeOnboarding(profile.onboarding))) {
       redirect('/onboarding');
     }

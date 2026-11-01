@@ -102,7 +102,7 @@ router.patch('/', async (req: AuthRequest, res) => {
     avatar_url: z.union([z.string().url(), z.literal('')]).optional(),
     timezone: z.string().max(64).optional(),
     language: z.string().max(16).optional(),
-    contact_phone: contactPhoneSchema.optional(),
+    contact_phone: contactPhoneSchema.nullable().optional(),
     companion_preferences: companionPreferencesSchema.optional(),
     onboarding: onboardingSchema.optional(),
   }).strict();

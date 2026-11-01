@@ -29327,7 +29327,7 @@
       "id": "surface:4681d564b0f04020f4a8",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/profile.ts",
-      "sha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "symbols": [
         "accessToken",
         "companionPreferencesSchema",
@@ -57082,12 +57082,12 @@
       "id": "surface:0fef06ce2b0ef25ac5b7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/layout.tsx",
-      "sha256": "2a1f25f3f48e1f0c05b815f9f7fa8d2973c9b05fc5cda5996d2b85ebe89b48dc",
+      "sha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597",
       "symbols": [
         "ShellLayout",
         "displayName",
         "metadata",
-        "phone",
+        "phonePrompt",
         "profile",
         "setup",
         "status",
@@ -57222,12 +57222,12 @@
       "id": "surface:41f1a217bdd7df6425b2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(workspace)/layout.tsx",
-      "sha256": "fbca4e61f25ab72ad44f0784b86e9a8124c47e37b3238d908dcf560be9d43488",
+      "sha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0",
       "symbols": [
         "WorkspaceLayout",
         "displayName",
         "metadata",
-        "phone",
+        "phonePrompt",
         "profile",
         "setup",
         "status",
@@ -58051,7 +58051,7 @@
       "id": "surface:7416bf67e7524ae492c3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/auth/callback/route.ts",
-      "sha256": "5d50e40da11f4591d95c2f5201cbdcc8ebdd636db997d34a6c52ad4784203d13",
+      "sha256": "f16ff961b78edad5a3a9c3f61ea9673fba786769d1726c86d61521860b1813af",
       "symbols": [
         "GET",
         "code",
@@ -58102,7 +58102,7 @@
       "id": "surface:6ba93cc56870dd90fcd0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/auth/contact/page.tsx",
-      "sha256": "8a93497f15a67e8209c44a94471827d36317032072e34a78f74ec268442250f3",
+      "sha256": "8c6a019c44fbd6b6596ab52e95742daaa4ff9cce6e53c4759bdfbc4a152c4b54",
       "symbols": [
         "ContactForm",
         "ContactPage",
@@ -58113,7 +58113,8 @@
         "safeNext",
         "save",
         "searchParams",
-        "signOut"
+        "signOut",
+        "skip"
       ],
       "imports": [
         "@/components/auth/AuthFlowFrame",
@@ -60424,11 +60425,11 @@
       "id": "surface:4f50c98aec9373d33805",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/onboarding/page.tsx",
-      "sha256": "74d415a422488dc3f9f1b9ca3f1f2167b7aa208231e12bea4129b2537fe3b92d",
+      "sha256": "8960eec0ab2a91d72c131420ea393359a508f0d3cfc9eb54548f97d602378565",
       "symbols": [
         "OnboardingPage",
         "metadata",
-        "phone",
+        "phonePrompt",
         "state",
         "supabase"
       ],
@@ -60999,7 +61000,7 @@
       "id": "surface:575632c7224c96ed7f86",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/privacy/page.tsx",
-      "sha256": "d6db98f89aa68bda72431c33f174f30ad8d701c69ede3220b0d2952ac0c4a142",
+      "sha256": "cb88a5e3428c167f72092df175137f96e41a115b4ba4489372dd11d91e224cae",
       "symbols": [
         "PrivacyPage",
         "metadata"
@@ -62595,7 +62596,7 @@
       "id": "surface:54faac9361c20cee791b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "sha256": "30a108fd3fa7bcefd74bae9099244535be699a758a060bff3c491a5e252a1f9e",
+      "sha256": "ed92522151ee8977ae9d928f4ad8617bb50e4d2e2305a33cb43b00c4f80f165e",
       "symbols": [
         "SignupForm",
         "avatarUrl",
@@ -86259,7 +86260,7 @@
       "id": "surface:7c50ba5c0ee7137f68de",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "sha256": "aa4d0515158e2b3763ca04696cf3ebe3666592a4d7739247e0de9068ab43902a",
+      "sha256": "de83e455ba7e88645883b9bcfe5edded0a554c9a5a23483b7e0969f6adf5ad62",
       "symbols": [
         "GeneralSettingsPanel",
         "LANGUAGES",
@@ -123953,7 +123954,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:21eda57ff89eec7657fb",
+      "id": "registration:92875a7c8499207537bd",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 99,
       "receiver": "router",
@@ -123965,7 +123966,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:85f43c5b4739f1de3353",
+      "id": "registration:993ec7c7dbb754afcd4e",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 159,
       "receiver": "router",
@@ -123977,7 +123978,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:49de08c227c317ae83ae",
+      "id": "registration:6f7c58368bac84c3d0fb",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 204,
       "receiver": "router",
@@ -127200,8 +127201,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e4273ba811b51122f6c8",
-      "registrationId": "registration:21eda57ff89eec7657fb",
+      "id": "route:310972b2f86edf7cf0c8",
+      "registrationId": "registration:92875a7c8499207537bd",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 99,
       "method": "PATCH",
@@ -127217,8 +127218,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f8363cd81ef0849cf2aa",
-      "registrationId": "registration:85f43c5b4739f1de3353",
+      "id": "route:83329f6108e7067bd698",
+      "registrationId": "registration:993ec7c7dbb754afcd4e",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 159,
       "method": "DELETE",
@@ -127234,8 +127235,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e02963efb129ae177607",
-      "registrationId": "registration:49de08c227c317ae83ae",
+      "id": "route:b40a9b4a017735e922ba",
+      "registrationId": "registration:6f7c58368bac84c3d0fb",
       "sourcePath": "backend/src/routes/profile.ts",
       "line": 204,
       "method": "GET",
@@ -132540,9 +132541,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:214cf792058a3d4aa309",
+      "id": "finding:093dcc5ca69f3cd34289",
       "sourcePath": "frontend/src/app/auth/contact/page.tsx",
-      "line": 53,
+      "line": 63,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -132660,7 +132661,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2ae81b5adb70536fd86f",
+      "id": "finding:fbbdf8836de4083e0a60",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
       "line": 610,
       "kind": "PLACEHOLDER",
@@ -132670,7 +132671,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:83c30fd353f95bf90542",
+      "id": "finding:96f642357bf564c50fd9",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
       "line": 642,
       "kind": "PLACEHOLDER",
@@ -132680,9 +132681,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5518208fe02cfa7e713e",
+      "id": "finding:f44430f376679c71abb4",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "line": 657,
+      "line": 656,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -132690,9 +132691,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:7084f461da60cec9ef26",
+      "id": "finding:1473f85586cca2b9de7c",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "line": 767,
+      "line": 766,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -134250,9 +134251,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:e4f894db606c2e91b27e",
+      "id": "finding:5b54ef0e1e23ba7ebe9e",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "line": 148,
+      "line": 147,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -136195,14 +136196,14 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:c2693136606e39a27f97",
+      "id": "frontend-call:5f34ca6afdf559efc948",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
       "line": 408,
       "callee": "api.profile.update",
       "reachable": true
     },
     {
-      "id": "frontend-call:68e1793c18666d8e6701",
+      "id": "frontend-call:e864747edc3b02b8aac7",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
       "line": 432,
       "callee": "api.referrals.apply",
@@ -137658,7 +137659,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:7541d166d93b92b8b04a",
+      "id": "frontend-call:0c01f065222026b204c0",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
       "line": 73,
       "callee": "api.profile.update",
@@ -144361,7 +144362,7 @@
     {
       "id": "test-suite:8cfe34b7093fcd88b1cc",
       "sourcePath": "frontend/src/components/auth/authSignupLayout.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -311,8 +311,8 @@ export function SignupForm() {
     }
 
     const contactPhone = normalizeContactPhone(phone);
-    if (!contactPhone) {
-      setError('Enter a contact number with country code, for example +1 412 555 0123.');
+    if (phone.trim() && !contactPhone) {
+      setError('Use a contact number with country code, for example +1 412 555 0123.');
       return;
     }
 
@@ -346,7 +346,7 @@ export function SignupForm() {
 
                 preferred_theme:
                   theme,
-                contact_phone: contactPhone,
+                ...(contactPhone ? { contact_phone: contactPhone } : {}),
               },
 
               emailRedirectTo:
@@ -652,12 +652,11 @@ export function SignupForm() {
             icon={<Phone className="h-4 w-4" />}
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
-            required
             autoComplete="tel"
             placeholder="+1 412 555 0123"
           />
           <p className="mt-1.5 text-[11px] text-[var(--auth-muted)]">
-            Required for account contact. No SMS verification; this number is not used to sign in.
+            Optional. You can add it later. It is unverified and is not used to sign in.
           </p>
         </div>
 

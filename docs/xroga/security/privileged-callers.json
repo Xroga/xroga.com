@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "75a16cf52aaa3930f71df6d4f902dd18b6b1f12067575a4e85e79a3b904f8def",
+  "reviewRegistrySha256": "efe500aff6a5480697bb52a09118b1d16642e1f6e965751f21031b86ee6cf1e5",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 224,
-    "persistenceCandidates": 986,
+    "persistenceCandidates": 987,
     "ownerPredicateCandidates": 262,
-    "reviewRequired": 140,
+    "reviewRequired": 141,
     "reviewedCandidates": 846,
-    "unresolvedSafetyCandidates": 184,
+    "unresolvedSafetyCandidates": 185,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 140,
+    "REVIEW_REQUIRED": 141,
     "SCOPED_BOUNDARY": 547,
     "NARROW_EXCEPTION": 52,
     "NOT_PERSISTENCE": 203,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 906,
+    "unresolvedCandidateBoundaries": 907,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -4580,23 +4580,23 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "112876f29808dc73515d"
+        "id": "aebb56e3d28bf9d915e4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1e9cad9298b039191655"
+        "id": "6bae10b88e7d9de4f344"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ab2d80d0f7212a9482f2"
+        "id": "09c2429c570684fed7d0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5f358bca6c78bcdea0e4"
+        "id": "0f136a57684d6049cd58"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6bb9f38e1571c40f454f"
+        "id": "a0cc691275ff5a5069a1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6040,11 +6040,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2ac296296f2f94ec8abb"
+        "id": "c157e5ff3bd5cae53adf"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2c8d017ca934d36b9d39"
+        "id": "69f8238a08b53a415c89"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6056,7 +6056,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "953f716b9cb5097dbad5"
+        "id": "4a9e67a75ebb46b94f22"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6064,15 +6064,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "8327115ee4aeb61ee9ce"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "0fd74b05d65465065102"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0a3209b1ec721a653d12"
+        "id": "d4c73673998a3db5e517"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a7d608b129d4bebf063f"
+        "id": "7ac0d3fc2c026b9b0919"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6384,23 +6388,23 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "112876f29808dc73515d"
+        "id": "aebb56e3d28bf9d915e4"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1e9cad9298b039191655"
+        "id": "6bae10b88e7d9de4f344"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ab2d80d0f7212a9482f2"
+        "id": "09c2429c570684fed7d0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5f358bca6c78bcdea0e4"
+        "id": "0f136a57684d6049cd58"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6bb9f38e1571c40f454f"
+        "id": "a0cc691275ff5a5069a1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6824,7 +6828,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2ac296296f2f94ec8abb"
+        "id": "c157e5ff3bd5cae53adf"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6832,11 +6836,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2c8d017ca934d36b9d39"
+        "id": "69f8238a08b53a415c89"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "953f716b9cb5097dbad5"
+        "id": "4a9e67a75ebb46b94f22"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6844,11 +6848,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "0a3209b1ec721a653d12"
+        "id": "8327115ee4aeb61ee9ce"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a7d608b129d4bebf063f"
+        "id": "d4c73673998a3db5e517"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7ac0d3fc2c026b9b0919"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -9861,10 +9869,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 986,
+    "currentCallers": 987,
     "structuredVerified": 80,
-    "structuredUnproven": 906,
-    "manualUnresolved": 184,
+    "structuredUnproven": 907,
+    "manualUnresolved": 185,
     "manualUnsupported": 722,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
@@ -19445,7 +19453,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "semanticReview": {
         "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
         "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -19466,7 +19474,7 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "semanticReview": {
         "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
         "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -19479,7 +19487,7 @@
       }
     },
     {
-      "id": "112876f29808dc73515d",
+      "id": "aebb56e3d28bf9d915e4",
       "path": "backend/src/routes/profile.ts",
       "line": 142,
       "enclosing": "<module>",
@@ -19487,7 +19495,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "semanticReview": {
         "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
         "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -19500,7 +19508,7 @@
       }
     },
     {
-      "id": "1e9cad9298b039191655",
+      "id": "6bae10b88e7d9de4f344",
       "path": "backend/src/routes/profile.ts",
       "line": 143,
       "enclosing": "<module>",
@@ -19508,7 +19516,7 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "semanticReview": {
         "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
         "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -19521,7 +19529,7 @@
       }
     },
     {
-      "id": "ab2d80d0f7212a9482f2",
+      "id": "09c2429c570684fed7d0",
       "path": "backend/src/routes/profile.ts",
       "line": 168,
       "enclosing": "<module>",
@@ -19529,7 +19537,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "semanticReview": {
         "authority": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
         "reason": "Original007 self-account owner admission only, reconciled to unchanged source and actual disposable Auth proof atb762157a21e9c709aba3d8a6a87b9c83f88cc617 run39168773496. Even a deliberately misissued initial context cannot delete the other actor because the fresh token owner must match. Own deletion succeeds, the foreign account remains intact and deleted-identity replay denies. Current route mounts and issued-context requirements are preserved. Canonical DELETE grants, atomic logout revocation, recent-login/MFA and complete FK/Storage cleanup are not certified by this one factory and remain independent later authority/custody/lifecycle obligations. No customer account was touched. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -19542,7 +19550,7 @@
       }
     },
     {
-      "id": "5f358bca6c78bcdea0e4",
+      "id": "0f136a57684d6049cd58",
       "path": "backend/src/routes/profile.ts",
       "line": 205,
       "enclosing": "<module>",
@@ -19550,7 +19558,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "semanticReview": {
         "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
         "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -19563,7 +19571,7 @@
       }
     },
     {
-      "id": "6bb9f38e1571c40f454f",
+      "id": "a0cc691275ff5a5069a1",
       "path": "backend/src/routes/profile.ts",
       "line": 206,
       "enclosing": "<module>",
@@ -19571,7 +19579,7 @@
       "target": "activity_logs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "semanticReview": {
         "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
         "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -30049,7 +30057,7 @@
       "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "2a1f25f3f48e1f0c05b815f9f7fa8d2973c9b05fc5cda5996d2b85ebe89b48dc",
+      "sourceSha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597",
       "semanticReview": {
         "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -30070,15 +30078,15 @@
       }
     },
     {
-      "id": "2ac296296f2f94ec8abb",
+      "id": "c157e5ff3bd5cae53adf",
       "path": "frontend/src/app/(shell)/layout.tsx",
       "line": 40,
       "enclosing": "ShellLayout",
       "kind": "RPC_CANDIDATE",
-      "target": "has_current_contact_phone",
+      "target": "needs_current_contact_phone_prompt",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2a1f25f3f48e1f0c05b815f9f7fa8d2973c9b05fc5cda5996d2b85ebe89b48dc"
+      "sourceSha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597"
     },
     {
       "id": "5740af96dff28fda6f3f",
@@ -30089,7 +30097,7 @@
       "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "fbca4e61f25ab72ad44f0784b86e9a8124c47e37b3238d908dcf560be9d43488",
+      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0",
       "semanticReview": {
         "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",
@@ -30110,15 +30118,15 @@
       }
     },
     {
-      "id": "2c8d017ca934d36b9d39",
+      "id": "69f8238a08b53a415c89",
       "path": "frontend/src/app/(workspace)/layout.tsx",
       "line": 28,
       "enclosing": "WorkspaceLayout",
       "kind": "RPC_CANDIDATE",
-      "target": "has_current_contact_phone",
+      "target": "needs_current_contact_phone_prompt",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fbca4e61f25ab72ad44f0784b86e9a8124c47e37b3238d908dcf560be9d43488"
+      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
     },
     {
       "id": "83779ac5d4b86b4ed00a",
@@ -30196,15 +30204,15 @@
       }
     },
     {
-      "id": "953f716b9cb5097dbad5",
+      "id": "4a9e67a75ebb46b94f22",
       "path": "frontend/src/app/auth/callback/route.ts",
       "line": 23,
       "enclosing": "GET",
       "kind": "RPC_CANDIDATE",
-      "target": "has_current_contact_phone",
+      "target": "needs_current_contact_phone_prompt",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "5d50e40da11f4591d95c2f5201cbdcc8ebdd636db997d34a6c52ad4784203d13"
+      "sourceSha256": "f16ff961b78edad5a3a9c3f61ea9673fba786769d1726c86d61521860b1813af"
     },
     {
       "id": "aa4c728556c80152b423",
@@ -30215,7 +30223,18 @@
       "target": "save_current_contact_phone",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8a93497f15a67e8209c44a94471827d36317032072e34a78f74ec268442250f3"
+      "sourceSha256": "8c6a019c44fbd6b6596ab52e95742daaa4ff9cce6e53c4759bdfbc4a152c4b54"
+    },
+    {
+      "id": "8327115ee4aeb61ee9ce",
+      "path": "frontend/src/app/auth/contact/page.tsx",
+      "line": 46,
+      "enclosing": "skip",
+      "kind": "RPC_CANDIDATE",
+      "target": "skip_current_contact_phone_prompt",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8c6a019c44fbd6b6596ab52e95742daaa4ff9cce6e53c4759bdfbc4a152c4b54"
     },
     {
       "id": "0fd74b05d65465065102",
@@ -30302,26 +30321,26 @@
       }
     },
     {
-      "id": "0a3209b1ec721a653d12",
+      "id": "d4c73673998a3db5e517",
       "path": "frontend/src/app/onboarding/page.tsx",
       "line": 28,
       "enclosing": "OnboardingPage",
       "kind": "RPC_CANDIDATE",
-      "target": "has_current_contact_phone",
+      "target": "needs_current_contact_phone_prompt",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "74d415a422488dc3f9f1b9ca3f1f2167b7aa208231e12bea4129b2537fe3b92d"
+      "sourceSha256": "8960eec0ab2a91d72c131420ea393359a508f0d3cfc9eb54548f97d602378565"
     },
     {
-      "id": "a7d608b129d4bebf063f",
+      "id": "7ac0d3fc2c026b9b0919",
       "path": "frontend/src/app/onboarding/page.tsx",
-      "line": 32,
+      "line": 31,
       "enclosing": "OnboardingPage",
       "kind": "RPC_CANDIDATE",
       "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "74d415a422488dc3f9f1b9ca3f1f2167b7aa208231e12bea4129b2537fe3b92d",
+      "sourceSha256": "8960eec0ab2a91d72c131420ea393359a508f0d3cfc9eb54548f97d602378565",
       "semanticReview": {
         "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. The current source differs from this historical review; mapping by unchanged caller signature and ordinal only preserves identity. Current-source security proof remains required.",

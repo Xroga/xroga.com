@@ -50,6 +50,8 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
   const anonymousClient=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});assert.ok((await anonymousClient.rpc('read_current_profile_setup')).error);
   assert.ok((await anonymousClient.rpc('has_current_contact_phone')).error);
   assert.ok((await anonymousClient.rpc('save_current_contact_phone',{p_contact_phone:'+14125550123'})).error);
+  assert.ok((await anonymousClient.rpc('needs_current_contact_phone_prompt')).error);
+  assert.ok((await anonymousClient.rpc('skip_current_contact_phone_prompt')).error);
   const anonymous=await page('/onboarding');assert.ok([302,303,307,308].includes(anonymous.status));assert.match(anonymous.headers.get('location')??'',/\/auth\/login/);
   assert.equal((await client.auth.signInWithPassword({email:owner.email,password})).error,null);assert.equal((await client.auth.getUser()).data.user?.id,owner.id);await role('owner');
   assert.equal((await client.rpc('has_current_contact_phone')).data,true);
@@ -77,17 +79,23 @@ export function registerFrontendScopeTests(admin:SupabaseClient):void{
   assert.equal((await client.auth.mfa.verify({factorId:enrolled.data.id,challengeId:challenge.data.id,code})).error,null);
   const founder=await page(`/os-preview/founder?userId=${owner.id}`);assert.equal(founder.status,200);assert.ok((await founder.text()).includes('Private interactive example'));
   assert.equal((await admin.from('profiles').update({role:'member'}).eq('id',member.id)).error,null);await role('member');await uiRedirect(await page('/admin'),'/dashboard');assert.equal((await page('/os-preview/founder')).status,403);
-  // A fresh OAuth-style account has no phone until it completes the contact step.
+  // A fresh OAuth-style account sees the optional contact prompt once.
   const noPhoneEmail=`contact-scope-${randomUUID()}@example.invalid`;
   const noPhone=await admin.auth.admin.createUser({email:noPhoneEmail,password,email_confirm:true});assert.equal(noPhone.error,null);assert.ok(noPhone.data.user);
   actors.push({id:noPhone.data.user.id,email:noPhoneEmail,label:'Contact fixture'});
   assert.equal((await client.auth.signOut()).error,null);
   assert.equal((await client.auth.signInWithPassword({email:noPhoneEmail,password})).error,null);
   assert.equal((await client.rpc('has_current_contact_phone')).data,false);
+  assert.equal((await client.rpc('needs_current_contact_phone_prompt')).data,true);
   await uiRedirect(await page('/workspace'),'/auth/contact');
+  assert.equal((await client.from('profiles').select('contact_phone_prompt_skipped_at').eq('id',owner.id)).error?.code,'42501');
+  const skipped=await client.rpc('skip_current_contact_phone_prompt');assert.equal(skipped.error,null);assert.equal(skipped.data,true);
+  assert.equal((await client.rpc('needs_current_contact_phone_prompt')).data,false);
+  await uiRedirect(await page('/workspace'),'/onboarding');
   assert.ok((await client.rpc('save_current_contact_phone',{p_contact_phone:'555-0123'})).error);
   const saved=await client.rpc('save_current_contact_phone',{p_contact_phone:'+14125550124'});assert.equal(saved.error,null);assert.equal(saved.data,true);
   assert.equal((await client.rpc('has_current_contact_phone')).data,true);
+  assert.equal((await client.rpc('needs_current_contact_phone_prompt')).data,false);
   assert.equal((await admin.from('profiles').select('contact_phone').eq('id',owner.id).single()).data?.contact_phone,'+14125550123');
   await uiRedirect(await page('/workspace'),'/onboarding');
   const retained=await admin.from('profiles').select('display_name,onboarding,role').eq('id',owner.id).single();assert.equal(retained.error,null);assert.equal(retained.data?.display_name,owner.label);assert.deepEqual(retained.data?.onboarding,complete);assert.equal(retained.data?.role,'owner');
