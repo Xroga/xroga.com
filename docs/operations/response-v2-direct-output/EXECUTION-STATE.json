@@ -1,5 +1,5 @@
 {
-  "observedAtUtc": "2026-11-01T22:49:31.624230+00:00",
+  "observedAtUtc": "2026-11-01T23:04:24.210166+00:00",
   "scope": "SOURCE_CORRECTION_AND_PREVIEW_REGRESSION_NOT_PRODUCT_ACCEPTANCE",
   "backendCandidate": "a2b972fcd50b2f6a431795e393e552aac26454a7",
   "frontendCandidate": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
@@ -23,9 +23,10 @@
       41357488248,
       41357484962,
       41357481276,
-      41357477838
+      41357477838,
+      41357474141
     ],
-    "pendingRun": 41357474141
+    "allSixPassed": true
   },
   "frontendGates": {
     "passedRuns": [
@@ -34,9 +35,7 @@
       41358325121,
       41358325044,
       41358324969,
-      41358325005
-    ],
-    "pendingRuns": [
+      41358325005,
       41358357688,
       41358324861
     ],
@@ -46,7 +45,17 @@
       "unresolvedHighRisk": 0
     },
     "pr": 909,
-    "draft": true
+    "draft": true,
+    "allEightWorkflowsPassed": true,
+    "unitAndIntegratedBothPassed": true,
+    "virtualMergeSource": "4b312358e30bddc0acce50c9a42f0ad45173ec8d",
+    "preview": {
+      "finalMetadataSource": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
+      "deployment": "2err1gKN9jLzeKXQxVzV3jFLA76t",
+      "state": "IGNORE_BUILD_CANCELED_REDEPLOY_REQUIRES_OWNER_EMAIL_CODE",
+      "workingPreviewSource": "e8256aa27e444ccf1b47e9583598512cec0c4de9",
+      "productionPromoted": false
+    }
   },
   "savedPartialAnswerRegression": {
     "previewSource": "e8256aa27e444ccf1b47e9583598512cec0c4de9",
@@ -81,5 +90,14 @@
     "impact": "Abandoned upload reservations require authorized operator reconciliation until a schedule is separately configured.",
     "newSchedulerCreated": false
   },
-  "nextAction": "Inspect final CI outcomes without restarting successful runs. Correct only demonstrated failures. After exact approval and all gates pass, follow the single-build, guarded paired cutover runbook. Perform bounded fresh new-chat acceptance before frontend promotion or acceptance claims."
+  "nextAction": "All source and integrated CI gates pass. Await exact functional-release package approval and owner Vercel code entry. Then follow the guarded single-build paired cutover and bounded fresh new-chat acceptance. Do not restart passing CI, release without approval, or claim production acceptance.",
+  "safePreparation": {
+    "backendEvidenceJob": "83192311-16ed-4de2-8e6f-7b9c4c862dfd",
+    "backendGateReceiptJob": "5058c9fa-adaa-4896-b1df-9c3b28c08a93",
+    "frontendEvidenceJob": "9d0d6dee-c72b-43c8-9d09-8bedb11607d5",
+    "watchExistingCiOnlyJob": "5cdbee6f-05c0-48b8-8c37-c04ebd16c470",
+    "newModelCalls": 0,
+    "newGoogleBuilds": 0,
+    "productionSqlApplied": false
+  }
 }

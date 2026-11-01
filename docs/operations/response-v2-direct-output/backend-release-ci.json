@@ -1,0 +1,39 @@
+{
+  "observedAtUtc": "2026-11-01T22:57:47.511360+00:00",
+  "source": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+  "checks": [
+    {
+      "name": "unit",
+      "id": 125000536568,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41357474141/job/125000536568"
+    },
+    {
+      "name": "build",
+      "id": 125000545244,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41357477838/job/125000545244"
+    },
+    {
+      "name": "authenticated-browser",
+      "id": 125000555589,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41357481276/job/125000555589"
+    },
+    {
+      "name": "deterministic-golden",
+      "id": 125000566629,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41357484962/job/125000566629"
+    },
+    {
+      "name": "structured-mission-policy",
+      "id": 125000575896,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41357488248/job/125000575896"
+    },
+    {
+      "name": "disposable-policy-database",
+      "id": 125000587684,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41357491888/job/125000587684"
+    }
+  ],
+  "allSixPassed": true,
+  "productionAcceptance": false,
+  "cloudBuildStarted": false
+}

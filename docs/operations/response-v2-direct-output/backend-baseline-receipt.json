@@ -1,0 +1,89 @@
+{
+  "workflowRun": 41357474141,
+  "sourceSha": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+  "manifests": [
+    {
+      "name": "run-a-manifest.json",
+      "sourceSha": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+      "result": "PASS",
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": 21,
+      "sourceTreeMutated": false,
+      "tests": [
+        {
+          "name": "backend-unit-tests",
+          "tests": 5281,
+          "pass": 5275,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-unit-tests",
+          "tests": 1327,
+          "pass": 1327,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "name": "run-b-manifest.json",
+      "sourceSha": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+      "result": "PASS",
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": 21,
+      "sourceTreeMutated": false,
+      "tests": [
+        {
+          "name": "backend-unit-tests",
+          "tests": 5281,
+          "pass": 5275,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-unit-tests",
+          "tests": 1327,
+          "pass": 1327,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        }
+      ]
+    }
+  ],
+  "scope": "EXACT_SOURCE_CI_NOT_PRODUCTION_ACCEPTANCE"
+}

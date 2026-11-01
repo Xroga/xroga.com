@@ -1,0 +1,177 @@
+{
+  "observedAtUtc": "2026-11-01T23:03:37.854330+00:00",
+  "head": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
+  "virtualMerge": "4b312358e30bddc0acce50c9a42f0ad45173ec8d",
+  "workflowRun": 41358324861,
+  "manifests": [
+    {
+      "scope": "head",
+      "manifest": "run-a-manifest.json",
+      "source": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": 21,
+      "tests": [
+        {
+          "name": "backend-unit-tests",
+          "tests": 4981,
+          "pass": 4975,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-unit-tests",
+          "tests": 1399,
+          "pass": 1399,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "scope": "head",
+      "manifest": "run-b-manifest.json",
+      "source": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": 21,
+      "tests": [
+        {
+          "name": "backend-unit-tests",
+          "tests": 4981,
+          "pass": 4975,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-unit-tests",
+          "tests": 1399,
+          "pass": 1399,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "scope": "integrated",
+      "manifest": "run-a-manifest.json",
+      "source": "4b312358e30bddc0acce50c9a42f0ad45173ec8d",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": 21,
+      "tests": [
+        {
+          "name": "backend-unit-tests",
+          "tests": 4981,
+          "pass": 4975,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-unit-tests",
+          "tests": 1399,
+          "pass": 1399,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "scope": "integrated",
+      "manifest": "run-b-manifest.json",
+      "source": "4b312358e30bddc0acce50c9a42f0ad45173ec8d",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": 21,
+      "tests": [
+        {
+          "name": "backend-unit-tests",
+          "tests": 4981,
+          "pass": 4975,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-unit-tests",
+          "tests": 1399,
+          "pass": 1399,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        }
+      ]
+    }
+  ],
+  "productionAcceptance": false
+}
