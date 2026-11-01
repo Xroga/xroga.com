@@ -10,7 +10,7 @@ import { composeResponseV2, layoutUnitV2, type SemanticPartV2 } from './composit
 import { loadPresentation } from './loadPresentation';
 const Chart = lazy(() => loadPresentation(() => import('./ChartV2')));
 const Table = lazy(() => loadPresentation(() => import('./DataV2')).then(m => ({ default: m.DataTableV2 })));
-const Graph = lazy(() => loadPresentation(() => import('./DataV2')).then(m => ({ default: m.GraphV2 })));
+const Graph = lazy(() => loadPresentation(() => import('./ArchitectureV2')));
 const Calculator = lazy(() => loadPresentation(() => import('./InteractiveV2')).then(m => ({ default: m.CalculatorV2 })));
 const Tabs = lazy(() => loadPresentation(() => import('./InteractiveV2')).then(m => ({ default: m.TabsV2 })));
 
@@ -44,7 +44,7 @@ function ComposedPart({ part, document, width }: { part: SemanticPartV2; documen
   return <div className={`${layout === 'reading' ? styles.measure : styles.wide} ${styles.semanticUnit}`} data-role={part.role} data-layout={layout}>
     {node.description && !['calculator', 'graph'].includes(node.kind) && <ProseV2 text={node.description} sources={document.sources} />}
     <Suspense fallback={<p className={styles.loading} role="status">Loading presentation...</p>}>
-      <NodeView node={{ ...node, title: displayTitleV2(node.title) }} document={document} grouped={!!part.relatedData} stacked={layout === 'stacked-comparison'} />
+      <NodeView node={{ ...node, title: part.suppressRepeatedTitle ? undefined : displayTitleV2(node.title) }} document={document} grouped={!!part.relatedData} stacked={layout === 'stacked-comparison'} />
     </Suspense>
   </div>;
 }

@@ -48,7 +48,10 @@
     "frontend/src/components/response-experience-v2/composition.ts",
     "frontend/src/components/response-experience-v2/composition.test.ts",
     "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
-    "docs/operations/response-v2-semantic-design.md"
+    "docs/operations/response-v2-semantic-design.md",
+    "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
+    "frontend/src/lib/assistantCopy.ts",
+    "frontend/src/lib/assistantCopy.test.ts"
   ],
   "decisions": {
     "keep": [

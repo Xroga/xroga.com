@@ -10,7 +10,7 @@ export type SemanticRoleV2 = 'narrative' | 'steps' | 'comparison' | 'series' | '
 export type SemanticUnitV2 = {
   type: 'unit'; id: string; role: SemanticRoleV2; node: ResponseNodeV2;
   range?: { start: number; end: number };
-  relatedData?: string; sourceKeys: string[];
+  relatedData?: string; sourceKeys: string[]; suppressRepeatedTitle?: boolean;
 };
 export type SemanticSectionV2 = { type: 'section'; id: string; heading: SemanticUnitV2; level: number; children: SemanticPartV2[] };
 export type SemanticPartV2 = SemanticUnitV2 | SemanticSectionV2;
@@ -105,7 +105,10 @@ export function composeResponseV2(document: ResponseDocumentV2): CompositionV2 {
     const keys = [...new Set([...sourceKeys.filter((key): key is string => !!key), ...authoredProse.flatMap(claimKeys)])];
     keys.forEach(key => placed.add(key));
     const related = node.kind === 'chart' ? document.nodes.find(other => other.kind === 'table' && sameChartTableV2(node, other)) : undefined;
-    append({ type: 'unit', id: node.id, node, role: roles[node.kind], sourceKeys: keys, relatedData: related?.id });
+    const heading = sections.at(-1)?.heading.node;
+    const headingText = heading?.kind === 'prose' ? heading.text.replace(/^\s*#{1,6}\s+/, '').trim() : undefined;
+    append({ type: 'unit', id: node.id, node, role: roles[node.kind], sourceKeys: keys, relatedData: related?.id,
+      suppressRepeatedTitle: !!node.title && node.title.trim() === headingText });
   }
   // Claim references come from the same Markdown citation grammar as ProseV2.
   // Unreferenced source metadata is retained, never presented as a verified claim.

@@ -3,6 +3,11 @@ import { test } from 'node:test';
 
 import { serializeAssistantCopy } from './assistantCopy';
 
+test('copy preserves underscores and operators in inline code', () => {
+  assert.equal(serializeAssistantCopy('Use `tenant_id_for_request` and `a ** b` with **care**.'),
+    'Use tenant_id_for_request and a ** b with care.');
+});
+
 test('assistant copy removes markdown chrome but preserves exact fenced code', () => {
   const source = '### Result\n\nThis is **ready** with `npm test`.\n\n- One\n- Two\n\n```ts\nconst value = "**literal**";\n```';
   const copied = serializeAssistantCopy(source);

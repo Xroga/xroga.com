@@ -59,6 +59,17 @@ function canonicalRichBlock(value: unknown, documentId: string, index: number): 
   }
   const candidate = {
     ...input,
+    // Preserve descriptions emitted by the existing primary model contract.
+    // Canonical detail wins when both fields are supplied. Validation still
+    // runs below, including the normal size and graph-reference bounds.
+    ...(input.type === 'graph' && Array.isArray(input.nodes) ? {
+      nodes: input.nodes.map(node => {
+        if (!node || typeof node !== 'object' || Array.isArray(node)) return node;
+        const item = node as Record<string, unknown>;
+        return item.detail === undefined && typeof item.subtitle === 'string'
+          ? { ...item, detail: item.subtitle } : item;
+      }),
+    } : {}),
     schemaVersion: 1,
     id: typeof input.id === 'string' && input.id.trim()
       ? safeIdPart(input.id)

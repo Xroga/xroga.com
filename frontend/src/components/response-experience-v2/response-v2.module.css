@@ -7,6 +7,14 @@
   line-height: var(--v2-leading); font-weight: 400; letter-spacing: normal; width: 100%; min-width: 0; text-align: start;
   isolation: isolate; container-type: inline-size;
 }
+.architecture { margin:0; }
+.architecture figcaption { font-size:16px; font-weight:600; margin-bottom:12px; }
+.architecture > p { font-size:14px; color:var(--v2-muted); }
+.architectureCanvas { height:440px; width:100%; border:1px solid var(--v2-line); border-radius:16px; overflow:hidden; background:var(--v2-wash); }
+.architectureCanvas :global(.react-flow__node) strong { display:block; font-size:14px; }
+.architectureCanvas :global(.react-flow__node) span { display:block; margin-top:6px; font-size:13px; }
+.architectureCanvas :global(.react-flow__controls-button) { background:var(--background,#fff); color:var(--v2-ink); border-color:var(--v2-line); }
+.architectureCanvas :global(.react-flow__controls-button) svg { fill:currentColor; }
 .canvas *, .canvas *::before, .canvas *::after { box-sizing: border-box; }
 .canvas :where(p,li,td,dd,blockquote) { font-family: inherit; font-weight: 400; letter-spacing: normal; }
 .canvas :where(h1,h2,h3,h4,h5,h6,strong,b,th,dt) { font-family: inherit; font-weight: 600; }

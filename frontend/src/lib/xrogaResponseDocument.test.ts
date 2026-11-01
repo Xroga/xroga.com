@@ -9,6 +9,17 @@ test('ordinary answers stay lightweight text', () => {
   assert.equal(result.output, undefined);
 });
 
+test('primary model graph subtitles survive canonicalization without replacing detail', () => {
+  const source = '```xroga-ui\n' + JSON.stringify({ type: 'graph', nodes: [
+    { id: 'api', label: 'API', subtitle: 'Server routes' },
+    { id: 'db', label: 'Database', detail: 'RLS policies', subtitle: 'Secondary' },
+  ], edges: [{ source: 'api', target: 'db' }] }) + '\n```';
+  const result = enhanceAiResponse(source, 'graph-descriptions');
+  const graph = result.output?.blocks.find(block => block.type === 'graph');
+  assert.deepEqual(graph?.nodes.map(node => node.detail), ['Server routes', 'RLS policies']);
+  assert.equal(result.output?.sourceText, source);
+});
+
 test('markdown data becomes a searchable table and a chart', () => {
   const result = enhanceAiResponse([
     '## Monthly revenue',

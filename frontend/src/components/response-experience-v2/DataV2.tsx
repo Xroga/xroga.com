@@ -4,6 +4,17 @@ import { ArrowDown, ArrowUp } from 'lucide-react';
 import { displayTitleV2, type ResponseNodeV2 } from './document';
 import styles from './response-v2.module.css';
 import { isLinearFlowV2, graphLayersV2 } from './graphLayout';
+import ReactMarkdown from 'react-markdown';
+import { safeLinkV2 } from './document';
+
+function CellV2({ value }: { value: string | number | boolean | null | undefined }) {
+  if (value == null) return <>Unavailable</>;
+  return <ReactMarkdown skipHtml allowedElements={['p', 'strong', 'em', 'code', 'a', 'br']} unwrapDisallowed
+    urlTransform={url => safeLinkV2(url) ?? ''}
+    components={{ p: ({ children }) => <>{children}</>, a: ({ href, children }) => href ? <a href={href} target="_blank" rel="noopener noreferrer">{children}</a> : <>{children}</> }}>
+    {String(value)}
+  </ReactMarkdown>;
+}
 export type TableNode = Extract<ResponseNodeV2, { kind: 'table' }>;
 export function DataTableV2({ node, stacked = false }: { node: TableNode; stacked?: boolean }) {
   const [query, setQuery] = useState(''); const [sort, setSort] = useState<{ key: string; descending: boolean } | null>(null); const [page, setPage] = useState(0);
@@ -15,7 +26,7 @@ export function DataTableV2({ node, stacked = false }: { node: TableNode; stacke
   const current = Math.min(page, Math.max(0, Math.ceil(rows.length / 50) - 1));
   return <section className={styles.data}>
     {node.rows.length > 10 && <label className={styles.filter}>Filter rows<input type="search" value={query} onChange={e => { setQuery(e.target.value); setPage(0); }} /></label>}
-    {stacked ? <div className={styles.comparisonRows}>{displayTitleV2(node.title) && <h3>{node.title}</h3>}{rows.map((row, index) => <section key={index}><h4>{String(row[node.columns[0].key] ?? 'Unavailable')}</h4><dl>{node.columns.slice(1).map(column => <div key={column.key}><dt>{column.label}</dt><dd>{row[column.key] == null ? 'Unavailable' : String(row[column.key])}</dd></div>)}</dl></section>)}</div> : <div className={styles.tableScroll} tabIndex={0} role="region" aria-label={node.title || 'Response data'}><table><caption className={displayTitleV2(node.title) ? undefined : styles.visuallyHidden}>{displayTitleV2(node.title) || node.columns.map(c => c.label).join(', ')}</caption><thead><tr>{node.columns.map(c => <th key={c.key} scope="col" aria-sort={sort?.key === c.key ? sort.descending ? 'descending' : 'ascending' : 'none'}><button type="button" onClick={() => { setSort({ key: c.key, descending: sort?.key === c.key && !sort.descending }); setPage(0); }}>{c.label}{sort?.key === c.key && (sort.descending ? <ArrowDown size={12} /> : <ArrowUp size={12} />)}</button></th>)}</tr></thead><tbody>{rows.slice(current * 50, (current + 1) * 50).map((row, index) => <tr key={current * 50 + index}>{node.columns.map(c => <td key={c.key} data-numeric={typeof row[c.key] === 'number'}>{row[c.key] == null ? 'Unavailable' : String(row[c.key])}</td>)}</tr>)}</tbody></table></div>}
+    {stacked ? <div className={styles.comparisonRows}>{displayTitleV2(node.title) && <h3>{node.title}</h3>}{rows.map((row, index) => <section key={index}><h4>{<CellV2 value={row[node.columns[0].key]} />}</h4><dl>{node.columns.slice(1).map(column => <div key={column.key}><dt>{column.label}</dt><dd>{<CellV2 value={row[column.key]} />}</dd></div>)}</dl></section>)}</div> : <div className={styles.tableScroll} tabIndex={0} role="region" aria-label={node.title || 'Response data'}><table><caption className={displayTitleV2(node.title) ? undefined : styles.visuallyHidden}>{displayTitleV2(node.title) || node.columns.map(c => c.label).join(', ')}</caption><thead><tr>{node.columns.map(c => <th key={c.key} scope="col" aria-sort={sort?.key === c.key ? sort.descending ? 'descending' : 'ascending' : 'none'}><button type="button" onClick={() => { setSort({ key: c.key, descending: sort?.key === c.key && !sort.descending }); setPage(0); }}>{c.label}{sort?.key === c.key && (sort.descending ? <ArrowDown size={12} /> : <ArrowUp size={12} />)}</button></th>)}</tr></thead><tbody>{rows.slice(current * 50, (current + 1) * 50).map((row, index) => <tr key={current * 50 + index}>{node.columns.map(c => <td key={c.key} data-numeric={typeof row[c.key] === 'number'}>{<CellV2 value={row[c.key]} />}</td>)}</tr>)}</tbody></table></div>}
     {!rows.length && <p>No matching rows.</p>}
     {rows.length > 50 && <nav aria-label="Table pages" className={styles.pagination}><button type="button" disabled={current === 0} onClick={() => setPage(current - 1)}>Previous</button><span>Page {current + 1} of {Math.ceil(rows.length / 50)} · {rows.length} rows</span><button type="button" disabled={(current + 1) * 50 >= rows.length} onClick={() => setPage(current + 1)}>Next</button></nav>}
   </section>;

@@ -115,3 +115,13 @@ test('visible authored notes and section content place sources without a duplica
   result.document.nodes.push({id:'notice',kind:'notice',tone:'info',text:'Supplied claim [1].'});
   assert.deepEqual(composeResponseV2(result.document).unplacedSourceKeys,[]);
 });
+
+test('a matching section title is displayed once without deleting source title data', () => {
+  const result = adaptResponseV2({id:'titles',content:'## Component roles'}); assert.ok(result.supported);
+  result.document.nodes.push({id:'roles',kind:'table',title:'Component roles',columns:[{key:'name',label:'Name'}],rows:[{name:'Next.js'}]});
+  const unit = flattenCompositionV2(composeResponseV2(result.document).parts).find(u=>u.id==='roles')!;
+  assert.equal(unit.suppressRepeatedTitle,true);
+  assert.equal(unit.node.title,'Component roles');
+  result.document.nodes[1].title='Different information';
+  assert.equal(flattenCompositionV2(composeResponseV2(result.document).parts).find(u=>u.id==='roles')!.suppressRepeatedTitle,false);
+});

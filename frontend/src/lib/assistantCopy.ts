@@ -1,4 +1,10 @@
 function cleanInline(value: string): string {
+  // Protect literal identifiers and operators before removing prose emphasis.
+  const pieces = value.split(/(`+[^`\n]*`+)/g);
+  if (pieces.length > 1) return pieces.map(piece => {
+    const code = /^(`+)([\s\S]*?)\1$/.exec(piece);
+    return code ? code[2] : cleanInline(piece);
+  }).join('');
   return value
     .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '$1 ($2)')
