@@ -1,5 +1,5 @@
 {
-  "observedAtUtc": "2026-11-01T22:50:00Z",
+  "observedAtUtc": "2026-11-01T22:49:31.624230+00:00",
   "scope": "SOURCE_CORRECTION_AND_PREVIEW_REGRESSION_NOT_PRODUCT_ACCEPTANCE",
   "backendCandidate": "a2b972fcd50b2f6a431795e393e552aac26454a7",
   "frontendCandidate": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
@@ -18,13 +18,33 @@
     "olderRecoverySource": "fd3b663290cf150da51768171021860b032df025"
   },
   "backendGates": {
-    "passedRuns": [41357491888, 41357488248, 41357484962, 41357481276, 41357477838],
+    "passedRuns": [
+      41357491888,
+      41357488248,
+      41357484962,
+      41357481276,
+      41357477838
+    ],
     "pendingRun": 41357474141
   },
   "frontendGates": {
-    "passedRuns": [41358360664, 41358325010, 41358325121, 41358325044, 41358324969, 41358325005],
-    "pendingRuns": [41358357688, 41358324861],
-    "strictEgress": { "reviewed": 150, "pending": 0, "unresolvedHighRisk": 0 },
+    "passedRuns": [
+      41358360664,
+      41358325010,
+      41358325121,
+      41358325044,
+      41358324969,
+      41358325005
+    ],
+    "pendingRuns": [
+      41358357688,
+      41358324861
+    ],
+    "strictEgress": {
+      "reviewed": 150,
+      "pending": 0,
+      "unresolvedHighRisk": 0
+    },
     "pr": 909,
     "draft": true
   },
