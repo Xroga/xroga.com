@@ -27,13 +27,17 @@ const edgeTypes = { responseConnection: LabeledConnectionV2 };
 /** Data-only graph. No executable actions, remote layout or model calls. */
 export default function ArchitectureV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'graph' }> }) {
   const [compact, setCompact] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(880);
   const fullWidth = useMemo(() => graphCanvasV2(node).width, [node]);
-  const layout = useMemo(() => graphCanvasV2(node, compact), [node, compact]);
+  const layout = useMemo(() => graphCanvasV2(node, compact, containerWidth), [node, compact, containerWidth]);
   const canvas = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = canvas.current;
     if (!element) return;
-    const resize = new ResizeObserver(entries => setCompact(entries[0].contentRect.width < fullWidth));
+    const resize = new ResizeObserver(entries => {
+      const width = entries[0].contentRect.width;
+      if (width > 0) { setContainerWidth(width); setCompact(width < fullWidth); }
+    });
     resize.observe(element);
     return () => resize.disconnect();
   }, [fullWidth]);
@@ -41,8 +45,8 @@ export default function ArchitectureV2({ node }: { node: Extract<ResponseNodeV2,
     // Start on the first reading-level node instead of a blank routing lane.
     // Preserve user scrolling until the diagram itself changes.
     const first = layout.positions[0];
-    if (canvas.current && first) canvas.current.scrollLeft = Math.max(0, first.x + layout.nodeWidth / 2 - canvas.current.clientWidth / 2);
-  }, [layout]);
+    if (canvas.current && first) canvas.current.scrollLeft = compact ? 0 : Math.max(0, first.x + layout.nodeWidth / 2 - canvas.current.clientWidth / 2);
+  }, [layout, compact]);
   const positions = useMemo(() => new Map(layout.positions.map(p => [p.id, p])), [layout]);
   const nodes = useMemo(() => node.nodes.map(item => ({
     id: item.id, position: positions.get(item.id)!,

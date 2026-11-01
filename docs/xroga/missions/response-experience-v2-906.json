@@ -118,7 +118,8 @@
     "backend/src/ai/tenantModelDispatch.ts",
     "backend/src/ai/openaiCompat.test.ts",
     "frontend/src/lib/runLightLaneChat.ts",
-    "frontend/src/components/response-experience-v2/exportText.test.ts"
+    "frontend/src/components/response-experience-v2/exportText.test.ts",
+    "backend/src/ai/quota.test.ts"
   ],
   "decisions": {
     "keep": [

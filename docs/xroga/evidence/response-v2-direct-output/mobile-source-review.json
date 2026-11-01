@@ -1,0 +1,22 @@
+{
+  "base": "2b6e4aa4d856cca6796c4991447aba4ab2f37ae4",
+  "scope": "DIRECT_CHAT_COMPLETION_AND_ACCOUNTING_CORRECTION_NOT_LIVE_ACCEPTANCE",
+  "records": [
+    {
+      "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "8019f022a34f98e05d9393ca6e82790e9f337b2bda23685a3e65541eb93816aa"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "egress": 0,
+      "persistence": 1,
+      "sourceSha256": "2a3e12fc693ba66cb8fae77aa523c2db1b8c2d00f9079952532ba042c80add95"
+    }
+  ],
+  "historicalProofsUnchanged": true,
+  "modelCalls": 0,
+  "productionSQL": false,
+  "review": "Existing actor, project, lease, credential, approval, outbound origin, secret and cancellation boundaries remain. Only additive public completion status, explicit existing direct-output control, serialized price ceilings and validated provider cost settlement change. Original tests remain byte-identical, new tests are additive."
+}

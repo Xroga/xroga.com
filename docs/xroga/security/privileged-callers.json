@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "cf8fc791bc9cbef36b6daf83807957632c374cfa1286a7b88769584bc46249af",
+  "reviewRegistrySha256": "e7cdde742d617d9a000dbf4a4d69d0f6bc692d013e2a1d16ef5dd4b73c8f868f",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -29189,7 +29189,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1a097a40b5095dc6a9842b0b24be8af91aaa66a0b23c35a047d9d1c47c8b89e5",
+      "sourceSha256": "2a3e12fc693ba66cb8fae77aa523c2db1b8c2d00f9079952532ba042c80add95",
       "semanticReview": {
         "authority": "Native Array.from creates local grid ranks from already validated graph node IDs when the graph contains a cycle. The callback slices and maps an in-memory node array. No database, storage, network, credential or execution API is called.",
         "reason": "Reviewed graphPositionsV2, graphLayersV2 and graphCanvasV2. Native Array is not shadowed or reassigned. All graph ranking, dimensions and edge lanes are computed from local validated nodes and edges. This disposition covers only local array construction, not upstream validation or any authority boundary. 2026-11-02: compact layout only changes local node positions and edge lanes. The native Array.from expression remains unchanged; no persistence, network or authority added.",

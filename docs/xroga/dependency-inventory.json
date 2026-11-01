@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c940a4067da8fa67d18b2f0be1b38728f6a36113",
+  "source_sha": "2b6e4aa4d856cca6796c4991447aba4ab2f37ae4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20942,7 +20942,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "sha256": "60a729d78e37f1c29efb47abadae7ae6d42fd576bbf26185e5dc27444f5e4ad4"
+      "sha256": "8019f022a34f98e05d9393ca6e82790e9f337b2bda23685a3e65541eb93816aa"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ChartV2.tsx",
@@ -21018,7 +21018,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sha256": "1a097a40b5095dc6a9842b0b24be8af91aaa66a0b23c35a047d9d1c47c8b89e5"
+      "sha256": "2a3e12fc693ba66cb8fae77aa523c2db1b8c2d00f9079952532ba042c80add95"
     },
     {
       "path": "frontend/src/components/response-experience-v2/interactionContext.ts",
@@ -35597,7 +35597,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "line": 46,
+      "line": 50,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35702,14 +35702,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "line": 23,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "line": 45,
+      "line": 24,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35717,6 +35710,13 @@
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
       "line": 46,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "line": 47,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

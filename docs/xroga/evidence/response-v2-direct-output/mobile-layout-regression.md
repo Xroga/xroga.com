@@ -1,0 +1,7 @@
+# Actual Workspace layout regression
+
+The authenticated Preview at `2b6e4aa4` reopened the genuine, previously truncated SaaS response without another generation. Desktop measured 1440 CSS pixels, with an 822-pixel diagram region and no local or page overflow. All four nodes, five directed connections and three authentic linked technology marks remained. Prose computed as Inter, 16px, weight 400, line height 26.4px.
+
+At a true 390 by 844 CSS-pixel viewport, the surrounding Workspace left 293 pixels for the diagram. Its 336-pixel compact canvas and automatic centering hid a return-edge lane. The correction sizes the compact node and canvas from the actual container width, keeps readable label size, adjusts estimated line height for the narrower node, and starts compact scrolling at zero. The graph tests cover both 263 and 293-pixel containers with all nodes and numbered lanes retained. Very narrow containers can still scroll locally rather than shrinking text or deleting edges.
+
+Full-viewport before/after files and DOM measurements are retained in the private operator evidence directory. This is renderer regression evidence using a genuine partial response. It does not certify a complete newly generated answer, a new backend release, factual tenant advice, or production product acceptance. Fresh post-correction SaaS, workshop and unrelated response-class acceptance remain required.

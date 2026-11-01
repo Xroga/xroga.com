@@ -86,4 +86,12 @@ test('the generated four-node five-edge architecture fits a desktop answer witho
   assert.ok(layout.width<=824,`Unexpected desktop width ${layout.width}`);
   assert.equal(layout.edgeLanes.length,5);
   assert.equal(JSON.stringify(graph),before);
+  for(const width of [263,293]) {
+    const mobile=graphCanvasV2(graph,true,width);
+    assert.ok(mobile.width<=width,`Clipped mobile routing at ${width}`);
+    assert.ok(mobile.nodeWidth>=180);
+    assert.equal(mobile.edgeLanes.length,5);
+    for(const p of mobile.positions) assert.ok(p.x+mobile.nodeWidth<=width);
+    for(const lane of mobile.edgeLanes) if(lane!==null) assert.ok(lane-12>=0);
+  }
 });
