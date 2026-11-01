@@ -1,0 +1,181 @@
+"""Approved Response V2 paired backend operations. SQL fence steps are separate reviewed calls.
+
+Every mutation is one resumable stage. Never auto-open admission or force runs
+terminal. Sensitive service manifests stay in RAM. Preserve unrelated voice tags.
+"""
+import copy,datetime,json,pathlib,subprocess,sys,time,urllib.error,urllib.request
+P='project-c40d4821-e647-4fa2-92d';R='us-east4'
+OLD='xroga-api-response-bc6cbc-serving-1101';NEW='xroga-api-response-fded88-serving-1101';TAG='response-fded88-serving-check'
+OLD_SHA='bc6cbc434a800c8e7aa086afc1edbbee447294f0';NEW_SHA='fded88f45384d0514ae9a6c69d87a726b61d9669'
+REPO='us-east4-docker.pkg.dev/'+P+'/cloud-run-source-deploy/xroga-api-release@'
+OLD_IMAGE=REPO+'sha256:3fb9ce8f8fc9961679559dbb5d764355436d5b5dc0bb6f6ad12969896b3f3969'
+NEW_IMAGE=REPO+json.loads((pathlib.Path(__file__).resolve().parent/'image.json').read_text())['digest']
+JOB='projects/'+P+'/locations/'+R+'/jobs/xroga-canonical-production'
+SERVICE='projects/'+P+'/locations/'+R+'/services/xroga-api'
+QUEUE='projects/'+P+'/locations/'+R+'/queues/xroga-canonical-production'
+V1='https://us-east4-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/'+P
+ROOT=pathlib.Path(__file__).resolve().parent
+MODE=sys.argv[1]
+assert MODE in ['preflight','pause','serving','job','promote','resume','status','recover-job','recover-traffic','recover-resume']
+PS='C:/Users/hp/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
+GC='C:/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.ps1'
+
+def cli(*args):
+ command='& '+' '.join("'"+v.replace("'","''")+"'" for v in [GC,*args,'--account=mabdullah.built@gmail.com','--project='+P,'--quiet'])
+ r=subprocess.run([PS,'-NoProfile','-Command',command],capture_output=True,text=True,timeout=60)
+ assert r.returncode==0,'GCLOUD_FAILED'
+ return r.stdout
+TOKEN=cli('auth','print-access-token').strip()
+def api(url,method='GET',body=None):
+ req=urllib.request.Request(url,headers={'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json'},
+  method=method,data=json.dumps(body).encode() if body is not None else None)
+ with urllib.request.urlopen(req,timeout=60) as s:
+  data=s.read()
+  return json.loads(data) if data else {}
+def run(path,method='GET',body=None):return api('https://run.googleapis.com/v2/'+path,method,body)
+def task(path,method='GET'):return api('https://cloudtasks.googleapis.com/v2/'+path,method,{} if method=='POST' else None)
+def wait(op):
+ end=time.monotonic()+240
+ while not op.get('done'):
+  assert time.monotonic()<end,'OPERATION_PENDING_INSPECT_BEFORE_RETRY'
+  time.sleep(3);op=run(op['name'])
+ assert not op.get('error'),'OPERATION_FAILED_INSPECT_RECEIPT'
+def record(stage,**extra):
+ row={'atUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'stage':stage,**extra}
+ with (ROOT/'response-paired-cutover-journal.jsonl').open('a') as f:f.write(json.dumps(row)+'\n')
+ print(json.dumps(row),flush=True)
+def live(service,expected):
+ active=[v for v in service['traffic'] if v.get('percent',0)>0]
+ assert len(active)==1 and active[0]['revision']==expected and active[0]['percent']==100,'SERVING_SOURCE_DRIFT'
+def job_config(job,image,sha):
+ t=job['template']['template'];c=t['containers'][0]
+ e={v['name']:v.get('value') for v in c.get('env',[])}
+ assert c['image']==image and job['labels']['xroga-source-sha']==sha,'JOB_SOURCE_DRIFT'
+ assert c.get('command')==['node','dist/scripts/runCanonicalWorker.js'],'JOB_COMMAND_DRIFT'
+ assert e['XROGA_GOOGLE_WORKER_IMAGE']==image and e['XROGA_GCE_BASE_IMAGE_ID']=='5308884476316794212','WORKER_CONFIGURATION_DRIFT'
+ assert t['serviceAccount']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','IDENTITY_DRIFT'
+def no_executions():
+ values=run(JOB+'/executions?pageSize=1000')
+ assert not values.get('nextPageToken'),'EXECUTION_PAGINATION_REVIEW_REQUIRED'
+ assert not any(v.get('runningCount',0)>0 for v in values.get('executions',[])),'ACTIVE_JOB_PRESENT'
+def fenced():
+ window=json.loads((ROOT/'response-maintenance-window.json').read_text(encoding='utf-8-sig'))
+ if not MODE.startswith('recover-'):
+  assert datetime.datetime.now(datetime.timezone.utc)<datetime.datetime.fromisoformat(window['deadlineUtc']),'MAINTENANCE_DEADLINE_REACHED_RECOVER_ONLY'
+ receipt=json.loads((ROOT/'response-gate-closed-live.json').read_text())
+ assert receipt['closed'] is True and receipt['nonterminalCanonical']==0,'LIVE_FENCE_PROOF_REQUIRED'
+ assert 0<=time.time()-receipt['checkedEpoch']<1200,'LIVE_FENCE_PROOF_EXPIRED'
+def serving_config(v):
+ s=v['spec'];c=s['containers'][0];e={x['name']:x for x in c.get('env',[])}
+ assert c['image']==NEW_IMAGE and v['metadata']['labels']['xroga-source-sha']==NEW_SHA,'SERVING_IMAGE_DRIFT'
+ assert e['XROGA_DEPLOYMENT_ENVIRONMENT']['value']=='production','EXPLICIT_ENVIRONMENT_REQUIRED'
+ assert e['XROGA_GOOGLE_WORKER_IMAGE']['value']==NEW_IMAGE and e.get('XROGA_RELEASE_CANDIDATE',{}).get('value')!='1','SERVING_CONTROLS_DRIFT'
+ assert s['serviceAccountName']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','SERVING_IDENTITY_DRIFT'
+
+approval=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
+assert approval['approved'] is True and approval['packageCommit']=='84264961107e6642ffe21d61380b479f7f117da9' and approval['sourceSha']==NEW_SHA,'EXACT_OWNER_APPROVAL_REQUIRED'
+if MODE in ['pause','serving','job','promote','resume']:
+ from release_gates import require_release_ci
+ require_release_ci()
+service=run(SERVICE);job=run(JOB);queue=task(QUEUE)
+if MODE=='preflight':
+ live(service,OLD);job_config(job,OLD_IMAGE,OLD_SHA);no_executions()
+ assert queue['state']=='RUNNING','QUEUE_NOT_RUNNING'
+ # This Job has only native control-plane values and secret references. Keep
+ # the recovery export, never export the service's literal environment values.
+ env=job['template']['template']['containers'][0].get('env',[])
+ assert not any(v.get('value') and any(x in v['name'] for x in ['PASSWORD','API_KEY','ACCESS_TOKEN','SECRET_ACCESS','JWT_SECRET','PRIVATE_KEY']) for v in env),'LITERAL_JOB_SECRET_REFUSED'
+ saved={'template':job['template'],'labels':job['labels']}
+ p=ROOT/'response-bc6-job-recovery.json'
+ if p.exists():assert json.loads(p.read_text())==saved,'RECOVERY_EXPORT_DRIFT'
+ else:p.write_text(json.dumps(saved,indent=2)+'\n')
+ record('PREFLIGHT_MATCHED_BC6_NO_ACTIVE_JOB',queue=queue['state'])
+elif MODE=='pause':
+ fenced();live(service,OLD);job_config(job,OLD_IMAGE,OLD_SHA);no_executions()
+ if queue['state']=='RUNNING':task(QUEUE+':pause','POST')
+ assert task(QUEUE)['state']=='PAUSED','QUEUE_PAUSE_FAILED'
+ record('QUEUE_PAUSED_AFTER_DATABASE_FENCE_AND_DRAIN')
+elif MODE=='serving':
+ candidate=json.loads((ROOT/'response-candidate-private-ready.json').read_text())
+ assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']=='xroga-api-response-fded88-check-1101','GUARDED_CANDIDATE_PROOF_REQUIRED'
+ fenced();live(service,OLD);assert queue['state']=='PAUSED';no_executions()
+ try:v=api(V1+'/revisions/'+NEW)
+ except urllib.error.HTTPError as e:
+  if e.code!=404:raise
+  v=None
+ if not v:
+  base=api(V1+'/revisions/'+OLD);current=api(V1+'/services/xroga-api')
+  template={'metadata':{'name':NEW,'labels':copy.deepcopy(base['metadata'].get('labels',{})),
+   'annotations':copy.deepcopy(base['metadata'].get('annotations',{}))},'spec':copy.deepcopy(base['spec'])}
+  for k in ['run.googleapis.com/operation-id','run.googleapis.com/urls','run.googleapis.com/ingress-status','serving.knative.dev/creator','serving.knative.dev/lastModifier','client.knative.dev/user-image']:
+   template['metadata']['annotations'].pop(k,None)
+  template['metadata']['labels']['xroga-source-sha']=NEW_SHA
+  # Preserve serving capacity and CPU billing configuration exactly. No minimum-instance increase.
+  c=template['spec']['containers'][0];c['image']=NEW_IMAGE
+  c['env']=[e for e in c['env'] if e['name'] not in ['XROGA_RELEASE_CANDIDATE','XROGA_GOOGLE_WORKER_IMAGE','XROGA_RELEASE_SHA','XROGA_DEPLOYMENT_ENVIRONMENT']]+[{'name':'XROGA_GOOGLE_WORKER_IMAGE','value':NEW_IMAGE},{'name':'XROGA_RELEASE_SHA','value':NEW_SHA},{'name':'XROGA_DEPLOYMENT_ENVIRONMENT','value':'production'}]
+  meta={k:copy.deepcopy(current['metadata'][k]) for k in ['name','namespace','resourceVersion','labels','annotations'] if k in current['metadata']}
+  for k in ['run.googleapis.com/urls','run.googleapis.com/ingress-status','run.googleapis.com/operation-id','serving.knative.dev/creator','serving.knative.dev/lastModifier']:meta.get('annotations',{}).pop(k,None)
+  spec=copy.deepcopy(current['spec']);spec['template']=template
+  spec['traffic']=[x for x in spec['traffic'] if x.get('tag')!=TAG]+[{'revisionName':NEW,'tag':TAG,'percent':0}]
+  record('SUBMITTING_NAMED_SERVING_REVISION_ADMISSION_CLOSED',revision=NEW)
+  api(V1+'/services/xroga-api','PUT',{'apiVersion':'serving.knative.dev/v1','kind':'Service','metadata':meta,'spec':spec})
+ end=time.monotonic()+240
+ while True:
+  v=api(V1+'/revisions/'+NEW)
+  if any(x.get('type')=='Ready' and x.get('status')=='True' for x in v.get('status',{}).get('conditions',[])):break
+  assert time.monotonic()<end,'NAMED_SERVING_READINESS_PENDING'
+  time.sleep(4)
+ serving_config(v);live(run(SERVICE),OLD)
+ record('NAMED_SERVING_READY_ZERO_DEFAULT_TRAFFIC',revision=NEW)
+elif MODE in ['job','recover-job']:
+ if MODE=='job':
+  ready=json.loads((ROOT/'response-serving-private-ready.json').read_text())
+  assert ready['state']=='PASS_PRIVATE_READINESS' and ready['revision']==NEW,'ZERO_TRAFFIC_SERVING_PROOF_REQUIRED'
+ fenced();assert queue['state']=='PAUSED';no_executions()
+ target=NEW_IMAGE if MODE=='job' else OLD_IMAGE
+ sha=NEW_SHA if MODE=='job' else OLD_SHA
+ if job['template']['template']['containers'][0]['image']!=target:
+  if MODE=='job':
+   job_config(job,OLD_IMAGE,OLD_SHA)
+   t=copy.deepcopy(job['template']);labels=copy.deepcopy(job['labels']);labels['xroga-source-sha']=NEW_SHA
+   t.setdefault('labels',{})['xroga-source-sha']=NEW_SHA
+   c=t['template']['containers'][0];c['image']=NEW_IMAGE
+   for e in c['env']:
+    if e['name']=='XROGA_GOOGLE_WORKER_IMAGE':e['value']=NEW_IMAGE
+    if e['name']=='XROGA_RELEASE_SHA':e['value']=NEW_SHA
+   c['env']=[e for e in c['env'] if e['name']!='XROGA_DEPLOYMENT_ENVIRONMENT']+[{'name':'XROGA_DEPLOYMENT_ENVIRONMENT','value':'production'}]
+  else:
+   saved=json.loads((ROOT/'response-bc6-job-recovery.json').read_text());t=saved['template'];labels=saved['labels']
+  record('SUBMITTING_JOB_IMAGE',image=target)
+  body={'name':JOB,'etag':job['etag'],'template':t,'labels':labels,'annotations':job.get('annotations',{})}
+  # Jobs PATCH has no updateMask parameter. Validate the supported full Job
+  # request first, then persist it with the same optimistic concurrency token.
+  validation=run(JOB+'?validateOnly=true','PATCH',body)
+  # A successful validation returns an ephemeral operation which is not
+  # registered for subsequent GET polling. Only real mutations are polled.
+  assert not validation.get('error'),'JOB_VALIDATION_FAILED'
+  record('JOB_VALIDATION_ONLY_ACCEPTED')
+  wait(run(JOB,'PATCH',body))
+ job_config(run(JOB),target,sha);record('MATCHED_JOB_CONFIGURATION_VERIFIED',source=sha)
+elif MODE in ['promote','recover-traffic']:
+ fenced();assert queue['state']=='PAUSED';no_executions()
+ target=NEW if MODE=='promote' else OLD
+ job_config(job,NEW_IMAGE if MODE=='promote' else OLD_IMAGE,NEW_SHA if MODE=='promote' else OLD_SHA)
+ if MODE=='promote':serving_config(api(V1+'/revisions/'+NEW))
+ traffic=[{'type':'TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION','revision':target,'percent':100}]
+ traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'response-fded88-check']]
+ if service['traffic']!=traffic:
+  record('SUBMITTING_DEFAULT_TRAFFIC_WITH_ADMISSION_CLOSED',revision=target)
+  wait(run(SERVICE+'?updateMask=traffic','PATCH',{'name':SERVICE,'etag':service['etag'],'traffic':traffic}))
+ after=run(SERVICE);live(after,target)
+ assert all(v in after['traffic'] for v in service['traffic'] if v.get('tag','').startswith('voice-')),'VOICE_TRAFFIC_CHANGED'
+ record('PAIRED_DEFAULT_TRAFFIC_VERIFIED_ADMISSION_STILL_CLOSED',revision=target)
+elif MODE in ['resume','recover-resume']:
+ target_sha=OLD_SHA if MODE=='recover-resume' else NEW_SHA
+ live(service,OLD if MODE=='recover-resume' else NEW);job_config(job,OLD_IMAGE if MODE=='recover-resume' else NEW_IMAGE,target_sha)
+ proof=json.loads((ROOT/'response-gate-open-live.json').read_text());assert proof['source']==target_sha and 0<=time.time()-proof['checkedEpoch']<300,'LIVE_OPEN_GATE_PROOF_REQUIRED'
+ if queue['state']=='PAUSED':task(QUEUE+':resume','POST')
+ assert task(QUEUE)['state']=='RUNNING','QUEUE_RESUME_FAILED'
+ record('MATCHED_SOURCE_QUEUE_RUNNING',source=target_sha)
+else:
+ record('READ_ONLY_STATUS',traffic=service['traffic'],jobImage=job['template']['template']['containers'][0]['image'],queue=queue['state'])
