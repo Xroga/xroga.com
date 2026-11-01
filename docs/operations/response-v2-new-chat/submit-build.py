@@ -2,14 +2,14 @@
 import datetime,json,os,pathlib,subprocess,tarfile,time
 ROOT=pathlib.Path(__file__).resolve().parent
 APP=pathlib.Path(r'C:/Users/hp/Documents/Codex/2026-10-23/g/work/xroga-response-backend-compatible')
-SHA='fded88f45384d0514ae9a6c69d87a726b61d9669'
+SHA='1d487ce977699ba0f049d1227ab8c0b4920d8c1f'
 P='project-c40d4821-e647-4fa2-92d'
 IMAGE=f'us-east4-docker.pkg.dev/{P}/cloud-run-source-deploy/xroga-api-release:response-fded88-1101'
 PS=r'C:/Users/hp/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
 GC=r'C:/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.ps1'
 J=ROOT/'build-journal.json'
 a=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
-assert a['approved'] and a['packageCommit']=='84264961107e6642ffe21d61380b479f7f117da9' and a['sourceSha']==SHA
+assert a['approved'] and a['packageCommit']=='84264961107e6642ffe21d61380b479f7f117da9' and a['sourceSha']==SHA and a.get('metadataPinAmendmentApproved') is True
 assert os.environ.get('XROGA_CLEANUP_JOB_ID'),'OWNED_LOCAL_RUNNER_REQUIRED'
 assert not J.exists(),'BUILD_ALREADY_JOURNALED_INSPECT_BEFORE_RETRY'
 from release_gates import require_release_ci

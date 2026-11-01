@@ -4,7 +4,7 @@ Use resourceVersion for concurrent deployment protection and preserve all voice 
 """
 import copy,datetime,json,pathlib,subprocess,time,urllib.error,urllib.request
 P='project-c40d4821-e647-4fa2-92d'
-SHA='fded88f45384d0514ae9a6c69d87a726b61d9669'
+SHA='1d487ce977699ba0f049d1227ab8c0b4920d8c1f'
 DIGEST=json.loads((pathlib.Path(__file__).resolve().parent/'image.json').read_text())['digest']
 IMAGE='us-east4-docker.pkg.dev/'+P+'/cloud-run-source-deploy/xroga-api-release@'+DIGEST
 NAME='xroga-api-response-fded88-check-1101'
@@ -42,7 +42,7 @@ def verify(revision):
     assert s['serviceAccountName']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','RUNTIME_IDENTITY_CHANGED'
 
 approval=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
-assert approval['approved'] and approval['sourceSha']==SHA and approval['packageCommit']=='84264961107e6642ffe21d61380b479f7f117da9','EXACT_FOCUSED_APPROVAL_REQUIRED'
+assert approval.get('metadataPinAmendmentApproved') is True and approval['approved'] and approval['sourceSha']==SHA and approval['packageCommit']=='84264961107e6642ffe21d61380b479f7f117da9','EXACT_FOCUSED_APPROVAL_REQUIRED'
 from release_gates import require_release_ci
 require_release_ci()
 image=json.loads(cli('artifacts','docker','images','describe',IMAGE,'--format=json'))

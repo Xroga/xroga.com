@@ -6,7 +6,7 @@ terminal. Sensitive service manifests stay in RAM. Preserve unrelated voice tags
 import copy,datetime,json,pathlib,subprocess,sys,time,urllib.error,urllib.request
 P='project-c40d4821-e647-4fa2-92d';R='us-east4'
 OLD='xroga-api-response-bc6cbc-serving-1101';NEW='xroga-api-response-fded88-serving-1101';TAG='response-fded88-serving-check'
-OLD_SHA='bc6cbc434a800c8e7aa086afc1edbbee447294f0';NEW_SHA='fded88f45384d0514ae9a6c69d87a726b61d9669'
+OLD_SHA='bc6cbc434a800c8e7aa086afc1edbbee447294f0';NEW_SHA='1d487ce977699ba0f049d1227ab8c0b4920d8c1f'
 REPO='us-east4-docker.pkg.dev/'+P+'/cloud-run-source-deploy/xroga-api-release@'
 OLD_IMAGE=REPO+'sha256:3fb9ce8f8fc9961679559dbb5d764355436d5b5dc0bb6f6ad12969896b3f3969'
 NEW_IMAGE=REPO+json.loads((pathlib.Path(__file__).resolve().parent/'image.json').read_text())['digest']
@@ -73,7 +73,7 @@ def serving_config(v):
  assert s['serviceAccountName']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','SERVING_IDENTITY_DRIFT'
 
 approval=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
-assert approval['approved'] is True and approval['packageCommit']=='84264961107e6642ffe21d61380b479f7f117da9' and approval['sourceSha']==NEW_SHA,'EXACT_OWNER_APPROVAL_REQUIRED'
+assert approval.get('metadataPinAmendmentApproved') is True and approval['approved'] is True and approval['packageCommit']=='84264961107e6642ffe21d61380b479f7f117da9' and approval['sourceSha']==NEW_SHA,'EXACT_OWNER_APPROVAL_REQUIRED'
 if MODE in ['pause','serving','job','promote','resume']:
  from release_gates import require_release_ci
  require_release_ci()
