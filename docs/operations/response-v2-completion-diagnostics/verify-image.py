@@ -1,7 +1,7 @@
 """Read immutable build/registry metadata; never persist credentials or image environment."""
 import datetime,hashlib,json,pathlib,subprocess,urllib.request
 ROOT=pathlib.Path(__file__).resolve().parent
-P='project-c40d4821-e647-4fa2-92d';SHA='2eaf5dc5b898ad6ee99301ebfac007d0ee22f5d6'
+P='project-c40d4821-e647-4fa2-92d';SHA='5953c15b2f1bab62dacd4c4c27180b3badc5f6c9'
 PS=r'C:/Users/hp/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
 GC=r'C:/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.ps1'
 def cli(*args):

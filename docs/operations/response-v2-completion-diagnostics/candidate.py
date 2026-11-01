@@ -4,11 +4,11 @@ Use resourceVersion for concurrent deployment protection and preserve all voice 
 """
 import copy,datetime,json,pathlib,subprocess,time,urllib.error,urllib.request
 P='project-c40d4821-e647-4fa2-92d'
-SHA='2eaf5dc5b898ad6ee99301ebfac007d0ee22f5d6'
+SHA='5953c15b2f1bab62dacd4c4c27180b3badc5f6c9'
 DIGEST=json.loads((pathlib.Path(__file__).resolve().parent/'image.json').read_text())['digest']
 IMAGE='us-east4-docker.pkg.dev/'+P+'/cloud-run-source-deploy/xroga-api-release@'+DIGEST
-NAME='xroga-api-response-2eaf5d-check-1102'
-TAG='response-2eaf5d-check'
+NAME='xroga-api-response-5953c1-check-1102'
+TAG='response-5953c1-check'
 OLD='xroga-api-response-fd3b66-serving-1101'
 RUN='https://us-east4-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/'+P
 ROOT=pathlib.Path(__file__).resolve().parent
@@ -42,7 +42,7 @@ def verify(revision):
     assert s['serviceAccountName']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','RUNTIME_IDENTITY_CHANGED'
 
 approval=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
-assert approval.get('completionDiagnosticsApproved') is True and approval['approved'] and approval['sourceSha']==SHA and approval['packageId']=='response-v2-completion-diagnostics-2eaf5dc5','EXACT_FOCUSED_APPROVAL_REQUIRED'
+assert approval.get('completionDiagnosticsApproved') is True and approval['approved'] and approval['sourceSha']==SHA and approval['packageId']=='response-v2-completion-diagnostics-5953c15b','EXACT_FOCUSED_APPROVAL_REQUIRED'
 from release_gates import require_release_ci
 require_release_ci()
 image=json.loads(cli('artifacts','docker','images','describe',IMAGE,'--format=json'))

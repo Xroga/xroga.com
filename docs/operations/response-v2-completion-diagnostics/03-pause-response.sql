@@ -4,7 +4,7 @@ SET LOCAL lock_timeout = '5s';
 SET LOCAL statement_timeout = '30s';
 SELECT pg_advisory_xact_lock(hashtextextended('xroga-canonical-admission',0));
 DO $guard$ BEGIN
-IF (SELECT count(*) FROM public.xroga_release_fence WHERE singleton AND allowed_source='2eaf5dc5b898ad6ee99301ebfac007d0ee22f5d6') IS DISTINCT FROM 1
+IF (SELECT count(*) FROM public.xroga_release_fence WHERE singleton AND allowed_source='5953c15b2f1bab62dacd4c4c27180b3badc5f6c9') IS DISTINCT FROM 1
 THEN RAISE EXCEPTION 'CANONICAL_FENCE_SOURCE_DRIFT'; END IF;
 END; $guard$;
 UPDATE public.xroga_release_fence SET allowed_source=NULL WHERE singleton;

@@ -4,14 +4,14 @@ ROOT=pathlib.Path(__file__).resolve().parent
 kind=sys.argv[1];assert kind in ['candidate','serving']
 sys.argv=[str(ROOT/'cutover.py'),'status']
 h=runpy.run_path(str(ROOT/'cutover.py'));api=h['api'];run=h['run'];task=h['task'];P=h['P'];QUEUE=h['QUEUE']
-revision='xroga-api-response-2eaf5d-check-1102' if kind=='candidate' else h['NEW']
-tag='response-2eaf5d-check' if kind=='candidate' else h['TAG']
+revision='xroga-api-response-5953c1-check-1102' if kind=='candidate' else h['NEW']
+tag='response-5953c1-check' if kind=='candidate' else h['TAG']
 service=api(h['V1']+'/services/xroga-api')
 uri=next(v['url'] for v in service['status']['traffic'] if v.get('tag')==tag)
 audience=service['status']['url']
 receipt=ROOT/('response-'+kind+'-private-ready.json')
 assert not receipt.exists(),'READINESS_TASK_ALREADY_RECORDED_INSPECT_NO_DUPLICATE'
-name=QUEUE+'/tasks/response-ready-2eaf5d-'+kind+'-'+uuid.uuid4().hex[:10]
+name=QUEUE+'/tasks/response-ready-5953c1-'+kind+'-'+uuid.uuid4().hex[:10]
 start=datetime.datetime.now(datetime.timezone.utc).isoformat()
 state={'state':'SUBMITTING_INSPECT_BEFORE_RETRY','revision':revision,'task':name,'startedAtUtc':start,'urlPath':'/ready','defaultTrafficChanged':False}
 def save():receipt.write_text(json.dumps(state,indent=2)+'\n')

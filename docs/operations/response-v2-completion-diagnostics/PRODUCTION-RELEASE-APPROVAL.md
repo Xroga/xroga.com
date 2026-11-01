@@ -2,8 +2,8 @@
 
 Prepared November 2, 2026. NOT APPROVED, BUILT OR DEPLOYED.
 
-Package ID: response-v2-completion-diagnostics-2eaf5dc5.
-Backend source: 2eaf5dc5b898ad6ee99301ebfac007d0ee22f5d6.
+Package ID: response-v2-completion-diagnostics-5953c15b.
+Backend source: 5953c15b2f1bab62dacd4c4c27180b3badc5f6c9.
 Frontend correction source is independently 209948736672abe8e03926e936f264fb50afb3e9 on draft PR #909. This package does not promote that frontend.
 
 The failed SaaS request's upstream cause remains unproven because the old adapter discarded completion metadata before throwing. This correction retains bounded content-free request ID, observed finish reason, actual supplied usage and channel counts on empty completions and stream interruption. It maps empty completion to a safe provider error with retry disabled. It does not change routing, prompts, model choice, quotas, admission, accounting settlement or successful answer publication. Local admitted SDK negative tests and type checking passed. Mandatory exact-source CI must pass before any cloud mutation. Do not present this as restored generation or finished V2 acceptance.
@@ -19,3 +19,5 @@ Execution after actual approval: record this package/source and completionDiagno
 No model request is authorized by this package. The existing unreconciled answer reservation remains held. One justified new diagnostic generation may proceed only within a separately established existing model allowance and canonical reservation controls. Stop the paid path if the same empty result recurs. Requested new-chat SaaS/workshop/research/code acceptance remains incomplete until independently observed in Workspace. A passing build is not product acceptance.
 
 The backend also includes the previously tested opt-in literal Share export correction, required by the V2 frontend. It preserves identifiers and formulas without a second Markdown cleanup pass. Legacy default, authentication, owner checks, visibility, revocation, escaped rendering and size limits remain. Local Share regressions passed. No share data migration.
+
+Exact-source CI also serializes the two disposable ledger test files so migration DDL in one before hook cannot deadlock another file executing queries. The six-worker concurrency tests, process-kill checks and assertions are unchanged. This changes only test scheduling, not production runtime or SQL.
