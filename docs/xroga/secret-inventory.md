@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `959c1778ecd823a505cd736dfe79a527616a6755`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -120,6 +120,7 @@ Values are forbidden. Source SHA: `959c1778ecd823a505cd736dfe79a527616a6755`. Na
 | NEON_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | NETLIFY_ACCESS_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-netlify-com, endpoint-api-vercel-com |
 | NEXT_PUBLIC_API_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1, endpoint-localhost |
+| NEXT_PUBLIC_AUTH_RECOVERY_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-analytics-ahrefs-com |
 | NEXT_PUBLIC_PROMO_FULL_ACCESS_END | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_SITE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-localhost, endpoint-twitter-com, endpoint-wa-me, endpoint-www-facebook-com, endpoint-www-linkedin-com, endpoint-www-reddit-com |
