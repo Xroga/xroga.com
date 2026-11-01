@@ -117,9 +117,9 @@ test('the shell sends unfinished accounts to onboarding without looping', () => 
 });
 
 test('signup lands new accounts in setup, without ignoring an explicit destination', () => {
-  assert.match(SIGNUP, /: '\/onboarding';/, 'a new signup should default to setup');
+  assert.match(SIGNUP, /safeAuthNextPath\(requestedNext, '\/onboarding'\)/, 'a new signup should default to setup');
   // An explicit `next` still wins — a shared link should survive signing up.
-  assert.match(SIGNUP, /requestedNext\?\.startsWith\('\/'\)/);
+  assert.match(SIGNUP, /searchParams\.get\(\s*'next'/);
 });
 
 test('connection state comes from the providers, never from a timer', () => {

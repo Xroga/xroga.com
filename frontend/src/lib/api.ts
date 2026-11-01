@@ -5457,6 +5457,7 @@ concurrency:
 
 export interface Profile {
   id?: string;
+  contact_phone?: string | null;
 
   role?:
     | 'member'

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "7c771736ef676141cdb812bcb93cef9e42d7c3dc2d9da4416c87d7f4fcac3b30",
+  "sourceTreeDigest": "d04f8dc327dfb19f603874760595ecc739a436904cc0f58dfc25036dde86f4aa",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4728,10 +4728,10 @@
       ]
     },
     {
-      "id": "68df836263d1eff0010b",
+      "id": "195e486260bf940789dd",
       "file": "frontend/src/lib/supabase/authProviders.ts",
       "line": 5,
-      "entryPoint": "requireGitHubProvider",
+      "entryPoint": "requireOAuthProvider",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "f8d5cdd15b875114d405b5a83c70a3af178717ea835e8746c7eb91964f64bef8",
@@ -4909,7 +4909,7 @@
         "3b970c32a8efb294a7fd",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
-        "68df836263d1eff0010b",
+        "195e486260bf940789dd",
         "eb39e5759b146603faf0",
         "e1ddea7115498d92341b"
       ]

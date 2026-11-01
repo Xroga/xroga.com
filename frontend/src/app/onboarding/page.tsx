@@ -25,6 +25,9 @@ export default async function OnboardingPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
+  const phonePrompt = await supabase.rpc('needs_current_contact_phone_prompt');
+  if (!phonePrompt.error && phonePrompt.data) redirect('/auth/contact?next=%2Fonboarding');
+
   const { data: profile, error } = await supabase.rpc('read_current_profile_setup');
   if (error || (profile && profile.id !== user.id)) throw new Error('Profile setup unavailable');
 
