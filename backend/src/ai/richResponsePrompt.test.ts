@@ -35,6 +35,24 @@ test('every compact rich-output example is strict JSON', () => {
   for (const example of examples) assert.doesNotThrow(() => JSON.parse(example));
 });
 
+test('conceptual architecture does not require a live data tool and demonstrates connected nodes', () => {
+  assert.match(CHAT_SYSTEM, /Conceptual diagrams.*do not require live retrieval/);
+  assert.doesNotMatch(CHAT_SYSTEM, /Use a visual only when actual sourced or tool data supports it/);
+  const graph = CHAT_SYSTEM.split('\n').filter(line => line.startsWith('{')).map(line => JSON.parse(line)).find(block => block.type === 'graph');
+  assert.ok(graph.nodes.length >= 2);
+  assert.ok(graph.edges.length >= 1);
+  for (const edge of graph.edges) {
+    assert.ok(graph.nodes.some((node: {id: string}) => node.id === edge.source));
+    assert.ok(graph.nodes.some((node: {id: string}) => node.id === edge.target));
+  }
+});
+
+test('security guidance excludes user-editable authorization and distinguishes webhook deduplication', () => {
+  assert.match(CHAT_SYSTEM, /Never use.*raw_user_meta_data.*authorization/);
+  assert.match(CHAT_SYSTEM, /current server-owned membership/);
+  assert.match(CHAT_SYSTEM, /webhook.*event ID/);
+});
+
 test('rich output is composed in the original answer with truthful boundaries', () => {
   assert.match(CHAT_SYSTEM, /at the point in the explanation where it belongs/);
   assert.doesNotMatch(CHAT_SYSTEM, /Add one data-only fenced block labelled xroga-ui after the explanatory prose/);
