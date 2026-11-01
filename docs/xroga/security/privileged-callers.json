@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "0e7a167d10269f9cabb928b3523b30911a1d7df32dc73d790dd81e01adeae631",
+  "reviewRegistrySha256": "9e2e6dcef4da379665f2b200f677a6d60867d4ab037e7f71a37a0153bc30a950",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -5632,7 +5632,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a4d209b595a78e8c6293"
+        "id": "81874eb62637b3391f51"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9060,7 +9060,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a4d209b595a78e8c6293"
+        "id": "81874eb62637b3391f51"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -28811,18 +28811,18 @@
       }
     },
     {
-      "id": "a4d209b595a78e8c6293",
+      "id": "81874eb62637b3391f51",
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "line": 16,
+      "line": 32,
       "enclosing": "CalculatorV2",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "eac91769db4f84414c48f952d415ba4987ad7a2c2e24f54869233a1b1bc45946",
+      "sourceSha256": "57667b5577b0bf1f0601921a4c78a7ee0dbe96f4ef917e778b2ce40fee3a0c4c",
       "semanticReview": {
         "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
-        "reason": "Reviewed exact receiver and surrounding data flow. This is local chart data derivation, not a database or bucket call. No upstream authorization or persistence boundary is certified.",
+        "reason": "Re-reviewed after tab-session persistence wiring. The native Array.from expression still generates exactly 21 deterministic sensitivity samples. Session persistence is separately scoped to validated numeric inputs and the authorized account/message. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
         "evidence": [
           {
             "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
