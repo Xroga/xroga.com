@@ -7,7 +7,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Issue 898 and founder comment 6541922149. Preserve passing PR899, reuse live Drive, and repair the demonstrated delayed Builder cancellation race. No browser-harness expansion, cloud window, production mutation or model call.",
+  "scope": "Continue Batch1.5/2 activation from merged PR902. Correct demonstrated Builder finalization retry loss after a database failure. No production mutation, model call or new host in this source correction.",
   "changedFiles": [
     "backend/src/workers/browserCoordinator.ts",
     "backend/src/workers/browserCoordinatorHost.test.ts",
@@ -37,7 +37,11 @@
     "backend/src/builder/service.ts",
     "backend/src/builder/store.ts",
     "backend/src/builder/cancel.test.ts",
-    "docs/operations/batch15-batch2-activation/BUILDER-CANCELLATION-RECEIPT.json"
+    "docs/operations/batch15-batch2-activation/BUILDER-CANCELLATION-RECEIPT.json",
+    "backend/src/builder/swarmBridge.ts",
+    "backend/src/builder/finalizationRecovery.test.ts",
+    "docs/operations/batch15-batch2-activation/FINALIZATION-RECOVERY-RECEIPT.json",
+    ".github/workflows/xroga-tenant-security.yml"
   ],
   "decisions": {
     "keep": [
@@ -100,6 +104,12 @@
       "scope": "19 focused cancellation, verification and delivery tests passed. Delayed response reproduced red before the correction. No live provider, model, database or production mutation.",
       "negative": true,
       "reference": "backend/src/builder/cancel.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/builder/finalizationRecovery.test.ts backend/src/builder/cancel.test.ts backend/src/workers/builderDurableWiring.test.ts",
+      "scope": "15 local tests passed. Three new regressions failed before correction. Synthetic storage responses, no live DB or provider. Does not prove process-loss recovery.",
+      "negative": true,
+      "reference": "backend/src/builder/finalizationRecovery.test.ts"
     }
   ],
   "architecture": {
@@ -108,12 +118,12 @@
     "rfc": null
   },
   "rollout": "Preserve live Batch1 and microphone. Reuse verified live Drive independently of the held Browser Worker. Review and integrate the small Builder correction, then obtain exact-source release gates and the specific authorizations required for bounded real-model production acceptance.",
-  "rollback": "Keep healthy source85 API/Job and current voice/frontend. Stop unaccepted host activation. A future release must close the source fence, drain work, pair recovery API/Job, verify readiness and reopen only the matching source.",
+  "rollback": "Preserve live ac8168 API/Job and voice routing. This additive source correction has no schema changes. Recovery must use the existing paired source-fence release procedure.",
   "knownGaps": [
-    "Browser package held by founder comment 6541922149, no test window or resources started. Retained production browser host remains unapproved.",
-    "PR899 source 3d568686 passed all seven required checks. The dependent Builder cancellation correction still requires final integration CI.",
-    "Provider zero-usage accounting and terminal crash recovery remain unaccepted. Never fabricate usage or release uncertain holds.",
-    "Full Batch1.5/2 production acceptance and any SQL/frontend promotion retain their explicit owner gates."
+    "Retained isolated Browser Worker host is not approved or provisioned.",
+    "Finalization correction requires exact-source CI and controlled release.",
+    "One real Builder generation/save test awaits a specifically approved enforceable spending ceiling.",
+    "Full live acceptance remains unproven."
   ],
   "placeholderClaimsRemaining": [
     "No Batch 1.5 or Batch 2 activation PASS is claimed"
@@ -123,10 +133,10 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Browser package held by founder comment 6541922149, no test window or resources started. Retained production browser host remains unapproved.",
-      "PR899 source 3d568686 passed all seven required checks. The dependent Builder cancellation correction still requires final integration CI.",
-      "Provider zero-usage accounting and terminal crash recovery remain unaccepted. Never fabricate usage or release uncertain holds.",
-      "Full Batch1.5/2 production acceptance and any SQL/frontend promotion retain their explicit owner gates."
+      "Retained isolated Browser Worker host is not approved or provisioned.",
+      "Finalization correction requires exact-source CI and controlled release.",
+      "One real Builder generation/save test awaits a specifically approved enforceable spending ceiling.",
+      "Full live acceptance remains unproven."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
