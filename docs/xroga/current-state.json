@@ -58183,6 +58183,7 @@
       "runtimeImports": [
         "frontend/src/components/auth/AuthFlowFrame.tsx",
         "frontend/src/components/auth/AuthModern.tsx",
+        "frontend/src/lib/supabase/authRecovery.ts",
         "frontend/src/lib/supabase/client.ts"
       ],
       "entryPoints": [
@@ -62549,6 +62550,7 @@
         "frontend/src/components/auth/AuthModern.tsx",
         "frontend/src/lib/supabase/authErrors.ts",
         "frontend/src/lib/supabase/authProviders.ts",
+        "frontend/src/lib/supabase/authRecovery.ts",
         "frontend/src/lib/supabase/client.ts",
         "frontend/src/lib/supabase/oauthReturn.ts"
       ],
@@ -107078,6 +107080,41 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:0d162c522da45a208048",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/supabase/authRecovery.ts",
+      "sha256": "827aa7dcba46c87def586936dfda9268893f866dafbf165afe7567da4e3d9c07",
+      "symbols": [
+        "passwordRecoveryEnabled"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/auth/forgot-password/page.tsx",
+        "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/signup/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/auth/forgot-password/page.tsx:8",
+        "frontend/src/components/auth/LoginForm.tsx:32"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:7e9f71de4b89940a205f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/client.ts",
@@ -146224,8 +146261,6 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
-    "Unresolved local import frontend/src/app/auth/forgot-password/page.tsx:8 -> @/lib/supabase/authRecovery",
-    "Unresolved local import frontend/src/components/auth/LoginForm.tsx:32 -> @/lib/supabase/authRecovery",
     "Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"
