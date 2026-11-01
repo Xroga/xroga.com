@@ -2366,7 +2366,8 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+          "sha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
+          "responseV2Review": "Reviewed bc6cbc43..bd1ca28d: only the prompt import and system text passed to the existing runChatPipeline callBuilderStream changed. runBuildPipeline admission, issued actor, ownership, persistence and cancellation code remain unchanged. This source binding retains the historical verification and IN_PROGRESS status; it is not new database or production acceptance.",
           "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
         },
         {

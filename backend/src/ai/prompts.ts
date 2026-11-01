@@ -283,6 +283,7 @@ export function chatPresentationSystem(request: string): string {
   });
   return `${lines.join('\n')}
 Before finishing this same answer, check that every explicitly requested visual is present at its reading position as a valid xroga-ui block. For a conceptual diagram, use the relationships described in your explanation, unique node IDs and edges whose source and target exist. Do not substitute ASCII, an empty heading or a promise. If the information is insufficient, explain that limitation instead of inventing connections.
+Calculators may include optional derivedResults: each has id, label, operation, operands (original input IDs, "$result", or finite constants), optional rounding (floor/ceil/round), unit and precision. Supported operations are sum, difference, product, quotient, average, percentage (first operand times second divided by 100), percentage-change, minimum and maximum. Derived results cannot reference each other. State each result's formula, units and assumptions. Never emit executable formula code.
 All example values are schema illustrations, not facts to reuse. Do not claim execution, source verification or secure implementation without evidence. Keep the substantive explanation complete and do not repeat it in each visual. No separate formatting request is needed.`;
 }
 

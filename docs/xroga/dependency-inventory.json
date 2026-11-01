@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "de616e08ccd30829b6d245431a536ead461c6c81",
+  "source_sha": "bd1ca28dbb53b6220ee120054534d4f61cf1b27e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15957,7 +15957,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4"
+      "sha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -15973,7 +15973,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "2181ba06754633766992d77774b95117fcf349d6167f4cc843d1007ae35ac0bd"
+      "sha256": "5db5d8416f4e0831680ed5edf9ace6436f2c523aeeb7f7c35fe4fac3f8f39c9b"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -30636,6 +30636,20 @@
     {
       "path": "backend/src/ai/projectMemory.ts",
       "line": 321,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/prompts.ts",
+      "line": 273,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/prompts.ts",
+      "line": 275,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

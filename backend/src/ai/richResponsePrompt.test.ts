@@ -15,6 +15,12 @@ test('actual chat contract keeps essential schemas and safety without unrelated 
   assert.match(system, /Do not substitute ASCII/);
   assert.ok(system.length < CHAT_SYSTEM.length);
   assert.match(chatPresentationSystem('Explain this calendar'), /\{"type":"calendar"/);
+  const calculator = chatPresentationSystem('Calculate a risk budget with a calculator and chart');
+  assert.match(calculator, /\{"type":"calculator"/);
+  assert.match(calculator, /\{"type":"chart"/);
+  assert.match(chatPresentationSystem('Explain an architecture with a calculator'), /\{"type":"graph"/);
+  assert.match(calculator, /derivedResults/);
+  assert.match(calculator, /Derived results cannot reference each other/);
 });
 
 test('chat answers may request safe rich output without fabricating visual data', () => {

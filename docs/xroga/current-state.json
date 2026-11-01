@@ -6524,7 +6524,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "752456582a9b529df72de1a530c7b24110bf6b2aea05582c047222f9dc9c903a",
+      "sha256": "5db5d8416f4e0831680ed5edf9ace6436f2c523aeeb7f7c35fe4fac3f8f39c9b",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
