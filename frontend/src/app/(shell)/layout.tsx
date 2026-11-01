@@ -36,6 +36,11 @@ export default async function ShellLayout({
   if (setup.error || (setup.data && setup.data.id !== user?.id)) throw new Error('Profile setup unavailable');
   const profile = setup.data;
 
+  if (user) {
+    const phonePrompt = await supabase.rpc('needs_current_contact_phone_prompt');
+    if (!phonePrompt.error && phonePrompt.data) redirect('/auth/contact?next=%2Fdashboard');
+  }
+
   if (user && profile && shouldRouteToOnboarding(normalizeOnboarding(profile.onboarding))) {
     redirect('/onboarding');
   }

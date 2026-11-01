@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "4799670b1f3e7161fc953ad74ad0469ae425fc4f058e87d95e176bb026471a26",
+  "reviewRegistrySha256": "d5296b4c36165cad5d7a0a58a972c79a3aee3d7f58fcf7973f40f6cb2b6c0a08",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 921,
+    "persistenceCandidates": 927,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 122,
-    "reviewedCandidates": 799,
+    "reviewedCandidates": 805,
     "unresolvedSafetyCandidates": 155,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 122,
-    "SCOPED_BOUNDARY": 521,
+    "SCOPED_BOUNDARY": 527,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 205,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 839,
+    "unresolvedCandidateBoundaries": 845,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -1007,12 +1007,36 @@
         "id": "OB-750b8f992eeac4cb"
       },
       {
-        "code": "OPEN_EVIDENCE_GAP",
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-3e5bd946bdcacd12"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
         "id": "OB-3e5bd946bdcacd12"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
+        "id": "OB-3e5bd946bdcacd12"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
         "id": "OB-49626f1bf7036db9"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-49626f1bf7036db9"
+      },
+      {
+        "code": "OPEN_EVIDENCE_GAP",
+        "id": "OB-49626f1bf7036db9"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-16364610c1ccefe6"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-16364610c1ccefe6"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -5648,6 +5672,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "c157e5ff3bd5cae53adf"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "69f8238a08b53a415c89"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "16c2383298e67ee3f47a"
       },
       {
@@ -5660,7 +5692,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "4a9e67a75ebb46b94f22"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "aa4c728556c80152b423"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "8327115ee4aeb61ee9ce"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "0fd74b05d65465065102"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d4c73673998a3db5e517"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7ac0d3fc2c026b9b0919"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9096,7 +9148,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "c157e5ff3bd5cae53adf"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "5740af96dff28fda6f3f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "69f8238a08b53a415c89"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9116,11 +9176,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "4a9e67a75ebb46b94f22"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "aa4c728556c80152b423"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8327115ee4aeb61ee9ce"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "0fd74b05d65465065102"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "40dcc370930a78bd99cd"
+        "id": "d4c73673998a3db5e517"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7ac0d3fc2c026b9b0919"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9189,11 +9265,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 921,
+    "currentCallers": 927,
     "structuredVerified": 82,
-    "structuredUnproven": 839,
+    "structuredUnproven": 845,
     "manualUnresolved": 155,
-    "manualUnsupported": 684,
+    "manualUnsupported": 690,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
@@ -27940,10 +28016,10 @@
       "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084",
+      "sourceSha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597",
       "semanticReview": {
         "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
-        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. 2026-11-02: preserve the already-serving e8feb297 auth frontend. Existing current-subject setup RPC remains unchanged. A separate review covers the optional contact prompt. Existing founder role/AAL2 policy is unchanged.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -27961,6 +28037,35 @@
       }
     },
     {
+      "id": "c157e5ff3bd5cae53adf",
+      "path": "frontend/src/app/(shell)/layout.tsx",
+      "line": 40,
+      "enclosing": "ShellLayout",
+      "kind": "RPC_CANDIDATE",
+      "target": "needs_current_contact_phone_prompt",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597",
+      "semanticReview": {
+        "authority": "Publishable cookie-bound Supabase clients invoke fixed RPC names with no owner argument. SQL uses auth.uid() and fixed public, pg_temp search_path. Reads expose only current-subject boolean prompt state. Writes update only that subject contact value or dismissal. Contact numbers are explicitly unverified and never grant identity, role, MFA or backend authority.",
+        "reason": "Preserve existing production e8feb297 functionality while releasing V2. Inspected both existing migration definitions and complete callers. Invalid phone, anonymous execution and foreign contact reads are denied by the retained actual Supabase frontend-scope fixture, with current-subject save/skip and unchanged foreign profile assertions. This manual scope review does not claim new exact-source CI or live acceptance. No production SQL is applied by copying migration source.",
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261028000100_contact_phone.sql",
+            "marker": "where id = (select auth.uid())"
+          },
+          {
+            "path": "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+            "marker": "where id = (select auth.uid()) and contact_phone is null"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "assert.ok((await anonymousClient.rpc('save_current_contact_phone'"
+          }
+        ]
+      }
+    },
+    {
       "id": "5740af96dff28fda6f3f",
       "path": "frontend/src/app/(workspace)/layout.tsx",
       "line": 23,
@@ -27969,10 +28074,10 @@
       "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
+      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0",
       "semanticReview": {
         "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
-        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. 2026-11-02: preserve the already-serving e8feb297 auth frontend. Existing current-subject setup RPC remains unchanged. A separate review covers the optional contact prompt. Existing founder role/AAL2 policy is unchanged.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -27985,6 +28090,35 @@
           {
             "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
             "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
+          }
+        ]
+      }
+    },
+    {
+      "id": "69f8238a08b53a415c89",
+      "path": "frontend/src/app/(workspace)/layout.tsx",
+      "line": 28,
+      "enclosing": "WorkspaceLayout",
+      "kind": "RPC_CANDIDATE",
+      "target": "needs_current_contact_phone_prompt",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0",
+      "semanticReview": {
+        "authority": "Publishable cookie-bound Supabase clients invoke fixed RPC names with no owner argument. SQL uses auth.uid() and fixed public, pg_temp search_path. Reads expose only current-subject boolean prompt state. Writes update only that subject contact value or dismissal. Contact numbers are explicitly unverified and never grant identity, role, MFA or backend authority.",
+        "reason": "Preserve existing production e8feb297 functionality while releasing V2. Inspected both existing migration definitions and complete callers. Invalid phone, anonymous execution and foreign contact reads are denied by the retained actual Supabase frontend-scope fixture, with current-subject save/skip and unchanged foreign profile assertions. This manual scope review does not claim new exact-source CI or live acceptance. No production SQL is applied by copying migration source.",
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261028000100_contact_phone.sql",
+            "marker": "where id = (select auth.uid())"
+          },
+          {
+            "path": "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+            "marker": "where id = (select auth.uid()) and contact_phone is null"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "assert.ok((await anonymousClient.rpc('save_current_contact_phone'"
           }
         ]
       }
@@ -28090,6 +28224,93 @@
       }
     },
     {
+      "id": "4a9e67a75ebb46b94f22",
+      "path": "frontend/src/app/auth/callback/route.ts",
+      "line": 23,
+      "enclosing": "GET",
+      "kind": "RPC_CANDIDATE",
+      "target": "needs_current_contact_phone_prompt",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "f16ff961b78edad5a3a9c3f61ea9673fba786769d1726c86d61521860b1813af",
+      "semanticReview": {
+        "authority": "Publishable cookie-bound Supabase clients invoke fixed RPC names with no owner argument. SQL uses auth.uid() and fixed public, pg_temp search_path. Reads expose only current-subject boolean prompt state. Writes update only that subject contact value or dismissal. Contact numbers are explicitly unverified and never grant identity, role, MFA or backend authority.",
+        "reason": "Preserve existing production e8feb297 functionality while releasing V2. Inspected both existing migration definitions and complete callers. Invalid phone, anonymous execution and foreign contact reads are denied by the retained actual Supabase frontend-scope fixture, with current-subject save/skip and unchanged foreign profile assertions. This manual scope review does not claim new exact-source CI or live acceptance. No production SQL is applied by copying migration source.",
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261028000100_contact_phone.sql",
+            "marker": "where id = (select auth.uid())"
+          },
+          {
+            "path": "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+            "marker": "where id = (select auth.uid()) and contact_phone is null"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "assert.ok((await anonymousClient.rpc('save_current_contact_phone'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "aa4c728556c80152b423",
+      "path": "frontend/src/app/auth/contact/page.tsx",
+      "line": 36,
+      "enclosing": "save",
+      "kind": "RPC_CANDIDATE",
+      "target": "save_current_contact_phone",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "8c6a019c44fbd6b6596ab52e95742daaa4ff9cce6e53c4759bdfbc4a152c4b54",
+      "semanticReview": {
+        "authority": "Publishable cookie-bound Supabase clients invoke fixed RPC names with no owner argument. SQL uses auth.uid() and fixed public, pg_temp search_path. Reads expose only current-subject boolean prompt state. Writes update only that subject contact value or dismissal. Contact numbers are explicitly unverified and never grant identity, role, MFA or backend authority.",
+        "reason": "Preserve existing production e8feb297 functionality while releasing V2. Inspected both existing migration definitions and complete callers. Invalid phone, anonymous execution and foreign contact reads are denied by the retained actual Supabase frontend-scope fixture, with current-subject save/skip and unchanged foreign profile assertions. This manual scope review does not claim new exact-source CI or live acceptance. No production SQL is applied by copying migration source.",
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261028000100_contact_phone.sql",
+            "marker": "where id = (select auth.uid())"
+          },
+          {
+            "path": "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+            "marker": "where id = (select auth.uid()) and contact_phone is null"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "assert.ok((await anonymousClient.rpc('save_current_contact_phone'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "8327115ee4aeb61ee9ce",
+      "path": "frontend/src/app/auth/contact/page.tsx",
+      "line": 46,
+      "enclosing": "skip",
+      "kind": "RPC_CANDIDATE",
+      "target": "skip_current_contact_phone_prompt",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "8c6a019c44fbd6b6596ab52e95742daaa4ff9cce6e53c4759bdfbc4a152c4b54",
+      "semanticReview": {
+        "authority": "Publishable cookie-bound Supabase clients invoke fixed RPC names with no owner argument. SQL uses auth.uid() and fixed public, pg_temp search_path. Reads expose only current-subject boolean prompt state. Writes update only that subject contact value or dismissal. Contact numbers are explicitly unverified and never grant identity, role, MFA or backend authority.",
+        "reason": "Preserve existing production e8feb297 functionality while releasing V2. Inspected both existing migration definitions and complete callers. Invalid phone, anonymous execution and foreign contact reads are denied by the retained actual Supabase frontend-scope fixture, with current-subject save/skip and unchanged foreign profile assertions. This manual scope review does not claim new exact-source CI or live acceptance. No production SQL is applied by copying migration source.",
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261028000100_contact_phone.sql",
+            "marker": "where id = (select auth.uid())"
+          },
+          {
+            "path": "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+            "marker": "where id = (select auth.uid()) and contact_phone is null"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "assert.ok((await anonymousClient.rpc('save_current_contact_phone'"
+          }
+        ]
+      }
+    },
+    {
       "id": "0fd74b05d65465065102",
       "path": "frontend/src/app/crypto/page.tsx",
       "line": 236,
@@ -28174,18 +28395,47 @@
       }
     },
     {
-      "id": "40dcc370930a78bd99cd",
+      "id": "d4c73673998a3db5e517",
       "path": "frontend/src/app/onboarding/page.tsx",
       "line": 28,
+      "enclosing": "OnboardingPage",
+      "kind": "RPC_CANDIDATE",
+      "target": "needs_current_contact_phone_prompt",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "8960eec0ab2a91d72c131420ea393359a508f0d3cfc9eb54548f97d602378565",
+      "semanticReview": {
+        "authority": "Publishable cookie-bound Supabase clients invoke fixed RPC names with no owner argument. SQL uses auth.uid() and fixed public, pg_temp search_path. Reads expose only current-subject boolean prompt state. Writes update only that subject contact value or dismissal. Contact numbers are explicitly unverified and never grant identity, role, MFA or backend authority.",
+        "reason": "Preserve existing production e8feb297 functionality while releasing V2. Inspected both existing migration definitions and complete callers. Invalid phone, anonymous execution and foreign contact reads are denied by the retained actual Supabase frontend-scope fixture, with current-subject save/skip and unchanged foreign profile assertions. This manual scope review does not claim new exact-source CI or live acceptance. No production SQL is applied by copying migration source.",
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261028000100_contact_phone.sql",
+            "marker": "where id = (select auth.uid())"
+          },
+          {
+            "path": "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+            "marker": "where id = (select auth.uid()) and contact_phone is null"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "assert.ok((await anonymousClient.rpc('save_current_contact_phone'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7ac0d3fc2c026b9b0919",
+      "path": "frontend/src/app/onboarding/page.tsx",
+      "line": 31,
       "enclosing": "OnboardingPage",
       "kind": "RPC_CANDIDATE",
       "target": "read_current_profile_setup",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40",
+      "sourceSha256": "8960eec0ab2a91d72c131420ea393359a508f0d3cfc9eb54548f97d602378565",
       "semanticReview": {
         "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
-        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. 2026-11-02 existing production auth preservation: unchanged current-subject setup/role RPC expressions. Only optional contact prompt and recovery/callback path reachability change. Founder identity, role and AAL2 checks are retained.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",
@@ -29766,10 +30016,10 @@
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "97122c2d487c2960d803b3b6e9d0fccab5b6f41164f6b5dc0bd97ff9017a3d91",
+      "sourceSha256": "4aef03331b8a8de9330ea5bfca84ed2d231dbcf02b811c755474dd85a5a9a185",
       "semanticReview": {
         "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
-        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
+        "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required. 2026-11-02 existing production auth preservation: unchanged current-subject setup/role RPC expressions. Only optional contact prompt and recovery/callback path reachability change. Founder identity, role and AAL2 checks are retained.",
         "evidence": [
           {
             "path": "frontend/src/lib/supabase/server.ts",

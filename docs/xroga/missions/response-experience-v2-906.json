@@ -78,7 +78,40 @@
     "backend/src/ai/openaiCompat.ts",
     "frontend/src/lib/semanticAgentRouting.test.ts",
     "backend/src/ai/completionDiagnostics.ts",
-    "backend/src/ai/completionDiagnostics.test.ts"
+    "backend/src/ai/completionDiagnostics.test.ts",
+    "backend/src/security/frontendScope.local.integration.ts",
+    "frontend/e2e/batch01-founder-local.spec.ts",
+    "frontend/e2e/command3-auth.spec.ts",
+    "frontend/src/app/(shell)/layout.tsx",
+    "frontend/src/app/(workspace)/layout.tsx",
+    "frontend/src/app/auth/callback/route.ts",
+    "frontend/src/app/auth/contact/page.tsx",
+    "frontend/src/app/auth/forgot-password/page.tsx",
+    "frontend/src/app/auth/reset-password/page.tsx",
+    "frontend/src/app/onboarding/page.tsx",
+    "frontend/src/app/privacy/page.tsx",
+    "frontend/src/components/auth/AuthFlowFrame.tsx",
+    "frontend/src/components/auth/AuthGoogleIcon.tsx",
+    "frontend/src/components/auth/AuthModern.tsx",
+    "frontend/src/components/auth/AuthShell.module.css",
+    "frontend/src/components/auth/LoginForm.tsx",
+    "frontend/src/components/auth/SignupForm.tsx",
+    "frontend/src/components/auth/authSignupLayout.test.ts",
+    "frontend/src/lib/contactPhone.test.ts",
+    "frontend/src/lib/contactPhone.ts",
+    "frontend/src/lib/onboarding.test.ts",
+    "frontend/src/lib/publicUrlInventory.ts",
+    "frontend/src/lib/supabase/authErrors.test.ts",
+    "frontend/src/lib/supabase/authErrors.ts",
+    "frontend/src/lib/supabase/authLookupCost.test.ts",
+    "frontend/src/lib/supabase/authProviders.ts",
+    "frontend/src/lib/supabase/authRecovery.ts",
+    "frontend/src/lib/supabase/middleware.ts",
+    "frontend/src/lib/supabase/oauthReturn.test.ts",
+    "frontend/src/lib/supabase/oauthReturn.ts",
+    ".github/workflows/xroga-tenant-security.yml",
+    "supabase/migrations/20261028000100_contact_phone.sql",
+    "supabase/migrations/20261101160136_optional_contact_prompt.sql"
   ],
   "decisions": {
     "keep": [
@@ -93,10 +126,13 @@
     "deprecate": []
   },
   "schemaImpact": {
-    "changed": false,
-    "migrations": [],
-    "rollout": "No schema changes",
-    "rollback": "Restore previous frontend"
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261028000100_contact_phone.sql",
+      "supabase/migrations/20261101160136_optional_contact_prompt.sql"
+    ],
+    "rollout": "Preserve migration source from the already-serving e8feb297 auth release for isolated compatibility tests. This V2 release does not apply these migrations to production.",
+    "rollback": "No production schema change. Restore the compatible frontend deployment without reverting existing contact data or existing auth schema."
   },
   "securityImpact": {
     "auth": {
@@ -161,7 +197,8 @@
     "Production rich-response acceptance for new SaaS, sourced research, calculations and mobile/reopen remains incomplete.",
     "Historical research bodies absent from older releases cannot be reconstructed from receipt digests. Do not repeat the paid search.",
     "Production readiness reports storage_reconcile_not_scheduled. Database, storage connectivity and quota checks passed, but housekeeping is not accepted.",
-    "2026-11-02: legacy empty completion has no retained provider request ID or usage. New content-free diagnostic receipts and vertical mobile graphs are source changes, not live-provider recovery proof. No new model attempt or accounting mutation."
+    "2026-11-02: legacy empty completion has no retained provider request ID or usage. New content-free diagnostic receipts and vertical mobile graphs are source changes, not live-provider recovery proof. No new model attempt or accounting mutation.",
+    "2026-11-02 production frontend e8feb297 is preserved in the V2 candidate. Optional current-subject contact migrations are copied as source only, not applied. Exact-source combined release gates and live response acceptance remain required."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [

@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "b52400f8baec06ca69c642b519bb53fa81d98cdffc8a490f5f821022318efd6f",
+      "currentSha256": "24e5de2d16427b38917348bd3f4ffb444272edf77a445a5c76c75d2f4a7cbcce",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
@@ -22,7 +22,8 @@
       "beforeFreeVoiceCallerSha256": "8dae4b2e5d13206a53e898f63f50a5606ed720288305b0e8ec250e59631c8bfa",
       "freeVoiceCallerContinuation": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
       "beforeGuestRichGuideSha256": "3840396b75b53b16bdde022098e2bbf623e5263d072bf8301e198e2f5f008e06",
-      "guestRichGuideContinuation": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md"
+      "guestRichGuideContinuation": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md",
+      "beforeCompletionSDKBindingSha256": "b52400f8baec06ca69c642b519bb53fa81d98cdffc8a490f5f821022318efd6f"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
