@@ -3,7 +3,7 @@ import { useId, useState, useContext, useEffect, lazy, Suspense, type CSSPropert
 import { RotateCcw } from 'lucide-react';
 import type { ResponseNodeV2 } from './document';
 import type { CitationSource } from '@/lib/xrogaCitations';
-import { calculateV2, formulaV2, type CalculatorNode } from './calculations';
+import { calculateV2, formulaV2, derivedCalculationsV2, type CalculatorNode } from './calculations';
 import { ProseV2 } from './ProseV2';
 import { InteractionScopeV2 } from './interactionContext';
 import { restoreScenarioV2, saveScenarioV2 } from './interactionState';
@@ -43,6 +43,7 @@ export function CalculatorV2({ node }: { node: CalculatorNode }) {
     </fieldset>; })}</div>
     <div className={styles.result}><div><span>{node.resultLabel}</span>{result != null && <p className={styles.formula}>{formulaV2(node, values)}</p>}</div><output aria-live="polite" aria-atomic="true">{result == null ? 'Unavailable' : result.toLocaleString(undefined, { maximumFractionDigits: node.precision })}{result != null && node.unit ? <small> {node.unit}</small> : null}</output></div>
     {result == null && <p role="status">Enter valid values within the stated limits. Division by zero is unavailable.</p>}
+    {derivedCalculationsV2(node, values).map(item => <div className={styles.result} key={item.id}><div><span>{item.label}</span>{item.formula && <p className={styles.formula}>{item.formula}</p>}</div><output aria-live="polite" aria-atomic="true">{item.value === null ? 'Unavailable' : item.value.toLocaleString(undefined, { maximumFractionDigits: item.precision ?? node.precision })}{item.value !== null && item.unit && <small> {item.unit}</small>}</output></div>)}
     {curve && axis && <Suspense fallback={null}><Chart compact showSourceData={false} node={{ id: `${node.id}:sensitivity`, kind: 'chart', shape: 'line', xKey: 'input', series: [{ key: 'result', label: `${node.resultLabel}${node.unit ? ` (${node.unit})` : ''}` }], rows: curve, summary: `Calculated across ${axis.label.toLowerCase()} (${axis.unit ?? 'input'}), keeping the other input fixed.` }} /></Suspense>}
     <p className={styles.calculationNote}>Illustration calculated from your inputs. No account action is performed.</p>
   </section>;

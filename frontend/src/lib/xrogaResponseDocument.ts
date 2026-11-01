@@ -77,6 +77,12 @@ function canonicalRichBlock(value: unknown, documentId: string, index: number): 
     ...('state' in input ? {} : { state: 'ready' }),
   };
   const block = adaptTrustedA2uiBlock(candidate);
+  if (block?.type === 'calculator' && block.derivedResults) {
+    const inputs = new Set(block.inputs.map(input => input.id));
+    if (inputs.has('$result') || new Set(block.derivedResults.map(item => item.id)).size !== block.derivedResults.length ||
+      block.derivedResults.some(item => item.operands.some(value => typeof value === 'string' && value !== '$result' && !inputs.has(value)) ||
+        (['quotient', 'percentage', 'percentage-change'].includes(item.operation) && item.operands.length !== 2))) return null;
+  }
   if (block?.type === 'graph') {
     const ids = new Set(block.nodes.map(node => node.id));
     const edges = new Set(block.edges.map(edge => JSON.stringify([edge.source, edge.target, edge.label ?? ''])));

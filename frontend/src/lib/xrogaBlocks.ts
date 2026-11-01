@@ -151,6 +151,15 @@ const conversionBlock = richBase.extend({
 });
 const progressBlock = richBase.extend({ type: z.literal('progress'), progress: progressItem });
 const progressGroupBlock = richBase.extend({ type: z.literal('progress-group'), items: z.array(progressItem).min(1) });
+export const calculatorDerivedResultSchema = z.object({
+  id: z.string().min(1).max(120), label: z.string().min(1).max(500),
+  operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']),
+  // References name an input or $result. Constants are finite authored values,
+  // never executable expressions or references to another derived result.
+  operands: z.array(z.union([z.string().min(1).max(120), z.number().finite()])).min(1).max(12),
+  rounding: z.enum(['floor', 'ceil', 'round']).optional(),
+  unit: z.string().max(120).optional(), precision: z.number().int().min(0).max(8).optional(),
+});
 const calculatorBlock = richBase.extend({
   type: z.literal('calculator'),
   operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']),
@@ -159,6 +168,7 @@ const calculatorBlock = richBase.extend({
     max: z.number().optional(), step: z.number().positive().optional(), unit: z.string().optional(),
   })).min(1).max(12),
   resultLabel: z.string().min(1), resultUnit: z.string().optional(), precision: z.number().int().min(0).max(8).optional(),
+  derivedResults: z.array(calculatorDerivedResultSchema).max(8).optional(),
 });
 const calculationBlock = richBase.extend({
   type: z.literal('calculation'), formula: z.string().optional(),

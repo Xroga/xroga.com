@@ -1,5 +1,28 @@
 import type { ResponseNodeV2 } from './document';
 export type CalculatorNode = Extract<ResponseNodeV2, { kind: 'calculator' }>;
+export function validDerivedResults(node: CalculatorNode): boolean {
+  const derived = node.derivedResults ?? [];
+  const ids = new Set(node.inputs.map(input => input.id));
+  return !ids.has('$result') && new Set(derived.map(item => item.id)).size === derived.length &&
+    derived.every(item => item.operands.every(value => typeof value === 'number' || value === '$result' || ids.has(value)) &&
+      (!['quotient', 'percentage', 'percentage-change'].includes(item.operation) || item.operands.length === 2));
+}
+
+/** One bounded arithmetic step over original inputs or the primary result.
+ * No expression parser, code evaluation, recursive references or network IO. */
+export function derivedCalculationsV2(node: CalculatorNode, values: Record<string, string>) {
+  const primary = calculateV2(node, values);
+  return (node.derivedResults ?? []).map(item => {
+    const inputs = item.operands.map((operand, index) => ({ id: String(index), label: String(index), value: 0 }));
+    const resolved = Object.fromEntries(item.operands.map((operand, index) => [String(index),
+      typeof operand === 'number' ? String(operand) : operand === '$result' ? String(primary) : values[operand]]));
+    const derivedNode: CalculatorNode = { ...node, inputs, operation: item.operation, derivedResults: undefined };
+    const raw = primary === null || !validDerivedResults(node) ? null : calculateV2(derivedNode, resolved);
+    const value = raw === null ? null : item.rounding === 'floor' ? Math.floor(raw) : item.rounding === 'ceil' ? Math.ceil(raw) : item.rounding === 'round' ? Math.round(raw) : raw;
+    const expression = raw === null ? null : formulaV2(derivedNode, resolved);
+    return { ...item, value, formula: expression && item.rounding ? `${item.rounding}(${expression})` : expression };
+  });
+}
 /** Display the exact supported operation, never a model-authored executable formula. */
 export function formulaV2(node: CalculatorNode, values: Record<string, string>): string | null {
   if (calculateV2(node, values) == null) return null;

@@ -28407,13 +28407,13 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sourceSha256": "157818b7d2bcb011be13bd4f9ce97a3ceb83955a0d56003cea9f559468e64f49",
+      "sourceSha256": "60dfe4ffa745d9405a93f27231c07ddc99c49a0e340d164e1ac0b02a81a9b888",
       "callIds": [
-        "48c38a03916aca026900"
+        "1f74e27f92ebeba3b35a"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
-      "reason": "Re-reviewed after formula display and input-before-result composition. The only scanner candidate remains native Array.from generating exactly 21 deterministic sensitivity samples. The expression and sample calculation are unchanged. Session persistence remains separately scoped to validated numeric inputs and the authorized account/message. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
+      "reason": "Re-reviewed after bounded derived calculator outputs. The only scanner candidate remains native Array.from generating exactly 21 deterministic sensitivity samples. The expression, sample calculation and scoped session storage calls are unchanged. Added outputs use local bounded arithmetic only. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
       "evidence": [
         {
           "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",

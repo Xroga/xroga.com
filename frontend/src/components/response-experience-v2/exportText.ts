@@ -1,5 +1,5 @@
 import { adaptResponseV2, type ResponseInputV2, type ResponseNodeV2 } from './document';
-import { calculateV2, formulaV2 } from './calculations';
+import { calculateV2, formulaV2, derivedCalculationsV2 } from './calculations';
 import { sourceRegistryV2 } from './sourceRegistry';
 
 const scalar = (value: unknown): string => value == null ? '' : String(value);
@@ -30,7 +30,7 @@ function nodeText(node: ResponseNodeV2): string {
     case 'calculator': {
       const values = Object.fromEntries(node.inputs.map(input => [input.id, String(input.value)]));
       const result = calculateV2(node, values);
-      return lines(['Original calculation inputs', ...node.inputs.map(input => `${input.label}: ${input.value}${input.unit ? ' ' + input.unit : ''}${input.min != null ? '; minimum ' + input.min : ''}${input.max != null ? '; maximum ' + input.max : ''}`), formulaV2(node, values) ?? undefined, `${node.resultLabel}: ${result == null ? 'Unavailable for these inputs' : result.toFixed(node.precision)}${node.unit ? ' ' + node.unit : ''}`]);
+      return lines(['Original calculation inputs', ...node.inputs.map(input => `${input.label}: ${input.value}${input.unit ? ' ' + input.unit : ''}${input.min != null ? '; minimum ' + input.min : ''}${input.max != null ? '; maximum ' + input.max : ''}`), formulaV2(node, values) ?? undefined, `${node.resultLabel}: ${result == null ? 'Unavailable for these inputs' : result.toFixed(node.precision)}${node.unit ? ' ' + node.unit : ''}`, ...derivedCalculationsV2(node, values).flatMap(item => [item.formula ?? undefined, `${item.label}: ${item.value === null ? 'Unavailable for these inputs' : item.value.toFixed(item.precision ?? node.precision)}${item.unit ? ' ' + item.unit : ''}`])]);
     }
     case 'metrics': return node.items.map(item => `${item.label}: ${scalar(item.value)}${item.unit ? ' ' + item.unit : ''}`).join('\n');
     case 'tabs': return node.items.map(item => lines([item.label, item.content])).join('\n\n');

@@ -4,7 +4,7 @@ type Store = Pick<Storage, 'getItem' | 'setItem'>;
 const PREFIX = 'xroga:response-v2:scenario:';
 const MAX_AGE = 8 * 60 * 60 * 1000;
 type Entry = { id: string; signature: string; values: Record<string, string>; updated: number };
-const signature = (node: CalculatorNode) => JSON.stringify([node.operation, node.inputs, node.unit, node.precision]);
+const signature = (node: CalculatorNode) => JSON.stringify([node.operation, node.inputs, node.unit, node.precision, node.derivedResults]);
 const validValues = (node: CalculatorNode, value: unknown): value is Record<string, string> => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const values = value as Record<string, string>;

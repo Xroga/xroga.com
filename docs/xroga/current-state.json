@@ -81043,7 +81043,7 @@
       "id": "surface:611cf58543cb117c4017",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sha256": "157818b7d2bcb011be13bd4f9ce97a3ceb83955a0d56003cea9f559468e64f49",
+      "sha256": "60dfe4ffa745d9405a93f27231c07ddc99c49a0e340d164e1ac0b02a81a9b888",
       "symbols": [
         "CalculatorV2",
         "Chart",
@@ -81504,15 +81504,23 @@
       "id": "surface:bc797240d03e041cba52",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/calculations.ts",
-      "sha256": "a2da1f6aaad480712c69cd2c758679cd898c015bf837827dd21a93600bdd1960",
+      "sha256": "48c43c52a20421552856b12c704961d465dcc7cf7499f86b8f5cbe7a122ec0cd",
       "symbols": [
         "CalculatorNode",
         "calculateV2",
+        "derived",
+        "derivedCalculationsV2",
+        "derivedNode",
+        "expression",
         "formulaV2",
+        "ids",
         "inputs",
         "numbers",
+        "primary",
         "raw",
+        "resolved",
         "result",
+        "validDerivedResults",
         "value"
       ],
       "imports": [
@@ -81524,7 +81532,9 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:6",
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts:5",
         "frontend/src/components/response-experience-v2/document.test.ts:4",
+        "frontend/src/components/response-experience-v2/document.ts:5",
         "frontend/src/components/response-experience-v2/exportText.ts:2",
         "frontend/src/components/response-experience-v2/interactionState.ts:1"
       ],
@@ -81537,6 +81547,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/interactionState.test.ts"
       ],
@@ -81684,7 +81695,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "01c3220cba94a671bfe2cc95b2c1c1c36d88b925c8ee541507269eaf527bdead",
+      "sha256": "3ef067dfaf524d2be69353adb6d1bb06a49ac7b64df744785f0e918f49bdd8ac",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -81720,12 +81731,14 @@
         "value"
       ],
       "imports": [
+        "./calculations",
         "@/lib/xrogaBlocks",
         "@/lib/xrogaCitations",
         "@/lib/xrogaRichResults",
         "zod"
       ],
       "runtimeImports": [
+        "frontend/src/components/response-experience-v2/calculations.ts",
         "frontend/src/lib/xrogaBlocks.ts",
         "frontend/src/lib/xrogaRichResults.ts"
       ],
@@ -81742,6 +81755,7 @@
         "frontend/src/components/response-experience-v2/SourceV2.tsx:7",
         "frontend/src/components/response-experience-v2/composition.test.ts:3",
         "frontend/src/components/response-experience-v2/composition.ts:5",
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts:4",
         "frontend/src/components/response-experience-v2/document.test.ts:3",
         "frontend/src/components/response-experience-v2/exportText.ts:1",
         "frontend/src/components/response-experience-v2/review/LocalReview.tsx:4",
@@ -81761,6 +81775,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/components/response-experience-v2/composition.test.ts",
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/graphLayout.test.ts",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
@@ -81776,7 +81791,7 @@
       "id": "surface:a979c2e1f1ae5fb4eaf1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/exportText.ts",
-      "sha256": "1fcda6ea49a6339ba449f4346bb425d9ea34a6ef1d602a2f155035b0e2b2991a",
+      "sha256": "231e78246ce45dde6d57a79059a72a1085c4971573aa04003f18fd2596939806",
       "symbols": [
         "body",
         "document",
@@ -81802,6 +81817,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts:6",
         "frontend/src/components/response-experience-v2/exportText.test.ts:3",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13"
       ],
@@ -81814,6 +81830,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -81914,7 +81931,7 @@
       "id": "surface:ae9d3103b455ab6912c9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/interactionState.ts",
-      "sha256": "754dc30472a8e62d88ef4989ab083226506bcdba4b6bf50ed0fbd5fd4caaff8e",
+      "sha256": "0d4a25227adb2ca81b049ea2664f8a87ecc59f42853d3fe76b29ef7a5f2c0529",
       "symbols": [
         "Entry",
         "MAX_AGE",
@@ -106793,7 +106810,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "1c23fe9911fab4dde99341a79c9adc4f115eccd2fc4e5cde61cd3ec5fd52c349",
+      "sha256": "685fdbdb94902996573d1066215ade86e6e33991012b2a153a1741bb151c30fc",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -106810,6 +106827,7 @@
         "boardBlock",
         "calculationBlock",
         "calculatorBlock",
+        "calculatorDerivedResultSchema",
         "calendarBlock",
         "candidate",
         "cardGridBlock",
@@ -107665,7 +107683,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "24e4596c4f9eb504dd687db5fc64f09010d2cdbe96981562746446ba2b647ec5",
+      "sha256": "77e4e2e357d3c68a052452381d819673c7f84a9a5ac3e468a1ff61241ae156a7",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -107699,6 +107717,7 @@
         "ids",
         "index",
         "input",
+        "inputs",
         "item",
         "key",
         "keyFor",
@@ -107756,6 +107775,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts:3",
         "frontend/src/components/response-experience-v2/document.test.ts:8",
         "frontend/src/components/response-experience-v2/exportText.test.ts:4",
         "frontend/src/context/TerminalChatContext.tsx:98",
@@ -107771,6 +107791,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts",
         "frontend/src/lib/xrogaResponseDocument.test.ts",
@@ -139428,6 +139449,13 @@
       "id": "test-suite:b857dadcc8ab57c3e89e",
       "sourcePath": "frontend/src/components/response-experience-v2/conversation.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0152383cc26e94782e18",
+      "sourcePath": "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

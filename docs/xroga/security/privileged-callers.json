@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c1490fba1a05ca4f49baf7c970d5626fb4c5e3c5029ed251eba6b0c5990c571b",
+  "reviewRegistrySha256": "22013b2bc41e6a2c7b63078afcd16edf71f8a44330f50cbdf5bc534fb69f2c3b",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -5636,7 +5636,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "48c38a03916aca026900"
+        "id": "1f74e27f92ebeba3b35a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9072,7 +9072,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "48c38a03916aca026900"
+        "id": "1f74e27f92ebeba3b35a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -28838,7 +28838,7 @@
       }
     },
     {
-      "id": "48c38a03916aca026900",
+      "id": "1f74e27f92ebeba3b35a",
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
       "line": 32,
       "enclosing": "CalculatorV2",
@@ -28846,10 +28846,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "157818b7d2bcb011be13bd4f9ce97a3ceb83955a0d56003cea9f559468e64f49",
+      "sourceSha256": "60dfe4ffa745d9405a93f27231c07ddc99c49a0e340d164e1ac0b02a81a9b888",
       "semanticReview": {
         "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
-        "reason": "Re-reviewed after formula display and input-before-result composition. The only scanner candidate remains native Array.from generating exactly 21 deterministic sensitivity samples. The expression and sample calculation are unchanged. Session persistence remains separately scoped to validated numeric inputs and the authorized account/message. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
+        "reason": "Re-reviewed after bounded derived calculator outputs. The only scanner candidate remains native Array.from generating exactly 21 deterministic sensitivity samples. The expression, sample calculation and scoped session storage calls are unchanged. Added outputs use local bounded arithmetic only. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
         "evidence": [
           {
             "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",

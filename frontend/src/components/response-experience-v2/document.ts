@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { parseXrogaOutput } from '@/lib/xrogaBlocks';
+import { parseXrogaOutput, calculatorDerivedResultSchema } from '@/lib/xrogaBlocks';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { xrogaRichResultSchema } from '@/lib/xrogaRichResults';
+import { validDerivedResults } from './calculations';
 
 const text = z.string().max(200_000);
 const label = z.string().max(500);
@@ -18,7 +19,7 @@ export const nodeSchema = z.discriminatedUnion('kind', [
   base.extend({ kind: z.literal('code'), text, language: label.optional() }),
   base.extend({ kind: z.literal('table'), columns: z.array(column).min(1).max(40), rows: z.array(row).max(10_000) }),
   base.extend({ kind: z.literal('chart'), shape: z.enum(['line', 'bar', 'area', 'pie', 'scatter']), xKey: label, series: z.array(series).min(1).max(8), rows: z.array(row).max(2_000), summary: text }),
-  base.extend({ kind: z.literal('calculator'), operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']), inputs: z.array(z.object({ id: label, label, value: z.number().finite(), min: z.number().finite().optional(), max: z.number().finite().optional(), step: z.number().positive().optional(), unit: label.optional() })).min(1).max(12), resultLabel: label, unit: label.optional(), precision: z.number().int().min(0).max(8) }),
+  base.extend({ kind: z.literal('calculator'), operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']), inputs: z.array(z.object({ id: label, label, value: z.number().finite(), min: z.number().finite().optional(), max: z.number().finite().optional(), step: z.number().positive().optional(), unit: label.optional() })).min(1).max(12), resultLabel: label, unit: label.optional(), precision: z.number().int().min(0).max(8), derivedResults: z.array(calculatorDerivedResultSchema).max(8).optional() }),
   base.extend({ kind: z.literal('graph'), nodes: z.array(z.object({ id: label, label, detail: text.optional() })).max(100), edges: z.array(z.object({ source: label, target: label, label: label.optional() })).max(200) }),
   base.extend({ kind: z.literal('metrics'), items: z.array(z.object({ id: label, label, value: scalar, unit: label.optional() })).max(30) }),
   base.extend({ kind: z.literal('tabs'), items: z.array(z.object({ id: label, label, content: text })).min(1).max(12) }),
@@ -78,7 +79,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
             case 'chart':
               if (!['line', 'bar', 'area', 'pie', 'scatter'].includes(b.chartType)) return { supported: false, reason: 'chart-shape' };
               nodes.push({ ...common, kind: 'chart', shape: b.chartType, xKey: b.xKey, series: b.series, rows: b.data, summary: b.summary }); break;
-            case 'calculator': nodes.push({ ...common, kind: 'calculator', operation: b.operation, inputs: b.inputs, resultLabel: b.resultLabel, unit: b.resultUnit, precision: b.precision ?? 2 }); break;
+            case 'calculator': nodes.push({ ...common, kind: 'calculator', operation: b.operation, inputs: b.inputs, resultLabel: b.resultLabel, unit: b.resultUnit, precision: b.precision ?? 2, derivedResults: b.derivedResults }); break;
             case 'graph': nodes.push({ ...common, kind: 'graph', nodes: b.nodes, edges: b.edges }); break;
             case 'metric': nodes.push({ ...common, kind: 'metrics', items: [b.metric] }); break;
             case 'metric-group': nodes.push({ ...common, kind: 'metrics', items: b.metrics }); break;
@@ -99,6 +100,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
     const parsed = responseDocumentSchema.safeParse({ version: 2, id: input.id, originalText, streaming, nodes, sources: input.webSources ?? [] });
     if (!parsed.success || new Set(parsed.data.nodes.map(n => n.id)).size !== parsed.data.nodes.length) return { supported: false, reason: 'invalid-document' };
     for (const n of parsed.data.nodes) {
+      if (n.kind === 'calculator' && !validDerivedResults(n)) return { supported: false, reason: 'invalid-derived-calculation' };
       if (n.kind === 'cards' && new Set(n.items.map(item => item.id)).size !== n.items.length) return { supported: false, reason: 'duplicate-cards' };
       if (n.kind === 'tabs' && new Set(n.items.map(v => v.id)).size !== n.items.length) return { supported: false, reason: 'duplicate-tabs' };
       if (n.kind === 'progress' && n.items.some(v => v.value > v.max)) return { supported: false, reason: 'invalid-progress' };
