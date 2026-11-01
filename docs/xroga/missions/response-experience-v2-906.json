@@ -9,6 +9,12 @@
   "risk": "low",
   "scope": "Independent response V2 with complete visible answers and source-backed rich presentation. Founder-authorized controlled authenticated-user rollout. Legacy renderer retained.",
   "changedFiles": [
+    "frontend/src/lib/xrogaBlocks.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
+    "frontend/src/lib/xrogaResponseDocument.test.ts",
+    "frontend/src/lib/xrogaRichResults.test.ts",
+    "frontend/src/components/response-experience-v2/loadPresentation.ts",
+    "frontend/src/components/response-experience-v2/loadPresentation.test.ts",
     "frontend/src/app/(workspace)/workspace/page.tsx",
     "frontend/src/components/terminal/SwarmMessageLog.tsx",
     "frontend/src/components/response-experience-v2/access.ts",

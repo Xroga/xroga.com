@@ -339,6 +339,9 @@ export const xrogaOutputSchema = z.object({
   id: z.string().min(1),
   status: z.enum(['completed', 'partial', 'blocked', 'failed']),
   blocks: z.array(xrogaBlockSchema),
+  // Optional for older persisted messages. Source text is evidence, never executable UI.
+  sourceText: z.string().max(200_000).optional(),
+  composition: z.literal('source-order').optional(),
   artifact: z.object({
     id: z.string().min(1), type: z.string().min(1), title: z.string().min(1), projectId: z.string().optional(),
     conversationId: z.string().optional(), runId: z.string().optional(), version: z.number().int().positive().default(1),

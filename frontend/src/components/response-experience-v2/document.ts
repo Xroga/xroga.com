@@ -52,6 +52,12 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
       } else {
         const output = parseXrogaOutput(input.featureOutput);
         if (!output) return { supported: false, reason: 'legacy-contract' };
+        const ordered = output.composition === 'source-order';
+        if (ordered) {
+          const narrative = output.blocks.flatMap(b => b.type === 'narrative' ? [b.text] : []).join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
+          if (narrative !== input.content.trim()) return { supported: false, reason: 'conflicting-ordered-content' };
+          nodes.length = 0;
+        }
         for (const b of output.blocks) {
           const common = { id: b.id, title: b.title, description: 'description' in b ? b.description : undefined };
           switch (b.type) {
@@ -59,7 +65,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
             case 'image': nodes.push({ ...common, kind: 'images', items: [b.image] }); break;
             case 'gallery': nodes.push({ ...common, kind: 'images', items: b.items }); break;
             case 'source-list': for (const source of b.sources) nodes.push({ id: `${b.id}:${source.id}`, kind: 'citation', label: source.title, url: source.url, excerpt: source.excerpt, description: source.publishedAt }); break;
-            case 'narrative': if (b.text !== input.content) nodes.push({ ...common, kind: 'prose', text: b.text }); break;
+            case 'narrative': if (ordered || b.text !== input.content) nodes.push({ ...common, kind: 'prose', text: b.text }); break;
             case 'document': nodes.push({ ...common, kind: 'prose', text: b.content }); break;
             case 'code': case 'diff': case 'terminal': case 'file': nodes.push({ ...common, kind: 'code', title: b.path ?? b.title, text: b.content, language: b.language ?? b.type }); break;
             case 'notice': case 'status': case 'error': case 'empty-state': nodes.push({ ...common, kind: 'notice', text: b.text, tone: b.tone ?? 'neutral' }); break;

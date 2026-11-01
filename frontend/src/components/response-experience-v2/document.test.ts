@@ -5,6 +5,31 @@ import { calculateV2, type CalculatorNode } from './calculations';
 import { responseV2Access } from './access';
 import { readFileSync } from 'node:fs';
 import { specimensV2 } from './specimens';
+import { enhanceAiResponse } from '@/lib/xrogaResponseDocument';
+
+test('generated prose, table and graph retain their positions across persistence and V2 adaptation', () => {
+  const source = ['## Components', '| Component | Role |', '| --- | --- |', '| Next.js | UI |', '| Supabase | Storage |',
+    '## Architecture', '```xroga-ui', JSON.stringify({ type: 'graph', nodes: [{ id: 'ui', label: 'Next.js' }, { id: 'db', label: 'Supabase' }], edges: [{ source: 'ui', target: 'db' }] }), '```',
+    '## Conclusion', 'Original conclusion.'].join('\n');
+  const enhanced = enhanceAiResponse(source, 'generated-test');
+  const saved = JSON.parse(JSON.stringify({ id: 'generated-test', content: enhanced.content, featureOutput: enhanced.output }));
+  const result = adaptResponseV2(saved);
+  assert.ok(result.supported);
+  assert.deepEqual(result.document.nodes.map(n => n.kind), ['prose', 'table', 'prose', 'graph', 'prose']);
+  assert.equal(saved.featureOutput.sourceText, source);
+  assert.equal(result.document.nodes.filter(n => n.kind === 'prose').map(n => n.text).join('\n\n'), enhanced.content);
+  assert.deepEqual(adaptResponseV2(saved), adaptResponseV2({ ...saved, featureOutput: enhanced.output }));
+});
+
+test('incomplete generated visual is explicit, preserved and never executed', () => {
+  const source = 'Explanation\n```xroga-ui\n{"type":"graph"';
+  const enhanced = enhanceAiResponse(source, 'incomplete');
+  assert.equal(enhanced.output?.sourceText, source);
+  assert.equal(enhanced.output?.status, 'partial');
+  const result = adaptResponseV2({ id: 'incomplete', content: enhanced.content, featureOutput: enhanced.output });
+  assert.ok(result.supported);
+  assert.deepEqual(result.document.nodes.map(n => n.kind), ['prose', 'notice']);
+});
 const output = (blocks: unknown[]) => ({ schemaVersion: 1, id: 'out', status: 'completed', blocks });
 const block = { schemaVersion: 1, id: 'b' };
 const input = (featureOutput?: unknown) => ({ id: 'm', content: '', featureOutput });

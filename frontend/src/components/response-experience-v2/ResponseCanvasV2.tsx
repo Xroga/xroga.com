@@ -7,11 +7,12 @@ import { InlineImageV2, SourceLinkV2, SourceRegistryContextV2 } from './SourceV2
 import { sourceRegistryV2 } from './sourceRegistry';
 import { ResourcesV2 } from './ResourcesV2';
 import { composeResponseV2, layoutUnitV2, type SemanticPartV2 } from './composition';
-const Chart = lazy(() => import('./ChartV2'));
-const Table = lazy(() => import('./DataV2').then(m => ({ default: m.DataTableV2 })));
-const Graph = lazy(() => import('./DataV2').then(m => ({ default: m.GraphV2 })));
-const Calculator = lazy(() => import('./InteractiveV2').then(m => ({ default: m.CalculatorV2 })));
-const Tabs = lazy(() => import('./InteractiveV2').then(m => ({ default: m.TabsV2 })));
+import { loadPresentation } from './loadPresentation';
+const Chart = lazy(() => loadPresentation(() => import('./ChartV2')));
+const Table = lazy(() => loadPresentation(() => import('./DataV2')).then(m => ({ default: m.DataTableV2 })));
+const Graph = lazy(() => loadPresentation(() => import('./DataV2')).then(m => ({ default: m.GraphV2 })));
+const Calculator = lazy(() => loadPresentation(() => import('./InteractiveV2')).then(m => ({ default: m.CalculatorV2 })));
+const Tabs = lazy(() => loadPresentation(() => import('./InteractiveV2')).then(m => ({ default: m.TabsV2 })));
 
 function NodeView({ node, document, grouped = false, stacked = false }: { node: ResponseNodeV2; document: ResponseDocumentV2; grouped?: boolean; stacked?: boolean }) {
   switch (node.kind) {
