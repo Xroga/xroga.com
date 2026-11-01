@@ -80684,7 +80684,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:9",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80708,7 +80708,7 @@
       "id": "surface:7408bdfee403df48ceaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "ad1b139406636f751e9a6a3372f5bc99b1b5394a0fed884af8990a0bc7011a1c",
+      "sha256": "a2160b9fb4080d02efa523bf35f7f1f30a722a6eba36bdb2cc1cf745e0f8ec1b",
       "symbols": [
         "DataTableV2",
         "GraphV2",
@@ -80716,6 +80716,7 @@
         "current",
         "diff",
         "filtered",
+        "linear",
         "names",
         "rows",
         "x",
@@ -80723,6 +80724,7 @@
       ],
       "imports": [
         "./document",
+        "./graphLayout",
         "./response-v2.module.css",
         "lucide-react",
         "react"
@@ -80736,8 +80738,8 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80795,8 +80797,8 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80899,7 +80901,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:7",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:5"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80948,7 +80950,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80970,7 +80972,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "677cbefff6406e312764f1dcd475ee8a8dec51b76363cbe5e69f6589860c360b",
+      "sha256": "84165fdd339bf666727ed6f76258124390e80e1295a2a2f11a910e910dd75611",
       "symbols": [
         "Calculator",
         "Chart",
@@ -80991,7 +80993,6 @@
         "./document",
         "./response-v2.module.css",
         "./sourceRegistry",
-        "lucide-react",
         "react"
       ],
       "runtimeImports": [
@@ -81015,7 +81016,6 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "lucide-react",
         "react"
       ],
       "authBoundary": [],
@@ -81125,7 +81125,7 @@
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:5",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:7"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81296,7 +81296,7 @@
         "frontend/src/components/response-experience-v2/DataV2.tsx:4",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:4",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:3",
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:4",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:7",
         "frontend/src/components/response-experience-v2/document.test.ts:3",
@@ -81448,7 +81448,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:8",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:7",
         "frontend/src/components/response-experience-v2/SourceV2.tsx:4",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:3"
       ],
@@ -81474,7 +81474,7 @@
       "id": "surface:1fd66df6d47a756e110c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/specimens.ts",
-      "sha256": "8e3265b58da62412a8f171a61674997f24e2c3d1421a19928c337651f8c25b4f",
+      "sha256": "7790ffa32ffe80f1aa35284d8581978507a572b89e732f3638319df1bddd792e",
       "symbols": [
         "base",
         "rich",
@@ -140357,6 +140357,7 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
+    "Unresolved local import frontend/src/components/response-experience-v2/DataV2.tsx:6 -> ./graphLayout",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"
   ]
 }

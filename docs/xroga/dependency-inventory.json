@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9b4131716092d2b04903ac7a9aebf71c79fde510",
+  "source_sha": "c0bf38423abab42b10cc3b299dd492fdef54706d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20576,7 +20576,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "ad1b139406636f751e9a6a3372f5bc99b1b5394a0fed884af8990a0bc7011a1c"
+      "sha256": "a2160b9fb4080d02efa523bf35f7f1f30a722a6eba36bdb2cc1cf745e0f8ec1b"
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
@@ -20596,7 +20596,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "677cbefff6406e312764f1dcd475ee8a8dec51b76363cbe5e69f6589860c360b"
+      "sha256": "84165fdd339bf666727ed6f76258124390e80e1295a2a2f11a910e910dd75611"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
@@ -20632,7 +20632,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/specimens.ts",
-      "sha256": "8e3265b58da62412a8f171a61674997f24e2c3d1421a19928c337651f8c25b4f"
+      "sha256": "7790ffa32ffe80f1aa35284d8581978507a572b89e732f3638319df1bddd792e"
     },
     {
       "path": "frontend/src/components/seo/EditorialPage.tsx",
@@ -27600,7 +27600,7 @@
       "hostname": "developer.mozilla.org",
       "protocol": "https:",
       "path": "frontend/src/components/response-experience-v2/specimens.ts",
-      "line": 10,
+      "line": 16,
       "credentialsInUrl": false
     },
     {
@@ -35027,7 +35027,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "line": 24,
+      "line": 25,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

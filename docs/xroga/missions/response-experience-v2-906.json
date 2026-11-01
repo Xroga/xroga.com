@@ -34,7 +34,11 @@
     "scripts/xroga/response-v2-preview.mjs",
     "frontend/src/components/response-experience-v2/SourceV2.tsx",
     "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
-    "frontend/src/lib/formatAiMarkdown.test.ts"
+    "frontend/src/lib/formatAiMarkdown.test.ts",
+    "frontend/src/components/response-experience-v2/graphLayout.ts",
+    "frontend/src/components/response-experience-v2/graphLayout.test.ts",
+    "frontend/src/components/response-experience-v2/sourceRegistry.ts",
+    "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
   ],
   "decisions": {
     "keep": [

@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { displayTitleV2, type ResponseNodeV2 } from './document';
 import styles from './response-v2.module.css';
+import { isLinearFlowV2 } from './graphLayout';
 export type TableNode = Extract<ResponseNodeV2, { kind: 'table' }>;
 export function DataTableV2({ node }: { node: TableNode }) {
   const [query, setQuery] = useState(''); const [sort, setSort] = useState<{ key: string; descending: boolean } | null>(null); const [page, setPage] = useState(0);
@@ -22,7 +23,8 @@ export function DataTableV2({ node }: { node: TableNode }) {
 
 export function GraphV2({ node }: { node: Extract<ResponseNodeV2, { kind: 'graph' }> }) {
   const names = new Map(node.nodes.map(n => [n.id, n.label]));
+  const linear = isLinearFlowV2(node);
   // Keep supplied order and explicit edges, including cycles and disconnected
   // nodes. Never fabricate a sequential flow from an unordered list.
-  return <figure className={styles.graph}><figcaption>{node.title || 'Workflow'}</figcaption>{node.description && <p>{node.description}</p>}<ol>{node.nodes.map((n, index) => <li key={n.id}><span className={styles.stepIndex} aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><div><strong>{n.label}</strong>{n.detail && <p>{n.detail}</p>}{node.edges.some(e => e.source === n.id) && <ul aria-label={`Connections from ${n.label}`}>{node.edges.filter(e => e.source === n.id).map((e, i) => <li key={i}><span aria-hidden="true">→</span><span>{names.get(e.target)}{e.label && <small>{e.label}</small>}</span></li>)}</ul>}</div></li>)}</ol></figure>;
+  return <figure className={styles.graph} data-linear={linear}><figcaption>{node.title || 'Workflow'}</figcaption>{node.description && <p>{node.description}</p>}<ol>{node.nodes.map((n, index) => <li key={n.id}>{linear && <span className={styles.stepIndex} aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}<div><strong>{n.label}</strong>{n.detail && <p>{n.detail}</p>}{node.edges.some(e => e.source === n.id) && <ul aria-label={`Connections from ${n.label}`}>{node.edges.filter(e => e.source === n.id).map((e, i) => <li key={i}><span aria-hidden="true">↓</span><span>{names.get(e.target)}{e.label && <small>{e.label}</small>}</span></li>)}</ul>}</div></li>)}</ol></figure>;
 }

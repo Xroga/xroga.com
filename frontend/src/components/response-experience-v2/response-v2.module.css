@@ -137,3 +137,12 @@
 .resource figcaption { font-size: .8rem; opacity: .75; }
 .resourcePrice { margin: 1rem 0; }
 .resourcePrice > strong { font-size: 1.2rem; margin-right: .6rem; font-variant-numeric: tabular-nums; }
+.source { margin-block-start:0; padding-block:16px; }
+.source>div { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 12px; }
+.source h3 { margin:0; font-size:14px; font-weight:500; }
+.source p { margin:12px 0 0; font-size:14px; color:var(--v2-muted); }
+.graph[data-linear=true] ol { display:block; margin-block:24px 0; }
+.graph[data-linear=true] ol>li { border:0; padding:0 0 24px; position:relative; }
+.graph[data-linear=true] ol>li:not(:last-child)::before { content:''; position:absolute; inset-inline-start:12px; top:30px; bottom:6px; width:1px; background:var(--v2-line); }
+.graph[data-linear=true] ol>li:last-child { padding-block-end:0; }
+.graph[data-linear=true] ul { margin-block-start:12px; font-size:12px; }

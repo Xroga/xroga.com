@@ -1,6 +1,5 @@
 'use client';
 import { lazy, Suspense } from 'react';
-import { ExternalLink } from 'lucide-react';
 import { planPresentationV2, presentationFamilyV2, displayTitleV2, safeLinkV2, type ResponseDocumentV2, type ResponseNodeV2 } from './document';
 import { ProseV2, CodeV2 } from './ProseV2';
 import styles from './response-v2.module.css';
@@ -24,7 +23,7 @@ function NodeView({ node, document, grouped = false }: { node: ResponseNodeV2; d
     case 'calculator': return <Calculator key={JSON.stringify([node.operation, node.inputs])} node={node} />;
     case 'tabs': return <Tabs key={JSON.stringify(node.items.map(item => item.id))} node={node} sources={document.sources} />;
     case 'graph': return <Graph node={node} />;
-    case 'citation': return <section className={styles.source}><h3>{node.label}</h3>{node.excerpt && <p>{node.excerpt}</p>}{safeLinkV2(node.url) ? <a href={safeLinkV2(node.url)} target="_blank" rel="noopener noreferrer">Open source <ExternalLink size={14} /></a> : <p>Source URL unavailable.</p>}</section>;
+    case 'citation': return <section className={styles.source}><div><SourceLinkV2 url={node.url} title={node.label} /><h3>{node.label}</h3></div>{node.excerpt && <p>{node.excerpt}</p>}</section>;
     case 'metrics': return <dl className={styles.metrics}>{node.items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value == null ? 'Unavailable' : String(item.value)}{item.unit ? ` ${item.unit}` : ''}</dd></div>)}</dl>;
     case 'notice': return <aside className={styles.notice} data-tone={node.tone}>{node.title && <h3>{node.title}</h3>}<ProseV2 text={node.text} sources={document.sources} /></aside>;
     case 'accordion': return <section>{node.title && <h3 className={styles.blockTitle}>{node.title}</h3>}{node.items.map(item => <section key={item.id} className={styles.disclosure}><h4>{item.title}</h4><ProseV2 text={item.content} sources={document.sources} /></section>)}</section>;

@@ -92,3 +92,14 @@ PR comment 6549942767 rejects visual acceptance. Production promotion remains he
 - Local source fixture visibly renders two claim-adjacent chips and one optional page reference. This is synthetic renderer evidence, not real research or complete Workspace product acceptance.
 
 Still required: final-source CI, full-size same-data Workspace before/after for the five founder acceptance scenarios, current-source desktop/mobile interaction checks, visual acceptance and controlled production deployment. No claim of LIVE or finished redesign. No model spend or other batch activation.
+
+## Final responsive verification, 2026-11-01
+
+- Latest founder reply permits deterministic fixtures when suitable saved conversations are unavailable. Synthetic evidence remains distinct from authenticated Workspace evidence.
+- The shared source chip now presents structured citation blocks as well as prose/resources. Linear flow composition requires every supplied edge to prove the exact sequence. Branches, disconnected nodes and cycles retain explicit connections without inferred ordering.
+- Added clearly labeled travel and SaaS fixtures. Travel contains no claimed retrieved fares, schedules or airline availability. SaaS uses fixed official documentation links and local domain-matched brand assets.
+- 27 focused tests passed, job 81c53223-d284-47c0-a003-7fd00a1bd97d. Frontend TypeScript passed, job c14fa401-6c7b-410b-bc60-274f10c1db57. Scoped ESLint passed, job 7869e584-32f6-499d-b4ad-f90f0f7da595, with existing native-image optimization warnings.
+- Full-size synthetic captures: 1440px SaaS diagram, 390px travel and light cited prose, 768px financial scenario. Mobile prose is 16px/400, wide tables scroll within their own region. Travel calculator changes 350 USD to 500 USD at 10 days, reset/reopen restores 350. Financial risk changes 500 USD to 1000 USD at 2%, with formula and assumptions both visible. RTL paragraphs remain readable and unclipped.
+- Source fixture has two links beside separate supported claims and one canonical page in optional references, not two duplicated full source cards. Distinct page/query identity is retained by tests.
+- Existing real signed-in Workspace evidence at 9b413171 includes eight persisted responses whose rendered text matches 0808ea21 exactly, with isolated Inter typography on mobile. No new prompts or model calls were made. This is persistence/rendering evidence, not a new live research or model-quality test.
+- All seven required workflows passed at c0bf38423abab42b10cc3b299dd492fdef54706d. The new focused source changes require their own exact-source CI and Preview verification before production promotion. Production is not yet claimed LIVE with V2.
