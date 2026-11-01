@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9e2e6dcef4da379665f2b200f677a6d60867d4ab037e7f71a37a0153bc30a950",
+  "reviewRegistrySha256": "69f3a114ffabf0d8eb8630f8103836dcf9b8bffe1cfd90cbe49522b7d95b0656",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 919,
+    "persistenceCandidates": 920,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 121,
-    "reviewedCandidates": 798,
+    "reviewedCandidates": 799,
     "unresolvedSafetyCandidates": 154,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 121,
     "SCOPED_BOUNDARY": 521,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 205,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 837,
+    "unresolvedCandidateBoundaries": 838,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -5632,7 +5632,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "81874eb62637b3391f51"
+        "id": "48c38a03916aca026900"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b7da7c544e1d23eb4355"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -9060,7 +9064,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "81874eb62637b3391f51"
+        "id": "48c38a03916aca026900"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b7da7c544e1d23eb4355"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9101,11 +9109,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 919,
+    "currentCallers": 920,
     "structuredVerified": 82,
-    "structuredUnproven": 837,
+    "structuredUnproven": 838,
     "manualUnresolved": 154,
-    "manualUnsupported": 683,
+    "manualUnsupported": 684,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
@@ -28811,7 +28819,7 @@
       }
     },
     {
-      "id": "81874eb62637b3391f51",
+      "id": "48c38a03916aca026900",
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
       "line": 32,
       "enclosing": "CalculatorV2",
@@ -28819,14 +28827,35 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "57667b5577b0bf1f0601921a4c78a7ee0dbe96f4ef917e778b2ce40fee3a0c4c",
+      "sourceSha256": "157818b7d2bcb011be13bd4f9ce97a3ceb83955a0d56003cea9f559468e64f49",
       "semanticReview": {
         "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
-        "reason": "Re-reviewed after tab-session persistence wiring. The native Array.from expression still generates exactly 21 deterministic sensitivity samples. Session persistence is separately scoped to validated numeric inputs and the authorized account/message. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
+        "reason": "Re-reviewed after formula display and input-before-result composition. The only scanner candidate remains native Array.from generating exactly 21 deterministic sensitivity samples. The expression and sample calculation are unchanged. Session persistence remains separately scoped to validated numeric inputs and the authorized account/message. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
         "evidence": [
           {
             "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
             "marker": "Array.from({ length: 21 }"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b7da7c544e1d23eb4355",
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "line": 7,
+      "enclosing": "graphPositionsV2",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "fbc7c82e0bb6e088b0ef2dcda6ef73f91e096d8af5f44aea83418498afa95ba7",
+      "semanticReview": {
+        "authority": "Native Array.from creates local grid ranks from already validated graph node IDs when the graph contains a cycle. The callback slices and maps an in-memory node array. No database, storage, network, credential or execution API is called.",
+        "reason": "Reviewed the complete graphPositionsV2 and graphLayersV2 functions. Native Array is not shadowed or reassigned. This disposition covers only local array construction, not upstream validation or any authority boundary.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+            "marker": "const ranks = layers ?? Array.from"
           }
         ]
       }

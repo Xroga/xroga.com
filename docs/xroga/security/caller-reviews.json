@@ -28333,17 +28333,33 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
-      "sourceSha256": "57667b5577b0bf1f0601921a4c78a7ee0dbe96f4ef917e778b2ce40fee3a0c4c",
+      "sourceSha256": "157818b7d2bcb011be13bd4f9ce97a3ceb83955a0d56003cea9f559468e64f49",
       "callIds": [
-        "81874eb62637b3391f51"
+        "48c38a03916aca026900"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from generates exactly 21 local sensitivity samples from explicit bounded calculator inputs. Each value uses the existing deterministic calculateV2 function. No storage, network, credential or action interface is called.",
-      "reason": "Re-reviewed after tab-session persistence wiring. The native Array.from expression still generates exactly 21 deterministic sensitivity samples. Session persistence is separately scoped to validated numeric inputs and the authorized account/message. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
+      "reason": "Re-reviewed after formula display and input-before-result composition. The only scanner candidate remains native Array.from generating exactly 21 deterministic sensitivity samples. The expression and sample calculation are unchanged. Session persistence remains separately scoped to validated numeric inputs and the authorized account/message. No database, bucket, external dispatch or authority certification is granted by this conversion review.",
       "evidence": [
         {
           "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
           "marker": "Array.from({ length: 21 }"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "sourceSha256": "fbc7c82e0bb6e088b0ef2dcda6ef73f91e096d8af5f44aea83418498afa95ba7",
+      "callIds": [
+        "b7da7c544e1d23eb4355"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Array.from creates local grid ranks from already validated graph node IDs when the graph contains a cycle. The callback slices and maps an in-memory node array. No database, storage, network, credential or execution API is called.",
+      "reason": "Reviewed the complete graphPositionsV2 and graphLayersV2 functions. Native Array is not shadowed or reassigned. This disposition covers only local array construction, not upstream validation or any authority boundary.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+          "marker": "const ranks = layers ?? Array.from"
         }
       ]
     }
