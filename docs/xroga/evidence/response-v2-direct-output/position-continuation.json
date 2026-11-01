@@ -1,0 +1,109 @@
+{
+  "scope": "UNCHANGED_PERSISTENCE_EXPRESSIONS_POSITION_CONTINUATION_NOT_SECURITY_ACCEPTANCE",
+  "reference": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
+  "records": [
+    {
+      "path": "backend/src/ai/completionDiagnostics.ts",
+      "beforeSha256": "3859e84227f83566301ad3eb12d65e8f40a2c5afe16ec19a9688bc6a7a1bf6e1",
+      "currentSha256": "677bb2771f0aef0c07081cd7b6e401089870e483640b5b0fe448bdcfd9b45005"
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "beforeSha256": "ce06bc3f842d59758d5adea1a144c184dda2a3ee4748a59895ce887b7111d952",
+      "currentSha256": "bfc71690a84aba032ca7685f035e94fdd2a7ca69fdb3f703a0c15cd16929c9ae"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "beforeSha256": "44c89cd06d6b7d42e7de4bcb7e4d71c78961cf8f45de4fee2e5ff73de3c777e5",
+      "currentSha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
+      "currentSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "beforeSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "currentSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "beforeSha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304",
+      "currentSha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc"
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "beforeSha256": "710ec917c3e9aae4864fd3eaf012fb8e2130066b01508ef5aae2633c301ceb26",
+      "currentSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91"
+    },
+    {
+      "previousCallerId": "78696e27dd5c1ca37c3a",
+      "currentCallerId": "78696e27dd5c1ca37c3a"
+    },
+    {
+      "previousCallerId": "aae055d92faa16ae4e2e",
+      "currentCallerId": "bebfcf0f4ba426a71be1"
+    },
+    {
+      "previousCallerId": "54326930ab9ec884b6cd",
+      "currentCallerId": "67b1241b9b70b5f136ae"
+    },
+    {
+      "previousCallerId": "53446e75ca49c95522af",
+      "currentCallerId": "33169c5e9ad22ce0655f"
+    },
+    {
+      "previousCallerId": "4c4451bbec61aecb23d3",
+      "currentCallerId": "7836681966b6d9215ec8"
+    },
+    {
+      "previousCallerId": "9d05c85f5bfac4989a75",
+      "currentCallerId": "86106178c4a136dd921d"
+    },
+    {
+      "previousCallerId": "469b0a4a0957a0d982b1",
+      "currentCallerId": "26e1c49e68e89b7b14bd"
+    },
+    {
+      "previousCallerId": "4a9c1469b879166fe52c",
+      "currentCallerId": "5c9be0f2e0f652c62e49"
+    },
+    {
+      "previousCallerId": "0b3ff8ce7a456a8a2acf",
+      "currentCallerId": "597ad99cc551e28182ea"
+    },
+    {
+      "previousCallerId": "f6f4b355a8c80fc166f4",
+      "currentCallerId": "5b2500bca0819c0cfbca"
+    },
+    {
+      "previousCallerId": "c2adb020f37811ce7849",
+      "currentCallerId": "48608e9c8e68e6683453"
+    },
+    {
+      "previousCallerId": "9cce2ff19e247ce9c5d5",
+      "currentCallerId": "0aa6642b9d69de06f3b2"
+    },
+    {
+      "previousCallerId": "670197ad89640f5a6242",
+      "currentCallerId": "64c63cbd2cbdc0d0e6f6"
+    },
+    {
+      "previousCallerId": "9d0558fe12707a8a2949",
+      "currentCallerId": "298b5f4095b683f456b6"
+    },
+    {
+      "previousCallerId": "65acb9b03435995fdeb0",
+      "currentCallerId": "e052915067b01ca6077d"
+    },
+    {
+      "previousCallerId": "774dd446f08cb58fbc9b",
+      "currentCallerId": "54e741be8699adc0e781"
+    },
+    {
+      "previousCallerId": "706f26c27c2b32064580",
+      "currentCallerId": "f4a361a7bbed04369e1b"
+    }
+  ]
+}

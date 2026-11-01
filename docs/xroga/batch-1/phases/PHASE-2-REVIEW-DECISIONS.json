@@ -859,7 +859,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "00d351afbe045a136c66",
-      "currentCallerId": "aae055d92faa16ae4e2e",
+      "currentCallerId": "bebfcf0f4ba426a71be1",
       "enclosing": "activatePaidCycle",
       "kind": "RPC_CANDIDATE",
       "target": "activate_xroga_paid_cycle",
@@ -869,7 +869,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "254a91383e3a8af0310b",
-      "currentCallerId": "54326930ab9ec884b6cd",
+      "currentCallerId": "67b1241b9b70b5f136ae",
       "enclosing": "activatePaidCycle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -879,7 +879,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "590df28cdc2b297e03b6",
-      "currentCallerId": "53446e75ca49c95522af",
+      "currentCallerId": "33169c5e9ad22ce0655f",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
@@ -889,7 +889,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "39a1f4163240597da04d",
-      "currentCallerId": "4c4451bbec61aecb23d3",
+      "currentCallerId": "7836681966b6d9215ec8",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -899,7 +899,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "613d8e71ddafb0d6bd0c",
-      "currentCallerId": "9d05c85f5bfac4989a75",
+      "currentCallerId": "86106178c4a136dd921d",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
@@ -909,7 +909,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "a80e4804742dfd6bcc0a",
-      "currentCallerId": "469b0a4a0957a0d982b1",
+      "currentCallerId": "26e1c49e68e89b7b14bd",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -919,7 +919,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "6285818c6e8220770b29",
-      "currentCallerId": "4a9c1469b879166fe52c",
+      "currentCallerId": "5c9be0f2e0f652c62e49",
       "enclosing": "setUsagePacing",
       "kind": "RPC_CANDIDATE",
       "target": "set_xroga_usage_pacing",
@@ -929,7 +929,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "090fe734dc5d1d3dc6e3",
-      "currentCallerId": "0b3ff8ce7a456a8a2acf",
+      "currentCallerId": "597ad99cc551e28182ea",
       "enclosing": "setUsagePacing",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -939,7 +939,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3f66673813dee0d85b85",
-      "currentCallerId": "f6f4b355a8c80fc166f4",
+      "currentCallerId": "5b2500bca0819c0cfbca",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
@@ -949,7 +949,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "746985044f7d3ee62aff",
-      "currentCallerId": "c2adb020f37811ce7849",
+      "currentCallerId": "48608e9c8e68e6683453",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -959,7 +959,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e030677c7ecb6b0dd90e",
-      "currentCallerId": "9cce2ff19e247ce9c5d5",
+      "currentCallerId": "0aa6642b9d69de06f3b2",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
@@ -969,7 +969,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e35278adbe80b78c8d41",
-      "currentCallerId": "670197ad89640f5a6242",
+      "currentCallerId": "64c63cbd2cbdc0d0e6f6",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -979,7 +979,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "b5a82155e981259a207e",
-      "currentCallerId": "9d0558fe12707a8a2949",
+      "currentCallerId": "298b5f4095b683f456b6",
       "enclosing": "settleProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
@@ -989,7 +989,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "564673e6f6b21c690fce",
-      "currentCallerId": "65acb9b03435995fdeb0",
+      "currentCallerId": "e052915067b01ca6077d",
       "enclosing": "settleProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -999,7 +999,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "5ed8ef26b72e26561f26",
-      "currentCallerId": "774dd446f08cb58fbc9b",
+      "currentCallerId": "54e741be8699adc0e781",
       "enclosing": "finishFailedProviderReservation",
       "kind": "RPC_CANDIDATE",
       "target": "release_xroga_provider_budget",
@@ -1009,7 +1009,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3fc72ec34d884b871909",
-      "currentCallerId": "706f26c27c2b32064580",
+      "currentCallerId": "f4a361a7bbed04369e1b",
       "enclosing": "finishFailedProviderReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -1814,7 +1814,7 @@
     },
     {
       "packetId": "B1-P2-392b9b628a9b92be",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "executionStatus": "IN_PROGRESS",
       "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
       "actualVerification": {
@@ -1827,7 +1827,7 @@
         "browserTests": 3,
         "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
       },
-      "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
+      "actorTrace": "Existing issued owner context, durable reservation, cycle-parent checks, exact SQL receipt validation and reconciliation holds remain. The active price catalogue version changes. Completed SDK usage may supply a validated integer provider charge instead of the former cheapest-endpoint estimate. Conservative fallback estimates, reported-cost bounds and no-retry accounting failures are covered by added regression tests. Persistence query expressions and target functions are unchanged. Historical parent-lock evidence is retained as historical, not new financial-source certification.",
       "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
       "relatedSourceBindings": [
         {
@@ -1857,6 +1857,12 @@
           "path": "backend/src/security/budgetOwner.local.integration.ts",
           "type": "REAL_TWO_OWNER_CONCURRENT_REPLAY_ROLLBACK_BROWSER_PROOF_PREPARED",
           "result": "NOT_EXECUTED"
+        },
+        {
+          "path": "backend/src/ai/providerBudget.test.ts",
+          "type": "OBSERVED_CHARGE_RESERVATION_AND_VALIDATION_REGRESSION",
+          "result": "PASS_LOCAL_NOT_PRODUCTION_LEDGER_RECONCILIATION",
+          "scope": "Observed Relace charge covered by reservation, exact reported charge settlement and invalid-cost rejection. SDK test independently proves one request, terminal usage-only cost preservation and canonical settlement."
         }
       ],
       "remaining": [
@@ -1886,8 +1892,8 @@
           "60a088c3f2c03ec9402c"
         ],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
-        "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
-        "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        "scope": "HISTORICAL_PARENT_LOCK_AND_OWNER_EVIDENCE_NOT_NEW_CHARGE_SOURCE_ACCEPTANCE",
+        "changedSourceRegression": "EXACT_SOURCE_INTEGRATED_GATE_REQUIRED"
       },
       "historicalBeforeDormantBudgetOwnerRepair": {
         "packetId": "B1-P2-392b9b628a9b92be",
@@ -1967,6 +1973,163 @@
         "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
         "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
         "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      },
+      "historicalBeforeDirectOutputAccounting": {
+        "packetId": "B1-P2-392b9b628a9b92be",
+        "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
+        "actualVerification": {
+          "sourceSha": "aaefe24138ddfaa790751b46a49dde21c7499161",
+          "disposableRun": "39165967730",
+          "aggregateRun": "39165967766",
+          "integratedSha": "edd3b8759d301861e1a7b0cb27d707085e63fc8b",
+          "migrations": 120,
+          "securityTests": 160,
+          "browserTests": 3,
+          "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
+        },
+        "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
+        "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
+        "relatedSourceBindings": [
+          {
+            "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+            "sha256": "34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"
+          }
+        ],
+        "evidence": [
+          {
+            "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+            "type": "SYNTHETIC_SQL_PROBE",
+            "result": "THREE_PRE_FIX_MISSING_REJECTIONS_THEN21_ASSERTIONS_PASS_WITH_REAPPLY",
+            "scope": "Actual function definitions in PGlite, not real Supabase, real locks or production data"
+          },
+          {
+            "path": "backend/src/security/providerCycleParent.local.integration.ts",
+            "type": "DISPOSABLE_DATABASE_LOCK_TEST",
+            "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+            "scope": "Misbound states, own concurrency/replay, exact balance/receipt, foreign/browser denial, four cycle-owner and four reservation-parent lock waits and rollback"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "type": "ORIGINAL_CONTEXT_AND_EXACT_RECEIPT_NEGATIVES",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "type": "REAL_TWO_OWNER_CONCURRENT_REPLAY_ROLLBACK_BROWSER_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Authenticate actual changed-source disposable and repeated branch/integrated regressions before any new four-caller security promotion",
+          "Full Phase3 spending/payment/approval authority remains separately mandatory. No real provider payment or grant is performed."
+        ],
+        "current007Evidence": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "verifiedCurrentCallerIds": [
+            "6f058d1957df9ddef58e",
+            "263d64635be54643daaf",
+            "28c7a352253f65a4d63b",
+            "ec7738731d0c6be00798",
+            "0882d94061fd33117251",
+            "ba74f371a047c8305b9a",
+            "9e5ee446a0fb192d8f39",
+            "3a904e92ac521ad89ef0",
+            "a50ebf735a3e2d6e8587",
+            "e5f59ad9b6097a1bb115"
+          ],
+          "remainingCurrentCallerIds": [
+            "1169e490665cdec7b3a3",
+            "2fbd469f16851f3b71ab",
+            "495469d5a798cf52f829",
+            "4ac1c2be7bfccf034c8e",
+            "8b8545e8ee1fbbfb3fbf",
+            "60a088c3f2c03ec9402c"
+          ],
+          "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
+          "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalBeforeDormantBudgetOwnerRepair": {
+          "packetId": "B1-P2-392b9b628a9b92be",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "executionStatus": "IN_PROGRESS",
+          "finding": "DEMONSTRATED_MISBOUND_BUDGET_CYCLE_PARENT_FIXED_ACTUAL_LOCK_PROOF_VERIFIED",
+          "actualVerification": {
+            "sourceSha": "aaefe24138ddfaa790751b46a49dde21c7499161",
+            "disposableRun": "39165967730",
+            "aggregateRun": "39165967766",
+            "integratedSha": "edd3b8759d301861e1a7b0cb27d707085e63fc8b",
+            "migrations": 120,
+            "securityTests": 160,
+            "browserTests": 3,
+            "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
+          },
+          "actorTrace": "Existing request/pipeline accounting callers and service-only RPCs remain unchanged. SQL formerly checked reservation.user_id but used cycle_id alone for balance mutation, or returned a replay without checking the cycle owner. A synthetic inconsistent reservation proved reserve accepting the foreign parent and settle/release changing its balance. This is a misbound-state authorization defect, not a claimed browser-created row or production exploit.",
+          "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
+          "relatedSourceBindings": [
+            {
+              "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+              "sha256": "34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"
+            }
+          ],
+          "evidence": [
+            {
+              "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+              "type": "SYNTHETIC_SQL_PROBE",
+              "result": "THREE_PRE_FIX_MISSING_REJECTIONS_THEN21_ASSERTIONS_PASS_WITH_REAPPLY",
+              "scope": "Actual function definitions in PGlite, not real Supabase, real locks or production data"
+            },
+            {
+              "path": "backend/src/security/providerCycleParent.local.integration.ts",
+              "type": "DISPOSABLE_DATABASE_LOCK_TEST",
+              "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+              "scope": "Misbound states, own concurrency/replay, exact balance/receipt, foreign/browser denial, four cycle-owner and four reservation-parent lock waits and rollback"
+            }
+          ],
+          "remaining": [
+            "Reconcile owner provenance for the remaining budget callers instead of treating this parent fix as all16 caller certification",
+            "Keep universal spend/settlement authority and dormant activatePaidCycle activation in Phase3"
+          ],
+          "current007Evidence": {
+            "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+            "verifiedCurrentCallerIds": [
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce"
+            ],
+            "remainingCurrentCallerIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+            "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+            "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+          }
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        },
+        "beforeCurrentMainIntegrationSource": {
+          "ref": "b0cd0ec31be56a8945ae41998563475237ed52fb",
+          "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+          "proof": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+        }
       }
     },
     {
@@ -2366,9 +2529,10 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
+          "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
           "responseV2Review": "Reviewed bc6cbc43..bd1ca28d: only the prompt import and system text passed to the existing runChatPipeline callBuilderStream changed. runBuildPipeline admission, issued actor, ownership, persistence and cancellation code remain unchanged. This source binding retains the historical verification and IN_PROGRESS status; it is not new database or production acceptance.",
-          "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+          "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "beforeDirectOutputSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a"
         },
         {
           "path": "backend/src/routes/swarm.ts",
