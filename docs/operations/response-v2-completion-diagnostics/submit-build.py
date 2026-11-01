@@ -2,14 +2,14 @@
 import datetime,json,os,pathlib,subprocess,tarfile,time
 ROOT=pathlib.Path(__file__).resolve().parent
 APP=pathlib.Path(r'C:/Users/hp/Documents/Codex/2026-10-23/g/work/xroga-response-backend-compatible')
-SHA='5953c15b2f1bab62dacd4c4c27180b3badc5f6c9'
+SHA='4500d039721323ebc5351a9493d1d695e1d3e6e8'
 P='project-c40d4821-e647-4fa2-92d'
-IMAGE=f'us-east4-docker.pkg.dev/{P}/cloud-run-source-deploy/xroga-api-release:response-5953c1-1102'
+IMAGE=f'us-east4-docker.pkg.dev/{P}/cloud-run-source-deploy/xroga-api-release:response-4500d0-1102'
 PS=r'C:/Users/hp/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe'
 GC=r'C:/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.ps1'
 J=ROOT/'build-journal.json'
 a=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
-assert a['approved'] and a['packageId']=='response-v2-completion-diagnostics-5953c15b' and a['sourceSha']==SHA and a.get('completionDiagnosticsApproved') is True
+assert a['approved'] and a['packageId']=='response-v2-completion-diagnostics-4500d039' and a['sourceSha']==SHA and a.get('completionDiagnosticsApproved') is True
 assert os.environ.get('XROGA_CLEANUP_JOB_ID'),'OWNED_LOCAL_RUNNER_REQUIRED'
 assert not J.exists(),'BUILD_ALREADY_JOURNALED_INSPECT_BEFORE_RETRY'
 from release_gates import require_release_ci
@@ -28,7 +28,7 @@ assert (context/'Dockerfile.api').is_file()
 assert not list(context.rglob('.env')) and not list(context.rglob('node_modules'))
 config={'steps':[{'name':'gcr.io/cloud-builders/docker','args':['build','-f','Dockerfile.api','--build-arg','XROGA_RELEASE_SHA='+SHA,'-t',IMAGE,'.']}],
  'images':[IMAGE],'timeout':'900s','serviceAccount':f'projects/{P}/serviceAccounts/574998934848-compute@developer.gserviceaccount.com',
- 'options':{'logging':'CLOUD_LOGGING_ONLY'},'tags':['xroga-focused-response-5953c1-1102']}
+ 'options':{'logging':'CLOUD_LOGGING_ONLY'},'tags':['xroga-focused-response-4500d0-1102']}
 cfg=work/'build.json';cfg.write_text(json.dumps(config))
 record('PREPARED_SOURCE_ONLY',archiveBytes=archive.stat().st_size,oneTimeCeilingUsd=a['maximumOneTimeGoogleUsd'],ci=ci_receipts)
 args=[GC,'builds','submit',str(context),'--config='+str(cfg),'--project='+P,'--region=us-east4','--account=mabdullah.built@gmail.com',

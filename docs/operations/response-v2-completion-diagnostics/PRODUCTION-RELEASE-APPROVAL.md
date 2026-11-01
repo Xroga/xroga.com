@@ -2,8 +2,8 @@
 
 Prepared November 2, 2026. NOT APPROVED, BUILT OR DEPLOYED.
 
-Package ID: response-v2-completion-diagnostics-5953c15b.
-Backend source: 5953c15b2f1bab62dacd4c4c27180b3badc5f6c9.
+Package ID: response-v2-completion-diagnostics-4500d039.
+Backend source: 4500d039721323ebc5351a9493d1d695e1d3e6e8.
 Frontend correction source is independently 209948736672abe8e03926e936f264fb50afb3e9 on draft PR #909. This package does not promote that frontend.
 
 The failed SaaS request's upstream cause remains unproven because the old adapter discarded completion metadata before throwing. This correction retains bounded content-free request ID, observed finish reason, actual supplied usage and channel counts on empty completions and stream interruption. It maps empty completion to a safe provider error with retry disabled. It does not change routing, prompts, model choice, quotas, admission, accounting settlement or successful answer publication. Local admitted SDK negative tests and type checking passed. Mandatory exact-source CI must pass before any cloud mutation. Do not present this as restored generation or finished V2 acceptance.

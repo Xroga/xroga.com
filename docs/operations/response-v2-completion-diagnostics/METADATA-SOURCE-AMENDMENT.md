@@ -1,0 +1,7 @@
+# Evidence-only source amendment
+
+The owner approved source 5953c15b2f1bab62dacd4c4c27180b3badc5f6c9 after its six gates pass. Its unit baseline failed a stale current-source proof hash for the SDK and its security test file. It cannot be promoted with a failed gate.
+
+Corrected source 4500d039721323ebc5351a9493d1d695e1d3e6e8 changes only TRANSPORT-LIFETIME-PROOF.json and CURRENT-PROOF-METADATA-CONTINUATION-20261028.json. Application source, build inputs, lockfiles, runtime, model routing, tests and workflow are byte-identical to 5953c15b. Existing security test expressions, SDK wire-call expressions and destination/admission guard functions were checked unchanged before updating current bindings. Historical archived proofs and frozen acceptance statuses remain unchanged. The source-lifetime and model-dispatch binding tests pass locally.
+
+Requested amendment is only the paired API/Job source identity and admission-fence SHA, conditional on all six new-source gates passing. The current fd3b recovery pair, single 60-minute maintenance window, $0.50 one-time and $0.10/month storage ceilings, resources and no new model/search allowance stay unchanged. No cloud build or production mutation has started, so this does not add a build/window or increase approved consumption. The original approval receipt remains pinned to 5953c15b and must not authorize this source until the owner approves this amendment.
