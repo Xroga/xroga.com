@@ -81024,7 +81024,7 @@
       "id": "surface:c37a54594bd9bc390b5b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "c500f1181d96daed23882e24a9839c846d8c6f47ce6a13d2b4d449158e3bd175",
+      "sha256": "66c67679e3da73774110a82af0bcfc17cfd1671ccb1a46378cd3457d1cc5e751",
       "symbols": [
         "CodeV2",
         "MathV2",
@@ -81348,7 +81348,7 @@
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
-        "frontend/src/components/response-experience-v2/document.test.ts:132",
+        "frontend/src/components/response-experience-v2/document.test.ts:137",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
       "reachable": true,
@@ -81554,7 +81554,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "50b918b89e2846f81c15a1756ffd8ebdc8142ec3a60a367651dbebe4223c2128",
+      "sha256": "ae33022b9815f8e42df3fb50ba9d1006f6a608ce81c101c6db984163a37f40ae",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -81619,6 +81619,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "declared-host:workspace.invalid",
         "zod"
       ],
       "authBoundary": [],
@@ -139159,7 +139160,7 @@
     {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
-      "declaredTests": 22,
+      "declaredTests": 23,
       "skipLocations": [],
       "focusLocations": []
     },

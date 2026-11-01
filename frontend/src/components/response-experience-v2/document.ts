@@ -124,5 +124,14 @@ export function sameChartTableV2(chart: Extract<ResponseNodeV2, {kind:'chart'}>,
   return table.columns.length === keys.length && table.columns.every((c, i) => c.key === keys[i]) && table.rows.length === chart.rows.length && table.rows.every((r, i) => keys.every(k => r[k] === chart.rows[i][k]));
 }
 export function safeLinkV2(value: string): string | undefined {
+  // Canonical approval links are same-origin navigation, never permission to
+  // execute an action. Reject ambiguous slash/control encodings before parsing.
+  if (value.startsWith('/')) {
+    if (value.startsWith('//') || /[\\\u0000-\u0020\u007f]|%(?:2f|5c|0[0-9a-f]|1[0-9a-f]|20|7f)/i.test(value)) return undefined;
+    try {
+      const base = 'https://workspace.invalid';
+      return new URL(value, base).origin === base ? value : undefined;
+    } catch { return undefined; }
+  }
   try { const u = new URL(value); return ['https:', 'http:'].includes(u.protocol) && !u.username && !u.password ? u.href : undefined; } catch { return undefined; }
 }

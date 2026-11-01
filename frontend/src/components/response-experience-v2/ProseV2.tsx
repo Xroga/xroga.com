@@ -32,6 +32,7 @@ export function ProseV2({ text, sources = [] }: { text: string; sources?: Citati
       li: ({ children }) => <li dir="auto">{children}</li>,
       a: ({ href, children }) => {
         if (!href) return <span>{children}</span>;
+        if (href.startsWith('/')) return <a href={href}>{children}</a>;
         const match = /^\[(\d+)\]$/.exec(String(children));
         const source = match && sources[Number(match[1]) - 1];
         if (source && safeLinkV2(source.url) === href) return <SourceLinkV2 url={href} title={source.title} number={Number(match![1])} />;

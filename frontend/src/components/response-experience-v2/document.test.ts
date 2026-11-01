@@ -76,6 +76,11 @@ test('unsafe links remain noninteractive', () => {
   for (const value of ['javascript:alert(1)', 'data:text/html,<script>', '//evil.com', 'https://u:pass@example.com', 'file:///a']) assert.equal(safeLinkV2(value), undefined);
   assert.equal(safeLinkV2('https://example.com/a?x=1'), 'https://example.com/a?x=1');
 });
+test('canonical internal review links remain usable without accepting alternate origins', () => {
+  const review = '/dashboard/actions/confirm/11111111-1111-4111-8111-111111111111';
+  assert.equal(safeLinkV2(review), review);
+  for (const value of ['//evil.com', '/\\evil.com', '/%5cevil.com', '/%2fevil.com', '/\nevil.com']) assert.equal(safeLinkV2(value), undefined);
+});
 const calc: CalculatorNode = { kind: 'calculator', id: 'c', operation: 'percentage', inputs: [{ id: 'capital', label: 'Capital', value: 50000, min: 0, max: 100000 }, { id: 'risk', label: 'Risk percent', value: 1, min: 0, max: 5 }], resultLabel: 'Hypothetical risk', unit: 'USD', precision: 2 };
 test('local calculator respects ranges, zero, missing and invalid values without eval', () => {
   assert.equal(calculateV2(calc, { capital: '50000', risk: '1' }), 500);
