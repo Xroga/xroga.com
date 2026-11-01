@@ -5,8 +5,8 @@ terminal. Sensitive service manifests stay in RAM. Preserve unrelated voice tags
 """
 import copy,datetime,json,pathlib,subprocess,sys,time,urllib.error,urllib.request
 P='project-c40d4821-e647-4fa2-92d';R='us-east4'
-OLD='xroga-api-response-4500d0-serving-1102';NEW='xroga-api-response-92c69c-serving-1102';TAG='response-92c69c-serving-check'
-OLD_SHA='4500d039721323ebc5351a9493d1d695e1d3e6e8';NEW_SHA='92c69c21eaf3a8490a43f6b110f48242af09d7ec'
+OLD='xroga-api-response-4500d0-serving-1102';NEW='xroga-api-response-a2b972-serving-1102';TAG='response-a2b972-serving-check'
+OLD_SHA='4500d039721323ebc5351a9493d1d695e1d3e6e8';NEW_SHA='a2b972fcd50b2f6a431795e393e552aac26454a7'
 REPO='us-east4-docker.pkg.dev/'+P+'/cloud-run-source-deploy/xroga-api-release@'
 OLD_IMAGE=REPO+'sha256:bb429763e6ac0c2791e31c88c3cb05dab70fb07ea8c417cfb3b552c23d7a6a7a'
 NEW_IMAGE=REPO+json.loads((pathlib.Path(__file__).resolve().parent/'image.json').read_text())['digest']
@@ -73,7 +73,7 @@ def serving_config(v):
  assert s['serviceAccountName']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','SERVING_IDENTITY_DRIFT'
 
 approval=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
-assert approval.get('directOutputCorrectionApproved') is True and approval['approved'] is True and approval['packageId']=='response-v2-direct-output-92c69c21' and approval['sourceSha']==NEW_SHA,'EXACT_OWNER_APPROVAL_REQUIRED'
+assert approval.get('directOutputCorrectionApproved') is True and approval['approved'] is True and approval['packageId']=='response-v2-direct-output-a2b972fc' and approval['sourceSha']==NEW_SHA,'EXACT_OWNER_APPROVAL_REQUIRED'
 if MODE in ['pause','serving','job','promote','resume']:
  from release_gates import require_release_ci
  require_release_ci()
@@ -97,7 +97,7 @@ elif MODE=='pause':
  record('QUEUE_PAUSED_AFTER_DATABASE_FENCE_AND_DRAIN')
 elif MODE=='serving':
  candidate=json.loads((ROOT/'response-candidate-private-ready.json').read_text())
- assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']=='xroga-api-response-92c69c-check-1102','GUARDED_CANDIDATE_PROOF_REQUIRED'
+ assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']=='xroga-api-response-a2b972-check-1102','GUARDED_CANDIDATE_PROOF_REQUIRED'
  fenced();live(service,OLD);assert queue['state']=='PAUSED';no_executions()
  try:v=api(V1+'/revisions/'+NEW)
  except urllib.error.HTTPError as e:
@@ -163,7 +163,7 @@ elif MODE in ['promote','recover-traffic']:
  job_config(job,NEW_IMAGE if MODE=='promote' else OLD_IMAGE,NEW_SHA if MODE=='promote' else OLD_SHA)
  if MODE=='promote':serving_config(api(V1+'/revisions/'+NEW))
  traffic=[{'type':'TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION','revision':target,'percent':100}]
- traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'response-92c69c-check']]
+ traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'response-a2b972-check']]
  if service['traffic']!=traffic:
   record('SUBMITTING_DEFAULT_TRAFFIC_WITH_ADMISSION_CLOSED',revision=target)
   wait(run(SERVICE+'?updateMask=traffic','PATCH',{'name':SERVICE,'etag':service['etag'],'traffic':traffic}))

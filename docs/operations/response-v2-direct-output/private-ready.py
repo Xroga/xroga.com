@@ -4,8 +4,8 @@ ROOT=pathlib.Path(__file__).resolve().parent
 kind=sys.argv[1];assert kind in ['candidate','serving']
 sys.argv=[str(ROOT/'cutover.py'),'status']
 h=runpy.run_path(str(ROOT/'cutover.py'));api=h['api'];run=h['run'];task=h['task'];P=h['P'];QUEUE=h['QUEUE']
-revision='xroga-api-response-92c69c-check-1102' if kind=='candidate' else h['NEW']
-tag='response-92c69c-check' if kind=='candidate' else h['TAG']
+revision='xroga-api-response-a2b972-check-1102' if kind=='candidate' else h['NEW']
+tag='response-a2b972-check' if kind=='candidate' else h['TAG']
 service=api(h['V1']+'/services/xroga-api')
 uri=next(v['url'] for v in service['status']['traffic'] if v.get('tag')==tag)
 audience=service['status']['url']

@@ -4,8 +4,8 @@ import pathlib
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parent
-SOURCE = '92c69c21eaf3a8490a43f6b110f48242af09d7ec'
-PACKAGE = 'response-v2-direct-output-92c69c21'
+SOURCE = 'a2b972fcd50b2f6a431795e393e552aac26454a7'
+PACKAGE = 'response-v2-direct-output-a2b972fc'
 
 class ExactApprovalTests(unittest.TestCase):
     def check(self, file, receipt):

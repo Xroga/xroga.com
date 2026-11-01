@@ -2,7 +2,7 @@
 import json
 import subprocess
 
-SOURCE = '92c69c21eaf3a8490a43f6b110f48242af09d7ec'
+SOURCE = 'a2b972fcd50b2f6a431795e393e552aac26454a7'
 REQUIRED = ('unit', 'build', 'authenticated-browser', 'deterministic-golden',
             'structured-mission-policy', 'disposable-policy-database')
 

@@ -13,5 +13,5 @@ BEGIN
   THEN RAISE EXCEPTION 'CANONICAL_FENCE_NOT_PAUSED_AND_DRAINED'; END IF;
 END;
 $guard$;
-UPDATE public.xroga_release_fence SET allowed_source='92c69c21eaf3a8490a43f6b110f48242af09d7ec' WHERE singleton;
+UPDATE public.xroga_release_fence SET allowed_source='a2b972fcd50b2f6a431795e393e552aac26454a7' WHERE singleton;
 COMMIT;

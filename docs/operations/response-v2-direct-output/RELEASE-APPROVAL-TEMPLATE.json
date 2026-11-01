@@ -1,11 +1,11 @@
 {
   "approved": false,
   "directOutputCorrectionApproved": false,
-  "packageId": "response-v2-direct-output-92c69c21",
-  "sourceSha": "92c69c21eaf3a8490a43f6b110f48242af09d7ec",
+  "packageId": "response-v2-direct-output-a2b972fc",
+  "sourceSha": "a2b972fcd50b2f6a431795e393e552aac26454a7",
   "maximumOneTimeGoogleUsd": 0.5,
   "maximumMonthlyImageStorageUsd": 0.1,
   "maximumMaintenanceMinutes": 60,
-  "maximumNewModelAndResearchUsd": 0.1,
+  "maximumNewModelAndResearchUsd": 0.5,
   "conditionalOnAllSixExactSourceGates": true
 }
