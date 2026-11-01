@@ -1,0 +1,11 @@
+{
+  "approved": false,
+  "directOutputCorrectionApproved": false,
+  "packageId": "response-v2-direct-output-92c69c21",
+  "sourceSha": "92c69c21eaf3a8490a43f6b110f48242af09d7ec",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.1,
+  "conditionalOnAllSixExactSourceGates": true
+}

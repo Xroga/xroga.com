@@ -1,0 +1,35 @@
+# Direct-answer completion correction, exact release decision
+
+Prepared November 2, 2026. Not approved, built or deployed.
+
+Package `response-v2-direct-output-92c69c21` pins backend `92c69c21eaf3a8490a43f6b110f48242af09d7ec`. Its application and build inputs are identical to `63c3d5b1`; the later commit corrects current-source review bindings after an actual CI rejection. Historical proofs, frozen obligations and security assertions remain. Frontend candidate `2b6e4aa4d856cca6796c4991447aba4ab2f37ae4` is independently gated on draft PR #909.
+
+One real new SaaS request on the approved 4500 release produced a four-node, five-edge diagram but stopped mid-answer. Provider metadata confirms `length`, 4,096 completion tokens and 3,467 reasoning tokens. Total provider charges for planner plus answer were $0.00217355. The existing ledger estimated $0.001225. This is recorded as an unreconciled historical discrepancy, not silently rewritten.
+
+The correction forwards the provider-supported existing `none` reasoning control for direct chat, preserving model selection and the answer token limit. It carries public partial-completion status through the API, saved response and V2 Copy/Share. It enforces conservative price ceilings on the serialized provider request and settles validated provider-reported charges when available. Invalid or over-reservation charges retain the existing accounting hold and stop retries. Missing charge metadata retains conservative accounting. It adds no ledger, schema, scheduler, credential, provider or formatting-model call. Frontend graphs retain every original connection with compact routing, numbered edges and a readable connection legend. The legacy renderer and current production authentication are preserved.
+
+## Requested production scope
+
+After all six exact-source backend gates pass, permit one build in the existing Google registry, immutable source/digest verification, guarded zero-traffic readiness, and the existing paired API/Job cutover in `project-c40d4821-e647-4fa2-92d`, `us-east4`. Apply only the four SQL files in this folder to the existing `xroga_release_fence` singleton in Supabase `nzenxdfumxrnsmybazmo`. These close, allow or recover the pinned source. There is no schema, customer-record, permission or financial-history change.
+
+Drain work without cancelling it. Keep maintenance within 60 minutes. Preserve voice routing, frontend rollback, the canonical queue, current Google identities, KMS and secrets. No new service, VM, IAM, DNS, subscription, minimum instance, top-up or paid upgrade. Maximum additional Google usage is $0.50 once and $0.10/month image retention, credits first within existing funding. Source build has not started. Submission is journaled before calling Google, and an unknown outcome forbids blind resubmission.
+
+Retain the current 4500 API/Job image `sha256:bb429763e6ac0c2791e31c88c3cb05dab70fb07ea8c417cfb3b552c23d7a6a7a`, revision `xroga-api-response-4500d0-serving-1102`, and the older fd3b recovery pair. Read-only preflight must prove parity, available recovery image, current fence, queue state, no active executions and required readiness. Export only native Job control values and secret references. Failed preflight stops the release. Failed candidate readiness leaves traffic unchanged. Later failure uses the guarded paired recovery and source fence before resuming the queue. Remove only the exact temporary readiness Tasks and check tags. Keep all serving and recovery images.
+
+The already-authorized presentation-only frontend promotion remains conditional on its exact-source checks and real authenticated acceptance. Preserve the existing production auth source and microphone. Recheck the actual production target before promotion, since another operator may have released concurrently. Keep PR #909 draft until its required product and release gates pass.
+
+## Bounded new-response acceptance
+
+Request up to $0.10 additional combined model and research usage from existing balances for at most four synthetic new-chat submissions: the exact founder SaaS explanation, the $25 × 40 hypothetical workshop calculator, one short unrelated code/conversation question, and one sourced research question. This is ordinary answer generation through existing APIs, not another formatting call. Do not top up, enable a new provider or retry a failed submission manually. Reuse previously retrieved evidence instead of purchasing a duplicate search.
+
+Before each submission, verify remaining approved allowance, existing canonical reservations, available routes and the bounded worst-case dispatch cost. Proceed only if existing controls can keep the whole remaining verification within the combined cap. Unknown costs and holds consume allowance conservatively. If that bound cannot be established, do not start the request. Preserve its precise blocker and continue independent checks. A recurring provider failure closes that paid path. No production model generation is authorized until the owner accepts this new scope.
+
+Verify the complete new answer, diagram topology and direction, original wording, safe tenant guidance, authentic resource links, calculator values/sliders/reset, source provenance/deduplication, private persistence/reopen, Copy/Share fidelity, actual desktop/mobile layout, and zero model dispatches from local interactions. A saved partial answer is useful only for renderer regression and cannot satisfy fresh-generation acceptance. Required readiness still has a recorded optional `storage_reconcile_not_scheduled` warning. Do not claim universal operational acceptance from a healthy API response.
+
+## Guarded operator sequence
+
+After actual approval, record the exact package/source in a local `RELEASE-APPROVED.json`. Run `submit-build.py` once under the repository-owned local runner. Inspect the journal and build result, then run `verify-image.py`, `candidate.py`, `private-ready.py candidate`, and `cutover.py preflight`. No secret or backup contents go into command output.
+
+Start the maintenance deadline, apply `01-pause-current.sql`, and record fresh closed/drained fence evidence. Run cutover stages `pause`, `serving`, `private-ready.py serving`, `job`, and `promote`. Verify API/Job parity before applying `02-allow-response.sql`, then run `resume` and authenticated acceptance. Do not repeat a completed mutation to compensate for a local DNS failure.
+
+If necessary, apply `03-pause-response.sql`, drain and verify a fresh fence receipt, run `recover-job` and `recover-traffic`, verify matching healthy recovery source, apply `04-recover-current.sql`, then `recover-resume`. Recovery is allowed after the forward maintenance deadline. No mismatched API/Job pair may receive new work.
