@@ -1,0 +1,10 @@
+{
+  "approved": true,
+  "packageCommit": "c92676966a2d2fc8c98f03a89fbff31a905feb71",
+  "sourceSha": "bc6cbc434a800c8e7aa086afc1edbbee447294f0",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageUsd": 0.1,
+  "modelSearchAllowanceIncreaseUsd": 0,
+  "approvalText": "Approve this exact paired release",
+  "recordedAtUtc": "2026-11-01T12:52:18.003380+00:00"
+}
