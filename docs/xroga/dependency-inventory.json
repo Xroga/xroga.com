@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3c67899d750769d306b23a13146c12bfc408dfa3",
+  "source_sha": "fd3b663290cf150da51768171021860b032df025",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15832,6 +15832,10 @@
       "sha256": "fba32cb6703084fd6de14661d92f08baaccaecb1c987e666b72d80ed327032e8"
     },
     {
+      "path": "backend/src/ai/completionDiagnostics.ts",
+      "sha256": "3859e84227f83566301ad3eb12d65e8f40a2c5afe16ec19a9688bc6a7a1bf6e1"
+    },
+    {
       "path": "backend/src/ai/contextPreparation.ts",
       "sha256": "375e05d4bc84d42f2a398a35b2a5f8ec07299b4f421cbf23b8e3d49e4edc721d"
     },
@@ -15929,7 +15933,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
+      "sha256": "44c89cd06d6b7d42e7de4bcb7e4d71c78961cf8f45de4fee2e5ff73de3c777e5"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -16249,7 +16253,7 @@
     },
     {
       "path": "backend/src/ai/universal/runtimeFailure.ts",
-      "sha256": "9003e328225367c4662cf6c0c767ee0c2cf1f5b8a22eb34a5310e7f1c587ff27"
+      "sha256": "8eecda995351e195eaacf2192b35e341a99fa52224bfa9112aa8190fb1b26f3a"
     },
     {
       "path": "backend/src/ai/universal/safeApi.ts",
@@ -23121,7 +23125,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 183,
+      "line": 184,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23740,7 +23744,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 110,
+      "line": 111,
       "credentialsInUrl": false
     },
     {
@@ -30411,7 +30415,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 238,
+      "line": 239,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -62,6 +62,29 @@ test('both actual model SDK paths allow ordinary work and deny secret prompts be
   }assert.equal(calls,2);
 });
 
+test('actual admitted SDK paths retain empty-response diagnostics without publishing or retrying',async t=>{
+  const run=admitted(t);let calls=0,published=0;
+  t.mock.method(console,'warn',()=>{});
+  t.mock.method(OpenAI.prototype,'post',async(_path:unknown,options:unknown)=>{
+    calls++;
+    if((options as {body:{stream?:boolean}}).body.stream)return(async function*(){
+      yield {id:'synthetic-empty',choices:[{delta:{reasoning_content:'private reasoning'},finish_reason:'length'}]};
+      yield {choices:[],usage:{prompt_tokens:4,completion_tokens:8}};
+    })();
+    return {id:'synthetic-empty',choices:[{message:{content:null,reasoning_content:'private reasoning'},finish_reason:'length'}],usage:{prompt_tokens:4,completion_tokens:8}};
+  });
+  const options={maxTokens:8,onDelta:()=>published++};
+  for(const invoke of [chatCompletion,chatCompletionStream])await assert.rejects(run(invoke,[{role:'user',content:'ordinary source'}],options),error=>{
+    const failure=error as {code:string;retryable:boolean;completionDiagnostics:{providerRequestId:string;usage:unknown;finishReason:string}};
+    assert.equal(failure.code,'EMPTY_PROVIDER_RESPONSE');assert.equal(failure.retryable,false);
+    assert.equal(failure.completionDiagnostics.providerRequestId,'synthetic-empty');
+    assert.equal(failure.completionDiagnostics.finishReason,'length');
+    assert.deepEqual(failure.completionDiagnostics.usage,{inputTokens:4,outputTokens:8});
+    return true;
+  });
+  assert.equal(calls,2);assert.equal(published,0);
+});
+
 test('model payload snapshots support tool records and aliases but reject cycles and unsupported values safely',()=>{
   const shared={text:'ordinary source'},payload={messages:[shared,shared,{role:'assistant',content:null}],tools:[]};
   const snapshot=snapshotModelEgressPayload(payload,'synthetic-private-key');shared.text='changed later';

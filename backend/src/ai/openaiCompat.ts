@@ -14,6 +14,7 @@ import {containsCredentialSecretText} from '../security/egress/dataClassificatio
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH} from './modelSdkAdmission.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
+import { CompletionDiagnostics, requirePublicCompletion } from './completionDiagnostics.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -305,36 +306,14 @@ export async function chatCompletion(
         opts.signal ? { signal: opts.signal } : undefined,
       ),
     );
+    const diagnostics = new CompletionDiagnostics();
+    diagnostics.observe(completion, false);
     const choice = completion.choices[0]?.message;
 
-    // Reasoning models split their reply in two. GLM and the DeepSeek v4 family return
-    // their thinking in `reasoning_content` and the answer in `content`. Reading only
-    // `content` means a model that spent its whole output budget thinking looks, from
-    // here, exactly like a provider that returned nothing — which is what "empty
-    // completion" reported for every GLM implementation attempt in production while the
-    // API itself was answering normally.
-    //
-    // The reasoning text is deliberately NOT used as the answer. It is a model's working,
-    // not its output, and committing it as a source file would be worse than failing. It is
-    // read only to tell the two situations apart, because they need different fixes: a
-    // larger output budget versus a different provider.
-    const reasoning =
-      typeof (choice as { reasoning_content?: unknown })?.reasoning_content === 'string'
-        ? ((choice as { reasoning_content?: string }).reasoning_content ?? '').trim()
-        : '';
+    // Private reasoning is counted in the receipt, never published as an answer.
     const answer = (choice?.content ?? '').trim();
 
-    if (!answer && reasoning) {
-      const error = new Error(
-        `${modelId} returned ${reasoning.length} characters of reasoning but no answer — its ` +
-          'output budget was spent thinking. Raise the budget for this call or route to a ' +
-          'model that answers within it.',
-      ) as Error & { code?: string };
-      error.code = 'REASONING_WITHOUT_ANSWER';
-      throw error;
-    }
-
-    const text = requireNonEmptyModelText(answer, modelId);
+    const text = requirePublicCompletion(answer, modelId, diagnostics);
     const inputTokens =
       completion.usage?.prompt_tokens ??
       messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
@@ -414,12 +393,15 @@ export async function chatCompletionStream(
     );
 
     let text = '';
+    const diagnostics = new CompletionDiagnostics();
     let providerRequestId: string | undefined;
     let finishReason: string | null = null;
     let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     let outputTokens = 0;
 
+    try {
     for await (const chunk of stream) {
+      diagnostics.observe(chunk, true);
       providerRequestId ??= chunk.id;
       if (opts.signal?.aborted) {
         const err = new Error('Build cancelled') as Error & { code?: string };
@@ -452,8 +434,12 @@ export async function chatCompletionStream(
         outputTokens = chunk.usage.completion_tokens ?? outputTokens;
       }
     }
+    } catch (error) {
+      console.warn('[model-stream-interrupted]', { modelId, ...diagnostics.receipt(), aborted: opts.signal?.aborted === true });
+      throw error;
+    }
 
-    text = requireNonEmptyModelText(text, modelId);
+    text = requirePublicCompletion(text, modelId, diagnostics);
     if (!outputTokens) outputTokens = estimateTokens(text);
 
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
