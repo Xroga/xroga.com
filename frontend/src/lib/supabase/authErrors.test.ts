@@ -9,7 +9,7 @@ test('maps configuration and provider failures to safe actionable messages', () 
   );
   assert.equal(
     safeAuthError(new Error('Unsupported provider: provider is not enabled'), 'fallback'),
-    'GitHub sign-in is not configured yet.'
+    'This sign-in provider is not configured yet.'
   );
   assert.equal(
     safeAuthError(new Error('Signups not allowed for this instance'), 'fallback'),

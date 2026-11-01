@@ -69,7 +69,8 @@ test('the middleware returns before building an auth client', () => {
 
 test('both redirects still happen, so the gate is not merely skipped', () => {
   assert.match(MIDDLEWARE, /if \(!user && !isPublicPage\)/, 'the sign-in redirect is gone');
-  assert.match(MIDDLEWARE, /if \(user && isAuthPage\)/, 'the signed-in-on-login redirect is gone');
+  assert.match(MIDDLEWARE, /if \(user && isAuthPage && pathname !== '\/auth\/contact'/, 'the signed-in-on-login redirect is gone');
+  assert.match(MIDDLEWARE, /pathname !== '\/auth\/reset-password'/, 'the recovery page must remain reachable');
 });
 
 test('files that can never be gated do not reach the middleware', () => {

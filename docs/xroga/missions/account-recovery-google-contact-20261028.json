@@ -30,9 +30,12 @@
     "frontend/src/lib/contactPhone.test.ts",
     "frontend/src/lib/contactPhone.ts",
     "frontend/src/lib/publicUrlInventory.ts",
+    "frontend/src/lib/onboarding.test.ts",
     "frontend/src/lib/supabase/oauthReturn.test.ts",
     "frontend/src/lib/supabase/oauthReturn.ts",
     "frontend/src/lib/supabase/authErrors.ts",
+    "frontend/src/lib/supabase/authErrors.test.ts",
+    "frontend/src/lib/supabase/authLookupCost.test.ts",
     "frontend/src/lib/supabase/authProviders.ts",
     "frontend/src/lib/supabase/middleware.ts",
     "frontend/e2e/batch01-founder-local.spec.ts",
@@ -75,6 +78,7 @@
     {"command": "npx tsc --noEmit -p backend/tsconfig.json", "scope": "Backend type-check", "negative": false, "reference": "backend/src/routes/profile.ts"}
     ,{"command": "npx tsx --test backend/src/routes/profile.contactPhone.test.ts", "scope": "Backend rejects malformed contact numbers", "negative": true, "reference": "backend/src/routes/profile.contactPhone.test.ts"}
     ,{"command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/supabase/oauthReturn.test.ts", "scope": "OAuth callback rejects external and malformed return targets", "negative": true, "reference": "frontend/src/lib/supabase/oauthReturn.test.ts"}
+    ,{"command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/onboarding.test.ts frontend/src/lib/supabase/authErrors.test.ts frontend/src/lib/supabase/authLookupCost.test.ts", "scope": "Existing signup, provider-error and auth-lookup contracts remain aligned with contact and recovery routes", "negative": true, "reference": "frontend/src/lib/onboarding.test.ts"}
   ],
   "architecture": {"change": "extends_canonical", "reason": "Reuses Supabase Auth, private profile SQL, and current Next layouts; no new identity provider or scheduler.", "rfc": null},
   "rollout": "Review PR and gates; test reset email and Google OAuth against isolated authenticated staging; verify redirect allowlist, Supabase SMTP, and production Google provider; apply migration before app deploy; then staged and production-safe smoke checks.",
