@@ -87,6 +87,7 @@ export class PostgresStorageRepository implements StorageRepository {
   async listObjects(tenantId: string, f: ListFilter) {
     const params: unknown[] = [tenantId];
     let where = 'tenant_id = $1';
+    if (f.safeFilename !== undefined) { params.push(f.safeFilename); where += ` and safe_filename = $${params.length}`; }
     if (f.projectId !== undefined) { params.push(f.projectId); where += f.projectId === null ? ' and project_id is null' : ` and project_id = $${params.length}`; if (f.projectId === null) params.pop(); }
     if (f.states) { params.push(f.states); where += ` and state = any($${params.length}::text[])`; }
     if (f.afterId) { params.push(f.afterId); where += ` and id > $${params.length}`; }
