@@ -21,6 +21,16 @@ export type SandboxNetworkPolicy =
   | 'restricted'
   | 'preview';
 
+/** No current adapter has independently verified registry-only network enforcement.
+ * Refuse before probing, allocating compute or forwarding source to a worker.
+ * A worker health flag or an application URL allowlist cannot grant this mode. */
+export function requireEnforcedSandboxNetworkPolicy(policy: SandboxNetworkPolicy, runtime: string): void {
+  if (policy === 'registry-only') throw new SandboxUnavailableError({
+    available: false, runtime, reason: 'policy_disabled',
+    detail: 'Registry-only execution requires a verified restricted-network worker. Unrestricted bridge networking is refused. Use a verified offline install with network policy none when all dependencies are already available.',
+  });
+}
+
 export interface SandboxLimits {
   memoryMb: number;
   cpuSeconds: number;

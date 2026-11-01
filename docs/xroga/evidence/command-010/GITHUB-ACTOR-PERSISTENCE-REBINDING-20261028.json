@@ -1,0 +1,173 @@
+{
+  "scope": "EXACT_EXISTING_PERSISTENCE_POSITIONS_NO_NEW_SECURITY_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/routes/github.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "currentSourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "fa85a7affe57fe8615c1",
+          "currentId": "fa85a7affe57fe8615c1",
+          "enclosing": "<module>",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "0b8393ef789df9e76d18",
+          "currentId": "0b8393ef789df9e76d18",
+          "enclosing": "<module>",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "github_integrations",
+          "unchangedExpressionSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+        },
+        {
+          "previousId": "9ccaf29d98b973526d7b",
+          "currentId": "9ccaf29d98b973526d7b",
+          "enclosing": "<module>",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "currentSourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "660909aa15c676228c90",
+          "currentId": "16e9bd43351094b6a7fb",
+          "enclosing": "getIntegration",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "148d27d99764607b2339",
+          "currentId": "51b0a88f73c6d7dbf811",
+          "enclosing": "getIntegration",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "github_integrations",
+          "unchangedExpressionSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+      "currentSourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "b092008f2d41b3ddf1d9",
+          "currentId": "acfbdb182d9e682cce3f",
+          "enclosing": "runBuildPipeline",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+      "currentSourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "40b6d116790751a2b569",
+          "currentId": "8c2f244d2269c3ff06ae",
+          "enclosing": "runBuildPipeline",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "currentSourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "355f4dbeae8a416a7e42",
+          "currentId": "30bbc8593d36230fdfe9",
+          "enclosing": "fetchRepoTextFile",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "currentSourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "45aec3a8752cfb119062",
+          "currentId": "d86fc4994d93219933ff",
+          "enclosing": "decodeRepositoryTextBlob",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "c39b7e3b3c17442c56c575628bbcf6fdcb56e11453a67190f449da09c5e2e3be",
+      "currentSourceSha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "29043e1b2d0f9c86568b",
+          "currentId": "fb2bffffc91cc072976a",
+          "enclosing": "toolUiLink",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "71810aae4ee0f65671120d7cc36a29e3dcc1dd34c482026e53cc7a042beee70e"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "currentSourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
+      "semanticReview": "Original issued actor is threaded without a new issuer; terminal denials remain terminal. Existing exact persistence expression and containing statement are unchanged. These source position bindings preserve prior scoped disposition, never certify new egress or consequential calls.",
+      "mapping": [
+        {
+          "previousId": "105bf445742d0d40d7cc",
+          "currentId": "105bf445742d0d40d7cc",
+          "enclosing": "getUserGitHubToken",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "dec9e2d45abac3ac1512b290f782b991529f22a2e2efe3cebce1e9f00ce055e1"
+        },
+        {
+          "previousId": "126af63b441c91019028",
+          "currentId": "126af63b441c91019028",
+          "enclosing": "getUserGitHubToken",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        }
+      ]
+    }
+  ]
+}

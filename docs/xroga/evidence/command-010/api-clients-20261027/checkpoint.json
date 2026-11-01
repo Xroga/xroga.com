@@ -1,0 +1,87 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_FIRST_PARTY_API_CLIENT_CHECKPOINT_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T17:31:37.081993+00:00",
+  "parent": "e2b4b4e6cba24e0b036a73e8105601b465f5cbef",
+  "trace": "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+  "strictAudit": {
+    "total": 145,
+    "reviewed": 94,
+    "pending": 51,
+    "unresolvedHighRiskBypasses": 30
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "strictIncomplete",
+      "jobId": "1abc8237-b3a8-4021-a6b9-bcbd7416471a",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/api-clients-20261027/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      },
+      "freeSpaceChangeBytesDuringInterval": 32768
+    },
+    {
+      "name": "backendTypes",
+      "jobId": "3f8aa572-93f3-4cf5-a562-3370a8b38d2b",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322060
+      },
+      "freeSpaceChangeBytesDuringInterval": -697933824
+    },
+    {
+      "name": "frontendTypes",
+      "jobId": "4e0a3b9e-8338-42a7-b470-d5a3bbadc7ab",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322060
+      },
+      "freeSpaceChangeBytesDuringInterval": -1490620416
+    },
+    {
+      "name": "softwareToolFixtureAfterTypingCorrection",
+      "jobId": "440887e5-3c46-409d-8b04-f8ed464bf94e",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/api-clients-20261027/softwareToolFixtureAfterTypingCorrection.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 72525
+      },
+      "freeSpaceChangeBytesDuringInterval": -696614912
+    }
+  ],
+  "backendTypes": "PASS_CURRENT_SOURCE",
+  "frontendTypes": "PASS_CURRENT_SOURCE",
+  "softwareToolFixtureTypingCorrection": {
+    "path": "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts",
+    "sha256": "9dbe791f45e6db0a5769930c2e4ca91ea08778a89d590c2a64ca9ec91c816dd1",
+    "change": "Replace unsafe partial interface assertion with a complete typed fixture whose unused ports fail closed. Security assertions and production implementation unchanged.6actualSDK/tool tests pass."
+  },
+  "phase4": "NOT_VERIFIED",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "productionChanged": false,
+  "spending": 0,
+  "storageMonitoring": {
+    "reportedDuringTypes": "About1.49GB free-space fall during concurrent checks, later about0.70GB during the backend correction check. Intervals overlap with unrelated active laptop activity and must not be summed as task-owned artifacts.",
+    "freeBytesObserved": 112876593152,
+    "allRetainedOwnJobReceiptsBytesObserved": 997222,
+    "ownTemporaryCleanup": "COMPLETE",
+    "windowsPagefileAllocatedMiBObserved": 30720,
+    "attribution": "Not established. No protected files, WSL disks, persistent volumes, system paging or other projects changed."
+  },
+  "next": "Classify remaining actual network versus local-data/state candidates, then remaining production-relevant provider/egress and upstream provenance gaps. Final exact-source CI and reviewed Phase4 release remain gated."
+}

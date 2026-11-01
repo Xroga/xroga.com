@@ -17,6 +17,7 @@ export type OAuthResultPayload = {
   projects?: unknown[];
   autoSelected?: boolean;
   provisioned?: boolean;
+  reviewUrl?: string;
   t?: number;
 };
 

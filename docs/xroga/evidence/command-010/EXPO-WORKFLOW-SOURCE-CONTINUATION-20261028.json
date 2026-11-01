@@ -1,0 +1,74 @@
+{
+  "scope": "EXACT_UNCHANGED_NATIVE_CONVERSIONS_AND_AUTH_TRANSPORT_FUNCTIONS_PLUS_EXPLICIT_NEW_WORKFLOW_BOUNDARY_NOT_WHOLE_PIPELINE_CERTIFICATION",
+  "parent": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+  "remaps": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "704187e956115d9aa476",
+      "afterId": "e4d85b225c1b15ed81a5",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "unchangedNearestBlockSha256": "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "29355a8ed40d9768bdd2",
+      "afterId": "86c1d25d68f4d6dc4446",
+      "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "unchangedNearestBlockSha256": "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+    },
+    {
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "beforeId": "830d44b7069ecb028334",
+      "afterId": "0451e237441c07358ba9",
+      "callSha256": "98d46ec21a33d5c151e918ccc441ecd49a851c3935a41115baf6b3de5fc869f6",
+      "unchangedNearestBlockSha256": "374b6c1672b669873dad750f30fd42a454f89d891f57ab4f25cdbd690d5bb1bc"
+    },
+    {
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "beforeId": "13a489a31a9849b826e4",
+      "afterId": "230cf93f46dcdc2cf5d4",
+      "callSha256": "42faaf1552f03a48b9ece7794177df79c47647eb2f291b616939c5b169ec5805",
+      "unchangedNearestBlockSha256": "374b6c1672b669873dad750f30fd42a454f89d891f57ab4f25cdbd690d5bb1bc"
+    }
+  ],
+  "unchangedFunctions": [
+    {
+      "path": "frontend/src/lib/api.ts",
+      "name": "resolveApiUrl",
+      "sha256": "cdfa2bc8476f789a0a01c919a9f9edd263f469b9deffcfe24a276f3b011e73b2"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "name": "fetchApiResponse",
+      "sha256": "8d1099f77da5112591b4c74885b37ef8f10bb9f62aa720f0e572bc764c3549e5"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "name": "apiFetch",
+      "sha256": "5e067385f100a1cb5c702b0fbc9630c23b7ac66197c4edbe649ebeb070d5fa07"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "name": "getAccessToken",
+      "sha256": "14a65bc0a26938b69d94277bdf8471ba3eae71a8bd6d152376aef685659cc39e"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "name": "uploadChatImage",
+      "sha256": "f7ddfa1a888183e124bd2ff75933246329e5121262ed8244df96f6e36c792fd7"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "name": "uploadChatFile",
+      "sha256": "14b0ea7fe9e5ddfb44d626896ad83e6257bb6987559e75f2d7732d03169bdbca"
+    },
+    {
+      "path": "backend/src/services/publish/userOwnedPublish.ts",
+      "name": "verifyExpoToken",
+      "sha256": "a51dfe27cd3925531c0891f6c28490f060293b1d97263640f6c02ed43857ca21"
+    }
+  ],
+  "originalProofsPreserved": true,
+  "priorCompleteReviews": "Retained in immutable pushed parent and referenced by original registry SHA, avoiding repeated recursive copies of historical evidence.",
+  "phase4Accepted": false
+}

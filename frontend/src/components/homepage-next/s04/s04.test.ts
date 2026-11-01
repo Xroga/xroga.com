@@ -124,13 +124,11 @@ test('the work panel says what Xroga is accomplishing; tasks settle with the sce
   assert.match(card, /className=\{s\.spec\}/);
 });
 
-test('the visitor can pause and resume the walkthrough', () => {
+test('the readiness list carries no Pause/Play or Replay controls; autoplay stays', () => {
   const main = src('S04Publish.tsx');
-  assert.match(main, /aria-pressed=\{sc\.paused\}/);
-  assert.match(main, /Pause the walkthrough/);
-  assert.match(main, /Play the walkthrough/);
+  assert.doesNotMatch(main, /sc\.togglePause|sc\.replay|aria-pressed=\{sc\.paused\}|Pause the walkthrough|Play the walkthrough/);
+  assert.doesNotMatch(main, /COPY\.replay/);
   const clock = src('useScene.ts');
-  assert.match(clock, /const togglePause = /);
   assert.match(clock, /c\.playing && !c\.paused/, 'leaving the viewport never overrides a visitor pause');
 });
 
@@ -243,4 +241,24 @@ test('motion is bounded: pauses offscreen, honours reduced motion, never loops, 
     assert.match(s, /prefers-reduced-motion: reduce/, `${f} honours reduced motion`);
   }
   for (const [f, s] of sources) assert.doesNotMatch(s, /scrollIntoView|window\.scrollTo|scrollBy\(/, f);
+});
+
+test('phones: the iPhone, Xroga\'s work and the store page are one snapping swipe row, never three stacked screens', () => {
+  const stages = src('stage/Stages.module.css');
+  const phones = stages.replace(/\r\n/g, '\n').slice(stages.replace(/\r\n/g, '\n').indexOf('@media (max-width: 760px) {\n  .ios,'));
+  const rule = phones.match(/\n  \.ios \{[^}]*\}/)?.[0] ?? '';
+  assert.match(rule, /display: flex;/);
+  assert.match(rule, /overflow-x: auto;/);
+  assert.match(rule, /scroll-snap-type: x mandatory;/);
+  // the row contains its own horizontal scrolling so a sideways swipe never drags the page
+  assert.match(rule, /overscroll-behavior-x: contain;/);
+  assert.match(phones, /\.iosStore \{\s*flex: 0 0 min\(82%, 300px\);/);
+});
+
+test('phones: the Google Play listing header and the Chrome listing never put three things in one row', () => {
+  const stages = src('stage/Stages.module.css').replace(/\r\n/g, '\n');
+  assert.match(stages, /\.playHead \{\s*grid-template-columns: auto minmax\(0, 1fr\);\s*\}/);
+  assert.match(stages, /\.playHead > em \{\s*grid-column: 1 \/ -1;/);
+  assert.match(stages, /\.cwsMedia \{\s*grid-template-columns: minmax\(0, 1fr\);/);
+  assert.match(stages, /\.ios\[data-ready\] \.shot \{\s*height: auto;/);
 });

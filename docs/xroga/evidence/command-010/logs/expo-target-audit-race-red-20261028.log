@@ -1,0 +1,331 @@
+TAP version 13
+# Subtest: actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch
+    # Subtest: ok
+    ok 1 - ok
+      ---
+      duration_ms: 439.9003
+      type: 'test'
+      ...
+    # Subtest: submit-android
+    ok 2 - submit-android
+      ---
+      duration_ms: 106.2303
+      type: 'test'
+      ...
+    # Subtest: submit-ios
+    ok 3 - submit-ios
+      ---
+      duration_ms: 95.4875
+      type: 'test'
+      ...
+    # Subtest: restart
+    ok 4 - restart
+      ---
+      duration_ms: 64.1558
+      type: 'test'
+      ...
+    # Subtest: head-advanced
+    ok 5 - head-advanced
+      ---
+      duration_ms: 62.3061
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 6 - concurrent
+      ---
+      duration_ms: 56.2428
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 7 - cancelled
+      ---
+      duration_ms: 30.9693
+      type: 'test'
+      ...
+    # Subtest: cancel-at-source
+    ok 8 - cancel-at-source
+      ---
+      duration_ms: 33.8398
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 9 - cancel-at-audit
+      ---
+      duration_ms: 54.9681
+      type: 'test'
+      ...
+    # Subtest: owner-at-audit
+    ok 10 - owner-at-audit
+      ---
+      duration_ms: 57.3745
+      type: 'test'
+      ...
+    # Subtest: account-at-audit
+    not ok 11 - account-at-audit
+      ---
+      duration_ms: 56.083
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoWorkflow.authority.test.ts:1:8407'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      stack: |-
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoWorkflow.authority.test.ts:67:8)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoWorkflow.authority.test.ts:54:743)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: store-at-audit
+    not ok 12 - store-at-audit
+      ---
+      duration_ms: 72.97
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoWorkflow.authority.test.ts:1:8407'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      stack: |-
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoWorkflow.authority.test.ts:67:8)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoWorkflow.authority.test.ts:54:743)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: audit-fail
+    ok 13 - audit-fail
+      ---
+      duration_ms: 46.5978
+      type: 'test'
+      ...
+    # Subtest: cancel-at-claim
+    ok 14 - cancel-at-claim
+      ---
+      duration_ms: 42.1586
+      type: 'test'
+      ...
+    # Subtest: cancel-after-claim
+    ok 15 - cancel-after-claim
+      ---
+      duration_ms: 42.0252
+      type: 'test'
+      ...
+    # Subtest: expire-after-claim
+    ok 16 - expire-after-claim
+      ---
+      duration_ms: 57.5081
+      type: 'test'
+      ...
+    # Subtest: expo-epoch
+    ok 17 - expo-epoch
+      ---
+      duration_ms: 44.156
+      type: 'test'
+      ...
+    # Subtest: github-epoch
+    ok 18 - github-epoch
+      ---
+      duration_ms: 49.1415
+      type: 'test'
+      ...
+    # Subtest: store-key-changed
+    ok 19 - store-key-changed
+      ---
+      duration_ms: 69.8114
+      type: 'test'
+      ...
+    # Subtest: foreign-account
+    ok 20 - foreign-account
+      ---
+      duration_ms: 42.1035
+      type: 'test'
+      ...
+    # Subtest: foreign-repository
+    ok 21 - foreign-repository
+      ---
+      duration_ms: 36.3307
+      type: 'test'
+      ...
+    # Subtest: foreign-local-project
+    ok 22 - foreign-local-project
+      ---
+      duration_ms: 30.6187
+      type: 'test'
+      ...
+    # Subtest: workflow-changed
+    ok 23 - workflow-changed
+      ---
+      duration_ms: 65.678
+      type: 'test'
+      ...
+    # Subtest: truncated-source
+    ok 24 - truncated-source
+      ---
+      duration_ms: 41.7474
+      type: 'test'
+      ...
+    # Subtest: source-symlink
+    ok 25 - source-symlink
+      ---
+      duration_ms: 46.53
+      type: 'test'
+      ...
+    # Subtest: source-key-file
+    ok 26 - source-key-file
+      ---
+      duration_ms: 44.3925
+      type: 'test'
+      ...
+    # Subtest: source-held-secret
+    ok 27 - source-held-secret
+      ---
+      duration_ms: 51.9742
+      type: 'test'
+      ...
+    # Subtest: blob-identity
+    ok 28 - blob-identity
+      ---
+      duration_ms: 40.4947
+      type: 'test'
+      ...
+    # Subtest: secret-in-blob
+    ok 29 - secret-in-blob
+      ---
+      duration_ms: 47.4636
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 30 - changed-target
+      ---
+      duration_ms: 22.6491
+      type: 'test'
+      ...
+    # Subtest: changed-proof
+    ok 31 - changed-proof
+      ---
+      duration_ms: 21.6108
+      type: 'test'
+      ...
+    # Subtest: changed-expiry
+    ok 32 - changed-expiry
+      ---
+      duration_ms: 26.2979
+      type: 'test'
+      ...
+    # Subtest: dispatch401
+    ok 33 - dispatch401
+      ---
+      duration_ms: 49.2993
+      type: 'test'
+      ...
+    # Subtest: dispatch403
+    ok 34 - dispatch403
+      ---
+      duration_ms: 53.5723
+      type: 'test'
+      ...
+    # Subtest: dispatch503
+    ok 35 - dispatch503
+      ---
+      duration_ms: 162.1416
+      type: 'test'
+      ...
+    # Subtest: dispatch-redirect
+    ok 36 - dispatch-redirect
+      ---
+      duration_ms: 150.0938
+      type: 'test'
+      ...
+    # Subtest: cancel-at-dispatch
+    ok 37 - cancel-at-dispatch
+      ---
+      duration_ms: 149.8281
+      type: 'test'
+      ...
+    # Subtest: foreign-run-url
+    ok 38 - foreign-run-url
+      ---
+      duration_ms: 144.1145
+      type: 'test'
+      ...
+    # Subtest: foreign-run
+    ok 39 - foreign-run
+      ---
+      duration_ms: 187.1913
+      type: 'test'
+      ...
+    # Subtest: wrong-commit
+    ok 40 - wrong-commit
+      ---
+      duration_ms: 168.7502
+      type: 'test'
+      ...
+    # Subtest: wrong-ref
+    ok 41 - wrong-ref
+      ---
+      duration_ms: 153.5388
+      type: 'test'
+      ...
+    # Subtest: bad-state
+    ok 42 - bad-state
+      ---
+      duration_ms: 168.5104
+      type: 'test'
+      ...
+    # Subtest: authorized-after-outage
+    ok 43 - authorized-after-outage
+      ---
+      duration_ms: 192.9182
+      type: 'test'
+      ...
+    # Subtest: missing-workflow fails preparation without dispatch fallback
+    ok 44 - missing-workflow fails preparation without dispatch fallback
+      ---
+      duration_ms: 52.3738
+      type: 'test'
+      ...
+    # Subtest: secret-in-workflow fails preparation without dispatch fallback
+    ok 45 - secret-in-workflow fails preparation without dispatch fallback
+      ---
+      duration_ms: 31.4894
+      type: 'test'
+      ...
+    # Subtest: source403 fails preparation without dispatch fallback
+    ok 46 - source403 fails preparation without dispatch fallback
+      ---
+      duration_ms: 39.8732
+      type: 'test'
+      ...
+    # Subtest: app creation requires exact approval and returns a verified ID without changing the saved selection
+    ok 47 - app creation requires exact approval and returns a verified ID without changing the saved selection
+      ---
+      duration_ms: 66.8304
+      type: 'test'
+      ...
+    # Subtest: metadata helpers reject raw and fabricated actors before network
+    ok 48 - metadata helpers reject raw and fabricated actors before network
+      ---
+      duration_ms: 1.1007
+      type: 'test'
+      ...
+    1..48
+not ok 1 - actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch
+  ---
+  duration_ms: 3780.9268
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoWorkflow.authority.test.ts:1:777'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 49
+# suites 0
+# pass 46
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4797.3644

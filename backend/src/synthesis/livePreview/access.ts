@@ -1,5 +1,6 @@
 import type { ProjectRuntimeSession } from '../projectRuntime/types.js';
 import type { LivePreviewGrant } from './types.js';
+import { configuredProjectRuntimeProviders } from '../projectRuntime/manager.js';
 
 /** Revalidate persisted relationships at resolution, not just possession of a
  * signed hostname. Never derive an upstream address from a request parameter. */
@@ -17,10 +18,11 @@ export function authorizedPreviewSession(grant:LivePreviewGrant,session:ProjectR
 
 export function authorizedPreviewTarget(grant: LivePreviewGrant, session: ProjectRuntimeSession | null, now = Date.now()): { host: string; port: number } | null {
   if(!authorizedPreviewSession(grant,session,now))return null;
-  const { machineId, app } = session.providerState;
-  if (typeof machineId !== 'string' || !/^[a-z0-9]{1,64}$/.test(machineId) ||
-    typeof app !== 'string' || !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(app)) return null;
-  return { host: `${machineId}.vm.${app}.internal`, port: grant.port! };
+  if (typeof session.providerId !== 'string' || !session.providerId) return null;
+  try {
+    const provider = configuredProjectRuntimeProviders().find(candidate => candidate.id === session.providerId);
+    return provider?.resolvePreviewTarget?.(session, grant.port!) ?? null;
+  } catch { return null; }
 }
 
 /** Capability admission binds an owned active session and its declared port.

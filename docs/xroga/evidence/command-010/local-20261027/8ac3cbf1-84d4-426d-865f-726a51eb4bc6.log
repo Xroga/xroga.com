@@ -1,0 +1,41 @@
+TAP version 13
+# Subtest: GJ connected read refuses credential canaries before discovery or execution
+not ok 1 - GJ connected read refuses credential canaries before discovery or execution
+  ---
+  duration_ms: 16.2604
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\e2e\\xrogaGoldenJourneys.test.ts:1:8607'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\e2e\xrogaGoldenJourneys.test.ts:116:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: GJ changed remote session ownership during egress receipt prevents the confirmed action
+not ok 2 - GJ changed remote session ownership during egress receipt prevents the confirmed action
+  ---
+  duration_ms: 30.2895
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\e2e\\xrogaGoldenJourneys.test.ts:1:9045'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\e2e\xrogaGoldenJourneys.test.ts:122:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1081.8876

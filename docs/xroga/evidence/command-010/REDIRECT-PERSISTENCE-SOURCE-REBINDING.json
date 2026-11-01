@@ -1,0 +1,361 @@
+{
+  "scope": "TWELVE_EXACT_EXISTING_PERSISTENCE_RECORDS_NO_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "currentSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "semanticReview": "Redirect denials after actual provider bytes preserve the existing conservative reservation for reconciliation via an SDK-preserved error type. Original reservation, release and settlement SQL expressions are unchanged. Real SDK/HTTP test shows one wire, zero forwarding, zero fallback and p_pending_reconciliation true. Focused original ledger/model regressions pass. All original unresolved manual/structured obligations remain unresolved.",
+      "mapping": [
+        {
+          "previousId": "d406c0b568fd6ec5e544",
+          "currentId": "aae055d92faa16ae4e2e",
+          "enclosing": "activatePaidCycle",
+          "kind": "RPC_CANDIDATE",
+          "target": "activate_xroga_paid_cycle",
+          "unchangedExpressionSha256": "c0743930c360577871f41f79aab76d0db4db895e39f23dd2bd1fe9106daa1401"
+        },
+        {
+          "previousId": "de6707af035c2d7fe760",
+          "currentId": "54326930ab9ec884b6cd",
+          "enclosing": "activatePaidCycle",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "currentSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "semanticReview": "Seven fixed OAuth/account-read fetch sites now share finite official URL/method admission, manual redirect inspection with terminal security errors, deadline, outbound/body limits and sanitized provider failures. Original PKCE, vault, refresh revision and owner SQL expressions remain exact. Focused OAuth, refresh, revocation and real local HTTP redirect tests pass. No deploy or external-export callers are promoted.",
+      "mapping": [
+        {
+          "previousId": "f5a449e18aa070e708bf",
+          "currentId": "12c9bb0d0c73ee6e60e3",
+          "enclosing": "encodeVercelRefreshLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "bbef4dc370cba405c98f08419f55353043e28e2cccd88d306f6a8932f6198189"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "currentSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "semanticReview": "Seven fixed OAuth/account-read fetch sites now share finite official URL/method admission, manual redirect inspection with terminal security errors, deadline, outbound/body limits and sanitized provider failures. Original PKCE, vault, refresh revision and owner SQL expressions remain exact. Focused OAuth, refresh, revocation and real local HTTP redirect tests pass. No deploy or external-export callers are promoted.",
+      "mapping": [
+        {
+          "previousId": "2f4adaffabba4e9c17b8",
+          "currentId": "fbf3c4a33e40d8cdd380",
+          "enclosing": "parseVercelRefreshLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "882313924d2da09f0bbce1fe40f4b8c90f03c32bd25b888a8d07966e90111688"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "currentSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "semanticReview": "Seven fixed OAuth/account-read fetch sites now share finite official URL/method admission, manual redirect inspection with terminal security errors, deadline, outbound/body limits and sanitized provider failures. Original PKCE, vault, refresh revision and owner SQL expressions remain exact. Focused OAuth, refresh, revocation and real local HTTP redirect tests pass. No deploy or external-export callers are promoted.",
+      "mapping": [
+        {
+          "previousId": "4e906804cf01a3be86b8",
+          "currentId": "d04965754963fdbd9233",
+          "enclosing": "buildVercelAuthorizeUrl",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "f5364b427cb9511bb72053c8f8943763fab7db99558a06b5eb949e3449721086"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "currentSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "semanticReview": "Seven fixed OAuth/account-read fetch sites now share finite official URL/method admission, manual redirect inspection with terminal security errors, deadline, outbound/body limits and sanitized provider failures. Original PKCE, vault, refresh revision and owner SQL expressions remain exact. Focused OAuth, refresh, revocation and real local HTTP redirect tests pass. No deploy or external-export callers are promoted.",
+      "mapping": [
+        {
+          "previousId": "3c6dd575e54ba2b2717c",
+          "currentId": "169a608ac63c88456351",
+          "enclosing": "parseVercelOAuthState",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "f35a51e459c9843dafa157634fcb85d115d86a4d974d8aa25f3fbead22ca59ad"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "currentSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "semanticReview": "Redirect denials after actual provider bytes preserve the existing conservative reservation for reconciliation via an SDK-preserved error type. Original reservation, release and settlement SQL expressions are unchanged. Real SDK/HTTP test shows one wire, zero forwarding, zero fallback and p_pending_reconciliation true. Focused original ledger/model regressions pass. All original unresolved manual/structured obligations remain unresolved.",
+      "mapping": [
+        {
+          "previousId": "5ffa627faeaa6803aab8",
+          "currentId": "53446e75ca49c95522af",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "RPC_CANDIDATE",
+          "target": "ensure_xroga_free_cycle",
+          "unchangedExpressionSha256": "b491044ebe1b60bbb13107068fe51c114cd0443af45b058d1b176fe056a99469"
+        },
+        {
+          "previousId": "7fb0d4feb0707259368b",
+          "currentId": "4c4451bbec61aecb23d3",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "abe158166765391a38bb",
+          "currentId": "9d05c85f5bfac4989a75",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "xroga_billing_cycles",
+          "unchangedExpressionSha256": "6d6c902b6c84da24f40aa1650f802ee8882e82b5272fb5cc084814c63d835d05"
+        },
+        {
+          "previousId": "cd6fb0dc4aecaa924a23",
+          "currentId": "469b0a4a0957a0d982b1",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "48010eb67a70f9160a4e",
+          "currentId": "4a9c1469b879166fe52c",
+          "enclosing": "setUsagePacing",
+          "kind": "RPC_CANDIDATE",
+          "target": "set_xroga_usage_pacing",
+          "unchangedExpressionSha256": "a78a54ae4e2620785b9280daa6621dcc8669ac0bbc6900884d13a8c6b7839bf3"
+        },
+        {
+          "previousId": "c79d0afb3ebeabc76c2d",
+          "currentId": "0b3ff8ce7a456a8a2acf",
+          "enclosing": "setUsagePacing",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "f8840556255dc425215c",
+          "currentId": "f6f4b355a8c80fc166f4",
+          "enclosing": "reserveProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "reserve_xroga_provider_budget",
+          "unchangedExpressionSha256": "f81e043496acfac4dd24216c73e8742804dda243ee9ee2a0cc717fa98955317b"
+        },
+        {
+          "previousId": "3c5c04328c11bf512dba",
+          "currentId": "c2adb020f37811ce7849",
+          "enclosing": "reserveProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "1523f7744eed6083f0b6",
+          "currentId": "9d0558fe12707a8a2949",
+          "enclosing": "settleProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "settle_xroga_provider_budget",
+          "unchangedExpressionSha256": "fd5b19821cdaf19811507e8703aecd2289a32af85ad242b366637d14f8889c7f"
+        },
+        {
+          "previousId": "4c1b535638e8a0a197f8",
+          "currentId": "65acb9b03435995fdeb0",
+          "enclosing": "settleProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "currentSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "semanticReview": "Seven fixed OAuth/account-read fetch sites now share finite official URL/method admission, manual redirect inspection with terminal security errors, deadline, outbound/body limits and sanitized provider failures. Original PKCE, vault, refresh revision and owner SQL expressions remain exact. Focused OAuth, refresh, revocation and real local HTTP redirect tests pass. No deploy or external-export callers are promoted.",
+      "mapping": [
+        {
+          "previousId": "6cd8c24a9e60be01c103",
+          "currentId": "bfa9c37b741565a62ccf",
+          "enclosing": "deleteVercelTokenFromStorage",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "1f7990192c0a2ca3a76f",
+          "currentId": "7f7950ebdd403fc9af4f",
+          "enclosing": "deleteVercelTokenFromStorage",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "25bae07d9f52425f11a7769f2732c1571383eac137a0379f298023aff4ac3760"
+        },
+        {
+          "previousId": "05048acae9b1850cc04a",
+          "currentId": "84c192f7c2170d985a33",
+          "enclosing": "refreshVercelOAuthTokenWithLease",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "5c951f6e7fdbc9713651",
+          "currentId": "64f1d4bef6d0e36d1656",
+          "enclosing": "refreshVercelOAuthTokenWithLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+        },
+        {
+          "previousId": "7865641cd30c1a0e72b5",
+          "currentId": "8d37b17d181b3f2e73ce",
+          "enclosing": "refreshVercelOAuthTokenWithLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "09371b515df625b7c63bf6b86cd14fa6926d089b6420ba5bfea15d668b22ab63"
+        },
+        {
+          "previousId": "7a2acf8694991f2fecf6",
+          "currentId": "698baf51e3e7301a6e15",
+          "enclosing": "clearVercelConnection",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "previousId": "eba320f0c59bba39be70",
+          "currentId": "59c54838d170716bad08",
+          "enclosing": "clearVercelConnection",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "currentSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "semanticReview": "Redirect denials after actual provider bytes preserve the existing conservative reservation for reconciliation via an SDK-preserved error type. Original reservation, release and settlement SQL expressions are unchanged. Real SDK/HTTP test shows one wire, zero forwarding, zero fallback and p_pending_reconciliation true. Focused original ledger/model regressions pass. All original unresolved manual/structured obligations remain unresolved.",
+      "mapping": [
+        {
+          "previousId": "88e420183bcb296b87a4",
+          "currentId": "9cce2ff19e247ce9c5d5",
+          "enclosing": "reserveProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "ensure_xroga_free_cycle",
+          "unchangedExpressionSha256": "b62a796405bf587af9c871e445471680e1c7397c6086b98aaf0b7e7cb09d444f"
+        },
+        {
+          "previousId": "df66c5e789c6e8f1dd46",
+          "currentId": "670197ad89640f5a6242",
+          "enclosing": "reserveProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "88789f83425415184ffc",
+          "currentId": "774dd446f08cb58fbc9b",
+          "enclosing": "finishFailedProviderReservation",
+          "kind": "RPC_CANDIDATE",
+          "target": "release_xroga_provider_budget",
+          "unchangedExpressionSha256": "1003047e1837473bb764c6d9d0791784c215952d7347bd930019ff717f7c8eef"
+        },
+        {
+          "previousId": "5fc4041577ba475ddde3",
+          "currentId": "706f26c27c2b32064580",
+          "enclosing": "finishFailedProviderReservation",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "currentSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "semanticReview": "Redirect denials after actual provider bytes preserve the existing conservative reservation for reconciliation via an SDK-preserved error type. Original reservation, release and settlement SQL expressions are unchanged. Real SDK/HTTP test shows one wire, zero forwarding, zero fallback and p_pending_reconciliation true. Focused original ledger/model regressions pass. All original unresolved manual/structured obligations remain unresolved.",
+      "mapping": [
+        {
+          "previousId": "3ff444168109d6f2d8a7",
+          "currentId": "536064ea8ac2c56348ec",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "reserve_operations_provider_budget",
+          "unchangedExpressionSha256": "1ddd595eb7f2ea1c5d03aeebb72a2e5d121e87445511c9298086211dd871e53b"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "currentSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "semanticReview": "Redirect denials after actual provider bytes preserve the existing conservative reservation for reconciliation via an SDK-preserved error type. Original reservation, release and settlement SQL expressions are unchanged. Real SDK/HTTP test shows one wire, zero forwarding, zero fallback and p_pending_reconciliation true. Focused original ledger/model regressions pass. All original unresolved manual/structured obligations remain unresolved.",
+      "mapping": [
+        {
+          "previousId": "e838e61e27730ca3c3a9",
+          "currentId": "2a28f5bad97e04e53770",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "currentSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "semanticReview": "Redirect denials after actual provider bytes preserve the existing conservative reservation for reconciliation via an SDK-preserved error type. Original reservation, release and settlement SQL expressions are unchanged. Real SDK/HTTP test shows one wire, zero forwarding, zero fallback and p_pending_reconciliation true. Focused original ledger/model regressions pass. All original unresolved manual/structured obligations remain unresolved.",
+      "mapping": [
+        {
+          "previousId": "d483200769e782169fd9",
+          "currentId": "49aa84226917135702d4",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "ensure_xroga_free_cycle",
+          "unchangedExpressionSha256": "29a7114644ac5a760bf7e59ccb8e01d93b1a3c8efc87f0d69f4e705837f32ed6"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "currentSourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "semanticReview": "Redirect denials after actual provider bytes preserve the existing conservative reservation for reconciliation via an SDK-preserved error type. Original reservation, release and settlement SQL expressions are unchanged. Real SDK/HTTP test shows one wire, zero forwarding, zero fallback and p_pending_reconciliation true. Focused original ledger/model regressions pass. All original unresolved manual/structured obligations remain unresolved.",
+      "mapping": [
+        {
+          "previousId": "5f776647ab77d7a35536",
+          "currentId": "7e2f36090a4523cf0a8d",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    }
+  ]
+}

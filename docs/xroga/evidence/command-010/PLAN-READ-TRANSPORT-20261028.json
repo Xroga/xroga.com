@@ -1,0 +1,69 @@
+{
+  "scope": "FIXED_PLATFORM_PLAN_READ_ONLY_NO_CHECKOUT_OR_FINANCIAL_AUTHORITY",
+  "candidate": {
+    "id": "a7a8d74128349a90e3e8",
+    "file": "backend/src/services/BillingService.ts",
+    "line": 881,
+    "entryPoint": "verifyConfiguredPlan",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "8efe1e372087f8e5a178bd708db951fc54d12e1fa7f15d919c0d4bb427e784f2",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": "Actual307followed to second origin and oversized otherwise-valid plan accepted in two pre-fix negatives.",
+  "correction": "Literal official issuer and approved plan ID, GET only, redirect:error,10s timeout,64KiB actual body limit with reader disposal, static denial, strict existing account/renewal/price/currency/trial validation unchanged.",
+  "trace": "Authenticated billing route calls createCheckout, which requires this platform plan read before POST. No tenant content is sent by this GET, only approved plan identifier and issuer-scoped platform credential. This read grants no purchase or tenant authority. Checkout creation remains independently pending.",
+  "verification": {
+    "tests": 21,
+    "failures": 0,
+    "skips": 0,
+    "negative": "Real redirect followup0; oversized receipt denied;403prevents checkout POST; wrong owner/terms denied.",
+    "positive": "Exact approved plan and cache remain functional, later successful read after denial allowed."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "dcaed686-bd2b-42e6-b62d-eacc852464e0",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/plan-read-red-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 210090
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "c8958db3-bf9a-4aeb-9565-feda480c8aba",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/plan-read-green-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 253041
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "sha256": "cde5d2e5f348b2aa22d87173b7afc007b6f984c75db51e2e85732c5f73942281"
+    },
+    {
+      "path": "backend/src/services/BillingService.planTransport.security.test.ts",
+      "sha256": "321f9511e97b2de142344915df7b815e31ae8fb0be84bc1c18a24def27fc04b7"
+    }
+  ],
+  "productionChanged": false,
+  "providerRequests": 0,
+  "spending": 0,
+  "limitations": [
+    "No checkout creation, webhook grant, charge, entitlement mutation or current live provider configuration certified."
+  ]
+}

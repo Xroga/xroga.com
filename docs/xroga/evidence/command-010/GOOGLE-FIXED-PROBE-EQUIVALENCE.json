@@ -1,0 +1,11 @@
+{
+  "scope": "UNCHANGED_FIXED_LOCAL_VERSION_PROBE_ONLY",
+  "path": "backend/src/sandbox/sandboxProviders.ts",
+  "parent": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+  "previousFileSha256": "998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a",
+  "currentFileSha256": "a6741cdee7fbc16220cdb2073d98e87e5cac971ad204ebab5fba8be895ee0f49",
+  "unchangedCanRunFunctionSha256": "e50c14b834e98a74ebcbd647e0371ebb8bffb0bf977ee2f14dde52fefdf12ac0",
+  "callerId": "f0eab43244d6d3c88de8",
+  "callSha256": "8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
+  "securityPromotion": false
+}

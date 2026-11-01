@@ -1,0 +1,30 @@
+{
+  "scope": "ONLY_ONE_REMAINING_SUPABASE_PROVISION_BOUNDARY_CLOSED_NOT_PHASE4_ACCEPTANCE",
+  "parent": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+  "resolved": [
+    "15dcdf4bce3cfa3abf94"
+  ],
+  "counts": {
+    "total": 136,
+    "reviewed": 131,
+    "pending": 5,
+    "unresolvedHighRiskBypasses": 2
+  },
+  "tests": {
+    "focused137": "24bca5e0-092b-48e8-aa10-bbe8c0764970",
+    "fixtureContinuation": "0840a49c-488f-499e-82f6-13e2ae15b24c",
+    "backendTypes": "ac06044c-790f-4120-90c4-add21f4d106b",
+    "frontendTypes": "2ae34228-ca3e-45a9-a640-e75661e4fde3",
+    "frontendLint": "981a4686-974b-4af5-b0fd-4aabc107450e",
+    "sourceRegisterIntegrity": "99cc5e05-d4f0-4eca-830e-cd77ace910ba"
+  },
+  "previousExactSourceCi": "docs/xroga/evidence/command-010/CI-CACE633A-20261028.json",
+  "strictAudit": "FAIL_PENDING_FIVE_NOT_ACCEPTED",
+  "next": [
+    "5baa649b7c2c9b6b6f30",
+    "7b6e1f490ce974fc3971"
+  ],
+  "productionChanged": false,
+  "spend": 0,
+  "phase4Accepted": false
+}

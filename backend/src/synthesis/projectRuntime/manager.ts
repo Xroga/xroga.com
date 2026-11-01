@@ -2,6 +2,7 @@ import {
   randomUUID,
 } from 'node:crypto';
 import { redactSecrets } from '../../lib/truthfulExecution.js';
+import {requireEnforcedSandboxNetworkPolicy} from '../../sandbox/sandboxTypes.js';
 import {googleProjectRuntimeFromEnvironment, googleProjectRuntimeSelected} from './googleFactory.js';
 import {runtimeAuthorityIdentity, type ProjectRuntimeAuthority} from './googleAuthority.js';
 
@@ -60,7 +61,7 @@ export class ProjectRuntimeUnavailableError
   }
 }
 
-function defaultProviders():
+export function configuredProjectRuntimeProviders():
   ProjectRuntimeProvider[] {
   // Google requires an issued caller and owner-bound store. The factory below
   // supplies both. Direct construction must never silently select Fly in this mode.
@@ -88,7 +89,7 @@ export class ProjectRuntimeManager {
 
     private readonly providers:
       readonly ProjectRuntimeProvider[] =
-      defaultProviders(),
+      configuredProjectRuntimeProviders(),
   ) {
     this.secrets =
       new ProjectSecretManager(
@@ -642,6 +643,7 @@ export class ProjectRuntimeManager {
     input:
       ProjectRuntimeCommand,
   ): Promise<ProjectRuntimeCommandResult> {
+    requireEnforcedSandboxNetworkPolicy(input.networkPolicy ?? 'restricted','project-runtime');
     const session =
       await this.session(
         sessionId,
@@ -747,6 +749,7 @@ export class ProjectRuntimeManager {
     input:
       RuntimeProcessStartInput,
   ): Promise<ProjectRuntimeProcessRecord> {
+    requireEnforcedSandboxNetworkPolicy(input.networkPolicy ?? 'restricted','project-runtime');
     const session =
       await this.session(
         sessionId,

@@ -2437,6 +2437,26 @@
   }
 
 }
+/* phones: the menu button meets the 44px touch target */
+@media (max-width: 1080px) {
+  .xn-menu-button {
+    width: 44px;
+    height: 44px;
+  }
+}
+/* very narrow phones: logo, call to action and menu button share the bar without covering each other */
+@media (max-width: 340px) {
+  .xn-bar {
+    padding: 0 4px 0 10px;
+  }
+  .xn-actions {
+    gap: 4px;
+  }
+  .xn-actions .xn-cta {
+    padding: 0 8px;
+    font-size: 12px;
+  }
+}
 @media (max-width: 360px) {
   .xn-actions .xn-cta .xn-cta-icon {
     display: none;

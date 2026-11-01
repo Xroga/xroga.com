@@ -1,0 +1,370 @@
+{
+  "scope": "EXACT_XROGA_CHECKOUT_CONFIGURATION_NOT_OTHER_NATIVE_PUBLISHERS_OR_FINANCIAL_ACTIONS",
+  "candidate": {
+    "id": "fcad57247cfb79779f95",
+    "file": "backend/src/services/BillingService.ts",
+    "line": 1079,
+    "entryPoint": "createCheckout",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "91c3d4d2d494b7e67688d1d78d3fa89a4e4cd6d1ade5273c8ec8e3fb4e110637",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "Raw user ID created an external checkout with no original approval or egress admission",
+    "External receipt could be unbounded or redirected",
+    "A receipt for another approval belonging to the same owner could be accepted"
+  ],
+  "implementation": "Authenticated checkout route requires original context matching request owner and prepares exact current Whop plan, company, owner metadata, nonce, pinned issuer, platform custody epoch and recurring terms. Existing business_action_confirmations table and read/claim/authorize_dispatch/finish RPCs remain the sole durable approval. The native operation is a narrow branch of the existing businessAction executor, not a new orchestrator or grant issuer. Checkout adapter requires original permit, exact immutable plan, current $25/30day terms and configuration, persisted canonical egress decision and one-time durable consumption before POST. Revalidate configuration after waits. No raw ID, confirmedHighRisk flag or serialized approval ID can authorize dispatch.",
+  "callerTrace": [
+    {
+      "caller": "POST /api/billing/checkout and /create-checkout",
+      "effect": "Only prepare existing durable confirmation. No checkout POST."
+    },
+    {
+      "caller": "CheckoutButton Continue to secure checkout",
+      "effect": "POST /api/billing/checkout/:id/confirm selects only exact native billing operation before canonical claim. Cancel uses existing confirmation cancellation endpoint."
+    },
+    {
+      "caller": "Generic existing business-action confirmation endpoint",
+      "effect": "Same native plan and original permit required by actual adapter. It cannot bypass exact target, terms, egress or claim checks."
+    }
+  ],
+  "accounting": "No model call, automatic card charge or paid provider execution occurs. The original purchase/spend action class is preserved with exact 25000000 microUSD/ USD bound to the existing verified $25 plan. Whop requires separate payment confirmation and unchanged webhook ownership/entitlement verification. Creating a checkout link never grants paid entitlement.",
+  "receipts": [
+    {
+      "name": "rawIdRed",
+      "id": "ee857200-a1fe-4dfc-8927-70d38b05f1bb",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-checkout-rawIdRed-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 207548
+      }
+    },
+    {
+      "name": "receiptNonceRed",
+      "id": "ac50a082-d560-4b89-b62f-34f9b3870a13",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-checkout-receiptNonceRed-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 9717
+      }
+    },
+    {
+      "name": "focusedGreen",
+      "id": "d87fab32-183b-4306-a28f-47031ab63b98",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-checkout-focusedGreen-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1022249
+      }
+    },
+    {
+      "name": "canonicalIntegrationGreen",
+      "id": "04499983-c46c-46a3-814f-7ae58384dc58",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-checkout-canonicalIntegrationGreen-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1019458
+      }
+    },
+    {
+      "name": "backendTypes",
+      "id": "e1118cea-cdb9-45b6-8733-ec1adf62c5a6",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322004
+      }
+    },
+    {
+      "name": "frontendTypes",
+      "id": "44e292ae-717d-4919-9983-f2a41b4d220f",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322068
+      }
+    }
+  ],
+  "verification": {
+    "focusedTests": 51,
+    "pass": 51,
+    "fail": 0,
+    "skip": 0,
+    "additionalCanonicalIntegrationTests": 26,
+    "additionalCanonicalIntegrationPass": 26,
+    "backendTypes": "PASS",
+    "frontendTypes": "PASS",
+    "route": "Actual Express routes, real canonical confirmation adapters and Supabase client with synthetic wire receipts. Tests exercise concurrent duplicate denial, cancel, expiry during audit wait, changed target/summary/operation, foreign owner, audit failure/substitution, custody rotation, provider403/503, redirect, oversized receipt and same-owner nonce substitution. Existing callback ownership, plan terms and signature tests retained.",
+    "ui": "Actual source typechecked and pure approval expiry/destination guards executed. No new live browser or production rollout claim."
+  },
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "sha256": "96aa6a02668b9d2a568bf7863c3546edbdc7a26d9bf98d2ff9c8a54202108fe3"
+    },
+    {
+      "path": "backend/src/routes/billingCheckout.security.test.ts",
+      "sha256": "ac4d78352d3ea9352a8b1265aebc79d9cb32bdc3631a84c272e8c0df09f43c8d"
+    },
+    {
+      "path": "backend/src/routes/billing.ts",
+      "sha256": "981e939ad5cb97856cea7ab62b2f400ab06dc355373221b6f65b5ab1e328f87d"
+    },
+    {
+      "path": "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
+      "sha256": "adce243b8db77de709612980c232d26838c2013e205cc99878e87e3c3d851e3f"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "sha256": "d62a773f55b916320a9fc376d0c3057d0772a88bc27cf41d30ee0b67773f2b97"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.test.ts",
+      "sha256": "913e8d6aafa71b03e923102157fc61d231237a163e32d0e64ca6e95bfe25d333"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+    },
+    {
+      "path": "frontend/src/components/billing/CheckoutButton.tsx",
+      "sha256": "96dfb30b212d6e9652415a629140dd3a617a99aa5bae060f0275dba4056cbeb2"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.ts",
+      "sha256": "318559fb218c890e6baf2bf3204947b34934b564747b440b2349ddc52b3f9659"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.test.ts",
+      "sha256": "508ded38db96db3214b1e393a8cf8fda2f00dd048f2ea0363f49c6d776121cfe"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
+    },
+    {
+      "path": "backend/src/index.ts",
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
+    },
+    {
+      "path": "backend/src/middleware/auth.ts",
+      "sha256": "8bb257cd67ad643d9ccc59eae5e767e0e03bbda1ca16ee37fcd304d63d04aca8"
+    },
+    {
+      "path": "backend/src/services/fixtures/checkoutApproval.ts",
+      "sha256": "3775326388a815bf862deae27d20154f0e17b6f07e71dc79e36f58f8b631d95b"
+    }
+  ],
+  "limitations": [
+    "No broader native GitHub/Expo/Supabase/publishing authority acceptance inferred.",
+    "No real customer credentials, Whop purchase, cloud operation or production mutation.",
+    "Whole-source exact CI, current-main integration and original12criteria remain required."
+  ],
+  "productionChanged": false,
+  "spending": 0,
+  "beforeFinalTerminalDenialSourceBindings": [
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "sha256": "96aa6a02668b9d2a568bf7863c3546edbdc7a26d9bf98d2ff9c8a54202108fe3"
+    },
+    {
+      "path": "backend/src/routes/billingCheckout.security.test.ts",
+      "sha256": "ac4d78352d3ea9352a8b1265aebc79d9cb32bdc3631a84c272e8c0df09f43c8d"
+    },
+    {
+      "path": "backend/src/routes/billing.ts",
+      "sha256": "981e939ad5cb97856cea7ab62b2f400ab06dc355373221b6f65b5ab1e328f87d"
+    },
+    {
+      "path": "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
+      "sha256": "bdede0aa63650f86dfc3de909aa50c1d6d66cb57a1b04b56aa68b7c327f91bee"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "sha256": "d62a773f55b916320a9fc376d0c3057d0772a88bc27cf41d30ee0b67773f2b97"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.test.ts",
+      "sha256": "913e8d6aafa71b03e923102157fc61d231237a163e32d0e64ca6e95bfe25d333"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "a6cdfb923889f78b91fb80c9400351ab6c4c2dcfb9d3fc2b2475041831c00240"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+    },
+    {
+      "path": "frontend/src/components/billing/CheckoutButton.tsx",
+      "sha256": "96dfb30b212d6e9652415a629140dd3a617a99aa5bae060f0275dba4056cbeb2"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.ts",
+      "sha256": "318559fb218c890e6baf2bf3204947b34934b564747b440b2349ddc52b3f9659"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.test.ts",
+      "sha256": "508ded38db96db3214b1e393a8cf8fda2f00dd048f2ea0363f49c6d776121cfe"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "73c5d51faae76bf30c67a6a6507d96b2540128fbe5d602dfbd37255fcc93833e"
+    }
+  ],
+  "finalTerminalDenialContinuation": {
+    "correction": "Redirects remain EgressDenied and provider401/403 remain AuthorityError, both terminal model failures. They cannot be converted to generic retryable provider errors. Ordinary503 still requires a fresh approval after durable failure. Unit fixture environment reads/restores the same two fields explicitly. No runtime auditor rule or key set changed.",
+    "receipts": [
+      {
+        "name": "terminalRed",
+        "id": "56fa0958-6515-4d0a-8675-0d3052e16fa9",
+        "status": "failed",
+        "exitCode": 1,
+        "log": "docs/xroga/evidence/command-010/native-checkout-terminalRed-20261028.log",
+        "rawArchive": "docs/xroga/evidence/command-010/native-checkout-terminalRed-20261028.log.original.gz",
+        "originalSha256": "a521e6e5c0f8b0ebe0958d9ac5e7f5250e7e7283854a0cbccc3f1eead095eacd",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 907877
+        }
+      },
+      {
+        "name": "terminalGreen",
+        "id": "567279cc-f776-48f5-900c-c4386d7b2074",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "docs/xroga/evidence/command-010/native-checkout-terminalGreen-20261028.log",
+        "originalSha256": "1c2c5321c48aa5441aab4944a1250f1f5ca4169b357e2ac5ab81b0ddd347177b",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 957166
+        }
+      }
+    ],
+    "rollout": "Coordinated Phase4 API/frontend rollout required. Pre-approval clients cannot bypass the new confirmation contract. Final recovery image must retain the same Phase4 guard. No deployment performed."
+  },
+  "testFixtureProductionGuard": {
+    "correction": "The unit-only synthetic claim helper now refuses every NODE_ENV except test before actor, credential, approval or network work. It is imported only by the three unit test files, never by production routes. The actual production producer remains the canonical durable confirmation flow.",
+    "currentFocusedChecks": 24,
+    "pass": 24,
+    "fail": 0,
+    "receipts": [
+      {
+        "name": "fixtureProductionRed",
+        "job": "8109881a-7843-42b9-aa76-6f96fd12d8d0",
+        "status": "failed",
+        "exitCode": 1,
+        "log": "docs/xroga/evidence/command-010/native-checkout-fixtureProductionRed-20261028.log",
+        "rawArchive": "docs\\xroga\\evidence\\command-010\\native-checkout-fixtureProductionRed-20261028.log.original.gz",
+        "originalSha256": "dd34d85f79b1b484817e8b66f80c2cf7fe6e492fc2e4764653c57a3ee27b08ce",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 909314
+        }
+      },
+      {
+        "name": "fixtureProductionAndRoutesGreen",
+        "job": "743eabb4-7e95-4335-b29f-4fb831e7b32e",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "docs/xroga/evidence/command-010/native-checkout-fixtureProductionAndRoutesGreen-20261028.log",
+        "rawArchive": null,
+        "originalSha256": "88eb8c35390010017ef3d83f03c55b551042de85db5c30afb659b26358b585a6",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 958186
+        }
+      }
+    ]
+  },
+  "beforeNativeSigningSourceBindings": [
+    {
+      "path": "backend/src/services/BillingService.ts",
+      "sha256": "96aa6a02668b9d2a568bf7863c3546edbdc7a26d9bf98d2ff9c8a54202108fe3"
+    },
+    {
+      "path": "backend/src/routes/billingCheckout.security.test.ts",
+      "sha256": "ac4d78352d3ea9352a8b1265aebc79d9cb32bdc3631a84c272e8c0df09f43c8d"
+    },
+    {
+      "path": "backend/src/routes/billing.ts",
+      "sha256": "981e939ad5cb97856cea7ab62b2f400ab06dc355373221b6f65b5ab1e328f87d"
+    },
+    {
+      "path": "backend/src/services/BillingService.checkoutAdmission.security.test.ts",
+      "sha256": "adce243b8db77de709612980c232d26838c2013e205cc99878e87e3c3d851e3f"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "sha256": "d62a773f55b916320a9fc376d0c3057d0772a88bc27cf41d30ee0b67773f2b97"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.test.ts",
+      "sha256": "913e8d6aafa71b03e923102157fc61d231237a163e32d0e64ca6e95bfe25d333"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "140d46c6d9f74e7305239661810eb8a291a2b3fbd01fc43ac74472e8da830a09"
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
+    },
+    {
+      "path": "frontend/src/components/billing/CheckoutButton.tsx",
+      "sha256": "96dfb30b212d6e9652415a629140dd3a617a99aa5bae060f0275dba4056cbeb2"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.ts",
+      "sha256": "318559fb218c890e6baf2bf3204947b34934b564747b440b2349ddc52b3f9659"
+    },
+    {
+      "path": "frontend/src/lib/checkoutAdmission.test.ts",
+      "sha256": "508ded38db96db3214b1e393a8cf8fda2f00dd048f2ea0363f49c6d776121cfe"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920"
+    },
+    {
+      "path": "backend/src/index.ts",
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
+    },
+    {
+      "path": "backend/src/middleware/auth.ts",
+      "sha256": "8bb257cd67ad643d9ccc59eae5e767e0e03bbda1ca16ee37fcd304d63d04aca8"
+    },
+    {
+      "path": "backend/src/services/fixtures/checkoutApproval.ts",
+      "sha256": "3775326388a815bf862deae27d20154f0e17b6f07e71dc79e36f58f8b631d95b"
+    }
+  ],
+  "nativeSigningCompatibility": {
+    "scope": "UNCHANGED_CHECKOUT_BRANCH_PLUS_ADDITIVE_SIGNING_ADAPTER_ONLY",
+    "proof": "docs/xroga/evidence/command-010/NATIVE-SIGNING-MATERIAL-BOUNDARY-20261028.json",
+    "checkoutBranchSha256": "b39a82e3f7a6c4d4252bce0cf5cf1bc14853e22a7a673b6121c518b8846ab2f4",
+    "focusedReceipt": "aa835052-2882-4fdd-a619-282e400006d5"
+  }
+}

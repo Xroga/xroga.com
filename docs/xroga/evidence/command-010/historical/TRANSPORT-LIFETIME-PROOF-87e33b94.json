@@ -1,0 +1,386 @@
+{
+  "version": 1,
+  "localVerification": {
+    "environment": "Canonical safeTestEnvironment, NODE_ENV=test, no provider credentials",
+    "backendSuite": {
+      "tests": 3179,
+      "pass": 3166,
+      "fail": 0,
+      "skipped": 13,
+      "durationMs": 191725,
+      "exitCode": 0
+    },
+    "skipScope": "Existing suite skips retained. No new skip, focus or acceptance suppression was added. New source/transport/upload/reachability regressions execute.",
+    "provenanceAndIntegrationRegressions": {
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0,
+      "note": "Preceding integrity run. One additional current-transport-proof test is now included in the stable-source CI batch."
+    },
+    "backendTypecheck": "PASS",
+    "backendBuild": "PASS",
+    "skipAndFocusIntegrity": "PASS",
+    "phaseOneAndTwoCurrentMappingIntegrity": "PASS_NOT_ACCEPTANCE",
+    "finalIncrementalScope": "After the first full suite, a real malformed-WebSocket-target regression exposed a destination-construction defect. The final origin-form guard rejects @authority, absolute URLs and network-path references before upgrade. Focused transport and resolver tests pass. Stable-source CI must bind the final source; the earlier 3179-test local suite is identified as preceding that final correction. The final GitHub protocol regression also reproduced a provider403 yielding a partial snapshot before correction. The source reader now aborts its read lifetime on provider authorization denial. Both final GitHub/hydration regressions pass. Earlier full-suite evidence is not relabelled as a final-source CI result.",
+    "missionPolicy": "PASS_NOT_RELEASE_AUTHORIZATION",
+    "fullCiForChangedSource": "PENDING_STABLE_SOURCE_PUSH_NOT_REPLACED_BY_STARTING_SOURCE_RECEIPTS"
+  },
+  "scope": "PREPARATORY_REAL_LOCAL_TRANSPORT_AND_CONTROLLED_PROVIDER_PROTOCOL_NOT_RELEASE_ACCEPTANCE",
+  "startingSource": "944bd5e3078be7d3c4d536baefd50c42eb83b32e",
+  "authenticatedStartingCi": {
+    "unitRun": 39964229777,
+    "goldenRun": 39964229836,
+    "allSixWorkflowConclusions": "success",
+    "featureSha": "944bd5e3078be7d3c4d536baefd50c42eb83b32e",
+    "integratedSha": "1b3a61bcbc1fb042d4d905cddea80d7b7314159b",
+    "parents": [
+      "fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "944bd5e3078be7d3c4d536baefd50c42eb83b32e"
+    ],
+    "baselineRepetitions": 4,
+    "stagesPerRepetition": 21,
+    "sourceTreeMutated": false,
+    "golden": "PASS_GUEST_FIXTURE_AND_ANONYMOUS_DENIAL_ONLY",
+    "artifactsDirectory": "C:/Users/hp/Documents/Codex/deliverables/xroga-phase4-944bd5e3-ci",
+    "newSourceAcceptance": false
+  },
+  "github": {
+    "productionCallers": [
+      "inspectConnectedRepositoryState",
+      "fetchRepositoryTextFilesFromGitHub",
+      "fetchBuildFilesFromGitHub",
+      "fetchGitHubFilesByPaths"
+    ],
+    "fix": "Reuse canonical getGitHubToken and exact owner/provider authority. Pin the selected envelope/revision for the read lifetime, validate immediately before each GET and after the bounded response body, refuse redirects, and revalidate before returning a complete snapshot. A changed read cannot reacquire a replacement credential or fall back to cached/browser data. A provider401/403 invalidates the complete snapshot and aborts outstanding read requests instead of skipping a denied blob.",
+    "tests": [
+      "backend/src/services/integrations/githubSourceRead.test.ts",
+      "backend/src/ai/modelContext.security.test.ts"
+    ],
+    "limits": [
+      "Controlled GitHub/Supabase protocols, not live provider or RLS proof",
+      "No atomic transaction across database authority and external GitHub dispatch is claimed",
+      "Other ghFetch consumers, repository analysis cache, generic model and remote-attachment callers remain open",
+      "New read transport 07a46a7b451eaf4dc307 remains in the register, upstream issued identity for every consumer is not certified"
+    ]
+  },
+  "preview": {
+    "fix": "Existing signed-grant resolver retained. Explicit HTTP request header allowlist excludes platform bearer/API/cookie/user headers. No target redirects are followed, foreign/metadata redirects are rejected. Active HTTP/WS streams revalidate every second, fail closed on failed lookup or five-second read deadline. Both WebSocket directions revalidate before forwarding, preserve message order/binary data and bound queued/buffered data and frame size to 1 MiB. Require origin-form paths before constructing HTTP or WebSocket destinations.",
+    "test": "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+    "transport": "Real loopback HTTP/WebSocket servers, only the expected internal Fly hostname maps to loopback through controlled DNS. Database SDK serialization uses controlled responses. No cloud runtime, public target or live provider was contacted.",
+    "positive": [
+      "signed owned HTTP request",
+      "relative redirect",
+      "WebSocket text and binary echo"
+    ],
+    "negative": [
+      "foreign/expired/revoked/session/port-mismatched grants before connection",
+      "platform bearer, cookie, API key and arbitrary user header separation",
+      "metadata redirect denial without follow",
+      "revoked client message not delivered",
+      "revoked upstream data withheld from client",
+      "oversized WebSocket frame rejected with close code1009 before upstream delivery",
+      "established idle WebSocket stopped on runtime invalidation",
+      "HTTP response stream closed after grant revocation",
+      "raw @authority, absolute URL and network-path WebSocket request-targets rejected400 before upgrade"
+    ],
+    "limits": [
+      "One-second idle recheck interval plus at most five-second failed-read deadline, not instantaneous distributed revocation",
+      "Preview target cookies are deliberately not forwarded, independent preview app authentication requires a separately reviewed credential contract",
+      "Full preview-grant issuance authority, subprotocol/payload classification, real Fly/DNS/provider ownership and live database concurrency remain open",
+      "All six preview caller dispositions remain pending"
+    ]
+  },
+  "privateUpload": {
+    "fix": "Canonical BYOK save still seals with existing CredentialVault and database revision CAS. Snapshot encrypted mirror payload before waits. Bind current owner, provider, ciphertext, metadata and revision before private bucket admission and recheck before dispatch/readback. Suppress provider credential-bearing diagnostics.",
+    "test": "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
+    "proved": [
+      "actual canonical writer and Storage SDK request body contains v3 ciphertext, no plaintext credential",
+      "owner/revision/revocation changes during bucket admission prevent upload",
+      "public bucket refusal",
+      "a revoke during the upload cannot revive authority through readback",
+      "storage errors do not leak credentials or undo a valid canonical save"
+    ],
+    "limits": [
+      "Storage upload and authority revocation are not atomic. An encrypted stale mirror may remain if revocation commits after dispatch, and the canonical consumer must continue refusing it",
+      "Live bucket-policy/privacy mutation, real database concurrency and generic private file producer ownership remain unverified",
+      "c7711580844b520345cf remains pending"
+    ]
+  },
+  "newNarrowCallerClosures": [
+    {
+      "id": "46ad38b463b0beb61ba5",
+      "disposition": "DISABLED_WITH_PROOF",
+      "scope": "No production importer, closed production legacy migration window, no approval for future reactivation"
+    },
+    {
+      "id": "e2ad9aec1c5cd1e3ab27",
+      "disposition": "DISABLED_WITH_PROOF",
+      "scope": "Same legacy writer retry, same bounded reachability proof"
+    }
+  ],
+  "counts": {
+    "total": 134,
+    "reviewed": 17,
+    "pending": 117,
+    "unresolvedHighRiskReviewCandidates": 62,
+    "newNarrowClosures": 2,
+    "newTransportCandidates": 1
+  },
+  "threeSdkFinalDispositions": "THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN",
+  "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
+  "criteria": "All 12 original states unchanged in manifest.json, AC12 not verified",
+  "phase3": "B1_P3_BLOCKED",
+  "phase4": "PREPARATORY_NOT_ACCEPTED",
+  "registryOnly": "ONLINE_FAIL_CLOSED",
+  "productionEffects": false,
+  "spend": 0,
+  "rollback": "Revert the preparatory code commit before release. No schema, live credential or production effects need reversal.",
+  "nextReadyTask": "Finish source-bound generic SDK CI and registered real database case, then SoftwareAgent upstream provenance/tool admission and whole preview/connected caller obligations. Preserve earlier receipts and original gates.",
+  "currentSourceBindings": [
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "sha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57"
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+      "sha256": "047188b564c14ec810549fa29eccb74404432646c4d21cf13e352ce0948e8b5e",
+      "previousCurrentBinding": {
+        "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+        "sha256": "f75d3441434e63ed52abe74b20a777e622b616228e4da6262f3d996c6d640151",
+        "scope": "HISTORICAL_TEST_SOURCE_NOT_CURRENT_CI_PROOF"
+      },
+      "continuation": "Existing positive/header/redirect/revocation/bounds assertions remain. The configured synthetic provider and exact persisted providerId are now explicit, with added zero-HTTP/WS-byte missing/unknown/misbound-provider cases. See PREVIEW-PROVIDER-CONTINUATION.md for scoped new-source test results. Historical localVerification above is not relabelled current."
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.ts",
+      "sha256": "ee3ae54b30581b8f230c4c15fab27c298ca8f674a307b28b5c8a95f86786520c"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.test.ts",
+      "sha256": "fdd9d9f3202ac05177eafe213a82371f5fb46967a0c75841f9d9743c0440f241"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
+      "sha256": "86624aa421843f07159f6e921d75a6596b74db2db515e0a52982b6e689a18084"
+    },
+    {
+      "path": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+      "sha256": "2d5082e73c3f8c0aca20a002eb53c960dca073ea9c4dd531eb1a07efb044e910"
+    },
+    {
+      "path": "backend/src/ai/modelContext.security.test.ts",
+      "sha256": "fec3452e2f1b8ed77f6e19e62e50080e297182c1e591d1d7561c3bb138bccc57"
+    },
+    {
+      "path": "scripts/security/source-lifetime-bindings.test.mjs",
+      "sha256": "d340ef0e6377631353d4b4d226db041736b1e7b5397292952ef1a6e74ee15cb7",
+      "previousGenericSdkBinding": {
+        "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb",
+        "scope": "HISTORICAL_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "path": "backend/src/ai/architect.ts",
+      "sha256": "102e1d18e249c6591ec7b098ce095d6af1f5af1a3cb5023d20868788c8c55062"
+    },
+    {
+      "path": "backend/src/ai/benchmarkExecutor.ts",
+      "sha256": "b969f1f6f3d65ce8fb53fe87a5406461d21cf9e0e7b12c57a0152bef548c8e33"
+    },
+    {
+      "path": "backend/src/ai/benchmarkRunner.ts",
+      "sha256": "a5208cdf668988cb24fe1e9c49c9144e3ee2da31dff0a077105dd3c5329faf33"
+    },
+    {
+      "path": "backend/src/ai/black-hole/webIntelligence.ts",
+      "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
+    },
+    {
+      "path": "backend/src/ai/converter.ts",
+      "sha256": "64dc8d414ffcaf4735d4ecbdd169f2d15c66bfde9282e024e0767e19168ae85c"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.egress.test.ts",
+      "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "sha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "previousGenericSdkBinding": {
+        "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
+        "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "previousGenericSdkBinding": {
+        "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
+        "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "sha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "previousGenericSdkBinding": {
+        "sha256": "be8bff52c0a19cd2a19c8235902191d954ef6cc1af4f631a3bfc1d2508600fdd",
+        "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "path": "backend/src/ai/providerRuntime.ts",
+      "sha256": "6d1292ee2cf9d8428b16d1fa27e30ead891062ba09b77b159244342b53905428"
+    },
+    {
+      "path": "backend/src/ai/qa.ts",
+      "sha256": "435121475541eb442df584e1d2674b9abcbe863d4d41c8ba06fbaaa8098e5c92"
+    },
+    {
+      "path": "backend/src/ai/repoSummarize.security.test.ts",
+      "sha256": "93e9131e7e17e97685912dbf2f9134f651b3cb576de2ea928b8c50d253c510de"
+    },
+    {
+      "path": "backend/src/ai/repoSummarize.ts",
+      "sha256": "bc3c17979ae5ddf3d896055af8ea923d5d77e5fdadf6e8fd2c33f31b45b3fd6d"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.test.ts",
+      "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897",
+      "previousGenericSdkBinding": {
+        "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
+        "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
+    },
+    {
+      "path": "backend/src/operations/benchmarkAdapter.ts",
+      "sha256": "417e10890cf8ca9d615c2d807e6a625168b073c418aed43d517e1a9a1334afe5"
+    },
+    {
+      "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+      "sha256": "8a454fcddb3ea3c4eaaf9c5c0746d6fcef756826f8cd93504a4cdfcde381790c"
+    },
+    {
+      "path": "backend/src/routes/guestChat.egress.test.ts",
+      "sha256": "643707813298ddf0fc779e526a98b247163404c2f223088b36c845d50031f9ac",
+      "previousGenericSdkBinding": {
+        "sha256": "5152f50af78aa99c2bb516dc68a5b53ba320f9158a6997804040cea56a0bc31a",
+        "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "path": "backend/src/routes/guestChat.ts",
+      "sha256": "260a5f28139ce66b174efbf9f17d6a03045ff0738a56dd07685e6f0fd8306d36",
+      "previousGenericSdkBinding": {
+        "sha256": "a4f476f3e93800fc3d0ce72e88b30484bee3f20dcb8f67233ce213442d2b0b8d",
+        "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAccounting.failure.test.ts",
+      "sha256": "dda180137594bd2585a7f57c6d45795d87543161256602895d2237c57787eadb"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
+    },
+    {
+      "path": "backend/src/services/integrations/businessRead.ts",
+      "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
+    },
+    {
+      "path": "backend/src/synthesis/coherentImplementation.test.ts",
+      "sha256": "f9476da81c5df78caa61625fa099f375a601c896b14db4eb0a02767487d6bb58"
+    },
+    {
+      "path": "backend/src/synthesis/coherentImplementation.ts",
+      "sha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8"
+    },
+    {
+      "path": "backend/src/synthesis/incrementalImplementation.ts",
+      "sha256": "83521be1d68976af19a4e74f0517d94c1ef323821873a3b0c75967c2b9110b59"
+    },
+    {
+      "path": "backend/src/synthesis/productionAdapters.test.ts",
+      "sha256": "4324bbc7f6da53c7042f77c626b61a7d2416e73009e19ecc593482fef055f3ee"
+    },
+    {
+      "path": "backend/src/synthesis/productionAdapters.ts",
+      "sha256": "440de34413df3178118f0f2d4067bcd26dd01069b5338a25f9a89c1ae88271f2"
+    },
+    {
+      "path": "backend/src/synthesis/universalEntrypoint.ts",
+      "sha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84"
+    },
+    {
+      "path": "backend/src/ai/modelSdkAdmission.ts",
+      "sha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85"
+    },
+    {
+      "path": "backend/src/ai/genericSdkAdmission.test.ts",
+      "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+    },
+    {
+      "path": "backend/src/ai/operationsSdkAdmission.test.ts",
+      "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+    },
+    {
+      "path": "backend/src/security/genericSdk.local.integration.ts",
+      "sha256": "cb5c247ade126ef0a316b4be90647160b30e2158674b8b0a9e28acb2be145dff"
+    },
+    {
+      "path": "backend/src/ai/builderAttempt.ts",
+      "sha256": "8a31b2354b50b32fe202939ce967cc55d9264427de982256e752c82ef4e4a833"
+    }
+  ],
+  "previousCallerCounts": {
+    "reference": "f6dfa28e88238a40e94f71ff0086dc841e4f5761",
+    "total": 134,
+    "reviewed": 14,
+    "pending": 120,
+    "unresolvedHighRiskReviewCandidates": 65,
+    "newNarrowClosures": 2,
+    "newTransportCandidates": 1
+  },
+  "softwareAgentContinuation": {
+    "proof": "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md",
+    "callerId": "4c899876b9e3850af11b",
+    "scope": "ACTUAL_SCOPED_SDK_DISPATCH_NOT_OTHER_GENERIC_SDK_OR_TOOL_EFFECT_ACCEPTANCE",
+    "realDisposable": "NEW_ASSERTION_REGISTERED_REQUIRES_NEW_SOURCE_RUN"
+  },
+  "genericSdkContinuation": {
+    "proof": "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md",
+    "callerIds": [
+      "31380a8d5b9454a98a98",
+      "9c345e07b723c086440e"
+    ],
+    "scope": "SCOPED_DISPATCH_ACCOUNTING_NOT_UPSTREAM_SECURITY_CERTIFICATION",
+    "red": "Missing and fabricated callback admission failed before repair. Detached unchanged2dc test failed atomic receipt assertion4!=5.",
+    "focused": "Final combined191 focused cases PASS0fail/skip in canonical safe test environment, including preserved active output limits. Only external provider/selected database responses synthetic.",
+    "realDisposable": "PASS_EXACT8FD7E3D3_RUN40095139649_BROWSER6_DB211_NEW_GENERIC_CASE122_SOFTWARE_AGENT_CASE121_FRESH_AND_UPGRADE141_PG17_CLI2.120_ZERO_FAIL_SKIP_TEARDOWN_VERIFIED",
+    "authenticatedSource": "8fd7e3d3cf6071b7818601d9828d07067b5c68dd",
+    "ciBindingRepair": "Unit40095143421 passed3200backend/1155frontend/types/builds/lint on feature and actual PR merge, then original negative fixture rejected stale MODEL-DISPATCH-PROOF current hashes. Only proof metadata corrected, all historical records and exact assertions retained. Five focused proof testsPASS. No duplicate authenticated run for unchanged application source.",
+    "productionEffects": false
+  }
+}

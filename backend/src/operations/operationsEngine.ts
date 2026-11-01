@@ -33,6 +33,14 @@ export const ACTION_DEFINITIONS: Record<string, ActionDefinition> = {
 };
 
 const SENSITIVE = [
+  // Whole credential shapes first, so the generic key=value rule below cannot stop at the first space or semicolon and leave the secret behind.
+  /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?(?:-----END [A-Z ]*PRIVATE KEY-----|$)/g,
+  /(?:proxy-)?authorization\s*[:=]\s*(?:(?:basic|bearer|digest|token)\s+)?[^\s,;"']+/gi,
+  /(?:set-)?cookie\s*[:=][^\r\n]+/gi,
+  /\beyJ[a-zA-Z0-9_-]{5,}\.[a-zA-Z0-9_-]{5,}\.[a-zA-Z0-9_-]+/g,
+  /\b(?:AKIA|ASIA)[A-Z0-9]{12,}\b/g,
+  /\bAIza[0-9A-Za-z_-]{20,}/g,
+  /\b[A-Z][A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD|CREDENTIAL)[A-Z0-9_]*\s*=\s*[^\s,;"']+/g,
   /(?:postgres(?:ql)?|mysql|redis):\/\/[^\s"']+/gi,
   /(?:bearer\s+)[a-z0-9._~+/=-]+/gi,
   /(?:sk|sb_secret|gho|ghp|xox[baprs])[_-][a-z0-9_-]+/gi,

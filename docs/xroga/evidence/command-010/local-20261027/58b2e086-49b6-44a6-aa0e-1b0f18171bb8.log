@@ -1,0 +1,19 @@
+{"kind":"DISPOSABLE_BROWSER_COOKIE_PROOF","rootCookieAccepted":true,"authCookieName":"sb-nzenxdfumxrnsmybazmo-auth-token","parentCookieInjectionCount":1,"newInfrastructure":false,"productionVisited":false}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Untrusted Preview script must not create a parent-domain authentication cookie
+
+1 !== 0
+
+    at <anonymous> (C:\Users\hp\Documents\Codex\2026-10-23\g\outputs\phase4-cookie-isolation-probe.mjs:31:9) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.21.1

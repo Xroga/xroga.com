@@ -49,7 +49,8 @@ export interface CloudTasksDeps {
 
 /** The access token of the service the code runs as, from the Cloud Run / Compute Engine metadata server. */
 export async function metadataAccessToken(fetchImpl: typeof fetch = fetch): Promise<string> {
-  const r = await fetchImpl('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token', { headers: { 'Metadata-Flavor': 'Google' } });
+  const r = await fetchImpl('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token', { headers: { 'Metadata-Flavor': 'Google' }, redirect: 'manual', signal: AbortSignal.timeout(5000) });
+  if (r.redirected || r.status >= 300 && r.status < 400) { await r.body?.cancel().catch(() => undefined); throw new Error('Runtime metadata redirect denied.'); }
   if (!r.ok) throw new Error(`metadata token request failed (${r.status})`);
   const body = await r.json() as { access_token?: string };
   if (!body.access_token) throw new Error('metadata token response had no access token');
@@ -68,6 +69,8 @@ export class CloudTasksDispatcher implements BrowserRunDispatcher {
     }
     if (!/^https:\/\//.test(config.targetUrl)) throw new Error('the Cloud Tasks target must be an https URL');
     if (!config.serviceAccountEmail || !config.audience) throw new Error('the Cloud Tasks target needs a service account and an audience');
+    const deadline = config.dispatchDeadlineSeconds ?? 1_800;
+    if (!Number.isInteger(deadline) || deadline < 15 || deadline > 1_800) throw new Error('Cloud Tasks dispatch deadline must be an integer from 15 to 1800 seconds');
   }
 
   async dispatch(runId: string): Promise<void> {
@@ -77,7 +80,7 @@ export class CloudTasksDispatcher implements BrowserRunDispatcher {
     const parent = `projects/${c.project}/locations/${c.location}/queues/${c.queue}`;
     const token = await this.deps.accessToken();
     const response = await this.deps.fetch(`https://cloudtasks.googleapis.com/v2/${parent}/tasks`, {
-      method: 'POST',
+      method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(15000),
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({
         task: {
@@ -92,6 +95,8 @@ export class CloudTasksDispatcher implements BrowserRunDispatcher {
       }),
     });
     // ALREADY_EXISTS means this run was enqueued moments ago: the hand-off already happened.
+    await response.body?.cancel().catch(() => undefined);
+    if (response.redirected || response.status >= 300 && response.status < 400) throw new Error('Cloud Tasks redirect denied.');
     if (response.ok || response.status === 409) return;
     throw new Error(`Cloud Tasks refused the dispatch (${response.status})`);
   }
@@ -102,7 +107,9 @@ export function dispatcherFromEnv(env: NodeJS.ProcessEnv, execute: (runId: strin
   if (env.XROGA_BROWSER_DISPATCH === 'cloud-tasks') {
     const { XROGA_BROWSER_TASKS_PROJECT: project, XROGA_BROWSER_TASKS_LOCATION: location, XROGA_BROWSER_TASKS_QUEUE: queue, XROGA_BROWSER_EXECUTE_URL: targetUrl, XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT: serviceAccountEmail, XROGA_BROWSER_EXECUTE_AUDIENCE: audience } = env;
     if (project && location && queue && targetUrl && serviceAccountEmail && audience) {
-      return { mode: 'cloud-tasks', dispatcher: new CloudTasksDispatcher({ project, location, queue, targetUrl, serviceAccountEmail, audience }, { fetch: fetchImpl, accessToken: () => metadataAccessToken(fetchImpl) }) };
+      const deadline = env.XROGA_BROWSER_DISPATCH_DEADLINE_SECONDS;
+      return { mode: 'cloud-tasks', dispatcher: new CloudTasksDispatcher({ project, location, queue, targetUrl, serviceAccountEmail, audience,
+        dispatchDeadlineSeconds: deadline === undefined ? undefined : Number(deadline) }, { fetch: fetchImpl, accessToken: () => metadataAccessToken(fetchImpl) }) };
     }
     // Misconfigured cloud dispatch must be loud, not a silent fall back to the mode that stalls on Cloud Run.
     throw new Error('XROGA_BROWSER_DISPATCH=cloud-tasks needs XROGA_BROWSER_TASKS_PROJECT, _LOCATION, _QUEUE, XROGA_BROWSER_EXECUTE_URL, _SERVICE_ACCOUNT and _AUDIENCE');

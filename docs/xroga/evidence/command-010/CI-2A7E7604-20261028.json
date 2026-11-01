@@ -1,0 +1,57 @@
+{
+  "source": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+  "conclusion": "PASS",
+  "workflowCount": 7,
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40607279149,
+      "headSha": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+      "name": "Command 4 authority distribution",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40607279065,
+      "headSha": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+      "name": "Agent V2 dependency lock",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40607279092,
+      "headSha": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+      "name": "Xroga mission operating policy",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40607279157,
+      "headSha": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+      "name": "Xroga tenant security fixtures",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40607279068,
+      "headSha": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+      "name": "Growth technical publishing",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40607279102,
+      "headSha": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+      "name": "Xroga golden acceptance harness",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40607279072,
+      "headSha": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+      "name": "Unit tests",
+      "status": "completed"
+    }
+  ],
+  "laterAuraSourceCovered": false
+}

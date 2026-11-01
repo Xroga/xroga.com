@@ -65,6 +65,13 @@ test('bundle reads preserve consistent legacy JWTs and deny opaque, mixed and ch
     const explicit={projectUrl:'https://newproject.supabase.co',anonKey:'sb_publishable_SYNTHETIC',serviceRoleKey:'sb_secret_SYNTHETIC_NEW'};
     await saveSupabaseBundle(old,explicit);
     assert.equal((await readUserSupabaseBundle(owner))?.serviceRoleKey,explicit.serviceRoleKey);
+    for(const mismatch of [{...explicit,anonKey:'sb_secret_SYNTHETIC_NEVER_PUBLIC'},{...explicit,serviceRoleKey:'sb_publishable_SYNTHETIC_NOT_ADMIN'}]){
+      const beforeRoleWrites:number=writes;
+      const admission=await prepareSupabaseBundleWrite(owner);
+      await assert.rejects(saveSupabaseBundle(admission,mismatch),/key roles do not match/);
+      assert.equal(writes,beforeRoleWrites,'Role-mismatched opaque keys cannot reach persistence');
+    }
+
     const a=await prepareSupabaseBundleWrite(owner),b=await prepareSupabaseBundleWrite(owner);
     await saveSupabaseBundle(a,explicit);
     await assert.rejects(saveSupabaseBundle(b,explicit),{code:'CREDENTIAL_WRITE_CONFLICT'});

@@ -1,0 +1,56 @@
+TAP version 13
+# Subtest: cancellation during final container cleanup cannot return successful completion
+ok 1 - cancellation during final container cleanup cannot return successful completion
+  ---
+  duration_ms: 6.8389
+  type: 'test'
+  ...
+# Subtest: cancellation while create completes cleans exact CID without starting it
+ok 2 - cancellation while create completes cleans exact CID without starting it
+  ---
+  duration_ms: 3.2293
+  type: 'test'
+  ...
+# Subtest: unverified cleanup is a terminal pending admission failure
+ok 3 - unverified cleanup is a terminal pending admission failure
+  ---
+  duration_ms: 5.2949
+  type: 'test'
+  ...
+# Subtest: authorized ordinary program failure preserves its exit status and exact cleanup
+ok 4 - authorized ordinary program failure preserves its exit status and exact cleanup
+  ---
+  duration_ms: 1.8123
+  type: 'test'
+  ...
+# Subtest: managed task containers carry the exact local cleanup ownership labels
+not ok 5 - managed task containers carry the exact local cleanup ownership labels
+  ---
+  duration_ms: 7.4612
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\sandbox\\containerLifecycle.security.test.ts:1:3037'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+
+      assert.ok(labels.includes('io.xroga.cleanup.owner=XROGA_LOCAL_DISPOSABLE_JOB_V1'))
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\sandbox\containerLifecycle.security.test.ts:37:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 4
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 788.1443

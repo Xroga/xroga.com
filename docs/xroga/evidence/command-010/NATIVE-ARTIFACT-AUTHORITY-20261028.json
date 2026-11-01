@@ -1,0 +1,132 @@
+{
+  "scope": "EXACT_NATIVE_GITHUB_ARTIFACT_PUBLICATION_NOT_SHARED_CALLER_OR_PHASE4_ACCEPTANCE",
+  "parent": "02a4f2256a88169b874ece4c78c069fe79d1d1b8",
+  "resolvedCandidateIds": [
+    "094a251245ce9b6ab659",
+    "07ca232e98dcc1720801"
+  ],
+  "path": "Existing owned pipeline source -> original issued actor and canonical repository owner -> current GitHub connection -> fixed bounded release metadata -> inspected private source manifest in existing project_files/DB or private R2 -> existing business_action_confirmations -> explicit current-user confirmation -> canonical durable claim and permit -> producer attestation, current owner/source epoch/credential/target -> central egress decision and immutable audit -> exact one-time release creation/asset replacement/upload sequence -> verified uploaded asset receipt and canonical consumed/failure receipt.",
+  "defectsFixed": [
+    "Both native helpers uploaded source without durable consequential approval.",
+    "No immutable approved source, project ownership, credential metadata, release ID or replacement asset binding survived a confirmation wait.",
+    "Pipeline could claim publication or start another native operation without the new exact approval."
+  ],
+  "controls": [
+    "Original WeakSet-issued context, exact owner and repository lookup. No raw-ID or fabricated permit fallback.",
+    "Preparation performs no GitHub mutation. Source is inspected before compression and stored through existing owner-private storage, with digest, file identity, delivery epoch and deterministic ZIP digest. No new store, key, schema or orchestrator.",
+    "Existing managed vault producer attestation binds the complete unsigned plan, including owner, tenant, project, account, arguments, expiry, nonce and risk. A request or changed JSONB row cannot mint a plan.",
+    "Current full canonical GitHub row and token are pinned. Exact private source and owned file epoch are re-read before effect admission. Revocation, cancellation, rotation and changed target are terminal.",
+    "The existing canonical confirmation executor claims once. Central egress persists a safe decision before consuming its genuine permit. Subsequent planned subeffects require the same current executing durable record and exact sequence. No denied/uncertain retry or store/Actions fallback.",
+    "Only fixed GitHub metadata and exact release asset destinations are allowed. Redirect/auth denial cannot become release creation or upload. Replacement requires the approved old asset and DELETE204. Publication requires the exact uploaded asset ID/name/size/state/download URL.",
+    "Native source path aliases, credential files, held platform/provider secrets and their common encodings are rejected before ZIP serialization. Generic binary egress policy remains unchanged.",
+    "Existing UI confirmation shows exact repository/tag/artifact identity and replacement intent. Actual pipeline tests execute its original block and require the approval link, no fake success and no installer/store action while publication is pending.",
+    "Provider HTTP operations in this adapter do not purchase a model/build service. Canonical durable effect receipts account for the exact publication. Separate paid Actions/build admission remains an unresolved shared-caller obligation."
+  ],
+  "evidence": {
+    "beforeFix": {
+      "job": "cf8d4f9b-16d5-4fbc-9606-771306d36239",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/native-artifact-before-fix-20261028.log",
+      "sha256": "c9b8cf328e914bc2d23776d7b28e6459057a8836a446915dbf6536c69e66b000",
+      "rawSha256": "9166fd7e0c9335b6cddf27133ce5b3c227556cf7d8f9f52ca8f9216fb7f51146",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 176025
+      }
+    },
+    "focused": {
+      "job": "cf87bb4c-2e39-4f84-ad8b-ab3a7343a053",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/native-artifact-124tests-20261028.log",
+      "sha256": "936f5435a435c9e31ee37fd74b17982a2e53bc59276395b0389a6e039716c387",
+      "rawSha256": "936f5435a435c9e31ee37fd74b17982a2e53bc59276395b0389a6e039716c387",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1389235
+      }
+    },
+    "backendTypes": {
+      "job": "db30491d-8a36-49aa-bdc3-b5c003780e6a",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/native-artifact-backendTypes-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322052
+      }
+    },
+    "frontendTypes": {
+      "job": "f1e773b6-2877-4db6-a4e9-608350da2938",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/native-artifact-frontendTypes-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1321996
+      }
+    }
+  },
+  "tests": {
+    "total": 124,
+    "pass": 124,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Actual helpers and canonical business-action confirmation/claim/dispatch/finish code through real Supabase SDK HTTP contracts against synthetic fixtures, actual pipeline native block execution, existing signing routes and signing admission tests, and unchanged business-action digest, claim, preview and risk tests. No real GitHub publication or customer-data access."
+  },
+  "limitations": [
+    "Shared ghFetch/Actions, Chrome Web Store, Expo, provisioning, Composio and Parallel remain pending independently. No upstream caller is promoted by these two upload closures.",
+    "Small source-manifest storage/readback executes against synthetic database fixtures. The unchanged larger-file R2 adapter retains its existing independent evidence, not a newly claimed live R2 upload.",
+    "No merge, deployment, production mutation, live provider call or cloud spending. Exact-source CI and final current-main release integration are still required."
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/publish/nativeArtifact.ts",
+      "sha256": "26e4bc697d300367f6d01b96053d68b109dc540aecb8f6d0ad6d52190cca4bf9"
+    },
+    {
+      "path": "backend/src/services/publish/nativeReleaseAdmission.ts",
+      "sha256": "9e89b5914a31c01f2b11499998080d13fcd94d97a412097d954e50995b8b0e7c"
+    },
+    {
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "sha256": "16b5130f410f0ff3c52f542c771273c1f71c912aa03288e6e314022049a6e89e"
+    },
+    {
+      "path": "backend/src/services/publish/nonWebShip.security.test.ts",
+      "sha256": "71f5e690545277374efb6237329286652a84099ed3b0b515dfd529e0ea817c65"
+    },
+    {
+      "path": "backend/src/services/publish/nativeArtifactApproval.security.test.ts",
+      "sha256": "3c2fe8a8815d717b374ff0f239c9e09a76ab11bb60e65496997d37c2493bd778"
+    },
+    {
+      "path": "backend/src/services/publish/__tests__/nativeReleaseFixture.ts",
+      "sha256": "1d90ece42b7e0f0abc7399f1ef0b4383c57cb196e4b5956f1e019b38c27d70bf"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "de9a18304d39831c376fa2d3f32806641312fc137465e0a080d7527a81f13020"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "bca6f6d4d07c97294e13567c9163a0ae72be6aff8eed1789922e68fe55744a23"
+    },
+    {
+      "path": "backend/src/ai/nativePublicationUi.test.ts",
+      "sha256": "3577ebb579546582c045a727f1f833107dc86858c5c3f77e58d6ee702720fe8a"
+    }
+  ],
+  "phase4Accepted": false,
+  "productionEffects": false,
+  "spending": 0
+}

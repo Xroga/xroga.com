@@ -26,10 +26,12 @@ export type WebOperation =
   | 'grok_x_search';
 
 /**
- * Record actual/fixed web-provider spend.
+ * Supplemental web-provider analytics. This is not reservation or settlement.
  *
  * Important:
- * accounting failure must NEVER fail the user's build.
+ * Analytics failure must not undo canonical settlement. Parallel dispatch must
+ * first pass parallelDispatch.ts and the existing durable provider budget RPCs.
+ * Unmigrated callers are not certified by writing this supplemental table.
  */
 export async function recordWebSpend(input: {
   userId: string;

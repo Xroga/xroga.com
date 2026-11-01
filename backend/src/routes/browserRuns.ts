@@ -42,7 +42,7 @@ const body = z.object({
 export type BrowserRunRuntime = BrowserCapabilityDeps & { runs: BrowserRunStore; dispatcher: BrowserRunDispatcher };
 
 /** Unique per process on any platform: Cloud Run containers all have pid 1, so a pid or a Fly machine id is not an identity. */
-const WORKER_ID = `api-${process.env.K_REVISION ?? process.env.FLY_MACHINE_ID ?? 'local'}-${randomUUID().slice(0, 8)}`;
+const WORKER_ID = `api-${randomUUID()}`;
 let production: BrowserRunRuntime | undefined;
 /** Built once from the environment; null when the host, its secret or Drive is missing. */
 export function productionBrowserRuntime(): BrowserRunRuntime | null {
@@ -61,7 +61,7 @@ export function productionBrowserRuntime(): BrowserRunRuntime | null {
     workerId: WORKER_ID,
     // per-process host slots; the cross-instance per-tenant ceiling is the durable count in prepareBrowserRun
     admission: new AdmissionController({ maxConcurrent: 4, maxPerTenant: 2, maxQueuedPerTenant: 4, maxQueuedTotal: 32 }),
-    ...(process.env.XROGA_BROWSER_PLANNER_MODEL ? { planner: async (goal: string, job: Parameters<typeof planBrowserTask>[1], allowAi: boolean) => (await planBrowserTask(goal, job, { modelId: process.env.XROGA_BROWSER_PLANNER_MODEL as ModelId }, { allowAi })).plan } : {}),
+    ...(process.env.XROGA_BROWSER_PLANNER_MODEL ? { planner: async (goal: string, job: Parameters<typeof planBrowserTask>[1], allowAi: boolean,model:Parameters<NonNullable<BrowserCapabilityDeps['planner']>>[3]) => (await planBrowserTask(goal, job, { modelId: process.env.XROGA_BROWSER_PLANNER_MODEL as ModelId }, { allowAi,...model })).plan } : {}),
   };
   let dispatcher: BrowserRunDispatcher;
   try {

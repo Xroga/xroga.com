@@ -21,7 +21,8 @@ test('New Work composer is a single surface and model and voice actions remain u
   await expect(page.getByText('Sensitive actions require approval.', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Start voice typing' })).toBeEnabled();
-  await expect(page.locator('.xv-voice-icon-only svg.lucide-mic')).toHaveCount(1);
+  await expect(page.locator('.xv-voice-icon-only svg')).toHaveCount(1);
+  await expect(page.getByRole('button', {name: 'Voice options'})).toHaveCount(0);
   await page.screenshot({ path: 'test-results/composer-single-surface.png' });
 });
 
@@ -87,7 +88,7 @@ test('existing conversation composer has the identical control layout without a 
   // Current main uses the microphone glyph while idle and audio lines only
   // while listening. Preserve that UI choice when verifying the idle composer.
   await expect(surface.getByRole('button', { name: 'Start voice typing' })).toBeEnabled();
-  await expect(surface.locator('.xv-voice-icon-only svg.lucide-mic')).toHaveCount(1);
+  await expect(surface.locator('.xv-voice-icon-only svg')).toHaveCount(1);
   await surface.getByRole('button', { name: 'Black Hole model and usage' }).hover();
   await page.waitForTimeout(330);
   await expect(page.locator('.xv-compact-app-tooltip')).toHaveCount(0);

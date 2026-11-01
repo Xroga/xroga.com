@@ -1,0 +1,203 @@
+{
+  "scope": "EXACT_PARALLEL_PRIVATE_EGRESS_AND_NATIVE_PUBLIC_RETRIEVAL_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "de91389d184738b4e4237d61b95ee0d163621f43",
+  "resolvedCandidateIds": [
+    "5baa649b7c2c9b6b6f30",
+    "90c62dd04b83e45e1c68"
+  ],
+  "originalCandidate": "5baa649b7c2c9b6b6f30",
+  "newPublicTransportCandidate": "90c62dd04b83e45e1c68",
+  "focusedReceipt": {
+    "scope": "EXACT_LOCAL_PARALLEL_NATIVE_APPROVAL_AND_CENTRAL_URL_CONTINUATION_NOT_PHASE4_ACCEPTANCE",
+    "parent": "de91389d184738b4e4237d61b95ee0d163621f43",
+    "files": [
+      "backend/src/ai/parallelApprovalPipeline.security.test.ts",
+      "backend/src/ai/supabaseApprovalPipeline.security.test.ts",
+      "backend/src/ai/parallelWeb.security.test.ts",
+      "backend/src/ai/black-hole/webIntelligence.test.ts",
+      "backend/src/ai/black-hole/xResearchAdmission.security.test.ts",
+      "backend/src/security/boundedPublicGet.test.ts",
+      "backend/src/security/egress/egress.integration.test.ts",
+      "backend/src/security/egress/publicPost.test.ts"
+    ],
+    "sourceBindings": [
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.test.ts",
+        "sha256": "c1d2edd795163426c69a75082933dc06cc3a8774ee2f682da765d6bddf5c1a2a"
+      },
+      {
+        "path": "backend/src/ai/black-hole/webIntelligence.ts",
+        "sha256": "caa40dd466ffccf48080888702e0de482301dbfcec9ecb9d13ffe82536e19c8e"
+      },
+      {
+        "path": "backend/src/ai/parallelDispatch.ts",
+        "sha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3"
+      },
+      {
+        "path": "backend/src/ai/parallelWeb.security.test.ts",
+        "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+      },
+      {
+        "path": "backend/src/ai/parallelWeb.ts",
+        "sha256": "3e5487425cda5bb757853899353f17bc10e27e1d6f6abba7ea5a4d7cf599836b"
+      },
+      {
+        "path": "backend/src/ai/pipeline.ts",
+        "sha256": "d318e41f53afbe119b40f1f25968b5d86e5c9cf8e1e94acf67a353e48a95115d"
+      },
+      {
+        "path": "backend/src/security/boundedPublicGet.test.ts",
+        "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+      },
+      {
+        "path": "backend/src/security/boundedPublicGet.ts",
+        "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
+      },
+      {
+        "path": "backend/src/services/integrations/businessAction.ts",
+        "sha256": "d556ca3ca87428bdd9f91c8ffef869fafd28efb1b0dc8a2dc88c02996134e35a"
+      },
+      {
+        "path": "backend/src/ai/parallelApproval.ts",
+        "sha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8"
+      },
+      {
+        "path": "backend/src/ai/parallelApprovalPipeline.security.test.ts",
+        "sha256": "e1769e1a7d983ae0f6d1f182ca1b3d5f2c122e639ec97c8a3592d93a4d88d950"
+      }
+    ],
+    "unchangedDuringChecks": true,
+    "tests": {
+      "exitCode": 0,
+      "pass": 37,
+      "fail": 0,
+      "skip": 0
+    },
+    "backendTypes": 0,
+    "productionChanged": false,
+    "spend": 0
+  },
+  "remaps": [
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "beforeId": "6c99f563cb991fc4b6b9",
+      "afterId": "45b3d2d19b57580957f7",
+      "expressionSha256": "f70d97b5cc5e783018cc426f7f85defdb7a8c2d0bced325bc1b590be5dd584ad",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "beforeId": "42ee937494dc19f5f8a8",
+      "afterId": "143402b49edb820c5168",
+      "expressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "beforeId": "ceb185c7249df748e570",
+      "afterId": "9ef0b2228cd77febbf7c",
+      "expressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10",
+      "nearestBlockUnchanged": false,
+      "semanticContinuation": "Existing original-context owner/run checks and canonical reserve/settle arguments remain exact. The reviewed changed enclosing block inserts producer-attested private-egress approval before reservation and a current claim check across every wait. Original REVIEWED_GAP and historical Phase2 obligations remain unpromoted."
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "beforeId": "c1e349666641c6258a7f",
+      "afterId": "a1e8df4a00affe8b85d4",
+      "expressionSha256": "c006ad8788e0eb459b0bc6532e33fefbcd61367b5a0fae8dc88ee5c364bb1d45",
+      "nearestBlockUnchanged": false,
+      "semanticContinuation": "Existing original-context owner/run checks and canonical reserve/settle arguments remain exact. The reviewed changed enclosing block inserts producer-attested private-egress approval before reservation and a current claim check across every wait. Original REVIEWED_GAP and historical Phase2 obligations remain unpromoted."
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "beforeId": "5a3c93b2ea16190402db",
+      "afterId": "6a4aaeb29c94369cd778",
+      "expressionSha256": "96a3860a9b0922c86af4fdff5dda20e6c5db29c75f18944e6abcbd45377fb7f5",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    },
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "beforeId": "170612bbffde0e9ba826",
+      "afterId": "316e1774bccfc8148739",
+      "expressionSha256": "a49eb9443dc73b17028f158d0f56d9620e25f810ae50e01cca0adf1a063054dd",
+      "nearestBlockUnchanged": false,
+      "semanticContinuation": "Existing original-context owner/run checks and canonical reserve/settle arguments remain exact. The reviewed changed enclosing block inserts producer-attested private-egress approval before reservation and a current claim check across every wait. Original REVIEWED_GAP and historical Phase2 obligations remain unpromoted."
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "98eff4c73564a22cc1f0",
+      "afterId": "6545d561a6182d0234a1",
+      "expressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "08f0ea46f9ffcabdaff0",
+      "afterId": "c700ca8f9a68a62068f4",
+      "expressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    },
+    {
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "beforeId": "397bc5f68faa782a225a",
+      "afterId": "6af2b06e38df82949534",
+      "expressionSha256": "5dbe14ee245495acad6868f57bba7d9b664442581afbf82f3b7fe7b11818f033",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    },
+    {
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "beforeId": "4666625d956886af8791",
+      "afterId": "a41efc8d393a9b9579ac",
+      "expressionSha256": "c96259d0a6239b314573c2be1aafeae08002191db1865d2ca99949a08743c8e4",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    },
+    {
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "beforeId": "35dad2a7210ffe5b9e49",
+      "afterId": "4f182ef8e1a36d664b5c",
+      "expressionSha256": "0a501486b2f7d9586982506b85a3aca32312e40a55cb821f075848b5faabfc74",
+      "nearestBlockUnchanged": true,
+      "semanticContinuation": "BYTE_IDENTICAL_NEAREST_BLOCK"
+    }
+  ],
+  "unchangedExistingEgressBlocks": [
+    {
+      "id": "d5061137673f9bba1398",
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "unchangedBlockSha256": "0c349a540c15e49da70f840b8c1671fd04fefebd147a52a1525dd69c281d4aab"
+    },
+    {
+      "id": "73bf2c76c1358dacf6a0",
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "unchangedBlockSha256": "c26673481b05df98679e5221a35a00eaa542a229114ae94bab69b59d51f17a77"
+    }
+  ],
+  "defects": [
+    "Raw project/user research was unconditionally labeled PUBLIC.",
+    "Known URLs were delegated to provider-internal retrieval without Xroga controlling DNS/redirects.",
+    "Pending approval could be mislabeled as ready evidence by the existing build branch."
+  ],
+  "correction": "Existing native business-action confirmation, producer proof, original context, exact project/run generation and canonical provider reserve/settle remain the only authority/accounting paths. Public HTML/text/JSON/XML and at most five PDF pages use the existing credential-free DNS-pinned GET, bounded to four exact approved URLs and2MiB per response, no redirect or provider charge. Results remain untrusted data. Pending research is displayed as pending, never green evidence.",
+  "limitations": [
+    "No live paid provider or customer request was used.",
+    "Native public retrieval is bounded document text, not JavaScript browser execution or provider-generated extraction synthesis. Existing browser tools remain separate.",
+    "This proof does not promote Composio, project creation, shared GitHub, orphan legacy research adapters, X research accounting or whole Phase4 acceptance."
+  ],
+  "negativeJobs": {
+    "privateQueryRed": "947e8204-9637-42c0-8a2f-6e80f132780c",
+    "getRevalidationRed": "fae6909d-d5df-4328-8da9-e5177c4fa8ac",
+    "pipelineReadyRed": "65977582-6c87-4468-aeec-80f6eebc0814"
+  },
+  "strictRulesChanged": false,
+  "frozenCriteriaChanged": false,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spend": 0
+}

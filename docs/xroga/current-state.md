@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `8ce54f2421039d724571bb727ecce234bcc02a03`. Branch observed: `codex/xroga-batch-01`. Audit started: 2026-10-21T15:13:45.536Z.
+Source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Branch observed: `feat/mic-mobile-main-20261031`. Audit started: 2026-10-31T01:28:02.145Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1674
-- routeRegistrations: 347
-- routes: 291
-- reachableRoutes: 233
+- surfaces: 1796
+- routeRegistrations: 381
+- routes: 319
+- reachableRoutes: 236
 - queues: 4
-- migrations: 154
+- migrations: 160
 - workflows: 21
-- testSuites: 872
-- declaredTests: 6334
-- classifiedMarkers: 394
-- reachableMarkers: 332
+- testSuites: 1042
+- declaredTests: 7113
+- classifiedMarkers: 403
+- reachableMarkers: 337
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
@@ -55,7 +55,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 | backend/src/services/integrations/businessAction.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/services/integrations/pluginPermissionPolicy.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/services/integrations/oauthPkceStore.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
-| backend/src/services/storage/projectFiles.ts | PRESENT | DEAD_OR_UNREACHABLE |
+| backend/src/services/storage/projectFiles.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/routes/billingWebhook.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | backend/src/services/publish/easCredentials.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | frontend/src/lib/xrogaBlocks.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
@@ -91,4 +91,6 @@ The JSON includes every discovered registration, source module, scheduler, migra
 - Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.
 - No production credentials or customer data were read; live behavior remains unverified in this command.
 - Static imports do not prove provider availability or authorization correctness.
+- Unresolved local import scripts/batch3/live-github-check.ts:22 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
+- Unresolved local import scripts/batch3/local-supabase-check.ts:17 -> ../../backend/src/existingSource/change/localProcessPort.testsupport.js
 - Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs

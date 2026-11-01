@@ -1,0 +1,110 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-BUILDER-UNIVERSAL-INNER-ROUTING-20261029",
+  "baseSha": "e1fe27c1390075df16e6b569b2bb9cfe448442fd",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "After PR 874 the pipeline routed the account 1 Builder run to the universal path, but tryUniversalBuild and executeUniversalRun re-ran routeProject without the Builder flag, refused to write, and the run fell back and failed with no model calls ($0). Pass the server-set builderBound flag to both inner write gates.",
+  "changedFiles": [
+    "backend/src/synthesis/builderUniversalAuthority.test.ts",
+    "backend/src/synthesis/universalEntrypoint.ts",
+    "backend/src/synthesis/universalExecution.ts",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/missions/builder-universal-inner-routing-20261029.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/privileged-callers.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Operator kill switch modes off, legacy and shadow",
+      "Percentage rollout and allowlist for non-Builder projects"
+    ],
+    "extend": [
+      "Server-bound Builder runs route to the universal path"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change.",
+    "rollback": "Revert the commit and redeploy the previous image."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No new authority. The builder binding is still created only by trusted server code after ownership is resolved."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress change; the line goes to the existing process log only."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No change; the iteration cap still bounds model calls."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No change."
+    }
+  },
+  "tests": [
+    {
+      "command": "npx tsx --test src/synthesis/*.test.ts src/synthesis/reliability/*.test.ts src/config/universalAgentFlags.test.ts (in backend)",
+      "scope": "Every universal write gate passes builderBound; operator modes still win. 660 PASS, 0 FAIL.",
+      "negative": true,
+      "reference": "backend/src/synthesis/builderUniversalAuthority.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adds a limit and a log line to the existing SoftwareAgent executor. No new orchestrator or control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks, build the release image, create a 0% revision, switch traffic with the Job, then repeat the authenticated build.",
+  "rollback": "Revert the commit and redeploy; restore the previous service revision and Job image and label.",
+  "knownGaps": [
+    "Preview, QA and external delivery remain separate gates"
+  ],
+  "placeholderClaimsRemaining": [
+    "Batch 2 building is not accepted until a live authenticated build saves a revision"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI checks and merge",
+      "Release image build and deploy",
+      "Live authenticated Batch 2 build evidence"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "backend/src/synthesis/builderUniversalAuthority.test.ts"
+  ]
+}

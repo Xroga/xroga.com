@@ -1,0 +1,230 @@
+TAP version 13
+# Subtest: organization listing requires original owner and current connection without redirect or partial receipts
+    # Subtest: missing
+    not ok 1 - missing
+      ---
+      duration_ms: 34.1294
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:15)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: cloned
+    not ok 2 - cloned
+      ---
+      duration_ms: 9.9969
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:15)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: foreign
+    not ok 3 - foreign
+      ---
+      duration_ms: 4.921
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:15)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: redirect
+    ok 4 - redirect
+      ---
+      duration_ms: 7.5194
+      type: 'test'
+      ...
+    # Subtest: large
+    not ok 5 - large
+      ---
+      duration_ms: 4.7297
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:15)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: bad
+    not ok 6 - bad
+      ---
+      duration_ms: 4.0117
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:15)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: forbidden
+    not ok 7 - forbidden
+      ---
+      duration_ms: 5.7917
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: |-
+        The input was expected to not match the regular expression /PRIVATE_PROVIDER_CANARY|unsafe upstream value/. Input:
+
+        '{"error":"PRIVATE_PROVIDER_CANARY","organizations":[]}'
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      actual: '{"error":"PRIVATE_PROVIDER_CANARY","organizations":[]}'
+      operator: 'doesNotMatch'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:123)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: disconnect
+    not ok 8 - disconnect
+      ---
+      duration_ms: 4.4518
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:15)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: rotate
+    not ok 9 - rotate
+      ---
+      duration_ms: 6.2304
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:15)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: unavailable
+    not ok 10 - unavailable
+      ---
+      duration_ms: 6.3482
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:3181'
+      failureType: 'testCodeFailure'
+      error: |-
+        The input was expected to not match the regular expression /PRIVATE_PROVIDER_CANARY|unsafe upstream value/. Input:
+
+        '{"error":"PRIVATE_PROVIDER_CANARY","organizations":[]}'
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      actual: '{"error":"PRIVATE_PROVIDER_CANARY","organizations":[]}'
+      operator: 'doesNotMatch'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:39:123)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\supabaseOrganizations.security.test.ts:35:133)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: ok
+    ok 11 - ok
+      ---
+      duration_ms: 4.8627
+      type: 'test'
+      ...
+    1..11
+not ok 1 - organization listing requires original owner and current connection without redirect or partial receipts
+  ---
+  duration_ms: 112.7823
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\supabaseOrganizations.security.test.ts:1:356'
+  failureType: 'subtestsFailed'
+  error: '9 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 12
+# suites 0
+# pass 2
+# fail 10
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7943.8899

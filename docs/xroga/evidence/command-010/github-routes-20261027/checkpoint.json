@@ -1,0 +1,59 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_GITHUB_ACCOUNT_ROUTE_SECURITY_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T18:43:45.052341+00:00",
+  "parent": "b77ef54819b0b0a43c14bf09a72d5dd0f7c47ed7",
+  "trace": "docs/xroga/evidence/command-010/github-routes-20261027/trace.json",
+  "strictAudit": {
+    "total": 134,
+    "reviewed": 109,
+    "pending": 25,
+    "unresolvedHighRiskBypasses": 16
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "backendTypes",
+      "jobId": "3787ca7f-84e9-4e39-921f-eda1779d7432",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322044
+      }
+    },
+    {
+      "name": "strictIncomplete",
+      "jobId": "0eae1647-cc1e-40a0-a9a8-136dde5009b1",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/github-routes-20261027/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "tenantInventoryIntegrity",
+      "jobId": "5b929041-1957-4582-940c-e0d520ff2e19",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-routes-20261027/tenantInventoryIntegrity.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "backendTypes": "PASS_CURRENT_SOURCE",
+  "frontendTypes": "PASS_UNCHANGED_072ee6b6",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "next": "Close remaining real SDK/provider and consequential caller gaps, starting with the canonical private credential mirror SDK redirect boundary. Preserve all completed tests and frozen rules."
+}

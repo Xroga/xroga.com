@@ -1,0 +1,59 @@
+TAP version 13
+# Subtest: real source callers reject revocation, same-token rotation and disconnect during response bodies without partial snapshots
+ok 1 - real source callers reject revocation, same-token rotation and disconnect during response bodies without partial snapshots
+  ---
+  duration_ms: 220.7782
+  type: 'test'
+  ...
+# Subtest: GitHub source read denies encoded repository escape, redirect retry and pre-aborted dispatch
+    # Subtest: only original owner context may read credentials
+    ok 1 - only original owner context may read credentials
+      ---
+      duration_ms: 1.1892
+      type: 'test'
+      ...
+    # Subtest: held server and selected credentials cannot be smuggled through read paths
+    ok 2 - held server and selected credentials cannot be smuggled through read paths
+      ---
+      duration_ms: 33.2628
+      type: 'test'
+      ...
+    # Subtest: encoded path escape denied before wire
+    ok 3 - encoded path escape denied before wire
+      ---
+      duration_ms: 9.1967
+      type: 'test'
+      ...
+    # Subtest: redirect is terminal and invalidates the source lifetime
+    ok 4 - redirect is terminal and invalidates the source lifetime
+      ---
+      duration_ms: 25.8395
+      type: 'test'
+      ...
+    # Subtest: ordinary provider failure permits later authorized read and encoded branch names
+    ok 5 - ordinary provider failure permits later authorized read and encoded branch names
+      ---
+      duration_ms: 20.2499
+      type: 'test'
+      ...
+    # Subtest: pre-aborted request never dispatches and cannot resume
+    ok 6 - pre-aborted request never dispatches and cannot resume
+      ---
+      duration_ms: 2.9376
+      type: 'test'
+      ...
+    1..6
+ok 2 - GitHub source read denies encoded repository escape, redirect retry and pre-aborted dispatch
+  ---
+  duration_ms: 109.2758
+  type: 'test'
+  ...
+1..2
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8224.3455

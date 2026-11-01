@@ -1,0 +1,157 @@
+{
+  "scope": "FIRST_PARTY_CLIENT_DESTINATION_GUARD_NOT_BACKEND_TENANT_ACTION_OR_PRODUCT_RELEASE_ACCEPTANCE",
+  "parent": "e2b4b4e6cba24e0b036a73e8105601b465f5cbef",
+  "originalCandidates": [
+    {
+      "id": "594c4c06e1eb42babe1f",
+      "file": "frontend/src/lib/api.ts",
+      "entryPoint": "waitForPersistedSwarmRun",
+      "callSha256": "1e48540ecc2a41091ccbc687506eae25d7ffffada9228aaa3d5d881a200149e4"
+    },
+    {
+      "id": "d662166dec7cf609667f",
+      "file": "frontend/src/lib/api.ts",
+      "entryPoint": "streamSwarmExecute",
+      "callSha256": "28527716ddc6c073a66877881bcf091b9e35e63bf1f00abc71edf47ecafffd5a"
+    },
+    {
+      "id": "b2c3a4c3942f15272501",
+      "file": "frontend/src/lib/api.ts",
+      "entryPoint": "apiFetch",
+      "callSha256": "794960ae8db63165c93cabb921641e33bb13b79b8861dba35862237e76c76942"
+    },
+    {
+      "id": "f0a6db0f8e8ede2098a2",
+      "file": "frontend/src/lib/community.ts",
+      "entryPoint": "request",
+      "callSha256": "c7ec007db9ebd2982b8697e5754c8d935547f0d6b30a5e8dd8abc20f27a65b40"
+    },
+    {
+      "id": "08afb35f3ce6baa20271",
+      "file": "frontend/src/lib/projectDeliveryApi.ts",
+      "entryPoint": "request",
+      "callSha256": "7fac39cbf109801333947189964632c2b69191360eb417f8acd8ce65d431954e"
+    },
+    {
+      "id": "603effc7da2a5dddb8aa",
+      "file": "frontend/src/lib/projectDeliveryApi.ts",
+      "entryPoint": "download",
+      "callSha256": "b58d5a14b2c4916fadbf2210408989d86cc496ba4c30200a05eb3efed1441153"
+    },
+    {
+      "id": "32301aa73e76e947953b",
+      "file": "frontend/src/lib/projectRuntimeApi.ts",
+      "entryPoint": "request",
+      "callSha256": "0c72e33e2778fa411b5d7cbf488f8a15f2e8bbe13f7636d9893accb64e305a58"
+    },
+    {
+      "id": "3b185c5710e3409a8052",
+      "file": "frontend/src/lib/runGuestLaneChat.ts",
+      "entryPoint": "runGuestLaneChat",
+      "callSha256": "1be40ca3eb1225a80e04401002e2ec07f1e17d0822cfcc3e666030de780d7548"
+    },
+    {
+      "id": "dce82d37d6c2a0911667",
+      "file": "frontend/src/lib/voiceApi.ts",
+      "entryPoint": "transcribeVoiceAudio",
+      "callSha256": "32b0561e685e55e1b0402e5626e0bc94ae553ecdd53831d580b06168f72c76e8"
+    }
+  ],
+  "replacementCandidate": {
+    "id": "c09bb8607fa4d00f23b7",
+    "file": "frontend/src/lib/api.ts",
+    "line": 1425,
+    "entryPoint": "fetchApiResponse",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "actualCallerTraces": [
+    "apiFetch and streamSwarmExecute use configured API origin, original headers/body and existing getAccessToken. Redirect security errors retain their typed403 identity",
+    "waitForPersistedSwarmRun uses the same guard and refuses a terminal redirect before another durable polling attempt. Ordinary completed-run recovery remains functional",
+    "community request sends only to configured /api/community prefix with existing session token",
+    "projectRuntimeApi request uses existing session token and configured /api/project-runtime prefix",
+    "projectDeliveryApi request and download use same configured API and session token, preserve successful JSON/ZIP behavior",
+    "voice transcription sends the selected browser Blob only to fixed /api/voice/transcribe with existing session token",
+    "guest chat sends existing guest session/history to fixed /api/guest/chat, no new actor issuer"
+  ],
+  "defect": "All8public client cases followed a real local HTTP307 to a second local fixture. Each observed1forwarded request. These are synthetic loopback fixtures, not proof of a production redirect exploit or forwarded Authorization header.",
+  "correction": "The existing central frontend API module now owns fetchApiResponse. Exact configured origin, no userinfo or fragment, forced manual redirect policy, browser opaqueredirect and Node3xx rejection, safe terminal API_DESTINATION_DENIED403, and pre/post-await cancellation. Private payloads are not forwarded to a redirected origin. Backend authentication and authorization remain mandatory and unchanged.",
+  "verification": {
+    "localNativeHttp": "Actual transpiled client modules with only Auth/UI import stubs, all8public cases refuse redirects. Authorized JSON, streaming, runtime, delivery, ZIP, voice and guest contracts pass controlled fixtures. Private durable polling completes normally and performs only1request on redirect denial.",
+    "chromium": "Actual source ApiError and fetchApiResponse declarations execute in Chromium across separate local UI/API/sink origins. Opaque redirect is typed403 and sink receives0requests.",
+    "negativeScope": "Different origin, userinfo, fragment and pre-cancellation denied before network. No real provider, customer credential or production API request."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "c1261c4b-b443-4d5c-bbe2-534589030963",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/api-clients-20261027/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "e014d974-7eca-491c-a232-522b42efd5d2",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/api-clients-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d"
+    },
+    {
+      "path": "frontend/src/lib/community.ts",
+      "sha256": "174ec2da07c36fb8df9b667dab92472332e34b0d1b4fe4e05ae87ee25594e383"
+    },
+    {
+      "path": "frontend/src/lib/projectRuntimeApi.ts",
+      "sha256": "b73d28693c69548bf7446da8bf28eeadfa69fccc602dfbe6b9ceb26459e6e994"
+    },
+    {
+      "path": "frontend/src/lib/projectDeliveryApi.ts",
+      "sha256": "11e169cd69f6a701e04da5044e692942030e8be8748db0dac6f39ff179a8fd4f"
+    },
+    {
+      "path": "frontend/src/lib/voiceApi.ts",
+      "sha256": "a865bad0e0360ea4571a23094ae16c218e6083f25db4debaeec80863268f4c6b"
+    },
+    {
+      "path": "frontend/src/lib/runGuestLaneChat.ts",
+      "sha256": "2b8b68d28264780988498d09461ec9a79e4ba8ff10cd4b960a4cbe096cc3b757"
+    },
+    {
+      "path": "frontend/e2e/phase4-api-clients.security.mjs",
+      "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+    },
+    {
+      "path": ".github/workflows/command3-auth-browser.yml",
+      "sha256": "06648a8503cd1ae65cec7d28394e04443fa79664afd55734302f41c2a676b743"
+    }
+  ],
+  "preservedEvidence": "The existing image-proxy browser fixture and its command are unchanged. Its original source-bound result remains valid for those unchanged modules; this workflow adds a separate API-client step and creates no whole-source CI acceptance.",
+  "limitations": [
+    "Configured first-party API origins are operator configuration, not arbitrary request destinations or proof of browser-controlled DNS pinning",
+    "This guard creates no tenant/authority/ledger grant and does not certify backend callers or unrelated frontend fetches",
+    "No production deployment, Batch1.5/2 work or model spend",
+    "Original strict remaining caller obligations, all12criteria, final exact-source integration/CI and compatible release remain mandatory"
+  ]
+}

@@ -34,6 +34,7 @@ import { BENCHMARK_SCHEMA_VERSION, BENCHMARKS, type BenchmarkDefinition, type Be
 import { roleForBenchmark } from './benchmarkLedger.js';
 import { isCodingModel, isResearchModel } from './providerPolicy.js';
 import { MODELS, type ModelId } from './models.js';
+import {isTerminalModelFailure} from './providerRuntime.js';
 
 /** How a case is selected. Every field narrows; an omitted field does not filter. */
 export interface BenchmarkSelection {
@@ -321,7 +322,8 @@ export async function runBenchmarks(input: {
       assertBenchmarkResult({ ...outcome, schemaVersion: BENCHMARK_SCHEMA_VERSION,
         benchmarkId: benchmarkCase.benchmark.id, modelId: benchmarkCase.modelId,
         succeeded: false, estimatedCostUsd: 0, at: new Date().toISOString() });
-    } catch {
+    } catch(error) {
+      if(isTerminalModelFailure(error))throw error;
       // A failed case is a measurement about that model on that task. Recorded, not thrown.
       outcome = null;
     } finally {

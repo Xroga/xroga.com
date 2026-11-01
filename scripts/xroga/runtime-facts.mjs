@@ -1,5 +1,7 @@
+import {readFileSync} from 'node:fs';
 // Reviewed metadata only. Never place credentials or customer payloads here.
-export const evidence = [
+// Keep dated pre-migration facts as history, never as current Fly liveness.
+export const historicalEvidence = [
   { id: 'WEB-RELEASE-20261013', source: 'https://xroga.com/api/release', observed_utc: '2026-10-13T11:45:02.6304913Z', result: 'HTTP_200', safe_resource: 'xroga.com', release_sha: '3b2bad21561e8abcb9a4a3bd0e98a7241d0efc3d' },
   { id: 'API-HEALTH-20261013', source: 'https://xroga-api.fly.dev/health', observed_utc: '2026-10-13T11:43:30.6359506Z', result: 'HTTP_200_OK', safe_resource: 'xroga-api', release_sha: '41665b7f9a8e593c1d4d0ce42272c32f6ee7c6b2' },
   { id: 'API-READY-20261013', source: 'https://xroga-api.fly.dev/ready', observed_utc: '2026-10-13T11:43:31.1647828Z', result: 'HTTP_200_READY', safe_resource: 'xroga-api', release_sha: '41665b7f9a8e593c1d4d0ce42272c32f6ee7c6b2' },
@@ -9,7 +11,7 @@ export const evidence = [
   { id: 'FLY-RELEASE-CI', source: 'https://github.com/Xroga/xroga.com/actions/runs/38135445708', observed_utc: '2026-10-13 (UTC observation day)', result: 'EXISTING_DEPLOYMENT_SUCCESS', safe_resource: 'xroga-api', release_sha: '41665b7f9a8e593c1d4d0ce42272c32f6ee7c6b2' },
   { id: 'FLY-SANDBOX-HISTORICAL', source: 'https://github.com/Xroga/xroga.com/actions/runs/37031296255', observed_utc: '2026-10-13 (UTC observation day)', result: 'HISTORICAL_VERIFICATION_SUCCESS_NOT_CURRENT_LIVENESS', safe_resource: 'xroga-sandbox', release_sha: 'fc65cc3783cd307f180ee3e383d0d9859906a58f' },
 ];
-export const coreServices = [
+export const historicalCoreServices = [
   { id: 'frontend', provider: 'Vercel', purpose: 'Existing Next.js frontend and server routes; not a new application', state: 'ACTIVE', hosts: ['xroga.com', 'www.xroga.com'], sources: ['vercel.json', '.github/workflows/vercel-build-check.yml', 'frontend/src/lib/api.ts'], keys: /^(NEXT_PUBLIC_|VERCEL_ENV|VERCEL_GIT_COMMIT_SHA)/, region: 'Hosting region not verified; project configured Node 24.x, canonical CI Node 22.21.1', auth: 'Supabase SSR session; individual protected routes require server authorization', outbound: ['api', 'supabase'], evidence: ['WEB-RELEASE-20261013', 'VERCEL-PROJECT-20261013'], health: '/api/release plus public route checks; protected-route integration pending TEST configuration' },
   { id: 'api', provider: 'Fly.io', purpose: 'Existing Express API, SSE and software-agent integration surfaces', state: 'ACTIVE', hosts: ['xroga-api.fly.dev'], sources: ['Dockerfile.api', 'fly.api.toml', '.github/workflows/fly-deploy.yml', 'backend/src/index.ts'], keys: /^(PORT|NODE_ENV|API_PUBLIC_URL|FRONTEND_URL|FLY_APP_NAME|XROGA_RELEASE_SHA|GITHUB_SHA)$/, region: 'iad in checked-in manifest; live region not independently queried', auth: 'Existing server Supabase/JWT middleware; tenant/role correctness is Command 007 acceptance, not inferred from liveness', outbound: ['supabase', 'redis', 'r2', 'fly-sandbox', 'credential-store'], evidence: ['API-HEALTH-20261013', 'API-READY-20261013', 'FLY-RELEASE-CI'], health: '/health, /api/health, /ready; 200 does not certify provider or tenant safety' },
   { id: 'supabase', provider: 'Supabase', purpose: 'Canonical platform Auth/Postgres/Storage plane; user-owned projects are distinct', state: 'ACTIVE', hosts: ['nzenxdfumxrnsmybazmo.supabase.co'], resource: 'nzenxdfumxrnsmybazmo', sources: ['backend/src/config/supabase.ts', 'frontend/src/lib/supabase/config.ts', 'frontend/src/lib/supabase/server.ts', 'frontend/src/lib/supabase/client.ts', '.github/workflows/supabase-migrate.yml'], keys: /^(SUPABASE_|DATABASE_URL)/, region: 'ap-northeast-1 (authenticated project metadata)', auth: 'Publishable browser credential; server service-role bypasses RLS and requires independent ownership checks', outbound: [], evidence: ['SUPABASE-PROJECT-20261013'], health: 'Project metadata healthy; actual schema/RLS/upgrade/staging proof remains separate' },
@@ -23,3 +25,40 @@ export const coreServices = [
   { id: 'cloud-run-proposal', provider: 'Google Cloud Run / Jobs', purpose: 'Future design intent, not deployed infrastructure', state: 'PROPOSED', hosts: [], sources: ['docs/xroga/research/inputs/batch-one-report.txt'], keys: /a^/, region: 'Not selected', auth: 'Not implemented', outbound: [], evidence: [], health: 'Named Cloud Build/job manifests absent; no migration authorized' },
   { id: 'cloudflare-workers-proposal', provider: 'Cloudflare Workers', purpose: 'Future hosting proposal; distinct from existing R2 adapter', state: 'PROPOSED', hosts: [], sources: ['docs/xroga/research/inputs/batch-one-report.txt'], keys: /a^/, region: 'Not selected', auth: 'Not implemented', outbound: [], evidence: [], health: 'No verified deployed Worker; hosting migration outside scope' },
 ];
+
+const receiptPath='docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json';
+const receipt=JSON.parse(readFileSync(new URL('../../'+receiptPath,import.meta.url),'utf8'));
+if(receipt.verdict!=='XROGA_ZERO_FLY_MIGRATION_ACCEPTED'||receipt.googleCloudProductionMigration!=='PASS'
+  ||receipt.productionAcceptance!=='PASS'||receipt.remainingActiveFlyDependencies.length!==0
+  ||!/^sha256:[a-f0-9]{64}$/.test(receipt.imageDigest))throw Error('Accepted Google migration evidence is required');
+const googleEvidence={id:'GOOGLE-MIGRATION-20261027',source:receiptPath,observed_utc:receipt.observedAtUtc,
+  result:'EXISTING_DEPLOYMENT_SUCCESS_ZERO_FLY_ACCEPTED',safe_resource:receipt.forwardRevision,release_sha:receipt.bakedRuntimeSource};
+export const evidence=[...historicalEvidence,googleEvidence];
+const current={
+  frontend:{evidence:[googleEvidence.id],health:'Accepted production frontend and authenticated API routing in the dated zero-Fly receipt. New Phase4 cookie/security release is not deployed or accepted.'},
+  api:{provider:'Google Cloud Run',hosts:['api.xroga.com'],resource:'xroga-api-google',region:'us-east4',
+    sources:['Dockerfile.api','backend/src/index.ts','backend/src/config/platformEnvironment.ts','scripts/infrastructure/cloud-run-release-gate.mjs',receiptPath],
+    keys:/^(PORT|NODE_ENV|API_PUBLIC_URL|FRONTEND_URL|XROGA_RELEASE_SHA|GITHUB_SHA|XROGA_PLATFORM_)/,
+    outbound:['supabase','r2','google-execution','google-delivery','credential-store'],evidence:[googleEvidence.id],
+    auth:'Native dedicated Google service identity, protected Secret Manager bundle, existing issued Supabase tenant context and canonical authority. No Fly federation or personal developer identity.',
+    health:'Accepted dated /health and /ready plus authenticated production infrastructure acceptance. Future Phase4 source still requires its own release gates.'},
+  r2:{state:'ACTIVE',resource:'xroga-private-files',region:'Existing Cloudflare account, private R2 bucket',evidence:[googleEvidence.id],
+    health:'Dated production private write/read/hash/owner denial and synthetic cleanup passed. Optional signed-link key was explicitly unconfigured, not accepted. Drive quota/activation is separate.'},
+  'fly-sandbox':{id:'google-execution',provider:'Google Compute Engine private execution slots',state:'ACTIVE',hosts:['compute.googleapis.com','oslogin.googleapis.com'],
+    resource:'Two bounded private execution slots',region:'us-central1-a',sources:['backend/src/sandbox/google/googleSandbox.ts','backend/src/sandbox/google/gceMachineControl.ts','backend/src/sandbox/google/gceSshTransport.ts','backend/src/synthesis/projectRuntime/googleFactory.ts',receiptPath],
+    keys:/^(XROGA_(?:SANDBOX|GCE|EXECUTION|PREVIEW)_|PLAYWRIGHT_)/,evidence:[googleEvidence.id],auth:'Native dedicated Google identity, scoped Compute/OS Login, ephemeral keys, pinned host identity and issued owner/project/run admission.',
+    health:'Accepted native production worker allocation, command, private Preview HTTP/WebSocket, cancellation and cleanup. Worker-loss recovery receipt is preserved. No Fly worker is selected.'},
+  'credential-store':{provider:'Google Cloud KMS with canonical Supabase CredentialVault',state:'ACTIVE',hosts:['cloudkms.googleapis.com','secretmanager.googleapis.com'],
+    resource:'Existing production KMS credential key and Secret Manager bundle',region:'Existing approved Google project',
+    sources:['backend/src/services/integrations/googleCloudKmsCryptoProvider.ts','backend/src/services/integrations/credentialVaultRuntime.ts','backend/src/config/platformEnvironment.ts',receiptPath],
+    keys:/^(XROGA_(?:GOOGLE_KMS|CREDENTIAL|PLATFORM)_|USER_SECRETS_ENCRYPTION_KEY)/,evidence:[googleEvidence.id],
+    auth:'Native Google runtime identity and narrowly scoped managed KMS. Encrypted v3 credentials, revisions, tombstones and compatible Google recovery retained. Legacy key is recovery-only.',
+    health:'Accepted Phase3 custody and actual native KMS production startup preserved. New security source is not a new custody or release acceptance.'},
+  browserbase:{state:'LEGACY',health:'No production runtime importer. Exact current-source reachability regression is recorded in Command010. Native Google browser-worker admission remains separate.'},
+  'cloud-run-proposal':{id:'google-delivery',provider:'Google Cloud Tasks and Cloud Run Jobs',purpose:'Canonical scheduler transport and durable worker delivery, not a second scheduler',state:'ACTIVE',
+    hosts:['cloudtasks.googleapis.com','run.googleapis.com'],resource:'xroga-canonical-production',region:'us-east4',
+    sources:['backend/src/workers/googleDeliveryStore.ts','backend/src/scripts/runCanonicalWorker.ts',receiptPath],keys:/^XROGA_GOOGLE_/,evidence:[googleEvidence.id],
+    auth:'Native scoped identities, authenticated OIDC delivery, canonical durable claims and generation fencing.',
+    health:'Accepted real production Tasks delivery204, durable result, duplicate denial, cancellation and recovery. Queue was RUNNING and empty at the dated acceptance.'},
+};
+export const coreServices=historicalCoreServices.map(fact=>({...fact,...current[fact.id]}));

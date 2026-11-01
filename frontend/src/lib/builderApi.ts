@@ -1,7 +1,7 @@
 'use client';
 
 import { createClient } from '@/lib/supabase/client';
-import { API_URL } from '@/lib/api';
+import { API_URL, fetchApiResponse } from '@/lib/api';
 
 /** AI Product Builder: client for /api/builder. Every value shown is what the backend recorded. */
 
@@ -66,7 +66,7 @@ export async function request<T>(path: string, init?: { method?: string; body?: 
   const { data } = await createClient().auth.getSession();
   const accessToken = data.session?.access_token;
   if (!accessToken) throw new BuilderApiError(401, 'UNAUTHORIZED', 'Sign in required.');
-  const response = await fetch(`${API_URL}/api/builder${path}`, {
+  const response = await fetchApiResponse(`${API_URL}/api/builder${path}`, {
     method: init?.method ?? 'GET',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
     body: init?.body === undefined ? undefined : JSON.stringify(init.body),

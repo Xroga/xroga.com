@@ -42,7 +42,7 @@ export function Bag({ tone = 'ember', className }: { tone?: Tone; className?: st
       <text x="80" y="134" textAnchor="middle" fontSize="15" fontWeight="800" letterSpacing="3" fill={t.ink} fontFamily="system-ui, sans-serif">
         EMBER
       </text>
-      <text x="80" y="150" textAnchor="middle" fontSize="8" letterSpacing="1.5" fill={t.ink} opacity="0.75" fontFamily="system-ui, sans-serif">
+      <text x="80" y="150" textAnchor="middle" fontSize="7.5" letterSpacing="0.6" fill={t.ink} opacity="0.75" fontFamily="system-ui, sans-serif">
         MONTHLY · MEDIUM
       </text>
       <path d="M48 162 h64" stroke={t.ink} strokeOpacity="0.3" />

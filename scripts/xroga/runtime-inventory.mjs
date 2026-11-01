@@ -15,7 +15,9 @@ const sorted = values => [...new Set(values)].sort();
 const hash = value => createHash('sha256').update(value).digest('hex');
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
 const manifestPaths = ['Dockerfile.api', 'Dockerfile.browser', 'fly.api.toml', 'fly.browser.toml', 'cloudbuild-run-job.yaml',
-  'cloudbuild-browser-worker.yaml', 'vercel.json', '.vercel/project.json', ...execFileSync('git', ['ls-files', '.github/workflows'], { cwd: root, encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean)];
+  'cloudbuild-browser-worker.yaml', 'vercel.json', '.vercel/project.json', 'scripts/infrastructure/cloud-run-release-gate.mjs',
+  'docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json',
+  ...execFileSync('git', ['ls-files', '.github/workflows'], { cwd: root, encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean)];
 
 function declaredKeys(path, propertyNames, variableNames = []) {
   const source = ts.createSourceFile(path, read(path), ts.ScriptTarget.Latest, true);
@@ -97,7 +99,7 @@ function service(fact, names) {
     idempotency_expectation: 'Required for consequential writes; verify canonical authority in Command 008',
     data_classification: fact.id === 'credential-store' ? 'SECRET_CREDENTIALS' : 'User data may be involved; tenant scope requires independent checks',
     failure_mode: 'Safe user-facing failure required; internal details restricted',
-    fallback_behaviour: fact.id === 'r2' ? 'No public/local/data-URL success fallback; explicit durable database text or verified private R2 only; actual R2 acceptance pending' : 'See source and recorded risks; no fallback newly enabled',
+    fallback_behaviour: fact.id === 'r2' ? 'No public/local/data-URL success fallback; explicit durable database text or verified private R2 only. Dated native production proof is preserved. Drive and optional signed-link activation remain separate.' : 'See source and recorded risks; no fallback newly enabled',
     observability_source: fact.sources, production_verification: fact.evidence.length ? 'Observed evidence explicitly scoped below; not full journey certification' : 'NOT_INDEPENDENTLY_VERIFIED', evidence_ids: fact.evidence };
 }
 
@@ -174,12 +176,71 @@ export function main() {
 export function renderRuntimeOutputs(inventory) {
   const rows = inventory.dependencies.map(row => `| ${row.dependency_id} | ${row.provider} | ${row.state} | ${row.hostnames.join(', ') || 'Unknown/not applicable'} | ${row.production_verification} |`);
   const riskRows = inventory.risks.map(row => `- ${row.severity} ${row.id}: ${row.summary}. Owner command: ${row.owner_command}; ${row.disposition}.`);
-  const md = `# Deployment topology — read-only truth\n\nSource SHA: \`${inventory.source_sha}\`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.\n\n| Dependency | Provider | State | Host/resource | Verification |\n| --- | --- | --- | --- | --- |\n${rows.join('\n')}\n\n## Evidence\n\n${inventory.evidence.map(row => `- ${row.id}: ${row.source}; observed ${row.observed_utc}; ${row.result}; ${row.release_sha ?? 'no application SHA claimed'}.`).join('\n')}\n\nFrontend release 3b2bad and API release 41665b legitimately differ: the initial main/backend/config tree is equivalent to the last API release. Different component SHAs alone do not prove stale API code. Vercel's configured Node 24.x differs from canonical CI/API 22.21.1; no hosting setting was changed. Local Fly CLI has no token; deeper current app/resource/secret metadata remains unverified. Supabase's older LOGIN project is inactive and is not an approved test project. DNS registrar ownership is not established by a checked-in hostname.\n\n## Risks and incomplete evidence\n\n${riskRows.join('\n')}\n\n${inventory.fallback_candidates.length} scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.\n\n## Boundaries\n\nFrontend → API routing: canonical xroga.com/xroga-api.fly.dev, with explicitly local development overrides. OAuth redirects target the existing dashboard callback paths; user-owned integrations are separate from platform auth. Whop platform billing and user-owned publishing/payment integrations must not be conflated. Callback/billing/provider readiness is not inferred from metadata or configuration names. Region/timeout/retry gaps remain explicit in each record. No new secret, payment, external action, DNS setting, provider or database was changed.\n`;
+  const md = `# Deployment topology, source and dated evidence
+
+Source SHA: \`${inventory.source_sha}\`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+
+| Dependency | Provider | State | Host/resource | Verification |
+| --- | --- | --- | --- | --- |
+${rows.join('\n')}
+
+## Accepted infrastructure checkpoint
+
+Google Cloud Run hosts the API at api.xroga.com. Native Google identity, managed KMS, private Compute execution, Cloud Tasks and Cloud Run Jobs replace Fly runtime dependencies. The immutable forward/recovery images, live revisions, private Preview and cleanup receipts are preserved in docs/xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json. This generation reuses that dated acceptance. It makes no new live-health, Phase4 or Batch1.5/2 activation claim.
+
+Vercel remains the frontend, Supabase remains Auth/Postgres, and Cloudflare R2 remains private object storage. Historical October13 Fly facts remain in runtime-facts.mjs for provenance. Cold Fly resources and inert compatibility files are not active runtime dependencies and must not be re-enabled. Optional file-link signing was unconfigured at migration acceptance. Drive entitlement and activation remain separately gated.
+
+## Evidence
+
+${inventory.evidence.map(row => `- ${row.id}: ${row.source}; observed ${row.observed_utc}; ${row.result}; ${row.release_sha ?? 'no application SHA claimed'}.`).join('\n')}
+
+## Candidate risks and independent release gates
+
+Historical findings below remain as review obligations, not fresh observations. Accepted Phase1-3 and Google migration evidence supersede only their exact proven scope. New source, caller provenance, security, schema and product activation still require the original acceptance gates.
+
+${riskRows.join('\n')}
+
+${inventory.fallback_candidates.length} memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+`;
   const escape = value => value.replace(/["\n]/g, ' '), node = id => id.replace(/-/g, '_');
-  const graph = `flowchart LR\n  browser["Browser"] --> frontend\n${inventory.dependencies.map(row => `  ${node(row.dependency_id)}["${escape(row.provider)} — ${row.state}"]`).join('\n')}\n${inventory.dependencies.flatMap(row => row.outbound_dependencies.map(id => `  ${node(row.dependency_id)} --> ${node(id)}`)).join('\n')}\n${inventory.dependencies.filter(row => row.dependency_id.startsWith('endpoint-')).map(row => `  ${row.config_sources.some(path => path.startsWith('backend/')) ? 'api' : 'frontend'} -. "source host/reference; unverified" .-> ${node(row.dependency_id)}`).join('\n')}\n`;
-  const envRows = inventory.environment_names.map(row => `| ${row.name} | ${row.secret_class} | ${row.requiredness} | ${row.consuming_sources.join(', ')} | ${row.startup_validation} |`);
-  const secrets = `# Environment/secret NAME inventory\n\nSource SHA: \`${inventory.source_sha}\`. Values are prohibited, including public credential values. ${inventory.environment_names.length} named readers/aliases/derived keys; ${inventory.dynamic_bindings.length} explicitly reviewed bindings.\n\n| Name | Class | Requiredness | Consuming source | Validation status |\n| --- | --- | --- | --- | --- |\n${envRows.join('\n')}\n\nRotation owner: Xroga operations for platform credentials; the authorized account owner for user-owned integrations. Actual rotation schedules/KMS custody are not claimed. Names in a source alias table are conditional compatibility declarations, not evidence that a provider is healthy or installed. Inherited system names are not provider credentials. Anonymous/publishable browser credentials are distinct from server service-role secrets; no values were retrieved.\n\nDynamic key status helpers expose booleans only and are recorded as caller policy, not a fabricated finite namespace. Model fields and operatorConfigKeys suffixes are reconciled from source; speculative pricing/context facts are not invented. Any new reader/binding or source change requires re-audit.\n`;
-  const contract = `# Runtime/dependency contract\n\nSource SHA: \`${inventory.source_sha}\`. Existing runtime semantics are preserved; this audit does not create another provider router, scheduler, vault or backend.\n\n## Runtime classes\n\n- ACTIVE requires dated observed service/deployment evidence, not a manifest or key-name presence.\n- CONFIGURED_BUT_UNVERIFIED records code/configuration without current authoritative proof.\n- LEGACY is retained and not deleted or automatically activated.\n- LOCAL_ONLY must never silently claim durable production storage.\n- PROPOSED is design intent, not infrastructure permission.\n\nCanonical engineering runtime: Node 22.21.1/npm 10.9.4/TypeScript 5.9.3. Current API image uses that Node pin. Frontend project metadata is configured 24.x; exact running frontend binary is not inferred from that setting. Docker API emits dist/index.js; Vercel builds frontend with its existing standalone npm pipeline. The Fly host test job currently lacks explicit setup-node; document/fix this through normal review, never assume its runner default.\n\n## Configuration and admission\n\nThe existing source helpers remain canonical. Supabase server service-role access bypasses RLS and needs independent owner/tenant checks (Command 007). OAuth/PKCE/private storage and existing BYOK encryption need verified KMS and migration (009). Existing action authority/digest/approval/budget boundaries must be unified (008) before consequential calls. API/worker/tool egress and untrusted input need central guard coverage (010).\n\nFrontend production Supabase remains pinned. Command 007 admits an explicit, validated non-production CI build realm; this does not grant roles or bypass founder/MFA authorization. Real authenticated E2E proof is still blocked pending the dedicated test configuration; never use production users. Missing isolated GitHub secrets/variable remain BLOCKED_PENDING_TEST_CONFIGURATION. Stage security/migration proof and KMS are release gates, not optional metadata.\n\n## Mechanical check\n\nRun \`node scripts/xroga/runtime-inventory.mjs\` to regenerate after review, then \`node scripts/xroga/check-runtime-config.mjs\`. Zod/schema, exact source/config hashes, known dynamic bindings, named environment coverage, service IDs, canonical public hosts, credential-like inventory values and explicit high-risk fallback records are checked. Positive/negative tests use only fake canaries. Current high risks remain recorded and unwaived; validation is inventory consistency, not production security certification.\n\n## Production rollout\n\nNo deploy, key rotation, DNS edit or DB migration in Command 004. Future release must pass authenticated E2E, isolated fresh/upgrade DB and staging tests, credential/KMS verification, advisory review, final GO/NO-GO and ten command manifests. Only then use the existing authorized release workflow. Rollback is a normal revert of audit/tooling commits; no user data was changed.\n`;
+  const graph = `flowchart LR\n  browser["Browser"] --> frontend\n${inventory.dependencies.map(row => `  ${node(row.dependency_id)}["${escape(row.provider)} - ${row.state}"]`).join('\n')}\n${inventory.dependencies.flatMap(row => row.outbound_dependencies.map(id => `  ${node(row.dependency_id)} --> ${node(id)}`)).join('\n')}\n${inventory.dependencies.filter(row => row.dependency_id.startsWith('endpoint-')).map(row => `  ${row.config_sources.some(path => path.startsWith('backend/')) ? 'api' : 'frontend'} -. "source host/reference; unverified" .-> ${node(row.dependency_id)}`).join('\n')}\n`;
+  const envRows = inventory.environment_names.map(row => `| ${row.name} | ${row.secret_class} | ${row.requiredness} | ${row.dependency_ids.join(', ')} |`);
+  const secrets = `# Secret and environment name inventory
+
+Values are forbidden. Source SHA: \`${inventory.source_sha}\`. Names and source discovery do not prove that a capability is configured or accepted.
+
+| Name | Classification | Requirement | Dependency |
+| --- | --- | --- | --- |
+${envRows.join('\n')}
+
+Production uses the existing protected Google Secret Manager configuration and native managed KMS. Account-specific connected credentials remain in the canonical encrypted CredentialVault. No personal developer login, legacy Fly credential or development-assistant session is a production requirement. Rotation and access changes require their applicable authority. Optional file delivery signing, Drive and later feature configuration remain independently gated.
+`;
+  const contract = `# Runtime and dependency contract
+
+Source SHA: \`${inventory.source_sha}\`. Xroga retains its canonical scheduler, authority, budget ledger, vault and durable state. This inventory creates no competing execution system.
+
+## Runtime classes
+
+- ACTIVE requires dated observed service/deployment evidence.
+- CONFIGURED_BUT_UNVERIFIED records source/configuration without operational acceptance.
+- LEGACY is retained history, never automatically activated.
+- LOCAL_ONLY cannot claim durable production storage.
+- PROPOSED is design intent, never infrastructure permission.
+
+Canonical engineering runtime is Node22.21.1, npm10.9.4 and TypeScript5.9.3. The immutable Google API image starts node dist/index.js and preserves both compatibility/security dependency checks. Vercel retains its separate frontend build. Exact deployed frontend binaries require deployment evidence. No Fly manifest is required to validate a Google API build.
+
+## Admission and configuration
+
+Production frontend/API origins are xroga.com and api.xroga.com. Preview uses isolated owned workers under preview.xroga.com. Native Google service identity, scoped managed KMS and pinned Secret Manager versions replace Fly federation. Supabase tenant authorization, consequential-action confirmation, current credentials, reservation and accounting remain mandatory. Data from tools, models and websites cannot grant authority. Arbitrary external URLs need canonical SSRF/redirect policy and outbound data needs canonical egress admission.
+
+The accepted Google migration receipt is dated evidence for its exact source and immutable forward/recovery images. New Phase4 source and later batch activation are not accepted merely because that infrastructure passed. Hosted Auth cookie hardening requires fresh sign-in and new disposable/browser acceptance before rollout.
+
+## Mechanical checks and release
+
+Regenerate with node scripts/xroga/runtime-inventory.mjs, then run node scripts/xroga/check-runtime-config.mjs. Inventory consistency is separate from security and product acceptance. Original Command010 criteria, strict caller audit, authenticated/disposable tests, exact final-source CI, schema compatibility and reviewed release gates stay unchanged. No production change follows from generation.
+
+Use the verified compatible Google recovery image and documented protected restore path. Never roll v3-writing production back to a legacy-only image or blindly re-enable a held Fly/automatic deployment workflow. Preserve revisions, tombstones, encrypted data and recovery assets.
+`;
   return new Map([['docs/xroga/dependency-inventory.json', json(inventory)], ['docs/xroga/dependency-inventory.schema.json', json(runtimeJsonSchema)],
     ['docs/xroga/deployment-topology.md', md], ['docs/xroga/deployment-topology.mmd', graph], ['docs/xroga/secret-inventory.md', secrets], ['docs/xroga/runtime-contract.md', contract]]);
 }

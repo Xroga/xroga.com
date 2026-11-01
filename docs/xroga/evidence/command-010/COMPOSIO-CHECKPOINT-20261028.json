@@ -1,0 +1,46 @@
+{
+  "scope": "ONLY_COMPOSIO_SHARED_BOUNDARY_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "b450dd28d26964cfaefe85abbfb2cd9bdc8cf793",
+  "resolved": [
+    "7b6e1f490ce974fc3971"
+  ],
+  "counts": {
+    "total": 137,
+    "reviewed": 134,
+    "pending": 3,
+    "unresolvedHighRiskBypasses": 0
+  },
+  "proof": "docs/xroga/evidence/command-010/COMPOSIO-BOUNDARY-20261028.json",
+  "focusedTests": "74_PASS_PLUS_FINAL_PREFLIGHT_AND_WORKFLOW_CHECKS",
+  "backendTypes": "PASS",
+  "frontendTypes": "PASS",
+  "frontendLint": "PASS_WITH_EXISTING_WARNINGS",
+  "sourceRegisterIntegrity": "10_PASS_CURRENT_SOURCE",
+  "strictAudit": "FAIL_INCOMPLETE_THREE_MANDATORY_CALLERS",
+  "formalAcceptedCriteria": 0,
+  "totalCriteria": 12,
+  "productionChanged": false,
+  "spend": 0,
+  "phase4Accepted": false,
+  "next": [
+    "807c2948cdfa16e19b84",
+    "90eeada0337da120131f",
+    "99ec2dc4769b5eced6a5"
+  ],
+  "finalReceipts": [
+    {
+      "label": "finalIntegrity",
+      "job": "27de15b2-5073-4f1a-acbd-b6e43c02f430",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-finalIntegrity-20261028.log.gz",
+      "sha256": "6fea11ded3b493d756f2c45bdffba572d7c444b5f42bbdb138088240133a492d"
+    },
+    {
+      "label": "originalStrictAudit",
+      "job": "9f6c8861-7f69-4308-ac8f-9b5bb90f1230",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/composio-originalStrictAudit-20261028.log.gz",
+      "sha256": "40819024e89c0a6ece66f608f4f5b97533f60e25f4367ff95bb7dc11d49cbc12"
+    }
+  ]
+}

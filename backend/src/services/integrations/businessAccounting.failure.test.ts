@@ -3,7 +3,10 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import ts from 'typescript';
 import { generateStructured } from '../../ai/black-hole/structuredOutput.js';
-import { isPostCompletionAccountingError, recordCompletedProviderUsage } from '../../ai/postCompletionAccounting.js';
+import { recordCompletedProviderUsage } from '../../ai/postCompletionAccounting.js';
+import { isTerminalModelFailure } from '../../ai/providerRuntime.js';
+import type { BoundModelDispatch, ModelPayload } from '../../ai/tenantModelDispatch.js';
+import { createTenantContext } from '../../security/tenantContext.js';
 
 // Execute the actual private selector source with synthetic boundary adapters.
 // This avoids adding production injection hooks or calling a paid provider.
@@ -16,7 +19,8 @@ for (const [file, name] of [['businessRead.ts', 'selectToolAndArguments'], ['bus
     const ast = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
     const selector = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name);
     assert.ok(selector);
-    assert.match(source, /recordCompletedProviderUsage as recordUsage/);
+    assert.match(selector.getText(ast), /withTenantModelReservation\(/);
+    assert.doesNotMatch(selector.getText(ast), /\brecordUsage\(/,'The canonical issuer owns accounting, selectors must not charge twice');
     const code = ts.transpileModule(selector.getText(ast), { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
     let providerCalls = 0, accountingCalls = 0, failAccounting = true, malformed = false;
     const valid = JSON.stringify({ toolSlug: 'FIXTURE_TOOL', arguments: {}, summary: 'Synthetic action' });
@@ -24,24 +28,27 @@ for (const [file, name] of [['businessRead.ts', 'selectToolAndArguments'], ['bus
       buildCandidatePayload: () => [{ toolSlug: 'FIXTURE_TOOL' }], selectPlannerRoutes: () => ['kimi_k3', 'glm_5_3'],
       generateStructured, isPlainRecord: (value: unknown) => !!value && typeof value === 'object', validateArguments: () => true,
       estimateMessageTokens: () => 1,
-      withProviderReservation: async (input: { execute: () => Promise<unknown> }) => input.execute(),
-      chatCompletion: async (modelId: string) => { providerCalls++; return { modelId, inputTokens: 2, outputTokens: 1, text: malformed && providerCalls === 1 ? 'invalid JSON' : valid }; },
-      recordUsage: async (...args: Parameters<typeof recordCompletedProviderUsage>) => {
+      withTenantModelReservation: async (input: { scope:{userId:string};modelId:Parameters<typeof recordCompletedProviderUsage>[1];payload: ModelPayload; execute: (dispatch: BoundModelDispatch) => Promise<{inputTokens:number;outputTokens:number}> }) => {
+        const result=await input.execute({ payload: input.payload, credentialOverride: undefined, beforeDispatch: async () => {} });
         accountingCalls++;
-        if (failAccounting) return recordCompletedProviderUsage(...args);
+        if(failAccounting)await recordCompletedProviderUsage(input.scope.userId,input.modelId,result.inputTokens,result.outputTokens);
+        return result;
       },
-      isPostCompletionAccountingError, ComposioClientError: Error,
+      chatCompletion: async (modelId: string) => { providerCalls++; return { modelId, inputTokens: 2, outputTokens: 1, text: malformed && providerCalls === 1 ? 'invalid JSON' : valid }; },
+      isTerminalModelFailure, ComposioClientError: Error,
     };
     const run = new Function(...Object.keys(adapters), `${code}; return ${name};`)(...Object.values(adapters));
+    const userId='11111111-1111-4111-8111-111111111111';
+    const tenantContext=createTenantContext({userId,via:'remote_getuser'});
     for (malformed of [false, true]) {
       providerCalls = 0; accountingCalls = 0;
-      await assert.rejects(run({ userId: 'fixture', useCase: 'Synthetic selection', tools: [] }), {
+      await assert.rejects(run({ userId, tenantContext, useCase: 'Synthetic selection', tools: [] }), {
         code: 'POST_COMPLETION_ACCOUNTING_UNCERTAIN', providerCompleted: true, accountingUncertain: true, retryable: false,
       });
       assert.equal(providerCalls, 1); assert.equal(accountingCalls, 1);
     }
     failAccounting = false; malformed = true; providerCalls = 0; accountingCalls = 0;
-    const result = await run({ userId: 'fixture', useCase: 'Synthetic selection', tools: [] });
+    const result = await run({ userId, tenantContext, useCase: 'Synthetic selection', tools: [] });
     assert.equal(result.toolSlug, 'FIXTURE_TOOL'); assert.equal(providerCalls, 2); assert.equal(accountingCalls, 2, 'malformed completed attempt still accounted');
   });
 }

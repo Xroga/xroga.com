@@ -21,6 +21,7 @@ const SETTINGS = read('../settings/SettingsView.tsx');
 const CSS = read('../../app/globals.css');
 const UIVERSE = read('../../../src/styles/uiverse.css');
 const MIC = read('../terminal/ChatBarButtons.tsx');
+const VOICE = read('../terminal/XrogaVoiceControl.tsx');
 const THEME_TOGGLE = read('./ThemeToggle.tsx');
 const HISTORY = read('./SidebarProjectHistory.tsx');
 const GH = read('../icons/GitHubIcon.tsx');
@@ -184,20 +185,22 @@ test('page fullscreen hides every piece of chrome, on a phone too', () => {
  * listening, and three CSS bars behind it. One of them was always wrong.
  */
 test('the mic is a meter that runs while recording and stops when it ends', () => {
-  assert.match(MIC, /<AudioLinesIcon ref=\{meterRef\} loop/, 'the mic is not the meter');
-  assert.ok(!/xv-mic-wave/.test(MIC), 'the second drawing is back');
+  assert.match(MIC, /<XrogaVoiceControl\b/, 'the shared microphone is not mounted');
+  assert.match(VOICE, /<AudioLinesIcon ref=\{meterRef\} loop/, 'the mic is not the meter');
+  assert.match(VOICE, /xv-mic-btn/, 'the shared microphone lost the existing styles');
+  assert.ok(!/xv-mic-wave/.test(VOICE), 'the second drawing is back');
   assert.ok(!/xv-mic-wave/.test(UIVERSE), 'the CSS bars are back');
   assert.match(METER, /repeat: loop \? Number\.POSITIVE_INFINITY : 0/, 'the meter settles mid-recording');
 
   /*
    * Driven from the recording state, not from the click: the recording ends without
-   * one when the browser stops on silence, on an error, or when permission is
+   * one when recording is interrupted, on an error, or when permission is
    * refused. The bars have to settle with it or they go on claiming to record a
    * released mic.
    */
-  assert.match(MIC, /if \(state === 'recording'\) meterRef\.current\?\.startAnimation\(\);/);
-  assert.match(MIC, /else meterRef\.current\?\.stopAnimation\(\);/);
-  assert.match(MIC, /\}, \[state\]\);/, 'the meter is not tied to the recording');
+  assert.match(VOICE, /if \(mode === 'listening'\) meterRef\.current\?\.startAnimation\(\);/);
+  assert.match(VOICE, /else meterRef\.current\?\.stopAnimation\(\);/);
+  assert.match(VOICE, /\}, \[mode\]\);/, 'the meter is not tied to the recording');
 
   /*
    * This file, and not a second one.

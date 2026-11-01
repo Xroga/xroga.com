@@ -1,0 +1,71 @@
+TAP version 13
+# Subtest: external read-only metadata cannot downgrade server-side destructive, write or unknown tool risk
+not ok 1 - external read-only metadata cannot downgrade server-side destructive, write or unknown tool risk
+  ---
+  duration_ms: 3.9934
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\integrations\\composioClient.security.test.ts:1:149'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'read'
+    - 'destructive'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'destructive'
+  actual: 'read'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\integrations\composioClient.security.test.ts:7:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: fixed Composio transport refuses credential-bearing redirects before following them
+not ok 2 - fixed Composio transport refuses credential-bearing redirects before following them
+  ---
+  duration_ms: 4.7225
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\integrations\\composioClient.security.test.ts:1:835'
+  failureType: 'testCodeFailure'
+  error: 'Xroga Connect is temporarily unavailable.'
+  code: 'COMPOSIO_NETWORK_ERROR'
+  name: 'ComposioClientError'
+  stack: |-
+    composioRequest (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\integrations\composioClient.ts:1451:11)
+    async getComposioToolDetails (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\integrations\composioClient.ts:2305:19)
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\integrations\composioClient.security.test.ts:22:21)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Composio response byte ceiling stops and cancels a dishonest unbounded stream
+not ok 3 - Composio response byte ceiling stops and cancels a dishonest unbounded stream
+  ---
+  duration_ms: 29.9322
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\integrations\\composioClient.security.test.ts:1:1454'
+  failureType: 'testCodeFailure'
+  error: 'bounded reads required, got 21 chunks'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\integrations\composioClient.security.test.ts:34:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 470.0602

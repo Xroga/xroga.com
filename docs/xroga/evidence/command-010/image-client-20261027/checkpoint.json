@@ -1,0 +1,28 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_IMAGE_PROXY_DENIAL_CLOSURE_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T16:37:37.936320+00:00",
+  "parent": "edbc9f2cc5af537913b303f73d39278d087e7aaa",
+  "trace": "docs/xroga/evidence/command-010/image-client-20261027/trace.json",
+  "strictAudit": {
+    "total": 154,
+    "reviewed": 66,
+    "pending": 88,
+    "unresolvedHighRiskBypasses": 49
+  },
+  "strictReceipt": {
+    "jobId": "1e8174ac-79ea-416e-a238-50df78a7ea25",
+    "status": "failed",
+    "exitCode": 1,
+    "log": "docs/xroga/evidence/command-010/image-client-20261027/strictIncomplete.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    }
+  },
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "productionChanged": false,
+  "spending": 0,
+  "next": "Reachable browser coordinator and container-worker transport, then remaining production-relevant callers"
+}

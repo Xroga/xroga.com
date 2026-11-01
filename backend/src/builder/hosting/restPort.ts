@@ -1,10 +1,10 @@
 import { VERCEL_PROJECT_NAME, VERCEL_TEAM_ID, VercelPortError, type VercelDeployment, type VercelEnvVar, type VercelPort, type VercelProject, type VercelReadyState, type VercelScope, type VercelViewer } from './port.js';
+import { builderAdmissionDenied, isBuilderSecurityDenial } from '../providerAuthority.js';
 
 /** (token, path, init) => Response against the Vercel REST API. Injected in tests. */
 export type VercelTransport = (token: string, path: string, init?: RequestInit) => Promise<Response>;
 
-export const vercelFetch: VercelTransport = (token, path, init) =>
-  fetch(`https://api.vercel.com${path}`, { ...init, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...(init?.headers ?? {}) } });
+export const vercelFetch: VercelTransport = async () => { throw builderAdmissionDenied(); };
 
 function failure(response: Response, action: string, ambiguousOnServerError: boolean): VercelPortError {
   const status = response.status;
@@ -39,7 +39,8 @@ export function createRestVercelPort(transport: VercelTransport = vercelFetch): 
   const call = async (token: string, path: string, init: RequestInit | undefined, ambiguous = false): Promise<Response> => {
     try {
       return await transport(token, path, init);
-    } catch {
+    } catch (error) {
+      if (isBuilderSecurityDenial(error)) throw error;
       throw new VercelPortError('unavailable', 'Vercel could not be reached.', ambiguous);
     }
   };

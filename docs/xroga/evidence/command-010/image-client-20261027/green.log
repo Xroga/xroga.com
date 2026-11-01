@@ -1,0 +1,37 @@
+TAP version 13
+# Subtest: a denied image proxy cannot fall through to direct fetch
+ok 1 - a denied image proxy cannot fall through to direct fetch
+  ---
+  duration_ms: 361.6516
+  type: 'test'
+  ...
+# {"outsideAttempts":0,"blocked":true}
+# Subtest: a denied image proxy cannot fall through to direct transformed-image loading
+ok 2 - a denied image proxy cannot fall through to direct transformed-image loading
+  ---
+  duration_ms: 101.4499
+  type: 'test'
+  ...
+# {"outsideAttempts":0,"blocked":true}
+# Subtest: authorized proxy images, local data/blob images and transformations remain functional
+ok 3 - authorized proxy images, local data/blob images and transformations remain functional
+  ---
+  duration_ms: 102.6828
+  type: 'test'
+  ...
+# {"browser":"151.0.7922.34","sourceSha256":"0b84a79c7fc9f30b9c35e18b8c3e2b556bde0152abb3c751f47205a8bbd6a38b","outsideAttempts":0}
+# Subtest: local image conversion cannot introduce SVG network effects or unbounded input bodies
+ok 4 - local image conversion cannot introduce SVG network effects or unbounded input bodies
+  ---
+  duration_ms: 154.4932
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1993.2756

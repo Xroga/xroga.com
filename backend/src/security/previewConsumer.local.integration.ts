@@ -11,12 +11,21 @@ import {livePreviewUrl} from '../synthesis/livePreview/signing.js';
 /** Exercise the actual HTTP/WebSocket resolver without opening an upstream socket. */
 export function registerPreviewConsumerTests(admin:SupabaseClient,getUsers:()=>readonly {id:string}[]):void{
  test('real signed preview consumer rechecks current private grant and session before selecting any upstream target',async t=>{
+  const priorProviderApp=process.env.XROGA_SANDBOX_FLY_APP;
+  const priorProviderToken=process.env.XROGA_SANDBOX_FLY_TOKEN;
+  const priorControlApp=process.env.FLY_APP_NAME;
+  Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'fixture-private',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
+  t.after(()=>{
+    if(priorProviderApp===undefined)delete process.env.XROGA_SANDBOX_FLY_APP;else process.env.XROGA_SANDBOX_FLY_APP=priorProviderApp;
+    if(priorProviderToken===undefined)delete process.env.XROGA_SANDBOX_FLY_TOKEN;else process.env.XROGA_SANDBOX_FLY_TOKEN=priorProviderToken;
+    if(priorControlApp===undefined)delete process.env.FLY_APP_NAME;else process.env.FLY_APP_NAME=priorControlApp;
+  });
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
   const [owner,other]=getUsers(),store=new SupabaseProjectRuntimeStore(),sessionIds:string[]=[],original=globalThis.fetch,prior=process.env.XROGA_PREVIEW_SIGNING_SECRET;
   process.env.XROGA_PREVIEW_SIGNING_SECRET=`SYNTHETIC_LOCAL_${randomUUID()}`;
   t.after(async()=>{globalThis.fetch=original;if(prior===undefined)delete process.env.XROGA_PREVIEW_SIGNING_SECRET;else process.env.XROGA_PREVIEW_SIGNING_SECRET=prior;assert.equal((await admin.from('project_preview_grants').delete().in('session_id',sessionIds)).error,null);assert.equal((await admin.from('project_runtime_sessions').delete().in('session_id',sessionIds)).error,null);});
   const seed=async(userId:string)=>{
-   const now=new Date().toISOString(),session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId:randomUUID(),userId,projectId:`signed-fixture-${randomUUID()}`,providerId:'fixture-no-execution',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],ports:[{port:3000,protocol:'http',processId:'fixture',status:'declared'}],providerState:{machineId:'abc123',app:'fixture-private'},createdAt:now,updatedAt:now,expiresAt:new Date(Date.now()+60_000).toISOString()};
+   const now=new Date().toISOString(),session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId:randomUUID(),userId,projectId:`signed-fixture-${randomUUID()}`,providerId:'fly-project-runtime',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],ports:[{port:3000,protocol:'http',processId:'fixture',status:'declared'}],providerState:{machineId:'abc123',app:'fixture-private'},createdAt:now,updatedAt:now,expiresAt:new Date(Date.now()+60_000).toISOString()};
    sessionIds.push(session.sessionId);await store.saveSession(session);const grant=await createLivePreviewGrant({userId,projectId:session.projectId,sessionId:session.sessionId,runId:randomUUID(),kind:'browser',port:3000,expiresAt:session.expiresAt!});return{session,grant,host:new URL(livePreviewUrl(grant)).hostname};
   };
   const own=await seed(owner.id),foreign=await seed(other.id);let outage=false;

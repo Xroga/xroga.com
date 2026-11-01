@@ -1,0 +1,69 @@
+{
+  "scope": "DEMONSTRATED_INTEGRATION_GATE_CORRECTIONS_ONLY",
+  "firstCandidate": "bc225b8e9441f146a385b09f157f4fcd6180e07b",
+  "failures": [
+    {
+      "run": 40769810621,
+      "cause": "Standalone frontend-only install omitted existing backend ioredis and bullmq dependencies imported by shared canonical guest accounting.",
+      "correction": "Use the same frozen root npm ci in both Vercel entry configurations and the frontend production build gate. No new dependency, counter, fallback or paid service.",
+      "requiredVerification": "Final exact-source frontend production build and complete baseline"
+    },
+    {
+      "run": 40769810168,
+      "cause": "The new terminal provider denial mapper ran before TenantAccessError and converted the existing missing-identity HTTP401 into HTTP403 in Phase2 and Preview restart routes.",
+      "correction": "Preserve the existing tenant error response first. Other canonical security denials remain terminal HTTP403. No test expectation or authorization rule was weakened.",
+      "focusedVerification": {
+        "job": "328f9269-97de-43e9-949b-38a52b8b4e1d",
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "skipped": 0
+      },
+      "requiredVerification": "Final exact-source disposable PostgreSQL/Chromium Builder suite"
+    }
+  ],
+  "additionalGate": "The unchanged strict egress audit now runs explicitly in tenant-security CI with --require-complete.",
+  "productionActivation": false,
+  "additionalBaselineFailures": {
+    "source": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
+    "run": 40770896423,
+    "tests": 4928,
+    "pass": 4920,
+    "fail": 2,
+    "governedSkips": 6,
+    "causes": [
+      "Identity regression fixture still selected historical productionDeps instead of current productionBrowserRuntime. It now inspects the real WORKER_ID binding and proves distinct replicas plus stable per-process identity.",
+      "QA imported pure Chromium helpers from the disabled legacy navigation module. Identical helpers and structural types moved into one shared loader, preserving compatibility exports. Existing unreachable-adapter test is unchanged."
+    ],
+    "focusedJob": "4d8dc7cd-5eba-4e49-a00c-b2c0cd846d72",
+    "requiredVerification": "Final complete exact-source baseline"
+  },
+  "authenticatedDatabaseCorrections": {
+    "source": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
+    "run": 40770896439,
+    "authenticatedBrowserSteps": "PASS",
+    "databaseTests": 212,
+    "databasePass": 210,
+    "databaseFail": 2,
+    "governedSkips": 0,
+    "causes": [
+      "Connection-route fixture expected a private read to dispatch without the existing required exact consent. It now confirms through the authenticated owner-only canonical endpoint and denies foreign approval.",
+      "A raw legacy GitHub row caused an uncaught Express4 async custody denial. The actual account routes now return sanitized503 before provider lookup. The fixture proves this bounded denial, then uses consumed PKCE and canonical v3 custody for the positive private-storage case."
+    ],
+    "negativeJob": "07d092be-15cc-447d-9019-4167e1204799",
+    "focusedGreenJob": "d2e4b077-0b41-4fbf-8899-70fce608db51",
+    "realDatabaseRetest": "REQUIRED_ON_FINAL_SOURCE",
+    "productionMutations": false
+  },
+  "vaultMirrorFixtureCorrection": {
+    "source": "8abb6e1a0e5fe9cdb25112d4354a087f85e52a32",
+    "run": 40776582443,
+    "databaseTests": 212,
+    "databasePass": 211,
+    "databaseFail": 1,
+    "cause": "Private-storage fixture expected a plaintext migration mirror to remain readable after canonical v3 credential custody superseded its authority. The actual mirror reader correctly refuses the mismatched current credential.",
+    "correction": "Assert stale mirror denial and successful owner-bound canonical vault retrieval. Keep raw-row bounded503, private object integrity, foreign/anonymous browser download and signing denials, and owned metadata success. Production code and custody rules are unchanged.",
+    "realDatabaseRetest": "REQUIRED_ON_FINAL_SOURCE",
+    "productionMutations": false
+  }
+}

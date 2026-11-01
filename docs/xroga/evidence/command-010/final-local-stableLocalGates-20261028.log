@@ -1,0 +1,83 @@
+{"stage":"scripts/xroga/phase-two.mjs","state":"START"}
+{"result":"GENERATED_NOT_ACCEPTANCE","packets":73,"historicalRecords":371,"certifiedByGeneration":0}
+{"stage":"scripts/xroga/runtime-inventory.mjs","state":"START"}
+{"result":"GENERATED_PENDING_VALIDATION","dependencies":188,"envNames":296,"unresolvedBindings":0,"fallbackCandidates":829}
+{"stage":"scripts/xroga/check-runtime-config.mjs","state":"START"}
+{"result":"PASS_CONFIG_INVENTORY_WITH_RECORDED_RISKS","dependencies":188,"environmentNames":296,"dynamicBindings":26,"highRisks":9,"secretValuesRead":false,"productionDeployed":false}
+{"stage":"scripts/xroga/inventory.mjs","state":"START"}
+{"result":"GENERATED_NOT_YET_VERIFIED","sourceSha":"87e33b94b3d85deaac12d4bcc691363f4876fa64","counts":{"surfaces":1623,"routeRegistrations":295,"routes":245,"reachableRoutes":234,"queues":4,"migrations":148,"workflows":20,"testSuites":899,"declaredTests":6058,"classifiedMarkers":384,"reachableMarkers":324,"absentRequiredPaths":5,"duplicateIds":0}}
+{"stage":"scripts/xroga/reconcile-requirements.mjs","state":"START"}
+{"result":"GENERATED","requirements":445,"sources":2048,"availableRows":527,"families":43,"candidates":23,"historicalFeatureRows":"119/119","historicalMissions":"72/72","historicalCoverageComplete":true,"implementationComplete":false}
+{"stage":"scripts/xroga/mission-check.mjs","state":"START"}
+{"result":"PASS_MISSION_POLICY_NOT_RELEASE_AUTHORIZATION","results":[{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P1","state":"VERIFIED_SCOPE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P2","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"batch-1-phase-4-google-integration","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"batch-1-phase-4-preparation","state":"BLOCKED","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"CLOUD-RUN-AUTOMATION-SCHEDULER-20261025","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-C006","state":"VERIFIED_SCOPE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-C007","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"COMPOSIO-CATALOG-DEPRECATION-20261025","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"LIVE-AI-ACCOUNTING-COMPOSIO-REPAIR-20261025","state":"CODE_COMPLETE","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-ACCEPTED-MAIN-INTEGRATION-20261025","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-DEPLOYED-PROMPT-PRESERVATION-20261024","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-MAIN-RECONCILIATION-20261023","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XB01-P3-PRODUCTION-CUSTODY-PATH-20261024","state":"IN_PROGRESS","release":"BLOCKED"},{"result":"PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION","missionId":"XROGA-ZERO-FLY-20261025","state":"IN_PROGRESS","release":"BLOCKED"}],"goldenStates":{"PASS":0,"FAIL":0,"BLOCKED_KNOWN_GAP":12,"NOT_APPLICABLE":0},"allBatchCommandsVerified":false}
+{"stage":"--test","state":"START"}
+TAP version 13
+# Subtest: AST audit sees executable transports, aliases, browser, MCP and process sinks, not generated strings
+ok 1 - AST audit sees executable transports, aliases, browser, MCP and process sinks, not generated strings
+  ---
+  duration_ms: 31.1889
+  type: 'test'
+  ...
+# Subtest: a constant origin or central import never silently certifies caller ownership
+ok 2 - a constant origin or central import never silently certifies caller ownership
+  ---
+  duration_ms: 1.4897
+  type: 'test'
+  ...
+# Subtest: aliased process execution and pinned uploads remain obligations, response sends and regex exec are excluded
+ok 3 - aliased process execution and pinned uploads remain obligations, response sends and regex exec are excluded
+  ---
+  duration_ms: 2.5634
+  type: 'test'
+  ...
+# Subtest: current transport proof binds every claimed source and keeps unresolved caller obligations visible
+ok 4 - current transport proof binds every claimed source and keeps unresolved caller obligations visible
+  ---
+  duration_ms: 29.509
+  type: 'test'
+  ...
+# Subtest: current metadata continuation preserves the exact historical proof files without promoting acceptance
+ok 5 - current metadata continuation preserves the exact historical proof files without promoting acceptance
+  ---
+  duration_ms: 307.6089
+  type: 'test'
+  ...
+# Subtest: source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+ok 6 - source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+  ---
+  duration_ms: 1989.9637
+  type: 'test'
+  ...
+# Subtest: Phase2 retains all73 packets and371 historical identities without certifying reviews or later scope
+ok 7 - Phase2 retains all73 packets and371 historical identities without certifying reviews or later scope
+  ---
+  duration_ms: 886.9311
+  type: 'test'
+  ...
+# Subtest: Phase2 semantic progress rejects changed source, unknown or duplicate packets and self-certified status
+ok 8 - Phase2 semantic progress rejects changed source, unknown or duplicate packets and self-certified status
+  ---
+  duration_ms: 5308.01
+  type: 'test'
+  ...
+# Subtest: shifted duplicate caller remapping requires a unique byte-identical method rather than matching syntax labels alone
+ok 9 - shifted duplicate caller remapping requires a unique byte-identical method rather than matching syntax labels alone
+  ---
+  duration_ms: 4.7695
+  type: 'test'
+  ...
+# Subtest: both baseline jobs reject stale Phase2 evidence hashes before browser installation and the unchanged full suites
+ok 10 - both baseline jobs reject stale Phase2 evidence hashes before browser installation and the unchanged full suites
+  ---
+  duration_ms: 0.8396
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7168.8323

@@ -64,6 +64,14 @@ async function main() {
   // every request: navigations must be in scope; everything is counted. The proxy enforces the same origins for all traffic.
   await context.route('**/*', async (route) => {
     const req = route.request();
+    // Public browser execution is read-only. A page's event handler, a model's
+    // action label or a serialized writeGrant cannot issue canonical authority.
+    // Block unmarked form/fetch/beacon effects before sending any request body.
+    if (violation || cancelled) return route.abort('blockedbyclient');
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method())) {
+      stopWith('RESULT_OUT_OF_SCOPE', 'State-changing browser requests require canonical action admission.');
+      return route.abort('blockedbyclient');
+    }
     if (req.isNavigationRequest()) {
       if (!inScope(req.url())) { stopWith('RESULT_OUT_OF_SCOPE', 'a navigation left the allowed scope'); return route.abort('blockedbyclient'); }
       if (req.frame() === req.frame().page().mainFrame()) {
@@ -71,7 +79,32 @@ async function main() {
         if (counters.navigations > job.limits.maxNavigations) { stopWith('RESULT_OVER_LIMIT', 'navigation limit reached'); return route.abort('blockedbyclient'); }
       }
     }
+    if (req.isNavigationRequest()) {
+      // BrowserContext socket routing doesn't cover dedicated-worker sockets.
+      // Keep page JavaScript and DOM reads, but refuse unadmitted child workers
+      // through a response CSP that also applies to blob/srcdoc descendants.
+      // A separate policy intersects the site's CSP, it never relaxes it.
+      let response;
+      try {
+        response = await route.fetch({ maxRedirects: 0, maxRetries: 0, timeout: 30_000 });
+        const body = await response.body();
+        if (body.length > job.limits.maxResponseBytes) { stopWith('RESULT_OVER_LIMIT', 'document byte limit reached'); return route.abort('blockedbyclient'); }
+        if (violation || cancelled) return route.abort('blockedbyclient');
+        const headers = response.headers();
+        headers['content-security-policy'] = (headers['content-security-policy'] ? headers['content-security-policy'] + ', ' : '') + "worker-src 'none'";
+        return await route.fulfill({ response, headers, body });
+      } catch {
+        stopWith('RESULT_OUT_OF_SCOPE', 'Document admission could not be verified.');
+        return route.abort('blockedbyclient');
+      } finally { await response?.dispose().catch(() => {}); }
+    }
     return route.continue();
+  });
+  // Routed sockets are never connected to the server. An opaque interactive
+  // channel cannot borrow a read-only task's navigation or model authority.
+  await context.routeWebSocket('**/*', async (socket) => {
+    stopWith('RESULT_OUT_OF_SCOPE', 'Browser socket writes require canonical action admission.');
+    await socket.close({ code: 1008, reason: 'Canonical action admission required' });
   });
   context.on('requestfinished', (req) => {
     req.sizes().then((s) => {

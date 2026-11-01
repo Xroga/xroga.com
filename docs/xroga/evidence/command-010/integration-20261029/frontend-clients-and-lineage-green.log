@@ -1,0 +1,125 @@
+TAP version 13
+# Subtest: each first-party client refuses API redirects without forwarding private request bodies
+    # Subtest: canonical API
+    ok 1 - canonical API
+      ---
+      duration_ms: 36.9962
+      type: 'test'
+      ...
+    # Subtest: stream submission
+    ok 2 - stream submission
+      ---
+      duration_ms: 8.9508
+      type: 'test'
+      ...
+    # Subtest: community
+    ok 3 - community
+      ---
+      duration_ms: 26.5363
+      type: 'test'
+      ...
+    # Subtest: runtime
+    ok 4 - runtime
+      ---
+      duration_ms: 24.7721
+      type: 'test'
+      ...
+    # Subtest: Builder create
+    ok 5 - Builder create
+      ---
+      duration_ms: 24.0647
+      type: 'test'
+      ...
+    # Subtest: Builder download
+    ok 6 - Builder download
+      ---
+      duration_ms: 30.9909
+      type: 'test'
+      ...
+    # Subtest: delivery status
+    ok 7 - delivery status
+      ---
+      duration_ms: 25.0682
+      type: 'test'
+      ...
+    # Subtest: delivery download
+    ok 8 - delivery download
+      ---
+      duration_ms: 3.8712
+      type: 'test'
+      ...
+    # Subtest: voice
+    ok 9 - voice
+      ---
+      duration_ms: 34.908
+      type: 'test'
+      ...
+    # Subtest: guest
+    ok 10 - guest
+      ---
+      duration_ms: 19.3479
+      type: 'test'
+      ...
+    1..10
+ok 1 - each first-party client refuses API redirects without forwarding private request bodies
+  ---
+  duration_ms: 543.4491
+  type: 'test'
+  ...
+# Subtest: API polling treats redirect refusal as terminal and authorized requests retain their contracts
+ok 2 - API polling treats redirect refusal as terminal and authorized requests retain their contracts
+  ---
+  duration_ms: 307.8037
+  type: 'test'
+  ...
+# Subtest: actual Chromium opaque redirects are terminal before any outside request
+ok 3 - actual Chromium opaque redirects are terminal before any outside request
+  ---
+  duration_ms: 917.0474
+  type: 'test'
+  ...
+# Subtest: current transport proof binds every claimed source and keeps unresolved caller obligations visible
+ok 4 - current transport proof binds every claimed source and keeps unresolved caller obligations visible
+  ---
+  duration_ms: 23.0392
+  type: 'test'
+  ...
+# Subtest: current metadata continuation preserves the exact historical proof files without promoting acceptance
+ok 5 - current metadata continuation preserves the exact historical proof files without promoting acceptance
+  ---
+  duration_ms: 248.0628
+  type: 'test'
+  ...
+# Subtest: source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+ok 6 - source-lifetime position reconciliation preserves exact expressions and nested historical receipts without certifying new boundaries
+  ---
+  duration_ms: 1192.1089
+  type: 'test'
+  ...
+# Subtest: historical candidate hash is preserved only for an exact current binding and unchanged complete test call
+ok 7 - historical candidate hash is preserved only for an exact current binding and unchanged complete test call
+  ---
+  duration_ms: 11.4965
+  type: 'test'
+  ...
+# Subtest: changed assertion, missing or ambiguous test, forged hashes and acceptance scope fail closed
+ok 8 - changed assertion, missing or ambiguous test, forged hashes and acceptance scope fail closed
+  ---
+  duration_ms: 9.9588
+  type: 'test'
+  ...
+# Subtest: model-dispatch current bindings preserve exact historical conversions, constructor and nested proof records
+ok 9 - model-dispatch current bindings preserve exact historical conversions, constructor and nested proof records
+  ---
+  duration_ms: 1049.7595
+  type: 'test'
+  ...
+1..9
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2122.984

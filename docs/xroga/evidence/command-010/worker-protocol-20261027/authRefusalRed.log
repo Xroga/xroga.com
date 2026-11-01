@@ -1,0 +1,72 @@
+TAP version 13
+# Subtest: untrusted coordinator job IDs cannot select signed follow-up paths
+ok 1 - untrusted coordinator job IDs cannot select signed follow-up paths
+  ---
+  duration_ms: 7.7757
+  type: 'test'
+  ...
+# Subtest: oversized coordinator records are cancelled and cannot become retryable failures
+ok 2 - oversized coordinator records are cancelled and cannot become retryable failures
+  ---
+  duration_ms: 20.5759
+  type: 'test'
+  ...
+# Subtest: held platform credentials cannot ride in a browser plan to the worker
+ok 3 - held platform credentials cannot ride in a browser plan to the worker
+  ---
+  duration_ms: 1.0514
+  type: 'test'
+  ...
+# Subtest: malformed coordinator records are terminal protocol denials
+ok 4 - malformed coordinator records are terminal protocol denials
+  ---
+  duration_ms: 2.3775
+  type: 'test'
+  ...
+# Subtest: coordinator redirect rejection stays terminal through signed transport
+ok 5 - coordinator redirect rejection stays terminal through signed transport
+  ---
+  duration_ms: 1.0697
+  type: 'test'
+  ...
+# Subtest: coordinator authentication refusal cannot trigger another attempt
+not ok 6 - coordinator authentication refusal cannot trigger another attempt
+  ---
+  duration_ms: 10.039
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\browserCoordinatorProtocol.security.test.ts:1:3588'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BrowserTaskError: the browser host refused the job (403)
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\browserCoordinatorProtocol.security.test.ts:46:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: configured coordinator origins cannot carry userinfo, paths, query strings or fragments
+ok 7 - configured coordinator origins cannot carry userinfo, paths, query strings or fragments
+  ---
+  duration_ms: 1.2664
+  type: 'test'
+  ...
+# Subtest: a cancelled coordinator cannot publish a late successful result
+ok 8 - a cancelled coordinator cannot publish a late successful result
+  ---
+  duration_ms: 2.0946
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 7
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1221.8866

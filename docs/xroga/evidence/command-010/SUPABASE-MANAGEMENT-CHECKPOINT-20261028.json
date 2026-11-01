@@ -1,0 +1,102 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "parent": "1f0761daa88420e5ef00d98e99135cd542915188",
+  "partialCorrectionEvidence": "docs/xroga/evidence/command-010/SUPABASE-MANAGEMENT-TRANSPORT-CONTINUATION-20261028.json",
+  "resolvedCandidateIds": [],
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 130,
+    "pending": 6,
+    "unresolvedHighRiskBypasses": 3
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "remainingCandidates": [
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "file": "backend/src/ai/parallelDispatch.ts",
+      "entryPoint": "executeParallelRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "807c2948cdfa16e19b84",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "file": "backend/src/services/integrations/composioClient.ts",
+      "entryPoint": "composioRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "file": "backend/src/services/integrations/supabaseProvision.ts",
+      "entryPoint": "mgmtFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    }
+  ],
+  "focused": {
+    "tests": 58,
+    "pass": 58,
+    "fail": 0,
+    "skipped": 0,
+    "scope": "Supabase service, actual OAuth callback/disconnect/organizations routes, credential revision, bundle and readiness tests. Provider/database/password interactions synthetic, no live SQL, provisioning, customer credentials or deployment."
+  },
+  "backendTypes": {
+    "job": "7f1c5a34-e641-4c4e-86ce-585f2dbb35f9",
+    "status": "passed",
+    "exitCode": 0,
+    "log": "docs/xroga/evidence/command-010/logs/supabase-management-finalBackendTypes-20261028.log.gz",
+    "uncompressedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 1322060
+    }
+  },
+  "registerIntegrity": {
+    "job": "4925b0fe-a9b1-48c5-88d4-da5912d371d7",
+    "status": "passed",
+    "exitCode": 0,
+    "log": "docs/xroga/evidence/command-010/logs/supabase-management-finalRegisterIntegrity10-20261028.log.gz",
+    "uncompressedSha256": "cbba902eb5227515680e08874e07ace6cdb502cfe11a01fdb42334375bb15e82",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    }
+  },
+  "strictEvidence": {
+    "job": "a96bc221-6130-43f3-80df-27ebe811cee3",
+    "status": "failed",
+    "exitCode": 1,
+    "log": "docs/xroga/evidence/command-010/logs/supabase-management-finalStrictAudit-20261028.log.gz",
+    "uncompressedSha256": "b1a320d6793bc2529a1d59b36a77834dfef9af79acbde6159d8b37c7f8819d5d",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    }
+  },
+  "frontendReuse": "Frontend files unchanged from d5a24c48, current handler regression, complete types and lint preserved. Exact-source CI remains required.",
+  "ci": "REQUIRED_ON_PUSHED_CORRECTED_SOURCE",
+  "previousCi": "docs/xroga/evidence/command-010/CI-1F0761DA-20261028.json",
+  "nextAction": "Continue original Supabase caller lifetime, owned project, canonical exact schema/storage/create approval and revocation. No actual provider/DB operation authorized by this local correction.",
+  "phase4": "NOT_VERIFIED",
+  "formalAcceptedCriteria": 0,
+  "criterionCount": 12,
+  "externalBlocker": "NONE_IDENTIFIED_SECURITY_ENGINEERING_REMAINS",
+  "productionChanged": false,
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "additionalSpend": 0
+}

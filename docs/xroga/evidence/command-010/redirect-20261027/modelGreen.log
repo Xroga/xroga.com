@@ -1,0 +1,239 @@
+TAP version 13
+# Subtest: only the three canonical production budget issuers can register generic SDK admissions
+ok 1 - only the three canonical production budget issuers can register generic SDK admissions
+  ---
+  duration_ms: 3803.4304
+  type: 'test'
+  ...
+# Subtest: actual SDK 31380a8d5b9454a98a98 refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+ok 2 - actual SDK 31380a8d5b9454a98a98 refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+  ---
+  duration_ms: 4.119
+  type: 'test'
+  ...
+# Subtest: actual SDK 9c345e07b723c086440e refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+ok 3 - actual SDK 9c345e07b723c086440e refuses missing admission and a fabricated beforeDispatch callback before sending bytes
+  ---
+  duration_ms: 1.3002
+  type: 'test'
+  ...
+# Subtest: real SDK redirects cannot become retries or another provider fallback
+ok 4 - real SDK redirects cannot become retries or another provider fallback
+  ---
+  duration_ms: 447.2538
+  type: 'test'
+  ...
+# {"initial":1,"forwarded":0,"fallback":0}
+# Subtest: both actual model SDK paths allow ordinary work and deny secret prompts before SDK dispatch
+ok 5 - both actual model SDK paths allow ordinary work and deny secret prompts before SDK dispatch
+  ---
+  duration_ms: 357.3317
+  type: 'test'
+  ...
+# Subtest: model payload snapshots support tool records and aliases but reject cycles and unsupported values safely
+ok 6 - model payload snapshots support tool records and aliases but reject cycles and unsupported values safely
+  ---
+  duration_ms: 175.6851
+  type: 'test'
+  ...
+# Subtest: model endpoint admission rejects a private registry destination in both execution paths
+ok 7 - model endpoint admission rejects a private registry destination in both execution paths
+  ---
+  duration_ms: 11.0934
+  type: 'test'
+  ...
+# Subtest: real SDK completion and streaming use only the approved endpoint and refuse redirects
+ok 8 - real SDK completion and streaming use only the approved endpoint and refuse redirects
+  ---
+  duration_ms: 73.4852
+  type: 'test'
+  ...
+# Subtest: public destination substitution and cross-provider credential namespace fail before either SDK call
+ok 9 - public destination substitution and cross-provider credential namespace fail before either SDK call
+  ---
+  duration_ms: 16.6538
+  type: 'test'
+  ...
+# Subtest: invalid accounting values cannot authorize execution or poison local balances
+ok 10 - invalid accounting values cannot authorize execution or poison local balances
+  ---
+  duration_ms: 6.1224
+  type: 'test'
+  ...
+# Subtest: production cannot authorize provider execution using process-memory accounting
+ok 11 - production cannot authorize provider execution using process-memory accounting
+  ---
+  duration_ms: 2.0469
+  type: 'test'
+  ...
+# Subtest: uses integer micro-USD and reserves more than the maximum estimated cost
+ok 12 - uses integer micro-USD and reserves more than the maximum estimated cost
+  ---
+  duration_ms: 6.1352
+  type: 'test'
+  ...
+# Subtest: cached input is conservatively accounted until a provider-specific rate is verified
+ok 13 - cached input is conservatively accounted until a provider-specific rate is verified
+  ---
+  duration_ms: 0.4015
+  type: 'test'
+  ...
+# Subtest: balanced month unlocks cycle-relative daily and complexity portions
+ok 14 - balanced month unlocks cycle-relative daily and complexity portions
+  ---
+  duration_ms: 0.6652
+  type: 'test'
+  ...
+# Subtest: full access never unlocks the protected completion reserve for ordinary work
+ok 15 - full access never unlocks the protected completion reserve for ordinary work
+  ---
+  duration_ms: 0.308
+  type: 'test'
+  ...
+# Subtest: idempotent replay returns one reservation without double accounting
+ok 16 - idempotent replay returns one reservation without double accounting
+  ---
+  duration_ms: 1.1207
+  type: 'test'
+  ...
+# Subtest: verified payment cycle becomes the active paid entitlement
+ok 17 - verified payment cycle becomes the active paid entitlement
+  ---
+  duration_ms: 5.4299
+  type: 'test'
+  ...
+# Subtest: same-key memory replays bind exact intent and deny settled, released or uncertain reservations
+ok 18 - same-key memory replays bind exact intent and deny settled, released or uncertain reservations
+  ---
+  duration_ms: 6.7842
+  type: 'test'
+  ...
+# Subtest: free entitlement projections never exceed the active cycle ceiling
+ok 19 - free entitlement projections never exceed the active cycle ceiling
+  ---
+  duration_ms: 1.296
+  type: 'test'
+  ...
+# Subtest: free in-memory status is bounded to 100 percent and does not advertise fake future unlocks
+ok 20 - free in-memory status is bounded to 100 percent and does not advertise fake future unlocks
+  ---
+  duration_ms: 0.6043
+  type: 'test'
+  ...
+# Subtest: process-local reservation settlement and release cannot mutate another owner budget
+ok 21 - process-local reservation settlement and release cannot mutate another owner budget
+  ---
+  duration_ms: 2.9622
+  type: 'test'
+  ...
+# Subtest: provider runtime health
+    # Subtest: does not retry invalid credentials, model IDs, or context overflow
+    ok 1 - does not retry invalid credentials, model IDs, or context overflow
+      ---
+      duration_ms: 9.3771
+      type: 'test'
+      ...
+    # Subtest: allows bounded retry for timeout, rate limit, and transient failures
+    ok 2 - allows bounded retry for timeout, rate limit, and transient failures
+      ---
+      duration_ms: 1.081
+      type: 'test'
+      ...
+    # Subtest: keeps account capacity distinct from provider outages
+    ok 3 - keeps account capacity distinct from provider outages
+      ---
+      duration_ms: 0.7688
+      type: 'test'
+      ...
+    # Subtest: stops the fallback chain immediately when shared account capacity is unavailable
+    ok 4 - stops the fallback chain immediately when shared account capacity is unavailable
+      ---
+      duration_ms: 10.9735
+      type: 'test'
+      ...
+    # Subtest: opens a circuit after repeated failures and recovers after the window
+    ok 5 - opens a circuit after repeated failures and recovers after the window
+      ---
+      duration_ms: 4.8282
+      type: 'test'
+      ...
+    # Subtest: tracks execution and validation history without prompt or secret content
+    ok 6 - tracks execution and validation history without prompt or secret content
+      ---
+      duration_ms: 0.9821
+      type: 'test'
+      ...
+    # Subtest: falls back after rate limits and returns only one successful result
+    ok 7 - falls back after rate limits and returns only one successful result
+      ---
+      duration_ms: 1.0027
+      type: 'test'
+      ...
+    # Subtest: does not duplicate health events when the provider transport records them
+    ok 8 - does not duplicate health events when the provider transport records them
+      ---
+      duration_ms: 0.8831
+      type: 'test'
+      ...
+    # Subtest: does not retry authentication, invalid model, invalid request, or context failures
+    ok 9 - does not retry authentication, invalid model, invalid request, or context failures
+      ---
+      duration_ms: 2.6908
+      type: 'test'
+      ...
+    # Subtest: classifies timeout, opens the circuit, and reports all-provider failure safely
+    ok 10 - classifies timeout, opens the circuit, and reports all-provider failure safely
+      ---
+      duration_ms: 11.9749
+      type: 'test'
+      ...
+    1..10
+ok 22 - provider runtime health
+  ---
+  duration_ms: 49.6977
+  type: 'suite'
+  ...
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"glm_5_3_flash","requestedProvider":"zhipu","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"deepseek_v4_flash","requestedProvider":"openrouter","actualModelId":"deepseek_v4_flash","actualProvider":"openrouter","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"deepseek_v4_flash","requestedProvider":"openrouter","actualModelId":"deepseek_v4_flash","actualProvider":"openrouter","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"deepseek_v4_flash","requestedProvider":"openrouter","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":true,"fallbackReason":"transient:status=503","fallbackFailureCount":1}
+# [pipeline] deepseek_v4_flash stream failed (output_limit_exceeded): unknown provider failure
+# Subtest: actual pipeline, completion and SoftwareAgent calls bind tenant, account revision, payload and canonical reservation
+ok 23 - actual pipeline, completion and SoftwareAgent calls bind tenant, account revision, payload and canonical reservation
+  ---
+  duration_ms: 3726.385
+  type: 'test'
+  ...
+# Subtest: local request security denial cannot fall through to a different provider or account
+ok 24 - local request security denial cannot fall through to a different provider or account
+  ---
+  duration_ms: 1.9783
+  type: 'test'
+  ...
+# Subtest: both actual browser SDK boundaries deny raw job IDs before reserving or constructing a provider client
+ok 25 - both actual browser SDK boundaries deny raw job IDs before reserving or constructing a provider client
+  ---
+  duration_ms: 27.2135
+  type: 'test'
+  ...
+# Subtest: gateway: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+ok 26 - gateway: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+  ---
+  duration_ms: 579.1156
+  type: 'test'
+  ...
+# Subtest: planner: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+ok 27 - planner: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+  ---
+  duration_ms: 344.5236
+  type: 'test'
+  ...
+1..27
+# tests 36
+# suites 1
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 22791.3626

@@ -8,6 +8,7 @@ export class AuthorityError extends Error {
 }
 const denied = (code = 'AUTHORITY_REQUIRED'): never => { throw new AuthorityError(code); };
 interface PermitState {
+  context: TenantContext;
   scope: Readonly<PreparedAuthorityScope>;
   used: boolean;
   revalidate: () => Promise<DurableAuthorityClaim>;
@@ -45,7 +46,7 @@ export async function executeAuthorizedAction<T>(input: {
   fresh(scope);
   const claim = Object.freeze({ ...input.claim }); verifyClaim(scope, claim);
   const permit: AuthorityPermit = Object.freeze({ grantId: claim.id });
-  permits.set(permit, { scope, claim, used: false, revalidate: input.revalidateBeforeEffect });
+  permits.set(permit, { context, scope, claim, used: false, revalidate: input.revalidateBeforeEffect });
   try { return await effect(permit); }
   finally { permits.delete(permit); }
 }
@@ -58,6 +59,15 @@ export function assertAuthorityPermit(value: unknown, binding: AuthorityDispatch
   for (const key of ['userId', 'provider', 'connectedAccountId', 'operation', 'targetDigest', 'planDigest'] as const) {
     if (binding[key] !== state.scope[key]) denied('AUTHORITY_SCOPE_MISMATCH');
   }
+}
+
+/** Original issuer context only. Never reconstruct an actor from a permit's
+ * serialized grant ID or user ID. Existing freshness, exact binding, one-use
+ * lifetime and finally revocation all remain enforced by the same permit store.
+ */
+export function authorityContextForPermit(value: unknown,binding:AuthorityDispatchBinding):TenantContext {
+  assertAuthorityPermit(value,binding);
+  return requireTenantContext(permits.get(value as object)!.context);
 }
 
 /** Called by the actual effect adapter after metadata/account waits. Mark used

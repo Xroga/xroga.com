@@ -1,0 +1,366 @@
+TAP version 13
+# Subtest: every private R2 operation rejects a bucket outside its configured capability before SDK or presigner use
+    # Subtest: private operation 1
+    not ok 1 - private operation 1
+      ---
+      duration_ms: 36.2588
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 2
+    not ok 2 - private operation 2
+      ---
+      duration_ms: 5.7714
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 3
+    not ok 3 - private operation 3
+      ---
+      duration_ms: 0.6236
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 4
+    not ok 4 - private operation 4
+      ---
+      duration_ms: 0.38
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 5
+    not ok 5 - private operation 5
+      ---
+      duration_ms: 0.6243
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: |-
+        The input did not match the regular expression /configured private bucket/. Input:
+        
+        'Error: empty body'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      actual:
+      error: 'empty body'
+      stack: |-
+        R2ObjectStore.openRead (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2ObjectStore.ts:130:24)
+        async waitForActual (node:assert:644:5)
+        async Function.rejects (node:assert:767:25)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 6
+    not ok 6 - private operation 6
+      ---
+      duration_ms: 0.4655
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 7
+    not ok 7 - private operation 7
+      ---
+      duration_ms: 6.6966
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 8
+    not ok 8 - private operation 8
+      ---
+      duration_ms: 0.5869
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 9
+    not ok 9 - private operation 9
+      ---
+      duration_ms: 1.1559
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: |-
+        The input did not match the regular expression /configured private bucket/. Input:
+        
+        'Error: no upload id'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      actual:
+      error: 'no upload id'
+      stack: |-
+        R2ObjectStore.createMultipart (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2ObjectStore.ts:156:28)
+        async waitForActual (node:assert:644:5)
+        async Function.rejects (node:assert:767:25)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 10
+    not ok 10 - private operation 10
+      ---
+      duration_ms: 2.5761
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 11
+    not ok 11 - private operation 11
+      ---
+      duration_ms: 1.2055
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: |-
+        The input did not match the regular expression /configured private bucket/. Input:
+        
+        'Error: provider returned no part ETag'
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      actual:
+      error: 'provider returned no part ETag'
+      stack: |-
+        R2ObjectStore.uploadPart (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2ObjectStore.ts:173:24)
+        async waitForActual (node:assert:644:5)
+        async Function.rejects (node:assert:767:25)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 12
+    not ok 12 - private operation 12
+      ---
+      duration_ms: 1.1461
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 13
+    not ok 13 - private operation 13
+      ---
+      duration_ms: 0.8091
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 14
+    not ok 14 - private operation 14
+      ---
+      duration_ms: 0.6077
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: private operation 15
+    not ok 15 - private operation 15
+      ---
+      duration_ms: 0.4217
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1840'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      operator: 'rejects'
+      stack: |-
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:24:55)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..15
+not ok 1 - every private R2 operation rejects a bucket outside its configured capability before SDK or presigner use
+  ---
+  duration_ms: 68.9745
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:396'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    12 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 12
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:25:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: R2 account configuration cannot turn the fixed provider origin into a URL-selected host
+not ok 2 - R2 account configuration cannot turn the fixed provider origin into a URL-selected host
+  ---
+  duration_ms: 1.0248
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\r2BucketBoundary.security.test.ts:1:1961'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\r2BucketBoundary.security.test.ts:30:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..2
+# tests 17
+# suites 0
+# pass 0
+# fail 17
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 721.6114

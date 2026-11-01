@@ -124,3 +124,10 @@ describe('Drive upload', () => {
     assert.equal(calls[0], 'initiate:blob.bin:3:application/octet-stream:nohash');
   });
 });
+
+it('multipart authorization denial is terminal and does not retry or complete',async()=>{
+ const store=storage({status:403}),calls:string[]=[];
+ const plan:InitiatedUpload={objectId:'obj-1',mode:'multipart',partSize:5,parts:1,expiresAt:'2030-01-01T00:00:00Z'};
+ await assert.rejects(uploadFile(file(5),deps(plan,store,calls,{partConcurrency:1})));
+ assert.equal([...store.attempts.values()][0],1);assert.ok(!calls.some(c=>c.startsWith('complete')));
+});

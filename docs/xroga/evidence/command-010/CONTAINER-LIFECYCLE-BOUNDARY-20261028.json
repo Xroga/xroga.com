@@ -1,0 +1,327 @@
+{
+  "scope": "LOCAL_DEVELOPMENT_CONTAINER_LIFECYCLE_NOT_GOOGLE_OR_UPSTREAM_PRODUCT_ACCEPTANCE",
+  "candidates": [
+    {
+      "id": "f0eab43244d6d3c88de8",
+      "file": "backend/src/sandbox/sandboxProviders.ts",
+      "line": 139,
+      "entryPoint": "canRun",
+      "transport": "subprocess-or-dynamic-execution",
+      "callee": "spawn",
+      "callSha256": "de564e641e3309305bca6125ae8e66ff6aed21b519976780134adeea28735105",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "5e931ac391ece81659aa",
+      "file": "backend/src/sandbox/sandboxProviders.ts",
+      "line": 240,
+      "entryPoint": "containerControl",
+      "transport": "subprocess-or-dynamic-execution",
+      "callee": "spawn",
+      "callSha256": "0dcb12e38d5a1794c6ba9359fc5252a83ff22f842bb06ddff9e427e80c667442",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "151aa103d929fb10c020",
+      "file": "backend/src/sandbox/sandboxProviders.ts",
+      "line": 277,
+      "entryPoint": "runIsolated",
+      "transport": "subprocess-or-dynamic-execution",
+      "callee": "spawn",
+      "callSha256": "5442edb387ddb815fb52cb566880885170270cce15b390f6819fc7fedc42943d",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "defects": [
+    "Killing Docker CLI left the actual daemon container running after cancellation",
+    "Invalid limits and encoded held credentials could reach probe",
+    "Cancellation during final cleanup could return success",
+    "Direct local adapter could bypass production Google provider selection",
+    "Daemon could pull unapproved images and accumulate separate logs"
+  ],
+  "correction": "Deny local adapter in production before probe. Validate and snapshot request before any CLI, none-only network, no registry pull, no daemon logs, no secrets in task environment. Create inert container first, validate exact daemon-issued CID, then attach. Cancellation, timeout, output limit and finally remove only that exact CID. Failed cleanup is terminal cleanupPending admission failure. Recheck cancellation after awaited cleanup. Bound all control commands and output, no shell.",
+  "trace": [
+    {
+      "caller": "compileValidate.ts compile-validator",
+      "binding": "executeCanonicalSandboxed, original Google execution binding retained; admission errors rethrown"
+    },
+    {
+      "caller": "productionAdapters.ts universal-validation",
+      "binding": "canonical sandbox, trusted registry validation image"
+    },
+    {
+      "caller": "browserVerificationAdapter.ts browser-verification",
+      "binding": "canonical sandbox, operator-configured image, admission errors rethrown"
+    },
+    {
+      "caller": "softwareAgentProductionInfrastructure.ts software-agent-command",
+      "binding": "canonical sandbox, admitted registry image, no local production fallback"
+    }
+  ],
+  "authority": "No new context issuer, raw-user-ID authorization, cloud identity or consequential-action grant. Local subprocess control remains an operator-development capability only. Existing production Google actor, run, project, source, generation and lease checks are unchanged.",
+  "credentials": "Scrubbed CLI control environment only adds Windows host context fields required by Docker Desktop. These are never forwarded to container request environment. Real fixture proves host API key and Windows context fields absent inside container.",
+  "accounting": "No model/provider billing or cloud provisioning occurs in local process adapter. Existing Google scheduler and budget accounting are not replaced or promoted.",
+  "verification": {
+    "tests": 45,
+    "pass": 45,
+    "fail": 0,
+    "skip": 0,
+    "realDockerChecks": 7,
+    "backendTypes": "PASS",
+    "positive": "Real success and ordinary exit7, bounded timeout/output, captured output, exact cleanup, canonical Google binding compatibility",
+    "negative": "Real running-program cancellation removes daemon container; pre-cancel/create race/late cancel, unknown cleanup, unsupported network, secret environment, invalid image and limits, production direct-call denial"
+  },
+  "receipts": [
+    {
+      "name": "daemonCancellationRed",
+      "id": "9829a7af-e854-4024-8664-775c1939f267",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/container-lifecycle-daemonCancellationRed-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 560181
+      }
+    },
+    {
+      "name": "admissionRed",
+      "id": "f195db0a-114e-45c4-8c8c-e9874542291e",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/container-lifecycle-admissionRed-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 570725
+      }
+    },
+    {
+      "name": "productionGuardRed",
+      "id": "1b417df2-7756-4e1b-b18d-bee43439555b",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/container-lifecycle-productionGuardRed-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 567260
+      }
+    },
+    {
+      "name": "green",
+      "id": "49bd2ee8-c9ae-45b2-8ef0-4bef12d4c251",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/container-lifecycle-green-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 692968
+      }
+    },
+    {
+      "name": "backendTypes",
+      "id": "b961e4ca-18da-4b12-ab7f-c172b0fe3adf",
+      "status": "passed",
+      "exitCode": 0,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322052
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/sandbox/sandboxProviders.ts",
+      "sha256": "797303c61e499a8b5f7aa63b778f32b4b6a8ea2adbb99eaac6dd59bb431e4008"
+    },
+    {
+      "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+      "sha256": "a0cdf6d808483fff5c64bfc3690bf9e3cd5eb8336d9d6d9acc3d9b971e1cb7a7"
+    },
+    {
+      "path": "backend/src/sandbox/containerLifecycle.security.test.ts",
+      "sha256": "8aa93e70a9763c361bc38c857da92bcca7c5435c2ae63cc4206e568d7aa8ebb9"
+    },
+    {
+      "path": "backend/src/sandbox/containerCancellation.local.integration.ts",
+      "sha256": "a51ff2700018ebe1c8de13c8d6d94edb855183a77d5acaa16ea4f0e8f59bd41d"
+    },
+    {
+      "path": "backend/src/sandbox/sandboxRuntime.ts",
+      "sha256": "fdde1c8881c155ba9eabe1722aa7ec7122d3ba3289ef782bb4a8ca7a501c34ef"
+    },
+    {
+      "path": "backend/src/sandbox/google/executionBinding.ts",
+      "sha256": "d1c4b9bf871c64b1be55c93099c2319fb5b3475ddc1a43d77f01e1de7d170b25"
+    },
+    {
+      "path": "backend/src/ai/compileValidate.ts",
+      "sha256": "fba32cb6703084fd6de14661d92f08baaccaecb1c987e666b72d80ed327032e8"
+    },
+    {
+      "path": "backend/src/synthesis/productionAdapters.ts",
+      "sha256": "afa35675448e04fae06fdead5eaa3768237987da074604d91b16666134380c5b"
+    },
+    {
+      "path": "backend/src/synthesis/browserVerificationAdapter.ts",
+      "sha256": "8bac14a995dc5225f2da713b56f520091872c54b3d6cb4efbfe512566de65e21"
+    },
+    {
+      "path": "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts",
+      "sha256": "e7afc2df2a662d5a05c13dcae698361578bb700dc289a24f1ee47c461fac33f5"
+    },
+    {
+      "path": "backend/src/synthesis/runtime/registry.ts",
+      "sha256": "887d7c8931682b4c147a06a53ad055c73fd2c10faef7f5c948e2bb4754544e6d"
+    }
+  ],
+  "limitations": [
+    "Podman CLI compatibility reviewed, no live Podman execution claim.",
+    "Unknown creation or failed cleanup remains a terminal reported pending condition. Abrupt host termination is not proven to clean arbitrary running containers.",
+    "No whole upstream product or production cloud execution acceptance inferred."
+  ],
+  "productionChanged": false,
+  "cloudSpending": 0,
+  "modelsCalled": 0,
+  "beforeCleanupOwnershipLabels": {
+    "verification": {
+      "tests": 45,
+      "pass": 45,
+      "fail": 0,
+      "skip": 0,
+      "realDockerChecks": 7,
+      "backendTypes": "PASS",
+      "positive": "Real success and ordinary exit7, bounded timeout/output, captured output, exact cleanup, canonical Google binding compatibility",
+      "negative": "Real running-program cancellation removes daemon container; pre-cancel/create race/late cancel, unknown cleanup, unsupported network, secret environment, invalid image and limits, production direct-call denial"
+    },
+    "sourceBindings": [
+      {
+        "path": "backend/src/sandbox/sandboxProviders.ts",
+        "sha256": "20479525ea3da1ecaff94dedf8b2d7a0e6fa72ae24838a112a71c26870528a51"
+      },
+      {
+        "path": "backend/src/sandbox/containerDispatchAdmission.security.test.ts",
+        "sha256": "a0cdf6d808483fff5c64bfc3690bf9e3cd5eb8336d9d6d9acc3d9b971e1cb7a7"
+      },
+      {
+        "path": "backend/src/sandbox/containerLifecycle.security.test.ts",
+        "sha256": "f4ee49a87259cfae4497f848436a9702140214b0ae879c826d429400f9cd4d08"
+      },
+      {
+        "path": "backend/src/sandbox/containerCancellation.local.integration.ts",
+        "sha256": "a51ff2700018ebe1c8de13c8d6d94edb855183a77d5acaa16ea4f0e8f59bd41d"
+      },
+      {
+        "path": "backend/src/sandbox/sandboxRuntime.ts",
+        "sha256": "fdde1c8881c155ba9eabe1722aa7ec7122d3ba3289ef782bb4a8ca7a501c34ef"
+      },
+      {
+        "path": "backend/src/sandbox/google/executionBinding.ts",
+        "sha256": "d1c4b9bf871c64b1be55c93099c2319fb5b3475ddc1a43d77f01e1de7d170b25"
+      },
+      {
+        "path": "backend/src/ai/compileValidate.ts",
+        "sha256": "fba32cb6703084fd6de14661d92f08baaccaecb1c987e666b72d80ed327032e8"
+      },
+      {
+        "path": "backend/src/synthesis/productionAdapters.ts",
+        "sha256": "afa35675448e04fae06fdead5eaa3768237987da074604d91b16666134380c5b"
+      },
+      {
+        "path": "backend/src/synthesis/browserVerificationAdapter.ts",
+        "sha256": "8bac14a995dc5225f2da713b56f520091872c54b3d6cb4efbfe512566de65e21"
+      },
+      {
+        "path": "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts",
+        "sha256": "e7afc2df2a662d5a05c13dcae698361578bb700dc289a24f1ee47c461fac33f5"
+      },
+      {
+        "path": "backend/src/synthesis/runtime/registry.ts",
+        "sha256": "887d7c8931682b4c147a06a53ad055c73fd2c10faef7f5c948e2bb4754544e6d"
+      }
+    ]
+  },
+  "ownershipLabels": {
+    "scope": "EXISTING_LOCAL_CLEANUP_POLICY_COMPLIANCE_NO_NEW_RUNTIME_AUTHORITY",
+    "correction": "Attach the existing exact owner marker, validated task job UUID and disposable=true labels. Request data cannot choose cleanup ownership. No image, network, volume or remote cleanup is added.",
+    "verification": "The current46check batch passed45 checks, including the label assertion and five real outcome subcases. Running-cancellation observation failed its5s Docker ps precondition. The single failed case was rerun once alone on unchanged source and passed real running cancellation, exact labels and zero remaining owned resources. No all-green single46check batch is claimed.",
+    "observations": [
+      {
+        "name": "labelRed",
+        "id": "e86b9ee1-b551-4959-aa86-4eca1f9c2a83",
+        "status": "failed",
+        "exitCode": 1,
+        "dockerExpected": false,
+        "log": "docs/xroga/evidence/command-010/container-ownership-labelRed-20261028.log",
+        "rawArchive": "docs/xroga/evidence/command-010/container-ownership-labelRed-20261028.log.original.gz",
+        "originalSha256": "03ce427ca2d547954235ab5961329f8983c37e63a5f6040a6cf2efe9937ad84e",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 568239
+        }
+      },
+      {
+        "name": "labelBatch",
+        "id": "ca2e98f6-87af-4401-b724-99350883824b",
+        "status": "failed",
+        "exitCode": 1,
+        "dockerExpected": true,
+        "log": "docs/xroga/evidence/command-010/container-ownership-labelBatch-20261028.log",
+        "rawArchive": "docs/xroga/evidence/command-010/container-ownership-labelBatch-20261028.log.original.gz",
+        "originalSha256": "75d0c2a20529fbecba5caff278be13ee3acde7280d3297f2429eac6328e98b84",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 694866
+        }
+      },
+      {
+        "name": "runningCancellationRecheck",
+        "id": "71def0df-9e29-43b7-98c9-daab7327869b",
+        "status": "passed",
+        "exitCode": 0,
+        "dockerExpected": true,
+        "log": "docs/xroga/evidence/command-010/container-ownership-runningCancellationRecheck-20261028.log",
+        "originalSha256": "9f31b3f53dc82ef506bed06dfc0eb1b31a4ca6a1841d2996d1cc60d04fab5b08",
+        "temporaryCleanup": {
+          "status": "COMPLETE",
+          "logicalBytesRemoved": 572124
+        }
+      }
+    ],
+    "finalResources": "Both synthetic runs verify exact own container removal. Cached protected image retained. No task image, network or volume created or deleted.",
+    "fixedEnvironmentContinuation": "The same two host-only Windows context fields are now read literally instead of a two-name loop. No key set, child-container environment, command, credential or production behavior changed. Runtime dynamic-key auditor remains unchanged."
+  },
+  "ciPortabilityContinuation": {
+    "scope": "TEST_PORTABILITY_AND_EXISTING_LINT_ONLY",
+    "verification": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/verification.json",
+    "job": "61de11b2-18f8-405c-8008-01056ee7dea6",
+    "status": "passed",
+    "exitCode": 0,
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "log": "docs/xroga/evidence/command-010/ci-portability-focused-20261028.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 582216
+    },
+    "productionChanged": false,
+    "strictCountsChanged": false
+  }
+}

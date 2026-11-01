@@ -1,4 +1,6 @@
 import { getSecret } from '../config/envSecrets.js';
+import type {TenantModelScope} from './tenantModelDispatch.js';
+import {isTerminalModelFailure} from './providerRuntime.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { redactSecrets } from '../lib/truthfulExecution.js';
 import { validateResearchUrl } from '../synthesis/research/researchEngine.js';
@@ -25,7 +27,7 @@ export interface ResearchBundle {
  * General public-web retrieval uses Parallel. X/Twitter retrieval is isolated in
  * `grokLiveSearch` and is invoked only for an explicit X intent.
  */
-export async function gatherResearch(query: string, userId?: string): Promise<ResearchBundle> {
+export async function gatherResearch(query: string, userId?: string, dispatchScope?: TenantModelScope): Promise<ResearchBundle> {
   const q = redactSecrets(query).trim().slice(0, 2_000);
   if (!q) return { query: q, summary: '', sources: [], provider: 'none' };
 
@@ -39,13 +41,14 @@ export async function gatherResearch(query: string, userId?: string): Promise<Re
       const bundle = result.bundle;
       if (bundle.summary.trim() || bundle.sources.length) return bundle;
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       console.warn('[research] X search failed:', normalizeProviderError(err).safeMessage);
     }
   }
 
   if (userId && getSecret('PARALLEL_API_KEY')) {
     try {
-      const result = await parallelSearch({ userId, objective: q, queries: [q] });
+      const result = await parallelSearch({ userId, dispatchScope, objective: q, queries: [q] });
       const sources = result.sources.map((source) => ({
         title: source.title,
         url: source.url,
@@ -61,6 +64,7 @@ export async function gatherResearch(query: string, userId?: string): Promise<Re
         };
       }
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       console.warn('[research] Parallel search failed:', normalizeProviderError(err).safeMessage);
     }
   }

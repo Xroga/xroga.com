@@ -1,3 +1,4 @@
+import {isBuilderSecurityDenial,type BuilderProviderAdmission} from '../providerAuthority.js';
 import type { ExternalOperation } from '../types.js';
 import { BuilderError } from '../types.js';
 import { markerFor, OperationRunner, type OperationDeps } from '../operations.js';
@@ -19,6 +20,7 @@ import { schemaFor, schemaMarker, type GeneratedSchema } from './schema.js';
  */
 
 export interface SupabaseDataDeps extends OperationDeps {
+  readonly admission?:BuilderProviderAdmission;
   readonly supabase: SupabasePort;
   /** The connected user's Supabase OAuth token from the existing vault, or null when none or revoked. */
   readonly tokenFor: (userId: string) => Promise<string | null>;
@@ -95,7 +97,8 @@ export class SupabaseDataService {
     const listed = (await this.deps.supabase.listProjects(token)).find((candidate) => candidate.ref === input.projectRef);
     if (!listed) throw new BuilderError('invalid_input', 'That project is not available to your connected Supabase account.');
     if (!project.currentRevisionId) throw new BuilderError('not_found', 'The project has no source revision yet.');
-    const plan: BindPlan = {
+    const connectionEpoch=this.deps.admission?{connection:await this.deps.admission.connectionFingerprint()}:{};
+    const plan: BindPlan = {...connectionEpoch,
       provider: 'supabase', action: 'bind_supabase_project', project: listed, publicUrl: `https://${listed.ref}.supabase.co`, marker: markerFor(projectId, input.operationKey),
       notes: [
         'Xroga will use this project for your app\'s database and sign-in. It stays in your Supabase account.',
@@ -121,6 +124,15 @@ export class SupabaseDataService {
   async executeBind(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
     const { operation, replay } = await this.ops.claim(userId, projectId, operationId, { provider: 'supabase', action: 'bind_supabase_project' });
     if (replay) return operation;
+    try {
+    return await (this.deps.admission?this.deps.admission.withAuthority(operation,()=>this.executeBindClaimed(userId,projectId,operationId,operation)):this.executeBindClaimed(userId,projectId,operationId,operation));
+    } catch(error) {
+      if(isBuilderSecurityDenial(error)){await this.deps.phase2.transitionOperation(userId,projectId,operationId,['executing'],'failed',{failure:'Security admission was denied. Review the current connection and prepare a new exact action.'});}
+      throw error;
+    }
+  }
+
+  private async executeBindClaimed(userId:string,projectId:string,operationId:string,operation:ExternalOperation):Promise<ExternalOperation>{
     const plan = operation.plan as BindPlan;
     const token = await this.connection(userId);
     if (!token) return this.ops.fail(userId, projectId, operationId, 'failed', 'Supabase is no longer connected. Nothing was changed.');
@@ -136,7 +148,7 @@ export class SupabaseDataService {
       };
       return await this.ops.succeed(userId, projectId, operationId, binding as unknown as Record<string, unknown>);
     } catch (error) {
-      if (error instanceof BuilderError) throw error;
+      if (error instanceof BuilderError||isBuilderSecurityDenial(error)) throw error;
       return this.ops.fail(userId, projectId, operationId, 'failed', error instanceof SupabasePortError ? error.message : 'Selecting the Supabase project stopped unexpectedly. Nothing was changed.');
     }
   }
@@ -173,7 +185,8 @@ export class SupabaseDataService {
     }
     const warnings = ['This changes the database of YOUR Supabase project. Xroga creates new tables only and never deletes or edits existing data.'];
     if (catalog.tables.length > 0) warnings.push(`The project already contains ${catalog.tables.length} table(s). They are left exactly as they are.`);
-    const plan: MigrationPlan = {
+    const connectionEpoch=this.deps.admission?{connection:await this.deps.admission.connectionFingerprint()}:{};
+    const plan: MigrationPlan = {...connectionEpoch,
       provider: 'supabase', action: 'apply_migration', projectRef: binding.projectRef, projectName: binding.projectName, archetype: schema.archetype, fileName: schema.fileName,
       sqlDigest: review.digest, sql: schema.sql, risk: review.risk, findings: review.findings, createsTables: schema.tables, protections: schema.protections,
       marker: markerFor(projectId, input.operationKey), warnings,
@@ -193,6 +206,15 @@ export class SupabaseDataService {
   async executeMigration(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
     const { operation, replay } = await this.ops.claim(userId, projectId, operationId, { provider: 'supabase', action: 'apply_migration' });
     if (replay) return operation;
+    try {
+    return await (this.deps.admission?this.deps.admission.withAuthority(operation,()=>this.executeMigrationClaimed(userId,projectId,operationId,operation)):this.executeMigrationClaimed(userId,projectId,operationId,operation));
+    } catch(error) {
+      if(isBuilderSecurityDenial(error)){await this.deps.phase2.transitionOperation(userId,projectId,operationId,['executing'],'failed',{failure:'Security admission was denied. Review the current connection and prepare a new exact action.'});}
+      throw error;
+    }
+  }
+
+  private async executeMigrationClaimed(userId:string,projectId:string,operationId:string,operation:ExternalOperation):Promise<ExternalOperation>{
     const plan = operation.plan as MigrationPlan;
     const binding = await this.binding(userId, projectId);
     if (!binding || binding.projectRef !== plan.projectRef) return this.ops.fail(userId, projectId, operationId, 'failed', 'The selected Supabase project changed since this was approved. Nothing was changed.');
@@ -238,7 +260,7 @@ export class SupabaseDataService {
         note: 'Verified against the live catalog. Cross-user access was tested on a real PostgreSQL in Xroga\'s test suite, not on this project.',
       });
     } catch (error) {
-      if (error instanceof BuilderError) throw error;
+      if (error instanceof BuilderError||isBuilderSecurityDenial(error)) throw error;
       return this.ops.fail(userId, projectId, operationId, 'failed', error instanceof SupabasePortError ? error.message : 'Applying the schema stopped unexpectedly. Nothing further was changed.');
     }
   }

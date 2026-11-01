@@ -28,6 +28,13 @@ test('exact synthetic readback passes only the native API preflight', () => {
   assert.equal(validateCloudRunRelease(actual,expected).result, 'PASS_NATIVE_API_PREFLIGHT_NOT_CUTOVER_ACCEPTANCE');
 });
 
+test('a zero-traffic candidate cannot be approved as a serving production release', () => {
+  const {actual,expected}=fixture();
+  expected.plainEnvironment.XROGA_RELEASE_CANDIDATE='1';
+  actual.service.spec.template.spec.containers[0].env.push({name:'XROGA_RELEASE_CANDIDATE',value:'1'});
+  assert.throws(()=>validateCloudRunRelease(actual,expected),{message:'CANDIDATE_MODE_NOT_PROMOTABLE'});
+});
+
 test('deployment guard denies image, identity, secret, execution-lifecycle and recovery drift', () => {
   const changes = [
     a=>{a.service.spec.template.spec.containers[0].image='registry.fly.io/synthetic:latest';},

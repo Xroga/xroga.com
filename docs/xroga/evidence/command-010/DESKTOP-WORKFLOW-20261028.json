@@ -1,0 +1,139 @@
+{
+  "scope": "ONLY_SHARED_NATIVE_GITHUB_RELEASE_CALLER_AND_REQUIRED_WORKFLOW_GUARDS_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "c855b541f4803c656ece900f6e1648c23e321c3e",
+  "resolvedCandidate": "99ec2dc4769b5eced6a5",
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "ba19d13225a2e7c3aba27bd78ad15e850e1b6b959e0e6b8154efde8d445aefcd"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "b0e8cacbae9d3821132fa1e16ee664aa045787fa628dcd6c91ba69d5d19d101f"
+    },
+    {
+      "path": "backend/src/services/publish/desktopWorkflow.ts",
+      "sha256": "1355f5b200abc1abe420fff5b8fd5a160678bd75067a428e772379d4199c00e6"
+    },
+    {
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "sha256": "f895fbc0e39f85a742a19318b315609ae606f2292cdf04266f428505dd5f05e9"
+    }
+  ],
+  "receipts": [
+    {
+      "label": "unapprovedTagRed",
+      "id": "a06a059e-a805-4e85-aa89-9aa9df1bfbbc",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-unapprovedTagRed-20261028.log.gz",
+      "sha256": "b9cccde07c1cf40f7b2abfb19b15ece1f640529e4feca750ab1acbb15e62217f",
+      "logSha256": "cb93ef7bd90a1816fbd85c11c1cc20851b33b820e4d3457e299158ce95fb965f"
+    },
+    {
+      "label": "credentialAssetRed",
+      "id": "24b0bea6-5f0f-499e-911a-249d943f3b27",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-credentialAssetRed-20261028.log.gz",
+      "sha256": "aa0341c000d9910e10135e390116cced02e1ec8ff915b835b528e1d45d8d8967",
+      "logSha256": "db48a7a3059b53643649866f6b79df5f3f61bdd95edecbeea381d65ecb4ce89a"
+    },
+    {
+      "label": "privateErrorRed",
+      "id": "0f72681c-3fb1-42fd-b411-a1b797dcb773",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-privateErrorRed-20261028.log.gz",
+      "sha256": "209b72703145f049f76589ff1a3dd7b24784827ebf1a85b2bbce86a6082e96c9",
+      "logSha256": "e18568a918f4f52f2140aabd271590d6344d86a6956c353755f4a30e1587d1c8"
+    },
+    {
+      "label": "pendingPipelineRed",
+      "id": "87efff08-c844-4a78-aa6d-ada5ddb2e26e",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-pendingPipelineRed-20261028.log.gz",
+      "sha256": "0bdd6371afaf7e9bee0c906948e242eab805d349060c60af379909e461851dcd",
+      "logSha256": "78c1d8ba3db6a92057b54d65feca144a63c490b84bdf3aa6570caf865c153d4b"
+    },
+    {
+      "label": "nativeRegression94",
+      "id": "73010259-675c-4d1b-9e71-9014a2aed8b1",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-nativeRegression94-20261028.log.gz",
+      "sha256": "13e968d4c2dc22f220d9bdd2a1b23370e9542fe9db7b732890e8e94590f473d0",
+      "logSha256": "17bf5fc363a1b6a6a5bc4194078ae5a3dd1b209d10cb3b141624a8a7fa2a4f30"
+    },
+    {
+      "label": "finalWorkflow18",
+      "id": "fd40434c-3240-46de-b70b-15e38d4bb52d",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-finalWorkflow18-20261028.log.gz",
+      "sha256": "887714330b528398394f5a80f8d8272caafc2ae497316c9f5c7b3362efb57929",
+      "logSha256": "802e4d939dffd86c44631bec69134063314476d5962287c96b9600f341e55537"
+    },
+    {
+      "label": "backendTypes",
+      "id": "45ea57b0-4fb7-49e0-8b85-7542c974d54d",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-backendTypes-20261028.log.gz",
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "persistenceRemaps": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "6545d561a6182d0234a1",
+      "afterId": "6545d561a6182d0234a1",
+      "expressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "nearestBlockUnchanged": true
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeId": "c700ca8f9a68a62068f4",
+      "afterId": "c700ca8f9a68a62068f4",
+      "expressionSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329",
+      "nearestBlockUnchanged": true
+    },
+    {
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "beforeId": "4c3e8f42ba6315b93466",
+      "afterId": "a79db4e249cf462214f2",
+      "expressionSha256": "4de83e0c7d7401ad6de2e1942d848a56fa5aeb356002a2fa5de83773c326be99",
+      "nearestBlockUnchanged": true
+    }
+  ],
+  "unchangedExistingEgressRemaps": [
+    {
+      "beforeId": "094a251245ce9b6ab659",
+      "afterId": "094a251245ce9b6ab659",
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
+      "nearestBlockUnchanged": true
+    },
+    {
+      "beforeId": "07ca232e98dcc1720801",
+      "afterId": "07ca232e98dcc1720801",
+      "path": "backend/src/services/publish/nonWebShip.ts",
+      "callSha256": "9f47273dec6705f271cc54c2beb5d464b8946bf3488de2df3d0e28567ce7ac0e",
+      "nearestBlockUnchanged": true
+    }
+  ],
+  "defects": [
+    "A raw desktop release request could create a tag without exact canonical consent and fall back to another branch/workflow.",
+    "Installer polling could substitute an unrelated latest release, accept an unbound asset URL and publish held credential content from an asset name.",
+    "Provider network, stream and malformed-JSON errors could expose private material.",
+    "A pending workflow approval could be mislabeled as an execution failure or blocked by an unrelated pending portable upload."
+  ],
+  "correction": "Existing approved Chrome/Electron ZIP paths retain exact managed-vault artifact admission, original context, current owned project/source, egress policy and one-use authority. Desktop release now uses the same canonical confirmation architecture, producer proof, current GitHub connection, owned project/repository, immutable commit and exact workflow bytes before one lightweight tag create. Its actual ref receipt and readback must match. There is no annotated-tag or alternate workflow/branch dispatch fallback. Polling requires the exact tag and commit, validates current tag before and after release metadata, owner/credential/cancellation and canonical GitHub asset URLs, rejects credential-bearing projections and never selects latest. Network, stream and JSON diagnostics are sanitized.",
+  "limitations": [
+    "All provider/DB fixtures are synthetic and local. No actual GitHub tag, Actions job, customer credential transfer or resource was created.",
+    "A verified tag request is not proof of a completed installer. Polling separately requires exact uploaded asset evidence.",
+    "Approval explicitly warns that existing repository tag workflows and hooks can execute code using configured repository secrets and can incur charges on the users GitHub account. No Actions run or billing claim was made here.",
+    "Portable source upload and signing-material transfer keep their existing separate approvals. A security denial cannot become a release fallback.",
+    "The shared generic GitHub helper90eeada0337da120131f, whole-source integration, all original12 criteria and production acceptance remain unpromoted."
+  ],
+  "strictRulesChanged": false,
+  "frozenCriteriaChanged": false,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spend": 0
+}

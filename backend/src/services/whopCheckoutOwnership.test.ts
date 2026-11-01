@@ -2,6 +2,12 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {readWhopCheckoutOwner} from './whopCheckoutOwnership.js';
 
+test('new checkout readback cannot substitute an older checkout for the same owner',async t=>{
+ const input={checkoutId:'ch_fixture',accountId:'biz_fixture',planId:'plan_fixture',apiKey:'synthetic',apiVersion:'2026-09-06',expectedCheckoutNonce:'exact-new-approval'};
+ t.mock.method(globalThis,'fetch',async()=>Response.json({id:input.checkoutId,account_id:input.accountId,mode:'payment',plan:{id:input.planId},metadata:{source:'xroga',plan_tier:'spark',xroga_user_id:'11111111-1111-4111-8111-111111111111',xroga_checkout_id:'old-approval'}}));
+ await assert.rejects(readWhopCheckoutOwner(input),{message:'checkout_owner_unavailable'});
+});
+
 test('Whop checkout owner readback binds exact resource account plan and canonical server metadata',async t=>{
   const input={checkoutId:'ch_fixture',accountId:'biz_fixture',planId:'plan_fixture',apiKey:'synthetic',apiVersion:'2026-09-06'};
   const owner='11111111-1111-4111-8111-111111111111';

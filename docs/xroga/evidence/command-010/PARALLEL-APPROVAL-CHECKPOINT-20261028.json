@@ -1,0 +1,66 @@
+{
+  "scope": "ONLY_PARALLEL_RESEARCH_AND_ITS_REQUIRED_PUBLIC_READ_BOUNDARY_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "de91389d184738b4e4237d61b95ee0d163621f43",
+  "resolved": [
+    "5baa649b7c2c9b6b6f30"
+  ],
+  "newGuard": "90c62dd04b83e45e1c68",
+  "counts": {
+    "total": 137,
+    "reviewed": 133,
+    "pending": 4,
+    "unresolvedHighRiskBypasses": 1
+  },
+  "receipts": [
+    {
+      "label": "final37AndBackendTypes",
+      "id": "7cb7f3b8-4d3a-493d-9dcf-0b747c598e86",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/parallel-final37AndBackendTypes-20261028.log.gz",
+      "compressedSha256": "bfb4aba35f93babe57d45cfbcfd87df3e10b85c8f3d4b5c4f0e12cdeab40ccda",
+      "logSha256": "c540045da72f23d5aef6fdf76450222f95efeaef9694dfd30ad839dc2f95c3e0"
+    },
+    {
+      "label": "sourceRegisterIntegrity10",
+      "id": "21d739bc-0b49-4e91-8d33-02c622b7d72a",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/parallel-sourceRegisterIntegrity10-20261028.log.gz",
+      "compressedSha256": "4bb21296e34c9882c168a8acdd9137bf16b6c44a35e986196a377aa45d8f5913",
+      "logSha256": "6a182dabf826926a0dbcc346ac5c92efbc9e39d9e22ee5931a07e1ac8039b34d"
+    },
+    {
+      "label": "privateQueryRed",
+      "id": "947e8204-9637-42c0-8a2f-6e80f132780c",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/parallel-privateQueryRed-20261028.log.gz",
+      "compressedSha256": "269fabe70fbb5037a5b52f7759f3202a5d477edca8df4113ef0296e0d29ed735",
+      "logSha256": "54ecb9bc5b54d06547b67f6d29f970f7fb1472883d7624d8bd4723310c704dc3"
+    },
+    {
+      "label": "urlRevalidationRed",
+      "id": "fae6909d-d5df-4328-8da9-e5177c4fa8ac",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/parallel-urlRevalidationRed-20261028.log.gz",
+      "compressedSha256": "299983f33b3956570e3b735674828c8856a34369ec82d8cf72ccaad73708ff19",
+      "logSha256": "ff4c0ff5d0f24a56c176e29ed3c119ad7fc2b9709ebe7683edaa0505e67cc760"
+    },
+    {
+      "label": "pendingEvidenceRed",
+      "id": "65977582-6c87-4468-aeec-80f6eebc0814",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/parallel-pendingEvidenceRed-20261028.log.gz",
+      "compressedSha256": "f23a07144418121e4c1fd21350520b2e90f2b5620798c3dcb9f69b9c9d5925c9",
+      "logSha256": "136062c607feddfde2628bdbc92e3ac7693302a0c15e58ee6c153966151b8457"
+    }
+  ],
+  "strictAudit": "FAIL_INCOMPLETE_FOUR_MANDATORY_CALLERS",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "totalCriteria": 12,
+  "finalCi": "NOT_STARTED_PENDING_REMAINING_FOUR_CALLERS",
+  "frontendTypes": "UNCHANGED_FRONTEND_PASSED_AT_SUPABASE_CHECKPOINT",
+  "productionChanged": false,
+  "spend": 0,
+  "phase4Accepted": false,
+  "next": "7b6e1f490ce974fc3971 Composio shared boundary, then project creation and two shared GitHub helpers"
+}

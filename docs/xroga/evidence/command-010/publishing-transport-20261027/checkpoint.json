@@ -1,0 +1,31 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_PUBLISHING_TRANSPORT_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T17:05:42.826213+00:00",
+  "parent": "39ef4cc17cd45de617447fab4a61b0524a8c53c0",
+  "trace": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+  "strictAudit": {
+    "total": 153,
+    "reviewed": 93,
+    "pending": 60,
+    "unresolvedHighRiskBypasses": 39
+  },
+  "strictJob": "ca2d82c5-52d7-4865-88f5-d7d1222788cb",
+  "strictResult": "INCOMPLETE_EXIT1",
+  "strictLog": "docs/xroga/evidence/command-010/publishing-transport-20261027/strictIncomplete.log",
+  "phase4": "NOT_VERIFIED",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "productionChanged": false,
+  "spending": 0,
+  "backendTypes": "PASS9d3f9cda before final signal-only guard change, final exact-source check remains required",
+  "frontendTypes": "PASSe1b6e15d at unchanged current frontend source",
+  "next": "Original production-relevant high-risk caller groups and SoftwareAgent upstream provenance/tool admission, then stable full security/CI acceptance",
+  "tenantSourceIntegrity": {
+    "jobId": "caea61d4-a3c6-48ad-b520-40daff596588",
+    "status": "passed",
+    "note": "Inventory integrity only, no tenant acceptance promotion"
+  }
+}

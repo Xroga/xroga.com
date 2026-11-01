@@ -425,6 +425,7 @@ const projectId =
                           },
                         );
 
+                    if('needsConfirmation' in next){window.location.assign(next.reviewUrl);return;}
                     setEnvelope(
                       next,
                     );

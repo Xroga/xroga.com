@@ -1,0 +1,16 @@
+{"preservedSource":"7a3f1167","boundary":"browserPlanner","syntheticProviderCalls":1,"reservations":1,"customerData":false,"network":false}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Missing expected rejection.
+    at async <anonymous> (C:\Users\hp\Documents\Codex\2026-10-23\g\outputs\reproduce-preserved-browser-planner.mjs:15:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: { code: 'TENANT_AUTH_REQUIRED' },
+  operator: 'rejects',
+  diff: 'simple'
+}
+
+Node.js v22.21.1

@@ -18,6 +18,7 @@
 import {
   DEFAULT_SANDBOX_LIMITS,
   SandboxUnavailableError,
+  requireEnforcedSandboxNetworkPolicy,
   type SandboxAvailability,
   type SandboxExecutionRequest,
   type SandboxExecutionResult,
@@ -31,6 +32,7 @@ import {
 import {googleProjectRuntimeSelected} from '../synthesis/projectRuntime/googleFactory.js';
 import {issueSandboxExecutionBinding,requireSandboxExecutionBinding,type SandboxCaller} from './google/executionBinding.js';
 import {snapshotSandboxRequest} from './google/googleSandbox.js';
+import {meterCanonicalSandbox} from './meteredExecution.js';
 
 export {
   ContainerSandboxRuntime,
@@ -102,6 +104,7 @@ export async function executeSandboxed(
     limits?: Partial<SandboxExecutionRequest['limits']>;
   },
 ): Promise<SandboxExecutionResult> {
+  requireEnforcedSandboxNetworkPolicy(request.networkPolicy, 'sandbox');
   const admitted={...request,limits:{...DEFAULT_SANDBOX_LIMITS,...request.limits}};
   if(googleProjectRuntimeSelected())await requireSandboxExecutionBinding(admitted);
   const { runtime, availability } = await selectSandboxProvider();
@@ -139,5 +142,6 @@ export async function executeCanonicalSandboxed(caller:SandboxCaller,
   }
   const captured=snapshotSandboxRequest({...request,limits:{...DEFAULT_SANDBOX_LIMITS,...request.limits}});
   captured.executionBinding=await issueSandboxExecutionBinding(caller,captured);
-  return executeSandboxed(captured);
+  // Usage is measured against the admitted run's owner. With metering off this is a straight call.
+  return meterCanonicalSandbox(caller,captured,()=>executeSandboxed(captured));
 }

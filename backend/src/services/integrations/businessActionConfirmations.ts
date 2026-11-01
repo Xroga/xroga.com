@@ -598,6 +598,7 @@ async function finishClaimedConfirmation(
 export async function confirmBusinessAction(
   context: TenantContext,
   confirmationId: string,
+  expectedOperation?:Readonly<{toolkit:string;toolSlug:string}>,
 ): Promise<{
   confirmation:
     SafeBusinessActionConfirmation;
@@ -671,6 +672,9 @@ export async function confirmBusinessAction(
       existing as
         ConfirmationRow,
     );
+  if(expectedOperation&&(!isBusinessActionPlan(row.plan)||row.plan.toolkit!==expectedOperation.toolkit||row.plan.toolSlug!==expectedOperation.toolSlug)){
+    throw new ComposioClientError('The approval belongs to another operation.',{status:409,code:'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED'});
+  }
 
   if (
     row.status ===

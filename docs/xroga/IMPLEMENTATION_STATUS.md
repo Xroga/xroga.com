@@ -1,5 +1,9 @@
 # Current implementation status — scoped evidence, not marketing claims
 
+## Current Batch1 development closure
+
+Batch1 development and integration are complete at `ff4032ca02c4b233c2598724caf44ab04b91fb0f`, merged through PR878. Phase4 passes12/12 original development criteria, with148 reviewed callers,0pending and0unresolved high-risk callers. All required implementation and merged-main CI passed. The founder explicitly retained the production hold. See `batch-1/BATCH-1-DEVELOPMENT-CLOSURE.md` for the current source-bound receipt and release boundary. The chronological notes below are preserved historical evidence. Their earlier pending counts and resolved integration blockers are superseded by this closure, without relabeling any old failed receipt or claiming production acceptance.
+
 ## Phase2 final-source acceptance pending
 
 This paragraph supersedes the historical Phase2 counts and pending repairs below. Exact code source `0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0` passes all eleven workflows,204 actual database security tests, four authenticated browser cases,129 fresh/upgrade migration histories and four full21-stage branch/integrated baselines. Immutable collection verifies636/636 current boundaries and161 privileged factories. All ten original007 criteria pass structured proof, with the independent manual gate retaining seven routing/construction entries until their exact proof-based reconciliation. All73 frozen packets/371 historical identities remain preserved. The final metadata source must independently pass CI and the unchanged original complete gate. See `batch-1/phases/PHASE-2-ACCEPTANCE.md` and its external final-source receipt. This is not production acceptance, full Batch1 completion or Phase3 admission. Original008/009/010, actual R2, production parity/custody and commercial launch requirements remain separate.

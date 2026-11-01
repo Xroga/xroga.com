@@ -9,6 +9,7 @@ import type { SendButtonState } from './ChatBarSendIcon';
 import { ChatbarShell } from '@/components/ui/Uiverse';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
+import { appendVoiceTranscript } from '@/lib/terminal/voiceRecording';
 import { ChatBarMicrophoneButton, ChatBarSendButton } from './ChatBarButtons';
 import { createClient } from '@/lib/supabase/client';
 import { dispatchCompanionEvent } from '@/lib/companion';
@@ -187,6 +188,7 @@ export function HomepageChatBar({
             <div className="relative w-full min-w-0">
               <textarea
                 ref={textareaRef}
+                dir="auto"
                 value={prompt}
                 onChange={(e) => {
                   delete e.currentTarget.dataset.insertHighlight;
@@ -229,6 +231,7 @@ export function HomepageChatBar({
             </div>
           </div>
 
+          <div data-xroga-voice-stage="" className="xv-voice-session-stage" />
           <div className="xv-hc-prompt-footer">
             <ChatBarActionsMenu
               className="shrink-0"
@@ -272,9 +275,11 @@ export function HomepageChatBar({
             </div>
             <span className="xv-hc-prompt-spacer" aria-hidden />
             <ChatBarMicrophoneButton
+              key={String(sending)}
               surface="homepage"
+              disabled={sending}
               onTranscript={(text) => {
-                setPrompt((current) => (current.trim() ? `${current.trim()} ${text}` : text));
+                setPrompt((current) => appendVoiceTranscript(current, text));
                 triggerComposerSignal(1200);
                 window.setTimeout(() => textareaRef.current?.focus(), 20);
               }}

@@ -28,21 +28,37 @@ async function saveKeyToStorage(
   payload: { access_token: string; metadata: Record<string, unknown> },
 ): Promise<boolean> {
   try {
-    if (!(await ensurePrivateOAuthBucket())) return false;
+    // Snapshot the sealed payload before awaiting bucket admission. A mirror is
+    // never authority and must not publish a stale/revoked write as successful.
+    const snapshot = structuredClone(payload);
+    if (!snapshot.access_token.startsWith('vault:v3:') || !vaultBinding(userId, providerRow, snapshot.metadata)) return false;
     const supabase = getSupabaseAdmin();
+    const readCurrent = () => supabase.from('user_integrations')
+      .select('user_id,provider,access_token,metadata,credential_revision')
+      .eq('user_id', userId).eq('provider', providerRow).maybeSingle();
+    const selected = await readCurrent();
+    const matches = (current: typeof selected) => !current.error && current.data?.user_id === userId
+      && current.data?.provider === providerRow && current.data.access_token === snapshot.access_token
+      && typeof current.data.credential_revision === 'string' && current.data.metadata?.revoked !== true
+      && isDeepStrictEqual(current.data.metadata ?? {}, snapshot.metadata);
+    if (!matches(selected)) return false;
+    if (!(await ensurePrivateOAuthBucket())) return false;
+    const current = await readCurrent();
+    if (!matches(current) || current.data?.credential_revision !== selected.data?.credential_revision) return false;
     const { error } = await supabase.storage
       .from(KEY_BUCKET)
-      .upload(keyStoragePath(userId, providerRow), JSON.stringify(payload), {
+      .upload(keyStoragePath(userId, providerRow), JSON.stringify(snapshot), {
         upsert: true,
         contentType: 'application/json',
       });
     if (error) {
-      console.warn('[userProviderKeys] storage upload:', error.message);
+      console.warn('[userProviderKeys] storage upload unavailable');
       return false;
     }
-    return true;
-  } catch (err) {
-    console.warn('[userProviderKeys] storage save:', (err as Error).message);
+    const after = await readCurrent();
+    return matches(after) && after.data?.credential_revision === selected.data?.credential_revision;
+  } catch {
+    console.warn('[userProviderKeys] storage save unavailable');
     return false;
   }
 }
@@ -1177,7 +1193,7 @@ async function bundleValues(userId: string, rows: Map<BundleProvider, BundleRow>
 
 async function boundBundle(userId: string, rows: Map<BundleProvider, BundleRow>, requireCanonicalRevision = false): Promise<boolean> {
   const values = await bundleValues(userId, rows), ref = projectRefFromUrl(values.projectUrl ?? '');
-  if (!ref || !values.anonKey) return false;
+  if (!ref || !values.anonKey || /^sb_secret_/i.test(values.anonKey) || values.serviceRoleKey && /^sb_publishable_/i.test(values.serviceRoleKey)) return false;
   const active = [...rows.values()].filter(row => row.access_token && row.metadata.revoked !== true);
   // A storage-only key has no canonical revision. Even an explicit reconnect
   // must supply that credential again rather than inherit its old mirror.
@@ -1202,6 +1218,7 @@ export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, inp
   if (!ref) throw new Error('Invalid Supabase project URL.');
   const previous = await bundleValues(admission.userId, rows);
   const values = { projectUrl: input.projectUrl.trim(), anonKey: input.anonKey.trim(), serviceRoleKey: input.serviceRoleKey?.trim(), dbPassword: input.dbPassword?.trim() };
+  if (/^sb_secret_/i.test(values.anonKey) || values.serviceRoleKey && /^sb_publishable_/i.test(values.serviceRoleKey)) throw new Error('Supabase public and server key roles do not match.');
   for (const [key, role] of [[values.anonKey, 'anon'], [values.serviceRoleKey, 'service_role']] as const) {
     if (!key || key.split('.').length !== 3) continue;
     let claim: Record<string, unknown>;
@@ -1258,6 +1275,7 @@ export async function connectUserSupabase(
     serviceRoleKey: input.serviceRoleKey?.trim(), accessToken: input.accessToken?.trim(),
     dbPassword: input.dbPassword?.trim(), projectName: input.projectName,
   };
+  if (/^sb_secret_/i.test(input.anonKey) || input.serviceRoleKey && /^sb_publishable_/i.test(input.serviceRoleKey)) throw new Error('Supabase public and server key roles do not match.');
   const projectRef = projectRefFromUrl(input.projectUrl);
   if (!projectRef) throw new Error('Supabase URL must be a hosted https://PROJECT.supabase.co origin.');
   // Legacy JWT claims are only a negative mismatch check, not verified identity.
@@ -1283,31 +1301,9 @@ export async function connectUserSupabase(
   const dbPassword = input.dbPassword?.trim();
 
   let provision: import('./supabaseProvision.js').ProvisionResult | undefined;
-  if (service && (accessToken || dbPassword)) {
-    const { provisionUserSupabase } = await import('./supabaseProvision.js');
-    provision = await provisionUserSupabase({
-      projectUrl: input.projectUrl.trim(),
-      serviceRoleKey: service,
-      accessToken,
-      dbPassword,
-      projectName: input.projectName,
-    });
-  } else if (service) {
-    const { ensureStorageBuckets, projectRefFromUrl } = await import('./supabaseProvision.js');
-    const ref = projectRefFromUrl(input.projectUrl.trim());
-    const buckets = await ensureStorageBuckets(input.projectUrl.trim(), service).catch(() => []);
-    provision = {
-      ok: buckets.length > 0,
-      method: 'keys_only',
-      projectRef: ref || undefined,
-      projectUrl: input.projectUrl.trim(),
-      buckets,
-      schemaApplied: false,
-      memoryTablesReady: false,
-      message: buckets.length
-        ? 'Storage bucket ready. Add Access Token for full one-click schema + AI memory setup.'
-        : 'Keys saved. Add Access Token (Account → Access Tokens) for automatic schema setup.',
-    };
+  if (service) {
+    const {provisionUserSupabase} = await import('./supabaseProvision.js');
+    provision = await provisionUserSupabase({userId,tenantContext:context,projectUrl:input.projectUrl,serviceRoleKey:service,accessToken,dbPassword,projectName:input.projectName});
   }
 
   const status = await getUserSupabaseStatus(userId);

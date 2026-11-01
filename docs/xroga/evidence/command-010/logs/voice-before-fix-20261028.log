@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: actual voice route requires original actor and budget, and cannot retry provider authorization denial
+    # Subtest: raw user identity and missing durable reservation send no audio
+    not ok 1 - raw user identity and missing durable reservation send no audio
+      ---
+      duration_ms: 61.391
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\voice.security.test.ts:1:3989'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\voice.security.test.ts:52:69)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\voice.security.test.ts:51:3)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+# [voice] transcription failed on gpt-4o-mini-transcribe: SYNTHETIC_CREDENTIAL_PROVIDER_MESSAGE
+    # Subtest: provider 401 is terminal instead of a model fallback trigger
+    not ok 2 - provider 401 is terminal instead of a model fallback trigger
+      ---
+      duration_ms: 15.202
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\voice.security.test.ts:1:4303'
+      failureType: 'testCodeFailure'
+      error: 'Expected "actual" to be strictly unequal to: 200'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 200
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\voice.security.test.ts:57:41)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\voice.security.test.ts:55:3)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..2
+not ok 1 - actual voice route requires original actor and budget, and cannot retry provider authorization denial
+  ---
+  duration_ms: 105.0759
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\voice.security.test.ts:1:861'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 767.0405

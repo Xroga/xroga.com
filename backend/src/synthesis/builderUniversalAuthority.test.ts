@@ -19,3 +19,12 @@ test('the binding is never read from a request body',()=>{
   assert.ok(!/builderBound/.test(SWARM));
   assert.ok(!/req\.body[^;\n]*builderBound/.test(PIPELINE));
 });
+
+test('every universal write gate passes the server-bound Builder flag to routeProject', () => {
+  for (const file of ['../ai/pipeline.ts', './universalEntrypoint.ts', './universalExecution.ts']) {
+    const text = readFileSync(new URL(file, import.meta.url), 'utf8');
+    const calls = text.match(/routeProject\([\s\S]{0,160}?\)\s*;/g) ?? [];
+    assert.ok(calls.length >= 1, file);
+    for (const call of calls) assert.match(call, /builderBound/, `${file}: ${call}`);
+  }
+});

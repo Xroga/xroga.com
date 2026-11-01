@@ -9,6 +9,7 @@ export type WriteOperation =
 export interface WritePolicyDecision {
   allowed: boolean;
   code?:
+    | 'INVALID_OPERATION'
     | 'INVALID_PATH'
     | 'PATH_TRAVERSAL'
     | 'PATH_DENIED'
@@ -75,6 +76,7 @@ export function evaluateWritePolicy(
   operation: WriteOperation,
   requestedPath: string,
 ): WritePolicyDecision {
+  if(!['create','modify','delete','rename'].includes(operation))return{allowed:false,code:'INVALID_OPERATION',message:'The requested file operation is not supported.'};
   const path = normalizeRepositoryPath(requestedPath);
 
   if (!path) {

@@ -1,3 +1,4 @@
+import type {TenantContext} from '../../security/tenantContext.js';
 import type {
   SoftwareCheckResult,
   SoftwareExecutionContract,
@@ -105,6 +106,7 @@ function requirePersistenceAllowed(
 export function createXrogaSoftwareAgentBindings(
   input: {
     userId: string;
+    tenantContext?: TenantContext;
 
     implementations:
       XrogaSoftwareAgentBindingImplementations;
@@ -121,6 +123,7 @@ export function createXrogaSoftwareAgentBindings(
 
   return {
     userId,
+    tenantContext:input.tenantContext,
 
     async runSandboxCommand({
       contract,

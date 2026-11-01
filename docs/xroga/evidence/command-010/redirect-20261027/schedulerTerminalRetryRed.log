@@ -1,0 +1,32 @@
+TAP version 13
+# Subtest: canonical scheduler never retries terminal policy or completed-accounting denials without a retryable flag
+not ok 1 - canonical scheduler never retries terminal policy or completed-accounting denials without a retryable flag
+  ---
+  duration_ms: 53.2687
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\ai\\executionRuntime.test.ts:1:1455'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\ai\executionRuntime.test.ts:38:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 861.5764

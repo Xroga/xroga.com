@@ -1,5 +1,8 @@
+import {withSupabaseSourceFixture} from './__tests__/supabaseSourceFixture.js';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import {createTenantContext} from '../../security/tenantContext.js';
+const context=createTenantContext({userId:'11111111-1111-4111-8111-111111111111',via:'remote_getuser'});
 import {
   buildUserSupabaseProvisionSql,
   projectRefFromUrl,
@@ -37,63 +40,50 @@ describe('supabaseProvision', () => {
   });
 
   it('rejects unsafe project endpoints and bucket IDs before any network request',async(t)=>{
-    const transport=t.mock.method(globalThis,'fetch',async()=>{throw new Error('unexpected network');});
-    await assert.rejects(ensureStorageBuckets('http://abcdxyz.supabase.co','fixture-key'),/Invalid/);
-    await assert.rejects(ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key',['../foreign']),/Invalid/);
+    const transport=t.mock.method(globalThis,'fetch',withSupabaseSourceFixture(t,context,async()=>{throw new Error('unexpected network');}));
+    await assert.rejects(ensureStorageBuckets('http://abcdxyz.supabase.co','fixture-key',['xroga-uploads'],context),/Invalid/);
+    await assert.rejects(ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key',['../foreign'],context),/Invalid/);
     assert.equal(transport.mock.callCount(),0);
   });
 
   it('existing public or unknown buckets cannot be reported private and are never silently changed',async(t)=>{
     for(const visibility of [true,undefined]){
       const requests:string[]=[];
-      const transport=t.mock.method(globalThis,'fetch',async(...[input,init]:Parameters<typeof fetch>)=>{
+      const transport=t.mock.method(globalThis,'fetch',withSupabaseSourceFixture(t,context,async(...[input,init]:Parameters<typeof fetch>)=>{
         requests.push(init?.method??'GET');
         assert.equal(new URL(String(input)).pathname,'/storage/v1/bucket');
         return Response.json([{id:'xroga-uploads',public:visibility}]);
-      });
-      await assert.rejects(ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key'),/privacy could not be verified/);
+      }));
+      await assert.rejects(ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key',['xroga-uploads'],context),/privacy could not be verified/);
       assert.deepEqual(requests,['GET']);transport.mock.restore();
     }
   });
 
-  it('new or concurrently created buckets require an independent private postcondition',async(t)=>{
-    for(const createStatus of [200,409]) for(const privateAfter of [true,false]){
-      let reads=0;const calls:string[]=[];
-      const transport=t.mock.method(globalThis,'fetch',async(...[_input,init]:Parameters<typeof fetch>)=>{
-        const method=init?.method??'GET';calls.push(method);
-        if(method==='POST'){
-          assert.equal(JSON.parse(String(init?.body)).public,false);
-          return Response.json(createStatus===200?{name:'xroga-uploads'}:{message:'already exists'},{status:createStatus});
-        }
-        return Response.json(++reads===1?[]:[{id:'xroga-uploads',public:!privateAfter}]);
-      });
-      const result=ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key');
-      if(privateAfter)assert.deepEqual(await result,['xroga-uploads']);
-      else await assert.rejects(result,/privacy could not be verified/);
-      assert.deepEqual(calls,['GET','POST','GET']);transport.mock.restore();
-    }
+  it('missing private buckets require native approval before creation',async t=>{
+    const calls:string[]=[];
+    t.mock.method(globalThis,'fetch',withSupabaseSourceFixture(t,context,async(_input,init)=>{calls.push(init?.method??'GET');return Response.json([]);}));
+    await assert.rejects(ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key',['xroga-uploads'],context),{code:'SUPABASE_PROVISION_ADMISSION_DENIED'});
+    assert.deepEqual(calls,['GET']);
+    // All original 200/409 and private/public postcondition combinations now
+    // execute with actual canonical permits in supabaseProvision.authority.test.ts.
   });
 
   it('storage discovery failure never creates a bucket or leaks the provider payload',async(t)=>{
-    const transport=t.mock.method(globalThis,'fetch',async()=>Response.json({message:'PRIVATE_PROVIDER_CANARY'},{status:403}));
-    await assert.rejects(ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key'),error=>{
-      assert.ok(error instanceof Error);assert.match(error.message,/access could not be verified/);assert.doesNotMatch(error.message,/CANARY/);return true;
+    const transport=t.mock.method(globalThis,'fetch',withSupabaseSourceFixture(t,context,async()=>Response.json({message:'PRIVATE_PROVIDER_CANARY'},{status:403})));
+    await assert.rejects(ensureStorageBuckets('https://abcdxyz.supabase.co','fixture-key',['xroga-uploads'],context),error=>{
+      assert.ok(error instanceof Error);assert.match(error.message,/denied by security policy/);assert.doesNotMatch(error.message,/CANARY/);return true;
     });
-    assert.equal(transport.mock.callCount(),1);
+    assert.equal(transport.mock.calls.filter(call=>new URL(String(call.arguments[0])).hostname==='abcdxyz.supabase.co').length,1);
   });
 
-  it('partial setup is not successful provisioning and does not expose raw schema errors',async(t)=>{
-    for(const schemaOk of [false,true]){
-      const transport=t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0])=>{
-        const url=new URL(String(input));
-        if(url.hostname==='api.supabase.com')return Response.json(schemaOk?[]:{message:'PRIVATE_SQL_CANARY'},{status:schemaOk?200:500});
-        return Response.json([{id:'xroga-uploads',public:schemaOk},{id:'abcdxyz-uploads',public:schemaOk}]);
-      });
-      const result=await provisionUserSupabase({projectUrl:'https://abcdxyz.supabase.co',serviceRoleKey:'fixture-key',accessToken:'fixture-token'});
-      assert.equal(result.ok,false);assert.equal(result.schemaApplied,schemaOk);
-      assert.equal(result.memoryTablesReady,schemaOk);assert.doesNotMatch(JSON.stringify(result),/CANARY/);
-      assert.match(result.message,schemaOk?/Schema and memory tables were saved/:/Private storage is ready/);
-      transport.mock.restore();
-    }
+  it('raw provisioning values cannot override missing canonical account credentials',async t=>{
+    let provider=0;
+    t.mock.method(globalThis,'fetch',withSupabaseSourceFixture(t,context,async()=>{provider++;return Response.json({message:'PRIVATE_SQL_CANARY'});}));
+    await assert.rejects(provisionUserSupabase({userId:context.userId,tenantContext:context,projectUrl:'https://abcdxyz.supabase.co',serviceRoleKey:'fixture-key',accessToken:'fixture-token'}),error=>{
+      assert.equal((error as {code:string}).code,'SUPABASE_PROVISION_ADMISSION_DENIED');assert.doesNotMatch(String(error),/CANARY/);return true;
+    });
+    assert.equal(provider,0);
+    // Partial schema, RLS and storage failures now retain failure under the
+    // actual native confirmation executor, rather than bypassing its authority.
   });
 });

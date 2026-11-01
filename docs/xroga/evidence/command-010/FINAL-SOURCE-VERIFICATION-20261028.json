@@ -1,0 +1,100 @@
+{
+  "scope": "ORIGINAL_PHASE4_IMPLEMENTATION_SOURCE_ONLY_NOT_CURRENT_MAIN_OR_PRODUCTION_ACCEPTANCE",
+  "phase4SourceParent": "e337c56fe7f9e78268260c57f65b899b28fc1a15",
+  "strictRulesChanged": false,
+  "frozenRequirementsChanged": false,
+  "receipts": [
+    {
+      "label": "integratedSecurity306",
+      "job": "23a90c61-a4f3-4293-bf75-f372eca5fd60",
+      "path": "docs/xroga/evidence/command-010/logs/phase4-final-integratedSecurity306-20261028.log.gz",
+      "sha256": "27a03c604f38389610b821015e809f011316772d4cd8a87d16f8d298aaea22d8",
+      "status": "passed"
+    },
+    {
+      "label": "backendTypes",
+      "job": "dba66fad-21e5-42fd-90e6-e5e8dfb9c3c3",
+      "path": "docs/xroga/evidence/command-010/logs/phase4-final-backendTypes-20261028.log.gz",
+      "sha256": "65f04b489b580bccbe98a629c2b7110486aaee1ada6dd1fc04065f68c3ec8f8a",
+      "status": "passed"
+    },
+    {
+      "label": "frontendTypes",
+      "job": "59483f52-5869-4152-a2fc-baea1c6b6a21",
+      "path": "docs/xroga/evidence/command-010/logs/phase4-final-frontendTypes-20261028.log.gz",
+      "sha256": "65f04b489b580bccbe98a629c2b7110486aaee1ada6dd1fc04065f68c3ec8f8a",
+      "status": "passed"
+    },
+    {
+      "label": "frontendLint",
+      "job": "b7344956-591f-4971-bfab-dd4278f9314a",
+      "path": "docs/xroga/evidence/command-010/logs/phase4-final-frontendLint-20261028.log.gz",
+      "sha256": "0ae09e1d9b23ab23cf0465f174f861b61acdba4db9cb604f4aa90ee36dbdfe33",
+      "status": "passed"
+    },
+    {
+      "label": "sourceRegisterIntegrity10",
+      "job": "db8aaedf-ff35-497b-b4f8-82ef33735bba",
+      "path": "docs/xroga/evidence/command-010/logs/phase4-final-sourceRegisterIntegrity10-20261028.log.gz",
+      "sha256": "e4e4737dee9f875bd775b10a6756273d2abf2fe2ced0b26f4897d0de60fb8ae4",
+      "status": "passed"
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "sha256": "f868ccf7fe84745d332a979c1d8df01b8697758c1a681f82a3c5ad8e3644ee4d"
+    },
+    {
+      "path": "backend/src/services/integrations/githubRequest.ts",
+      "sha256": "aa0259f7dbaafafa423920884fc69e3d9ecc18b8c575eb075d53a253af1130f0"
+    },
+    {
+      "path": "backend/src/services/integrations/githubApproval.ts",
+      "sha256": "50bd566b12896f2c4c6ab290e2107e1d633db348c642b6843ddfa7bae45beb08"
+    },
+    {
+      "path": "backend/src/services/integrations/githubPublication.ts",
+      "sha256": "8089f58f7f4452c44e44328de23be97e1361bc9e0cb4d917ab5718f9aad3064d"
+    },
+    {
+      "path": "backend/src/services/showcase/templateExport.ts",
+      "sha256": "90032352847fb16dc35c8769b440dd05edaf1f06c1fbf3cad899de9c338f0b62"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProjectCreation.ts",
+      "sha256": "b8dd11eec607febea99a9de997e251aae883566f131b80de7f34d8a0325a771b"
+    },
+    {
+      "path": "backend/src/services/integrations/supabaseProvision.ts",
+      "sha256": "8a4e4525686b82ae4b943d29caff07c8cad077b85e3cbd000f0426e617902839"
+    },
+    {
+      "path": "backend/src/ai/parallelWeb.ts",
+      "sha256": "3e5487425cda5bb757853899353f17bc10e27e1d6f6abba7ea5a4d7cf599836b"
+    },
+    {
+      "path": "deploy/browser-worker/runJob.mjs",
+      "sha256": "f0f63e2da95ff25ba8bb166a1f60fd9efb847298e4823a22dfbb33662ee9ebe3"
+    },
+    {
+      "path": "backend/src/workers/browserReadOnlyTransport.security.test.ts",
+      "sha256": "1a5b756adee2ac25d089e815b8a8261cbf63ee1c3c80fd446c1179d1c95ccf3b"
+    }
+  ],
+  "strictAuditExpected": {
+    "total": 137,
+    "reviewed": 137,
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0
+  },
+  "ci": "EXACT_FINAL_HEAD_PENDING",
+  "production": "UNCHANGED_NO_PHASE4_DEPLOY",
+  "formalAcceptance": "BLOCKED_CURRENT_MAIN_LATER_BATCH_ADAPTER_INTEGRATION",
+  "mainBaseline": "b496482a",
+  "mainIntegrationHandoff": "docs/xroga/evidence/command-010/MAIN-INTEGRATION-HANDOFF-20261028.md"
+}

@@ -1,0 +1,57 @@
+{
+  "scope": "SCOPED_STORAGE_SECURITY_NOT_PHASE4_OR_BATCH_ACTIVATION_ACCEPTANCE",
+  "atUtc": "2026-10-27T15:31:15.468280+00:00",
+  "parent": "8c1f9902fb6bd94d52967dfb03a8e653817d4822",
+  "sourceBindings": [
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "sha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596"
+    },
+    {
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "sha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "path": "backend/src/storage/r2ObjectStore.test.ts",
+      "sha256": "6f2802478f642e964a2f82f1add19854694e168507db7fce8ebed7f21c24457d"
+    },
+    {
+      "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+      "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+    },
+    {
+      "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+      "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+    },
+    {
+      "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+      "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+    },
+    {
+      "path": "backend/src/security/egress/unusedProcessTree.test.ts",
+      "sha256": "fdf4c7a2e294a4283d92f84c475aa9cab6fa1c8dc475a3f788be3670cf83ecd2"
+    }
+  ],
+  "strictAudit": {
+    "counts": {
+      "total": 162,
+      "reviewed": 64,
+      "pending": 98,
+      "unresolvedHighRiskBypasses": 52
+    },
+    "result": "FAIL_INCOMPLETE_CALLERS",
+    "job": "ddc50ddf-868a-4197-98aa-d9b92a0b6e4c"
+  },
+  "tests": {
+    "storageAndDriveIntegration": "120PASS_0FAIL_0SKIP job3d86eb5f-720f-47b7-a1f3-78206609b0f6",
+    "backendTypes": "PASS_0ERRORS job91e994bf-dd04-4c29-9bf0-607d1d3fde76",
+    "unreachableProcessHelpers": "PASS jobba6e5990-56d8-49ef-9efe-854a7a1cd380"
+  },
+  "schemaChanges": false,
+  "productionChanged": false,
+  "spending": 0,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "next": "Reachable provider-auth, publishing/external file egress and remaining browser process/transport caller traces. Final disposable/Auth/exact-source CI and controlled Phase4 release remain gated."
+}

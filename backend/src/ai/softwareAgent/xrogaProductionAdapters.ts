@@ -1,3 +1,4 @@
+import type {TenantContext} from '../../security/tenantContext.js';
 import {
   fetchRepositoryTextFilesFromGitHub,
   type ProjectFile,
@@ -27,6 +28,7 @@ export interface XrogaSoftwareAgentBindings {
    * Never expose this object to the model.
    */
   userId: string;
+  tenantContext?: TenantContext;
 
   runSandboxCommand(input: {
     contract: SoftwareExecutionContract;
@@ -122,6 +124,7 @@ export function createXrogaProductionRepositoryAdapter(
           bindings.userId,
           `${repository.owner}/${repository.repo}`,
           repository.branch,
+          bindings.tenantContext,
         );
 
       return files.map(

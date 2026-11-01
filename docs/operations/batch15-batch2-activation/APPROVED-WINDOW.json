@@ -1,0 +1,14 @@
+{
+  "approved": true,
+  "packageCommit": "fa9e90d62f92a1961983d0b7e1f3cd2fa6836d6c",
+  "packagePath": "docs/operations/batch15-batch2-activation/ISOLATED-VERIFICATION-APPROVAL.md",
+  "founderReply": "Approve this exact isolated window",
+  "recordedAtUtc": "2026-10-31T08:35:24.490040+00:00",
+  "maximumGrossUsd": 2,
+  "modelSpendUsd": 0,
+  "maximumWindowSeconds": 7200,
+  "cleanupAtSeconds": 5400,
+  "clockStarted": false,
+  "productionSqlApproved": false,
+  "productionActivationApprovedByThisWindow": false
+}

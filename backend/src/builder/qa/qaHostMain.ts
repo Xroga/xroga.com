@@ -25,7 +25,7 @@ export function createQaHostApp(env: NodeJS.ProcessEnv = process.env, open: type
     if (active >= limit) throw new Error('busy');
     active += 1;
     try {
-      const driver = await open({ baseUrl });
+      const driver = await open({ baseUrl, readOnly: true });
       return await runQa({ plan, driver, environment, only, previouslyPassed, baseHost: new URL(baseUrl).host });
     } finally {
       active -= 1;

@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "failedSource": "49978f11b2c6bd68ece1aa24c68cedaee753b177",
+  "integratedSource": "f3585774717b4b3e422638b6c1937ab2652cb075",
+  "integratedParents": ["fb95f76bafc1b544b6655d435cddede260d9cd99", "49978f11b2c6bd68ece1aa24c68cedaee753b177"],
+  "existingRuns": [
+    {"id":"39871551484","workflow":"Golden","conclusion":"SUCCESS"},
+    {"id":"39871551330","workflow":"Mission","conclusion":"SUCCESS"},
+    {"id":"39871551336","workflow":"Dependency lock","conclusion":"SUCCESS"},
+    {"id":"39871551483","workflow":"Growth","conclusion":"SUCCESS"},
+    {"id":"39871551443","workflow":"Unit branch and integrated","conclusion":"FAILURE"},
+    {"id":"39871551410","workflow":"Tenant security","conclusion":"FAILURE"}
+  ],
+  "ledgerFailure": {
+    "packet":"B1-P2-c69ab864b825c827",
+    "path":"docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "field":"packets[37].proofCandidates[1].sourceSha256",
+    "testFile":"backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+    "historicalExpected":"48efff750a375aaaeb81bb90d5376a160b539a6748ac377119da62ec2a13be06",
+    "currentActual":"2d5bb74f472c8559cd4d415ef19af8f45ad6a6ce18022e3324f37e52bef650d8",
+    "cause":"A separate network test correctly replaced obsolete registry bridge behavior with fail-closed rejection. The fork-isolation proof candidate stayed byte-identical but the generator incorrectly treated its entire file hash as current-only. The same difference exists on the branch and its virtual merge.",
+    "repair":"Keep the frozen ledger unchanged. Validate exact historical/current full-file hashes and unique byte-identical complete fork test invocation in a separate source-bound delta. No test is certified from markers or hashes, all existing source drift, packet and regression checks remain required.",
+    "negativeTests":"Changed assertions, missing and ambiguous tests, forged old/new/test hashes, unreviewed current edits and incorrect acceptance scope are rejected."
+  },
+  "containerFailure": {
+    "providerError":"Docker exit125: range of CPUs is from 0.01 to 4.00, as there are only 4 CPUs available",
+    "cause":"Production cpuSeconds300 maps to --cpus5. The disposable fixture reused it on a four-CPU runner.",
+    "repair":"Fixture-only limits spread production defaults with cpuSeconds60, mapping to --cpus1. Production defaults and resource conversion are unchanged.",
+    "actualLocalVerification":"Real digest-pinned Docker container passed offline npm install, absent non-loopback interfaces/default route and public/private/metadata/IPv6-private TCP denial. No mocked container, skipped assertion, online install or cloud effect.",
+    "image":"node@sha256:63538dfe497cc29dfafdda25ada09b46db68a3f4cc205abf1f5d6bf0913f3384"
+  },
+  "acceptance":"PHASE4_PREPARATORY_ONLY_PHASE3_BLOCKED",
+  "currentMainCompatibility":"NOT_ASSERTED_STACKED_PHASE3_BASE_ONLY"
+}

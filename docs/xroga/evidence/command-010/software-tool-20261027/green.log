@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: SoftwareAgentWorkspace checkpoint recovery
+    # Subtest: keeps the original repository as the diff base while restoring a checkpointed working tree
+    ok 1 - keeps the original repository as the diff base while restoring a checkpointed working tree
+      ---
+      duration_ms: 26.5033
+      type: 'test'
+      ...
+    1..1
+ok 1 - SoftwareAgentWorkspace checkpoint recovery
+  ---
+  duration_ms: 28.359
+  type: 'suite'
+  ...
+# Subtest: run_command native admission denial aborts the SDK and cannot become another model/tool attempt
+ok 2 - run_command native admission denial aborts the SDK and cannot become another model/tool attempt
+  ---
+  duration_ms: 14.1741
+  type: 'test'
+  ...
+# Subtest: run_checks native admission denial aborts the SDK and cannot become another model/tool attempt
+ok 3 - run_checks native admission denial aborts the SDK and cannot become another model/tool attempt
+  ---
+  duration_ms: 1.083
+  type: 'test'
+  ...
+# Subtest: verify_preview native admission denial aborts the SDK and cannot become another model/tool attempt
+ok 4 - verify_preview native admission denial aborts the SDK and cannot become another model/tool attempt
+  ---
+  duration_ms: 1.0046
+  type: 'test'
+  ...
+# Subtest: software checkpoint requires issued authority, immutable ordered snapshots and exact receipt
+ok 5 - software checkpoint requires issued authority, immutable ordered snapshots and exact receipt
+  ---
+  duration_ms: 38.7247
+  type: 'test'
+  ...
+# Subtest: RUN_STATE_CONFLICT initial checkpoint stops actual service before executor or providers
+ok 6 - RUN_STATE_CONFLICT initial checkpoint stops actual service before executor or providers
+  ---
+  duration_ms: 1.9934
+  type: 'test'
+  ...
+# Subtest: RESOURCE_ACCESS_UNAVAILABLE initial checkpoint stops actual service before executor or providers
+ok 7 - RESOURCE_ACCESS_UNAVAILABLE initial checkpoint stops actual service before executor or providers
+  ---
+  duration_ms: 1.2688
+  type: 'test'
+  ...
+# Subtest: actual executor aborts on RUN_STATE_CONFLICT caught by tool without publishing its event
+ok 8 - actual executor aborts on RUN_STATE_CONFLICT caught by tool without publishing its event
+  ---
+  duration_ms: 12.0729
+  type: 'test'
+  ...
+# Subtest: actual executor aborts on RESOURCE_ACCESS_UNAVAILABLE caught by tool without publishing its event
+ok 9 - actual executor aborts on RESOURCE_ACCESS_UNAVAILABLE caught by tool without publishing its event
+  ---
+  duration_ms: 2.4232
+  type: 'test'
+  ...
+# Subtest: executor source preserves authority failure through SDK abort and outward event boundary
+ok 10 - executor source preserves authority failure through SDK abort and outward event boundary
+  ---
+  duration_ms: 0.8698
+  type: 'test'
+  ...
+# Subtest: actual checkpoint loader binds owner row and embedded recovery identity without requiring legacy generation
+ok 11 - actual checkpoint loader binds owner row and embedded recovery identity without requiring legacy generation
+  ---
+  duration_ms: 64.3866
+  type: 'test'
+  ...
+# Subtest: shared recovery wrapper protects preview reconstruction and actual service from same-owner foreign lineage
+ok 12 - shared recovery wrapper protects preview reconstruction and actual service from same-owner foreign lineage
+  ---
+  duration_ms: 16.5303
+  type: 'test'
+  ...
+# Subtest: Software Agent V2 durable checkpoints
+    # Subtest: fingerprints the base independently of file ordering
+    ok 1 - fingerprints the base independently of file ordering
+      ---
+      duration_ms: 71.7446
+      type: 'test'
+      ...
+    # Subtest: changes the base fingerprint when repository content changes
+    ok 2 - changes the base fingerprint when repository content changes
+      ---
+      duration_ms: 0.5977
+      type: 'test'
+      ...
+    # Subtest: reconstructs modified created and deleted checkpoint files
+    ok 3 - reconstructs modified created and deleted checkpoint files
+      ---
+      duration_ms: 2.3346
+      type: 'test'
+      ...
+    # Subtest: accepts a checkpoint only for the exact original execution base
+    ok 4 - accepts a checkpoint only for the exact original execution base
+      ---
+      duration_ms: 1.0859
+      type: 'test'
+      ...
+    # Subtest: stores independent durable copies instead of mutable object references
+    ok 5 - stores independent durable copies instead of mutable object references
+      ---
+      duration_ms: 0.8671
+      type: 'test'
+      ...
+    1..5
+ok 13 - Software Agent V2 durable checkpoints
+  ---
+  duration_ms: 80.0002
+  type: 'suite'
+  ...
+# Subtest: actual universal SoftwareAgent implementation refuses unissued identity before constructing adapters
+ok 14 - actual universal SoftwareAgent implementation refuses unissued identity before constructing adapters
+  ---
+  duration_ms: 2.8204
+  type: 'test'
+  ...
+# Subtest: tracked production SoftwareAgent SDK caller carries original identity through both universal branches
+ok 15 - tracked production SoftwareAgent SDK caller carries original identity through both universal branches
+  ---
+  duration_ms: 130.9524
+  type: 'test'
+  ...
+# Subtest: unknown software write operations cannot acquire authority through a TypeScript cast
+ok 16 - unknown software write operations cannot acquire authority through a TypeScript cast
+  ---
+  duration_ms: 3.3795
+  type: 'test'
+  ...
+# Subtest: production host refuses invented or wrong-method write intents before mutation
+ok 17 - production host refuses invented or wrong-method write intents before mutation
+  ---
+  duration_ms: 1.523
+  type: 'test'
+  ...
+# Subtest: actual SDK tool refuses invented or wrong-method write intents before mutation
+ok 18 - actual SDK tool refuses invented or wrong-method write intents before mutation
+  ---
+  duration_ms: 1.7627
+  type: 'test'
+  ...
+# Subtest: tool-result instructions and fabricated contract fields cannot widen the original write scope
+ok 19 - tool-result instructions and fabricated contract fields cannot widen the original write scope
+  ---
+  duration_ms: 0.4865
+  type: 'test'
+  ...
+# Subtest: an ordinary authorized source modification remains functional
+ok 20 - an ordinary authorized source modification remains functional
+  ---
+  duration_ms: 7.3974
+  type: 'test'
+  ...
+# Subtest: a non-string software file body cannot cross the actual tool mutation boundary
+ok 21 - a non-string software file body cannot cross the actual tool mutation boundary
+  ---
+  duration_ms: 0.8962
+  type: 'test'
+  ...
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"glm_5_3_flash","requestedProvider":"zhipu","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"glm_5_3_flash","requestedProvider":"zhipu","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"runId":"owned-run","builderVersion":"agent-v2","requestedModelId":"glm_5_3_flash","requestedProvider":"zhipu","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# [software_agent_model_route] {"builderVersion":"agent-v2","requestedModelId":"glm_5_3_flash","requestedProvider":"zhipu","actualModelId":"glm_5_3_flash","actualProvider":"zhipu","fallbackUsed":false,"fallbackReason":null,"fallbackFailureCount":0}
+# Subtest: SoftwareAgent SDK factory refuses missing, cloned or wrong-owner dispatch identity before any lookup
+ok 22 - SoftwareAgent SDK factory refuses missing, cloned or wrong-owner dispatch identity before any lookup
+  ---
+  duration_ms: 8.3353
+  type: 'test'
+  ...
+# Subtest: real SoftwareAgent factory preserves budgeted positive execution and rejects secret data before SDK dispatch
+ok 23 - real SoftwareAgent factory preserves budgeted positive execution and rejects secret data before SDK dispatch
+  ---
+  duration_ms: 286.6884
+  type: 'test'
+  ...
+1..23
+# tests 27
+# suites 2
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16645.3362

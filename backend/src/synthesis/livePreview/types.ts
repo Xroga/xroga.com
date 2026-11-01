@@ -20,6 +20,9 @@ export type LivePreviewStatus =
   | 'stopped'
   | 'not_applicable';
 
+/** Whether the running preview reflects the latest saved source: current, an older version, or unknown for a runtime bound before this was recorded. */
+export type PreviewSourceState = 'current' | 'stale' | 'unknown';
+
 export interface LivePreviewGrant {
   readonly previewId:
     string;
@@ -91,6 +94,9 @@ export interface LivePreviewDescriptor {
 
   readonly message:
     string;
+
+  /** Absent on older servers. A preview that is not current must never be presented as the latest version. */
+  readonly sourceState?: PreviewSourceState;
 
   readonly updatedAt:
     string;

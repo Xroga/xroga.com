@@ -19,6 +19,16 @@ function fixture(responses: IncomingMessage[]) {
 }
 const limits = { maxBytes: 5, timeoutMs: 500, maxRedirects: 1 };
 
+test('revocation or cancellation after DNS denies the first public connection',async()=>{
+  for(const kind of ['revocation','cancellation']){
+    const controller=new AbortController(),f=fixture([response(['safe'])]);
+    f.io.resolve=async()=>{if(kind==='cancellation')controller.abort();return[{address:'8.8.8.8',family:4}];};
+    const options={...limits,signal:controller.signal,beforeRequest:async()=>{if(kind==='revocation')throw new Error('authority revoked');}};
+    await assert.rejects(boundedPublicGet('https://example.com',options,f.io));
+    assert.deepEqual(f.opened,[]);
+  }
+});
+
 test('public address admission rejects local, metadata, special and IPv4-in-IPv6 targets', () => {
   for (const ip of ['0.0.0.0','10.0.0.1','127.0.0.2','169.254.169.254','172.31.255.255','192.168.1.1',
     '100.100.100.200','192.0.0.8','192.0.2.1','198.18.0.1','198.51.100.2','203.0.113.2','224.0.0.1','255.255.255.255',

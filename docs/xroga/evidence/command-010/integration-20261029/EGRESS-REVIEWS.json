@@ -1,0 +1,236 @@
+{
+  "scope": "INDIVIDUAL_CURRENT_MAIN_INTEGRATION_REVIEWS_ONLY",
+  "verifiedPhase4": "92043b72c20e5a12636dee079d760a1e5708b48f",
+  "originalReviewed": 137,
+  "newReviews": [
+    {
+      "id": "18d087781cdd07fac737",
+      "file": "backend/src/builder/hosting/authority.ts",
+      "entryPoint": "transport",
+      "transport": "fetch",
+      "callSha256": "073c3620157932bd8acfccb0ece3e2e64dfc2234ee02211013b1a2a4721a5630",
+      "sourceFileSha256": "2bf88af6ce3cae68dd8bde240ea72cc50374457abc013eb9eafdf96457104e2a",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "Builder hosting: issued actor -> owned immutable revision -> exact reviewed plan -> durable approved CAS -> current Vercel credential epoch -> canonical authority and persisted egress receipt -> one-use finite provider request -> exact project/deployment readback. Separate typed promotion remains mandatory. Redirect, authorization denial, cancellation and epoch change stop later mutations. No Git linking, secret environment values or production fallback.",
+      "tests": [
+        {
+          "path": "backend/src/builder/providerBoundary.security.test.ts",
+          "marker": "new Builder hosting caller preserves separate preview and typed production approval under canonical egress",
+          "sha256": "37154fb0441934498cd8440e491f4fe67ae474134fa24bcc153625085fbce8e4"
+        }
+      ]
+    },
+    {
+      "id": "42b94382bd37c3f50c6c",
+      "file": "backend/src/builder/phase2Bridge.ts",
+      "entryPoint": "httpProbe",
+      "transport": "boundedPublicGet",
+      "callSha256": "19e7be598711a56dc789dcf8d5e0472f5acc684b20c256f927d30d11a5cf01ce",
+      "sourceFileSha256": "a90bc0fffddd99bb11c5e9e368db6710f659cef8f4a227253806fef312dc9e76",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "Builder owned deployment verification uses credential-free boundedPublicGet. Every HTTPS hop is independently admitted and DNS pinned. No URL credentials, private/mixed DNS, custom ports or unbounded body. The probe supplies diagnostics only and never authorizes promotion.",
+      "tests": [
+        {
+          "path": "backend/src/builder/httpProbe.security.test.ts",
+          "marker": "Builder deployment probe admits public HTTPS and independently rejects redirected private DNS",
+          "sha256": "ae11f5a00925962df95d33b8e7e6a62e7e43a89ebad0979b2e81828749a4e71c"
+        }
+      ]
+    },
+    {
+      "id": "4680a42df5d217acf6e8",
+      "file": "backend/src/builder/providerTransports.ts",
+      "entryPoint": "supabase",
+      "transport": "fetch",
+      "callSha256": "0666a3ba96e29002958b112078c1745ed99b3e8fd3c823fdd9f8a7c03d5adf26",
+      "sourceFileSha256": "9e1eebc532206de7e102672b7610f42aff569a218918acbd1951aa1935be7b0e",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "Builder Supabase: original issued actor, current private provider connection and exact account project membership precede catalog reads. Only fixed catalog SQL or an owned, reviewed schema migration under durable CAS and canonical single-use authority can POST. reveal=false excludes keys. Source revision, credential epoch, cancellation and exact current plan are checked across waits. No raw-token transport or arbitrary SQL fallback.",
+      "tests": [
+        {
+          "path": "backend/src/builder/providerBoundary.security.test.ts",
+          "marker": "production Builder Supabase selection and exact reviewed migration retain RLS and public-only configuration",
+          "sha256": "37154fb0441934498cd8440e491f4fe67ae474134fa24bcc153625085fbce8e4"
+        }
+      ]
+    },
+    {
+      "id": "f35703dda1fec9d30cc6",
+      "file": "backend/src/builder/qa/playwrightQaDriver.ts",
+      "entryPoint": "open",
+      "transport": "fetch",
+      "callSha256": "0b8a6a316a6de9b0f25c889c54626b707b6b794c06636165d34cd49afcd27497",
+      "sourceFileSha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "The browser route fetch is downstream of same-origin route admission, with maxRedirects zero and bounded document bytes. Remote QA uses read-only mode, no service workers/downloads, blocks sockets and child workers, and enforces the production Chromium sandbox. It holds no provider credential. This certifies the adapter and fixtures, not an unbuilt live Google image.",
+      "tests": [
+        {
+          "path": "backend/src/builder/qa/qaBoundary.security.test.ts",
+          "marker": "real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets",
+          "sha256": "5374ca3c1aea00db89d1ece0e7cc160d516c7a46f3dee8bbb713ae056017f6fb"
+        }
+      ]
+    },
+    {
+      "id": "1850a010eca54aa83087",
+      "file": "backend/src/builder/qa/playwrightQaDriver.ts",
+      "entryPoint": "goto",
+      "transport": "goto",
+      "callSha256": "a448bf63ee9d2a97429656cd9bc23f9ee630c401f5af84fbdd9502a8d180c65e",
+      "sourceFileSha256": "f74fd856462651096471c190fc4a9cdb0be572f1a1f9991c3e50e9062afa1a3a",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "QA page navigation is origin-bound with finite paths. HTTP routing covers initial request and every redirect, rejects non-origin targets and read-only mutations, and blocks sockets/child workers. Remote host is signed, allowlisted and independently bounded. No browser data or generated tool response can issue authority.",
+      "tests": [
+        {
+          "path": "backend/src/builder/qa/qaBoundary.security.test.ts",
+          "marker": "real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets",
+          "sha256": "5374ca3c1aea00db89d1ece0e7cc160d516c7a46f3dee8bbb713ae056017f6fb"
+        }
+      ]
+    },
+    {
+      "id": "2bef60263a5e26b959d0",
+      "file": "backend/src/builder/qa/runner.ts",
+      "entryPoint": "runStep",
+      "transport": "goto",
+      "callSha256": "d242131e306c821490ffc0e9bb2806a62b0fc45f3aeee52f69435f63268b3e67",
+      "sourceFileSha256": "7b99e9c1f752a499466a1e777234ada68a89296e13a31836075296a8d2c9f316",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "The QA runner delegates only validated plan paths to the admitted QaPage. Its production implementation is the origin-bound read-only driver or signed isolated host. This goto does not bypass route interception. Same-origin status and diagnostics are assertions, never authorization or provider actions.",
+      "tests": [
+        {
+          "path": "backend/src/builder/qa/qaBoundary.security.test.ts",
+          "marker": "real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets",
+          "sha256": "5374ca3c1aea00db89d1ece0e7cc160d516c7a46f3dee8bbb713ae056017f6fb"
+        }
+      ]
+    },
+    {
+      "id": "54233be811bb959a4016",
+      "file": "backend/src/builder/qa/runner.ts",
+      "entryPoint": "runStep",
+      "transport": "goto",
+      "callSha256": "d242131e306c821490ffc0e9bb2806a62b0fc45f3aeee52f69435f63268b3e67",
+      "sourceFileSha256": "7b99e9c1f752a499466a1e777234ada68a89296e13a31836075296a8d2c9f316",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "The protected-path assertion delegates to the same admitted QaPage and checks expected authentication refusal. It cannot authorize a foreign page or mutate provider state. Driver origin/read-only/socket policy and remote host allowlist remain mandatory.",
+      "tests": [
+        {
+          "path": "backend/src/builder/qa/qaBoundary.security.test.ts",
+          "marker": "real isolated QA browser blocks unapproved POST, page sockets and child-worker sockets",
+          "sha256": "5374ca3c1aea00db89d1ece0e7cc160d516c7a46f3dee8bbb713ae056017f6fb"
+        }
+      ]
+    },
+    {
+      "id": "f6a75877b1bf49789cea",
+      "file": "backend/src/workers/browserRunDispatch.ts",
+      "entryPoint": "dispatch",
+      "transport": "fetch",
+      "callSha256": "1c9d0e6c836968b727356c939c9c52f0a95dca5fe4ab44e787d970f8f9f2e244",
+      "sourceFileSha256": "e758f39d7594810fc1f13553f0545256f5631d3263c69401e8d2a8c33806f5c6",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trace": "Browser Cloud Tasks dispatch receives an already persisted owned run ID from the authorized route. Fixed Google metadata recipient supplies only native service token. Trusted deployment queue/target and OIDC identity are server configuration. Task payload contains run ID, no raw authority, credentials or browser content. Authenticated worker re-reads owner-bound durable row and lease. Redirect is terminal, duplicate task name is deduplicated, half-configured transport never falls back in process. Execution/cancellation/accounting remain in the existing scheduler.",
+      "tests": [
+        {
+          "path": "backend/src/workers/browserRunDispatch.test.ts",
+          "marker": "redirect",
+          "sha256": "95387ffd28abe1f9ae7c4bf4d981f97fe0fa7f8e3ba2883b60cace91ad4e5686"
+        }
+      ]
+    },
+    {
+      "id": "7a469e291cb12e3566f6",
+      "file": "frontend/src/components/drive/DrivePanel.tsx",
+      "entryPoint": "DrivePanel",
+      "transport": "uploadFile",
+      "callSha256": "bcd143eb6ad3418647d42b0481ec5881c94e6db85335d3b3f857f2f48857866b",
+      "sourceFileSha256": "1b5d6112718c0d3668510f20f0004d8ae42f4ebe7a34f6f672f76578ecaf7103",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "DrivePanel delegates its selected File to the existing private upload API. Authenticated first-party initiate/sign/complete calls establish owned object, size, MIME, part and private destination. Browser credentials are never attached to signed object PUT. Terminal redirect/authorization denial prevents completion and multipart retry. Server ownership and private R2 policy are independently preserved, no new credential or account scope.",
+      "tests": [
+        {
+          "path": "frontend/src/lib/driveUpload.test.ts",
+          "marker": "multipart authorization denial is terminal",
+          "sha256": "e9ffdba7b8026c295504f7abb31bfd80294ad9bfd0f65f88d92239dea2c09bce"
+        }
+      ]
+    },
+    {
+      "id": "13608654d27d029cbf04",
+      "file": "frontend/src/lib/driveUpload.ts",
+      "entryPoint": "uploadFile",
+      "transport": "send",
+      "callSha256": "05651bff86db784159fd02e819b3e2f974ec8363536c65088382ebd8a375d291",
+      "sourceFileSha256": "88eaad3e6b6c8255870628ce2c520149b3b2c7b774331ef4e70bd7db151e167a",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "Single private upload uses only HTTPS signed server DTO, rejects URL credentials/hash/custom port, omits cookies and referrer, and refuses redirects/401/403 before completion. Existing size/source hash, owned initiate/complete and cancellation controls remain. Ordinary object failure remains distinguishable from security denial.",
+      "tests": [
+        {
+          "path": "frontend/src/lib/driveUpload.test.ts",
+          "marker": "a cancelled upload sends nothing more",
+          "sha256": "e9ffdba7b8026c295504f7abb31bfd80294ad9bfd0f65f88d92239dea2c09bce"
+        }
+      ]
+    },
+    {
+      "id": "811d45a99740e2ecccba",
+      "file": "frontend/src/lib/driveUpload.ts",
+      "entryPoint": "sendPart",
+      "transport": "send",
+      "callSha256": "f0e78fabb577d53892892c3dbabc3814a92a414ea1bebc30fb7a795a1dc3c0cc",
+      "sourceFileSha256": "88eaad3e6b6c8255870628ce2c520149b3b2c7b774331ef4e70bd7db151e167a",
+      "disposition": "VERIFIED_GUARD",
+      "trace": "Multipart sends only owned signed part DTOs, validates required headers/content length, omits credentials/referrer and uses manual redirect. Authorization or redirect denial is non-retryable and aborts remaining dispatch/completion. Bounded ordinary provider failures retain retry and ETag accounting. Cancellation and source fingerprint prevent unauthorized resumption.",
+      "tests": [
+        {
+          "path": "frontend/src/lib/driveUpload.test.ts",
+          "marker": "multipart authorization denial is terminal",
+          "sha256": "e9ffdba7b8026c295504f7abb31bfd80294ad9bfd0f65f88d92239dea2c09bce"
+        }
+      ]
+    }
+  ],
+  "unchangedFunctionContinuations": [
+    {
+      "id": "b43397505cfcf3799292",
+      "file": "backend/src/synthesis/playwrightDriver.ts",
+      "verifiedReference": "92043b72c20e5a12636dee079d760a1e5708b48f",
+      "oldFileSha256": "583bd198a2b0cfb9dd91e8f22c029984ba757e32deba689d396ef40c8a83e95a",
+      "currentFileSha256": "73a7569c28a450be8f1ecb1d07bcfdbcdbaa531f11e49fe587175dfe3883e30d",
+      "unchangedFunctionSha256": "cb0ad87ad43f2a55fce98c0d6140adef12445615e8bec0bd1bcc6df6315f1eb3"
+    },
+    {
+      "id": "c09bb8607fa4d00f23b7",
+      "file": "frontend/src/lib/api.ts",
+      "verifiedReference": "92043b72c20e5a12636dee079d760a1e5708b48f",
+      "oldFileSha256": "f3edcd5a2e7c3c21a3ab7ba3fbb4b9396cfd07e502f2c48cb910d7e54076e639",
+      "currentFileSha256": "32dc22a8e533c4fc4e5f2faafbc19f9bc48c226ba9335a950258a3b810eca32d",
+      "unchangedFunctionSha256": "8d1099f77da5112591b4c74885b37ef8f10bb9f62aa720f0e572bc764c3549e5"
+    }
+  ],
+  "manualAdditionalTraces": [
+    "RemoteQaClient signed fixed-host transport: private allowlist, original signature, manual redirect, bounded JSON, post-wait cancellation; remoteQa.test.ts verifies redirect, oversized response and cancellation.",
+    "Metadata token fetch is fixed native Google metadata only. It carries no customer body, model key or source files. No new IAM or production permission was granted."
+  ],
+  "productionAcceptance": false,
+  "strictAuditorChanged": false,
+  "frozenCriteriaChanged": false,
+  "sharedChromiumExtraction": {
+    "reference": "21193a524f94ca5ecd4c3643309bd3ae83511f78",
+    "from": "backend/src/synthesis/playwrightDriver.ts",
+    "to": "backend/src/synthesis/chromiumRuntime.ts",
+    "functions": [
+      {
+        "name": "loadChromium",
+        "functionSha256": "2b6e784760700bd6d4877948a84ce1512a5c241ad599b08ca8a039d7320b5dcb"
+      },
+      {
+        "name": "discoverChromiumExecutable",
+        "functionSha256": "c0d1206eef6008b73e69d94e48acb68729cc262f7f3073c235b301c95366020e"
+      }
+    ],
+    "reason": "QA imports only the shared loader. The legacy navigation module has no new runtime importer. Original unreachable-adapter test is unchanged and passes. No navigation or sandbox fallback moved into the loader.",
+    "focusedJob": "4d8dc7cd-5eba-4e49-a00c-b2c0cd846d72"
+  }
+}

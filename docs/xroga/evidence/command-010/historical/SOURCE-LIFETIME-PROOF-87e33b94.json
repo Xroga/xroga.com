@@ -1,0 +1,408 @@
+{
+  "version": 1,
+  "scope": "CURRENT_SOURCE_POSITION_RECONCILIATION_NOT_SECURITY_CERTIFICATION",
+  "reference": "944bd5e3078be7d3c4d536baefd50c42eb83b32e",
+  "bindings": [
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "beforeSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+      "currentSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
+      "matches": [
+        {
+          "beforeId": "b9d29af2f2ef47d2dbd8",
+          "afterId": "5f28d665d687ff7e0502",
+          "enclosing": "attachRuntimePreviewWebSocketGateway",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "f65e23f9000ea339366ea597789c04dae85885fb72400451daefb3845c968295"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "beforeSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+      "currentSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "matches": [
+        {
+          "beforeId": "b4b2b91f3280a140691a",
+          "afterId": "55ac9b0f3f9ba972ca8c",
+          "enclosing": "getIntegration",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "48c115e3fcc79a824240",
+          "afterId": "2360912af68a9536c836",
+          "enclosing": "getIntegration",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "github_integrations",
+          "callSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+        },
+        {
+          "beforeId": "a6b38f59fd65dcf93b63",
+          "afterId": "d1009c426dd9153743b7",
+          "enclosing": "fetchRepoTextFile",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4"
+        },
+        {
+          "beforeId": "ff18538f080dddb2c506",
+          "afterId": "ad1b1dafdbd324ceed15",
+          "enclosing": "decodeRepositoryTextBlob",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "beforeSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "currentSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "matches": [
+        {
+          "beforeId": "a6063fe099976dc970f7",
+          "afterId": "feecde5ebb7ae5f4ad78",
+          "enclosing": "saveKeyToStorage",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "67a6738bb98de6ea35e6",
+          "afterId": "5e37205582073bfc30c9",
+          "enclosing": "saveKeyToStorage",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "619e6216a5562cf8f6e6cfe98d82abe76a318cfefef8b61deb2308724970a4e2"
+        },
+        {
+          "beforeId": "fa8edcff0bd9d41187f5",
+          "afterId": "018c071575ceb3f8516a",
+          "enclosing": "loadKeyFromStorage",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "1e079f47b68cfa4b0ee1",
+          "afterId": "c0cad7450906cef3fce8",
+          "enclosing": "loadKeyFromStorage",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "619e6216a5562cf8f6e6cfe98d82abe76a318cfefef8b61deb2308724970a4e2"
+        },
+        {
+          "beforeId": "2d2e0b1518dc39fd144c",
+          "afterId": "b101c0c287c875bae159",
+          "enclosing": "loadKeyFromStorage",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3"
+        },
+        {
+          "beforeId": "7ce8a829e7682246c531",
+          "afterId": "125d1fa1b446def91170",
+          "enclosing": "listKeysFromStorage",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "877306d453c374d2e0b5",
+          "afterId": "56f1365c1095ea75af85",
+          "enclosing": "listKeysFromStorage",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "b94e72286c62046ffefd657e13cf7eacad44fdae14e858a6599a365160898e73"
+        },
+        {
+          "beforeId": "064e4bfd4f37af44215d",
+          "afterId": "3d61f3f5ae6402c20b58",
+          "enclosing": "decryptApiKey",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "280b341103edcc90f004e60aca0567c43527b5a98e740692c61de9d7b404fa56"
+        },
+        {
+          "beforeId": "a17b512e046309335346",
+          "afterId": "64f0d9db49a13b562831",
+          "enclosing": "decryptApiKey",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "a5fba515e01c7ccb101f1d7090d7525724fca49a7959056fd66f0d5653f91fb7"
+        },
+        {
+          "beforeId": "9410f0207c086070cbe9",
+          "afterId": "1f040da6c68c16cd33e2",
+          "enclosing": "openCanonicalProviderRow",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "71fea689c69941283b73e3922b1a8f5493e65c599b83a7965ff263d6f7983ca2"
+        },
+        {
+          "beforeId": "7839b0a49e20e551f26b",
+          "afterId": "c0b89211921517abfb82",
+          "enclosing": "openCanonicalProviderRow",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "985a191bb6a3829d93a3",
+          "afterId": "c135db5a5ea7536cfe6f",
+          "enclosing": "prepareUserProviderKeyWrite",
+          "kind": "RPC_CANDIDATE",
+          "target": "prepare_provider_key_write",
+          "callSha256": "6152bdc4876391e983d27983caedbf0310ef143cae2ce70f8fd08d0d3fa659b0"
+        },
+        {
+          "beforeId": "5de53ce023fae631bbe1",
+          "afterId": "bfd902ca64f5f7780a21",
+          "enclosing": "prepareUserProviderKeyWrite",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "60641ebebf916f3f47ab",
+          "afterId": "8784feaf266f3ae5d72e",
+          "enclosing": "saveUserProviderKey",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "ee7bb2f7b51795d5885a",
+          "afterId": "37cfa6ca45abf19a23eb",
+          "enclosing": "saveUserProviderKey",
+          "kind": "RPC_CANDIDATE",
+          "target": "save_cws_oauth_key_if_current",
+          "callSha256": "c1c2f5b1feebfc5a6c5cd908d842788b56d649a32bece97f3e4a438e9514b4a5"
+        },
+        {
+          "beforeId": "5325278cd77c5cf43ece",
+          "afterId": "1c2765565427d7a39f41",
+          "enclosing": "saveUserProviderKey",
+          "kind": "RPC_CANDIDATE",
+          "target": "save_provider_key_if_current",
+          "callSha256": "de1e045c49c310ca7277b611b67a5ebbf0ff8a6f2b327872aa0d00e288c9288f"
+        },
+        {
+          "beforeId": "ed5b917b1d684e7326d9",
+          "afterId": "6a42e1dbe625c387daee",
+          "enclosing": "migrateLegacyProviderKey",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "02bcd9af68c7c3ac2c1e",
+          "afterId": "f7171c690025f6a4bdde",
+          "enclosing": "migrateLegacyProviderKey",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3",
+          "unchangedFunctionSha256": "7c69bc474f60992c53acec0a625f03c9debd9581f1ef1cee76deca5dd6d73759"
+        },
+        {
+          "beforeId": "b5dbe13cb2b6b496c93a",
+          "afterId": "88c53c3d219aa201d578",
+          "enclosing": "migrateLegacyProviderKey",
+          "kind": "RPC_CANDIDATE",
+          "target": "migrate_provider_key_to_vault",
+          "callSha256": "5053a5dd15a817d8f5cecf377c6e67d4dbfcdb5c059102ab3a2768ad6a2affa2"
+        },
+        {
+          "beforeId": "e0456ce0f2abfa813fb5",
+          "afterId": "dc1960ee19b048e0649c",
+          "enclosing": "migrateLegacyProviderKey",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3",
+          "unchangedFunctionSha256": "7c69bc474f60992c53acec0a625f03c9debd9581f1ef1cee76deca5dd6d73759"
+        },
+        {
+          "beforeId": "2604632d4df816296c98",
+          "afterId": "5f84595697b6399ed442",
+          "enclosing": "listUserProviderKeys",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "90411ad954f04510350e",
+          "afterId": "30d93bb175651c6091b1",
+          "enclosing": "listUserProviderKeys",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+        },
+        {
+          "beforeId": "4d24d57fe7012dc5dd75",
+          "afterId": "6021c31eedb4e0085d2b",
+          "enclosing": "deleteUserProviderKey",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "c14b11328e9369fa6e7f",
+          "afterId": "c36354753e5d659f1133",
+          "enclosing": "deleteUserProviderKey",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3"
+        },
+        {
+          "beforeId": "c06d3f691fef0e9a9320",
+          "afterId": "fe37d49899df3732b5cc",
+          "enclosing": "listCustomRowsForRevocation",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "d235d34aeef6e920a127",
+          "afterId": "ef2d01aaa4ae1572ad53",
+          "enclosing": "listCustomRowsForRevocation",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "b94e72286c62046ffefd657e13cf7eacad44fdae14e858a6599a365160898e73"
+        },
+        {
+          "beforeId": "8716b1816d340d8ef220",
+          "afterId": "36190833aa1b3b96e8ee",
+          "enclosing": "revokeProviderRow",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "b4fad07683df7604b45b",
+          "afterId": "726ceac5ed6ed44f0821",
+          "enclosing": "revokeProviderRow",
+          "kind": "RPC_CANDIDATE",
+          "target": "revoke_provider_key",
+          "callSha256": "ef6e25fd3ade4193a9e1f2a5e767d5705be00527b73f953059f8ba70f72b7122"
+        },
+        {
+          "beforeId": "1ba202fc5a6dd57faf27",
+          "afterId": "cac7d32579dae1ccf84c",
+          "enclosing": "revokeProviderRow",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "b94e72286c62046ffefd657e13cf7eacad44fdae14e858a6599a365160898e73"
+        },
+        {
+          "beforeId": "22b15fbd9a04f1c32cb6",
+          "afterId": "a497ca44a05b78d07e6c",
+          "enclosing": "getUserProviderKey",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "c10dcb70902c0260de04",
+          "afterId": "977606a7b1f57d55adb2",
+          "enclosing": "getUserProviderKey",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "09371b515df625b7c63bf6b86cd14fa6926d089b6420ba5bfea15d668b22ab63"
+        },
+        {
+          "beforeId": "d402557729d7b229c33f",
+          "afterId": "4c3d52cdd8d4da245c3a",
+          "enclosing": "getUserProviderKey",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+        },
+        {
+          "beforeId": "14b09354c0efcdc2fdbf",
+          "afterId": "fa50fc7afb1cc2af0bfe",
+          "enclosing": "resolveProviderEnvForDeploy",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "88d220a299b3576a5c37",
+          "afterId": "aa227a13e3f851a147cb",
+          "enclosing": "resolveProviderEnvForDeploy",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+        },
+        {
+          "beforeId": "8d454ae0583ff0b8a697",
+          "afterId": "b8a2f76b780dc05a1342",
+          "enclosing": "snapshotSupabaseRows",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "e4b3729dbce70a455196",
+          "afterId": "bf70a476decc73712608",
+          "enclosing": "snapshotSupabaseRows",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "callSha256": "a1fdd17b3ec1147a0bc3e6d245a27ae62e3970a768356688434d26535a9c7e25"
+        },
+        {
+          "beforeId": "e17cae98899a7ed70612",
+          "afterId": "fc6a606bde6698305460",
+          "enclosing": "snapshotSupabaseRows",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "e9ecb899da99ce8e0edb37681c43ec4502215e3ad669b1afdb07b9cd9ba20901"
+        },
+        {
+          "beforeId": "37a3830ff80942ec3e00",
+          "afterId": "a48ccd229f5da7688e01",
+          "enclosing": "legacyJwtMatches",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "7b6b803acaec1bdcac992791883cb9fc7e75155ecbae1608196512fba26958e1"
+        },
+        {
+          "beforeId": "f59d11df4719c567f3ba",
+          "afterId": "ff2f67e37627c078ddb6",
+          "enclosing": "saveSupabaseBundle",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "feb5a3e74d32a7765073ba9bed140aff89727ab2135feaa492e610610784f90d"
+        },
+        {
+          "beforeId": "2ee5ca9468b0a47bc429",
+          "afterId": "dda425f65c86b04927bd",
+          "enclosing": "saveSupabaseBundle",
+          "kind": "RPC_CANDIDATE",
+          "target": "save_supabase_bundle_if_current",
+          "callSha256": "e39718a863e75ab96cda1c3eb9f1eb1a29fbb09db40be3a53a94a77c483de204"
+        },
+        {
+          "beforeId": "f1c0b859e956f853f600",
+          "afterId": "00a5b7095a4b9bb8d860",
+          "enclosing": "saveSupabaseBundle",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "30f1b688a8b8ec4f22c0",
+          "afterId": "21bfc5f4b895f0031a37",
+          "enclosing": "connectUserSupabase",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "callSha256": "feb5a3e74d32a7765073ba9bed140aff89727ab2135feaa492e610610784f90d"
+        }
+      ]
+    }
+  ],
+  "reviewedSourceCallsOnly": "Unchanged call expressions map by kind, target and enclosing function. Duplicate expressions require an unchanged whole function. All new calls and function-level security obligations remain separate. Nested historical receipts are preserved.",
+  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3"
+}

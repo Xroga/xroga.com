@@ -1,0 +1,284 @@
+TAP version 13
+# Subtest: CWS exact approval, current source and target receipts gate upload, publish and status
+    # Subtest: ok
+    ok 1 - ok
+      ---
+      duration_ms: 245.3864
+      type: 'test'
+      ...
+    # Subtest: restart
+    ok 2 - restart
+      ---
+      duration_ms: 73.3885
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 3 - concurrent
+      ---
+      duration_ms: 63.3676
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 4 - cancelled
+      ---
+      duration_ms: 14.7298
+      type: 'test'
+      ...
+    # Subtest: foreign-project
+    ok 5 - foreign-project
+      ---
+      duration_ms: 32.8119
+      type: 'test'
+      ...
+    # Subtest: file-changed
+    ok 6 - file-changed
+      ---
+      duration_ms: 29.3795
+      type: 'test'
+      ...
+    # Subtest: file-at-audit
+    ok 7 - file-at-audit
+      ---
+      duration_ms: 36.4229
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 8 - audit-fail
+      ---
+      duration_ms: 45.8834
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 9 - cancel-at-audit
+      ---
+      duration_ms: 38.3845
+      type: 'test'
+      ...
+    # Subtest: cancel-at-claim
+    ok 10 - cancel-at-claim
+      ---
+      duration_ms: 43.9099
+      type: 'test'
+      ...
+    # Subtest: cancel-after-claim
+    ok 11 - cancel-after-claim
+      ---
+      duration_ms: 43.1707
+      type: 'test'
+      ...
+    # Subtest: expire-after-claim
+    ok 12 - expire-after-claim
+      ---
+      duration_ms: 31.2226
+      type: 'test'
+      ...
+    # Subtest: connection-before-confirm
+    ok 13 - connection-before-confirm
+      ---
+      duration_ms: 18.7106
+      type: 'test'
+      ...
+    # Subtest: connection-at-audit
+    ok 14 - connection-at-audit
+      ---
+      duration_ms: 40.1656
+      type: 'test'
+      ...
+    # Subtest: foreign-account
+    not ok 15 - foreign-account
+      ---
+      duration_ms: 54.3626
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\chromeWebStore.authority.test.ts:1:5724'
+      failureType: 'testCodeFailure'
+      error: 'Missing expected rejection.'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      stack: |-
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\chromeWebStore.authority.test.ts:81:4)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\chromeWebStore.authority.test.ts:58:644)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: changed-target
+    ok 16 - changed-target
+      ---
+      duration_ms: 32.9606
+      type: 'test'
+      ...
+    # Subtest: changed-artifact
+    ok 17 - changed-artifact
+      ---
+      duration_ms: 25.0486
+      type: 'test'
+      ...
+    # Subtest: changed-expiry
+    ok 18 - changed-expiry
+      ---
+      duration_ms: 21.5712
+      type: 'test'
+      ...
+    # Subtest: changed-proof
+    ok 19 - changed-proof
+      ---
+      duration_ms: 26.9729
+      type: 'test'
+      ...
+    # Subtest: empty
+    ok 20 - empty
+      ---
+      duration_ms: 62.8102
+      type: 'test'
+      ...
+    # Subtest: null
+    ok 21 - null
+      ---
+      duration_ms: 54.8
+      type: 'test'
+      ...
+    # Subtest: foreign
+    ok 22 - foreign
+      ---
+      duration_ms: 60.4276
+      type: 'test'
+      ...
+    # Subtest: pending
+    ok 23 - pending
+      ---
+      duration_ms: 104.3578
+      type: 'test'
+      ...
+    # Subtest: failed
+    ok 24 - failed
+      ---
+      duration_ms: 82.5761
+      type: 'test'
+      ...
+    # Subtest: oauth
+    ok 25 - oauth
+      ---
+      duration_ms: 48.2589
+      type: 'test'
+      ...
+    # Subtest: token403
+    ok 26 - token403
+      ---
+      duration_ms: 60.3942
+      type: 'test'
+      ...
+    # Subtest: token-redirect
+    ok 27 - token-redirect
+      ---
+      duration_ms: 47.5468
+      type: 'test'
+      ...
+    # Subtest: revoke-at-refresh
+    ok 28 - revoke-at-refresh
+      ---
+      duration_ms: 48.519
+      type: 'test'
+      ...
+    # Subtest: owner-at-refresh
+    ok 29 - owner-at-refresh
+      ---
+      duration_ms: 42.2057
+      type: 'test'
+      ...
+    # Subtest: cancel-at-refresh
+    ok 30 - cancel-at-refresh
+      ---
+      duration_ms: 53.984
+      type: 'test'
+      ...
+    # Subtest: upload403
+    ok 31 - upload403
+      ---
+      duration_ms: 87.5404
+      type: 'test'
+      ...
+    # Subtest: upload503
+    ok 32 - upload503
+      ---
+      duration_ms: 92.2987
+      type: 'test'
+      ...
+    # Subtest: upload-redirect
+    ok 33 - upload-redirect
+      ---
+      duration_ms: 75.4123
+      type: 'test'
+      ...
+    # Subtest: oversize
+    ok 34 - oversize
+      ---
+      duration_ms: 45.7701
+      type: 'test'
+      ...
+    # Subtest: cancel-at-upload
+    ok 35 - cancel-at-upload
+      ---
+      duration_ms: 48.0726
+      type: 'test'
+      ...
+    # Subtest: revoke-at-upload
+    ok 36 - revoke-at-upload
+      ---
+      duration_ms: 48.3568
+      type: 'test'
+      ...
+    # Subtest: bad-publish
+    ok 37 - bad-publish
+      ---
+      duration_ms: 74.8643
+      type: 'test'
+      ...
+    # Subtest: publish403
+    ok 38 - publish403
+      ---
+      duration_ms: 72.1897
+      type: 'test'
+      ...
+    # Subtest: derived-token-in-source
+    ok 39 - derived-token-in-source
+      ---
+      duration_ms: 60.4316
+      type: 'test'
+      ...
+    # Subtest: ok-after-outage
+    ok 40 - ok-after-outage
+      ---
+      duration_ms: 90.8638
+      type: 'test'
+      ...
+    # Subtest: owned status preserves exact receipt validation without publication
+    ok 41 - owned status preserves exact receipt validation without publication
+      ---
+      duration_ms: 70.2545
+      type: 'test'
+      ...
+    # Subtest: held connected secrets cannot enter a compressed artifact
+    ok 42 - held connected secrets cannot enter a compressed artifact
+      ---
+      duration_ms: 15.3353
+      type: 'test'
+      ...
+    1..42
+not ok 1 - CWS exact approval, current source and target receipts gate upload, publish and status
+  ---
+  duration_ms: 2378.5174
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\chromeWebStore.authority.test.ts:1:777'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 43
+# suites 0
+# pass 41
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4922.1447

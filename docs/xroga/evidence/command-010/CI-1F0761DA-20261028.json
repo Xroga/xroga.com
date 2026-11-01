@@ -1,0 +1,58 @@
+{
+  "source": "1f0761daa88420e5ef00d98e99135cd542915188",
+  "result": "SIX_PASS_ONE_GENERATED_REGISTER_PREFLIGHT_FAILURE",
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40677656094,
+      "name": "Xroga golden acceptance harness",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40677656094"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40677656091,
+      "name": "Growth technical publishing",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40677656091"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40677656109,
+      "name": "Xroga mission operating policy",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40677656109"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40677655999,
+      "name": "Xroga tenant security fixtures",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40677655999"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40677655986,
+      "name": "Command 4 authority distribution",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40677655986"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 40677656058,
+      "name": "Unit tests",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40677656058"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40677655973,
+      "name": "Agent V2 dependency lock",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40677655973"
+    }
+  ],
+  "cause": "Unit and integrated preflight stopped before expensive regression. Phase2 closure ledger included a hash of the changed credential revision test and had not been regenerated.",
+  "correction": "Original phase-two.mjs --write, current source-bound unchanged-readiness proof and original integrity checks. No gate weakened or skipped.",
+  "phase4Accepted": false
+}

@@ -24,6 +24,18 @@ interface QueueDependencies {
   quota:(context:TenantContext)=>Promise<unknown>;
   pollMs?:number;
 }
+/** Admission without an HTTP response: quota, durable enqueue and dispatch. A failed dispatch is retried by the named outbox sweep. */
+export async function admitGoogleRun(context:TenantContext,runId:string,input:CanonicalQueuedInput,fixtures?:Pick<QueueDependencies,'store'|'transport'|'quota'>):Promise<{runId:string;dispatched:boolean}>{
+  requireTenantContext(context);
+  const dependencies=fixtures??(()=>{const c=googleDispatchConfiguration();return{store:new GoogleDeliveryStore(c),transport:new GoogleCanonicalDispatch(c),
+    quota:(actor:TenantContext)=>assertHasQuota(requireTenantContext(actor).userId)};})();
+  await dependencies.quota(context);
+  const deliveryId=await dependencies.store.enqueue(context,runId,input);
+  let dispatched=false;
+  try{await dependencies.transport.enqueue(deliveryId);dispatched=true;}catch{/* the outbox sweep retries delivery only */}
+  return{runId,dispatched};
+}
+
 export async function enqueueGoogleSwarm(req:Request,res:Response,context:TenantContext,runId:string,input:CanonicalQueuedInput,stream:boolean,fixtures?:QueueDependencies){
   requireTenantContext(context);
   const dependencies:QueueDependencies=fixtures??(()=>{const c=googleDispatchConfiguration();return{store:new GoogleDeliveryStore(c),transport:new GoogleCanonicalDispatch(c),read:getRunAsync,

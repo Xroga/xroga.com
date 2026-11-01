@@ -1,0 +1,57 @@
+{
+  "source": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+  "result": "SEVEN_WORKFLOWS_PASS",
+  "observedAt": "2026-10-28T10:49:07.223Z",
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40667339906,
+      "headSha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+      "status": "completed",
+      "workflowName": "Xroga mission operating policy"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40667339942,
+      "headSha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+      "status": "completed",
+      "workflowName": "Command 4 authority distribution"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40667339938,
+      "headSha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+      "status": "completed",
+      "workflowName": "Xroga tenant security fixtures"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40667340052,
+      "headSha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+      "status": "completed",
+      "workflowName": "Unit tests"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40667340124,
+      "headSha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+      "status": "completed",
+      "workflowName": "Agent V2 dependency lock"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40667339987,
+      "headSha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+      "status": "completed",
+      "workflowName": "Growth technical publishing"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40667340155,
+      "headSha": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+      "status": "completed",
+      "workflowName": "Xroga golden acceptance harness"
+    }
+  ],
+  "scope": "Preceding owned Expo store-readiness checkpoint, not new workflow source or Phase4 acceptance"
+}

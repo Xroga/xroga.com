@@ -1,3 +1,5 @@
+import {isTerminalModelFailure} from '../ai/providerRuntime.js';
+import type {TenantContext} from '../security/tenantContext.js';
 import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { getUsage, usageToTokenUsage } from '../ai/quota.js';
@@ -58,16 +60,16 @@ export function connectionStatusTarget(message: string): string | null {
   return target.length >= 2 && target.length <= 60 ? target : null;
 }
 
-async function connectionStatusResponse(userId: string, target: string): Promise<string> {
+async function connectionStatusResponse(userId: string, target: string,tenantContext:TenantContext): Promise<string> {
   if (!isComposioConfigured()) {
     return 'Xroga Connect is not configured on this server, so I cannot verify app connections right now.';
   }
 
-  const session = await createReadOnlyComposioSession(userId);
+  const session = await createReadOnlyComposioSession(userId,tenantContext);
   const connected = await listConnectedComposioToolkits(userId, {
     sessionId: session.session_id,
     mode: 'read',
-  });
+  },tenantContext);
   const names = connected.map((item) => ({
     normalized: item.toolkit.toLowerCase().replace(/[^a-z0-9]/g, ''),
     name: displayToolkitName(item.toolkit),
@@ -87,7 +89,7 @@ async function connectionStatusResponse(userId: string, target: string): Promise
 }
 
 /** Connection requests must not require an already-authorized action tool. */
-async function connectionRequestResponse(userId: string, message: string, terms: string[]): Promise<string> {
+async function connectionRequestResponse(userId: string, message: string, terms: string[],tenantContext:TenantContext): Promise<string> {
   if (!isComposioConfigured()) {
     return 'Xroga Connect is not configured on this server, so I cannot start app authorization yet. [Browse Plugins](/dashboard/integrations) once it is available.';
   }
@@ -103,20 +105,21 @@ async function connectionRequestResponse(userId: string, message: string, terms:
   for (const term of terms) {
     if (!/^[a-z][a-z0-9_-]{1,59}$/.test(term)) continue;
     try {
-      const item = await getComposioCatalogToolkit(term);
+      const item = await getComposioCatalogToolkit(term,tenantContext);
       if (!item.deprecated && canUserAccessComposioToolkit(userId, item.slug)) {
         possible.set(item.slug, { toolkit: item.slug, name: item.name, description: item.description, logo: item.logo, recommended: true });
         exact = item.slug;
         break;
       }
-    } catch {
+    } catch(error) {
+      if(isTerminalModelFailure(error))throw error;
       // An unrecognized slug can still match the provider's name/description
       // search; do not present an unverified catalog candidate.
     }
   }
   if (!exact) {
     for (const term of terms) {
-      const page = await listComposioCatalog({ search: term, limit: 100 });
+      const page = await listComposioCatalog({ search: term, limit: 100 },tenantContext);
       const normalized = term.replace(/[^a-z0-9]/g, '');
       for (const item of page.items) {
         if (item.deprecated || !canUserAccessComposioToolkit(userId, item.slug)) continue;
@@ -139,12 +142,13 @@ async function connectionRequestResponse(userId: string, message: string, terms:
   candidates[0]!.recommended = true;
 
   try {
-    const session = await createReadOnlyComposioSession(userId);
-    const connected = await listConnectedComposioToolkits(userId, { sessionId: session.session_id, mode: 'read', toolkits: candidates.map((item) => item.toolkit) });
+    const session = await createReadOnlyComposioSession(userId,tenantContext);
+    const connected = await listConnectedComposioToolkits(userId, { sessionId: session.session_id, mode: 'read', toolkits: candidates.map((item) => item.toolkit) },tenantContext);
     if (candidates.length === 1 && connected.some((item) => item.connected && item.toolkit.toLowerCase() === candidates[0]!.toolkit)) {
       return `${candidates[0]!.name} is already connected. [Set up a connected-app automation](/dashboard/automations#scheduled-tasks), or tell Xroga the exact email you want sent.`;
     }
-  } catch {
+  } catch(error) {
+    if(isTerminalModelFailure(error))throw error;
     // Catalog identity is enough to offer authorization; the click performs
     // a fresh authenticated session check and may report an upstream outage.
   }
@@ -203,8 +207,8 @@ router.post('/plan', async (req: AuthRequest, res, next) => {
     const actor = requireTenantContext(req.tenantContext);
     if (actor.userId !== req.userId) return res.status(403).json({ error: 'Connection scope is unavailable.' });
     const response = statusTarget
-      ? await connectionStatusResponse(actor.userId, statusTarget)
-      : await connectionRequestResponse(actor.userId, message, connectTerms!);
+      ? await connectionStatusResponse(actor.userId, statusTarget,actor)
+      : await connectionRequestResponse(actor.userId, message, connectTerms!,actor);
     return res.json(await makeConnectionStatusPlan(actor.userId, message, response));
   } catch {
     return res.status(503).json({ error: 'Xroga could not verify or prepare this app connection. No action was executed.' });

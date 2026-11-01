@@ -1,0 +1,43 @@
+{
+  "scope": "ONLY_SHARED_NATIVE_RELEASE_CALLER_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "c855b541f4803c656ece900f6e1648c23e321c3e",
+  "resolved": [
+    "99ec2dc4769b5eced6a5"
+  ],
+  "counts": {
+    "total": 137,
+    "reviewed": 136,
+    "pending": 1,
+    "unresolvedHighRiskBypasses": 0
+  },
+  "focusedRegression": "94_PASS",
+  "finalWorkflowChecks": "18_PASS",
+  "backendTypes": "PASS",
+  "frontendTypes": "UNCHANGED_FROM_3BF0586C_PASS",
+  "integrity": "10_PASS",
+  "receipts": [
+    {
+      "label": "integrity10",
+      "job": "4ce9db16-5cc4-49ff-a75d-5af8e6cd9fb9",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-integrity10-20261028.log.gz",
+      "sha256": "419364e992c4ce9c78221fd030b79f78cbd495dfae493d9677b56b0da4ae7e72"
+    },
+    {
+      "label": "originalStrictAudit",
+      "job": "61eefa31-c20d-466e-918a-5e5a8892bdd1",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/desktop-workflow-originalStrictAudit-20261028.log.gz",
+      "sha256": "1f897a0065000552be058d93de7b970b71769e7d92c94c61f273c621292948ed"
+    }
+  ],
+  "strictAudit": "FAIL_INCOMPLETE_ONE_MANDATORY_GITHUB_CALLER",
+  "formalAcceptedCriteria": 0,
+  "totalCriteria": 12,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spend": 0,
+  "next": [
+    "90eeada0337da120131f"
+  ]
+}

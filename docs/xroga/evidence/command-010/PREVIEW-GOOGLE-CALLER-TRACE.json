@@ -1,0 +1,117 @@
+{
+  "scope": "SIX_OWNED_PREVIEW_TRANSPORT_CALLERS_ONLY_NOT_PHASE4_ACCEPTANCE",
+  "atUtc": "2026-10-27T12:55:52.042116+00:00",
+  "sourceFile": "backend/src/middleware/runtimePreviewGateway.ts",
+  "sourceFileSha256": "e77261c31101ceadbe7ed0833b0afa69e9e2a16d79491daf62ead41c312f755f",
+  "callers": [
+    {
+      "id": "7359a41f4a615f5b0a81",
+      "entryPoint": "proxyHttp",
+      "callee": "httpRequest",
+      "callSha256": "56af3480d4d600a32d241486f677ae65815a7379459eafd35d99b3806ac93451",
+      "sourceReason": "HTTP request uses only the admitted owned worker target and origin-form path. API cookies, bearer keys and arbitrary headers are excluded. Redirects cannot select another destination. Parent-cookie response attributes and Clear-Site-Data are constrained.",
+      "beforeResponseCookieRepairCallSha256": "1134932cbe38fa8f37b787e832c53884095ed4986da9028502aa6cb54470c497"
+    },
+    {
+      "id": "a0ba7209a0695a62227d",
+      "entryPoint": "attachRuntimePreviewWebSocketGateway",
+      "callee": "WebSocket",
+      "callSha256": "9e4955a3395208a6831c323448dfc8b534461274e36c2deb81e0220a5df5d6a1",
+      "sourceReason": "WebSocket constructor with requested subprotocols uses only the already admitted fixed worker host/port and origin-form path, with fixed safe headers and no API credentials."
+    },
+    {
+      "id": "7b7f1f842cfadda3dff0",
+      "entryPoint": "attachRuntimePreviewWebSocketGateway",
+      "callee": "WebSocket",
+      "callSha256": "ccca84d5508a71f8da2aa96ab3a3755855e3a8b0097cfa74bfb7aa1a8ac2d0f8",
+      "sourceReason": "WebSocket constructor without subprotocols uses the same admitted private worker and fixed headers, never a request-selected URL authority."
+    },
+    {
+      "id": "165aca6677bb45e4a237",
+      "entryPoint": "attachRuntimePreviewWebSocketGateway",
+      "callee": "upstream.send",
+      "callSha256": "8c824695d70b06775816e7c1e27fe63b6f95398bc8f2e94cf0926be11c1817e7",
+      "sourceReason": "Immediate upstream send is serialized behind current grant revalidation, with bounded queued bytes, and cannot reconnect or retry after denial."
+    },
+    {
+      "id": "716a373b546de2ebcbd5",
+      "entryPoint": "attachRuntimePreviewWebSocketGateway",
+      "callee": "upstream.send",
+      "callSha256": "dc4fa376f515af9cdebdb3a3a5350299a648b948c772604c1d2729fdca9dbdea",
+      "sourceReason": "Buffered upstream flush revalidates the same admission before draining bounded frames into the existing socket."
+    },
+    {
+      "id": "44f081144b3e1b3d20cb",
+      "entryPoint": "attachRuntimePreviewWebSocketGateway",
+      "callee": "client.send",
+      "callSha256": "d3ea6de8669bb78bf36f4227fde1a5199f9cb0398afaf6c03f37c362ae6d8c74",
+      "sourceReason": "Downstream send returns only data on the originally bound socket after current owner/session/grant checks, with revocation and backpressure closure."
+    }
+  ],
+  "actor": "Unforgeable signed grant plus current persisted owner/project/session/run and expiry. Initial native Google admission verifies runtime identity, immutable handle, image and private physical address. Every connection is admitted anew. Frames remain on that socket and never reconnect after denial.",
+  "ownership": "Grant and saved runtime owner, project, session, active interactive status, declared HTTP port, current revision and run must match. Caller JSON cannot supply a network address.",
+  "internalServicePolicy": "Google target is exclusively the verified execution subnet and port3000. This is an exact server-owned internal dependency, not an arbitrary URL-policy exception. Non-Google compatibility still uses the configured provider target resolver and is not selected by Google production.",
+  "credentials": "API/SSO cookies and bearer keys are stripped from upstream requests. Project responses cannot set parent Domain attributes or Clear-Site-Data. Hosted Supabase sessions use the shared __Host- key without unprefixed fallback, closing browser-script parent-cookie injection.",
+  "authorityBudget": "Existing signed runtime capability and admitted worker lifecycle are reused. No new command authority, approval system, provider reservation or billable dispatch is created by a frame. Consequential connected-app actions retain their own confirmation.",
+  "provenance": "Generated project HTML remains untrusted. It cannot mint a signed grant, substitute a saved owner or choose another private/public host.",
+  "revocation": "Expiry, stopped/changed sessions, changed grant, authority outage and denied revalidation terminate connections with no retry. Current source has one bounded watcher.",
+  "tests": {
+    "focusedTransportAndGoogleJob": "e84ad240-262d-4aae-aa96-6ed222953e76",
+    "responseHeaderAndGoogleJob": "a6191aca-db37-4fca-a286-461571d0eadf",
+    "resolverNewShapeAndAllDenialsJob": "61b3f983-0d93-4dfc-a60f-3a2ebebf057c",
+    "hostCookieUnitJob": "208b660f-b58f-4b38-b47e-51f3ba9b0a68",
+    "actualLocalTlsBrowserBefore": "58b2e086-49b6-44a6-aa0e-1b0f18171bb8",
+    "actualLocalTlsBrowserAfter": "42028a54-71d9-483c-9b71-ea1ecc1d3200",
+    "playwrightRegressionJob": "5d411134-a4f0-4a17-ba80-7224e38430a7",
+    "providerOrProductionPassClaimed": false,
+    "immutableGrantPortRegressionJob": "cd902d01-139e-4b25-9195-0572b7bc198e"
+  },
+  "evidence": [
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+      "marker": "real local HTTP and WebSocket preview transports enforce scoped targets, header separation and lifetime revocation",
+      "sha256": "047188b564c14ec810549fa29eccb74404432646c4d21cf13e352ce0948e8b5e"
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
+      "marker": "real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect",
+      "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
+      "marker": "untrusted Preview response cannot set parent-domain cookies or clear the main application cookies",
+      "sha256": "4b891cbc10afd95419cb1660ea0a4c7875feda09e579e4a76885245a0026fe11"
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+      "marker": "actual shared HTTP/WebSocket resolver binds signed grant, persisted owner/project/session, lifetime and declared target",
+      "sha256": "9e5cef05c89224e19b2662bd190f80e9d6198f45077b09e6083bc8bd65102e0b"
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/googleTarget.test.ts",
+      "marker": "Google Preview denies declared non-Preview service ports before native identity or address lookup",
+      "sha256": "85fc79554c7f2b8328cd6755c25d9bd60eb8fcd399aaa936a909b5a81f1529d7"
+    },
+    {
+      "path": "frontend/e2e/phase4-cookie-isolation.spec.ts",
+      "marker": "synthetic Preview cookie injection",
+      "sha256": "66d4d07d3ddc2639357d16487f7c48c0b150e925e4a9e95caceb9b1e1eabf25c"
+    },
+    {
+      "path": "frontend/src/lib/supabase/authCookiePolicy.test.ts",
+      "marker": "hosted Auth cookie and SDK storage key enforce host-only HTTPS session isolation",
+      "sha256": "c722ae0afa431cd21f1996b3681211afc00c7739ddcb7293c40c7dd8bdae9cd0"
+    }
+  ],
+  "releaseImpact": "Fresh sign-in required for hosted Auth cookie name change. Current production is untouched. Real disposable Auth/browser and full final-source CI remain mandatory.",
+  "specificationReferences": [
+    "https://httpwg.org/specs/rfc6265.html#attribute-domain",
+    "https://www.w3.org/TR/clear-site-data/#clear-cookies",
+    "https://supabase.com/docs/guides/auth/server-side/advanced-guide"
+  ],
+  "immutableTestCorrection": {
+    "previousSha256": "ed9242d52387b07b8cf606c2b8a5eaf6d2b7902bfbfcfedb5b248014179fdc89",
+    "currentSha256": "85fc79554c7f2b8328cd6755c25d9bd60eb8fcd399aaa936a909b5a81f1529d7",
+    "reason": "Readonly grant/session variants replace illegal field assignments. Same five denied ports and zero identity/address calls, now type-correct."
+  }
+}

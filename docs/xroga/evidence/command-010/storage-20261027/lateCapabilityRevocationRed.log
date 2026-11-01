@@ -1,0 +1,78 @@
+TAP version 13
+# Subtest: single-upload capability is not returned after ownership changes while signing
+not ok 1 - single-upload capability is not returned after ownership changes while signing
+  ---
+  duration_ms: 7.7007
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\storageCapabilityRevocation.security.test.ts:1:110'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'NOT_FOUND'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\storageCapabilityRevocation.security.test.ts:10:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: multipart capabilities are not returned after ownership changes while signing
+not ok 2 - multipart capabilities are not returned after ownership changes while signing
+  ---
+  duration_ms: 1.6791
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\storageCapabilityRevocation.security.test.ts:1:574'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'NOT_FOUND'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\storageCapabilityRevocation.security.test.ts:20:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: download capability is not returned after owner changes while signing
+not ok 3 - download capability is not returned after owner changes while signing
+  ---
+  duration_ms: 3.7872
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\storageCapabilityRevocation.security.test.ts:1:1222'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\storageCapabilityRevocation.security.test.ts:34:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: download capability is not returned after deleted changes while signing
+not ok 4 - download capability is not returned after deleted changes while signing
+  ---
+  duration_ms: 1.4654
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\storage\\storageCapabilityRevocation.security.test.ts:1:1222'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\storage\storageCapabilityRevocation.security.test.ts:34:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 0
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 404.609

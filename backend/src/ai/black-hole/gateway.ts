@@ -51,6 +51,7 @@ import { estimateTokens, type ChatMessage, type ChatResult } from '../openaiComp
 import { providerAdapter, type AdapterRequest } from './providerAdapter.js';
 import { resolveModelSpec, type ModelId } from '../models.js';
 import type { RuntimeModelCapability } from '../modelCapabilityRegistry.js';
+import { isTerminalModelFailure } from '../providerRuntime.js';
 
 export type { PublicMode } from './router.js';
 
@@ -368,7 +369,7 @@ export async function generateWith(
     } catch (error) {
       // An aborted request is the caller's decision, not a provider failure. Walking the chain
       // after a cancellation would spend budget on work already known to be unwanted.
-      if (request.signal?.aborted) throw error;
+      if (request.signal?.aborted || isTerminalModelFailure(error)) throw error;
       lastError = error;
       current = nextInChain(route, current);
     }

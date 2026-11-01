@@ -43,47 +43,49 @@ async function loadImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-/** Convert any image URL (http or data:) to a PNG blob — works for clipboard paste. */
-export async function imageUrlToPngBlob(url: string): Promise<Blob> {
-  if (url.startsWith('data:')) {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    if (blob.type === 'image/png') return blob;
-    const img = await loadImage(url);
-    return drawImageToPngBlob(img);
-  }
+const MAX_IMAGE_BYTES=16*1024*1024;
+class ImageAdmissionError extends Error {
+  constructor(){super('The image could not be retrieved safely.');this.name='ImageAdmissionError';}
+}
 
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    try {
-      const proxyRes = await fetch(`/api/image-fetch?url=${encodeURIComponent(url)}`);
-      if (proxyRes.ok) {
-        const blob = await proxyRes.blob();
-        if (blob.type === 'image/png') return blob;
-        const objUrl = URL.createObjectURL(blob);
-        try {
-          const img = await loadImage(objUrl);
-          return drawImageToPngBlob(img);
-        } finally {
-          URL.revokeObjectURL(objUrl);
-        }
+/** Remote images always enter through the canonical pinned image proxy.
+ * A proxy refusal cannot authorize another browser fetch or an Image.src load.
+ * Local data and same-origin blob capabilities remain usable for editing.
+ */
+async function admittedImageBlob(url:string):Promise<Blob>{
+  if(typeof url!=='string'||!url||url.length>24*1024*1024)throw new ImageAdmissionError();
+  let parsed:URL;try{parsed=new URL(url);}catch{throw new ImageAdmissionError();}
+  let source:string,remote=false;
+  if(parsed.protocol==='https:'||parsed.protocol==='http:'){
+    source=`/api/image-fetch?url=${encodeURIComponent(url)}`;remote=true;
+  }else if(parsed.protocol==='data:'&&/^data:image\//i.test(url))source=url;
+  else if(parsed.protocol==='blob:'&&typeof window!=='undefined'&&parsed.origin===window.location.origin)source=url;
+  else throw new ImageAdmissionError();
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),25000);
+  try{
+    const response=await fetch(source,{redirect:'error',credentials:remote?'same-origin':'omit',signal:controller.signal});
+    const type=response.headers.get('content-type')?.split(';')[0]??'';
+    if(!response.ok||response.redirected||(remote&&!/^image\/[a-z0-9.+-]+$/i.test(type))){
+      await response.body?.cancel().catch(()=>undefined);throw new ImageAdmissionError();
+    }
+    const chunks:BlobPart[]=[];let bytes=0;const reader=response.body?.getReader();
+    try{
+      if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.byteLength;
+        if(bytes>MAX_IMAGE_BYTES)throw new ImageAdmissionError();chunks.push(new Uint8Array(next.value));
       }
-    } catch {
-      /* try direct fetch below */
-    }
-  }
+    }finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    if(!bytes)throw new ImageAdmissionError();
+    return new Blob(chunks,{type});
+  }catch{throw new ImageAdmissionError();}
+  finally{clearTimeout(timer);}
+}
 
-  try {
-    const res = await fetch(url, { mode: 'cors' });
-    if (res.ok) {
-      const blob = await res.blob();
-      if (blob.type.startsWith('image/')) return blob.type === 'image/png' ? blob : drawImageToPngBlob(await loadImage(url));
-    }
-  } catch {
-    /* fall through to canvas */
-  }
-
-  const img = await loadImage(url);
-  return drawImageToPngBlob(img);
+export async function imageUrlToPngBlob(url: string): Promise<Blob> {
+  const blob=await admittedImageBlob(url);
+  if(blob.type==='image/png')return blob;
+  const local=URL.createObjectURL(blob);
+  try{return await drawImageToPngBlob(await loadImage(local));}
+  finally{URL.revokeObjectURL(local);}
 }
 
 function drawImageToPngBlob(img: HTMLImageElement): Promise<Blob> {
@@ -102,8 +104,10 @@ export async function renderTransformedImage(
   url: string,
   transform: ImageTransform
 ): Promise<Blob | null> {
+  let local:string|undefined;
   try {
-    const img = await loadImage(url);
+    local=URL.createObjectURL(await admittedImageBlob(url));
+    const img = await loadImage(local);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
@@ -132,9 +136,10 @@ export async function renderTransformedImage(
     ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
 
     return await new Promise((resolve) => canvas.toBlob((b) => resolve(b), 'image/png'));
-  } catch {
+  } catch(error) {
+    if(error instanceof ImageAdmissionError)throw error;
     return null;
-  }
+  }finally{if(local)URL.revokeObjectURL(local);}
 }
 
 export async function downloadImage(url: string, filename = 'xroga-image.png', transform?: ImageTransform) {
@@ -149,7 +154,7 @@ export async function downloadImage(url: string, filename = 'xroga-image.png', t
     URL.revokeObjectURL(a.href);
     toast.success('Download started');
   } catch {
-    toast.error('Download failed — try opening the image in a new tab');
+    toast.error("This image couldn't be downloaded.");
   }
 }
 

@@ -271,9 +271,8 @@ test('providers appear inside the work they support, never as a wall', () => {
   for (const id of ['ahrefs', 'gbp'] as const) assert.equal(hasMark(id), false);
 });
 
-test('exactly one route into the product, plus the integrations directory', () => {
-  assert.equal((SHELL.match(/<Link /g) ?? []).length, 1);
-  assert.match(SHELL, /loggedIn \? '\/workspace' : '\/auth\/signup'/);
+test('no footer route into the product; scenes carry no hrefs', () => {
+  assert.equal((SHELL.match(/<Link /g) ?? []).length, 0);
   assert.doesNotMatch(SCENES, /href=/);
 });
 
@@ -540,4 +539,27 @@ test('the heading sequence plays once in ~3.2 s: visibility lit, three cues, a c
   // cues are hidden before the sequence only when script runs and motion is allowed; reduced motion shows the final state
   assert.match(SHELL, /setTitleReady\(!reduced\)/);
   assert.match(CSS, /\.section\[data-title-ready\]:not\(\[data-title-seen\]\) \.cue,/);
+});
+
+test('phones: Launch & Marketing is one swipe row of two panes; on larger screens the panes are the studio\'s own columns', () => {
+  const css = readFileSync(new URL('./S03.module.css', import.meta.url), 'utf8');
+  const tsx = readFileSync(new URL('./GrowthStudio.tsx', import.meta.url), 'utf8');
+  assert.match(css, /\.atelierPanes \{\s*display: contents;\s*\}/);
+  const phones = css.slice(css.indexOf('/* phones: Launch & Marketing shows one pane at a time'));
+  const rule = phones.match(/\.atelierPanes \{[^}]*\}/)?.[0] ?? '';
+  assert.match(rule, /display: flex;/);
+  assert.match(rule, /scroll-snap-type: x mandatory;/);
+  assert.match(rule, /overscroll-behavior-x: contain;/);
+  // the preview pane and the settings aside are both inside the row, in reading order
+  assert.ok(tsx.indexOf('className={s.atelierPanes}') < tsx.indexOf('className={s.atelierMain}'));
+  assert.ok(tsx.indexOf('className={s.atelierMain}') < tsx.indexOf('className={s.controls}'));
+});
+
+test('phones: social ads show one placement at a time and the crawl-map paths break at slashes, never mid-word', () => {
+  const css = readFileSync(new URL('./S03.module.css', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+  const phones = css.slice(css.indexOf('/* social ads: one placement is shown at a time'));
+  assert.match(phones, /\.feed\[data-pos='back'\],\s*\.story\[data-pos='back'\] \{[^}]*opacity: 0;/);
+  assert.match(phones, /\.feed\[data-pos='front'\],\s*\.story\[data-pos='front'\] \{[^}]*translate\(-50%, -50%\)/);
+  const health = readFileSync(new URL('./search/Health.tsx', import.meta.url), 'utf8');
+  assert.match(health, /<wbr \/>/);
 });

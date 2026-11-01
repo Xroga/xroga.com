@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
+import { authCookieOptions } from './authCookiePolicy';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getSupabasePublicConfig } from './config';
 import { isPublicPath, requiresUserLookup } from './routeAccess';
@@ -51,6 +52,7 @@ export async function updateSession(request: NextRequest) {
     config.url,
     config.publishableKey,
     {
+      cookieOptions: authCookieOptions(config.projectRef),
       cookies: {
         getAll() {
           return request.cookies.getAll();

@@ -1,0 +1,64 @@
+{
+  "scope": "THREE_UNCHANGED_PUBLISHING_RECORDS_NO_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "currentSourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "semanticReview": "Publishing transport now rejects redirects, validates finite official provider paths and bounds response bytes. Existing publishing catches preserve canonical terminal denials. No persistence expression, actor predicate, credential table or SQL changed. Exact AST expressions and statements are matched one-to-one below. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without new acceptance claims.",
+      "mapping": [
+        {
+          "previousId": "55ac9b0f3f9ba972ca8c",
+          "currentId": "660909aa15c676228c90",
+          "enclosing": "getIntegration",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "2360912af68a9536c836",
+          "currentId": "148d27d99764607b2339",
+          "enclosing": "getIntegration",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "github_integrations",
+          "unchangedExpressionSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "currentSourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "semanticReview": "Publishing transport now rejects redirects, validates finite official provider paths and bounds response bytes. Existing publishing catches preserve canonical terminal denials. No persistence expression, actor predicate, credential table or SQL changed. Exact AST expressions and statements are matched one-to-one below. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without new acceptance claims.",
+      "mapping": [
+        {
+          "previousId": "d1009c426dd9153743b7",
+          "currentId": "355f4dbeae8a416a7e42",
+          "enclosing": "fetchRepoTextFile",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/githubDeploy.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "currentSourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "semanticReview": "Publishing transport now rejects redirects, validates finite official provider paths and bounds response bytes. Existing publishing catches preserve canonical terminal denials. No persistence expression, actor predicate, credential table or SQL changed. Exact AST expressions and statements are matched one-to-one below. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without new acceptance claims.",
+      "mapping": [
+        {
+          "previousId": "ad1b1dafdbd324ceed15",
+          "currentId": "45aec3a8752cfb119062",
+          "enclosing": "decodeRepositoryTextBlob",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabasePublicConfig } from './config';
+import { authCookieOptions } from './authCookiePolicy';
 
 let browserClient: SupabaseClient | null = null;
 
@@ -10,6 +11,8 @@ export function createClient() {
   // rapid navigation, leaving authenticated mutations permanently pending.
   if (browserClient) return browserClient;
   const config = getSupabasePublicConfig();
-  browserClient = createBrowserClient(config.url, config.publishableKey);
+  browserClient = createBrowserClient(config.url, config.publishableKey, {
+    cookieOptions: authCookieOptions(config.projectRef),
+  });
   return browserClient;
 }

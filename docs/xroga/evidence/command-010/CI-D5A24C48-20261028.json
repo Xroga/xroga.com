@@ -1,0 +1,75 @@
+{
+  "source": "d5a24c4858c2a5c95c789dd75f113f9d798ad7d9",
+  "result": "SIX_PASS_ONE_FAILED",
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40675844854,
+      "name": "Command 4 authority distribution",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40675844854"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40675844737,
+      "name": "Xroga mission operating policy",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40675844737"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40675844728,
+      "name": "Agent V2 dependency lock",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40675844728"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40675844703,
+      "name": "Xroga tenant security fixtures",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40675844703"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40675844793,
+      "name": "Xroga golden acceptance harness",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40675844793"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40675844827,
+      "name": "Growth technical publishing",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40675844827"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 40675844657,
+      "name": "Unit tests",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/40675844657"
+    }
+  ],
+  "failure": {
+    "test": "BYOK save carries its admitted revision, rejects a concurrent revoke and permits a fresh reconnect",
+    "cause": "Older credential revision test called ensureExpoProjectLinked with raw userId after that interface correctly required original TenantContext. Unit and integrated runs failed at the same test.",
+    "correction": "Keep raw-user denial as an explicit negative assertion. Execute the actual link helper with an issued actor and its pre-provider CAS, revoke selection during discovery, and require no persistence. No production authorization fallback restored.",
+    "focusedJob": "56471c6c-b179-413b-acaf-4346ed2b211b",
+    "focusedPass": 2,
+    "exactSourceCi": "REQUIRED_ON_CORRECTED_COMMIT"
+  },
+  "logs": [
+    {
+      "scope": "unit",
+      "path": "docs/xroga/evidence/command-010/logs/ci-d5a24c48-unit-backend-unit-tests-20261028.log.gz",
+      "uncompressedSha256": "5cc187c7eef8da5e1e40e9abc05a5e7115942d6410954d964072cc8896378a47"
+    },
+    {
+      "scope": "integrated",
+      "path": "docs/xroga/evidence/command-010/logs/ci-d5a24c48-integrated-backend-unit-tests-20261028.log.gz",
+      "uncompressedSha256": "781e56cd6e1d25198f99e84800061831f23aa36b125cd0d68069d7da77886433"
+    }
+  ]
+}

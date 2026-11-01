@@ -1,0 +1,25 @@
+TAP version 13
+# Subtest: actual pipeline stops native dispatch and the other store path after required Expo configuration denial
+not ok 1 - actual pipeline stops native dispatch and the other store path after required Expo configuration denial
+  ---
+  duration_ms: 71.6761
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\ai\\expoStoreDenial.security.test.ts:1:328'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\ai\expoStoreDenial.security.test.ts:22:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 883.5643

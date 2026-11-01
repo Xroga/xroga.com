@@ -1,0 +1,170 @@
+TAP version 13
+# Subtest: permit context access returns only the original issued actor within its exact unused lifetime
+ok 1 - permit context access returns only the original issued actor within its exact unused lifetime
+  ---
+  duration_ms: 13.6866
+  type: 'test'
+  ...
+# Subtest: canonical executor dispatches only an exact issued actor and durable adapter claim, once
+ok 2 - canonical executor dispatches only an exact issued actor and durable adapter claim, once
+  ---
+  duration_ms: 2.4476
+  type: 'test'
+  ...
+# Subtest: boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+ok 3 - boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+  ---
+  duration_ms: 6.3676
+  type: 'test'
+  ...
+# Subtest: expiry, revocation and substituted durable receipt after a wait fail before effect
+ok 4 - expiry, revocation and substituted durable receipt after a wait fail before effect
+  ---
+  duration_ms: 6.9481
+  type: 'test'
+  ...
+# Subtest: all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+ok 5 - all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+  ---
+  duration_ms: 13.9301
+  type: 'test'
+  ...
+# (node:43988) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: vertical slice denies synthetic credential, malicious document and redirect destination before any effect, receipt redacted
+ok 6 - vertical slice denies synthetic credential, malicious document and redirect destination before any effect, receipt redacted
+  ---
+  duration_ms: 22.4324
+  type: 'test'
+  ...
+# Subtest: legitimate exact provider action keeps canonical authority, account and durable revalidation
+ok 7 - legitimate exact provider action keeps canonical authority, account and durable revalidation
+  ---
+  duration_ms: 19.3199
+  type: 'test'
+  ...
+# Subtest: all untrusted provenances and malicious MCP metadata cannot mint authority
+ok 8 - all untrusted provenances and malicious MCP metadata cannot mint authority
+  ---
+  duration_ms: 16.905
+  type: 'test'
+  ...
+# Subtest: foreign file ownership, provider account switching, recipient/payload mutation and credential fields deny
+ok 9 - foreign file ownership, provider account switching, recipient/payload mutation and credential fields deny
+  ---
+  duration_ms: 11.5302
+  type: 'test'
+  ...
+# Subtest: receipt failure or timeout never reaches an effect, and revocation after receipt is still enforced
+ok 10 - receipt failure or timeout never reaches an effect, and revocation after receipt is still enforced
+  ---
+  duration_ms: 14.3227
+  type: 'test'
+  ...
+# Subtest: public research succeeds but redirect-to-private and rebinding never open a private connection
+ok 11 - public research succeeds but redirect-to-private and rebinding never open a private connection
+  ---
+  duration_ms: 14.6122
+  type: 'test'
+  ...
+# Subtest: raw user ID cannot create checkout or read provider plan without issued approval
+ok 12 - raw user ID cannot create checkout or read provider plan without issued approval
+  ---
+  duration_ms: 76.2996
+  type: 'test'
+  ...
+# Subtest: original request display requires a digest-verified scoped plan and preserves redacted approval metadata
+ok 13 - original request display requires a digest-verified scoped plan and preserves redacted approval metadata
+  ---
+  duration_ms: 61.0771
+  type: 'test'
+  ...
+# Subtest: existing action digest binds exact display, target, arguments, session and authority metadata
+ok 14 - existing action digest binds exact display, target, arguments, session and authority metadata
+  ---
+  duration_ms: 11.5634
+  type: 'test'
+  ...
+# Subtest: old summary-unbound digests and unsafe cyclic or prototype arguments fail closed
+ok 15 - old summary-unbound digests and unsafe cyclic or prototype arguments fail closed
+  ---
+  duration_ms: 0.7712
+  type: 'test'
+  ...
+# Subtest: metadata waits cannot change the admitted actor plan or confirmation authority
+ok 16 - metadata waits cannot change the admitted actor plan or confirmation authority
+  ---
+  duration_ms: 23.0869
+  type: 'test'
+  ...
+# Subtest: metadata for a different same-toolkit action is rejected before policy or execution
+ok 17 - metadata for a different same-toolkit action is rejected before policy or execution
+  ---
+  duration_ms: 3.5446
+  type: 'test'
+  ...
+# [pluginPermissionPolicy] authoritative policy unavailable
+# [pluginPermissionPolicy] authoritative policy unavailable
+# Subtest: current plugin policy promotes routine writes to digest-bound pending confirmations without executing
+ok 18 - current plugin policy promotes routine writes to digest-bound pending confirmations without executing
+  ---
+  duration_ms: 14078.928
+  type: 'test'
+  ...
+# Subtest: financial connected-app mutations require confirmation regardless of permission mode
+ok 19 - financial connected-app mutations require confirmation regardless of permission mode
+  ---
+  duration_ms: 3.727
+  type: 'test'
+  ...
+# Subtest: full access never bypasses confirmation for a crypto swap
+ok 20 - full access never bypasses confirmation for a crypto swap
+  ---
+  duration_ms: 0.5407
+  type: 'test'
+  ...
+# Subtest: permission preferences cannot waive a prepared approval or current consequential risk
+ok 21 - permission preferences cannot waive a prepared approval or current consequential risk
+  ---
+  duration_ms: 0.5241
+  type: 'test'
+  ...
+# Subtest: dependent business evidence requires explicit review before discovery or model dispatch
+ok 22 - dependent business evidence requires explicit review before discovery or model dispatch
+  ---
+  duration_ms: 9.7261
+  type: 'test'
+  ...
+# Subtest: explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+ok 23 - explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+  ---
+  duration_ms: 124.2319
+  type: 'test'
+  ...
+# Subtest: actual business selectors preserve invalid reservation denial before trying another model
+ok 24 - actual business selectors preserve invalid reservation denial before trying another model
+  ---
+  duration_ms: 14.5582
+  type: 'test'
+  ...
+# Subtest: actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+ok 25 - actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+  ---
+  duration_ms: 122.7212
+  type: 'test'
+  ...
+# Subtest: business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+ok 26 - business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+  ---
+  duration_ms: 992.2131
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17423.2886

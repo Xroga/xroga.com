@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: actual CWS manual connection pins credential write admission before Google validation
+    # Subtest: ok
+    not ok 1 - ok
+      ---
+      duration_ms: 622.6697
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\cwsCredentialAdmission.security.test.ts:1:2530'
+      failureType: 'testCodeFailure'
+      error: |-
+        The current revision must be captured before provider I/O
+        + actual - expected
+
+        + 'google'
+        - 'prepare'
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'prepare'
+      actual: 'google'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\cwsCredentialAdmission.security.test.ts:29:10)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\cwsCredentialAdmission.security.test.ts:25:30)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: revoke
+    not ok 2 - revoke
+      ---
+      duration_ms: 26.8727
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\cwsCredentialAdmission.security.test.ts:1:2530'
+      failureType: 'testCodeFailure'
+      error: |-
+        The current revision must be captured before provider I/O
+        + actual - expected
+
+        + 'google'
+        - 'prepare'
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'prepare'
+      actual: 'google'
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\cwsCredentialAdmission.security.test.ts:29:10)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\routes\cwsCredentialAdmission.security.test.ts:25:30)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..2
+not ok 1 - actual CWS manual connection pins credential write admission before Google validation
+  ---
+  duration_ms: 673.5288
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\routes\\cwsCredentialAdmission.security.test.ts:1:364'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10012.2254

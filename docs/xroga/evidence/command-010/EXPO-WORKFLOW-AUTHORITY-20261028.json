@@ -1,0 +1,336 @@
+{
+  "scope": "EXACT_EXPO_APP_METADATA_CREATION_AND_IMMUTABLE_SOURCE_WORKFLOW_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+  "parent": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+  "resolvedCandidateIds": [
+    "602637659fcacb16c1ef"
+  ],
+  "amendedReviewedCandidateIds": [
+    "42cc7885da84d7295699"
+  ],
+  "path": "Original issued actor -> owned canonical Expo and selected-project row epochs -> authenticated exact provider account/project/repository -> original local Xroga project ownership -> canonical GitHub connection and immutable commit -> complete bounded Git source inspection -> existing durable confirmation and full unsigned-plan managed-vault attestation -> genuine current one-use permit -> repeat owned-source and provider target/store checks across audit and claim waits -> original central private-data egress decision and safe audit -> one exact app mutation or immutable-commit workflow dispatch -> exact provider project/run/source receipt -> durable canonical finish. No model tool description or serialized approval token is authority.",
+  "defectsFixed": [
+    "Raw owner IDs and fabricated contexts could retrieve credentials and dispatch or create remote apps without exact canonical approval.",
+    "Manual Expo validation captured its save revision after provider I/O, allowing concurrent disconnect resurrection.",
+    "Saved or explicit Expo IDs were accepted without current authenticated account/project access, and creation selected the first account.",
+    "Provider errors containing not-found text could trigger a second build-only request, including after authorization denial.",
+    "Mutable branch dispatch and uninspected repository source lacked exact immutable-source, tenant/project and credential-material binding.",
+    "App owner/store configuration could change during the audit wait and still reach dispatch in the initial local implementation.",
+    "Malformed GraphQL error shapes could be ignored. Transport and stream errors could expose synthetic credential canaries.",
+    "Preparation/UI treated a proposed or queued operation as a started build, and generic recent-build polling could be mistaken for a specific approved workflow result."
+  ],
+  "callerPartitions": {
+    "metadata": "All actual list, saved/default resolution, explicit linking and connection verification routes carry original actor and current credential epoch. Project linking captures existing provider-key CAS before metadata and verifies the exact provider-owned app. No first-account/project fallback. Real HTTP tests cover success, foreign project, concurrent selection revocation and token revocation.",
+    "connection": "The real /expo-token route captures the existing CAS write admission before identity verification and saves only with that admission. Current v3 custody remains unchanged. App creation preparation does not silently overwrite the saved project selection.",
+    "creation": "When no app exists and exactly one account is verified, preparation creates only a durable approval. Confirmation validates complete producer attestation and current claim before metadata, rechecks account across audit/claim waits, consumes one exact grant, performs one matching CREATE mutation and verifies returned owned project/slug. The resulting project must be explicitly linked before a build.",
+    "workflow": "Both Android/iOS and optional submission use the existing canonical executor. Bound fields include tenant, local owned project, Expo account/project/repository, full source epochs, immutable commit/tree, inspected source hash/count, exact YAML hash/name, platform, submission mode and configured public store-key identity. Confirmation re-reads and inspects the same source and checks current target/store immediately before effect. Dispatch uses the approved commit SHA, never a newly resolved branch. No missing-file, denial or uncertain-dispatch retry.",
+    "receipt": "A returned run UUID and exact account/project dashboard URL are checked against GET run details, including immutable gitCommitHash, requestedGitRef and documented finite status. Success means verified dispatch only. The result explicitly leaves build completion and store approval unverified.",
+    "uiAndPipeline": "The actual pipeline prepares an Android build review with original actor, cancellation and admitted local project. It performs no automatic credential upload, store submission, unrelated build-list polling or second-platform action. iOS and store submissions remain available as explicit Publish requests. Existing local submit confirmation is preserved and followed by the canonical exact review. Actual frontend handlers validate the local review URL and do not toast a started build or poll on preparation."
+  },
+  "sourceInspection": {
+    "existingBoundary": "requireNativeArtifactProject and inspectNativeArtifactSource are unchanged canonical owner/file checks. No new source, credential or evidence store.",
+    "limits": {
+      "treeEntries": 2000,
+      "files": 1000,
+      "rawBytes": 25165824,
+      "blobBytes": 8388608,
+      "existingSerializedFloorBytes": 33554432,
+      "readConcurrency": 4,
+      "lifetimeMs": 120000
+    },
+    "checks": [
+      "Exact owned local repository and canonical GitHub connection. Complete nontruncated immutable tree and finite regular blobs only.",
+      "Every blob validates path, size, base64 and actual Git blob object hash. Every raw blob has a SHA-256 fact included in the source digest.",
+      "Existing forbidden credential paths and secret/held-value floor inspect all source, not just workflow YAML. Binary assets retain actual raw-byte hashes.",
+      "Symlinks, submodules, Git LFS pointers, truncated/oversize sources, missing or mismatching blobs and credential material fail closed before dispatch.",
+      "No checkout, generated image, cache, persistent temporary dataset or remote provider write is created during inspection."
+    ],
+    "limitation": "This is the existing deterministic credential floor and exact source/provenance binding, not a claim of complete semantic DLP or control over arbitrary code inside an external CI provider."
+  },
+  "unchangedArchitecture": [
+    "Original central egress policy and no-raw-credential-material rule. Saved Play/Apple keys are still not uploaded, even after approval.",
+    "Existing canonical confirmation/claim/effect/finish and managed CredentialVault. No replacement scheduler, budget ledger, identity issuer, provider router or key store.",
+    "Existing authenticated readonly build polling stays individually owner/epoch/cancellation bound, but is not used to claim an unrelated approved workflow completed.",
+    "No new SQL, customer data access, cloud resource, IAM binding, actual provider build, store submission, production deployment or model spending."
+  ],
+  "evidence": {
+    "originalRawAndSecretRed": {
+      "job": "242078e7-1d22-448b-a96a-be5567807939",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-workflow-original-raw-source-red-20261028.log",
+      "sha256": "53a91a8a6dba2a8c95c0ff7d4c7e0929585da2956b8e67595832c92ed6dc8f67",
+      "rawSha256": "cd9da13a7f2f6f295e9948b937e850e0c2417d816a85d48da7cf9ac47d074a10",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 211436
+      }
+    },
+    "denialRetryRed": {
+      "job": "e6e2b324-2914-4ed3-a1e3-d78e7f336a4c",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-workflow-denial-retry-red-20261028.log",
+      "sha256": "13cc4c7bc01a95031efc5af7486bd510d434efea14db7a2882be626fb58a3c59",
+      "rawSha256": "13cc4c7bc01a95031efc5af7486bd510d434efea14db7a2882be626fb58a3c59",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 279199
+      }
+    },
+    "manualWriteRaceRed": {
+      "job": "3710a05a-ec20-49a4-abde-86e196a334a1",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-manual-write-race-red-20261028.log",
+      "sha256": "735556d62e27153743ee2f0b43e64f26657d5e76e5bc641d5d19a082840b0093",
+      "rawSha256": "c315c029bbb231a58f8836f36998c818485e1bdb70defeef556e5460e3aaa3ca",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1185576
+      }
+    },
+    "targetRaceRed": {
+      "job": "44a9bf9c-dec6-4498-a774-f6c6755ac784",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-target-audit-race-red-20261028.log",
+      "sha256": "0e707f1f2337ad098ada1eca5cdc10f9d689d1bfe00ea3735009de5f3d6bede4",
+      "rawSha256": "0e707f1f2337ad098ada1eca5cdc10f9d689d1bfe00ea3735009de5f3d6bede4",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1085450
+      }
+    },
+    "malformedGraphqlRed": {
+      "job": "61c43469-fd18-4c36-82df-27b64a84bc32",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-malformed-graphql-red-20261028.log",
+      "sha256": "447e7b4e9e8ba808c74a523acc440fd94c5565f7900e7479206a5ff7b16eac77",
+      "rawSha256": "447e7b4e9e8ba808c74a523acc440fd94c5565f7900e7479206a5ff7b16eac77",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 315125
+      }
+    },
+    "transportLeakRed": {
+      "job": "98ea5e24-0aa0-475c-ac77-b501190fb0a5",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-transport-secret-red-20261028.log",
+      "sha256": "464e85b26c2b4928ce51f1814eb0694eb593ed2edac58a3599daacfa7b4a53e2",
+      "rawSha256": "74733f82cbb0da1190994fb423110e75014aaca2722dfb8167e5be1691e326da",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1103821
+      }
+    },
+    "sourceTransportRed": {
+      "job": "f0c2b752-1432-41ef-9e44-e1a9eddb4c86",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-source-transport-red-20261028.log",
+      "sha256": "c4dfbfcdcf56a4e6a8030eb76fc784756a70d3d0f8ccab56e140bac28f84d28b",
+      "rawSha256": "1a9b2454308c8121118b40a514bf7d54b4fe31124be0d7745fa686507ea9916f",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1089090
+      }
+    },
+    "uninspectedLfsRed": {
+      "job": "01714075-d650-4f0b-ad00-21e0a0e28ff2",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-lfs-source-red-20261028.log",
+      "sha256": "c16a862a8fb7f9f99143990739c3ba60fb84979ea3ea2a23b9f966ff10e7ac53",
+      "rawSha256": "c16a862a8fb7f9f99143990739c3ba60fb84979ea3ea2a23b9f966ff10e7ac53",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1089661
+      }
+    },
+    "focused": {
+      "job": "c8c56391-def4-4b9d-93d2-2d3000a3b714",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-workflow-final-315tests-20261028.log",
+      "sha256": "254ff1337a0dc4fd31703428913631d86babce15fdd15a9cf5c6d07092c0672b",
+      "rawSha256": "254ff1337a0dc4fd31703428913631d86babce15fdd15a9cf5c6d07092c0672b",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1650903
+      }
+    },
+    "currentUi": {
+      "job": "a6e4835f-06cd-433c-a262-382876d80ca1",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-current-mobile-approval-20261028.log",
+      "sha256": "1381d5cb0443143cb575dd981f3eccf66313a6b2b0ca66785168344ef041cf27",
+      "rawSha256": "1381d5cb0443143cb575dd981f3eccf66313a6b2b0ca66785168344ef041cf27",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 7362
+      }
+    },
+    "backendTypes": {
+      "job": "63d2303f-00c7-44fc-af1a-990034aa0870",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-workflow-backend-types-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322044
+      }
+    },
+    "frontendTypes": {
+      "job": "d64d26bd-319d-402a-b597-03121e847de7",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-workflow-frontend-types-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322068
+      }
+    },
+    "frontendLint": {
+      "job": "64efa69f-ec27-4416-8c75-9db0d0ffd1ed",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/expo-workflow-frontend-lint-20261028.log",
+      "sha256": "a0e63e9ee2cd7052847d0457110184b5d83b448e7c894d2a9bbba6e6720f3b55",
+      "rawSha256": "65393dcd4438f40f67eab8542ffdb7f127d92044e3ee1f8312f9330f7c626fe0",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  },
+  "tests": {
+    "total": 315,
+    "pass": 315,
+    "fail": 0,
+    "skip": 0,
+    "scope": "All publication service tests plus actual Expo/CWS HTTP connection routes, actual pipeline and frontend action handlers, existing canonical action risk, digest, preview and durable-claim regression tests. Synthetic identities/source/provider HTTP responses only.",
+    "finalTextNote": "The final review banner/build-button copy changed after the broad315 run. Current handler regression, complete frontend type check and targeted lint run on that final file. Exact-source full CI is still required."
+  },
+  "testContinuation": "Original ownership, ambiguity, source/receipt, cancellation and secret-denial tests remain. The old HTTP expectation of raw dispatch now requires 202 preparation and zero provider writes. The old pipeline polling assertion is replaced with no unrelated build-list attribution. Actual required store checks remain in the approved submission path. No frozen requirement, evaluator, auditor, security skip or acceptance count is weakened.",
+  "protocolSources": [
+    "https://docs.expo.dev/eas/workflows/rest-api/",
+    "https://raw.githubusercontent.com/expo/eas-cli/main/packages/eas-cli/src/graphql/types/App.ts",
+    "https://raw.githubusercontent.com/expo/eas-cli/main/packages/eas-cli/src/credentials/android/api/graphql/queries/AndroidAppCredentialsQuery.ts",
+    "https://raw.githubusercontent.com/expo/eas-cli/main/packages/eas-cli/src/credentials/ios/api/graphql/queries/IosAppCredentialsQuery.ts"
+  ],
+  "limitations": [
+    "No live Expo build or store submission was performed. Security protocol fixtures are not live provider acceptance.",
+    "Complete bounded regular Git source is supported. Uninspected external source objects and oversize repositories are refused, never bypassed by confirmation.",
+    "Other original Parallel, Composio, GitHub/Actions and Supabase callers remain independent unresolved candidates. Browser side-effect admission and positive X-research accounting remain visible obligations.",
+    "All12 original criteria, final integration/current-main reconciliation, exact-source CI and controlled release remain required. Batch1 is not accepted."
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/publish/easPublish.ts",
+      "sha256": "7c744ca46dc7562a29dedcf26c9f64902ba64d61bf360012dd9e845530e1bdec"
+    },
+    {
+      "path": "backend/src/services/publish/expoWorkflow.ts",
+      "sha256": "ec5785ce82dece5c4262692301167850fa1dbd7725a6a47c70d1fecd0e9be1d0"
+    },
+    {
+      "path": "backend/src/services/publish/expoApproval.ts",
+      "sha256": "43311a8585fb2fc86dccda26962358838627e0c7d03095f4c148eca60b18dcf2"
+    },
+    {
+      "path": "backend/src/services/publish/expoAccess.ts",
+      "sha256": "27f443c736f0584985db9f884febe46c342e4d512228a32adb51506d7d14fd3c"
+    },
+    {
+      "path": "backend/src/services/publish/easCredentials.ts",
+      "sha256": "4d943522bba020a8eaf5268a8da948f814a3ca4c6e4359a6004185c5b59b9e5e"
+    },
+    {
+      "path": "backend/src/services/publish/expoCanonicalAdmission.security.test.ts",
+      "sha256": "6d7f6f5922842c751704531776d42f0fbf3a981ff7fcd22704e2ecbabaeea24d"
+    },
+    {
+      "path": "backend/src/services/publish/expoWorkflow.authority.test.ts",
+      "sha256": "fd728c72339911c7192ed92ab8a3f5bac33c80b1756b0fbdc949e4986d6809c9"
+    },
+    {
+      "path": "backend/src/services/publish/expoWorkflowDenial.security.test.ts",
+      "sha256": "018b77b32dba32533a82c673358b21ecb8efd466a948003fb64c72f8746022cc"
+    },
+    {
+      "path": "backend/src/services/publish/expoStoreReadiness.security.test.ts",
+      "sha256": "98c232c45f491776423188d60b8a4b4815c2c24f8c7d1667e7f1eca4562d66cf"
+    },
+    {
+      "path": "backend/src/services/publish/easBuilds.authority.test.ts",
+      "sha256": "111cee259882b389ba8639bf531820636ad334eb0bd10b491ff617828268f6eb"
+    },
+    {
+      "path": "backend/src/services/publish/easPublish.routeScope.test.ts",
+      "sha256": "3d21f62a21c48eac4a061cbe38e765571204ab05180f54f0091a603f2474445a"
+    },
+    {
+      "path": "backend/src/services/publish/userOwnedPublish.ts",
+      "sha256": "f53f9f8ffb9bad01a773cd1d2a8ecaa3599f5e2a919180d4451bfb6803b10bde"
+    },
+    {
+      "path": "backend/src/routes/publish.ts",
+      "sha256": "145e0d250a83c52d4f019f85fd549a63c93816c55e0dc01877553748d8e3bb5c"
+    },
+    {
+      "path": "backend/src/routes/expoCredentialAdmission.security.test.ts",
+      "sha256": "60b350e2db10993c05f3003c95bc4a6b23cefdf69a528e05d7641a1807a8f3b0"
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "86ee4caa462432568293d0072110826643b665e774db1a6ed1f82c557dee7726"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "sha256": "8ba95fbd5468ab36237e3b146861474769b1ac24890ee305763ef926ffbb2577"
+    },
+    {
+      "path": "backend/src/ai/expoStoreDenial.security.test.ts",
+      "sha256": "3bc6795ea1aecb1e7222643e61590f02f3cd08636c98aa1cae3a3a4894740cfa"
+    },
+    {
+      "path": "backend/src/ai/nativePublicationUi.test.ts",
+      "sha256": "4214962721b4f4f288da5954975d551f7eb0812a1f7492c79132bea670d52351"
+    },
+    {
+      "path": "frontend/src/components/publish/MobilePublishPanel.tsx",
+      "sha256": "1d76a84c4dafa8ec7bbbe0817e86fd2177c5e80c7202a02a76f6f64c6fb403e3"
+    },
+    {
+      "path": "frontend/src/components/publish/MobilePublishPanel.approval.test.ts",
+      "sha256": "84f53315820e7da8e8037e8aabe62553d433b988984a146de40d8e74d4225ab9"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "sha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8"
+    }
+  ],
+  "phase4Accepted": false,
+  "productionEffects": false,
+  "spending": 0
+}

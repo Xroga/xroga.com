@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "scope": "CURRENT_SOURCE_MODEL_GUARDS_AND_NARROW_PROVENANCE_NOT_TENANT_OR_COMMAND010_ACCEPTANCE",
+  "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+  "acceptedPhaseTwo": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "historicalCurrentLedgerSha256": "f9f9d3ce482a9ff29c46ac25aaf40f421f89fe0a9a69da2743eaab4cfb4d039b",
+  "historicalEvidencePolicy": "Original contract, frozen 73 packets, accepted Git snapshots and authenticated receipts are unchanged. Only the current-source projection of two changed-file records is reconciled, with old bindings retained. No old receipt certifies a new source or a new privileged caller.",
+  "bindings": [
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "genericSdkPreviousCurrentBinding": {"reference":"2dc69b2b3df123f30e7e6b493266b10b7e2acad8","sha256":"2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc","afterIds":["6c962371859b256ff96c","8db8b524179b45694274"],"scope":"HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"},
+      "beforeIds": [
+        "01d5efe9b761bc670212",
+        "944a58bb15dca85b3ddd"
+      ],
+      "afterIds": [
+        "af88e0f5ab6048f75011",
+        "863e45f48048017eb977"
+      ],
+      "unchangedNearestBlockSha256": [
+        "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
+        "ab3bd82a85c9e2f6a4858bbabb1e72da459998a65ec18ac15405c09d135c846e"
+      ],
+      "semanticScope": "Only the two Array.from conversions of local byPath maps remain NOT_PERSISTENCE. The build admission still requires the issued context, owner and original database project. New model dispatch scope carries that context, canonical account selection and captured run attempt into each changed call. Full runBuildPipeline is deliberately not claimed byte-identical."
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+      "currentSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
+      "businessModelContinuationBinding": {
+        "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
+        "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
+        "unchangedToolUiLinkFunctionSha256": "fddbc236a5255bcff25c878a747c44abb719d201b9bbfece0ec3f9b1d1df58cb",
+        "scope": "UNCHANGED_LOCAL_BUFFER_CONVERSION_NOT_NEW_CALLER_CERTIFICATION"
+      },
+      "previousCurrentBinding": {
+        "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+        "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+        "scope": "HISTORICAL_PREPARATION_NOT_NEW_SOURCE_ACCEPTANCE"
+      },
+      "beforeIds": [
+        "ebede146c851a085d2b8"
+      ],
+      "afterIds": [
+        "ebede146c851a085d2b8"
+      ],
+      "unchangedNearestBlockSha256": [
+        "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
+      ],
+      "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline, planSemanticRequest and the existing business read/action preparation services. No route or actor issuer is added. New-source SDK/caller tests and full integration remain separate from this narrow conversion proof."
+    },
+    {
+      "path": "backend/src/synthesis/universalEntrypoint.ts",
+      "historicalSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "currentSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
+      "genericSdkPreviousCurrentBinding": {"reference":"2dc69b2b3df123f30e7e6b493266b10b7e2acad8","sha256":"91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2","afterIds":["cfba5e514ab70426438c"],"scope":"HISTORICAL_EXACT_CONSTRUCTOR_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"},
+      "beforeIds": [
+        "10b5e279dd241e2f40ec"
+      ],
+      "afterIds": [
+        "411b7b4d8d600d797423"
+      ],
+      "unchangedConstructorCallSha256": "87204a9f0158a5f0f5a7b3da90d6580419ad58c24720fc9cad951a7e98666857",
+      "semanticScope": "The same request-scoped universalStore constructor receives the same internal persisted-owner context. Added model context/project/attempt fields are forwarded to SoftwareAgent and do not replace persistence subject, stores or receiving guards. Historical constructor proof remains bound to its original source, with new-source integration still required."
+    }
+  ],
+  "currentModelGuard": {
+    "implementation": "backend/src/ai/tenantModelDispatch.ts",
+    "callSiteTests": "backend/src/ai/tenantModelDispatch.test.ts",
+    "guestHttpTest": "backend/src/routes/guestChat.egress.test.ts",
+    "existingInterfaces": [
+      "TenantContext",
+      "requireOwnedProject",
+      "AdmittedRunAttempt",
+      "getUserProviderKey",
+      "CredentialVault",
+      "AuthorityPermit",
+      "withProviderReservation"
+    ],
+    "positive": [
+      "canonical vault credential",
+      "completion",
+      "builder stream",
+      "architect",
+      "converter",
+      "SoftwareAgent stream",
+      "current admitted worker",
+      "ordinary guest HTTP"
+    ],
+    "negative": [
+      "foreign tenant and account",
+      "forged context or attempt",
+      "rotated credential during reservation",
+      "revoked credential before wire dispatch",
+      "project ownership change during a wait",
+      "changed worker/generation/status/project",
+      "wrong reservation owner",
+      "mutated wire payload",
+      "expired canonical permit",
+      "credential denial cannot fall through to another provider"
+    ],
+    "evidenceType": "ACTUAL_CALL_SITES_REAL_SDK_SERIALIZATION_CONTROLLED_PROVIDER_AND_DATABASE_PROTOCOL_FIXTURES",
+    "notClaimed": [
+      "real database concurrency",
+      "live provider execution",
+      "universal DLP",
+      "atomic transaction across external effects",
+      "all upstream file/history ownership",
+      "all generic completion callers migrated",
+      "complete Operations-to-model egress coverage"
+    ]
+  },
+  "narrowCallerClosure": {
+    "id": "f0eab43244d6d3c88de8",
+    "test": "backend/src/sandbox/sandboxProbeBoundary.test.ts",
+    "scope": "Actual local CLI version child process only. No tenant data or credentials, fixed version argument and scrubbed environment. This does not close runIsolated, remote execution or registry-only networking."
+  },
+  "threeSdkDispositions": "PENDING_SOURCE_TRACE",
+  "prioritizedRemainingTraces": [
+    {
+      "ids": [
+        "46ad38b463b0beb61ba5",
+        "e2ad9aec1c5cd1e3ab27"
+      ],
+      "path": "backend/src/services/integrations/githubTokenStore.ts",
+      "finding": "No production importer of saveGitHubTokenToStorage was found. Its exported legacy writer requires the migration window and original issued context, uses the owner-prefixed fixed bucket, and admits only a confirmed private bucket. Existing actual call-site protocol tests cover forged context and owned path. Do not turn absence of a static importer into proof against every future/dynamic caller or infer encrypted payload from the StoredGitHubAuth type.",
+      "disposition": "PENDING_SOURCE_TRACE"
+    },
+    {
+      "ids": [
+        "c7711580844b520345cf"
+      ],
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "finding": "The private saveKeyToStorage helper is reached after existing prepare/write admission from saveUserProviderKey and migration. Its mirror receives the sealed encrypted credential and exact provider/owner path, with private bucket admission. Existing mirror-race tests cover consumer revalidation, not every writer-side outbound invariant or bucket permission race. Keep the actual upload obligation open rather than infer whole-path certification from encryption or private bucket naming.",
+      "disposition": "PENDING_SOURCE_TRACE"
+    },
+    {
+      "ids": [
+        "a0ba7209a0695a62227d",
+        "7b7f1f842cfadda3dff0"
+      ],
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "finding": "These are the actual dynamic WebSocket forwarding transports, not model SDKs or harmless URL literals. Their target resolution, issued viewer context and runtime/project ownership must be reviewed as a paired transport before closure.",
+      "disposition": "PENDING_SOURCE_TRACE"
+    }
+  ],
+  "productionEffects": false,
+  "phase3": "B1_P3_BLOCKED",
+  "phase4": "PREPARATORY_NOT_ACCEPTED",
+  "previousPreparatoryRevision": {
+    "reference": "9379a2f105bb59b787f164836de563655657bc6d",
+    "bindings": [
+      {
+        "path": "backend/src/ai/pipeline.ts",
+        "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+        "callIds": [
+          "fbccd562d15a2401fc3f",
+          "55ed6e1f948491b895a0"
+        ]
+      },
+      {
+        "path": "backend/src/routes/phase1.ts",
+        "sourceSha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+        "callIds": [
+          "ebede146c851a085d2b8"
+        ]
+      },
+      {
+        "path": "backend/src/synthesis/universalEntrypoint.ts",
+        "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
+        "callIds": [
+          "1271489516ef5d2c31c2"
+        ]
+      }
+    ],
+    "scope": "HISTORICAL_CURRENT_MAPPING_NOT_NEW_SOURCE_ACCEPTANCE"
+  },
+  "repositoryContextContinuation": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
+}

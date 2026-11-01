@@ -1,3 +1,6 @@
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
+import {requireOwnedProject} from '../../security/ownership.js';
+import type {GitHubPending} from '../../services/integrations/githubApproval.js';
 import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
@@ -887,7 +890,9 @@ export async function publishProjectDelivery(
   input:
     PublishProjectDeliveryInput =
       {},
-): Promise<ProjectDeliveryEnvelope> {
+  tenantContext?:TenantContext,
+): Promise<ProjectDeliveryEnvelope|GitHubPending> {
+  const actor=requireTenantContext(tenantContext);requireResourceOwner(actor,userId);await requireOwnedProject(actor,projectId);
   const store =
     new SupabaseProjectRuntimeStore();
 
@@ -977,6 +982,7 @@ export async function publishProjectDelivery(
           .files,
 
         {
+          tenantContext:actor,projectId,
           slug:
             projectSlug(
               project,
@@ -1008,6 +1014,7 @@ export async function publishProjectDelivery(
         },
       );
 
+    if(result.needsConfirmation&&result.reviewUrl)return{needsConfirmation:true,reviewUrl:result.reviewUrl,message:'Review the exact publication before any GitHub write.'};
     if (
       !result.commitSha
     ) {

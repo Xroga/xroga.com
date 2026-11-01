@@ -1,190 +1,20 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useEffect, useRef, useState } from 'react';
 import { ArrowUp, CloudUpload, LoaderCircle } from 'lucide-react';
-import { AudioLinesIcon, type AudioLinesIconHandle } from '@/components/icons/animated/AudioLinesIcon';
+import { XrogaVoiceControl } from './XrogaVoiceControl';
 import { ChatBarSendIcon, isSendBusy, isSendLoading, type SendButtonState } from './ChatBarSendIcon';
 
 export type { SendButtonState };
 export type ChatbarSurface = 'homepage' | 'dashboard' | 'incognito';
 
-type SpeechInputState = 'idle' | 'recording' | 'processing' | 'denied' | 'unavailable';
-
-interface BrowserSpeechRecognitionEvent {
-  resultIndex: number;
-  results: ArrayLike<{
-    isFinal: boolean;
-    0: { transcript: string };
-  }>;
-}
-
-interface BrowserSpeechRecognitionErrorEvent {
-  error: string;
-}
-
-interface BrowserSpeechRecognition {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  onstart: (() => void) | null;
-  onresult: ((event: BrowserSpeechRecognitionEvent) => void) | null;
-  onerror: ((event: BrowserSpeechRecognitionErrorEvent) => void) | null;
-  onend: (() => void) | null;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-}
-
-type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
-
-function getSpeechRecognitionConstructor(): BrowserSpeechRecognitionConstructor | null {
-  if (typeof window === 'undefined') return null;
-  const speechWindow = window as typeof window & {
-    SpeechRecognition?: BrowserSpeechRecognitionConstructor;
-    webkitSpeechRecognition?: BrowserSpeechRecognitionConstructor;
-  };
-  return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
-}
-
-export function ChatBarMicrophoneButton({
-  onTranscript,
-  surface = 'dashboard',
-}: {
+// Use the same on-device dictation lifecycle on every composer surface.
+export function ChatBarMicrophoneButton({ onTranscript, disabled = false }: {
   onTranscript: (transcript: string) => void;
   surface?: ChatbarSurface;
+  disabled?: boolean;
 }) {
-  const [state, setState] = useState<SpeechInputState>('idle');
-  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
-  const meterRef = useRef<AudioLinesIconHandle>(null);
-
-  /*
-   * The meter runs off the recording state, not off the click.
-   *
-   * Recording ends without one: the browser stops on silence, on an error, and when
-   * permission is refused. All three land here as a state that is no longer
-   * 'recording', so the bars settle with the recognition rather than going on
-   * claiming to record a microphone that was already released.
-   */
-  useEffect(() => {
-    if (state === 'recording') meterRef.current?.startAnimation();
-    else meterRef.current?.stopAnimation();
-  }, [state]);
-
-  useEffect(() => {
-    if (!getSpeechRecognitionConstructor()) setState('unavailable');
-    return () => {
-      recognitionRef.current?.abort();
-      recognitionRef.current = null;
-    };
-  }, []);
-
-  const label = {
-    idle: 'Start voice input',
-    recording: 'Stop recording',
-    processing: 'Processing voice input',
-    denied: 'Voice input permission denied',
-    unavailable: 'Voice input unavailable in this browser',
-  }[state];
-
-  const handleClick = () => {
-    if (state === 'recording') {
-      recognitionRef.current?.stop();
-      setState('processing');
-      return;
-    }
-    if (state === 'processing' || state === 'unavailable') return;
-
-    const SpeechRecognition = getSpeechRecognitionConstructor();
-    if (!SpeechRecognition) {
-      setState('unavailable');
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.lang = document.documentElement.lang || navigator.language || 'en-US';
-    recognition.onstart = () => setState('recording');
-    recognition.onresult = (event) => {
-      let finalTranscript = '';
-      for (let index = event.resultIndex; index < event.results.length; index += 1) {
-        const result = event.results[index];
-        if (result.isFinal) finalTranscript += result[0]?.transcript ?? '';
-      }
-      const transcript = finalTranscript.trim();
-      if (transcript) {
-        setState('processing');
-        onTranscript(transcript);
-      }
-    };
-    recognition.onerror = (event) => {
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setState('denied');
-      } else if (event.error === 'audio-capture') {
-        setState('unavailable');
-      } else {
-        setState('idle');
-      }
-    };
-    recognition.onend = () => {
-      recognitionRef.current = null;
-      setState((current) => (current === 'denied' || current === 'unavailable' ? current : 'idle'));
-    };
-    recognitionRef.current = recognition;
-
-    try {
-      recognition.start();
-    } catch {
-      recognitionRef.current = null;
-      setState('unavailable');
-    }
-  };
-
-  /*
-   * A browser with no SpeechRecognition gets no button at all.
-   *
-   * The previous shape was a crossed-out mic that stayed on screen, disabled — a
-   * control that advertises a capability the browser does not have, and one more mic
-   * glyph to explain. Support is only knowable after mount, so this renders on the
-   * server and withdraws on the client rather than the other way round.
-   */
-  if (state === 'unavailable') return null;
-
-  return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={state === 'processing'}
-      className={cn(
-        'xv-mic-btn',
-        state === 'recording' && 'is-listening',
-        state === 'denied' && 'is-error',
-        surface === 'homepage' && 'xv-mic-btn--home'
-      )}
-      title={label}
-      aria-label={label}
-      aria-pressed={state === 'recording'}
-      aria-live="polite"
-    >
-      {/*
-        Six bars that rise and fall for exactly as long as the recording does, red
-        while it runs and still when it stops. `loop` is what makes it continue until
-        the second press rather than playing one pass and settling under a live
-        microphone.
-
-        The ring around it is gone with the mic glyph: `.xv-mic-btn` sets `border: 0`
-        and takes `color: inherit`, so the meter is the terminal's own ink — black on
-        the White and Beige skins, white on Gray and Black — rather than a token that
-        falls through inside a surface with its own colour.
-      */}
-      {state === 'processing' ? (
-        <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden />
-      ) : (
-        <AudioLinesIcon ref={meterRef} loop size={16} className="xv-mic-icon" aria-hidden />
-      )}
-    </button>
-  );
+  return <XrogaVoiceControl onVoiceDraft={onTranscript} disabled={disabled} />;
 }
 
 export function ChatBarSendButton({

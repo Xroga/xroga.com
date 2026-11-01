@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {browserProxyHeaders, escapeProxyHtml} from '@/lib/untrustedProxyResponse';
+import {boundedPublicGet,publicHttpsUrl} from '@/lib/server/publicEgress';
+export const runtime='nodejs';
 
 function browserHtml(message: string, detail: string, target?: string) {
   message=escapeProxyHtml(message);detail=escapeProxyHtml(detail);target=target===undefined?undefined:escapeProxyHtml(target);
@@ -41,35 +43,29 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(target, {
-      headers: {
-        'user-agent':
-          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36 XrogaBrowser/1.0',
-        accept: 'text/html,application/xhtml+xml',
-      },
-      redirect: 'follow',
-      cache: 'no-store',
-    });
+    publicHttpsUrl(target);
+    const response = await boundedPublicGet(target,{maxBytes:2*1024*1024,timeoutMs:20_000,maxRedirects:3,allowHttpErrors:true});
 
-    const contentType = response.headers.get('content-type') ?? '';
-    if (!response.ok) {
+    const contentType = response.contentType;
+    if (response.statusCode<200||response.statusCode>=300) {
       return new NextResponse(
-        browserHtml('Could not open this page', `The site returned ${response.status}.`, target),
+        browserHtml('Could not open this page', `The site returned ${response.statusCode}.`, target),
         { headers: browserProxyHeaders, status: 200 }
       );
     }
 
     if (!contentType.includes('text/html')) {
-      return NextResponse.redirect(target);
+      return NextResponse.redirect(response.finalUrl);
     }
 
-    const html = await response.text();
+    const html = response.bytes.toString('utf8');
+    const base=escapeProxyHtml(response.finalUrl);
     const injectedBase = html.includes('<head>')
       ? html.replace(
           /<head>/i,
-          `<head><base href="${target}"><meta name="referrer" content="no-referrer" />`
+          `<head><base href="${base}"><meta name="referrer" content="no-referrer" />`
         )
-      : `<base href="${target}">${html}`;
+      : `<base href="${base}">${html}`;
 
     return new NextResponse(injectedBase, {
       headers: browserProxyHeaders,

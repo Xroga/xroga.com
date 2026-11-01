@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {createTenantContext} from '../../security/tenantContext.js';
 import { listConnectedComposioToolkits } from './composioClient.js';
 
 test('connected toolkit lookup stays within Composio session page limit', async (t) => {
+  const owner='11111111-1111-4111-8111-111111111111',context=createTenantContext({userId:owner,via:'remote_getuser'});
   const previousFetch = globalThis.fetch;
   const previousKey = process.env.COMPOSIO_API_KEY;
   const requested: URL[] = [];
@@ -21,7 +23,7 @@ test('connected toolkit lookup stays within Composio session page limit', async 
     return Response.json({
       session_id: 'trs_test',
       config: {
-        user_id: 'xroga:test-user',
+        user_id: 'xroga:'+owner,
         tags: ['readOnlyHint'],
         workbench: { enable: false, enable_proxy_execution: false },
         execute: { enable_multi_execute: false },
@@ -34,10 +36,10 @@ test('connected toolkit lookup stays within Composio session page limit', async 
     else process.env.COMPOSIO_API_KEY = previousKey;
   });
 
-  const toolkits = await listConnectedComposioToolkits('test-user', {
+  const toolkits = await listConnectedComposioToolkits(owner, {
     sessionId: 'trs_test',
     toolkits: ['gmail'],
-  });
+  },context);
   assert.equal(toolkits[0]?.toolkit, 'gmail');
   const listing = requested.find((url) => url.pathname.endsWith('/toolkits'));
   assert.ok(listing);

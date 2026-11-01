@@ -1,0 +1,25 @@
+{
+  "scope": "CURRENT_SOURCE_BINDINGS_ONLY_HISTORICAL_ACCEPTANCE_PRESERVED_FINAL_INTEGRATION_PENDING",
+  "pipeline": {
+    "path": "backend/src/ai/pipeline.ts",
+    "previousPhase4SourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+    "currentSourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+    "sourceReview": "The integrated pipeline retains original issued tenant context, owner match, selected database project UUID and admitted worker attempt when creating/continuing durable execution. Google-specific worker/Preview routing is reconciled against accepted main without reverting frontend or restoring Fly. This source binding is not proof that all new egress, model, runtime or upstream callers are accepted.",
+    "focusedCurrentSourceRegression": "d3cfb26b-1e42-4bfd-9d76-38d518c71d0b, fourteen pipeline/model-context and project/runtime tests passed with zero skips. Full exact-source CI and disposable integration remain required."
+  },
+  "supplementalAnalytics": {
+    "path": "backend/src/ai/webBudget.ts",
+    "previousSourceSha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe",
+    "currentSourceSha256": "0970dd0edfcf52dfd97e0ce6b7397d8be00777491d2dcffb29a0baf864738d2d",
+    "unchangedFunctionSha256": "286d9cec19a380ab6aacc781375a837bcec85c07ac73a858eb83dca6b2b42c4f",
+    "sourceReview": "Only documentation outside recordWebSpend changed. The original owner-captured query/insert implementation and composite FK semantics are byte-identical. Parallel dispatch now reserves and settles separately in the same canonical provider ledger. This does not certify unmigrated research callers."
+  },
+  "historicalProofBinding": {
+    "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+    "marker": "forking canonical project state changes project identity and detaches repository/runtime state",
+    "historicalSourceSha256": "48efff750a375aaaeb81bb90d5376a160b539a6748ac377119da62ec2a13be06",
+    "currentSourceSha256": "2d5bb74f472c8559cd4d415ef19af8f45ad6a6ce18022e3324f37e52bef650d8",
+    "testCallSha256": "ecb814ca961b98053e35d1db29e63f62ae81dd64bd427e6116c36bbd017452d1",
+    "verifiedWithUnmodifiedVerifier": true
+  }
+}

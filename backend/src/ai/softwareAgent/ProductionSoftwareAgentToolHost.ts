@@ -265,6 +265,8 @@ export class ProductionSoftwareAgentToolHost
     content: string,
     intent: FileWriteIntent,
   ): Promise<FileMutationResult> {
+    if(intent!=='create'&&intent!=='modify')throw new Error('INVALID_OPERATION: File writes require create or modify intent.');
+    if(typeof content!=='string')throw new Error('INVALID_FILE_CONTENT: File content must be text.');
     const normalizedPath =
       normalizeProjectPath(
         path,

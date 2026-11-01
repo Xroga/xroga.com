@@ -1,0 +1,152 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH15-2-ACTIVATION-20261031",
+  "baseSha": "b86a037700631ab3a237da5c5d7da4f6034afd5d",
+  "requirementIds": [
+    "XR-FAMILY-schedulers"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Continue Batch1.5/2 activation from merged PR902. Correct demonstrated Builder finalization retry loss after a database failure. No production mutation, model call or new host in this source correction.",
+  "changedFiles": [
+    "backend/src/workers/browserCoordinator.ts",
+    "backend/src/workers/browserCoordinatorHost.test.ts",
+    "backend/src/workers/browserCoordinatorHost.ts",
+    "docs/operations/batch15-batch2-activation/APPROVED-WINDOW.json",
+    "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
+    "docs/operations/batch15-batch2-activation/ISOLATED-VERIFICATION-APPROVAL.md",
+    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
+    "docs/operations/batch15-batch2-activation/PERSISTENCE-CONVERSION-REVIEW.json",
+    "docs/operations/batch15-batch2-activation/live-runtime-preflight.json",
+    "docs/operations/batch15-batch2-activation/network-inventory.json",
+    "docs/operations/batch15-batch2-activation/resource-inventory.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/missions/batch15-batch2-activation-20261031.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/privileged-callers.json",
+    "scripts/browser/browser-coordinator.mts",
+    "backend/src/builder/service.ts",
+    "backend/src/builder/store.ts",
+    "backend/src/builder/cancel.test.ts",
+    "docs/operations/batch15-batch2-activation/BUILDER-CANCELLATION-RECEIPT.json",
+    "backend/src/builder/swarmBridge.ts",
+    "backend/src/builder/finalizationRecovery.test.ts",
+    "docs/operations/batch15-batch2-activation/FINALIZATION-RECOVERY-RECEIPT.json",
+    ".github/workflows/xroga-tenant-security.yml"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, tenant/approval/accounting boundaries, current Batch 1 and microphone releases",
+      "Existing coordinator protocol, hardened ContainerBrowserWorker and historical host harness"
+    ],
+    "extend": [
+      "Compiled dedicated host entrypoint with strict config and immutable images",
+      "Reject expired or nonpositive signed worker leases before dispatch",
+      "Bind Builder slot cancellation to the same server-captured run whose canonical cancellation was requested."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No production SQL. Reconcile hosted schema before proposing any missing expansion.",
+    "rollback": "No schema rollback needed for this source change."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Coordinator rejects expired/missing expiry and nonpositive fencing tokens before dispatch. HMAC remains mandatory."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Stricter expected-run guard prevents a delayed Stop response from clearing a replacement build. Existing issued tenant context and owner predicates remain mandatory."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Dedicated coordinator configuration refuses API/model/database credentials. Only the shared signing secret is accepted."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing boundary preserved. No production operation or spend performed."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/workers/browserCoordinatorHost.test.ts backend/src/workers/browserCoordinator.test.ts backend/src/workers/browserRunDurability.test.ts backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+      "scope": "Real loopback signed HTTP admission, config denial and deterministic protocol/durability regression. Not live host acceptance.",
+      "negative": true,
+      "reference": "backend/src/workers/browserCoordinatorHost.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/builder/cancel.test.ts backend/src/builder/audit.verification.test.ts backend/src/builder/audit.delivery.test.ts",
+      "scope": "19 focused cancellation, verification and delivery tests passed. Delayed response reproduced red before the correction. No live provider, model, database or production mutation.",
+      "negative": true,
+      "reference": "backend/src/builder/cancel.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/builder/finalizationRecovery.test.ts backend/src/builder/cancel.test.ts backend/src/workers/builderDurableWiring.test.ts",
+      "scope": "15 local tests passed. Three new regressions failed before correction. Synthetic storage responses, no live DB or provider. Does not prove process-loss recovery.",
+      "negative": true,
+      "reference": "backend/src/builder/finalizationRecovery.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Same browser coordinator and container worker, compiled production packaging only. No new scheduler or control plane.",
+    "rfc": null
+  },
+  "rollout": "Preserve live Batch1 and microphone. Reuse verified live Drive independently of the held Browser Worker. Review and integrate the small Builder correction, then obtain exact-source release gates and the specific authorizations required for bounded real-model production acceptance.",
+  "rollback": "Preserve live ac8168 API/Job and voice routing. This additive source correction has no schema changes. Recovery must use the existing paired source-fence release procedure.",
+  "knownGaps": [
+    "Retained isolated Browser Worker host is not approved or provisioned.",
+    "Finalization correction requires exact-source CI and controlled release.",
+    "One real Builder generation/save test awaits a specifically approved enforceable spending ceiling.",
+    "Full live acceptance remains unproven."
+  ],
+  "placeholderClaimsRemaining": [
+    "No Batch 1.5 or Batch 2 activation PASS is claimed"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Retained isolated Browser Worker host is not approved or provisioned.",
+      "Finalization correction requires exact-source CI and controlled release.",
+      "One real Builder generation/save test awaits a specifically approved enforceable spending ceiling.",
+      "Full live acceptance remains unproven."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "docs/operations/batch15-batch2-activation/CHECKPOINT.md",
+    "docs/operations/batch15-batch2-activation/LOCAL-VERIFICATION.json",
+    "docs/operations/batch15-batch2-activation/PERSISTENCE-CONVERSION-REVIEW.json",
+    "docs/operations/batch15-batch2-activation/BUILDER-CANCELLATION-RECEIPT.json"
+  ]
+}

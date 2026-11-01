@@ -2,6 +2,8 @@ import { Router, type Response } from 'express';
 import { z } from 'zod';
 import { BillingService, BillingServiceError } from '../services/BillingService.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
+import {createBusinessActionConfirmation,confirmBusinessAction} from '../services/integrations/businessActionConfirmations.js';
 import {
   setUsagePacing,
 } from '../ai/providerBudget.js';
@@ -66,8 +68,10 @@ async function createCheckout(req: AuthRequest, res: Response) {
   }
 
   try {
-    const result = await BillingService.createCheckout(req.userId!);
-    res.json(result);
+    const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId);
+    const plan=await BillingService.prepareCheckoutPlan(context);
+    const confirmation=await createBusinessActionConfirmation(context.userId,plan);
+    res.json({confirmation});
   } catch (err) {
     if (err instanceof BillingServiceError) {
       res.status(err.statusCode).json({ error: err.message, code: err.code });
@@ -79,6 +83,19 @@ async function createCheckout(req: AuthRequest, res: Response) {
 
 router.post('/checkout', createCheckout);
 router.post('/create-checkout', createCheckout);
+
+router.post('/checkout/:id/confirm',async(req:AuthRequest,res)=>{
+  try{
+    const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId);
+    const result=await confirmBusinessAction(context,String(req.params.id??''),{toolkit:'xroga-native-billing',toolSlug:'XROGA_CREATE_CHECKOUT'});
+    // The adapter already verified this exact provider receipt. No arbitrary
+    // tool output or workflow continuation becomes a checkout destination.
+    res.json(JSON.parse(result.execution.resultText));
+  }catch(error){
+    const status=(error as {status?:unknown}).status;
+    res.status(typeof status==='number'&&status>=400&&status<=599?status:503).json({error:'Checkout approval could not complete. Check its status before trying again.',code:'CHECKOUT_CONFIRMATION_FAILED'});
+  }
+});
 
 async function manageSubscription(req: AuthRequest, res: Response) {
   try {

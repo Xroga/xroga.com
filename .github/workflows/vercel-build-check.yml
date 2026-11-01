@@ -33,6 +33,8 @@ jobs:
 
       - name: Install and build frontend
         run: |
-          npm ci --prefix frontend --workspaces=false
+          # Shared canonical server-side guest accounting imports the backend
+          # Redis client. Use the frozen monorepo install used by Vercel too.
+          npm ci
           npm run lint --prefix frontend --workspaces=false
           npm run build --prefix frontend --workspaces=false

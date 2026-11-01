@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `8ce54f2421039d724571bb727ecce234bcc02a03`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
+Application source SHA: `c6b2f05ed5f07ee188bdbaa7afd29891070b584f`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
 
 445 requirements; 527 source rows mapped; 43 mandatory capability families; 23 independently registered external candidates; zero newly adopted runtime dependencies. Original research lists additional candidates without granting adoption rights.
 
@@ -15,7 +15,7 @@ Application source SHA: `8ce54f2421039d724571bb727ecce234bcc02a03`. Original row
 | XB01-C007 | TENANT ISOLATION, SERVER-SIDE OWNERSHIP AND RBAC BASELINE | IMPLEMENTED_BUT_UNVERIFIED | 007 | EXTEND |
 | XB01-C008 | CANONICAL OUTCOME-SCOPED AUTHORITY, APPROVAL AND PREPARED-ACTION CONTRACT | IMPLEMENTED_BUT_UNVERIFIED | 008 | EXTEND |
 | XB01-C009 | CREDENTIAL VAULT, ENVELOPE ENCRYPTION, ROTATION AND CONNECTED-ACCOUNT IDENTITY | IMPLEMENTED_BUT_UNVERIFIED | 009 | EXTEND |
-| XB01-C010 | TOOL TRUST, DATA EGRESS, SSRF AND UNTRUSTED-INPUT SECURITY GATEWAY | PROPOSED_ONLY | 010 | NEW |
+| XB01-C010 | TOOL TRUST, DATA EGRESS, SSRF AND UNTRUSTED-INPUT SECURITY GATEWAY | IMPLEMENTED_BUT_UNVERIFIED | 010 | EXTEND |
 | XR-FAMILY-repository-truth | repository truth | IMPLEMENTED_BUT_UNVERIFIED | 001 | EXTEND |
 | XR-FAMILY-research-traceability | research traceability | IMPLEMENTED_BUT_UNVERIFIED | 002 | EXTEND |
 | XR-FAMILY-deterministic-ci | deterministic CI | IMPLEMENTED_BUT_UNVERIFIED | 003 | EXTEND |
@@ -25,7 +25,7 @@ Application source SHA: `8ce54f2421039d724571bb727ecce234bcc02a03`. Original row
 | XR-FAMILY-tenant-isolation | tenant isolation | IMPLEMENTED_BUT_UNVERIFIED | 007 | EXTEND |
 | XR-FAMILY-authority-approval | authority/approval | IMPLEMENTED_BUT_UNVERIFIED | 008 | EXTEND |
 | XR-FAMILY-credentials | credentials | IMPLEMENTED_BUT_UNVERIFIED | 009 | EXTEND |
-| XR-FAMILY-egress-security | egress security | PROPOSED_ONLY | 010 | NEW |
+| XR-FAMILY-egress-security | egress security | IMPLEMENTED_BUT_UNVERIFIED | 010 | EXTEND |
 | XR-FAMILY-canonical-durable-execution | canonical durable execution | IMPLEMENTED_BUT_UNVERIFIED | MISSION-014 | EXTEND |
 | XR-FAMILY-schedulers | schedulers | IMPLEMENTED_BUT_UNVERIFIED | MISSION-043 | EXTEND |
 | XR-FAMILY-cost-budget | cost/budget | IMPLEMENTED_BUT_UNVERIFIED | MISSION-065 | EXTEND |

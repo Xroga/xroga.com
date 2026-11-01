@@ -4,7 +4,7 @@ import {
 } from 'node:crypto';
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
 import { businessActionClass } from '../../security/authority/risk.js';
-import { assertAuthorityPermit } from '../../security/authority/enforce.js';
+import { assertAuthorityPermit,authorityContextForPermit,AuthorityError } from '../../security/authority/enforce.js';
 import type { AuthorityPermit, PreparedAuthorityScope } from '../../security/authority/types.js';
 
 import {
@@ -14,13 +14,10 @@ import {
 } from '../../ai/openaiCompat.js';
 
 import {
-  withProviderReservation,
-} from '../../ai/providerBudget.js';
-
-import {
-  recordCompletedProviderUsage as recordUsage,
-  isPostCompletionAccountingError,
-} from '../../ai/postCompletionAccounting.js';
+  withTenantModelReservation,
+} from '../../ai/tenantModelDispatch.js';
+import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 
 import {
   generateStructured,
@@ -487,7 +484,7 @@ function canonicalize(
   return legacyOrder(valid);
 }
 
-function actionPlanDigest(
+export function actionPlanDigest(
   input: Omit<
     BusinessActionPlan,
     'planDigest'
@@ -621,6 +618,7 @@ function buildCandidatePayload(
 async function selectActionToolAndArguments(
   input: {
     userId: string;
+    tenantContext: TenantContext;
 
     useCase: string;
 
@@ -837,10 +835,10 @@ async function selectActionToolAndArguments(
                   ];
 
                 const completion =
-                  await withProviderReservation(
+                  await withTenantModelReservation(
                     {
-                      userId:
-                        input.userId,
+                      scope:{context:input.tenantContext,userId:input.userId,connectedAccountId:'platform'},
+                      payload:{messages},
 
                       modelId,
 
@@ -852,10 +850,10 @@ async function selectActionToolAndArguments(
                       maximumOutputTokens:
                         1_500,
 
-                      execute: () =>
+                      execute: (dispatch) =>
                         chatCompletion(
                           modelId,
-                          messages,
+                          dispatch.payload.messages as ChatMessage[],
                           {
                             temperature:
                               0,
@@ -871,20 +869,14 @@ async function selectActionToolAndArguments(
 
                             signal:
                               input.signal,
+                            credentialOverride:dispatch.credentialOverride,
+                            beforeDispatch:dispatch.beforeDispatch,
                           },
                         ),
                     },
                   );
 
-                await recordUsage(
-                  input.userId,
-
-                  completion.modelId,
-
-                  completion.inputTokens,
-
-                  completion.outputTokens,
-                );
+                /* Canonical dispatch already verified the atomic usage receipt. */
 
                 return completion.text;
               },
@@ -897,7 +889,7 @@ async function selectActionToolAndArguments(
         return structured.value;
       }
     } catch (error) {
-      if (isPostCompletionAccountingError(error)) throw error;
+      if (input.signal?.aborted || isTerminalModelFailure(error)) throw error;
       /*
        * Try the bounded fallback route.
        */
@@ -1084,6 +1076,7 @@ async function connectionOutcomeForToolkits(
 export async function prepareBusinessAction(
   input: {
     userId: string;
+    tenantContext: TenantContext;
 
     useCase: string;
 
@@ -1096,6 +1089,11 @@ export async function prepareBusinessAction(
     referenceEvidence?: BusinessActionReferenceEvidence[];
   },
 ): Promise<BusinessActionPreparationOutcome> {
+  const tenantContext=requireTenantContext(input.tenantContext),userId=input.userId;
+  requireResourceOwner(tenantContext,userId);
+  input={userId,tenantContext,useCase:input.useCase,signal:input.signal,
+    forceConfirmation:input.forceConfirmation === true,
+    referenceEvidence:input.referenceEvidence && structuredClone(input.referenceEvidence)};
   const useCase =
     input.useCase.trim();
 
@@ -1128,7 +1126,7 @@ export async function prepareBusinessAction(
       {
         query:
           useCase,
-      },
+      },input.tenantContext
     );
 
   /*
@@ -1188,7 +1186,7 @@ export async function prepareBusinessAction(
 
         toolkits:
           candidateToolkits,
-      },
+      },input.tenantContext
     );
 
   const connectedSet =
@@ -1249,6 +1247,7 @@ export async function prepareBusinessAction(
   const selection =
     await selectActionToolAndArguments(
       {
+        tenantContext,
         userId:
           input.userId,
 
@@ -1297,7 +1296,7 @@ export async function prepareBusinessAction(
 
   const details =
     await getComposioToolDetails(
-      selected.slug,
+      selected.slug,input.tenantContext,
     );
 
   if (
@@ -1443,11 +1442,72 @@ export async function executePreparedBusinessAction(
   }
 
   input = { userId: input.userId, authorization: { ...input.authorization }, plan: snapshotBusinessActionPlan(input.plan), authorityPermit: input.authorityPermit };
+  if(input.plan.toolkit==='xroga-native-billing'){
+    // Native billing uses the same durable confirmation and original permit.
+    // Never route its prepared payload through third-party tool discovery.
+    const {BillingService}=await import('../BillingService.js');
+    const result=await BillingService.createCheckout(input.userId,{plan:input.plan,authorityPermit:input.authorityPermit});
+    return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-signing'){
+    const {executeElectronSigningMaterial}=await import('../publish/electronSecrets.js');
+    const result=await executeElectronSigningMaterial(input.userId,input.plan,input.authorityPermit);
+    return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-github'){
+    const{executeGitHubNativeAction}=await import('./githubApproval.js');
+    const result=await executeGitHubNativeAction(input.userId,input.plan,input.authorityPermit);
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-desktop-workflow'){
+    const{executeDesktopWorkflow}=await import('../publish/desktopWorkflow.js');
+    const result=await executeDesktopWorkflow(input.userId,input.plan,input.authorityPermit);
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-release'){
+    const {executeNativeRelease}=await import('../publish/nonWebShip.js');
+    const result=await executeNativeRelease(input.userId,input.plan,input.authorityPermit);
+    return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-cws'){
+    const {executeCwsPublication}=await import('../publish/chromeWebStore.js');
+    const result=await executeCwsPublication(input.userId,input.plan,input.authorityPermit);
+    return {status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-supabase-create'){
+    const {executeSupabaseProjectCreation}=await import('./supabaseProjectCreation.js');
+    const result=await executeSupabaseProjectCreation(input.userId,input.plan,input.authorityPermit);
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-supabase'){
+    const {executeSupabaseNativeAction}=await import('./supabaseProvision.js');
+    const result=await executeSupabaseNativeAction(input.userId,input.plan,input.authorityPermit);
+    if(result.ok!==true)throw new AuthorityError('SUPABASE_NATIVE_ACTION_NOT_VERIFIED');
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-research'){
+    const {executeParallelNativeAction}=await import('../../ai/parallelApproval.js');
+    const result=await executeParallelNativeAction(input.userId,input.plan,input.authorityPermit);
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-connect-control'){
+    const {executeComposioControl}=await import('./composioControl.js');
+    const result=await executeComposioControl(input.userId,input.plan,input.authorityPermit);
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  if(input.plan.toolkit==='xroga-native-expo'){
+    const{executeExpoNativeAction}=await import('../publish/easPublish.js');
+    const result=await executeExpoNativeAction(input.userId,input.plan,input.authorityPermit);
+    if(result.ok!==true)throw new AuthorityError('EXPO_NATIVE_ACTION_NOT_VERIFIED');
+    return{status:'success',toolkit:input.plan.toolkit,toolSlug:input.plan.toolSlug,resultText:JSON.stringify(result),resultDigest:preparedActionDigest(result)};
+  }
+  let metadataContext:TenantContext|undefined;
   if (input.authorityPermit) {
     const admitted = businessActionAuthorityScope(input.plan);
     assertAuthorityPermit(input.authorityPermit, { userId: input.userId, provider: admitted.provider,
       connectedAccountId: admitted.connectedAccountId, operation: admitted.operation,
       targetDigest: admitted.targetDigest, planDigest: admitted.planDigest });
+    metadataContext=authorityContextForPermit(input.authorityPermit,{userId:input.userId,provider:admitted.provider,connectedAccountId:admitted.connectedAccountId,operation:admitted.operation,targetDigest:admitted.targetDigest,planDigest:admitted.planDigest});
   }
 
   /*
@@ -1459,7 +1519,7 @@ export async function executePreparedBusinessAction(
    */
   const details =
     await getComposioToolDetails(
-      input.plan.toolSlug,
+      input.plan.toolSlug,metadataContext,
     );
 
   if (
@@ -1501,7 +1561,7 @@ export async function executePreparedBusinessAction(
       input.plan.toolkit,
     );
 
-  if (permissionMode === 'read_only') {
+  if (permissionMode === 'read_only' && details.risk!=='read') {
     throw new ComposioClientError('This connected application is read-only.', { status: 403, code: 'BUSINESS_ACTION_READ_ONLY' });
   }
 

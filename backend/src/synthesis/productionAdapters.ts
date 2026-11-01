@@ -23,6 +23,8 @@ import type { ProjectFile } from '../ai/patches.js';
 import { executeCanonicalSandboxed } from '../sandbox/sandboxRuntime.js';
 import {googleProjectRuntimeSelected} from './projectRuntime/googleFactory.js';
 import { reviewBuildOutput } from '../ai/qa.js';
+import type {TenantModelScope} from '../ai/tenantModelDispatch.js';
+import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
 import type { ExecutionAdapters } from './universalExecution.js';
 import type { UniversalRunPlan, ValidationRunner } from './universalFlow.js';
@@ -161,9 +163,10 @@ export function sandboxValidationRunner(): ValidationRunner {
       [candidate.command, ...candidate.args].map(shellQuote).join(' ');
     const cwd = command.cwd?.trim();
     const setupCommands = context?.setupCommands ?? [];
+    const setupNeedsNetwork = setupCommands.some(candidate=>candidate.networkPolicy!=='none');
     const needsWrapper = setupCommands.length > 0 || Boolean(cwd);
     const setupScript = setupCommands.map((candidate) => argv(candidate)).join('\n');
-    const phaseCommand = command.networkPolicy === 'none' && setupCommands.length > 0
+    const phaseCommand = command.networkPolicy === 'none' && setupNeedsNetwork
       ? `exec unshare -n ${argv(command)}`
       : `exec ${argv(command)}`;
     const script = [
@@ -182,7 +185,7 @@ export function sandboxValidationRunner(): ValidationRunner {
       command: needsWrapper ? '/bin/sh' : command.command,
       args: needsWrapper ? ['-c', script] : [...command.args],
       timeoutMs: 600_000,
-      networkPolicy: setupCommands.length > 0 ? 'registry-only' : command.networkPolicy,
+      networkPolicy: setupNeedsNetwork ? 'registry-only' : command.networkPolicy,
       environment: buildSandboxEnvironment(),
       ...(context?.image ? { image: context.image } : {}),
       ...(native?{stages:[...setupCommands.map((setup,index)=>({id:'setup-'+index,command:setup.command,args:[...setup.args],
@@ -202,6 +205,7 @@ export function sandboxValidationRunner(): ValidationRunner {
  * since both are pure functions of the files plus systems that already exist.
  */
 export function productionAdapters(input: {
+  dispatchScope?:TenantModelScope;
   implement:
     ImplementFn;
 
@@ -303,6 +307,7 @@ return input
     review: async (files) => {
       try {
         const result = await reviewBuildOutput({
+          dispatchScope:input.dispatchScope,
           prompt: 'Universal engineering run — review the complete generated change.',
           html: '', css: '', js: '',
           files: [...files],
@@ -313,6 +318,7 @@ return input
 
         return { approved: Boolean(result?.ok), findings: result?.issues ?? [] };
       } catch (error) {
+        if(isTerminalModelFailure(error))throw error;
         // A reviewer that throws is not a reviewer that approved. §46 requires the review
         // to fail closed, and this is the only place that could quietly invert it.
         return {

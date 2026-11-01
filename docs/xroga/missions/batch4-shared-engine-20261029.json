@@ -1,0 +1,342 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH4-SHARED-ENGINE-20261029",
+  "baseSha": "63b8c44429256530a67c95d8874e76d5672bcc3f",
+  "requirementIds": [
+    "XR-MISSION-034",
+    "XR-MISSION-037",
+    "XR-HIST-c7b62da288a8e42e"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Batch 4 (shared engineering engine), development only, continuing Codex checkpoints A-C from e1db3eb2. This increment: durable saved-revision read-back, queued-run wait and delivery rediscovery, and a shared source-bound verification gate. Phases 1-3 are not complete. Added since: shared repair controller, gate adoption in Batch 2 QA and Batch 3 outcome, and the engineering resource ledger migration (local only).",
+  "changedFiles": [
+    ".github/workflows/xroga-tenant-security.yml",
+    "BATCH-4-HANDOFF.md",
+    "backend/src/ai/engineeringOperator.test.ts",
+    "backend/src/ai/engineeringOperator.ts",
+    "backend/src/ai/eventReplay.test.ts",
+    "backend/src/ai/eventReplay.ts",
+    "backend/src/ai/repairController.test.ts",
+    "backend/src/ai/repairController.ts",
+    "backend/src/ai/resourceLedger.test.ts",
+    "backend/src/ai/resourceLedger.ts",
+    "backend/src/ai/resourceMeter.test.ts",
+    "backend/src/ai/resourceMeter.ts",
+    "backend/src/ai/runReconciler.queue.test.ts",
+    "backend/src/ai/runReconciler.ts",
+    "backend/src/ai/verificationGate.test.ts",
+    "backend/src/ai/verificationGate.ts",
+    "backend/src/builder/qa/qaService.ts",
+    "backend/src/builder/qa/verificationEvidence.test.ts",
+    "backend/src/builder/qa/verificationEvidence.ts",
+    "backend/src/existingSource/change/__tests__/crashChild.ts",
+    "backend/src/existingSource/change/__tests__/crashHarness.ts",
+    "backend/src/existingSource/change/change.test.ts",
+    "backend/src/existingSource/change/crashRecovery.test.ts",
+    "backend/src/existingSource/change/service.ts",
+    "backend/src/existingSource/change/testRunner.ts",
+    "backend/src/existingSource/change/verificationEvidence.test.ts",
+    "backend/src/existingSource/change/verificationEvidence.ts",
+    "backend/src/operations/operationsEngine.ts",
+    "backend/src/operations/redactionCanary.test.ts",
+    "backend/src/routes/admin.ts",
+    "backend/src/routes/engineeringOperator.ts",
+    "backend/src/routes/projectRuntime.ts",
+    "backend/src/routes/swarm.ts",
+    "backend/src/sandbox/google/gceMachineControl.ts",
+    "backend/src/sandbox/google/googleSandbox.test.ts",
+    "backend/src/sandbox/google/googleSandbox.ts",
+    "backend/src/sandbox/google/orphanReconciler.test.ts",
+    "backend/src/sandbox/google/orphanReconciler.ts",
+    "backend/src/sandbox/meteredExecution.test.ts",
+    "backend/src/sandbox/meteredExecution.ts",
+    "backend/src/sandbox/sandboxRuntime.ts",
+    "backend/src/security/serviceRoleGuard.ts",
+    "backend/src/synthesis/livePreview/coordinator.ts",
+    "backend/src/synthesis/livePreview/status.test.ts",
+    "backend/src/synthesis/livePreview/status.ts",
+    "backend/src/synthesis/livePreview/types.ts",
+    "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
+    "backend/src/synthesis/projectRuntime/store.metering.test.ts",
+    "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+    "backend/src/synthesis/projectRuntime/store.persistence.test.ts",
+    "backend/src/synthesis/projectRuntime/store.ts",
+    "backend/src/synthesis/projectRuntime/store.worker.test.ts",
+    "backend/src/synthesis/projectRuntime/types.ts",
+    "backend/src/workers/__tests__/postgrestFilter.ts",
+    "backend/src/workers/browserCapability.ts",
+    "backend/src/workers/browserRunStore.integration.test.ts",
+    "backend/src/workers/browserRunStore.ts",
+    "backend/src/workers/fairSelection.test.ts",
+    "backend/src/workers/fairSelection.ts",
+    "backend/src/workers/googleDeliveryMaintenance.ts",
+    "backend/src/workers/googleDeliveryStore.test.ts",
+    "backend/src/workers/googleDeliveryStore.ts",
+    "backend/src/workers/postgresLeaseStore.integration.test.ts",
+    "backend/tests/engineeringDiagnostics.local.integration.ts",
+    "backend/tests/engineeringResourceLedger.local.integration.ts",
+    "backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+    "backend/tests/googleDeliveryCrash.local.integration.ts",
+    "docs/infra/batch-4/GOLDEN-MATRIX.md",
+    "docs/infra/batch-4/OPERATIONS.md",
+    "docs/infra/batch-4/ORIGINAL-SPECIFICATION.md",
+    "docs/infra/batch-4/RESOURCE-LEDGER.md",
+    "docs/infra/batch-4/STATUS.md",
+    "docs/infra/batch-4/THREE-PHASE-ORDER.md",
+    "docs/infra/batch-4/benchmarks/local-fairness-latency.json",
+    "docs/infra/batch-4/phase1-checkpoint-01.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/evidence/command-010/CURRENT-PROOF-METADATA-CONTINUATION-20261028.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "docs/xroga/missions/batch4-shared-engine-20261029.json",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/credential-usage-audit.json",
+    "docs/xroga/security/current-migration-additions.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/phase-three-authority-delta.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "frontend/src/components/terminal/RuntimePreviewControls.staleNotice.test.ts",
+    "frontend/src/components/terminal/RuntimePreviewControls.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/swarmReplayGap.contract.test.ts",
+    "frontend/src/store/useLiveBuildStore.ts",
+    "scripts/batch4/local-fairness-benchmark.ts",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "supabase/migrations/20261029100000_engineering_resource_ledger.sql",
+    "supabase/migrations/20261029110000_engineering_operator_diagnostics.sql"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, Google delivery and worker path, SoftwareAgent, project runtime store, live preview coordinator",
+      "Batch 1/1.5/2/3 behaviour and security controls",
+      "Codex Batch 4 checkpoints"
+    ],
+    "extend": [
+      "Saved revisions are read back by their own id under the same owner before they are reported durable",
+      "Queued runs get a bounded wait (heartbeat from admission or resume) and end as never_started instead of worker_restarted",
+      "A verification gate binds test evidence to the exact delivered source, run, project and attempt"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261029100000_engineering_resource_ledger.sql",
+      "supabase/migrations/20261029110000_engineering_operator_diagnostics.sql"
+    ],
+    "rollout": "Additive service-role-only tables and functions. Not applied by this change; apply through the verified migration workflow after authorisation.",
+    "rollback": "DROP TABLE public.engineering_resource_reservations, public.engineering_resource_limits; drop the engineering_resource and engineering_diagnostics functions. Nothing else references them."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New /api/existing-source routes require the issued tenant context and are off unless XROGA_EXISTING_SOURCE=1."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Every binding query carries the verified owner; another owner's binding id is indistinguishable from one that does not exist; the same repository linked by two owners stays two bindings. Code maps are stored per owner and binding, service-role only with RLS, cascade on unlink, purged on revocation, transfer, account change and removed connection; another owner's map is indistinguishable from a missing one."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Delivery writes a NEW review branch and opens a draft PR only after the binding is re-verified at the provider, the account can push, the remote head is re-read, credentials and workflow paths are scanned out, and the change is verified (or explicitly confirmed unverified). It never writes the base or a protected branch and never force-pushes. An unverified change needs an explicit acknowledgement before a draft PR."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "The connected account token is resolved server-side and never returned; .env, key and credential files are never fetched; secrets inside ordinary files are redacted by the existing tool session."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; blob fetches for the map skip sensitive, vendored, generated, binary and oversize files. No repository content reaches a model in these phases; the passport carries signatures and paths, not bodies. A ZIP import is read only from the owner's own upload; entries are validated (no traversal, symlink, encrypted, bomb), and credentials and binaries are never stored. Change execution and tests run only through the isolation runtime port (never on the API host); with no runtime the change ends unverified."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Map builds are bounded (1500 blob fetches, 24 MB, one build at a time per owner, shared in-flight builds); persisted map capped at 8 MB. No model spend."
+    },
+    "billing": {
+      "changed": false,
+      "description": "None."
+    }
+  },
+  "tests": [
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/verificationGate.test.ts",
+      "scope": "Verification gate: genuine receipts only, exact source/run/project/attempt, failure and unavailable semantics, cancelled and stale attempts, durable source, provider receipt.",
+      "negative": true,
+      "reference": "backend/src/ai/verificationGate.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/runReconciler.queue.test.ts backend/src/ai/runReconciler.test.ts",
+      "scope": "Queued-run wait versus worker-held orphan rule, with real filter semantics.",
+      "negative": true,
+      "reference": "backend/src/ai/runReconciler.queue.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/workers/googleDeliveryStore.test.ts",
+      "scope": "Delivery rediscovery window, expired-launch retry, attempt ceiling, source match, and the existingSourceChangeId contract.",
+      "negative": true,
+      "reference": "backend/src/workers/googleDeliveryStore.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/synthesis/projectRuntime/store.persistence.test.ts backend/src/synthesis/projectRuntime/store.worker.test.ts",
+      "scope": "Saved revision read-back: tampered, missing and unreadable rows refuse the receipt.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/store.persistence.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/repairController.test.ts",
+      "scope": "Bounded repair controller: finite persisted attempts, protected-path refusal, no-progress and repeated-source stops, cancellation, lease loss, budget exhaustion, crash-resume.",
+      "negative": true,
+      "reference": "backend/src/ai/repairController.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/verificationEvidence.test.ts backend/src/builder/qa/verificationEvidence.test.ts",
+      "scope": "Batch 2 and Batch 3 adapters onto the shared gate: tested versus delivered source, browser-only rule, carried passes outside the gate.",
+      "negative": true,
+      "reference": "backend/src/existingSource/change/verificationEvidence.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/resourceLedger.test.ts",
+      "scope": "Resource ledger client: tenant-bound owner, bounded input, no error-text leak, repair budget port.",
+      "negative": true,
+      "reference": "backend/src/ai/resourceLedger.test.ts"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_LEDGER_TEST_DATABASE_URL=<loopback disposable> node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringResourceLedger.local.integration.ts",
+      "scope": "Resource ledger on a real disposable PostgreSQL: idempotent reserve, atomic cap under a concurrent race, settle once, release, cross-owner denial, sweep, privileges.",
+      "negative": true,
+      "reference": "backend/tests/engineeringResourceLedger.local.integration.ts"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_LEDGER_TEST_DATABASE_URL=<loopback disposable> node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringResourceLedger.processes.local.integration.ts",
+      "scope": "Real OS processes: six workers racing a cap, SIGKILL while holding a reservation (hold stays visible, blocks capacity, swept and charged in full), redelivery after death is the same reservation.",
+      "negative": true,
+      "reference": "backend/tests/engineeringResourceLedger.processes.local.integration.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/eventReplay.test.ts backend/src/operations/redactionCanary.test.ts",
+      "scope": "Event replay, gap reporting and merge; canary secrets through the shared redaction.",
+      "negative": true,
+      "reference": "backend/src/ai/eventReplay.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/workers/fairSelection.test.ts backend/src/workers/googleDeliveryStore.test.ts",
+      "scope": "Per-tenant fair delivery selection and the delivery store contract.",
+      "negative": true,
+      "reference": "backend/src/workers/fairSelection.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/resourceMeter.test.ts backend/src/sandbox/meteredExecution.test.ts backend/src/synthesis/projectRuntime/store.metering.test.ts",
+      "scope": "Resource metering: configuration, record-only versus enforced, fail-closed, the sandbox seam, storage bytes through the real saveRevision, and the sweep.",
+      "negative": true,
+      "reference": "backend/src/ai/resourceMeter.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/change.test.ts",
+      "scope": "Batch 3 repairs through the shared controller with a real process runner: protected-test refusal and rollback, no-progress stop, multi-step repair.",
+      "negative": true,
+      "reference": "backend/src/existingSource/change/change.test.ts"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_DELIVERY_TEST_DATABASE_URL=<loopback disposable> node node_modules/tsx/dist/cli.mjs --test backend/tests/googleDeliveryCrash.local.integration.ts",
+      "scope": "Real processes against the real delivery migrations: dispatcher killed after reserving, worker killed after claiming, fenced resume with one winner, cancellation after admission.",
+      "negative": true,
+      "reference": "backend/tests/googleDeliveryCrash.local.integration.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs scripts/batch4/local-fairness-benchmark.ts docs/infra/batch-4/benchmarks/local-fairness-latency.json",
+      "scope": "Local fairness and latency measurement (not production performance).",
+      "negative": true,
+      "reference": "scripts/batch4/local-fairness-benchmark.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/synthesis/livePreview/status.test.ts",
+      "scope": "Preview source state: only a recorded matching fingerprint is current.",
+      "negative": true,
+      "reference": "backend/src/synthesis/livePreview/status.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/swarmReplayGap.contract.test.ts frontend/src/components/terminal/RuntimePreviewControls.staleNotice.test.ts",
+      "scope": "Frontend contracts: lost history is reported once; a stale preview is labelled as an older version.",
+      "negative": true,
+      "reference": "frontend/src/lib/swarmReplayGap.contract.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/ai/engineeringOperator.test.ts",
+      "scope": "Operator module and router: validation, fixed functions, no error-text leak, retention rules, mounted only behind the admin middleware.",
+      "negative": true,
+      "reference": "backend/src/ai/engineeringOperator.test.ts"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_DIAGNOSTICS_TEST_DATABASE_URL=<loopback disposable> node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringDiagnostics.local.integration.ts",
+      "scope": "Operator diagnostics on a real disposable PostgreSQL: exact counts for each stalled state, samples, no run content, privileges.",
+      "negative": true,
+      "reference": "backend/tests/engineeringDiagnostics.local.integration.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/sandbox/google/orphanReconciler.test.ts",
+      "scope": "Reconciliation of unrecorded Google machines through the real control against a simulated Compute API.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/orphanReconciler.test.ts"
+    },
+    {
+      "command": "NODE_ENV=test node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/change/crashRecovery.test.ts",
+      "scope": "A real worker process killed mid-edit; a restarted service recovers from the durable row alone.",
+      "negative": true,
+      "reference": "backend/src/existingSource/change/crashRecovery.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends the existing reconciler, delivery store, runtime store and verification vocabulary. No scheduler, agent loop, runtime or control plane is added.",
+    "rfc": null
+  },
+  "rollout": "Development only. Merge and activation need the founder authorisation after all three phases and acceptance gates.",
+  "rollback": "Revert the branch. The reconciler change only alters when an unclaimed run is ended and which reason it records; the read-back only adds a verification read after an insert.",
+  "knownGaps": [
+    "Operator diagnostics are an API only (no admin UI)",
+    "The orphan sweep and ledger retention are wired to the maintenance tick but tested with injected dependencies, not against a real Compute API or Supabase",
+    "Crash recovery is shown for the Batch 3 path with a file-backed store and a scripted agent",
+    "Batch 2 repair intentionally remains the canonical task graph task; only Batch 3 uses the shared controller",
+    "Several changes are default-on (queued-run wait, fair discovery, revision read-back, redaction, gate cross-check); see docs/infra/batch-4/OPERATIONS.md",
+    "Golden A-V: 4 PASS (stated levels), 18 PARTIAL; the PARTIAL rows need a real sandbox, preview, browser or model",
+    "All real-model, real-provider, staging and production verification is DEFERRED BY FOUNDER"
+  ],
+  "placeholderClaimsRemaining": [
+    "PostgREST and PostgreSQL behaviour is exercised through loopback or evaluator fixtures here"
+  ],
+  "evidenceRefs": [
+    "docs/infra/batch-4/STATUS.md",
+    "docs/infra/batch-4/RESOURCE-LEDGER.md",
+    "BATCH-4-HANDOFF.md",
+    "docs/infra/batch-4/OPERATIONS.md",
+    "docs/infra/batch-4/GOLDEN-MATRIX.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Batch 4 is development only and not accepted",
+      "Production hold",
+      "Phases 1-3 incomplete"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

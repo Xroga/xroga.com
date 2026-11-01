@@ -1,10 +1,13 @@
 import { randomUUID } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { requireResourceOwner, requireTenantContext, type TenantContext } from '../security/tenantContext.js';
-import { MODELS, requirePricing, type ModelId } from './models.js';
+import { MODELS, requirePricing, resolveModelSpec, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
-import { PostCompletionAccountingError } from './postCompletionAccounting.js';
+import { PostCompletionAccountingError, recordCompletedProviderUsage } from './postCompletionAccounting.js';
+import { registerModelSdkAdmission, modelAdmissionDenied, MODEL_REDIRECT_AFTER_DISPATCH } from './modelSdkAdmission.js';
+import type { BoundModelDispatch, ModelPayload } from './tenantModelDispatch.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
@@ -455,24 +458,58 @@ export async function withOperationsProviderReservation<T extends ProviderUsageR
   estimatedInputTokens: number;
   maximumOutputTokens: number;
   idempotencyKey: string;
-  execute: () => Promise<T>;
+  payload?: ModelPayload;
+  execute: (dispatch?: BoundModelDispatch) => Promise<T>;
 }): Promise<T> {
-  const reservation = await reserveOperationsProviderBudget(input);
+  // Snapshot the admitted action before any asynchronous lookup. The canonical
+  // RPC verifies its owner, actor, approval and current lease, never a raw ID.
+  const bound={...input,admittedAction:structuredClone(input.admittedAction)};
+  const payload=input.payload?structuredClone(input.payload):undefined;
+  let reservation:ProviderReservation;
+  try{reservation=await reserveOperationsProviderBudget(bound);}
+  catch(error){throw Object.assign(Error('The admitted Operations reservation could not be verified.',{cause:error}),{code:'PROVIDER_RESERVATION_DENIED',retryable:false});}
+  let active=true;
+  let sdk:ReturnType<typeof registerModelSdkAdmission>|undefined;
   let providerCompleted = false;
   try {
-    const result = await input.execute();
+    let dispatch:BoundModelDispatch|undefined;
+    if(payload){
+      const apiModel=resolveModelSpec(bound.modelId)?.apiModel;
+      if(!apiModel)modelAdmissionDenied();
+      const expected=JSON.parse(JSON.stringify({messages:payload.messages,tools:payload.tools??[]}));
+      const beforeDispatch=async(wireBody:string)=>{
+        if(!active)modelAdmissionDenied();
+        const wire=JSON.parse(wireBody);
+        if(wire.model!==apiModel||wire.max_tokens!==bound.maximumOutputTokens
+          ||!isDeepStrictEqual({messages:wire.messages,tools:wire.tools??[]},expected))modelAdmissionDenied();
+        // Same idempotency key, same reservation. The database rechecks current
+        // membership, cancellation, approval and lease on every SDK retry.
+        const current=await reserveOperationsProviderBudget(bound);
+        if(!active||!isDeepStrictEqual(current,reservation))modelAdmissionDenied();
+      };
+      sdk=registerModelSdkAdmission(beforeDispatch,bound.modelId,undefined);
+      dispatch={payload,credentialOverride:undefined,beforeDispatch};
+    }
+    const result = await bound.execute(dispatch);
     providerCompleted = true;
-    await settleProviderBudget({ userId: input.ownerId, modelId: input.modelId, reservation, result });
+    await settleProviderBudget({ userId: bound.ownerId, modelId: bound.modelId, reservation, result });
+    const completion=sdk?.completion();
+    if(completion){
+      if(result.inputTokens!==completion.result.inputTokens||result.outputTokens!==completion.result.outputTokens)throw new PostCompletionAccountingError();
+      // ownerId is now corroborated by the durable admitted-action reservation.
+      await recordCompletedProviderUsage(bound.ownerId,bound.modelId,completion.result.inputTokens,completion.result.outputTokens);
+      completion.checkCancellation();completion.publish();
+    }
     return result;
   } catch (error) {
     await finishFailedProviderReservation({
-      userId: input.ownerId,
+      userId: bound.ownerId,
       reservation,
       error: providerCompleted ? new Error('Provider accounting outcome requires reconciliation') : error,
     }).catch(() => undefined);
     if (providerCompleted) throw new PostCompletionAccountingError();
     throw error;
-  }
+  }finally{active=false;sdk?.revoke();}
 }
 
 export async function settleProviderBudget(input: {
@@ -533,7 +570,8 @@ export async function finishFailedProviderReservation(input: {
   error: unknown;
 }): Promise<void> {
   const failure = normalizeProviderError(input.error);
-  const pending = ['timeout', 'cancelled', 'transient', 'unknown'].includes(failure.kind);
+  const pending = ['timeout', 'cancelled', 'transient', 'unknown'].includes(failure.kind)
+    || (input.error as {type?:unknown})?.type===MODEL_REDIRECT_AFTER_DISPATCH;
   if (hasDurableStore()) {
     const { error } = await getSupabaseAdmin().rpc('release_xroga_provider_budget', {
       p_user_id: input.userId,
@@ -561,9 +599,18 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   estimatedInputTokens: number;
   maximumOutputTokens: number;
   purpose?: BudgetPurpose;
+  idempotencyKey?: string;
   execute: () => Promise<T>;
 }): Promise<T> {
-  const reservation = await reserveProviderBudget(input);
+  let reservation: ProviderReservation;
+  try { reservation = await reserveProviderBudget(input); }
+  catch (error) {
+    if (normalizeProviderError(error).kind === 'capacity') throw error;
+    // Failure to prove a reservation is a request admission refusal. Another
+    // model/account cannot turn malformed or unavailable budget evidence valid.
+    throw Object.assign(new Error(error instanceof Error ? error.message : 'Provider budget admission is unavailable.', { cause: error }),
+      { code: 'PROVIDER_RESERVATION_DENIED', retryable: false });
+  }
   let providerCompleted = false;
   try {
     const result = await input.execute();
@@ -583,7 +630,12 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
       }
       throw new PostCompletionAccountingError();
     }
-    await finishFailedProviderReservation({ userId: input.userId, reservation, error });
+    try { await finishFailedProviderReservation({ userId: input.userId, reservation, error }); }
+    catch {
+      // An unverified release must not become permission to spend again.
+      throw Object.assign(new Error('Provider budget release could not be verified.'),
+        { code: 'PROVIDER_RESERVATION_DENIED', retryable: false });
+    }
     throw error;
   }
 }

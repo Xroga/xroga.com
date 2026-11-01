@@ -128,9 +128,9 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
     revisions.clear();saved.length=0;attempted.length=0;prepares=0;oauthToken='SYNTHETIC_CURRENT_TOKEN';
     const created=await originalFetch(`${origin}/create-project`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name:'Fixture',organizationId:'synthetic-org',userId:'22222222-2222-4222-8222-222222222222'})});
-    assert.equal(created.status,400);assert.equal(createdProjects,1);
-    assert.deepEqual(attempted,['bundle']);
-    assert.deepEqual(saved,[]);assert.equal(prepares,1);assert.equal(oauthToken,'');
+    assert.equal(created.status,400);assert.equal(createdProjects,0,'A raw creation request cannot bypass native exact approval');
+    assert.deepEqual(attempted,[],'No implicit derived-credential persistence');
+    assert.deepEqual(saved,[]);assert.equal(prepares,0);assert.equal(oauthToken,'SYNTHETIC_CURRENT_TOKEN','Rejected creation does not replace the current connection');
     await new Promise<void>(resolve=>setTimeout(resolve,50));
   } finally {
     globalThis.fetch=originalFetch;

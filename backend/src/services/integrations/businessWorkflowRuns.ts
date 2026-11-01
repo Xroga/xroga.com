@@ -129,7 +129,12 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
     try {
       if (step.kind === 'read') {
         const eventEvidence = current.outcomes.filter((item) => item.stepIndex === -1).map((item) => ({ sourceRequest: item.request, toolkit: item.toolkit, toolSlug: item.toolSlug, data: item.data }));
-        const result = await readBusinessData({ userId: current.user_id, useCase: step.request, referenceEvidence: eventEvidence });
+        const result = await readBusinessData({ userId: current.user_id, tenantContext: context, useCase: step.request, referenceEvidence: eventEvidence });
+        if(result.status==='confirmation_required'){
+          try{current=await updateRun(context,current,{status:'awaiting_confirmation',current_confirmation_id:result.confirmation.id});}
+          catch(error){await cancelBusinessActionConfirmation(current.user_id,result.confirmation.id).catch(()=>undefined);throw error;}
+          return{run:view(current),confirmation:result.confirmation};
+        }
         if (result.status !== 'success') {
           current = await updateRun(context, current, { status: 'setup_required' });
           return { run: view(current), pendingRead: result };
@@ -148,6 +153,7 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
       const referenceEvidence = previousEvidence(current, step);
       const preparation = await prepareBusinessAction({
         userId: current.user_id,
+        tenantContext: context,
         useCase: step.request,
         referenceEvidence,
         forceConfirmation: true,
@@ -216,11 +222,14 @@ export async function resumeBusinessWorkflowAfterConfirmation(
   if (!validRun(data)) return null;
   requireResourceOwner(context, data.user_id);
   const step = data.steps[data.step_index];
-  if (!step || step.kind !== 'action') throw new Error('The pending workflow step is invalid.');
+  if (!step || !['action','read'].includes(step.kind)) throw new Error('The pending workflow step is invalid.');
+  if(step.kind==='read'&&execution.resultText.length>8_000){
+    return{run:view(await updateRun(context,data,{status:'setup_required',failure_code:'READ_RESULT_TOO_LARGE',current_confirmation_id:null}))};
+  }
   const current = await updateRun(context, data, {
     status: 'running',
     current_confirmation_id: null,
-    outcomes: [...data.outcomes, { stepIndex: data.step_index, request: step.request, kind: 'action', toolkit: execution.toolkit, toolSlug: execution.toolSlug, data: execution.resultText }],
+    outcomes: [...data.outcomes, { stepIndex: data.step_index, request: step.request, kind: step.kind, toolkit: execution.toolkit, toolSlug: execution.toolSlug, data: execution.resultText }],
     step_index: data.step_index + 1,
   });
   return advance(context, current);

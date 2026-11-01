@@ -67,8 +67,8 @@
  *   failure — it never falls through to running the build *with* a network. Denial is
  *   fail-closed, which is the only property that makes it worth claiming.
  *
- *   `registry-only` deliberately does not unshare: `npm install` has to reach the registry.
- *   Egress is denied for exactly the steps that have no reason to want it.
+ *   `registry-only` is refused until a verified restricted network is available.
+ *   An unrestricted guest is not a registry-only install environment.
  *
  * Two properties the container providers have that this one does not, stated plainly rather
  * than left for someone to discover:
@@ -86,6 +86,7 @@
  */
 
 import {
+  requireEnforcedSandboxNetworkPolicy,
   type SandboxAvailability,
   type SandboxExecutionRequest,
   type SandboxExecutionResult,
@@ -215,6 +216,7 @@ export function buildExecCommand(
   args: readonly string[],
   networkPolicy: SandboxNetworkPolicy,
 ): string[] {
+  requireEnforcedSandboxNetworkPolicy(networkPolicy, 'fly-machine');
   // `mkdir -p` rather than a bare `cd`: /work only exists if a request file happened to be
   // written into it, so a request with no files — or with only absolute paths — would
   // otherwise fail with "can't cd to /work" and report exit 2 for a build that never ran.
@@ -367,6 +369,7 @@ export class FlyMachineSandboxRuntime implements SandboxRuntime {
   }
 
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
+    requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
     const started = Date.now();
     const notRun = (stderr: string): SandboxExecutionResult => ({
       exitCode: null,

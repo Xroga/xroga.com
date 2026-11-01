@@ -346,7 +346,9 @@ test('hardcoded secrets in model output are rejected before materialization', ()
 test('caller cancellation reaches the active coherent provider request', async () => {
   const controller = new AbortController();
   let receivedSignal: AbortSignal | undefined;
+  let calls=0;
   const complete = (async (_modelId: string, _messages: ChatMessage[], opts: { signal?: AbortSignal }) => {
+    calls++;
     receivedSignal = opts.signal;
     controller.abort();
     const error = new Error('cancelled') as Error & { code?: string };
@@ -356,7 +358,8 @@ test('caller cancellation reaches the active coherent provider request', async (
 
   await assert.rejects(
     implementCoherently({ brief: 'Create a project.', candidates: CANDIDATES, complete, signal: controller.signal }),
-    CoherentImplementationError,
+    {code:'BUILD_CANCELLED'},
   );
   assert.equal(receivedSignal, controller.signal);
+  assert.equal(calls,1,'Cancellation retains its terminal code and cannot start another candidate');
 });

@@ -203,6 +203,12 @@ export interface ProjectRuntimeBinding {
   readonly workspaceRevision:
     number;
 
+  /**
+   * Fingerprint of the project workspace this runtime was last synchronized from. Lets a later status read tell whether the running
+   * preview still reflects the latest saved source. Absent on bindings written before this existed, which are reported as unknown.
+   */
+  readonly sourceFingerprint?: string;
+
   readonly updatedAt:
     string;
 }
@@ -448,6 +454,9 @@ export interface ProjectRuntimeProviderProbe {
 }
 
 export interface ProjectRuntimeProvider {
+  /** Resolve only configured provider-owned addresses, never request hosts. */
+  resolvePreviewTarget?(session: ProjectRuntimeSession, port: number): { host: string; port: number } | null;
+
   readonly id:
     string;
 

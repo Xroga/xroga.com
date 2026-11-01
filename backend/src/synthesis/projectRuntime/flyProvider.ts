@@ -8,6 +8,7 @@ import type {
 
 import {
   DEFAULT_SANDBOX_LIMITS,
+  requireEnforcedSandboxNetworkPolicy,
 } from '../../sandbox/sandboxTypes.js';
 
 import {
@@ -195,6 +196,7 @@ export function executableLine(
     | 'restricted'
     | 'preview',
 ): string {
+  requireEnforcedSandboxNetworkPolicy(networkPolicy,'fly-project-runtime');
   const argv =
     [
       command,
@@ -214,12 +216,10 @@ export function executableLine(
    * Until a host/domain-aware egress gateway is added, restricted
    * receives the same denied-egress boundary as none.
    *
-   * registry-only is the one explicit networked mode used for
-   * dependency resolution.
+   * registry-only was refused above because no verified registry
+   * egress gateway exists. Preview is a separate, unverified policy.
    */
     return (
-    networkPolicy ===
-      'registry-only' ||
     networkPolicy ===
       'preview'
   )
@@ -456,6 +456,15 @@ export class FlyProjectRuntimeProvider
       this.ownApp ===
         this.app,
     );
+  }
+
+  resolvePreviewTarget(session: ProjectRuntimeSession, port: number): { host: string; port: number } | null {
+    const machineId = session.providerState?.machineId;
+    if (this.selfTargeting() || session.providerId !== this.id || session.providerState?.app !== this.app
+      || typeof machineId !== 'string' || !/^[a-z0-9]{1,64}$/.test(machineId)
+      || !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(this.app)
+      || !Number.isInteger(port) || port < 1 || port > 65535) return null;
+    return { host: `${machineId}.vm.${this.app}.internal`, port };
   }
 
   private machineId(

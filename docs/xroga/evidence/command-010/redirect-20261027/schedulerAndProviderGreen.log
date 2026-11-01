@@ -1,0 +1,415 @@
+TAP version 13
+# Subtest: canonical scheduler never retries terminal policy or completed-accounting denials without a retryable flag
+ok 1 - canonical scheduler never retries terminal policy or completed-accounting denials without a retryable flag
+  ---
+  duration_ms: 11.9981
+  type: 'test'
+  ...
+# Subtest: canonical scheduler retains ordinary provider-outage recovery
+ok 2 - canonical scheduler retains ordinary provider-outage recovery
+  ---
+  duration_ms: 13.5731
+  type: 'test'
+  ...
+# Subtest: route plans become persisted executable nodes with all control metadata
+ok 3 - route plans become persisted executable nodes with all control metadata
+  ---
+  duration_ms: 7.1342
+  type: 'test'
+  ...
+# Subtest: scheduler executes dependencies, preserves independent work, and never completes plans without evidence
+ok 4 - scheduler executes dependencies, preserves independent work, and never completes plans without evidence
+  ---
+  duration_ms: 2.4308
+  type: 'test'
+  ...
+# Subtest: restart recovery reloads completed nodes and resumes only pending nodes
+ok 5 - restart recovery reloads completed nodes and resumes only pending nodes
+  ---
+  duration_ms: 0.7393
+  type: 'test'
+  ...
+# Subtest: canonical mutations are atomic, path-safe, serialised, recoverable, and preserve unrelated files
+ok 6 - canonical mutations are atomic, path-safe, serialised, recoverable, and preserve unrelated files
+  ---
+  duration_ms: 1.8777
+  type: 'test'
+  ...
+# Subtest: blocked external operations cannot fabricate push or deployment completion
+ok 7 - blocked external operations cannot fabricate push or deployment completion
+  ---
+  duration_ms: 13.8462
+  type: 'test'
+  ...
+# Subtest: real SDK redirects cannot become retries or another provider fallback
+ok 8 - real SDK redirects cannot become retries or another provider fallback
+  ---
+  duration_ms: 73.5918
+  type: 'test'
+  ...
+# {"initial":1,"forwarded":0,"fallback":0}
+# Subtest: each Parallel provider entry denies raw user ID authorization before network dispatch
+    # Subtest: search
+    ok 1 - search
+      ---
+      duration_ms: 1.8163
+      type: 'test'
+      ...
+    # Subtest: extract
+    ok 2 - extract
+      ---
+      duration_ms: 0.456
+      type: 'test'
+      ...
+    # Subtest: responses
+    ok 3 - responses
+      ---
+      duration_ms: 0.3235
+      type: 'test'
+      ...
+    1..3
+ok 9 - each Parallel provider entry denies raw user ID authorization before network dispatch
+  ---
+  duration_ms: 3.9367
+  type: 'test'
+  ...
+# Subtest: actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement
+ok 10 - actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement
+  ---
+  duration_ms: 116.9836
+  type: 'test'
+  ...
+# Subtest: external read-only metadata cannot downgrade server-side destructive, write or unknown tool risk
+ok 11 - external read-only metadata cannot downgrade server-side destructive, write or unknown tool risk
+  ---
+  duration_ms: 10.2436
+  type: 'test'
+  ...
+# Subtest: fixed Composio transport refuses credential-bearing redirects before following them
+ok 12 - fixed Composio transport refuses credential-bearing redirects before following them
+  ---
+  duration_ms: 26.4869
+  type: 'test'
+  ...
+# Subtest: real Composio redirects stay security denials rather than ordinary network errors
+ok 13 - real Composio redirects stay security denials rather than ordinary network errors
+  ---
+  duration_ms: 136.9925
+  type: 'test'
+  ...
+# Subtest: Composio response byte ceiling stops and cancels a dishonest unbounded stream
+ok 14 - Composio response byte ceiling stops and cancels a dishonest unbounded stream
+  ---
+  duration_ms: 3.509
+  type: 'test'
+  ...
+# Subtest: settled calls use the new remainder, ordinary provider failures can recover, and worker claims cannot change spend
+ok 15 - settled calls use the new remainder, ordinary provider failures can recover, and worker claims cannot change spend
+  ---
+  duration_ms: 7.1293
+  type: 'test'
+  ...
+# Subtest: model lifetime stops after MODEL_DISPATCH_BINDING_DENIED
+ok 16 - model lifetime stops after MODEL_DISPATCH_BINDING_DENIED
+  ---
+  duration_ms: 0.8284
+  type: 'test'
+  ...
+# Subtest: model lifetime stops after MODEL_USAGE_UNMEASURED
+ok 17 - model lifetime stops after MODEL_USAGE_UNMEASURED
+  ---
+  duration_ms: 0.573
+  type: 'test'
+  ...
+# Subtest: model lifetime stops after unconfirmed settlement
+ok 18 - model lifetime stops after unconfirmed settlement
+  ---
+  duration_ms: 0.5714
+  type: 'test'
+  ...
+# Subtest: cancellation prevents further dispatch and output even if a provider ignores abort
+ok 19 - cancellation prevents further dispatch and output even if a provider ignores abort
+  ---
+  duration_ms: 1.2957
+  type: 'test'
+  ...
+# Subtest: container: untrusted worker failure text cannot enter persisted failure evidence
+ok 20 - container: untrusted worker failure text cannot enter persisted failure evidence
+  ---
+  duration_ms: 11.062
+  type: 'test'
+  ...
+# Subtest: container: overlapping model requests cannot reuse an unspent allowance
+ok 21 - container: overlapping model requests cannot reuse an unspent allowance
+  ---
+  duration_ms: 36.2624
+  type: 'test'
+  ...
+# Subtest: container: a result cannot succeed before model accounting completes and revokes the call lifetime
+ok 22 - container: a result cannot succeed before model accounting completes and revokes the call lifetime
+  ---
+  duration_ms: 6.629
+  type: 'test'
+  ...
+# Subtest: remote: untrusted worker failure text cannot enter persisted failure evidence
+ok 23 - remote: untrusted worker failure text cannot enter persisted failure evidence
+  ---
+  duration_ms: 7.6138
+  type: 'test'
+  ...
+# Subtest: remote: overlapping model requests cannot reuse an unspent allowance
+ok 24 - remote: overlapping model requests cannot reuse an unspent allowance
+  ---
+  duration_ms: 12.0384
+  type: 'test'
+  ...
+# Subtest: remote: a result cannot succeed before model accounting completes and revokes the call lifetime
+ok 25 - remote: a result cannot succeed before model accounting completes and revokes the call lifetime
+  ---
+  duration_ms: 4.7372
+  type: 'test'
+  ...
+# Subtest: browser task handler on the canonical scheduler
+    # Subtest: security denials and uncertain completed accounting cannot retry a browser task
+    ok 1 - security denials and uncertain completed accounting cannot retry a browser task
+      ---
+      duration_ms: 19.4369
+      type: 'test'
+      ...
+    # Subtest: runs through ExecutionScheduler, stores verified private evidence, and releases the lease
+    ok 2 - runs through ExecutionScheduler, stores verified private evidence, and releases the lease
+      ---
+      duration_ms: 16.2144
+      type: 'test'
+      ...
+    # Subtest: builds the job from issued authority only; the worker sees the actor, project, run and task, not anything a scope could inject
+    ok 3 - builds the job from issued authority only; the worker sees the actor, project, run and task, not anything a scope could inject
+      ---
+      duration_ms: 6.3934
+      type: 'test'
+      ...
+    # Subtest: refuses a scope that smuggles a credential field, before any worker runs
+    ok 4 - refuses a scope that smuggles a credential field, before any worker runs
+      ---
+      duration_ms: 1.6371
+      type: 'test'
+      ...
+    # Subtest: a private or out-of-scope start page never reaches a worker
+    ok 5 - a private or out-of-scope start page never reaches a worker
+      ---
+      duration_ms: 3.0469
+      type: 'test'
+      ...
+    # Subtest: authority
+        # Subtest: another tenant cannot write into a project it does not own, even if the authorise hook is wrong (Drive itself refuses)
+        ok 1 - another tenant cannot write into a project it does not own, even if the authorise hook is wrong (Drive itself refuses)
+          ---
+          duration_ms: 1.6135
+          type: 'test'
+          ...
+        # Subtest: a denied authorisation stops before dispatch: no worker, no lease, no writes
+        ok 2 - a denied authorisation stops before dispatch: no worker, no lease, no writes
+          ---
+          duration_ms: 0.8896
+          type: 'test'
+          ...
+        # Subtest: permission revoked while the job runs: nothing is stored
+        ok 3 - permission revoked while the job runs: nothing is stored
+          ---
+          duration_ms: 0.9547
+          type: 'test'
+          ...
+        # Subtest: permission revoked between two artifact writes: the second is not written
+        ok 4 - permission revoked between two artifact writes: the second is not written
+          ---
+          duration_ms: 1.6534
+          type: 'test'
+          ...
+        1..4
+    ok 6 - authority
+      ---
+      duration_ms: 5.6829
+      type: 'suite'
+      ...
+    # Subtest: leases and fencing
+        # Subtest: a worker that lost its lease mid-job cannot store anything and its result is discarded
+        ok 1 - a worker that lost its lease mid-job cannot store anything and its result is discarded
+          ---
+          duration_ms: 111.2737
+          type: 'test'
+          ...
+        # Subtest: a late result from a worker that lost its lease is refused even when it has no artifacts to store
+        ok 2 - a late result from a worker that lost its lease is refused even when it has no artifacts to store
+          ---
+          duration_ms: 103.7296
+          type: 'test'
+          ...
+        # Subtest: a lease lost between two artifact writes stops the second write
+        ok 3 - a lease lost between two artifact writes stops the second write
+          ---
+          duration_ms: 2.7401
+          type: 'test'
+          ...
+        # Subtest: two dispatches of the same task: one runs, the other is refused
+        ok 4 - two dispatches of the same task: one runs, the other is refused
+          ---
+          duration_ms: 46.6516
+          type: 'test'
+          ...
+        # Subtest: the heartbeat keeps a long job alive past its first ttl
+        ok 5 - the heartbeat keeps a long job alive past its first ttl
+          ---
+          duration_ms: 913.227
+          type: 'test'
+          ...
+        1..5
+    ok 7 - leases and fencing
+      ---
+      duration_ms: 1178.3255
+      type: 'suite'
+      ...
+    # Subtest: untrusted results
+        # Subtest: pages outside the scope or egress policy
+        ok 1 - pages outside the scope or egress policy
+          ---
+          duration_ms: 5.8858
+          type: 'test'
+          ...
+        # Subtest: counters over the job limits or not whole numbers
+        ok 2 - counters over the job limits or not whole numbers
+          ---
+          duration_ms: 20.4343
+          type: 'test'
+          ...
+        # Subtest: artifacts with bad names, types, sizes or duplicates
+        ok 3 - artifacts with bad names, types, sizes or duplicates
+          ---
+          duration_ms: 11.2521
+          type: 'test'
+          ...
+        # Subtest: credential-like artifacts are never stored, by name or by content, and the good ones in the same job are not stored either
+        ok 4 - credential-like artifacts are never stored, by name or by content, and the good ones in the same job are not stored either
+          ---
+          duration_ms: 4.0401
+          type: 'test'
+          ...
+        # Subtest: too many artifacts
+        ok 5 - too many artifacts
+          ---
+          duration_ms: 2.3412
+          type: 'test'
+          ...
+        # Subtest: a worker error never leaks its message into the task
+        ok 6 - a worker error never leaks its message into the task
+          ---
+          duration_ms: 1.5743
+          type: 'test'
+          ...
+        1..6
+    ok 8 - untrusted results
+      ---
+      duration_ms: 46.105
+      type: 'suite'
+      ...
+    # Subtest: the worker's free-text summary is stored without any credential it may have copied from a page
+    ok 9 - the worker's free-text summary is stored without any credential it may have copied from a page
+      ---
+      duration_ms: 7.7457
+      type: 'test'
+      ...
+    # Subtest: idempotency and recovery
+        # Subtest: a retry reuses artifacts an earlier attempt stored, so a crash between writes leaves no duplicates
+        ok 1 - a retry reuses artifacts an earlier attempt stored, so a crash between writes leaves no duplicates
+          ---
+          duration_ms: 8.4706
+          type: 'test'
+          ...
+        # Subtest: reuse requires identical content: the same name with different bytes is a new object
+        ok 2 - reuse requires identical content: the same name with different bytes is a new object
+          ---
+          duration_ms: 8.6213
+          type: 'test'
+          ...
+        # Subtest: the same task in another tenant never reuses or sees this tenant's artifacts
+        ok 3 - the same task in another tenant never reuses or sees this tenant's artifacts
+          ---
+          duration_ms: 10.2644
+          type: 'test'
+          ...
+        1..3
+    ok 10 - idempotency and recovery
+      ---
+      duration_ms: 27.9316
+      type: 'suite'
+      ...
+    # Subtest: admission (bounded concurrency, tenant fairness)
+        # Subtest: the same tenant queues behind its own cap, one job at a time
+        ok 1 - the same tenant queues behind its own cap, one job at a time
+          ---
+          duration_ms: 154.4757
+          type: 'test'
+          ...
+        # Subtest: two tenants run side by side while each respects its own cap
+        ok 2 - two tenants run side by side while each respects its own cap
+          ---
+          duration_ms: 105.2567
+          type: 'test'
+          ...
+        # Subtest: a full queue fails fast with a typed error and never reaches the worker
+        ok 3 - a full queue fails fast with a typed error and never reaches the worker
+          ---
+          duration_ms: 89.698
+          type: 'test'
+          ...
+        # Subtest: authority revoked while a job waits in the queue stops it: the worker is never started
+        ok 4 - authority revoked while a job waits in the queue stops it: the worker is never started
+          ---
+          duration_ms: 86.0597
+          type: 'test'
+          ...
+        # Subtest: a failed or cancelled job gives its slot back
+        ok 5 - a failed or cancelled job gives its slot back
+          ---
+          duration_ms: 6.1768
+          type: 'test'
+          ...
+        1..5
+    ok 11 - admission (bounded concurrency, tenant fairness)
+      ---
+      duration_ms: 443.7219
+      type: 'suite'
+      ...
+    # Subtest: cancellation and limits
+        # Subtest: run cancellation reaches the worker, stores nothing and releases the lease
+        ok 1 - run cancellation reaches the worker, stores nothing and releases the lease
+          ---
+          duration_ms: 33.6184
+          type: 'test'
+          ...
+        # Subtest: the job deadline stops a worker that never answers
+        ok 2 - the job deadline stops a worker that never answers
+          ---
+          duration_ms: 64.5923
+          type: 'test'
+          ...
+        1..2
+    ok 12 - cancellation and limits
+      ---
+      duration_ms: 98.8402
+      type: 'suite'
+      ...
+    1..12
+ok 26 - browser task handler on the canonical scheduler
+  ---
+  duration_ms: 1857.3006
+  type: 'suite'
+  ...
+1..26
+# tests 59
+# suites 7
+# pass 59
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3781.576

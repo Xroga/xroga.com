@@ -221,6 +221,8 @@ export async function executeUniversalRun(input: {
   runId: string;
   existingFiles?: readonly ProjectFile[];
   flags?: UniversalAgentFlags;
+  /** Set only by trusted server code for a run bound to an owned AI Product Builder project. */
+  builderBound?: boolean;
   adapters: ExecutionAdapters;
   store?: UniversalStore;
   commitMessage?: string;
@@ -313,7 +315,7 @@ export async function executeUniversalRun(input: {
   });
 
   // ── Routing ────────────────────────────────────────────────────────────────
-  const decision = routeProject(input.owner.projectId, input.flags);
+  const decision = routeProject(input.owner.projectId, input.flags, { builderBound: input.builderBound === true });
   record('routing', 'routing decision', decision.reason);
 
   if (!mayWrite(decision)) {

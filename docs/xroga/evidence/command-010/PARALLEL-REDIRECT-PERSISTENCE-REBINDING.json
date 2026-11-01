@@ -1,0 +1,62 @@
+{
+  "scope": "ONE_EXISTING_REVIEWED_GAP_PRESERVED_NO_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/ai/parallelDispatch.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "d5fc61960cb0b75bce2c548c1b46501bbc3d0e2638fb4ec970efa8e91e0cf137",
+      "currentSourceSha256": "05dc7599ee3cc4c309e56b2f6505b44a2b0e823f9016df4ab1c07aeab4c45d17",
+      "semanticReview": "Fixed-provider redirects are now observed manually and raised as canonical EgressDenied before any continuation, with the existing conservative hold retained. All existing issued-context/current-owner, reservation and settlement persistence expressions remain exact. Original REVIEWED_GAP disposition remains unresolved for upstream provenance and provider-internal remote URL/DNS behavior. Focused actual caller synthetic protocol regression passes.",
+      "mapping": [
+        {
+          "previousId": "7e7b5e81355e9a2bd831",
+          "currentId": "7f21a82745cdb3340773",
+          "enclosing": "executeParallelRequest",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "swarm_runs",
+          "unchangedExpressionSha256": "f70d97b5cc5e783018cc426f7f85defdb7a8c2d0bced325bc1b590be5dd584ad"
+        },
+        {
+          "previousId": "75cbf034c044cf32b892",
+          "currentId": "2bd8300b0463880a6e3c",
+          "enclosing": "executeParallelRequest",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "previousId": "9ba49df0a3b0dbcb6499",
+          "currentId": "4980ad45b150a99c9693",
+          "enclosing": "executeParallelRequest",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "previousId": "4d5d2f4b9bd33a701568",
+          "currentId": "8e7c51dd4e34d2f73d6c",
+          "enclosing": "executeParallelRequest",
+          "kind": "RPC_CANDIDATE",
+          "target": "reserve_xroga_provider_budget",
+          "unchangedExpressionSha256": "c006ad8788e0eb459b0bc6532e33fefbcd61367b5a0fae8dc88ee5c364bb1d45"
+        },
+        {
+          "previousId": "f4b4fed45844e6530265",
+          "currentId": "df8252f381f17dee4349",
+          "enclosing": "executeParallelRequest",
+          "kind": "RPC_CANDIDATE",
+          "target": "ensure_xroga_free_cycle",
+          "unchangedExpressionSha256": "96a3860a9b0922c86af4fdff5dda20e6c5db29c75f18944e6abcbd45377fb7f5"
+        },
+        {
+          "previousId": "0061fed247982bdbe46e",
+          "currentId": "2fef898f25273817dd83",
+          "enclosing": "executeParallelRequest",
+          "kind": "RPC_CANDIDATE",
+          "target": "settle_xroga_provider_budget",
+          "unchangedExpressionSha256": "a49eb9443dc73b17028f158d0f56d9620e25f810ae50e01cca0adf1a063054dd"
+        }
+      ]
+    }
+  ]
+}

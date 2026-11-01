@@ -3,12 +3,13 @@ import { randomUUID } from 'node:crypto';
 import type { BuilderService } from '../service.js';
 import type { Phase2Store } from '../phase2Store.js';
 import type { BuilderStore } from '../store.js';
-import { BuilderError, type BuilderProject, type BuilderRevision, type VerificationRecord } from '../types.js';
+import { BuilderError, type BuilderProject, type BuilderRevision, type RevisionVerification, type VerificationRecord } from '../types.js';
 import { deriveQaPlan } from './plan.js';
 import { buildRepairPacket, DEFAULT_MAX_REPAIR_ATTEMPTS, runRepairLoop, type RepairLoopResult, type RepairPacket, type RepairPorts } from './repair.js';
 import { passedCheckIds, runQa, type QaEnvironment } from './runner.js';
 import type { RemoteQaExecutor } from './remoteQa.js';
 import type { QaDriver, QaPlan, QaReport } from './types.js';
+import { gateQaReport } from './verificationEvidence.js';
 
 /** Where the application for a revision is running, or null when it cannot be (no runtime). */
 export interface QaTarget {
@@ -133,7 +134,15 @@ export class QaService {
     if (!saved) throw new BuilderError('storage_failed', 'The QA result could not be stored; it is not recorded as verified.');
     // Evidence is only attached to the revision it tested. A read-only remote run tested a narrower set of checks than the
     // local run, so it never relabels the revision (it is recorded as its own verification and shown as such).
-    if (options.relabelRevision !== false) await this.deps.store.setRevisionVerification(userId, project.id, revision.id, verificationStatus(report.status));
+    if (options.relabelRevision !== false) {
+      let label: RevisionVerification = verificationStatus(report.status);
+      // the shared gate is an independent second check on a `verified` label; it can only downgrade it
+      if (label === 'verified') {
+        const gate = gateQaReport({ report, runId, projectId: project.id, revisionContentSha256: revision.contentSha256, testedContentSha256: revision.contentSha256 });
+        if (gate && gate.outcome !== 'verified') label = 'partial';
+      }
+      await this.deps.store.setRevisionVerification(userId, project.id, revision.id, label);
+    }
     return saved.record;
   }
 

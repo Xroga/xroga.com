@@ -1,4 +1,6 @@
-import { chatCompletion } from './openaiCompat.js';
+import { chatCompletion,estimateMessageTokens } from './openaiCompat.js';
+import {withTenantModelReservation,type TenantModelScope} from './tenantModelDispatch.js';
+import {isTerminalModelFailure} from './providerRuntime.js';
 import type { ProjectFile } from './patches.js';
 import { staticValidateProject } from './staticValidate.js';
 import type { ModelId } from './models.js';
@@ -19,6 +21,7 @@ export interface ReviewBuildOutputOpts {
   validationResults?: unknown[];
   securitySensitiveContext?: string[];
   completion?: typeof chatCompletion;
+  dispatchScope?:TenantModelScope;
   /** The commit the reviewed files came from. Recorded in the review's evidence. */
   commitSha?: string;
 }
@@ -332,7 +335,9 @@ export async function reviewBuildOutput(
 
     let parsed: ParsedReviewVerdict;
     try {
-      const completion = opts.completion ?? chatCompletion;
+      const completion:typeof chatCompletion = opts.completion ?? ((modelId,messages,options={})=>withTenantModelReservation({
+        scope:opts.dispatchScope!,modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:options.maxTokens??8192,
+        execute:dispatch=>chatCompletion(modelId,dispatch.payload.messages as typeof messages,{...options,credentialOverride:dispatch.credentialOverride,beforeDispatch:dispatch.beforeDispatch})}));
       const reviewMessages = [
         { role: 'system' as const, content: REVIEW_SYSTEM },
         {
@@ -370,7 +375,8 @@ export async function reviewBuildOutput(
         outputTokens += repair.outputTokens;
         parsed = parseReviewJson(repair.text);
       }
-    } catch {
+    } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       // A provider failure is not a pass. The old catch path returned `staticResult.ok`,
       // so a build whose LLM review never happened could still be reported as reviewed.
       return {

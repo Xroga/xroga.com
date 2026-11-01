@@ -1,0 +1,355 @@
+TAP version 13
+# Subtest: actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch
+    # Subtest: ok
+    ok 1 - ok
+      ---
+      duration_ms: 421.8137
+      type: 'test'
+      ...
+    # Subtest: binary-source
+    ok 2 - binary-source
+      ---
+      duration_ms: 128.4404
+      type: 'test'
+      ...
+    # Subtest: submit-android
+    ok 3 - submit-android
+      ---
+      duration_ms: 114.1749
+      type: 'test'
+      ...
+    # Subtest: submit-ios
+    ok 4 - submit-ios
+      ---
+      duration_ms: 124.0936
+      type: 'test'
+      ...
+    # Subtest: restart
+    ok 5 - restart
+      ---
+      duration_ms: 82.9746
+      type: 'test'
+      ...
+    # Subtest: head-advanced
+    ok 6 - head-advanced
+      ---
+      duration_ms: 91.1371
+      type: 'test'
+      ...
+    # Subtest: concurrent
+    ok 7 - concurrent
+      ---
+      duration_ms: 92.8555
+      type: 'test'
+      ...
+    # Subtest: cancelled
+    ok 8 - cancelled
+      ---
+      duration_ms: 35.1983
+      type: 'test'
+      ...
+    # Subtest: cancel-at-source
+    ok 9 - cancel-at-source
+      ---
+      duration_ms: 46.8178
+      type: 'test'
+      ...
+    # Subtest: cancel-at-audit
+    ok 10 - cancel-at-audit
+      ---
+      duration_ms: 73.587
+      type: 'test'
+      ...
+    # Subtest: owner-at-audit
+    ok 11 - owner-at-audit
+      ---
+      duration_ms: 53.0143
+      type: 'test'
+      ...
+    # Subtest: account-at-audit
+    ok 12 - account-at-audit
+      ---
+      duration_ms: 63.6187
+      type: 'test'
+      ...
+    # Subtest: store-at-audit
+    ok 13 - store-at-audit
+      ---
+      duration_ms: 104.8375
+      type: 'test'
+      ...
+    # Subtest: audit-fail
+    ok 14 - audit-fail
+      ---
+      duration_ms: 53.3898
+      type: 'test'
+      ...
+    # Subtest: cancel-at-claim
+    ok 15 - cancel-at-claim
+      ---
+      duration_ms: 52.2781
+      type: 'test'
+      ...
+    # Subtest: cancel-after-claim
+    ok 16 - cancel-after-claim
+      ---
+      duration_ms: 65.9068
+      type: 'test'
+      ...
+    # Subtest: expire-after-claim
+    ok 17 - expire-after-claim
+      ---
+      duration_ms: 58.8786
+      type: 'test'
+      ...
+    # Subtest: expo-epoch
+    ok 18 - expo-epoch
+      ---
+      duration_ms: 50.3629
+      type: 'test'
+      ...
+    # Subtest: github-epoch
+    ok 19 - github-epoch
+      ---
+      duration_ms: 46.1277
+      type: 'test'
+      ...
+    # Subtest: store-key-changed
+    ok 20 - store-key-changed
+      ---
+      duration_ms: 66.1036
+      type: 'test'
+      ...
+    # Subtest: foreign-account
+    ok 21 - foreign-account
+      ---
+      duration_ms: 33.2199
+      type: 'test'
+      ...
+    # Subtest: foreign-repository
+    ok 22 - foreign-repository
+      ---
+      duration_ms: 27.6119
+      type: 'test'
+      ...
+    # Subtest: foreign-local-project
+    ok 23 - foreign-local-project
+      ---
+      duration_ms: 28.6777
+      type: 'test'
+      ...
+    # Subtest: workflow-changed
+    ok 24 - workflow-changed
+      ---
+      duration_ms: 42.875
+      type: 'test'
+      ...
+    # Subtest: source-network
+    not ok 25 - source-network
+      ---
+      duration_ms: 30.523
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoWorkflow.authority.test.ts:1:9177'
+      failureType: 'testCodeFailure'
+      error: |-
+        The input was expected to not match the regular expression /PRIVATE_PROVIDER_CANARY|fixture-expo-token|fixture-github-token/. Input:
+
+        'fixture-github-token PRIVATE_PROVIDER_CANARY'
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+      actual: 'fixture-github-token PRIVATE_PROVIDER_CANARY'
+      operator: 'doesNotMatch'
+      stack: |-
+        Object.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoWorkflow.authority.test.ts:72:54)
+        expectedException (node:assert:576:17)
+        expectsError (node:assert:701:21)
+        Function.rejects (node:assert:767:3)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoWorkflow.authority.test.ts:72:8)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\expoWorkflow.authority.test.ts:59:814)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: source-malformed
+    ok 26 - source-malformed
+      ---
+      duration_ms: 36.6845
+      type: 'test'
+      ...
+    # Subtest: truncated-source
+    ok 27 - truncated-source
+      ---
+      duration_ms: 55.758
+      type: 'test'
+      ...
+    # Subtest: source-symlink
+    ok 28 - source-symlink
+      ---
+      duration_ms: 55.0934
+      type: 'test'
+      ...
+    # Subtest: source-key-file
+    ok 29 - source-key-file
+      ---
+      duration_ms: 67.1891
+      type: 'test'
+      ...
+    # Subtest: source-held-secret
+    ok 30 - source-held-secret
+      ---
+      duration_ms: 159.4123
+      type: 'test'
+      ...
+    # Subtest: blob-identity
+    ok 31 - blob-identity
+      ---
+      duration_ms: 141.2295
+      type: 'test'
+      ...
+    # Subtest: secret-in-blob
+    ok 32 - secret-in-blob
+      ---
+      duration_ms: 145.7022
+      type: 'test'
+      ...
+    # Subtest: changed-target
+    ok 33 - changed-target
+      ---
+      duration_ms: 84.3589
+      type: 'test'
+      ...
+    # Subtest: changed-proof
+    ok 34 - changed-proof
+      ---
+      duration_ms: 81.7361
+      type: 'test'
+      ...
+    # Subtest: changed-expiry
+    ok 35 - changed-expiry
+      ---
+      duration_ms: 74.3473
+      type: 'test'
+      ...
+    # Subtest: dispatch401
+    ok 36 - dispatch401
+      ---
+      duration_ms: 178.8754
+      type: 'test'
+      ...
+    # Subtest: dispatch403
+    ok 37 - dispatch403
+      ---
+      duration_ms: 171.3275
+      type: 'test'
+      ...
+    # Subtest: dispatch503
+    ok 38 - dispatch503
+      ---
+      duration_ms: 172.6888
+      type: 'test'
+      ...
+    # Subtest: dispatch-network
+    ok 39 - dispatch-network
+      ---
+      duration_ms: 202.2126
+      type: 'test'
+      ...
+    # Subtest: dispatch-redirect
+    ok 40 - dispatch-redirect
+      ---
+      duration_ms: 224.8265
+      type: 'test'
+      ...
+    # Subtest: cancel-at-dispatch
+    ok 41 - cancel-at-dispatch
+      ---
+      duration_ms: 149.3976
+      type: 'test'
+      ...
+    # Subtest: foreign-run-url
+    ok 42 - foreign-run-url
+      ---
+      duration_ms: 172.0343
+      type: 'test'
+      ...
+    # Subtest: foreign-run
+    ok 43 - foreign-run
+      ---
+      duration_ms: 174.0228
+      type: 'test'
+      ...
+    # Subtest: wrong-commit
+    ok 44 - wrong-commit
+      ---
+      duration_ms: 179.7789
+      type: 'test'
+      ...
+    # Subtest: wrong-ref
+    ok 45 - wrong-ref
+      ---
+      duration_ms: 179.9846
+      type: 'test'
+      ...
+    # Subtest: bad-state
+    ok 46 - bad-state
+      ---
+      duration_ms: 187.1353
+      type: 'test'
+      ...
+    # Subtest: authorized-after-outage
+    ok 47 - authorized-after-outage
+      ---
+      duration_ms: 172.7641
+      type: 'test'
+      ...
+    # Subtest: missing-workflow fails preparation without dispatch fallback
+    ok 48 - missing-workflow fails preparation without dispatch fallback
+      ---
+      duration_ms: 54.6024
+      type: 'test'
+      ...
+    # Subtest: secret-in-workflow fails preparation without dispatch fallback
+    ok 49 - secret-in-workflow fails preparation without dispatch fallback
+      ---
+      duration_ms: 42.6937
+      type: 'test'
+      ...
+    # Subtest: source403 fails preparation without dispatch fallback
+    ok 50 - source403 fails preparation without dispatch fallback
+      ---
+      duration_ms: 35.3284
+      type: 'test'
+      ...
+    # Subtest: app creation requires exact approval and returns a verified ID without changing the saved selection
+    ok 51 - app creation requires exact approval and returns a verified ID without changing the saved selection
+      ---
+      duration_ms: 87.7978
+      type: 'test'
+      ...
+    # Subtest: metadata helpers reject raw and fabricated actors before network
+    ok 52 - metadata helpers reject raw and fabricated actors before network
+      ---
+      duration_ms: 1.1281
+      type: 'test'
+      ...
+    1..52
+not ok 1 - actual Expo native confirmation pins owner, project, immutable workflow, current sources and one dispatch
+  ---
+  duration_ms: 5289.0946
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\expoWorkflow.authority.test.ts:1:777'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 53
+# suites 0
+# pass 51
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6253.5918

@@ -273,6 +273,7 @@ function GithubExportDialog({ template, onClose }: { template: ShowcaseTemplate;
   const [repo, setRepo] = useState('');
   const [directory, setDirectory] = useState('');
   const [result, setResult] = useState<{
+    needsConfirmation?:boolean;reviewUrl?:string;
     branch: string;
     commitSha?: string;
     pullRequestUrl?: string;
@@ -348,7 +349,7 @@ function GithubExportDialog({ template, onClose }: { template: ShowcaseTemplate;
       title={`Use ${template.name} in GitHub`}
       description={
         phase === 'done'
-          ? 'The files were pushed to a new branch.'
+          ? result?.needsConfirmation?'Review the exact export before files are written.':'The files were pushed to a new branch.'
           : 'Xroga copies the template into a repository you own, on a new branch, and opens a pull request.'
       }
       className="max-w-lg"
@@ -436,7 +437,7 @@ function GithubExportDialog({ template, onClose }: { template: ShowcaseTemplate;
             Branch <code className="rounded bg-[var(--surface-inset)] px-1 py-0.5 text-xs">{result.branch}</code>
           </p>
           <p className="text-[var(--text-secondary)]">
-            {result.filesCreated} file{result.filesCreated === 1 ? '' : 's'} added
+            {result.needsConfirmation?'No files have been written. ':''}{result.filesCreated} file{result.filesCreated === 1 ? '' : 's'} added
             {result.filesSkipped ? `, ${result.filesSkipped} left untouched` : ''}.
           </p>
           {result.commitSha && (
@@ -444,7 +445,7 @@ function GithubExportDialog({ template, onClose }: { template: ShowcaseTemplate;
               Commit <code className="rounded bg-[var(--surface-inset)] px-1 py-0.5 text-xs">{result.commitSha.slice(0, 7)}</code>
             </p>
           )}
-          {result.pullRequestUrl ? (
+          {result.needsConfirmation&&result.reviewUrl ? <a href={result.reviewUrl} className="font-semibold text-[var(--accent)]">Review exact GitHub export</a> : result.pullRequestUrl ? (
             <a
               href={result.pullRequestUrl}
               target="_blank"

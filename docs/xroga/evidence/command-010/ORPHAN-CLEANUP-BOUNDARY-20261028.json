@@ -1,0 +1,78 @@
+{
+  "scope": "HOST_OPERATOR_DISPOSABLE_STOPPED_RESOURCES_ONLY_NO_JOB_AUTHORITY_OR_EXTERNAL_DATA_EGRESS",
+  "candidate": {
+    "id": "1d79a3dee4b57945a6d6",
+    "file": "backend/src/workers/containerBrowserWorker.ts",
+    "line": 68,
+    "entryPoint": "dockerSync",
+    "transport": "subprocess-or-dynamic-execution",
+    "callee": "spawnSync",
+    "callSha256": "85dfc5726e1cc6f9c081fdb5b159dc228337379138382bd0fa55cec392a8a352",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defect": "A second coordinator startup/stop could force-delete every labelled live job on the same Docker daemon. Original method counted attempted deletion as success and trusted raw listing identifiers.",
+  "correction": "Finite shell-free docker commands, full64hex identifiers, exact xroga-bj names and labels, stopped/nonpaused/nonrestarting/no-restart state, inactive internal networks, no force/volumes flags, count only successful daemon removal.32resource caps per class,10s work deadline,5s command timeout and1MiB output bound.",
+  "callers": [
+    "scripts/browser/browser-coordinator.mts: startup and shutdown",
+    "scripts/browser/run-workflows.mts: startup"
+  ],
+  "authority": "These operator scripts instantiate trusted server host code, not public request bodies. Cleanup never starts a browser, grants tenant authority, calls a model, reads customer files or creates network access. Existing task finally cleanup remains bound to its own lease-derived names.",
+  "verification": {
+    "tests": 27,
+    "failures": 0,
+    "skips": 0,
+    "negative": "Original fake command port reproduced deletion of live and foreign resources. Repaired actual method retains them, refuses malformed IDs/labels, skips attached networks, and counts restart/attach deletion failure as zero.",
+    "positive": "Exact stopped labelled browser and unused internal job network removed. Existing container protocol, cancellation and sandbox spec tests pass.",
+    "executionScope": "Actual TypeScript method executed against deterministic injected Docker command port. No live Docker daemon resources mutated. Daemon race guarantees based on official Docker semantics, not a claimed live concurrency experiment."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "bfa65c6b-3e5f-4e16-b509-f3801a519070",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/orphan-cleanup-red-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 265844
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "da9d12a9-059d-471d-956a-f04d0763ac66",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/orphan-cleanup-green-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 298519
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/workers/containerBrowserWorker.ts",
+      "sha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e"
+    },
+    {
+      "path": "backend/src/workers/containerOrphanCleanup.security.test.ts",
+      "sha256": "c0ce13690fdab872fa9851d342cc7fb8697b691db2b72142dd52553790dc4ab1"
+    }
+  ],
+  "references": [
+    "https://docs.docker.com/reference/cli/docker/container/rm/",
+    "https://docs.docker.com/reference/cli/docker/network/rm/"
+  ],
+  "limitations": [
+    "Running leftovers are deliberately retained for lease-aware operator review. This method cannot establish an abandoned running job solely from a label.",
+    "No live host rollout or broader browser consequential-action authority acceptance."
+  ],
+  "productionChanged": false,
+  "spending": 0
+}

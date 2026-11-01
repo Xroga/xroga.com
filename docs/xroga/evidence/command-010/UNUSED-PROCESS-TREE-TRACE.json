@@ -1,0 +1,21 @@
+{
+  "scope": "CURRENT_KNOWN_SOURCE_GRAPH_UNREACHABLE_PROCESS_HELPERS_NOT_ACCEPTANCE_OF_FUTURE_CALLERS",
+  "unchangedGoogleSource": "7a3f1167d6f8d56e954d0e7ead692a45ac2354ac",
+  "sourceSha256": "41febffb1ac3fa86601857282e085217db7dcaf7d5b1490482db1b49a21742a5",
+  "candidates": [
+    {
+      "id": "f0b2c5745ae0de95cf2c",
+      "entryPoint": "killTree",
+      "callSha256": "a2bef4b8f104c6f8be2b4bd4c406422ab8029b6ebe04539fe201bd2ca83b1c24"
+    },
+    {
+      "id": "89220f199b9f996c1aa6",
+      "entryPoint": "runBounded",
+      "callSha256": "6a288b83b0d5871d589855937891750663a4b0e774c34a114c9b0fad4aaaf3be"
+    }
+  ],
+  "proof": "backend/src/security/egress/unusedProcessTree.test.ts",
+  "proofSha256": "fdf4c7a2e294a4283d92f84c475aa9cab6fa1c8dc475a3f788be3670cf83ecd2",
+  "execution": "ba6e5990-56d8-49ef-9efe-854a7a1cd380",
+  "limitation": "No current runtime/operator importer or named invocation. Helpers remain preserved. New callers invalidate this review and require separate authority/process-security verification. No processes were spawned or killed by this source-graph test."
+}

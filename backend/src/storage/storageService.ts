@@ -81,6 +81,10 @@ export class StorageService {
     const o = await this.#repo.getObject(objectId);
     if (!o || o.tenantId !== actor.tenantId || o.ownerUserId !== actor.userId) throw new StorageError('NOT_FOUND', 'object not found', 404);
     assertKeyMatchesIdentity(o);
+    // Saved object ownership cannot preserve access after the project changes owner.
+    // All user-facing object operations, including completion and part signing,
+    // must admit the project's current owner before using provider capabilities.
+    await this.#authorizeProject(actor, o.projectId);
     return o;
   }
 
@@ -90,6 +94,19 @@ export class StorageService {
     if (!isUuid(projectId)) throw new StorageError('INVALID_REQUEST', 'invalid project id');
     const owner = await this.#repo.getProjectOwner(projectId);
     if (!owner || owner !== actor.userId) throw new StorageError('NOT_FOUND', 'project not found', 404);
+  }
+
+  /** Signing/audit I/O cannot extend an earlier ownership or object-state check.
+   * This guards publication of a new capability, not revocation of an already
+   * delivered presigned URL, which keeps its existing bounded expiry.
+   */
+  async #assertCapabilityCurrent(actor:StorageActor,expected:StorageObject,state:ObjectState):Promise<void>{
+    const current=await this.#owned(actor,expected.id);
+    if(current.state==='DELETING'||current.state==='DELETED'||(state==='READY'&&current.state!=='READY'))throw new StorageError('NOT_FOUND','object is not available',404);
+    if(current.state!==state||(['bucket','objectKey','projectId','contentType','safeFilename','declaredSize','sha256Verified','sizeBytes','multipartUploadId'] as const)
+      .some(key=>current[key]!==expected[key])||current.uploadExpiresAt?.getTime()!==expected.uploadExpiresAt?.getTime())
+      throw new StorageError('CONFLICT','the object changed while its capability was being prepared',409);
+    if(state==='UPLOADING'&&current.uploadExpiresAt&&current.uploadExpiresAt<=this.#now())throw new StorageError('EXPIRED','upload expired',410);
   }
 
   async #audit(actor: StorageActor | null, o: StorageObject | null, action: string, outcome: string, detail: Record<string, unknown> = {}) {
@@ -127,19 +144,31 @@ export class StorageService {
       throw new StorageError('QUOTA_EXCEEDED', 'storage quota exceeded', 413);
     }
 
+    let createdUpload:string|undefined;
     try {
+      // Quota resolution and reservation can wait on locks. Do not issue a
+      // provider capability using the project snapshot from before that wait.
+      await this.#authorizeProject(actor, projectId);
       if (multipart) {
         const plan = multipartPlan(input.size, this.#policy);
         const { uploadId } = await this.#store.createMultipart(this.#bucket, obj.objectKey, contentType);
-        await this.#repo.updateObject(id, ['PENDING'], { state: 'UPLOADING', multipartUploadId: uploadId });
+        createdUpload=uploadId;
+        const current=await this.#repo.updateObject(id, ['PENDING'], { state: 'UPLOADING', multipartUploadId: uploadId });
+        if(!current)throw new StorageError('CONFLICT','the upload changed during preparation',409);
         await this.#audit(actor, obj, 'upload.initiate', 'ok', { mode: 'multipart', parts: plan.parts });
+        await this.#assertCapabilityCurrent(actor,current,'UPLOADING');
         return { objectId: id, mode: 'multipart', partSize: plan.partSize, parts: plan.parts, expiresAt: expires.toISOString() };
       }
       const signed = await this.#store.presignPut({ bucket: this.#bucket, key: obj.objectKey, contentType, size: input.size, sha256Hex: input.sha256 ?? null, ttlSeconds: UPLOAD_URL_TTL_SECONDS });
-      await this.#repo.updateObject(id, ['PENDING'], { state: 'UPLOADING' });
+      const current=await this.#repo.updateObject(id, ['PENDING'], { state: 'UPLOADING' });
+      if(!current)throw new StorageError('CONFLICT','the upload changed during preparation',409);
       await this.#audit(actor, obj, 'upload.initiate', 'ok', { mode: 'single' });
+      await this.#assertCapabilityCurrent(actor,current,'UPLOADING');
       return { objectId: id, mode: 'single', upload: { method: 'PUT', url: signed.url, headers: signed.headers, expiresAt: signed.expiresAt.toISOString() } };
     } catch (err) {
+      // Only the upload created by this attempt is disposable. Keep its ID in
+      // the failed row for the existing reconciler if provider cleanup fails.
+      if(createdUpload)await this.#store.abortMultipart(this.#bucket,obj.objectKey,createdUpload).catch(()=>undefined);
       await this.#repo.updateObject(id, ['PENDING', 'UPLOADING'], { state: 'FAILED', errorCode: 'INITIATE_FAILED' }).catch(() => null);
       await this.#repo.release(id).catch(() => null);
       if (err instanceof ProviderUnavailableError) throw new StorageError('PROVIDER_UNAVAILABLE', 'storage temporarily unavailable', 503);
@@ -155,11 +184,13 @@ export class StorageService {
     if (!partNumbers.length || partNumbers.length > 100 || partNumbers.some((n) => !Number.isInteger(n) || n < 1 || n > plan.parts)) {
       throw new StorageError('INVALID_REQUEST', 'invalid part numbers');
     }
-    return Promise.all(partNumbers.map(async (n) => {
+    const signed=await Promise.all(partNumbers.map(async (n) => {
       const len = n < plan.parts ? plan.partSize : o.declaredSize - plan.partSize * (plan.parts - 1);
       const s = await this.#store.presignPart(o.bucket, o.objectKey, o.multipartUploadId as string, n, UPLOAD_URL_TTL_SECONDS, len);
       return { partNumber: n, method: s.method, url: s.url, headers: s.headers, expiresAt: s.expiresAt.toISOString(), contentLength: len };
     }));
+    await this.#assertCapabilityCurrent(actor,o,'UPLOADING');
+    return signed;
   }
 
   /** Idempotent. Never reports READY unless size and SHA-256 were verified against the stored bytes. */
@@ -170,7 +201,7 @@ export class StorageService {
       throw new StorageError(o.state === 'QUARANTINED' ? 'QUARANTINED' : o.state === 'CORRUPT' ? 'CORRUPT' : 'BAD_STATE', `object is ${o.state.toLowerCase()}`, 409);
     }
     try {
-      if (o.uploadMode === 'multipart') await this.#completeMultipartIfNeeded(o, input.parts);
+      if (o.uploadMode === 'multipart') await this.#completeMultipartIfNeeded(actor,o, input.parts);
       return toPublicObject(await this.#verifyAndAdmit(o, actor));
     } catch (err) {
       if (err instanceof ProviderUnavailableError) throw new StorageError('PROVIDER_UNAVAILABLE', 'storage temporarily unavailable; retry', 503);
@@ -178,7 +209,7 @@ export class StorageService {
     }
   }
 
-  async #completeMultipartIfNeeded(o: StorageObject, parts: CompletedPart[] | undefined): Promise<void> {
+  async #completeMultipartIfNeeded(actor:StorageActor,o: StorageObject, parts: CompletedPart[] | undefined): Promise<void> {
     // A previous attempt may have completed the multipart upload and then crashed: the object exists, the upload id is gone.
     const existing = await this.#store.head(o.bucket, o.objectKey);
     if (existing) return;
@@ -196,6 +227,7 @@ export class StorageService {
       total += s.size;
     }
     if (total !== o.declaredSize) throw new StorageError('SIZE_MISMATCH', 'uploaded parts do not add up to the declared size');
+    await this.#assertCapabilityCurrent(actor,o,o.state);
     await this.#store.completeMultipart(o.bucket, o.objectKey, o.multipartUploadId, ordered);
   }
 
@@ -226,6 +258,9 @@ export class StorageService {
     if (size !== cur.declaredSize) await fail('QUARANTINED', 'SIZE_MISMATCH', { declared: cur.declaredSize, actual: size });
     if (cur.sha256Declared && sha256 !== cur.sha256Declared) await fail('CORRUPT', 'CHECKSUM_MISMATCH', { declared: cur.sha256Declared, actual: sha256 });
 
+    // Read-back verification can outlive project access. Reconciliation acts
+    // for the saved owner and must obey the same current project ownership.
+    await this.#authorizeProject(actor ?? { userId: cur.ownerUserId, tenantId: cur.tenantId }, cur.projectId);
     const c = await this.#repo.commit(cur.id, size);
     if (c === 'NO_RESERVATION' || c === 'RESERVATION_LOST') {
       // reservation expired while the upload was in flight: take it again (quota is re-checked), then commit
@@ -468,6 +503,7 @@ export class StorageService {
     const h = safeDownloadHeaders(o.contentType, o.safeFilename);
     const s = await this.#store.presignGet({ bucket: o.bucket, key: o.objectKey, ttlSeconds: ttl, contentType: h.contentType, contentDisposition: h.contentDisposition });
     await this.#audit(actor, o, 'download.sign', 'ok', { ttl });
+    await this.#assertCapabilityCurrent(actor,o,'READY');
     return { url: s.url, expiresAt: s.expiresAt.toISOString(), filename: o.safeFilename, contentType: h.contentType, size: o.sizeBytes, sha256: o.sha256Verified };
   }
 

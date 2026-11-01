@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import {imageProxyHeaders} from '@/lib/untrustedProxyResponse';
+import {boundedPublicGet,publicHttpsUrl} from '@/lib/server/publicEgress';
+export const runtime='nodejs';
 
 /** Same-origin proxy so clipboard copy can fetch image bytes without CORS blocks. */
 export async function GET(request: Request) {
@@ -8,24 +10,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing url' }, { status: 400 });
   }
 
-  if (!/^https?:\/\//i.test(url)) {
+  try { publicHttpsUrl(url); } catch {
     return NextResponse.json({ error: 'Invalid url' }, { status: 400 });
   }
 
   try {
-    const res = await fetch(url, {
-      headers: { Accept: 'image/*' },
-      signal: AbortSignal.timeout(25_000),
-    });
-    if (!res.ok) {
-      return NextResponse.json({ error: `Upstream ${res.status}` }, { status: 502 });
-    }
-    const contentType = res.headers.get('content-type') ?? 'image/png';
+    const res = await boundedPublicGet(url,{maxBytes:16*1024*1024,timeoutMs:25_000,maxRedirects:3});
+    const contentType = res.contentType;
     if(!/^image\/[a-z0-9.+-]+(?:\s*;|$)/i.test(contentType)){
-      await res.body?.cancel();
       return NextResponse.json({error:'The upstream response is not an image.'},{status:415,headers:imageProxyHeaders});
     }
-    const blob = await res.arrayBuffer();
+    const blob = new Uint8Array(res.bytes);
     return new NextResponse(blob, {
       headers: {
         ...imageProxyHeaders,

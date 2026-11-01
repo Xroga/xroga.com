@@ -1,0 +1,278 @@
+{
+  "scope": "NINE_EXACT_EXISTING_REVIEW_RECORDS_NO_NEW_BOUNDARY_OR_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+      "currentSourceSha256": "f0e3b232c2f87f3c0cdb35e3982f557da4fb8a8d86ea2a98ea44e62274929aa6",
+      "semanticReview": "Canonical scheduler now respects explicit retryable:false. No task store, persistence expression, actor or database operation changed. Focused browser denial/accounting regression reproduces 3 automatic attempts before correction and one after. This preserves existing scoped persistence disposition only.",
+      "mapping": [
+        {
+          "previousId": "b0890e13b2718629037e",
+          "currentId": "b0890e13b2718629037e",
+          "enclosing": "load",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "execution_runs",
+          "unchangedExpressionSha256": "db55893dba9e7efcfb747e9edb83bc84e7e9933d240b805152aedc6a13a088bf"
+        },
+        {
+          "previousId": "1b90517b37251b8ee7c7",
+          "currentId": "1b90517b37251b8ee7c7",
+          "enclosing": "load",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+      "currentSourceSha256": "f0e3b232c2f87f3c0cdb35e3982f557da4fb8a8d86ea2a98ea44e62274929aa6",
+      "semanticReview": "Canonical scheduler now respects explicit retryable:false. No task store, persistence expression, actor or database operation changed. Focused browser denial/accounting regression reproduces 3 automatic attempts before correction and one after. This preserves existing scoped persistence disposition only.",
+      "mapping": [
+        {
+          "previousId": "1bb8bd89204f01a7253f",
+          "currentId": "1bb8bd89204f01a7253f",
+          "enclosing": "saveSnapshot",
+          "kind": "RPC_CANDIDATE",
+          "target": "persist_execution_checkpoint_attempt",
+          "unchangedExpressionSha256": "475e2a3d0044e5b8d2f7d2df637bb48e85de880bf48ae2415ad3670e936c8251"
+        },
+        {
+          "previousId": "024ec43cb6e858b32b18",
+          "currentId": "024ec43cb6e858b32b18",
+          "enclosing": "saveSnapshot",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "semanticReview": "withProviderReservation accepts an optional idempotency key already supported by reserveProviderBudget. The same issued browser job, attempt and call bind it. Every persistence expression and canonical reservation/settlement receipt validation remain unchanged. Focused canonical model/ledger tests pass. All pre-existing REVIEWED_GAP outcomes remain gaps.",
+      "mapping": [
+        {
+          "previousId": "d406c0b568fd6ec5e544",
+          "currentId": "d406c0b568fd6ec5e544",
+          "enclosing": "activatePaidCycle",
+          "kind": "RPC_CANDIDATE",
+          "target": "activate_xroga_paid_cycle",
+          "unchangedExpressionSha256": "c0743930c360577871f41f79aab76d0db4db895e39f23dd2bd1fe9106daa1401"
+        },
+        {
+          "previousId": "de6707af035c2d7fe760",
+          "currentId": "de6707af035c2d7fe760",
+          "enclosing": "activatePaidCycle",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "semanticReview": "withProviderReservation accepts an optional idempotency key already supported by reserveProviderBudget. The same issued browser job, attempt and call bind it. Every persistence expression and canonical reservation/settlement receipt validation remain unchanged. Focused canonical model/ledger tests pass. All pre-existing REVIEWED_GAP outcomes remain gaps.",
+      "mapping": [
+        {
+          "previousId": "5ffa627faeaa6803aab8",
+          "currentId": "5ffa627faeaa6803aab8",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "RPC_CANDIDATE",
+          "target": "ensure_xroga_free_cycle",
+          "unchangedExpressionSha256": "b491044ebe1b60bbb13107068fe51c114cd0443af45b058d1b176fe056a99469"
+        },
+        {
+          "previousId": "7fb0d4feb0707259368b",
+          "currentId": "7fb0d4feb0707259368b",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "abe158166765391a38bb",
+          "currentId": "abe158166765391a38bb",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "xroga_billing_cycles",
+          "unchangedExpressionSha256": "6d6c902b6c84da24f40aa1650f802ee8882e82b5272fb5cc084814c63d835d05"
+        },
+        {
+          "previousId": "cd6fb0dc4aecaa924a23",
+          "currentId": "cd6fb0dc4aecaa924a23",
+          "enclosing": "getProviderEntitlementStatus",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "48010eb67a70f9160a4e",
+          "currentId": "48010eb67a70f9160a4e",
+          "enclosing": "setUsagePacing",
+          "kind": "RPC_CANDIDATE",
+          "target": "set_xroga_usage_pacing",
+          "unchangedExpressionSha256": "a78a54ae4e2620785b9280daa6621dcc8669ac0bbc6900884d13a8c6b7839bf3"
+        },
+        {
+          "previousId": "c79d0afb3ebeabc76c2d",
+          "currentId": "c79d0afb3ebeabc76c2d",
+          "enclosing": "setUsagePacing",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "f8840556255dc425215c",
+          "currentId": "f8840556255dc425215c",
+          "enclosing": "reserveProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "reserve_xroga_provider_budget",
+          "unchangedExpressionSha256": "f81e043496acfac4dd24216c73e8742804dda243ee9ee2a0cc717fa98955317b"
+        },
+        {
+          "previousId": "3c5c04328c11bf512dba",
+          "currentId": "3c5c04328c11bf512dba",
+          "enclosing": "reserveProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "1523f7744eed6083f0b6",
+          "currentId": "1523f7744eed6083f0b6",
+          "enclosing": "settleProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "settle_xroga_provider_budget",
+          "unchangedExpressionSha256": "fd5b19821cdaf19811507e8703aecd2289a32af85ad242b366637d14f8889c7f"
+        },
+        {
+          "previousId": "4c1b535638e8a0a197f8",
+          "currentId": "4c1b535638e8a0a197f8",
+          "enclosing": "settleProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "semanticReview": "withProviderReservation accepts an optional idempotency key already supported by reserveProviderBudget. The same issued browser job, attempt and call bind it. Every persistence expression and canonical reservation/settlement receipt validation remain unchanged. Focused canonical model/ledger tests pass. All pre-existing REVIEWED_GAP outcomes remain gaps.",
+      "mapping": [
+        {
+          "previousId": "88e420183bcb296b87a4",
+          "currentId": "88e420183bcb296b87a4",
+          "enclosing": "reserveProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "ensure_xroga_free_cycle",
+          "unchangedExpressionSha256": "b62a796405bf587af9c871e445471680e1c7397c6086b98aaf0b7e7cb09d444f"
+        },
+        {
+          "previousId": "df66c5e789c6e8f1dd46",
+          "currentId": "df66c5e789c6e8f1dd46",
+          "enclosing": "reserveProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "88789f83425415184ffc",
+          "currentId": "88789f83425415184ffc",
+          "enclosing": "finishFailedProviderReservation",
+          "kind": "RPC_CANDIDATE",
+          "target": "release_xroga_provider_budget",
+          "unchangedExpressionSha256": "1003047e1837473bb764c6d9d0791784c215952d7347bd930019ff717f7c8eef"
+        },
+        {
+          "previousId": "5fc4041577ba475ddde3",
+          "currentId": "5fc4041577ba475ddde3",
+          "enclosing": "finishFailedProviderReservation",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "semanticReview": "withProviderReservation accepts an optional idempotency key already supported by reserveProviderBudget. The same issued browser job, attempt and call bind it. Every persistence expression and canonical reservation/settlement receipt validation remain unchanged. Focused canonical model/ledger tests pass. All pre-existing REVIEWED_GAP outcomes remain gaps.",
+      "mapping": [
+        {
+          "previousId": "3ff444168109d6f2d8a7",
+          "currentId": "3ff444168109d6f2d8a7",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "reserve_operations_provider_budget",
+          "unchangedExpressionSha256": "1ddd595eb7f2ea1c5d03aeebb72a2e5d121e87445511c9298086211dd871e53b"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "semanticReview": "withProviderReservation accepts an optional idempotency key already supported by reserveProviderBudget. The same issued browser job, attempt and call bind it. Every persistence expression and canonical reservation/settlement receipt validation remain unchanged. Focused canonical model/ledger tests pass. All pre-existing REVIEWED_GAP outcomes remain gaps.",
+      "mapping": [
+        {
+          "previousId": "e838e61e27730ca3c3a9",
+          "currentId": "e838e61e27730ca3c3a9",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "semanticReview": "withProviderReservation accepts an optional idempotency key already supported by reserveProviderBudget. The same issued browser job, attempt and call bind it. Every persistence expression and canonical reservation/settlement receipt validation remain unchanged. Focused canonical model/ledger tests pass. All pre-existing REVIEWED_GAP outcomes remain gaps.",
+      "mapping": [
+        {
+          "previousId": "d483200769e782169fd9",
+          "currentId": "d483200769e782169fd9",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "RPC_CANDIDATE",
+          "target": "ensure_xroga_free_cycle",
+          "unchangedExpressionSha256": "29a7114644ac5a760bf7e59ccb8e01d93b1a3c8efc87f0d69f4e705837f32ed6"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "disposition": "REVIEWED_GAP",
+      "previousSourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "currentSourceSha256": "9e88217867a8b21639dd896d7ef0d4b823db432a67b30d0f9793c7fcf64472c3",
+      "semanticReview": "withProviderReservation accepts an optional idempotency key already supported by reserveProviderBudget. The same issued browser job, attempt and call bind it. Every persistence expression and canonical reservation/settlement receipt validation remain unchanged. Focused canonical model/ledger tests pass. All pre-existing REVIEWED_GAP outcomes remain gaps.",
+      "mapping": [
+        {
+          "previousId": "5f776647ab77d7a35536",
+          "currentId": "5f776647ab77d7a35536",
+          "enclosing": "reserveOperationsProviderBudget",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        }
+      ]
+    }
+  ]
+}

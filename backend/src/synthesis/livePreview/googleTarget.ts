@@ -8,7 +8,9 @@ import {authorizedPreviewSession} from './access.js';
  * An address stored in JSON or supplied by a browser is never an upstream. */
 export async function googlePreviewTarget(grant:LivePreviewGrant,session:ProjectRuntimeSession|null,
   control:Pick<GceMachineControl,'configuration'|'resolve'>,nativeIdentity:()=>Promise<void>,clock=Date.now):Promise<{host:string;port:number}|null> {
-  if(!authorizedPreviewSession(grant,session,clock())||session.providerId!=='google-gce')return null;
+  // Native Preview's explicit private service is port 3000. A declared project
+  // port cannot widen admission to SSH or another internal service port.
+  if(!authorizedPreviewSession(grant,session,clock())||session.providerId!=='google-gce'||grant.port!==3000)return null;
   try {
     const handle=session.providerState.gce as GceExecutionHandle|undefined;
     if(!handle||handle.runtimeId!==session.sessionId)return null;

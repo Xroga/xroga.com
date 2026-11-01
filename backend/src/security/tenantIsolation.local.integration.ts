@@ -6,6 +6,8 @@ import express from 'express';
 import {registerGithubConsumerTests} from './githubConsumer.local.integration.js';
 import {registerBrowserMaintainTests} from './browserMaintain.local.integration.js';
 import {registerPlatformBenchmarkTests} from './platformBenchmark.local.integration.js';
+import {registerSoftwareAgentSdkTests} from './softwareAgentSdk.local.integration.js';
+import {registerGenericSdkTests} from './genericSdk.local.integration.js';
 import {registerWebAccountingTests} from './webAccounting.local.integration.js';
 import {registerConnectedMemoryConsumerTests} from './connectedMemoryConsumer.local.integration.js';
 import {registerLearningOwnerReadTests} from './learningOwnerReads.local.integration.js';
@@ -199,6 +201,8 @@ registerRuntimeEventParentTests(admin,()=>users);
 registerAdminReadTests(admin,request);
 registerGithubConsumerTests(admin,()=>users);
 registerPlatformBenchmarkTests(admin,()=>users);
+registerSoftwareAgentSdkTests(admin);
+registerGenericSdkTests(admin);
 registerWebAccountingTests(admin,()=>users);
 registerConnectedMemoryConsumerTests(admin);
 registerLearningOwnerReadTests(admin,()=>users);
@@ -460,12 +464,21 @@ test('real revision restore rejects mismatched snapshot identities before restor
 });
 
 test('real durable preview session cannot resolve a misbound owner/project or stale capability', async t => {
+  const priorProviderApp=process.env.XROGA_SANDBOX_FLY_APP;
+  const priorProviderToken=process.env.XROGA_SANDBOX_FLY_TOKEN;
+  const priorControlApp=process.env.FLY_APP_NAME;
+  Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'xroga-synthetic-runtime',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
+  t.after(()=>{
+    if(priorProviderApp===undefined)delete process.env.XROGA_SANDBOX_FLY_APP;else process.env.XROGA_SANDBOX_FLY_APP=priorProviderApp;
+    if(priorProviderToken===undefined)delete process.env.XROGA_SANDBOX_FLY_TOKEN;else process.env.XROGA_SANDBOX_FLY_TOKEN=priorProviderToken;
+    if(priorControlApp===undefined)delete process.env.FLY_APP_NAME;else process.env.FLY_APP_NAME=priorControlApp;
+  });
   const [owner, other] = users;
   const now = Date.now(), sessionId = randomUUID();
   const store = new SupabaseProjectRuntimeStore();
   const session: ProjectRuntimeSession = {
     schemaVersion: '1.0.0', sessionId, userId: owner.id, projectId: owner.project,
-    providerId: 'fixture-no-execution', runtimeClass: 'interactive', status: 'running', image: null,
+    providerId: 'fly-project-runtime', runtimeClass: 'interactive', status: 'running', image: null,
     workspaceRevision: 1, knownFiles: [], processes: [],
     ports: [{ port: 3000, protocol: 'http', processId: 'fixture', status: 'declared' }],
     providerState: { machineId: 'abc123', app: 'xroga-synthetic-runtime' },
@@ -793,12 +806,21 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
   const canary='SYNTHETIC_PRIVATE_STORAGE_CANARY_NOT_A_PROVIDER_CREDENTIAL';
   try {
     assert.equal((await admin.from('user_integrations').insert({user_id:owner.id,provider:'github',access_token:canary,metadata:{}})).error,null);
+    const rawStatus=await fetch(`${api}/api/github/status`,{headers:{Authorization:`Bearer ${owner.token}`},signal:AbortSignal.timeout(5000)});
+    assert.equal(rawStatus.status,503);const deniedText=await rawStatus.text();assert.ok(!deniedText.includes(canary));assert.equal((JSON.parse(deniedText) as {connected:boolean}).connected,false);
+    const state=randomUUID();
+    await storePkceSession(owner.context,'github_oauth_pkce',{verifier:'synthetic',state,redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString()});
+    const admission=await consumePkceSession(owner.context,'github_oauth_pkce',state);assert.ok(admission?.authorization_revision);
+    await saveGitHubConnection(owner.id,canary,{providerUserId:'fixture',username:'fixture',authorizationRevision:admission.authorization_revision});
     const mirror={access_token:canary,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto' as const,default_repo:null,updated_at:new Date().toISOString()};
     assert.equal(await saveGitHubTokenToStorage(owner.context,mirror),true);
     for(const forged of [owner.id,{...owner.context}]) assert.equal(await saveGitHubTokenToStorage(forged as typeof owner.context,{...mirror,access_token:'SYNTHETIC_REJECTED'}),false);
     const unchanged=await admin.storage.from(bucket).download(path);assert.equal(unchanged.error,null);assert.deepEqual(JSON.parse(await unchanged.data!.text()),mirror);
     const config=await admin.storage.getBucket(bucket);assert.equal(config.error,null);assert.equal(config.data?.public,false);
-    assert.equal((await getGitHubTokenFromStorage(owner.id))?.access_token,canary);
+    // Canonical v3 custody supersedes the plaintext migration mirror. A stale
+    // mirror must stay denied, while the owned vault connection remains usable.
+    assert.equal(await getGitHubTokenFromStorage(owner.id),null);
+    assert.equal(await getGitHubToken(owner.id),canary);
     const ownStatus=await request(`/api/github/status?userId=${other.id}`,owner.token);assert.equal(ownStatus.status,200);
     const ownText=await ownStatus.text();assert.equal((JSON.parse(ownText) as {connected:boolean}).connected,true);assert.ok(!ownText.includes(canary));
     assert.equal(await getGitHubTokenFromStorage(other.id),null);
@@ -811,6 +833,7 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     const status=await request(`/api/github/status?userId=${owner.id}`,other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
   } finally {
     const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');
+    assert.equal((await admin.from('github_integrations').delete().eq('user_id',owner.id)).error,null);
     assert.equal((await admin.from('user_integrations').delete().eq('user_id',owner.id).eq('provider','github')).error,null);
   }
 });

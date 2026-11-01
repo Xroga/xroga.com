@@ -9,7 +9,16 @@
  */
 
 import { randomBytes } from 'crypto';
-import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import {isDeepStrictEqual} from 'node:util';
+import {AuthorityError} from '../../security/authority/enforce.js';
+import type {AuthorityPermit} from '../../security/authority/types.js';
+import {EgressDenied} from '../../security/egress/egressPolicy.js';
+import type {BusinessActionPlan} from '../integrations/businessAction.js';
+import type {SafeBusinessActionConfirmation} from '../integrations/businessActionConfirmations.js';
+import {nativeReleaseActor} from './nativeReleaseAdmission.js';
+import {requireNativeArtifactProject,type NativeArtifactReference} from './nativeArtifact.js';
+import {cwsConnection,prepareCwsPublication,admitCwsPublication} from './cwsAdmission.js';
+import { requireTenantContext, requireResourceOwner, type TenantContext } from '../../security/tenantContext.js';
 import {
   getUserProviderKey,
   saveUserProviderKey,
@@ -33,8 +42,24 @@ function resourceIds(extensionId:string,publisherId:string):{extensionId:string;
   if(!/^[A-Za-z0-9_-]{1,128}$/.test(item)||!/^[A-Za-z0-9_-]{1,128}$/.test(publisher))throw new Error('Invalid Chrome Web Store item or publisher identifier.');
   return {extensionId:item,publisherId:publisher};
 }
-async function cwsFetch(input:string,init?:RequestInit):Promise<Response>{
-  try{return await fetch(input,{...init,redirect:'error',signal:AbortSignal.timeout(20_000)});}catch{throw new Error('Chrome Web Store request unavailable. Retry shortly.');}
+async function cwsFetch(input:string,init:RequestInit,context:TenantContext,check:()=>Promise<void>=async()=>{}):Promise<Response>{
+  requireTenantContext(context);
+  const url=new URL(input),method=init.method??'GET',ids='[A-Za-z0-9_-]{1,128}';
+  const allowed=input===TOKEN_URL&&method==='POST'||url.origin==='https://chromewebstore.googleapis.com'&&(
+    method==='POST'&&new RegExp(`^/(?:upload/v2/publishers/${ids}/items/${ids}:upload|v2/publishers/${ids}/items/${ids}:publish)$`).test(url.pathname)
+    ||method==='GET'&&new RegExp(`^/v2/publishers/${ids}/items/${ids}:fetchStatus$`).test(url.pathname));
+  if(!allowed||url.search||url.hash||url.username||url.password||input!==url.href||/%/.test(url.pathname))throw new EgressDenied('UNSAFE_DESTINATION');
+  await check();requireTenantContext(context);init.signal?.throwIfAborted();
+  let response:Response;
+  try{response=await fetch(input,{...init,redirect:'manual',signal:AbortSignal.any([AbortSignal.timeout(20_000),...(init.signal?[init.signal]:[])])});}catch{throw new Error('Chrome Web Store request unavailable. Retry shortly.');}
+  if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
+  if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('CWS_PROVIDER_AUTHORIZATION_DENIED');}
+  if(!response.ok){await response.body?.cancel().catch(()=>undefined);await check();return new Response('Provider request unavailable.',{status:response.status});}
+  const chunks:Uint8Array[]=[];let size=0;const reader=response.body?.getReader();
+  try{if(reader)for(;;){const item=await reader.read();if(item.done)break;size+=item.value.length;if(size>65536)throw new EgressDenied('INVALID_EGRESS_INPUT');chunks.push(item.value);}}
+  finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+  await check();requireTenantContext(context);init.signal?.throwIfAborted();
+  return new Response([204,205].includes(response.status)?null:Buffer.concat(chunks),{status:response.status,headers:{'Content-Type':'application/json'}});
 }
 function matchesItem(value:unknown,creds:CwsCredentials):boolean{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
@@ -97,7 +122,8 @@ export function getCwsOAuthCallbackUrl(requested?: string): string {
   return `${base}${CWS_CALLBACK_PATH}`;
 }
 
-export async function getCwsCredentials(userId: string): Promise<CwsCredentials | null> {
+export async function getCwsCredentials(userId: string, tenantContext?:TenantContext): Promise<CwsCredentials | null> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const raw = await getUserProviderKey(userId, 'cws_oauth');
   if (!raw) return null;
   try {
@@ -126,7 +152,9 @@ export async function saveCwsCredentials(
   userId: string,
   creds: CwsCredentials,
   writeAdmission?: ProviderKeyWriteAdmission,
+  tenantContext?:TenantContext,
 ): Promise<void> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const identity=resourceIds(creds.extensionId,creds.publisherId);
   await saveUserProviderKey(
     userId,
@@ -141,7 +169,7 @@ export async function saveCwsCredentials(
   );
 }
 
-async function refreshAccessToken(creds: CwsCredentials): Promise<string> {
+async function refreshAccessToken(creds: CwsCredentials, context:TenantContext,check?:()=>Promise<void>): Promise<string> {
   resourceIds(creds.extensionId,creds.publisherId);
   const body = new URLSearchParams({
     client_id: creds.clientId,
@@ -153,13 +181,13 @@ async function refreshAccessToken(creds: CwsCredentials): Promise<string> {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
-  });
+  },context,check);
   const json = (await res.json().catch(() => ({}))) as {
     access_token?: string;
     error?: string;
     error_description?: string;
   };
-  if (!res.ok || typeof json?.access_token!=='string' || !json.access_token.trim() || json.error) {
+  if (!res.ok || typeof json?.access_token!=='string' || !json.access_token || json.access_token.length>16384 || /[\x00-\x20\x7f]/.test(json.access_token) || json.error) {
     throw new Error('Chrome Web Store OAuth failed. Reconnect your Google credentials.');
   }
   return json.access_token;
@@ -168,9 +196,12 @@ async function refreshAccessToken(creds: CwsCredentials): Promise<string> {
 /** Validate saved (or pasted) CWS OAuth by refreshing an access token. */
 export async function validateCwsCredentials(
   creds: CwsCredentials,
+  tenantContext?:TenantContext,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
+  const context=requireTenantContext(tenantContext);
+  creds={...creds};
   try {
-    await refreshAccessToken(creds);
+    await refreshAccessToken(creds,context);
     return { ok: true };
   } catch (err) {
     return { ok: false, error: 'Chrome Web Store credentials could not be validated.' };
@@ -180,6 +211,14 @@ export async function validateCwsCredentials(
 function itemName(creds: CwsCredentials): string {
   const ids=resourceIds(creds.extensionId,creds.publisherId);
   return `publishers/${encodeURIComponent(ids.publisherId)}/items/${encodeURIComponent(ids.extensionId)}`;
+}
+
+/** Authenticated provider readback, not a client-supplied publisher claim.
+ * A valid new unpublished listing need not have a published revision yet. */
+async function verifyCwsItemAccess(creds:CwsCredentials,accessToken:string,context:TenantContext,check:()=>Promise<void>){
+  const response=await cwsFetch(`https://chromewebstore.googleapis.com/v2/${itemName(creds)}:fetchStatus`,{headers:{Authorization:`Bearer ${accessToken}`,Accept:'application/json','x-goog-api-version':'2'}},context,check);
+  const value=await response.json().catch(()=>null);
+  if(!response.ok||!matchesItem(value,creds))throw new AuthorityError('CWS_ITEM_ACCESS_NOT_VERIFIED');
 }
 
 /**
@@ -253,6 +292,7 @@ export async function completeCwsOAuth(opts: {
   state: string;
   redirectUri?: string;
 }): Promise<{ ok: true; message: string } | { ok: false; error: string }> {
+  opts={...opts};
   const context = requireTenantContext(opts.tenantContext);
   const { userId } = context;
   const pkce = await consumePkceSession(context, PKCE_PROVIDER, opts.state);
@@ -298,7 +338,7 @@ export async function completeCwsOAuth(opts: {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
-  });
+  },context);
   const json = (await res.json().catch(() => ({}))) as {
     access_token?: string;
     refresh_token?: string;
@@ -320,12 +360,12 @@ export async function completeCwsOAuth(opts: {
     extensionId,
     publisherId,
   };
-  await saveCwsCredentials(userId, creds, writeAdmission);
+  await saveCwsCredentials(userId, creds, writeAdmission,context);
 
   return {
     ok: true,
     message:
-      'Chrome Web Store OAuth connected. Next Chrome ship uploads + submits for Google review (listing must already exist in the CWS dashboard).',
+      'Chrome Web Store OAuth connected. The next Chrome ship will prepare an upload and submission for your approval. The listing must already exist in the CWS dashboard.',
   };
 }
 
@@ -337,6 +377,9 @@ export type CwsPublishResult = {
   dashboardUrl?: string;
   message: string;
   error?: string;
+  needsConfirmation?:boolean;
+  confirmation?:SafeBusinessActionConfirmation;
+  reviewUrl?:string;
 };
 
 /**
@@ -345,10 +388,23 @@ export type CwsPublishResult = {
  */
 export async function publishChromeExtensionToStore(opts: {
   userId: string;
-  zip: Buffer;
+  zip?: Buffer;
+  tenantContext?:TenantContext;
+  repoFullName?:string;
+  artifact?:NativeArtifactReference;
+  plan?:BusinessActionPlan;
+  authorityPermit?:AuthorityPermit;
 }): Promise<CwsPublishResult> {
-  opts={...opts,zip:Buffer.from(opts.zip)};
-  const creds = await getCwsCredentials(opts.userId);
+  const actor=nativeReleaseActor(opts.userId,opts.tenantContext,opts.plan,opts.authorityPermit);
+  opts={...opts};
+  // An opaque caller ZIP cannot prove source provenance, even with an actor.
+  if(opts.zip!==undefined)throw new AuthorityError('CWS_INSPECTABLE_SOURCE_REQUIRED');
+  const repository=actor.plan?.arguments.repository??opts.repoFullName;
+  const artifact=actor.plan?.arguments.artifact??opts.artifact;
+  if(typeof repository!=='string'||!artifact||typeof artifact!=='object')throw new AuthorityError('CWS_INSPECTABLE_SOURCE_REQUIRED');
+  const reference={...artifact as NativeArtifactReference};
+  await requireNativeArtifactProject(actor.context,repository,reference.projectId);
+  const creds = await getCwsCredentials(opts.userId,actor.context);
   if (!creds) {
     return {
       ok: false,
@@ -358,19 +414,19 @@ export async function publishChromeExtensionToStore(opts: {
       error: 'NO_CWS_CREDS',
     };
   }
-  if (opts.zip.length < 64) {
-    return {
-      ok: false,
-      submitted: false,
-      message: 'extension.zip is empty',
-      error: 'EMPTY_ZIP',
-    };
-  }
-
+  const connection=await cwsConnection(actor.context);
+  const check=async()=>{if(await cwsConnection(actor.context)!==connection||!isDeepStrictEqual(await getCwsCredentials(opts.userId,actor.context),creds))throw new AuthorityError('CWS_CREDENTIAL_CHANGED');};
+  await check();
+  if(!actor.plan)return prepareCwsPublication({context:actor.context,repository,artifact:reference,creds,connection,check,verifyAccount:async guard=>{
+    const token=await refreshAccessToken(creds,actor.context,guard);await verifyCwsItemAccess(creds,token,actor.context,guard);return token;
+  }});
+  const admission=await admitCwsPublication({actor,permit:opts.authorityPermit,repository,creds,connection,check});
+  try{
   let accessToken: string;
   try {
-    accessToken = await refreshAccessToken(creds);
+    accessToken = await refreshAccessToken(creds,actor.context,admission.check);
   } catch (err) {
+    if(err instanceof AuthorityError||err instanceof EgressDenied)throw err;
     return {
       ok: false,
       submitted: false,
@@ -380,7 +436,9 @@ export async function publishChromeExtensionToStore(opts: {
   }
 
   const name = itemName(creds);
+  await verifyCwsItemAccess(creds,accessToken,actor.context,admission.check);
   const uploadUrl = `https://chromewebstore.googleapis.com/upload/v2/${name}:upload`;
+  await admission.beforeUpload(accessToken);
   const upload = await cwsFetch(uploadUrl, {
     method: 'POST',
     headers: {
@@ -388,8 +446,8 @@ export async function publishChromeExtensionToStore(opts: {
       'Content-Type': 'application/zip',
       'x-goog-api-version': '2',
     },
-    body: opts.zip,
-  });
+    body: admission.zip,
+  },actor.context,admission.check);
   const uploadJson = (await upload.json().catch(() => ({}))) as {
     name?:string;
     uploadState?: string;
@@ -410,7 +468,9 @@ export async function publishChromeExtensionToStore(opts: {
     };
   }
 
+  await admission.uploadVerified();
   const publishUrl = `https://chromewebstore.googleapis.com/v2/${name}:publish`;
+  await admission.beforePublish();
   const publish = await cwsFetch(publishUrl, {
     method: 'POST',
     headers: {
@@ -419,7 +479,7 @@ export async function publishChromeExtensionToStore(opts: {
       'x-goog-api-version': '2',
     },
     body: JSON.stringify({ publishType: 'DEFAULT_PUBLISH' }),
-  });
+  },actor.context,admission.check);
   const publishJson = (await publish.json().catch(() => ({}))) as {
     name?:string;itemId?:string;state?:string;
     error?: { message?: string };
@@ -447,17 +507,19 @@ export async function publishChromeExtensionToStore(opts: {
     message:
       'Submitted to Chrome Web Store for Google review. Listing goes public only after Google approves — Xroga cannot skip review.',
   };
+  }finally{admission.close();}
 }
 
 /** Fetch listing status after submit (best-effort; never invents “approved”). */
-export async function fetchCwsItemStatus(userId: string): Promise<{
+export async function fetchCwsItemStatus(userId: string,tenantContext?:TenantContext): Promise<{
   ok: boolean;
   status?: string;
   dashboardUrl?: string;
   message: string;
   error?: string;
 }> {
-  const creds = await getCwsCredentials(userId);
+  const context=requireTenantContext(tenantContext);requireResourceOwner(context,userId);
+  const creds = await getCwsCredentials(userId,context);
   if (!creds) {
     return {
       ok: false,
@@ -465,10 +527,14 @@ export async function fetchCwsItemStatus(userId: string): Promise<{
       error: 'NO_CWS_CREDS',
     };
   }
+  const connection=await cwsConnection(context);
+  const check=async()=>{if(await cwsConnection(context)!==connection||!isDeepStrictEqual(await getCwsCredentials(userId,context),creds))throw new AuthorityError('CWS_CREDENTIAL_CHANGED');};
+  await check();
   let accessToken: string;
   try {
-    accessToken = await refreshAccessToken(creds);
+    accessToken = await refreshAccessToken(creds,context,check);
   } catch (err) {
+    if(err instanceof AuthorityError||err instanceof EgressDenied)throw err;
     return { ok: false, message: (err as Error).message, error: 'OAUTH_FAILED' };
   }
 
@@ -479,7 +545,7 @@ export async function fetchCwsItemStatus(userId: string): Promise<{
       Accept: 'application/json',
       'x-goog-api-version': '2',
     },
-  });
+  },context,check);
   const json = (await res.json().catch(() => ({}))) as {
     name?: string;
     publishedItemRevisionStatus?: {state?:string};
@@ -509,3 +575,9 @@ export async function fetchCwsItemStatus(userId: string): Promise<{
 }
 
 export { CWS_SCOPE };
+
+export async function executeCwsPublication(userId:string,plan:BusinessActionPlan,authorityPermit?:AuthorityPermit){
+ const result=await publishChromeExtensionToStore({userId,plan,authorityPermit});
+ if(!result.ok||!result.submitted)throw new AuthorityError('CWS_PUBLICATION_NOT_VERIFIED');
+ return result;
+}

@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: the two dormant content-upload and communication adapters have no current production importer or exported-call reference
+ok 1 - the two dormant content-upload and communication adapters have no current production importer or exported-call reference
+  ---
+  duration_ms: 16179.5911
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 24023.1031

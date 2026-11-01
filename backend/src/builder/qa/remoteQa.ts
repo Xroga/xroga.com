@@ -165,6 +165,7 @@ export class RemoteQaClient implements RemoteQaExecutor {
   constructor(private readonly options: RemoteQaClientOptions) {
     if (typeof options.secret !== 'string' || Buffer.byteLength(options.secret) < 32) throw new Error('The browser QA host secret must be at least 32 bytes');
     this.base = new URL(options.hostUrl);
+    if (this.base.username || this.base.password || this.base.search || this.base.hash) throw new Error('The browser QA host must not contain credentials or capability parameters.');
     if (this.base.protocol !== 'https:' && !(this.base.protocol === 'http:' && LOOPBACK.has(this.base.hostname))) throw new Error('The browser QA host must be reached over https');
   }
 
@@ -176,16 +177,28 @@ export class RemoteQaClient implements RemoteQaExecutor {
     const body = JSON.stringify(request);
     const timeout = AbortSignal.timeout(this.options.timeoutMs ?? 10 * 60_000);
     const signal = input.signal ? AbortSignal.any([timeout, input.signal]) : timeout;
+    signal.throwIfAborted();
     let response: globalThis.Response;
     try {
-      response = await (this.options.fetch ?? fetch)(new URL('/qa', this.base), { method: 'POST', headers: signRequest(this.options.secret, 'POST', '/qa', body), body, signal });
+      response = await (this.options.fetch ?? fetch)(new URL('/qa', this.base), { method: 'POST', redirect: 'manual', headers: signRequest(this.options.secret, 'POST', '/qa', body), body, signal });
     } catch {
       // Unreachable, refused, timed out or cancelled: nothing was tested, and the caller records exactly that.
       throw unavailable('The isolated browser host could not be reached, so nothing was tested.');
     }
-    if (!response.ok) throw unavailable(`The isolated browser host refused the request (${response.status}), so nothing was tested.`);
+    signal.throwIfAborted();
+    if (response.redirected || !response.ok) { await response.body?.cancel().catch(() => undefined); throw unavailable(`The isolated browser host refused the request (${response.status}), so nothing was tested.`); }
+    const reader = response.body?.getReader(), chunks: Uint8Array[] = []; let bytes = 0;
+    try {
+      if (reader) for (;;) {
+        const next = await reader.read(); if (next.done) break;
+        signal.throwIfAborted(); bytes += next.value.length;
+        if (bytes > 16 * 1024 * 1024) throw unavailable('The isolated browser answer exceeded its bound, so nothing was tested.');
+        chunks.push(next.value);
+      }
+    } finally { await reader?.cancel().catch(() => undefined); reader?.releaseLock(); }
     let parsed: unknown;
-    try { parsed = await response.json(); } catch { throw unavailable('The isolated browser host returned an unreadable answer, so nothing was tested.'); }
+    try { parsed = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { throw unavailable('The isolated browser host returned an unreadable answer, so nothing was tested.'); }
+    signal.throwIfAborted();
     return sealRemoteReport({ plan: input.plan, only: input.only, previouslyPassed: input.previouslyPassed, baseUrl: input.baseUrl }, parsed);
   }
 }

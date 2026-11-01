@@ -1,0 +1,548 @@
+TAP version 13
+# Subtest: actual pipeline stops native dispatch and the other store path after required Expo configuration denial
+ok 1 - actual pipeline stops native dispatch and the other store path after required Expo configuration denial
+  ---
+  duration_ms: 202.5801
+  type: 'test'
+  ...
+# Subtest: actual pipeline native publication shows approval without claiming upload or starting another action
+ok 2 - actual pipeline native publication shows approval without claiming upload or starting another action
+  ---
+  duration_ms: 244.1002
+  type: 'test'
+  ...
+# Subtest: EAS reads and polling retain current owned project, cancellation and exact nonbaseline receipts
+    # Subtest: unissued actor never reads a key
+    ok 1 - unissued actor never reads a key
+      ---
+      duration_ms: 3.1474
+      type: 'test'
+      ...
+    # Subtest: unissued actor never reads a key
+    ok 2 - unissued actor never reads a key
+      ---
+      duration_ms: 0.3735
+      type: 'test'
+      ...
+    # Subtest: serialized session cannot replace the original issued access
+    ok 3 - serialized session cannot replace the original issued access
+      ---
+      duration_ms: 0.7708
+      type: 'test'
+      ...
+    # Subtest: ok
+    ok 4 - ok
+      ---
+      duration_ms: 65.1167
+      type: 'test'
+      ...
+    # Subtest: fallback
+    ok 5 - fallback
+      ---
+      duration_ms: 23.2529
+      type: 'test'
+      ...
+    # Subtest: fallback503
+    ok 6 - fallback503
+      ---
+      duration_ms: 21.2414
+      type: 'test'
+      ...
+    # Subtest: one captured default remains current throughout the poll
+    ok 7 - one captured default remains current throughout the poll
+      ---
+      duration_ms: 84.3768
+      type: 'test'
+      ...
+    # Subtest: a changed default cannot silently rebind or continue a pending poll
+    ok 8 - a changed default cannot silently rebind or continue a pending poll
+      ---
+      duration_ms: 26.2647
+      type: 'test'
+      ...
+    # Subtest: foreign is terminal without read fallback
+    ok 9 - foreign is terminal without read fallback
+      ---
+      duration_ms: 13.1994
+      type: 'test'
+      ...
+    # Subtest: foreign-parent is terminal without read fallback
+    ok 10 - foreign-parent is terminal without read fallback
+      ---
+      duration_ms: 15.8911
+      type: 'test'
+      ...
+    # Subtest: bad-date is terminal without read fallback
+    ok 11 - bad-date is terminal without read fallback
+      ---
+      duration_ms: 12.812
+      type: 'test'
+      ...
+    # Subtest: platform is terminal without read fallback
+    ok 12 - platform is terminal without read fallback
+      ---
+      duration_ms: 11.2549
+      type: 'test'
+      ...
+    # Subtest: unsafe-url is terminal without read fallback
+    ok 13 - unsafe-url is terminal without read fallback
+      ---
+      duration_ms: 8.4175
+      type: 'test'
+      ...
+    # Subtest: rest-denied is terminal without read fallback
+    ok 14 - rest-denied is terminal without read fallback
+      ---
+      duration_ms: 3.6791
+      type: 'test'
+      ...
+    # Subtest: old cannot fabricate a new finished build
+    ok 15 - old cannot fabricate a new finished build
+      ---
+      duration_ms: 44.2781
+      type: 'test'
+      ...
+    # Subtest: ok cannot fabricate a new finished build
+    ok 16 - ok cannot fabricate a new finished build
+      ---
+      duration_ms: 41.5212
+      type: 'test'
+      ...
+    # Subtest: cancellation during a response stops further requests
+    ok 17 - cancellation during a response stops further requests
+      ---
+      duration_ms: 12.2485
+      type: 'test'
+      ...
+    # Subtest: cancellation clears the waiting poll timer
+    ok 18 - cancellation clears the waiting poll timer
+      ---
+      duration_ms: 15.6099
+      type: 'test'
+      ...
+    1..18
+ok 3 - EAS reads and polling retain current owned project, cancellation and exact nonbaseline receipts
+  ---
+  duration_ms: 421.317
+  type: 'test'
+  ...
+# Subtest: Expo store targets preserve explicit project/package, reject ambiguity and never mutate credentials
+    # Subtest: android/ok
+    ok 1 - android/ok
+      ---
+      duration_ms: 80.816
+      type: 'test'
+      ...
+    # Subtest: android/create
+    ok 2 - android/create
+      ---
+      duration_ms: 35.8154
+      type: 'test'
+      ...
+    # Subtest: android/already-other
+    ok 3 - android/already-other
+      ---
+      duration_ms: 26.2856
+      type: 'test'
+      ...
+    # Subtest: android/foreign
+    ok 4 - android/foreign
+      ---
+      duration_ms: 36.6683
+      type: 'test'
+      ...
+    # Subtest: android/ambiguous
+    ok 5 - android/ambiguous
+      ---
+      duration_ms: 20.6587
+      type: 'test'
+      ...
+    # Subtest: android/bad-receipt
+    ok 6 - android/bad-receipt
+      ---
+      duration_ms: 17.1749
+      type: 'test'
+      ...
+    # Subtest: android/outage
+    ok 7 - android/outage
+      ---
+      duration_ms: 9.3138
+      type: 'test'
+      ...
+    # Subtest: ios/ok
+    ok 8 - ios/ok
+      ---
+      duration_ms: 15.6831
+      type: 'test'
+      ...
+    # Subtest: ios/create
+    ok 9 - ios/create
+      ---
+      duration_ms: 18.775
+      type: 'test'
+      ...
+    # Subtest: ios/already-other
+    ok 10 - ios/already-other
+      ---
+      duration_ms: 11.5039
+      type: 'test'
+      ...
+    # Subtest: ios/foreign
+    ok 11 - ios/foreign
+      ---
+      duration_ms: 18.0535
+      type: 'test'
+      ...
+    # Subtest: ios/ambiguous
+    ok 12 - ios/ambiguous
+      ---
+      duration_ms: 15.0979
+      type: 'test'
+      ...
+    # Subtest: ios/bad-receipt
+    ok 13 - ios/bad-receipt
+      ---
+      duration_ms: 28.5628
+      type: 'test'
+      ...
+    # Subtest: ios/outage
+    ok 14 - ios/outage
+      ---
+      duration_ms: 12.6792
+      type: 'test'
+      ...
+    1..14
+ok 4 - Expo store targets preserve explicit project/package, reject ambiguity and never mutate credentials
+  ---
+  duration_ms: 383.9953
+  type: 'test'
+  ...
+# Subtest: packageIdFromProjectName
+    # Subtest: matches Expo scaffold package style
+    ok 1 - matches Expo scaffold package style
+      ---
+      duration_ms: 4.3077
+      type: 'test'
+      ...
+    # Subtest: falls back safely
+    ok 2 - falls back safely
+      ---
+      duration_ms: 0.3034
+      type: 'test'
+      ...
+    1..2
+ok 5 - packageIdFromProjectName
+  ---
+  duration_ms: 6.4287
+  type: 'suite'
+  ...
+# Subtest: EAS publish HTTP route preserves explicit project and blocks submit after required sync failure
+ok 6 - EAS publish HTTP route preserves explicit project and blocks submit after required sync failure
+  ---
+  duration_ms: 338.2307
+  type: 'test'
+  ...
+# Subtest: actual Expo store verification preserves configured operation and denies raw secret export
+    # Subtest: android unissued actor
+    ok 1 - android unissued actor
+      ---
+      duration_ms: 3.6932
+      type: 'test'
+      ...
+    # Subtest: android unissued actor
+    ok 2 - android unissued actor
+      ---
+      duration_ms: 0.4983
+      type: 'test'
+      ...
+    # Subtest: android configured
+    ok 3 - android configured
+      ---
+      duration_ms: 86.6688
+      type: 'test'
+      ...
+    # Subtest: android no-saved-configured
+    ok 4 - android no-saved-configured
+      ---
+      duration_ms: 32.4093
+      type: 'test'
+      ...
+    # Subtest: android missing
+    ok 5 - android missing
+      ---
+      duration_ms: 47.6608
+      type: 'test'
+      ...
+    # Subtest: android mismatch
+    ok 6 - android mismatch
+      ---
+      duration_ms: 32.3249
+      type: 'test'
+      ...
+    # Subtest: android foreign-project
+    ok 7 - android foreign-project
+      ---
+      duration_ms: 24.262
+      type: 'test'
+      ...
+    # Subtest: android foreign-account
+    ok 8 - android foreign-account
+      ---
+      duration_ms: 26.4954
+      type: 'test'
+      ...
+    # Subtest: android foreign-child
+    ok 9 - android foreign-child
+      ---
+      duration_ms: 14.7126
+      type: 'test'
+      ...
+    # Subtest: android ambiguous
+    ok 10 - android ambiguous
+      ---
+      duration_ms: 17.6962
+      type: 'test'
+      ...
+    # Subtest: android credential-revision
+    ok 11 - android credential-revision
+      ---
+      duration_ms: 11.8089
+      type: 'test'
+      ...
+    # Subtest: android credential-metadata
+    ok 12 - android credential-metadata
+      ---
+      duration_ms: 15.7826
+      type: 'test'
+      ...
+    # Subtest: android provider401
+    ok 13 - android provider401
+      ---
+      duration_ms: 11.9959
+      type: 'test'
+      ...
+    # Subtest: android provider403
+    ok 14 - android provider403
+      ---
+      duration_ms: 13.6978
+      type: 'test'
+      ...
+    # Subtest: android redirect
+    ok 15 - android redirect
+      ---
+      duration_ms: 11.056
+      type: 'test'
+      ...
+    # Subtest: android oversize
+    ok 16 - android oversize
+      ---
+      duration_ms: 13.8559
+      type: 'test'
+      ...
+    # Subtest: android graphql-denial
+    ok 17 - android graphql-denial
+      ---
+      duration_ms: 11.3297
+      type: 'test'
+      ...
+    # Subtest: android outage
+    ok 18 - android outage
+      ---
+      duration_ms: 9.3554
+      type: 'test'
+      ...
+    # Subtest: android audit-fail
+    ok 19 - android audit-fail
+      ---
+      duration_ms: 44.2359
+      type: 'test'
+      ...
+    # Subtest: android revoke-at-audit
+    ok 20 - android revoke-at-audit
+      ---
+      duration_ms: 38.7901
+      type: 'test'
+      ...
+    # Subtest: android cancel-at-metadata
+    ok 21 - android cancel-at-metadata
+      ---
+      duration_ms: 15.0949
+      type: 'test'
+      ...
+    # Subtest: android fresh-authorized-recovery
+    ok 22 - android fresh-authorized-recovery
+      ---
+      duration_ms: 36.4081
+      type: 'test'
+      ...
+    # Subtest: ios unissued actor
+    ok 23 - ios unissued actor
+      ---
+      duration_ms: 0.6433
+      type: 'test'
+      ...
+    # Subtest: ios unissued actor
+    ok 24 - ios unissued actor
+      ---
+      duration_ms: 0.3174
+      type: 'test'
+      ...
+    # Subtest: ios configured
+    ok 25 - ios configured
+      ---
+      duration_ms: 27.2094
+      type: 'test'
+      ...
+    # Subtest: ios no-saved-configured
+    ok 26 - ios no-saved-configured
+      ---
+      duration_ms: 20.1757
+      type: 'test'
+      ...
+    # Subtest: ios missing
+    ok 27 - ios missing
+      ---
+      duration_ms: 27.9429
+      type: 'test'
+      ...
+    # Subtest: ios mismatch
+    ok 28 - ios mismatch
+      ---
+      duration_ms: 36.7114
+      type: 'test'
+      ...
+    # Subtest: ios foreign-project
+    ok 29 - ios foreign-project
+      ---
+      duration_ms: 25.8005
+      type: 'test'
+      ...
+    # Subtest: ios foreign-account
+    ok 30 - ios foreign-account
+      ---
+      duration_ms: 28.0788
+      type: 'test'
+      ...
+    # Subtest: ios foreign-child
+    ok 31 - ios foreign-child
+      ---
+      duration_ms: 26.1237
+      type: 'test'
+      ...
+    # Subtest: ios ambiguous
+    ok 32 - ios ambiguous
+      ---
+      duration_ms: 23.5349
+      type: 'test'
+      ...
+    # Subtest: ios credential-revision
+    ok 33 - ios credential-revision
+      ---
+      duration_ms: 37.2627
+      type: 'test'
+      ...
+    # Subtest: ios credential-metadata
+    ok 34 - ios credential-metadata
+      ---
+      duration_ms: 12.7005
+      type: 'test'
+      ...
+    # Subtest: ios provider401
+    ok 35 - ios provider401
+      ---
+      duration_ms: 13.9995
+      type: 'test'
+      ...
+    # Subtest: ios provider403
+    ok 36 - ios provider403
+      ---
+      duration_ms: 14.1679
+      type: 'test'
+      ...
+    # Subtest: ios redirect
+    ok 37 - ios redirect
+      ---
+      duration_ms: 13.1779
+      type: 'test'
+      ...
+    # Subtest: ios oversize
+    ok 38 - ios oversize
+      ---
+      duration_ms: 16.6847
+      type: 'test'
+      ...
+    # Subtest: ios graphql-denial
+    ok 39 - ios graphql-denial
+      ---
+      duration_ms: 14.8759
+      type: 'test'
+      ...
+    # Subtest: ios outage
+    ok 40 - ios outage
+      ---
+      duration_ms: 18.2971
+      type: 'test'
+      ...
+    # Subtest: ios audit-fail
+    ok 41 - ios audit-fail
+      ---
+      duration_ms: 22.5702
+      type: 'test'
+      ...
+    # Subtest: ios revoke-at-audit
+    ok 42 - ios revoke-at-audit
+      ---
+      duration_ms: 26.0825
+      type: 'test'
+      ...
+    # Subtest: ios cancel-at-metadata
+    ok 43 - ios cancel-at-metadata
+      ---
+      duration_ms: 14.1475
+      type: 'test'
+      ...
+    # Subtest: ios fresh-authorized-recovery
+    ok 44 - ios fresh-authorized-recovery
+      ---
+      duration_ms: 26.3847
+      type: 'test'
+      ...
+    # Subtest: unknown-extra
+    ok 45 - unknown-extra
+      ---
+      duration_ms: 29.0309
+      type: 'test'
+      ...
+    # Subtest: private-token-uri
+    ok 46 - private-token-uri
+      ---
+      duration_ms: 16.9634
+      type: 'test'
+      ...
+    # Subtest: malformed-key
+    ok 47 - malformed-key
+      ---
+      duration_ms: 19.2795
+      type: 'test'
+      ...
+    1..47
+ok 7 - actual Expo store verification preserves configured operation and denies raw secret export
+  ---
+  duration_ms: 1177.0373
+  type: 'test'
+  ...
+# Subtest: real store-readiness HTTP routes retain selected owner context and never transfer keys
+ok 8 - real store-readiness HTTP routes retain selected owner context and never transfer keys
+  ---
+  duration_ms: 384.564
+  type: 'test'
+  ...
+1..8
+# tests 88
+# suites 1
+# pass 88
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4514.4201

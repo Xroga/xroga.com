@@ -1,0 +1,231 @@
+{
+  "scope": "BATCH1_DEVELOPMENT_AND_CONTROLLED_MAIN_INTEGRATION_ONLY",
+  "startingMain": "b0cd0ec31be56a8945ae41998563475237ed52fb",
+  "integrationBaseline": "55edf4b6c9b3fe36d6567c2b140d8251dddd17ae",
+  "verifiedPhase4": "92043b72c20e5a12636dee079d760a1e5708b48f",
+  "originalPr": 844,
+  "method": "Selected verified Phase4 changes on main, not a merge of the historical stacked PR. Current main Builder and durable Google browser functionality reconciled with existing canonical security.",
+  "localCriteriaPassed": 12,
+  "criterionCount": 12,
+  "criteria": [
+    {
+      "id": "XB01-C010-AC01",
+      "originalText": "All arbitrary outbound URL callers are inventoried.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "docs/xroga/security/egress-callers.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC02",
+      "originalText": "High-risk URL callers use central URL policy.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "backend/src/security/boundedPublicGet.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC03",
+      "originalText": "All consequential external data egress passes egressPolicy.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "docs/xroga/security/egress-caller-reviews.json",
+        "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json",
+        "docs/xroga/evidence/command-010/BROWSER-READONLY-TRANSPORT-20261028.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC04",
+      "originalText": "businessAction integrates authority + egress before provider execution.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/services/integrations/composioProvenance.security.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC05",
+      "originalText": "Tool descriptions cannot create authority.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC06",
+      "originalText": "Malicious document/web/tool-output tests cannot override policy.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC07",
+      "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/boundedPublicGet.test.ts",
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC08",
+      "originalText": "Redirect-to-private test passes.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC09",
+      "originalText": "Cross-tenant external upload test passes.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/egress/fileEgress.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC10",
+      "originalText": "Credential-secret egress test passes.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/egress/heldCredentialFloor.test.ts",
+        "backend/src/services/integrations/githubPublication.security.test.ts",
+        "docs/xroga/evidence/command-010/BROWSER-INPUT-CREDENTIAL-FLOOR-20261028.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC11",
+      "originalText": "Security decision evidence contains no raw credential.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    },
+    {
+      "id": "XB01-C010-AC12",
+      "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
+      "developmentSource": "PASS_LOCAL_AND_PRESERVED_SOURCE_EVIDENCE",
+      "originalEvidence": [
+        "docs/xroga/security/egress-callers.json"
+      ],
+      "integrationEvidence": [
+        "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+        "docs/xroga/evidence/command-010/integration-20261029/LOCAL-VERIFICATION.json"
+      ],
+      "exactSourceCi": "REQUIRED_BEFORE_INTEGRATION_ACCEPTANCE",
+      "production": "NOT_ACTIVATED_NOT_ACCEPTED"
+    }
+  ],
+  "strictAudit": {
+    "total": 148,
+    "reviewed": 148,
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0,
+    "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
+    "auditorModified": false
+  },
+  "preserved": {
+    "acceptedPhase1Phase2Phase3": true,
+    "original137CallerReviews": true,
+    "original12Criteria": true,
+    "existingSevenWorkflowReceipts": true,
+    "claudeBranchesUntouched": true,
+    "scheduler": "existing canonical scheduler and durable claims",
+    "supabaseR2Kms": "existing providers and ownership boundaries"
+  },
+  "isolatedVerification": {
+    "realChromium": true,
+    "providerProtocols": "Controlled synthetic HTTP fixtures, no live GitHub/Supabase Management/Vercel action or model calls",
+    "durableBrowser": "Owned row, lease, cancellation and recovery fixtures with terminal policy refusal",
+    "builderPostgres": "Required dedicated exact-source builder-phase1 workflow, disposable PostgreSQL and Chromium",
+    "hostedStage": "Existing isolated Supabase dqxnatoessviphudbhei metadata read only. PostgreSQL17.11,130/130 public tables have RLS,4 existing auth users. No new fixtures, credentials, schema or customer rows accessed."
+  },
+  "ciRequirements": [
+    "All main-target PR gates on the exact integration head and virtual merge",
+    "Dedicated builder-phase1 exact-source disposable PostgreSQL/Chromium workflow",
+    "No bypass of failed required tests and no reuse of old source CI for changed semantics"
+  ],
+  "productionRelease": {
+    "hold": true,
+    "policy": "deploy/PRODUCTION_ACTIVATION_HOLD.json",
+    "newPaidServices": 0,
+    "modelSpending": 0,
+    "requirements": [
+      "Founder coordinated production activation authorization",
+      "Build and verify immutable API and browser/QA image digests from the accepted integrated source",
+      "Keep API, canonical Cloud Run Job source identity and recovery image compatible",
+      "Use existing restore-validated migration procedure only for required compatible schema changes",
+      "Verify native Google service identity, KMS and private storage with the accepted production configuration",
+      "Run authenticated production tenant, worker, Preview, cancellation, recovery and accounting checks before production acceptance"
+    ],
+    "automaticMainDeploy": "Vercel ignore command holds main. Google image/deploy path remains manual. Fly workflows remain retired. No live SQL executed."
+  }
+}

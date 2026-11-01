@@ -1,0 +1,45 @@
+{
+  "scope": "ONLY_SUPABASE_PROJECT_CREATION_NOT_WHOLE_PHASE4_ACCEPTANCE",
+  "parent": "6d10503fb6aafd2d9da628c886042b466d9ecb27",
+  "resolvedOriginal": [
+    "807c2948cdfa16e19b84"
+  ],
+  "replacementTransport": "0b86177865b1789b9b67",
+  "counts": {
+    "total": 137,
+    "reviewed": 135,
+    "pending": 2,
+    "unresolvedHighRiskBypasses": 0
+  },
+  "focusedTests": "25_PASS",
+  "backendTypes": "PASS",
+  "frontendTypes": "PASS",
+  "frontendLint": "PASS_WITH_EXISTING_WARNINGS",
+  "integrity": "10_PASS",
+  "receipts": [
+    {
+      "label": "integrity10",
+      "job": "b2b742d2-f6ec-44a0-b25a-3c582453c67b",
+      "status": "passed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-integrity10-20261028.log.gz",
+      "sha256": "2b018942d4d90c2e49803fac522597c08f8aee376376f4557fcb9bab47c9d671"
+    },
+    {
+      "label": "originalStrictAudit",
+      "job": "39fe7f5a-4109-4271-979e-e452d0259aa7",
+      "status": "failed",
+      "path": "docs/xroga/evidence/command-010/logs/supabase-create-originalStrictAudit-20261028.log.gz",
+      "sha256": "57b59db07dbe26dc5ade37a4f29ef1c0dfaf892b07d2d89fc8a9b08fab9bee53"
+    }
+  ],
+  "strictAudit": "FAIL_INCOMPLETE_TWO_MANDATORY_GITHUB_CALLERS",
+  "formalAcceptedCriteria": 0,
+  "totalCriteria": 12,
+  "phase4Accepted": false,
+  "productionChanged": false,
+  "spend": 0,
+  "next": [
+    "90eeada0337da120131f",
+    "99ec2dc4769b5eced6a5"
+  ]
+}

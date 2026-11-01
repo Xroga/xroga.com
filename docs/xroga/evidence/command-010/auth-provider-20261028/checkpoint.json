@@ -1,0 +1,51 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_PUBLIC_AUTH_PREFLIGHT_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T19:10:36.044815+00:00",
+  "parent": "1a98c3e0141a0b0aad99cd168d81401f6f0a75c4",
+  "trace": "docs/xroga/evidence/command-010/auth-provider-20261028/trace.json",
+  "strictAudit": {
+    "total": 135,
+    "reviewed": 112,
+    "pending": 23,
+    "unresolvedHighRiskBypasses": 14
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "frontendTypes",
+      "jobId": "034d642b-5da0-4f54-b38a-1ab6eb5f9d1a",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322012
+      }
+    },
+    {
+      "name": "strictIncomplete",
+      "jobId": "d2c98c5d-4113-4133-bfd1-ad230bd7f3ec",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/auth-provider-20261028/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "backendTypes": "PASS_UNCHANGED_1b7294f4",
+  "frontendTypes": "PASS_CURRENT_SOURCE",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "pinnedMainBaseline": "5ada5db7526efb1e0a4e426dbf4feab3d538597f",
+  "observedCurrentMain": "11fdf064dc22131f33d1f6f01f8c4c9fd4a72e4e",
+  "mainIntegration": "DEFERRED_TO_ACTUAL_INTEGRATION_BOUNDARY_NO_FREEZE_NO_REPEATED_REBASE",
+  "next": "Continue exact remaining23callers including14high-risk. Native external publishing/credential transfers need original actor, owned provenance and existing canonical approval/egress carried through actual callers. Shared transports alone must not promote them. No Batch1.5/2activation or model-quality work."
+}

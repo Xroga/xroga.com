@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import {tenantCriteria} from '../security/tenant-acceptance.mjs';
 import ts from 'typescript';
+import {verifyHistoricalProofBinding} from './phase-two-proof-bindings.mjs';
 
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const read=p=>readFileSync(resolve(root,p),'utf8').replace(/\r\n/g,'\n');
@@ -20,7 +21,21 @@ export function assertUnchangedEnclosing(before,after,name){
   assert.equal(enclosingText(before,name),enclosingText(after,name),'Changed duplicate operations need explicit semantic mapping');
 }
 export function buildPhaseTwo({reviewDecisions}={}){
+  const proofBindings=JSON.parse(read('docs/xroga/security/phase-four-proof-bindings.json')).bindings;
+  const proofHashes=new Map();
+  for(const binding of proofBindings){
+    assert.equal(binding.reference,'f040165e69222990ea3d03d90057dcbec1d501d7','Unreviewed historical proof reference');
+    const key=binding.path+'\n'+binding.marker;
+    assert.ok(!proofHashes.has(key),'Duplicate historical proof binding');
+    const before=execFileSync('git',['show',`${binding.reference}:${binding.path}`],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024});
+    const historical=JSON.parse(execFileSync('git',['show',`${binding.reference}:docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json`],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024}));
+    assert.ok(historical.packets.some(p=>p.proofCandidates.some(e=>e.path===binding.path&&e.marker===binding.marker&&e.sourceSha256===binding.historicalSourceSha256)),
+      'Proof binding has no original ledger candidate');
+    proofHashes.set(key,verifyHistoricalProofBinding(binding,before,read(binding.path)));
+  }
   const frozen=JSON.parse(read(frozenPath));
+  for(const binding of proofBindings)assert.ok(frozen.packets.some(p=>p.existingTestReferences.some(e=>e.path===binding.path&&e.marker===binding.marker)),
+    'Unused historical proof binding');
   assert.equal(frozen.packets.length,73);
   const historical=frozen.packets.flatMap(p=>p.mapping.map(m=>m.baselineCallerId));
   assert.equal(historical.length,371);assert.equal(new Set(historical).size,371);
@@ -122,7 +137,7 @@ export function buildPhaseTwo({reviewDecisions}={}){
       untrustedInputs:'Caller-supplied IDs and payloads require source tracing; primitive owner strings are not independently issued authority.',
       privilegedBypass:'Service-role SDK may bypass RLS. This identifies a boundary to verify, not a demonstrated exploit.',
       existingGuard:p.actorAndAuthorityTrace,
-      proofCandidates:p.existingTestReferences.map(e=>({...e,sourceSha256:hash(read(e.path)),polarity:'NOT_INFERRED_FROM_MARKER',conclusion:'NOT_CERTIFIED'})),
+      proofCandidates:p.existingTestReferences.map(e=>({...e,sourceSha256:proofHashes.get(e.path+'\n'+e.marker)??hash(read(e.path)),polarity:'NOT_INFERRED_FROM_MARKER',conclusion:'NOT_CERTIFIED'})),
       proofIds:[],
       originalTenantCriteria:p.obligations.find(o=>o.command==='007').criterionIds,
       independentLaterObligations:p.obligations.filter(o=>o.phase>2),

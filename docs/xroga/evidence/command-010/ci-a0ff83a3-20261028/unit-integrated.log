@@ -1,0 +1,1115 @@
+﻿2026-10-27T20:18:38.6096299Z Current runner version: '2.338.0'
+2026-10-27T20:18:38.6139272Z ##[group]Runner Image Provisioner
+2026-10-27T20:18:38.6140381Z Hosted Compute Agent
+2026-10-27T20:18:38.6140862Z Version: 20261021.618
+2026-10-27T20:18:38.6141523Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-27T20:18:38.6142138Z Build Date: 2026-10-21T00:45:21Z
+2026-10-27T20:18:38.6142726Z Worker ID: {644c4bd2-b011-432f-9b09-8b775fdb2c22}
+2026-10-27T20:18:38.6143383Z Region: westus3
+2026-10-27T20:18:38.6143829Z Cloud: Azure
+2026-10-27T20:18:38.6144374Z ##[endgroup]
+2026-10-27T20:18:38.6145596Z ##[group]Operating System
+2026-10-27T20:18:38.6146150Z Ubuntu
+2026-10-27T20:18:38.6146606Z 24.04.5
+2026-10-27T20:18:38.6147065Z LTS
+2026-10-27T20:18:38.6147585Z ##[endgroup]
+2026-10-27T20:18:38.6148056Z ##[group]Runner Image
+2026-10-27T20:18:38.6148637Z Image: ubuntu-24.04
+2026-10-27T20:18:38.6149130Z Version: 20261025.353.1
+2026-10-27T20:18:38.6150343Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-27T20:18:38.6151809Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-10-27T20:18:38.6152653Z ##[endgroup]
+2026-10-27T20:18:38.6153579Z ##[group]GITHUB_TOKEN Permissions
+2026-10-27T20:18:38.6155501Z Contents: read
+2026-10-27T20:18:38.6156042Z Metadata: read
+2026-10-27T20:18:38.6156522Z ##[endgroup]
+2026-10-27T20:18:38.6158386Z Secret source: Actions
+2026-10-27T20:18:38.6159227Z Cache mode: write
+2026-10-27T20:18:38.6160269Z Prepare workflow directory
+2026-10-27T20:18:38.6434884Z Prepare all required actions
+2026-10-27T20:18:38.6474660Z Getting action download info
+2026-10-27T20:18:38.9221945Z Download action repository 'actions/checkout@v5' (SHA:fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09)
+2026-10-27T20:18:39.1092455Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-10-27T20:18:39.3861049Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-27T20:18:40.0202971Z Complete job name: integrated-candidate
+2026-10-27T20:18:40.0936314Z ##[group]Run actions/checkout@v5
+2026-10-27T20:18:40.0936843Z with:
+2026-10-27T20:18:40.0937059Z   fetch-depth: 0
+2026-10-27T20:18:40.0937314Z   ref: bd8812a037f22ff1cf6d19370549632734f5d24e
+2026-10-27T20:18:40.0937623Z   repository: Xroga/xroga.com
+2026-10-27T20:18:40.0940113Z   token: ***
+2026-10-27T20:18:40.0940352Z   ssh-strict: true
+2026-10-27T20:18:40.0940588Z   ssh-user: git
+2026-10-27T20:18:40.0940878Z   persist-credentials: true
+2026-10-27T20:18:40.0941130Z   clean: true
+2026-10-27T20:18:40.0941363Z   sparse-checkout-cone-mode: true
+2026-10-27T20:18:40.0941627Z   fetch-tags: false
+2026-10-27T20:18:40.0941849Z   show-progress: true
+2026-10-27T20:18:40.0942082Z   lfs: false
+2026-10-27T20:18:40.0942317Z   submodules: false
+2026-10-27T20:18:40.0942539Z   set-safe-directory: true
+2026-10-27T20:18:40.0942803Z   allow-unsafe-pr-checkout: false
+2026-10-27T20:18:40.0943227Z ##[endgroup]
+2026-10-27T20:18:40.4479341Z Syncing repository: Xroga/xroga.com
+2026-10-27T20:18:40.4480809Z ##[group]Getting Git version info
+2026-10-27T20:18:40.4481213Z Working directory is '/home/runner/work/xroga.com/xroga.com'
+2026-10-27T20:18:40.5007109Z [command]/usr/bin/git version
+2026-10-27T20:18:40.5092854Z git version 2.56.0
+2026-10-27T20:18:40.5111497Z ##[endgroup]
+2026-10-27T20:18:40.5124057Z Temporarily overriding HOME='/home/runner/work/_temp/5d8417c5-7682-41c8-bfb8-2e64e7f08b99' before making global git config changes
+2026-10-27T20:18:40.5125188Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-27T20:18:40.5128270Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/xroga.com/xroga.com
+2026-10-27T20:18:40.5174032Z Deleting the contents of '/home/runner/work/xroga.com/xroga.com'
+2026-10-27T20:18:40.5177621Z ##[group]Initializing the repository
+2026-10-27T20:18:40.5181149Z [command]/usr/bin/git init /home/runner/work/xroga.com/xroga.com
+2026-10-27T20:18:40.5265492Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-27T20:18:40.5266648Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-27T20:18:40.5267562Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-27T20:18:40.5268079Z hint: call:
+2026-10-27T20:18:40.5268287Z hint:
+2026-10-27T20:18:40.5268659Z hint: 	git config --global init.defaultBranch <name>
+2026-10-27T20:18:40.5269024Z hint:
+2026-10-27T20:18:40.5269330Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-27T20:18:40.5270036Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-27T20:18:40.5270593Z hint:
+2026-10-27T20:18:40.5270926Z hint: 	git branch -m <name>
+2026-10-27T20:18:40.5271295Z hint:
+2026-10-27T20:18:40.5271795Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-27T20:18:40.5272622Z Initialized empty Git repository in /home/runner/work/xroga.com/xroga.com/.git/
+2026-10-27T20:18:40.5282295Z [command]/usr/bin/git remote add origin https://github.com/Xroga/xroga.com
+2026-10-27T20:18:40.5356221Z ##[endgroup]
+2026-10-27T20:18:40.5356912Z ##[group]Disabling automatic garbage collection
+2026-10-27T20:18:40.5360070Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-27T20:18:40.5393478Z ##[endgroup]
+2026-10-27T20:18:40.5394079Z ##[group]Setting up auth
+2026-10-27T20:18:40.5399499Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-27T20:18:40.5433776Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-27T20:18:40.7429320Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-27T20:18:40.7468314Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-27T20:18:40.7674940Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-27T20:18:40.7714008Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-27T20:18:40.7920447Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-27T20:18:40.7990599Z ##[endgroup]
+2026-10-27T20:18:40.7991125Z ##[group]Fetching the repository
+2026-10-27T20:18:40.8000604Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-27T20:18:49.5931305Z From https://github.com/Xroga/xroga.com
+2026-10-27T20:18:49.5933156Z  * [new branch]        agent-execution-ui-20261005 -> origin/agent-execution-ui-20261005
+2026-10-27T20:18:49.5933918Z  * [new branch]        agent-execution-ux-20261005 -> origin/agent-execution-ux-20261005
+2026-10-27T20:18:49.5934921Z  * [new branch]        agent/adaptive-recovery-engine -> origin/agent/adaptive-recovery-engine
+2026-10-27T20:18:49.5935759Z  * [new branch]        agent/balanced-pacing-restoration -> origin/agent/balanced-pacing-restoration
+2026-10-27T20:18:49.5936536Z  * [new branch]        agent/capability-truthful-execution -> origin/agent/capability-truthful-execution
+2026-10-27T20:18:49.5937144Z  * [new branch]        agent/command-2-atomic-commit -> origin/agent/command-2-atomic-commit
+2026-10-27T20:18:49.5937724Z  * [new branch]        agent/command-2-blocker-correction -> origin/agent/command-2-blocker-correction
+2026-10-27T20:18:49.5938441Z  * [new branch]        agent/command-2-final-verification -> origin/agent/command-2-final-verification
+2026-10-27T20:18:49.5939163Z  * [new branch]        agent/command-2-implement-fallbacks -> origin/agent/command-2-implement-fallbacks
+2026-10-27T20:18:49.5939751Z  * [new branch]        agent/command-2-ledger-reconcile -> origin/agent/command-2-ledger-reconcile
+2026-10-27T20:18:49.5941211Z  * [new branch]        agent/command-2-live-evidence -> origin/agent/command-2-live-evidence
+2026-10-27T20:18:49.5941853Z  * [new branch]        agent/command-2-path-observability -> origin/agent/command-2-path-observability
+2026-10-27T20:18:49.6015022Z  * [new branch]        agent/command-2-project-identity -> origin/agent/command-2-project-identity
+2026-10-27T20:18:49.6016296Z  * [new branch]        agent/command-2-run-finalization -> origin/agent/command-2-run-finalization
+2026-10-27T20:18:49.6017376Z  * [new branch]        agent/command3a-production-recovery -> origin/agent/command3a-production-recovery
+2026-10-27T20:18:49.6018239Z  * [new branch]        agent/command3c-production-growth -> origin/agent/command3c-production-growth
+2026-10-27T20:18:49.6019214Z  * [new branch]        agent/community-seo-smoky -> origin/agent/community-seo-smoky
+2026-10-27T20:18:49.6020219Z  * [new branch]        agent/companion-costumes-sidebar-2026 -> origin/agent/companion-costumes-sidebar-2026
+2026-10-27T20:18:49.6021166Z  * [new branch]        agent/complete-command-1-runtime -> origin/agent/complete-command-1-runtime
+2026-10-27T20:18:49.6022115Z  * [new branch]        agent/complete-command3b-operations-centre -> origin/agent/complete-command3b-operations-centre
+2026-10-27T20:18:49.6023507Z  * [new branch]        agent/complete-core-execution-runtime -> origin/agent/complete-core-execution-runtime
+2026-10-27T20:18:49.6024635Z  * [new branch]        agent/complete-production-operations-growth -> origin/agent/complete-production-operations-growth
+2026-10-27T20:18:49.6025834Z  * [new branch]        agent/complete-public-launch-certification -> origin/agent/complete-public-launch-certification
+2026-10-27T20:18:49.6027043Z  * [new branch]        agent/complete-universal-product-synthesis -> origin/agent/complete-universal-product-synthesis
+2026-10-27T20:18:49.6027968Z  * [new branch]        agent/deploy-command-1  -> origin/agent/deploy-command-1
+2026-10-27T20:18:49.6029049Z  * [new branch]        agent/e2e-final-recovery -> origin/agent/e2e-final-recovery
+2026-10-27T20:18:49.6029822Z  * [new branch]        agent/expand-chat-composer -> origin/agent/expand-chat-composer
+2026-10-27T20:18:49.6030861Z  * [new branch]        agent/final-command-4-5-public-launch -> origin/agent/final-command-4-5-public-launch
+2026-10-27T20:18:49.6031665Z  * [new branch]        agent/finish-command-2-universal -> origin/agent/finish-command-2-universal
+2026-10-27T20:18:49.6032355Z  * [new branch]        agent/fix-community-guest-flow -> origin/agent/fix-community-guest-flow
+2026-10-27T20:18:49.6032893Z  * [new branch]        agent/fix-community-migration -> origin/agent/fix-community-migration
+2026-10-27T20:18:49.6033433Z  * [new branch]        agent/fix-community-public-read -> origin/agent/fix-community-public-read
+2026-10-27T20:18:49.6034086Z  * [new branch]        agent/fix-community-verification-runtime -> origin/agent/fix-community-verification-runtime
+2026-10-27T20:18:49.6034728Z  * [new branch]        agent/fix-companion-initial-sync -> origin/agent/fix-companion-initial-sync
+2026-10-27T20:18:49.6035282Z  * [new branch]        agent/fix-companion-profile-race -> origin/agent/fix-companion-profile-race
+2026-10-27T20:18:49.6035830Z  * [new branch]        agent/fix-production-auth-entry -> origin/agent/fix-production-auth-entry
+2026-10-27T20:18:49.6036326Z  * [new branch]        agent/fix-public-llms   -> origin/agent/fix-public-llms
+2026-10-27T20:18:49.6036836Z  * [new branch]        agent/fix-terminal-header-sidebar -> origin/agent/fix-terminal-header-sidebar
+2026-10-27T20:18:49.6037373Z  * [new branch]        agent/fix-vercel-auth-runtime -> origin/agent/fix-vercel-auth-runtime
+2026-10-27T20:18:49.6037934Z  * [new branch]        agent/fix-workspace-tagline-contrast -> origin/agent/fix-workspace-tagline-contrast
+2026-10-27T20:18:49.6038576Z  * [new branch]        agent/fresh-product-stale-repo-boundary -> origin/agent/fresh-product-stale-repo-boundary
+2026-10-27T20:18:49.6039433Z  * [new branch]        agent/homepage-black-cloud-background -> origin/agent/homepage-black-cloud-background
+2026-10-27T20:18:49.6040330Z  * [new branch]        agent/hosted-sandbox-worker -> origin/agent/hosted-sandbox-worker
+2026-10-27T20:18:49.6041065Z  * [new branch]        agent/instant-persistent-workspace-shell -> origin/agent/instant-persistent-workspace-shell
+2026-10-27T20:18:49.6041800Z  * [new branch]        agent/intelligent-model-orchestration -> origin/agent/intelligent-model-orchestration
+2026-10-27T20:18:49.6042404Z  * [new branch]        agent/living-x-companion -> origin/agent/living-x-companion
+2026-10-27T20:18:49.6043024Z  * [new branch]        agent/managed-vercel-existing-project -> origin/agent/managed-vercel-existing-project
+2026-10-27T20:18:49.6043654Z  * [new branch]        agent/managed-vercel-recovery -> origin/agent/managed-vercel-recovery
+2026-10-27T20:18:49.6044248Z  * [new branch]        agent/mars-beige-workspace-top -> origin/agent/mars-beige-workspace-top
+2026-10-27T20:18:49.6044913Z  * [new branch]        agent/mobile-tablet-workspace-header -> origin/agent/mobile-tablet-workspace-header
+2026-10-27T20:18:49.6045576Z  * [new branch]        agent/negated-capability-routing -> origin/agent/negated-capability-routing
+2026-10-27T20:18:49.6046265Z  * [new branch]        agent/neon-rift-game-and-aura-thumbnail -> origin/agent/neon-rift-game-and-aura-thumbnail
+2026-10-27T20:18:49.6046904Z  * [new branch]        agent/public-launch-qa-repair -> origin/agent/public-launch-qa-repair
+2026-10-27T20:18:49.6047535Z  * [new branch]        agent/real-e2e-production-recovery -> origin/agent/real-e2e-production-recovery
+2026-10-27T20:18:49.6048181Z  * [new branch]        agent/real-review-evidence-console -> origin/agent/real-review-evidence-console
+2026-10-27T20:18:49.6048811Z  * [new branch]        agent/real-review-native-system -> origin/agent/real-review-native-system
+2026-10-27T20:18:49.6049421Z  * [new branch]        agent/resolve-ci-node24-warnings -> origin/agent/resolve-ci-node24-warnings
+2026-10-27T20:18:49.6050375Z  * [new branch]        agent/responsive-homepage-artwork -> origin/agent/responsive-homepage-artwork
+2026-10-27T20:18:49.6051242Z  * [new branch]        agent/ship-stack-ownership-engine -> origin/agent/ship-stack-ownership-engine
+2026-10-27T20:18:49.6051869Z  * [new branch]        agent/ship-stack-ownership-flow -> origin/agent/ship-stack-ownership-flow
+2026-10-27T20:18:49.6052486Z  * [new branch]        agent/showcase-auto-tech-marquee -> origin/agent/showcase-auto-tech-marquee
+2026-10-27T20:18:49.6053129Z  * [new branch]        agent/showcase-stage-workspace-hero -> origin/agent/showcase-stage-workspace-hero
+2026-10-27T20:18:49.6053844Z  * [new branch]        agent/simplify-companion-workspace-beige -> origin/agent/simplify-companion-workspace-beige
+2026-10-27T20:18:49.6054491Z  * [new branch]        agent/universal-engineering -> origin/agent/universal-engineering
+2026-10-27T20:18:49.6055071Z  * [new branch]        agent/universal-engineering-2 -> origin/agent/universal-engineering-2
+2026-10-27T20:18:49.6055704Z  * [new branch]        agent/universal-engineering-3 -> origin/agent/universal-engineering-3
+2026-10-27T20:18:49.6056282Z  * [new branch]        agent/vercel-credential-truth -> origin/agent/vercel-credential-truth
+2026-10-27T20:18:49.6056902Z  * [new branch]        agent/vercel-deploy-readiness-proof -> origin/agent/vercel-deploy-readiness-proof
+2026-10-27T20:18:49.6057508Z  * [new branch]        agent/vercel-token-provenance -> origin/agent/vercel-token-provenance
+2026-10-27T20:18:49.6058104Z  * [new branch]        agent/vercel-token-save-feedback -> origin/agent/vercel-token-save-feedback
+2026-10-27T20:18:49.6058686Z  * [new branch]        agent/vercel-vcp-token-compat -> origin/agent/vercel-vcp-token-compat
+2026-10-27T20:18:49.6059332Z  * [new branch]        agent/wayfare-booking-workspace-polish -> origin/agent/wayfare-booking-workspace-polish
+2026-10-27T20:18:49.6060081Z  * [new branch]        agent/xroga-entity-seo  -> origin/agent/xroga-entity-seo
+2026-10-27T20:18:49.6060789Z  * [new branch]        audit/step5-step7-current-main -> origin/audit/step5-step7-current-main
+2026-10-27T20:18:49.6061325Z  * [new branch]        claude/b15-db-backup    -> origin/claude/b15-db-backup
+2026-10-27T20:18:49.6061850Z  * [new branch]        claude/b15-tenantcontext-core -> origin/claude/b15-tenantcontext-core
+2026-10-27T20:18:49.6062407Z  * [new branch]        claude/batch15-audit-fixes -> origin/claude/batch15-audit-fixes
+2026-10-27T20:18:49.6062934Z  * [new branch]        claude/batch2-final-audit -> origin/claude/batch2-final-audit
+2026-10-27T20:18:49.6063553Z  * [new branch]        claude/batch2-phase1-product-builder -> origin/claude/batch2-phase1-product-builder
+2026-10-27T20:18:49.6064279Z  * [new branch]        claude/batch2-phase2-qa-iteration-export -> origin/claude/batch2-phase2-qa-iteration-export
+2026-10-27T20:18:49.6064933Z  * [new branch]        claude/batch2-phase3-delivery -> origin/claude/batch2-phase3-delivery
+2026-10-27T20:18:49.6065517Z  * [new branch]        claude/batch3-existing-editor -> origin/claude/batch3-existing-editor
+2026-10-27T20:18:49.6066181Z  * [new branch]        claude/behavioral-product-understanding -> origin/claude/behavioral-product-understanding
+2026-10-27T20:18:49.6066790Z  * [new branch]        claude/benchmark-runner -> origin/claude/benchmark-runner
+2026-10-27T20:18:49.6067316Z  * [new branch]        claude/black-hole-foundation -> origin/claude/black-hole-foundation
+2026-10-27T20:18:49.6067939Z  * [new branch]        claude/canonical-implementation-task -> origin/claude/canonical-implementation-task
+2026-10-27T20:18:49.6068638Z  * [new branch]        claude/canonical-repair-review-publish -> origin/claude/canonical-repair-review-publish
+2026-10-27T20:18:49.6069301Z  * [new branch]        claude/canonical-validation-task -> origin/claude/canonical-validation-task
+2026-10-27T20:18:49.6070047Z  * [new branch]        claude/capability-page-redesign -> origin/claude/capability-page-redesign
+2026-10-27T20:18:49.6070807Z  * [new branch]        claude/capability-voxel-theme -> origin/claude/capability-voxel-theme
+2026-10-27T20:18:49.6071486Z  * [new branch]        claude/command3-agent-intelligence-gate -> origin/claude/command3-agent-intelligence-gate
+2026-10-27T20:18:49.6072212Z  * [new branch]        claude/command3-benchmark-tests-and-docs -> origin/claude/command3-benchmark-tests-and-docs
+2026-10-27T20:18:49.6072903Z  * [new branch]        claude/command3-capability-maturity -> origin/claude/command3-capability-maturity
+2026-10-27T20:18:49.6073550Z  * [new branch]        claude/command3-doc-reconciliation -> origin/claude/command3-doc-reconciliation
+2026-10-27T20:18:49.6074162Z  * [new branch]        claude/command3-execution-state -> origin/claude/command3-execution-state
+2026-10-27T20:18:49.6074777Z  * [new branch]        claude/command3-incremental-build -> origin/claude/command3-incremental-build
+2026-10-27T20:18:49.6075392Z  * [new branch]        claude/command3-legacy-adapter -> origin/claude/command3-legacy-adapter
+2026-10-27T20:18:49.6076065Z  * [new branch]        claude/command3-provider-health-grants -> origin/claude/command3-provider-health-grants
+2026-10-27T20:18:49.6076717Z  * [new branch]        claude/command3-reasoning-models -> origin/claude/command3-reasoning-models
+2026-10-27T20:18:49.6077328Z  * [new branch]        claude/command3-registry-honesty -> origin/claude/command3-registry-honesty
+2026-10-27T20:18:49.6077887Z  * [new branch]        claude/command3-three-gaps -> origin/claude/command3-three-gaps
+2026-10-27T20:18:49.6078497Z  * [new branch]        claude/command3-truncation-diagnosis -> origin/claude/command3-truncation-diagnosis
+2026-10-27T20:18:49.6079117Z  * [new branch]        claude/composer-repo-chip-fix -> origin/claude/composer-repo-chip-fix
+2026-10-27T20:18:49.6079752Z  * [new branch]        claude/composio-platform-expansion -> origin/claude/composio-platform-expansion
+2026-10-27T20:18:49.6080636Z  * [new branch]        claude/consolidated-agent-intelligence -> origin/claude/consolidated-agent-intelligence
+2026-10-27T20:18:49.6081480Z  * [new branch]        claude/dev-storage-hygiene-20261025 -> origin/claude/dev-storage-hygiene-20261025
+2026-10-27T20:18:49.6082108Z  * [new branch]        claude/docs-google-canonical -> origin/claude/docs-google-canonical
+2026-10-27T20:18:49.6082754Z  * [new branch]        claude/execution-state-canonical-slice -> origin/claude/execution-state-canonical-slice
+2026-10-27T20:18:49.6083423Z  * [new branch]        claude/execution-state-launch-slice -> origin/claude/execution-state-launch-slice
+2026-10-27T20:18:49.6084058Z  * [new branch]        claude/fix-browser-logo-assertion -> origin/claude/fix-browser-logo-assertion
+2026-10-27T20:18:49.6084661Z  * [new branch]        claude/fix-duplicate-publish -> origin/claude/fix-duplicate-publish
+2026-10-27T20:18:49.6085207Z  * [new branch]        claude/fix-fly-guest-shape -> origin/claude/fix-fly-guest-shape
+2026-10-27T20:18:49.6085815Z  * [new branch]        claude/fix-manifest-path-truncation -> origin/claude/fix-manifest-path-truncation
+2026-10-27T20:18:49.6086411Z  * [new branch]        claude/focused-cerf-h0rz58 -> origin/claude/focused-cerf-h0rz58
+2026-10-27T20:18:49.6086949Z  * [new branch]        claude/launch-verification -> origin/claude/launch-verification
+2026-10-27T20:18:49.6087537Z  * [new branch]        claude/measured-evidence-routing -> origin/claude/measured-evidence-routing
+2026-10-27T20:18:49.6088070Z  * [new branch]        claude/navigation-v2    -> origin/claude/navigation-v2
+2026-10-27T20:18:49.6088589Z  * [new branch]        claude/p0-atomic-git-writes -> origin/claude/p0-atomic-git-writes
+2026-10-27T20:18:49.6089252Z  * [new branch]        claude/p0-safe-execution-github-integrity -> origin/claude/p0-safe-execution-github-integrity
+2026-10-27T20:18:49.6090067Z  * [new branch]        claude/p0-stop-supabase-egress-storm -> origin/claude/p0-stop-supabase-egress-storm
+2026-10-27T20:18:49.6090642Z  * [new branch]        claude/product-matrix   -> origin/claude/product-matrix
+2026-10-27T20:18:49.6091270Z  * [new branch]        claude/release-image-build -> origin/claude/release-image-build
+2026-10-27T20:18:49.6091822Z  * [new branch]        claude/s00-final-closeout-2 -> origin/claude/s00-final-closeout-2
+2026-10-27T20:18:49.6092396Z  * [new branch]        claude/s00-headline-type-polish -> origin/claude/s00-headline-type-polish
+2026-10-27T20:18:49.6092955Z  * [new branch]        claude/s00-s01-single-theme -> origin/claude/s00-s01-single-theme
+2026-10-27T20:18:49.6093479Z  * [new branch]        claude/s01-capability-deck -> origin/claude/s01-capability-deck
+2026-10-27T20:18:49.6094026Z  * [new branch]        claude/s04-cinematic-rebuild -> origin/claude/s04-cinematic-rebuild
+2026-10-27T20:18:49.6094546Z  * [new branch]        claude/s04-final-polish -> origin/claude/s04-final-polish
+2026-10-27T20:18:49.6095067Z  * [new branch]        claude/s04-final-refinement -> origin/claude/s04-final-refinement
+2026-10-27T20:18:49.6095627Z  * [new branch]        claude/s04-ios-ready-transition -> origin/claude/s04-ios-ready-transition
+2026-10-27T20:18:49.6096209Z  * [new branch]        claude/s04-release-studio-v10 -> origin/claude/s04-release-studio-v10
+2026-10-27T20:18:49.6096810Z  * [new branch]        claude/s04-v11-publishing-clarity -> origin/claude/s04-v11-publishing-clarity
+2026-10-27T20:18:49.6097390Z  * [new branch]        claude/s05-capability-finale -> origin/claude/s05-capability-finale
+2026-10-27T20:18:49.6097902Z  * [new branch]        claude/s05-final-polish -> origin/claude/s05-final-polish
+2026-10-27T20:18:49.6098442Z  * [new branch]        claude/showcase-browse-rebuild -> origin/claude/showcase-browse-rebuild
+2026-10-27T20:18:49.6099080Z  * [new branch]        claude/sidebar-workspace-docs-themes -> origin/claude/sidebar-workspace-docs-themes
+2026-10-27T20:18:49.6099749Z  * [new branch]        claude/smoky-skins-and-workspace-ui -> origin/claude/smoky-skins-and-workspace-ui
+2026-10-27T20:18:49.6100426Z  * [new branch]        claude/terminal-components -> origin/claude/terminal-components
+2026-10-27T20:18:49.6101084Z  * [new branch]        claude/xroga-ai-showcase -> origin/claude/xroga-ai-showcase
+2026-10-27T20:18:49.6101649Z  * [new branch]        claude/xroga-ai-updates-j24vhq -> origin/claude/xroga-ai-updates-j24vhq
+2026-10-27T20:18:49.6102286Z  * [new branch]        claude/xroga-b15-integration-20261025 -> origin/claude/xroga-b15-integration-20261025
+2026-10-27T20:18:49.6102913Z  * [new branch]        claude/xroga-b15-phase2-20261024 -> origin/claude/xroga-b15-phase2-20261024
+2026-10-27T20:18:49.6103497Z  * [new branch]        claude/xroga-b15-phase3-20261024 -> origin/claude/xroga-b15-phase3-20261024
+2026-10-27T20:18:49.6104025Z  * [new branch]        claude/xroga-batch-1-5  -> origin/claude/xroga-batch-1-5
+2026-10-27T20:18:49.6104640Z  * [new branch]        cleanup/homepage-s05-final-cta-20261019 -> origin/cleanup/homepage-s05-final-cta-20261019
+2026-10-27T20:18:49.6105218Z  * [new branch]        codex-preview-93379bcc  -> origin/codex-preview-93379bcc
+2026-10-27T20:18:49.6105795Z  * [new branch]        codex/builder-direct-code-output -> origin/codex/builder-direct-code-output
+2026-10-27T20:18:49.6106387Z  * [new branch]        codex/builder-direct-fallback -> origin/codex/builder-direct-fallback
+2026-10-27T20:18:49.6106986Z  * [new branch]        codex/builder-provider-diversity -> origin/codex/builder-provider-diversity
+2026-10-27T20:18:49.6107635Z  * [new branch]        codex/cloud-preview-20261018-93379bcc -> origin/codex/cloud-preview-20261018-93379bcc
+2026-10-27T20:18:49.6108284Z  * [new branch]        codex/command3-production-evidence -> origin/codex/command3-production-evidence
+2026-10-27T20:18:49.6108900Z  * [new branch]        codex/fix-main-welcome-contract -> origin/codex/fix-main-welcome-contract
+2026-10-27T20:18:49.6109547Z  * [new branch]        codex/growth-command2-demand-content -> origin/codex/growth-command2-demand-content
+2026-10-27T20:18:49.6110362Z  * [new branch]        codex/growth-command3-technical-publishing -> origin/codex/growth-command3-technical-publishing
+2026-10-27T20:18:49.6111136Z  * [new branch]        codex/phase3-ci-dependencies -> origin/codex/phase3-ci-dependencies
+2026-10-27T20:18:49.6111730Z  * [new branch]        codex/phase3-feedback-security -> origin/codex/phase3-feedback-security
+2026-10-27T20:18:49.6112279Z  * [new branch]        codex/phase3-ui-contracts -> origin/codex/phase3-ui-contracts
+2026-10-27T20:18:49.6112878Z  * [new branch]        codex/production-auth-gate-20260913 -> origin/codex/production-auth-gate-20260913
+2026-10-27T20:18:49.6113527Z  * [new branch]        codex/repair-universal-review-gate -> origin/codex/repair-universal-review-gate
+2026-10-27T20:18:49.6114109Z  * [new branch]        codex/signup-power-layout -> origin/codex/signup-power-layout
+2026-10-27T20:18:49.6114742Z  * [new branch]        codex/social-protocol-latency-20260913 -> origin/codex/social-protocol-latency-20260913
+2026-10-27T20:18:49.6115451Z  * [new branch]        codex/universal-semantic-worker-20260911 -> origin/codex/universal-semantic-worker-20260911
+2026-10-27T20:18:49.6116141Z  * [new branch]        codex/workspace-access-refinements -> origin/codex/workspace-access-refinements
+2026-10-27T20:18:49.6116699Z  * [new branch]        codex/xroga-batch-01    -> origin/codex/xroga-batch-01
+2026-10-27T20:18:49.6117206Z  * [new branch]        codex/xroga-cloud-scheduler -> origin/codex/xroga-cloud-scheduler
+2026-10-27T20:18:49.6117837Z  * [new branch]        codex/xroga-cloudrun-readiness-20261024 -> origin/codex/xroga-cloudrun-readiness-20261024
+2026-10-27T20:18:49.6118498Z  * [new branch]        codex/xroga-explicit-app-connect -> origin/codex/xroga-explicit-app-connect
+2026-10-27T20:18:49.6119071Z  * [new branch]        codex/xroga-openrouter-only -> origin/codex/xroga-openrouter-only
+2026-10-27T20:18:49.6119683Z  * [new branch]        codex/xroga-phase-3-handoff-a21a8202 -> origin/codex/xroga-phase-3-handoff-a21a8202
+2026-10-27T20:18:49.6120596Z  * [new branch]        codex/xroga-phase3-library-diagnostic-20261024 -> origin/codex/xroga-phase3-library-diagnostic-20261024
+2026-10-27T20:18:49.6121526Z  * [new branch]        codex/xroga-phase3-main-integration-20261023 -> origin/codex/xroga-phase3-main-integration-20261023
+2026-10-27T20:18:49.6122220Z  * [new branch]        codex/xroga-phase4-prep-20261023 -> origin/codex/xroga-phase4-prep-20261023
+2026-10-27T20:18:49.6122903Z  * [new branch]        codex/xroga-phase4-ui-integration-20261023 -> origin/codex/xroga-phase4-ui-integration-20261023
+2026-10-27T20:18:49.6123615Z  * [new branch]        codex/xroga-universal-connected-apps -> origin/codex/xroga-universal-connected-apps
+2026-10-27T20:18:49.6124272Z  * [new branch]        codex/xroga-usage-accounting-grant -> origin/codex/xroga-usage-accounting-grant
+2026-10-27T20:18:49.6124871Z  * [new branch]        codex/xroga-zero-fly-20261025 -> origin/codex/xroga-zero-fly-20261025
+2026-10-27T20:18:49.6125486Z  * [new branch]        cursor/ai-compile-agents-memory-ab4c -> origin/cursor/ai-compile-agents-memory-ab4c
+2026-10-27T20:18:49.6126145Z  * [new branch]        cursor/ai-honesty-grok-research-a9a2 -> origin/cursor/ai-honesty-grok-research-a9a2
+2026-10-27T20:18:49.6126808Z  * [new branch]        cursor/ai-media-terminal-cards-e4f5 -> origin/cursor/ai-media-terminal-cards-e4f5
+2026-10-27T20:18:49.6127415Z  * [new branch]        cursor/ai-trust-ship-loop-ab4c -> origin/cursor/ai-trust-ship-loop-ab4c
+2026-10-27T20:18:49.6128000Z  * [new branch]        cursor/api-role-manifesto-e4f5 -> origin/cursor/api-role-manifesto-e4f5
+2026-10-27T20:18:49.6128594Z  * [new branch]        cursor/auth-homepage-modern-e4f5 -> origin/cursor/auth-homepage-modern-e4f5
+2026-10-27T20:18:49.6129201Z  * [new branch]        cursor/authorize-ship-gaps-a9a2 -> origin/cursor/authorize-ship-gaps-a9a2
+2026-10-27T20:18:49.6129832Z  * [new branch]        cursor/auto-field-api-integrate-ab4c -> origin/cursor/auto-field-api-integrate-ab4c
+2026-10-27T20:18:49.6130590Z  * [new branch]        cursor/auto-repo-crypto-agents-a9a2 -> origin/cursor/auto-repo-crypto-agents-a9a2
+2026-10-27T20:18:49.6131349Z  * [new branch]        cursor/automation-seo-browser-e4f5 -> origin/cursor/automation-seo-browser-e4f5
+2026-10-27T20:18:49.6132087Z  * [new branch]        cursor/background-video-notifications-e4f5 -> origin/cursor/background-video-notifications-e4f5
+2026-10-27T20:18:49.6132779Z  * [new branch]        cursor/beginner-build-engine-e4f5 -> origin/cursor/beginner-build-engine-e4f5
+2026-10-27T20:18:49.6133460Z  * [new branch]        cursor/best-trained-system-prompts-ab4c -> origin/cursor/best-trained-system-prompts-ab4c
+2026-10-27T20:18:49.6134141Z  * [new branch]        cursor/black-hole-agnes-agents-e4f5 -> origin/cursor/black-hole-agnes-agents-e4f5
+2026-10-27T20:18:49.6134812Z  * [new branch]        cursor/blackhole-research-loaders-a9a2 -> origin/cursor/blackhole-research-loaders-a9a2
+2026-10-27T20:18:49.6135507Z  * [new branch]        cursor/blackhole-shine-processing-e4f5 -> origin/cursor/blackhole-shine-processing-e4f5
+2026-10-27T20:18:49.6136221Z  * [new branch]        cursor/blue-pricing-homepage-auth-ab4c -> origin/cursor/blue-pricing-homepage-auth-ab4c
+2026-10-27T20:18:49.6136891Z  * [new branch]        cursor/build-cache-update-qa-ab4c -> origin/cursor/build-cache-update-qa-ab4c
+2026-10-27T20:18:49.6137539Z  * [new branch]        cursor/build-routing-phase1-fix-e4f5 -> origin/cursor/build-routing-phase1-fix-e4f5
+2026-10-27T20:18:49.6138221Z  * [new branch]        cursor/build-session-continuation-e4f5 -> origin/cursor/build-session-continuation-e4f5
+2026-10-27T20:18:49.6138834Z  * [new branch]        cursor/build-todo-list-ab4c -> origin/cursor/build-todo-list-ab4c
+2026-10-27T20:18:49.6139363Z  * [new branch]        cursor/build-ux-fixes-ab4c -> origin/cursor/build-ux-fixes-ab4c
+2026-10-27T20:18:49.6140061Z  * [new branch]        cursor/byok-vercel-secrets-ab4c -> origin/cursor/byok-vercel-secrets-ab4c
+2026-10-27T20:18:49.6141001Z  * [new branch]        cursor/capabilities-math-format-e4f5 -> origin/cursor/capabilities-math-format-e4f5
+2026-10-27T20:18:49.6141877Z  * [new branch]        cursor/chat-actions-seo-e4f5 -> origin/cursor/chat-actions-seo-e4f5
+2026-10-27T20:18:49.6143113Z  * [new branch]        cursor/chat-paste-routing-format-e4f5 -> origin/cursor/chat-paste-routing-format-e4f5
+2026-10-27T20:18:49.6143945Z  * [new branch]        cursor/chat-turn-rail-ab4c -> origin/cursor/chat-turn-rail-ab4c
+2026-10-27T20:18:49.6144583Z  * [new branch]        cursor/chat-updates-vercel-oauth-ab4c -> origin/cursor/chat-updates-vercel-oauth-ab4c
+2026-10-27T20:18:49.6145241Z  * [new branch]        cursor/chatbar-ship-send-icon-ab4c -> origin/cursor/chatbar-ship-send-icon-ab4c
+2026-10-27T20:18:49.6145879Z  * [new branch]        cursor/chatbar-talk-inline-e4f5 -> origin/cursor/chatbar-talk-inline-e4f5
+2026-10-27T20:18:49.6146514Z  * [new branch]        cursor/chrome-desktop-ui-entry-a9a2 -> origin/cursor/chrome-desktop-ui-entry-a9a2
+2026-10-27T20:18:49.6147128Z  * [new branch]        cursor/claude-tagline-font-ab4c -> origin/cursor/claude-tagline-font-ab4c
+2026-10-27T20:18:49.6147752Z  * [new branch]        cursor/cloud-environment-setup-a9a2 -> origin/cursor/cloud-environment-setup-a9a2
+2026-10-27T20:18:49.6148396Z  * [new branch]        cursor/cloud-repo-terminals-ab4c -> origin/cursor/cloud-repo-terminals-ab4c
+2026-10-27T20:18:49.6149059Z  * [new branch]        cursor/complete-platform-updates-ab4c -> origin/cursor/complete-platform-updates-ab4c
+2026-10-27T20:18:49.6149695Z  * [new branch]        cursor/complete-ship-loops-a9a2 -> origin/cursor/complete-ship-loops-a9a2
+2026-10-27T20:18:49.6150556Z  * [new branch]        cursor/cost-effective-repo-updates-ab4c -> origin/cursor/cost-effective-repo-updates-ab4c
+2026-10-27T20:18:49.6151278Z  * [new branch]        cursor/dashboard-crash-9phase-fix-e4f5 -> origin/cursor/dashboard-crash-9phase-fix-e4f5
+2026-10-27T20:18:49.6152006Z  * [new branch]        cursor/dashboard-fullscreen-chatbar-e4f5 -> origin/cursor/dashboard-fullscreen-chatbar-e4f5
+2026-10-27T20:18:49.6152715Z  * [new branch]        cursor/dashboard-tables-feedback-e4f5 -> origin/cursor/dashboard-tables-feedback-e4f5
+2026-10-27T20:18:49.6153656Z  * [new branch]        cursor/deepseek-openrouter-official-keys-ab4c -> origin/cursor/deepseek-openrouter-official-keys-ab4c
+2026-10-27T20:18:49.6154429Z  * [new branch]        cursor/deepseek-v4-build-animation-ab4c -> origin/cursor/deepseek-v4-build-animation-ab4c
+2026-10-27T20:18:49.6155091Z  * [new branch]        cursor/deploy-missing-fixes-e4f5 -> origin/cursor/deploy-missing-fixes-e4f5
+2026-10-27T20:18:49.6155715Z  * [new branch]        cursor/deploy-vercel-fallback-e4f5 -> origin/cursor/deploy-vercel-fallback-e4f5
+2026-10-27T20:18:49.6156375Z  * [new branch]        cursor/dual-pipeline-code-engine-e4f5 -> origin/cursor/dual-pipeline-code-engine-e4f5
+2026-10-27T20:18:49.6157062Z  * [new branch]        cursor/e2e-artifacts-integrations-a9a2 -> origin/cursor/e2e-artifacts-integrations-a9a2
+2026-10-27T20:18:49.6157739Z  * [new branch]        cursor/e2e-build-update-github-ab4c -> origin/cursor/e2e-build-update-github-ab4c
+2026-10-27T20:18:49.6158420Z  * [new branch]        cursor/e2e-supabase-ship-complete-a9a2 -> origin/cursor/e2e-supabase-ship-complete-a9a2
+2026-10-27T20:18:49.6159104Z  * [new branch]        cursor/ensure-ship-loop-schema-ab4c -> origin/cursor/ensure-ship-loop-schema-ab4c
+2026-10-27T20:18:49.6159788Z  * [new branch]        cursor/fast-complex-builds-free-ai-ab4c -> origin/cursor/fast-complex-builds-free-ai-ab4c
+2026-10-27T20:18:49.6160618Z  * [new branch]        cursor/feature-seo-pages-e4f5 -> origin/cursor/feature-seo-pages-e4f5
+2026-10-27T20:18:49.6161169Z  * [new branch]        cursor/fill-live-gaps-a9a2 -> origin/cursor/fill-live-gaps-a9a2
+2026-10-27T20:18:49.6161728Z  * [new branch]        cursor/finish-nonweb-gaps-a9a2 -> origin/cursor/finish-nonweb-gaps-a9a2
+2026-10-27T20:18:49.6162441Z  * [new branch]        cursor/fix-ai-media-storage-old-terminal-e4f5 -> origin/cursor/fix-ai-media-storage-old-terminal-e4f5
+2026-10-27T20:18:49.6163466Z  * [new branch]        cursor/fix-auth-chat-e4f5 -> origin/cursor/fix-auth-chat-e4f5
+2026-10-27T20:18:49.6164246Z  * [new branch]        cursor/fix-auth-jwt-e4f5 -> origin/cursor/fix-auth-jwt-e4f5
+2026-10-27T20:18:49.6165066Z  * [new branch]        cursor/fix-auth-live-e4f5 -> origin/cursor/fix-auth-live-e4f5
+2026-10-27T20:18:49.6165814Z  * [new branch]        cursor/fix-blank-build-greeting-cost-ab4c -> origin/cursor/fix-blank-build-greeting-cost-ab4c
+2026-10-27T20:18:49.6166571Z  * [new branch]        cursor/fix-build-not-essay-ab4c -> origin/cursor/fix-build-not-essay-ab4c
+2026-10-27T20:18:49.6167225Z  * [new branch]        cursor/fix-chat-ux-natural-e4f5 -> origin/cursor/fix-chat-ux-natural-e4f5
+2026-10-27T20:18:49.6167879Z  * [new branch]        cursor/fix-exit-update-vercel-ab4c -> origin/cursor/fix-exit-update-vercel-ab4c
+2026-10-27T20:18:49.6168604Z  * [new branch]        cursor/fix-feature-execution-e4f5 -> origin/cursor/fix-feature-execution-e4f5
+2026-10-27T20:18:49.6169312Z  * [new branch]        cursor/fix-fly-deploy-lock-e4f5 -> origin/cursor/fix-fly-deploy-lock-e4f5
+2026-10-27T20:18:49.6170157Z  * [new branch]        cursor/fix-fly-deploy-retry-ab4c -> origin/cursor/fix-fly-deploy-retry-ab4c
+2026-10-27T20:18:49.6170823Z  * [new branch]        cursor/fix-fly-deployment-e4f5 -> origin/cursor/fix-fly-deployment-e4f5
+2026-10-27T20:18:49.6171453Z  * [new branch]        cursor/fix-fly-dockerfile-e4f5 -> origin/cursor/fix-fly-dockerfile-e4f5
+2026-10-27T20:18:49.6172156Z  * [new branch]        cursor/fix-full-preview-stay-ab4c -> origin/cursor/fix-full-preview-stay-ab4c
+2026-10-27T20:18:49.6172844Z  * [new branch]        cursor/fix-full-site-ui-e4f5 -> origin/cursor/fix-full-site-ui-e4f5
+2026-10-27T20:18:49.6173539Z  * [new branch]        cursor/fix-github-gate-no-response-ab4c -> origin/cursor/fix-github-gate-no-response-ab4c
+2026-10-27T20:18:49.6174308Z  * [new branch]        cursor/fix-greeting-image-routing-e4f5 -> origin/cursor/fix-greeting-image-routing-e4f5
+2026-10-27T20:18:49.6175002Z  * [new branch]        cursor/fix-image-circuit-e4f5 -> origin/cursor/fix-image-circuit-e4f5
+2026-10-27T20:18:49.6175818Z  * [new branch]        cursor/fix-image-crash-storage-e4f5 -> origin/cursor/fix-image-crash-storage-e4f5
+2026-10-27T20:18:49.6176497Z  * [new branch]        cursor/fix-image-live-e4f5 -> origin/cursor/fix-image-live-e4f5
+2026-10-27T20:18:49.6177122Z  * [new branch]        cursor/fix-image-production-e4f5 -> origin/cursor/fix-image-production-e4f5
+2026-10-27T20:18:49.6177829Z  * [new branch]        cursor/fix-integrations-ux-a9a2 -> origin/cursor/fix-integrations-ux-a9a2
+2026-10-27T20:18:49.6178527Z  * [new branch]        cursor/fix-lint-activephase-a9a2 -> origin/cursor/fix-lint-activephase-a9a2
+2026-10-27T20:18:49.6179238Z  * [new branch]        cursor/fix-loader-dupes-speed-a9a2 -> origin/cursor/fix-loader-dupes-speed-a9a2
+2026-10-27T20:18:49.6180068Z  * [new branch]        cursor/fix-migrate-ci-secrets-ab4c -> origin/cursor/fix-migrate-ci-secrets-ab4c
+2026-10-27T20:18:49.6180688Z  * [new branch]        cursor/fix-oss-model-paths-e4f5 -> origin/cursor/fix-oss-model-paths-e4f5
+2026-10-27T20:18:49.6181359Z  * [new branch]        cursor/fix-play-sync-ship-ui-a9a2 -> origin/cursor/fix-play-sync-ship-ui-a9a2
+2026-10-27T20:18:49.6182040Z  * [new branch]        cursor/fix-preview-msg-token-zero-ab4c -> origin/cursor/fix-preview-msg-token-zero-ab4c
+2026-10-27T20:18:49.6182721Z  * [new branch]        cursor/fix-repos-sidebar-empty-ab4c -> origin/cursor/fix-repos-sidebar-empty-ab4c
+2026-10-27T20:18:49.6183512Z  * [new branch]        cursor/fix-supabase-authorize-popup-a9a2 -> origin/cursor/fix-supabase-authorize-popup-a9a2
+2026-10-27T20:18:49.6184188Z  * [new branch]        cursor/fix-supabase-ci-final-ab4c -> origin/cursor/fix-supabase-ci-final-ab4c
+2026-10-27T20:18:49.6184775Z  * [new branch]        cursor/fix-supabase-ipv6-ab4c -> origin/cursor/fix-supabase-ipv6-ab4c
+2026-10-27T20:18:49.6185367Z  * [new branch]        cursor/fix-supabase-migrate-ab4c -> origin/cursor/fix-supabase-migrate-ab4c
+2026-10-27T20:18:49.6186020Z  * [new branch]        cursor/fix-supabase-migrate-final-ab4c -> origin/cursor/fix-supabase-migrate-final-ab4c
+2026-10-27T20:18:49.6186783Z  * [new branch]        cursor/fix-supabase-pooler-ab4c -> origin/cursor/fix-supabase-pooler-ab4c
+2026-10-27T20:18:49.6187732Z  * [new branch]        cursor/fix-supabase-user-integrations-fallback-a9a2 -> origin/cursor/fix-supabase-user-integrations-fallback-a9a2
+2026-10-27T20:18:49.6188905Z  * [new branch]        cursor/fix-swarm-stall-fastpath-a9a2 -> origin/cursor/fix-swarm-stall-fastpath-a9a2
+2026-10-27T20:18:49.6189850Z  * [new branch]        cursor/fix-token-usage-deduction-ab4c -> origin/cursor/fix-token-usage-deduction-ab4c
+2026-10-27T20:18:49.6190914Z  * [new branch]        cursor/fix-token-usage-persist-ab4c -> origin/cursor/fix-token-usage-persist-ab4c
+2026-10-27T20:18:49.6192002Z  * [new branch]        cursor/fix-token-usage-persist-caps-ab4c -> origin/cursor/fix-token-usage-persist-caps-ab4c
+2026-10-27T20:18:49.6192963Z  * [new branch]        cursor/fix-ui-layout-e4f5 -> origin/cursor/fix-ui-layout-e4f5
+2026-10-27T20:18:49.6193784Z  * [new branch]        cursor/fix-unique-builds-not-blog-ab4c -> origin/cursor/fix-unique-builds-not-blog-ab4c
+2026-10-27T20:18:49.6194842Z  * [new branch]        cursor/fix-user-vercel-supabase-connect-a9a2 -> origin/cursor/fix-user-vercel-supabase-connect-a9a2
+2026-10-27T20:18:49.6195871Z  * [new branch]        cursor/fix-vercel-chat-e4f5 -> origin/cursor/fix-vercel-chat-e4f5
+2026-10-27T20:18:49.6196692Z  * [new branch]        cursor/fix-vercel-ci-ab4c -> origin/cursor/fix-vercel-ci-ab4c
+2026-10-27T20:18:49.6197544Z  * [new branch]        cursor/fix-vercel-deploy-e4f5 -> origin/cursor/fix-vercel-deploy-e4f5
+2026-10-27T20:18:49.6198439Z  * [new branch]        cursor/fix-vercel-lint-ab4c -> origin/cursor/fix-vercel-lint-ab4c
+2026-10-27T20:18:49.6199371Z  * [new branch]        cursor/fix-vercel-lint-unused-ab4c -> origin/cursor/fix-vercel-lint-unused-ab4c
+2026-10-27T20:18:49.6200443Z  * [new branch]        cursor/fix-vercel-oauth-a9a2 -> origin/cursor/fix-vercel-oauth-a9a2
+2026-10-27T20:18:49.6201403Z  * [new branch]        cursor/fix-vercel-oauth-scopes-a9a2 -> origin/cursor/fix-vercel-oauth-scopes-a9a2
+2026-10-27T20:18:49.6202707Z  * [new branch]        cursor/fix-vercel-user-integrations-a9a2 -> origin/cursor/fix-vercel-user-integrations-a9a2
+2026-10-27T20:18:49.6203762Z  * [new branch]        cursor/fix-video-generation-e4f5 -> origin/cursor/fix-video-generation-e4f5
+2026-10-27T20:18:49.6204650Z  * [new branch]        cursor/fix-video-playback-e4f5 -> origin/cursor/fix-video-playback-e4f5
+2026-10-27T20:18:49.6205621Z  * [new branch]        cursor/fly-deploy-oauth-simplify-a9a2 -> origin/cursor/fly-deploy-oauth-simplify-a9a2
+2026-10-27T20:18:49.6206291Z  * [new branch]        cursor/fly-deploy-workflow-e4f5 -> origin/cursor/fly-deploy-workflow-e4f5
+2026-10-27T20:18:49.6206946Z  * [new branch]        cursor/fly-token-deploy-retry-a9a2 -> origin/cursor/fly-token-deploy-retry-a9a2
+2026-10-27T20:18:49.6207614Z  * [new branch]        cursor/force-orbitvault-update-ab4c -> origin/cursor/force-orbitvault-update-ab4c
+2026-10-27T20:18:49.6208243Z  * [new branch]        cursor/force-welcome-fonts-ab4c -> origin/cursor/force-welcome-fonts-ab4c
+2026-10-27T20:18:49.6208876Z  * [new branch]        cursor/free-ai-endpoints-byok-ab4c -> origin/cursor/free-ai-endpoints-byok-ab4c
+2026-10-27T20:18:49.6209440Z  * [new branch]        cursor/full-app-fix-e4f5 -> origin/cursor/full-app-fix-e4f5
+2026-10-27T20:18:49.6210279Z  * [new branch]        cursor/full-preview-hosted-deploy-e4f5 -> origin/cursor/full-preview-hosted-deploy-e4f5
+2026-10-27T20:18:49.6211001Z  * [new branch]        cursor/full-stack-builder-platform-ab4c -> origin/cursor/full-stack-builder-platform-ab4c
+2026-10-27T20:18:49.6211660Z  * [new branch]        cursor/github-build-deploy-e4f5 -> origin/cursor/github-build-deploy-e4f5
+2026-10-27T20:18:49.6212251Z  * [new branch]        cursor/github-build-resume-e4f5 -> origin/cursor/github-build-resume-e4f5
+2026-10-27T20:18:49.6212841Z  * [new branch]        cursor/github-connect-ux-e4f5 -> origin/cursor/github-connect-ux-e4f5
+2026-10-27T20:18:49.6213501Z  * [new branch]        cursor/github-connected-build-fix-e4f5 -> origin/cursor/github-connected-build-fix-e4f5
+2026-10-27T20:18:49.6214332Z  * [new branch]        cursor/github-history-fixes-ab4c -> origin/cursor/github-history-fixes-ab4c
+2026-10-27T20:18:49.6215031Z  * [new branch]        cursor/github-projects-model-fallback-ab4c -> origin/cursor/github-projects-model-fallback-ab4c
+2026-10-27T20:18:49.6215665Z  * [new branch]        cursor/go-liquid-icon-ab4c -> origin/cursor/go-liquid-icon-ab4c
+2026-10-27T20:18:49.6216236Z  * [new branch]        cursor/groq-no-grok-council-e4f5 -> origin/cursor/groq-no-grok-council-e4f5
+2026-10-27T20:18:49.6216877Z  * [new branch]        cursor/harden-patch-ship-safety-a9a2 -> origin/cursor/harden-patch-ship-safety-a9a2
+2026-10-27T20:18:49.6217686Z  * [new branch]        cursor/headline-response-format-e4f5 -> origin/cursor/headline-response-format-e4f5
+2026-10-27T20:18:49.6218295Z  * [new branch]        cursor/hero-chatbar-ui-e4f5 -> origin/cursor/hero-chatbar-ui-e4f5
+2026-10-27T20:18:49.6218904Z  * [new branch]        cursor/hero-chatbar-ui-polish-e4f5 -> origin/cursor/hero-chatbar-ui-polish-e4f5
+2026-10-27T20:18:49.6219493Z  * [new branch]        cursor/hide-dollar-caps-ab4c -> origin/cursor/hide-dollar-caps-ab4c
+2026-10-27T20:18:49.6220379Z  * [new branch]        cursor/high-end-builds-github-projects-ab4c -> origin/cursor/high-end-builds-github-projects-ab4c
+2026-10-27T20:18:49.6221102Z  * [new branch]        cursor/homepage-blackhole-power-a9a2 -> origin/cursor/homepage-blackhole-power-a9a2
+2026-10-27T20:18:49.6221793Z  * [new branch]        cursor/homepage-chatbar-incognito-e4f5 -> origin/cursor/homepage-chatbar-incognito-e4f5
+2026-10-27T20:18:49.6222441Z  * [new branch]        cursor/homepage-coding-vibe-ab4c -> origin/cursor/homepage-coding-vibe-ab4c
+2026-10-27T20:18:49.6223071Z  * [new branch]        cursor/homepage-compare-usage-a9a2 -> origin/cursor/homepage-compare-usage-a9a2
+2026-10-27T20:18:49.6223721Z  * [new branch]        cursor/homepage-empower-chatbar-ab4c -> origin/cursor/homepage-empower-chatbar-ab4c
+2026-10-27T20:18:49.6224508Z  * [new branch]        cursor/homepage-error-dashboard-a9a2 -> origin/cursor/homepage-error-dashboard-a9a2
+2026-10-27T20:18:49.6225223Z  * [new branch]        cursor/homepage-paddle-compliance-ab4c -> origin/cursor/homepage-paddle-compliance-ab4c
+2026-10-27T20:18:49.6225924Z  * [new branch]        cursor/homepage-sidebar-polish-e4f5 -> origin/cursor/homepage-sidebar-polish-e4f5
+2026-10-27T20:18:49.6226634Z  * [new branch]        cursor/homepage-store-profile-polish-e4f5 -> origin/cursor/homepage-store-profile-polish-e4f5
+2026-10-27T20:18:49.6227320Z  * [new branch]        cursor/homepage-value-planbar-a9a2 -> origin/cursor/homepage-value-planbar-a9a2
+2026-10-27T20:18:49.6228003Z  * [new branch]        cursor/homepage-workspace-showcase-a9a2 -> origin/cursor/homepage-workspace-showcase-a9a2
+2026-10-27T20:18:49.6228633Z  * [new branch]        cursor/honest-e2e-ship-a9a2 -> origin/cursor/honest-e2e-ship-a9a2
+2026-10-27T20:18:49.6229257Z  * [new branch]        cursor/honest-nonweb-mobile-ship-a9a2 -> origin/cursor/honest-nonweb-mobile-ship-a9a2
+2026-10-27T20:18:49.6230090Z  * [new branch]        cursor/hybrid-council-blackhole-e4f5 -> origin/cursor/hybrid-council-blackhole-e4f5
+2026-10-27T20:18:49.6230757Z  * [new branch]        cursor/image-to-video-chatbar-e4f5 -> origin/cursor/image-to-video-chatbar-e4f5
+2026-10-27T20:18:49.6231401Z  * [new branch]        cursor/image-variants-voting-e4f5 -> origin/cursor/image-variants-voting-e4f5
+2026-10-27T20:18:49.6232072Z  * [new branch]        cursor/integrations-chatbar-files-e4f5 -> origin/cursor/integrations-chatbar-files-e4f5
+2026-10-27T20:18:49.6232781Z  * [new branch]        cursor/integrations-mega-blue-theme-e4f5 -> origin/cursor/integrations-mega-blue-theme-e4f5
+2026-10-27T20:18:49.6233576Z  * [new branch]        cursor/integrations-persist-homepage-polish-a9a2 -> origin/cursor/integrations-persist-homepage-polish-a9a2
+2026-10-27T20:18:49.6234305Z  * [new branch]        cursor/launch-ready-hardening-a9a2 -> origin/cursor/launch-ready-hardening-a9a2
+2026-10-27T20:18:49.6235129Z  * [new branch]        cursor/lemon-vercel-mobile-a9a2 -> origin/cursor/lemon-vercel-mobile-a9a2
+2026-10-27T20:18:49.6235772Z  * [new branch]        cursor/ltx-video-production-fix-e4f5 -> origin/cursor/ltx-video-production-fix-e4f5
+2026-10-27T20:18:49.6236391Z  * [new branch]        cursor/math-format-deploy-e4f5 -> origin/cursor/math-format-deploy-e4f5
+2026-10-27T20:18:49.6236983Z  * [new branch]        cursor/math-solution-format-ab4c -> origin/cursor/math-solution-format-ab4c
+2026-10-27T20:18:49.6237541Z  * [new branch]        cursor/media-studio-v2-e4f5 -> origin/cursor/media-studio-v2-e4f5
+2026-10-27T20:18:49.6238145Z  * [new branch]        cursor/mobile-oneclick-publish-a9a2 -> origin/cursor/mobile-oneclick-publish-a9a2
+2026-10-27T20:18:49.6238839Z  * [new branch]        cursor/mobile-responsive-dashboard-e4f5 -> origin/cursor/mobile-responsive-dashboard-e4f5
+2026-10-27T20:18:49.6239568Z  * [new branch]        cursor/modern-v-infinity-typography-ab4c -> origin/cursor/modern-v-infinity-typography-ab4c
+2026-10-27T20:18:49.6240412Z  * [new branch]        cursor/morph-wait-bh-homepage-a9a2 -> origin/cursor/morph-wait-bh-homepage-a9a2
+2026-10-27T20:18:49.6241029Z  * [new branch]        cursor/movie-production-e4f5 -> origin/cursor/movie-production-e4f5
+2026-10-27T20:18:49.6241631Z  * [new branch]        cursor/multi-niche-game-build-e4f5 -> origin/cursor/multi-niche-game-build-e4f5
+2026-10-27T20:18:49.6242267Z  * [new branch]        cursor/new-ai-backend-kimi-glm-ab4c -> origin/cursor/new-ai-backend-kimi-glm-ab4c
+2026-10-27T20:18:49.6242943Z  * [new branch]        cursor/nine-phase-build-pipeline-e4f5 -> origin/cursor/nine-phase-build-pipeline-e4f5
+2026-10-27T20:18:49.6243612Z  * [new branch]        cursor/nine-phase-state-machine-e4f5 -> origin/cursor/nine-phase-state-machine-e4f5
+2026-10-27T20:18:49.6244197Z  * [new branch]        cursor/nonweb-e2e-ship-a9a2 -> origin/cursor/nonweb-e2e-ship-a9a2
+2026-10-27T20:18:49.6244897Z  * [new branch]        cursor/nonweb-store-ship-e2e-a9a2 -> origin/cursor/nonweb-store-ship-e2e-a9a2
+2026-10-27T20:18:49.6245563Z  * [new branch]        cursor/notify-qa-lucide-updates-ab4c -> origin/cursor/notify-qa-lucide-updates-ab4c
+2026-10-27T20:18:49.6246257Z  * [new branch]        cursor/oauth-pkce-storage-fallback-a9a2 -> origin/cursor/oauth-pkce-storage-fallback-a9a2
+2026-10-27T20:18:49.6246895Z  * [new branch]        cursor/omni-reality-swarm-e4f5 -> origin/cursor/omni-reality-swarm-e4f5
+2026-10-27T20:18:49.6247529Z  * [new branch]        cursor/openrouter-deepseek-stack-ab4c -> origin/cursor/openrouter-deepseek-stack-ab4c
+2026-10-27T20:18:49.6248225Z  * [new branch]        cursor/oss-video-fallback-pipeline-e4f5 -> origin/cursor/oss-video-fallback-pipeline-e4f5
+2026-10-27T20:18:49.6248843Z  * [new branch]        cursor/oss-video-models-e4f5 -> origin/cursor/oss-video-models-e4f5
+2026-10-27T20:18:49.6249459Z  * [new branch]        cursor/patch-current-repo-only-ab4c -> origin/cursor/patch-current-repo-only-ab4c
+2026-10-27T20:18:49.6250250Z  * [new branch]        cursor/perf-logo-fast-feel-ab4c -> origin/cursor/perf-logo-fast-feel-ab4c
+2026-10-27T20:18:49.6250911Z  * [new branch]        cursor/persist-chat-after-refresh-e4f5 -> origin/cursor/persist-chat-after-refresh-e4f5
+2026-10-27T20:18:49.6251580Z  * [new branch]        cursor/persist-repos-terminals-ab4c -> origin/cursor/persist-repos-terminals-ab4c
+2026-10-27T20:18:49.6252164Z  * [new branch]        cursor/phase1-ai-engine-ab4c -> origin/cursor/phase1-ai-engine-ab4c
+2026-10-27T20:18:49.6252804Z  * [new branch]        cursor/phase2-black-hole-v-infinity-e4f5 -> origin/cursor/phase2-black-hole-v-infinity-e4f5
+2026-10-27T20:18:49.6253498Z  * [new branch]        cursor/phase3-referral-community-ab4c -> origin/cursor/phase3-referral-community-ab4c
+2026-10-27T20:18:49.6254175Z  * [new branch]        cursor/plain-text-modern-loader-e4f5 -> origin/cursor/plain-text-modern-loader-e4f5
+2026-10-27T20:18:49.6254822Z  * [new branch]        cursor/plan-a-update-workspace-ab4c -> origin/cursor/plan-a-update-workspace-ab4c
+2026-10-27T20:18:49.6255669Z  * [new branch]        cursor/platform-updates-preview-search-ab4c -> origin/cursor/platform-updates-preview-search-ab4c
+2026-10-27T20:18:49.6256329Z  * [new branch]        cursor/pricing-media-seo-e4f5 -> origin/cursor/pricing-media-seo-e4f5
+2026-10-27T20:18:49.6256997Z  * [new branch]        cursor/purge-last-old-thought-strings-a9a2 -> origin/cursor/purge-last-old-thought-strings-a9a2
+2026-10-27T20:18:49.6257730Z  * [new branch]        cursor/purge-legacy-ai-response-ux-a9a2 -> origin/cursor/purge-legacy-ai-response-ux-a9a2
+2026-10-27T20:18:49.6258372Z  * [new branch]        cursor/push-to-talk-voice-e4f5 -> origin/cursor/push-to-talk-voice-e4f5
+2026-10-27T20:18:49.6259012Z  * [new branch]        cursor/query-analysis-deploy-fix-e4f5 -> origin/cursor/query-analysis-deploy-fix-e4f5
+2026-10-27T20:18:49.6259708Z  * [new branch]        cursor/real-ai-preview-not-scaffold-ab4c -> origin/cursor/real-ai-preview-not-scaffold-ab4c
+2026-10-27T20:18:49.6260459Z  * [new branch]        cursor/real-blog-preview-ux-ab4c -> origin/cursor/real-blog-preview-ux-ab4c
+2026-10-27T20:18:49.6261107Z  * [new branch]        cursor/real-build-progress-ship-ab4c -> origin/cursor/real-build-progress-ship-ab4c
+2026-10-27T20:18:49.6261720Z  * [new branch]        cursor/real-cost-metering-ab4c -> origin/cursor/real-cost-metering-ab4c
+2026-10-27T20:18:49.6262308Z  * [new branch]        cursor/reduce-response-text-e4f5 -> origin/cursor/reduce-response-text-e4f5
+2026-10-27T20:18:49.6262938Z  * [new branch]        cursor/remove-old-token-ai-ui-ab4c -> origin/cursor/remove-old-token-ai-ui-ab4c
+2026-10-27T20:18:49.6263587Z  * [new branch]        cursor/repo-terminal-storage-fix-ab4c -> origin/cursor/repo-terminal-storage-fix-ab4c
+2026-10-27T20:18:49.6264244Z  * [new branch]        cursor/repo-terminals-numbered-ab4c -> origin/cursor/repo-terminals-numbered-ab4c
+2026-10-27T20:18:49.6264886Z  * [new branch]        cursor/repo-workspace-sessions-ab4c -> origin/cursor/repo-workspace-sessions-ab4c
+2026-10-27T20:18:49.6265674Z  * [new branch]        cursor/repos-show-active-sessions-ab4c -> origin/cursor/repos-show-active-sessions-ab4c
+2026-10-27T20:18:49.6266428Z  * [new branch]        cursor/repos-sidebar-cost-hackathon-ab4c -> origin/cursor/repos-sidebar-cost-hackathon-ab4c
+2026-10-27T20:18:49.6267120Z  * [new branch]        cursor/repos-sidebar-used-only-ab4c -> origin/cursor/repos-sidebar-used-only-ab4c
+2026-10-27T20:18:49.6267859Z  * [new branch]        cursor/restore-homepage-brutal-pricing-ab4c -> origin/cursor/restore-homepage-brutal-pricing-ab4c
+2026-10-27T20:18:49.6268547Z  * [new branch]        cursor/restore-repo-terminal-ab4c -> origin/cursor/restore-repo-terminal-ab4c
+2026-10-27T20:18:49.6269200Z  * [new branch]        cursor/retire-legacy-ai-surfaces-a9a2 -> origin/cursor/retire-legacy-ai-surfaces-a9a2
+2026-10-27T20:18:49.6269828Z  * [new branch]        cursor/retro-tv-error-pages-ab4c -> origin/cursor/retro-tv-error-pages-ab4c
+2026-10-27T20:18:49.6270626Z  * [new branch]        cursor/scale-analytics-i18n-ab4c -> origin/cursor/scale-analytics-i18n-ab4c
+2026-10-27T20:18:49.6271270Z  * [new branch]        cursor/sealed-prompts-no-emoji-e4f5 -> origin/cursor/sealed-prompts-no-emoji-e4f5
+2026-10-27T20:18:49.6271870Z  * [new branch]        cursor/seo-coding-agent-ab4c -> origin/cursor/seo-coding-agent-ab4c
+2026-10-27T20:18:49.6272467Z  * [new branch]        cursor/setup-dev-environment-300d -> origin/cursor/setup-dev-environment-300d
+2026-10-27T20:18:49.6273147Z  * [new branch]        cursor/ship-blog-without-github-gate-ab4c -> origin/cursor/ship-blog-without-github-gate-ab4c
+2026-10-27T20:18:49.6273864Z  * [new branch]        cursor/ship-complete-vercel-deploy-a9a2 -> origin/cursor/ship-complete-vercel-deploy-a9a2
+2026-10-27T20:18:49.6274495Z  * [new branch]        cursor/ship-completeness-a9a2 -> origin/cursor/ship-completeness-a9a2
+2026-10-27T20:18:49.6275132Z  * [new branch]        cursor/ship-loop-mobile-scaffold-ab4c -> origin/cursor/ship-loop-mobile-scaffold-ab4c
+2026-10-27T20:18:49.6275967Z  * [new branch]        cursor/simple-blog-speed-progress-ab4c -> origin/cursor/simple-blog-speed-progress-ab4c
+2026-10-27T20:18:49.6276672Z  * [new branch]        cursor/simplify-build-progress-ui-a9a2 -> origin/cursor/simplify-build-progress-ui-a9a2
+2026-10-27T20:18:49.6277356Z  * [new branch]        cursor/skip-phase2-build-updates-e4f5 -> origin/cursor/skip-phase2-build-updates-e4f5
+2026-10-27T20:18:49.6278013Z  * [new branch]        cursor/smart-creation-deploy-ux-e4f5 -> origin/cursor/smart-creation-deploy-ux-e4f5
+2026-10-27T20:18:49.6278659Z  * [new branch]        cursor/stop-stuck-build-loops-ab4c -> origin/cursor/stop-stuck-build-loops-ab4c
+2026-10-27T20:18:49.6279346Z  * [new branch]        cursor/stopped-build-resume-history-ab4c -> origin/cursor/stopped-build-resume-history-ab4c
+2026-10-27T20:18:49.6280058Z  * [new branch]        cursor/strategic-grok-45-ab4c -> origin/cursor/strategic-grok-45-ab4c
+2026-10-27T20:18:49.6280637Z  * [new branch]        cursor/supabase-url-setup-e4f5 -> origin/cursor/supabase-url-setup-e4f5
+2026-10-27T20:18:49.6281287Z  * [new branch]        cursor/swarm-negotiation-engine-e4f5 -> origin/cursor/swarm-negotiation-engine-e4f5
+2026-10-27T20:18:49.6281995Z  * [new branch]        cursor/swarm-orchestrator-resilience-e4f5 -> origin/cursor/swarm-orchestrator-resilience-e4f5
+2026-10-27T20:18:49.6282669Z  * [new branch]        cursor/talk-voice-deploy-fix-ab4c -> origin/cursor/talk-voice-deploy-fix-ab4c
+2026-10-27T20:18:49.6283286Z  * [new branch]        cursor/terminal-e2e-no-cards-ab4c -> origin/cursor/terminal-e2e-no-cards-ab4c
+2026-10-27T20:18:49.6283934Z  * [new branch]        cursor/terminal-projects-panel-ab4c -> origin/cursor/terminal-projects-panel-ab4c
+2026-10-27T20:18:49.6284590Z  * [new branch]        cursor/terminal-qa-chat-output-ab4c -> origin/cursor/terminal-qa-chat-output-ab4c
+2026-10-27T20:18:49.6285252Z  * [new branch]        cursor/test-prompts-spa-plan-fix-ab4c -> origin/cursor/test-prompts-spa-plan-fix-ab4c
+2026-10-27T20:18:49.6286048Z  * [new branch]        cursor/thinking-panel-plain-text-e4f5 -> origin/cursor/thinking-panel-plain-text-e4f5
+2026-10-27T20:18:49.6286755Z  * [new branch]        cursor/thumbnail-aspect-modern-ui-e4f5 -> origin/cursor/thumbnail-aspect-modern-ui-e4f5
+2026-10-27T20:18:49.6287451Z  * [new branch]        cursor/token-deduction-dashboard-ab4c -> origin/cursor/token-deduction-dashboard-ab4c
+2026-10-27T20:18:49.6288131Z  * [new branch]        cursor/token-only-billing-models-ab4c -> origin/cursor/token-only-billing-models-ab4c
+2026-10-27T20:18:49.6288776Z  * [new branch]        cursor/two-lane-build-queue-ab4c -> origin/cursor/two-lane-build-queue-ab4c
+2026-10-27T20:18:49.6289440Z  * [new branch]        cursor/typing-real-github-updates-ab4c -> origin/cursor/typing-real-github-updates-ab4c
+2026-10-27T20:18:49.6290239Z  * [new branch]        cursor/ui-chatbar-sidebar-polish-e4f5 -> origin/cursor/ui-chatbar-sidebar-polish-e4f5
+2026-10-27T20:18:49.6290862Z  * [new branch]        cursor/ui-honesty-polish-e4f5 -> origin/cursor/ui-honesty-polish-e4f5
+2026-10-27T20:18:49.6291499Z  * [new branch]        cursor/ui-persist-terminal-media-e4f5 -> origin/cursor/ui-persist-terminal-media-e4f5
+2026-10-27T20:18:49.6292145Z  * [new branch]        cursor/ui-polish-refinements-e4f5 -> origin/cursor/ui-polish-refinements-e4f5
+2026-10-27T20:18:49.6292769Z  * [new branch]        cursor/ui-polish-sidebar-auth-e4f5 -> origin/cursor/ui-polish-sidebar-auth-e4f5
+2026-10-27T20:18:49.6293433Z  * [new branch]        cursor/ui-settings-publish-polish-ab4c -> origin/cursor/ui-settings-publish-polish-ab4c
+2026-10-27T20:18:49.6294112Z  * [new branch]        cursor/ui-terminal-media-polish-e4f5 -> origin/cursor/ui-terminal-media-polish-e4f5
+2026-10-27T20:18:49.6294731Z  * [new branch]        cursor/uiverse-animations-e4f5 -> origin/cursor/uiverse-animations-e4f5
+2026-10-27T20:18:49.6295342Z  * [new branch]        cursor/ultra-fast-simple-blog-ab4c -> origin/cursor/ultra-fast-simple-blog-ab4c
+2026-10-27T20:18:49.6296028Z  * [new branch]        cursor/update-no-scaffold-overwrite-ab4c -> origin/cursor/update-no-scaffold-overwrite-ab4c
+2026-10-27T20:18:49.6296793Z  * [new branch]        cursor/user-owned-publish-ab4c -> origin/cursor/user-owned-publish-ab4c
+2026-10-27T20:18:49.6297406Z  * [new branch]        cursor/vercel-credits-liveapi-ab4c -> origin/cursor/vercel-credits-liveapi-ab4c
+2026-10-27T20:18:49.6298026Z  * [new branch]        cursor/video-studio-overhaul-e4f5 -> origin/cursor/video-studio-overhaul-e4f5
+2026-10-27T20:18:49.6298638Z  * [new branch]        cursor/vision-docs-analyze-ab4c -> origin/cursor/vision-docs-analyze-ab4c
+2026-10-27T20:18:49.6299197Z  * [new branch]        cursor/voice-talk-fix-e4f5 -> origin/cursor/voice-talk-fix-e4f5
+2026-10-27T20:18:49.6299753Z  * [new branch]        cursor/voice-talk-overlay-e4f5 -> origin/cursor/voice-talk-overlay-e4f5
+2026-10-27T20:18:49.6300483Z  * [new branch]        cursor/web-search-sidebar-history-ab4c -> origin/cursor/web-search-sidebar-history-ab4c
+2026-10-27T20:18:49.6301201Z  * [new branch]        cursor/welcome-auth-theme-polish-ab4c -> origin/cursor/welcome-auth-theme-polish-ab4c
+2026-10-27T20:18:49.6301868Z  * [new branch]        cursor/welcome-chatbar-empower-ab4c -> origin/cursor/welcome-chatbar-empower-ab4c
+2026-10-27T20:18:49.6302539Z  * [new branch]        cursor/welcome-typography-resume-ab4c -> origin/cursor/welcome-typography-resume-ab4c
+2026-10-27T20:18:49.6303191Z  * [new branch]        cursor/white-black-gray-themes-ab4c -> origin/cursor/white-black-gray-themes-ab4c
+2026-10-27T20:18:49.6303842Z  * [new branch]        cursor/workspace-coder-polish-ab4c -> origin/cursor/workspace-coder-polish-ab4c
+2026-10-27T20:18:49.6304473Z  * [new branch]        cursor/workspace-dashboard-ui-ab4c -> origin/cursor/workspace-dashboard-ui-ab4c
+2026-10-27T20:18:49.6305124Z  * [new branch]        cursor/workspace-deep-work-theme-ab4c -> origin/cursor/workspace-deep-work-theme-ab4c
+2026-10-27T20:18:49.6305812Z  * [new branch]        cursor/xroga-branding-capabilities-e4f5 -> origin/cursor/xroga-branding-capabilities-e4f5
+2026-10-27T20:18:49.6306661Z  * [new branch]        cursor/xroga-complete-platform-e4f5 -> origin/cursor/xroga-complete-platform-e4f5
+2026-10-27T20:18:49.6307309Z  * [new branch]        cursor/xroga-identity-emojis-e4f5 -> origin/cursor/xroga-identity-emojis-e4f5
+2026-10-27T20:18:49.6307931Z  * [new branch]        cursor/xroga-modern-platform-e4f5 -> origin/cursor/xroga-modern-platform-e4f5
+2026-10-27T20:18:49.6308563Z  * [new branch]        cursor/xroga-phase1-foundation-e4f5 -> origin/cursor/xroga-phase1-foundation-e4f5
+2026-10-27T20:18:49.6309226Z  * [new branch]        cursor/xroga-phase2-core-features-e4f5 -> origin/cursor/xroga-phase2-core-features-e4f5
+2026-10-27T20:18:49.6310030Z  * [new branch]        cursor/xroga-phase3-premium-features-e4f5 -> origin/cursor/xroga-phase3-premium-features-e4f5
+2026-10-27T20:18:49.6310728Z  * [new branch]        cursor/xroga-phase4-dashboard-ui-e4f5 -> origin/cursor/xroga-phase4-dashboard-ui-e4f5
+2026-10-27T20:18:49.6311430Z  * [new branch]        cursor/xroga-phase5-payments-launch-e4f5 -> origin/cursor/xroga-phase5-payments-launch-e4f5
+2026-10-27T20:18:49.6312094Z  * [new branch]        cursor/xroga-todo-ui-secrets-e4f5 -> origin/cursor/xroga-todo-ui-secrets-e4f5
+2026-10-27T20:18:49.6312715Z  * [new branch]        cursor/youtube-wow-advisor-ab4c -> origin/cursor/youtube-wow-advisor-ab4c
+2026-10-27T20:18:49.6313461Z  * [new branch]        design/black-header-curtain-and-eyebrow-pill -> origin/design/black-header-curtain-and-eyebrow-pill
+2026-10-27T20:18:49.6314221Z  * [new branch]        design/black-home-chatbar-light-gradient -> origin/design/black-home-chatbar-light-gradient
+2026-10-27T20:18:49.6314972Z  * [new branch]        design/crypto-dashboard-showcase-2026-09-26 -> origin/design/crypto-dashboard-showcase-2026-09-26
+2026-10-27T20:18:49.6315726Z  * [new branch]        design/crypto-editorial-uiverse-2026-09-26 -> origin/design/crypto-editorial-uiverse-2026-09-26
+2026-10-27T20:18:49.6316464Z  * [new branch]        design/crypto-exact-chart-loader-2026-09-26 -> origin/design/crypto-exact-chart-loader-2026-09-26
+2026-10-27T20:18:49.6317396Z  * [new branch]        design/crypto-exact-repo-hero-poda-2026-09-26 -> origin/design/crypto-exact-repo-hero-poda-2026-09-26
+2026-10-27T20:18:49.6318155Z  * [new branch]        design/crypto-exact-uiverse-v2-2026-09-26 -> origin/design/crypto-exact-uiverse-v2-2026-09-26
+2026-10-27T20:18:49.6318864Z  * [new branch]        design/crypto-header-final-cta-2026-09-26 -> origin/design/crypto-header-final-cta-2026-09-26
+2026-10-27T20:18:49.6319644Z  * [new branch]        design/crypto-hero-badge-trust-button-2026-09-26 -> origin/design/crypto-hero-badge-trust-button-2026-09-26
+2026-10-27T20:18:49.6320484Z  * [new branch]        design/header-black-blue-white-2026-09-26 -> origin/design/header-black-blue-white-2026-09-26
+2026-10-27T20:18:49.6321153Z  * [new branch]        design/header-glass-pill-2026-09-26 -> origin/design/header-glass-pill-2026-09-26
+2026-10-27T20:18:49.6321771Z  * [new branch]        design/header-modern-ai-2026-09-26 -> origin/design/header-modern-ai-2026-09-26
+2026-10-27T20:18:49.6322403Z  * [new branch]        design/home-black-crypto-curtain -> origin/design/home-black-crypto-curtain
+2026-10-27T20:18:49.6323035Z  * [new branch]        design/public-header-segmented-tabs -> origin/design/public-header-segmented-tabs
+2026-10-27T20:18:49.6323658Z  * [new branch]        design/public-header-v6-2026-09-26 -> origin/design/public-header-v6-2026-09-26
+2026-10-27T20:18:49.6324373Z  * [new branch]        design/s01-masked-particle-background-20261020 -> origin/design/s01-masked-particle-background-20261020
+2026-10-27T20:18:49.6325153Z  * [new branch]        design/s01-noise-matrix-background-20261019 -> origin/design/s01-noise-matrix-background-20261019
+2026-10-27T20:18:49.6325933Z  * [new branch]        design/s01-precision-particle-backdrop-20261019 -> origin/design/s01-precision-particle-backdrop-20261019
+2026-10-27T20:18:49.6326722Z  * [new branch]        design/workspace-classic-particles-20261021 -> origin/design/workspace-classic-particles-20261021
+2026-10-27T20:18:49.6327459Z  * [new branch]        docs/current-xroga-readme -> origin/docs/current-xroga-readme
+2026-10-27T20:18:49.6328066Z  * [new branch]        execution-evidence-ui-v2-20261005 -> origin/execution-evidence-ui-v2-20261005
+2026-10-27T20:18:49.6328695Z  * [new branch]        experiment/s01-white-card-backs -> origin/experiment/s01-white-card-backs
+2026-10-27T20:18:49.6329378Z  * [new branch]        feat/context-chat-dash-navigation-20261021 -> origin/feat/context-chat-dash-navigation-20261021
+2026-10-27T20:18:49.6330228Z  * [new branch]        feat/full-composio-plugin-platform-20260927 -> origin/feat/full-composio-plugin-platform-20260927
+2026-10-27T20:18:49.6331014Z  * [new branch]        feat/organized-project-pins-recents-20261021 -> origin/feat/organized-project-pins-recents-20261021
+2026-10-27T20:18:49.6331701Z  * [new branch]        feat/plugins-marketplace-step1 -> origin/feat/plugins-marketplace-step1
+2026-10-27T20:18:49.6332366Z  * [new branch]        feat/plugins-marketplace-step1-20260927 -> origin/feat/plugins-marketplace-step1-20260927
+2026-10-27T20:18:49.6333092Z  * [new branch]        feat/project-workspaces-github-20261022 -> origin/feat/project-workspaces-github-20261022
+2026-10-27T20:18:49.6333791Z  * [new branch]        feat/send-button-leaf-loader -> origin/feat/send-button-leaf-loader
+2026-10-27T20:18:49.6334624Z  * [new branch]        feat/sidebar-compact-automations-library-publish -> origin/feat/sidebar-compact-automations-library-publish
+2026-10-27T20:18:49.6335337Z  * [new branch]        feat/sidebar-history-tick-rail -> origin/feat/sidebar-history-tick-rail
+2026-10-27T20:18:49.6336079Z  * [new branch]        feat/sidebar-native-scroll-pinned-recents-rocket -> origin/feat/sidebar-native-scroll-pinned-recents-rocket
+2026-10-27T20:18:49.6336873Z  * [new branch]        feat/sidebar-openable-lucide-animated-v3 -> origin/feat/sidebar-openable-lucide-animated-v3
+2026-10-27T20:18:49.6337634Z  * [new branch]        feat/sidebar-projects-pins-recents-20261021 -> origin/feat/sidebar-projects-pins-recents-20261021
+2026-10-27T20:18:49.6338482Z  * [new branch]        feat/xroga-mosaic-card-polish-20261006 -> origin/feat/xroga-mosaic-card-polish-20261006
+2026-10-27T20:18:49.6339124Z  * [new branch]        feat/xroga-os-command-1-preview -> origin/feat/xroga-os-command-1-preview
+2026-10-27T20:18:49.6339670Z  * [new branch]        feat/xroga-os-command-2 -> origin/feat/xroga-os-command-2
+2026-10-27T20:18:49.6340288Z  * [new branch]        feat/xroga-os-command-3 -> origin/feat/xroga-os-command-3
+2026-10-27T20:18:49.6340965Z  * [new branch]        feat/xroga-os-rich-cards-command2-integration -> origin/feat/xroga-os-rich-cards-command2-integration
+2026-10-27T20:18:49.6341747Z  * [new branch]        feat/xroga-production-browser-verification -> origin/feat/xroga-production-browser-verification
+2026-10-27T20:18:49.6342410Z  * [new branch]        feat/xroga-rich-response-cards -> origin/feat/xroga-rich-response-cards
+2026-10-27T20:18:49.6343089Z  * [new branch]        feat/xroga-verification-and-agent-roles -> origin/feat/xroga-verification-and-agent-roles
+2026-10-27T20:18:49.6343809Z  * [new branch]        fix-capacity-and-public-errors-20261005 -> origin/fix-capacity-and-public-errors-20261005
+2026-10-27T20:18:49.6344469Z  * [new branch]        fix-live-agent-feedback-20261005 -> origin/fix-live-agent-feedback-20261005
+2026-10-27T20:18:49.6345134Z  * [new branch]        fix-private-reasoning-ui-test-20261005 -> origin/fix-private-reasoning-ui-test-20261005
+2026-10-27T20:18:49.6345801Z  * [new branch]        fix-workspace-radius-e2e-20261005 -> origin/fix-workspace-radius-e2e-20261005
+2026-10-27T20:18:49.6346416Z  * [new branch]        fix/auth-browser-ci-determinism -> origin/fix/auth-browser-ci-determinism
+2026-10-27T20:18:49.6347105Z  * [new branch]        fix/black-header-shell-remove-hero-actions -> origin/fix/black-header-shell-remove-hero-actions
+2026-10-27T20:18:49.6347737Z  * [new branch]        fix/black-home-headline-size -> origin/fix/black-home-headline-size
+2026-10-27T20:18:49.6348596Z  * [new branch]        fix/builder-bounded-attempts-and-scaffold-fallback -> origin/fix/builder-bounded-attempts-and-scaffold-fallback
+2026-10-27T20:18:49.6349413Z  * [new branch]        fix/canonicalize-preview-build-contract -> origin/fix/canonicalize-preview-build-contract
+2026-10-27T20:18:49.6350247Z  * [new branch]        fix/client-root-crash-recovery-20261022 -> origin/fix/client-root-crash-recovery-20261022
+2026-10-27T20:18:49.6350896Z  * [new branch]        fix/closing-animation-layering -> origin/fix/closing-animation-layering
+2026-10-27T20:18:49.6351536Z  * [new branch]        fix/compile-single-sandbox-execution -> origin/fix/compile-single-sandbox-execution
+2026-10-27T20:18:49.6352258Z  * [new branch]        fix/composer-parity-hover-panels-20261021 -> origin/fix/composer-parity-hover-panels-20261021
+2026-10-27T20:18:49.6353036Z  * [new branch]        fix/composer-popovers-voice-starters-20261021 -> origin/fix/composer-popovers-voice-starters-20261021
+2026-10-27T20:18:49.6353764Z  * [new branch]        fix/conversation-save-clobbers-run -> origin/fix/conversation-save-clobbers-run
+2026-10-27T20:18:49.6354548Z  * [new branch]        fix/crypto-clearance-after-sticky-header-2026-09-26 -> origin/fix/crypto-clearance-after-sticky-header-2026-09-26
+2026-10-27T20:18:49.6355390Z  * [new branch]        fix/crypto-header-content-clearance-2026-09-26 -> origin/fix/crypto-header-content-clearance-2026-09-26
+2026-10-27T20:18:49.6356124Z  * [new branch]        fix/crypto-showcase-framing-2026-09-26 -> origin/fix/crypto-showcase-framing-2026-09-26
+2026-10-27T20:18:49.6356692Z  * [new branch]        fix/cybersecurity-lint  -> origin/fix/cybersecurity-lint
+2026-10-27T20:18:49.6357286Z  * [new branch]        fix/darken-homepage-cursor-particles -> origin/fix/darken-homepage-cursor-particles
+2026-10-27T20:18:49.6357957Z  * [new branch]        fix/engineering-artifact-durability -> origin/fix/engineering-artifact-durability
+2026-10-27T20:18:49.6358649Z  * [new branch]        fix/fixed-glass-header-crypto-2026-09-26 -> origin/fix/fixed-glass-header-crypto-2026-09-26
+2026-10-27T20:18:49.6359468Z  * [new branch]        fix/game-builder-headline-two-lines -> origin/fix/game-builder-headline-two-lines
+2026-10-27T20:18:49.6360286Z  * [new branch]        fix/homepage-cursor-readability -> origin/fix/homepage-cursor-readability
+2026-10-27T20:18:49.6360883Z  * [new branch]        fix/homepage-header-clearance -> origin/fix/homepage-header-clearance
+2026-10-27T20:18:49.6361436Z  * [new branch]        fix/homepage-header-cta-ci -> origin/fix/homepage-header-cta-ci
+2026-10-27T20:18:49.6361988Z  * [new branch]        fix/homepage-hero-below-header -> origin/fix/homepage-hero-below-header
+2026-10-27T20:18:49.6362683Z  * [new branch]        fix/phase3-current-main-ui-contracts-20261022 -> origin/fix/phase3-current-main-ui-contracts-20261022
+2026-10-27T20:18:49.6363339Z  * [new branch]        fix/production-build-errors -> origin/fix/production-build-errors
+2026-10-27T20:18:49.6363969Z  * [new branch]        fix/project-workspace-tasks-20261022 -> origin/fix/project-workspace-tasks-20261022
+2026-10-27T20:18:49.6364624Z  * [new branch]        fix/provider-temperature-rejection -> origin/fix/provider-temperature-rejection
+2026-10-27T20:18:49.6365343Z  * [new branch]        fix/public-header-mega-and-overlap-2026-09-26 -> origin/fix/public-header-mega-and-overlap-2026-09-26
+2026-10-27T20:18:49.6366137Z  * [new branch]        fix/restore-empty-workspace-composer-20261022 -> origin/fix/restore-empty-workspace-composer-20261022
+2026-10-27T20:18:49.6366973Z  * [new branch]        fix/restore-sidebar-history-target-workspace-rail -> origin/fix/restore-sidebar-history-target-workspace-rail
+2026-10-27T20:18:49.6367784Z  * [new branch]        fix/revert-chatbar-style-apply-header-blue -> origin/fix/revert-chatbar-style-apply-header-blue
+2026-10-27T20:18:49.6368436Z  * [new branch]        fix/s01-geist-dot-background -> origin/fix/s01-geist-dot-background
+2026-10-27T20:18:49.6369196Z  * [new branch]        fix/s03-headline-atmosphere-v12-followup -> origin/fix/s03-headline-atmosphere-v12-followup
+2026-10-27T20:18:49.6369996Z  * [new branch]        fix/s03-headline-single-line-v13 -> origin/fix/s03-headline-single-line-v13
+2026-10-27T20:18:49.6370633Z  * [new branch]        fix/sidebar-compact-smooth-20261022 -> origin/fix/sidebar-compact-smooth-20261022
+2026-10-27T20:18:49.6371282Z  * [new branch]        fix/sidebar-hover-stability-20261022 -> origin/fix/sidebar-hover-stability-20261022
+2026-10-27T20:18:49.6371897Z  * [new branch]        fix/sidebar-owner-rls-20261022 -> origin/fix/sidebar-owner-rls-20261022
+2026-10-27T20:18:49.6372598Z  * [new branch]        fix/workspace-composer-mobile-search-20261021 -> origin/fix/workspace-composer-mobile-search-20261021
+2026-10-27T20:18:49.6373495Z  * [new branch]        fix/workspace-page-isolation-repo-rail-plugins-20261021 -> origin/fix/workspace-page-isolation-repo-rail-plugins-20261021
+2026-10-27T20:18:49.6374294Z  * [new branch]        fix/workspace-toolpicker-ux-20261021 -> origin/fix/workspace-toolpicker-ux-20261021
+2026-10-27T20:18:49.6374955Z  * [new branch]        fix/xroga-execution-observability -> origin/fix/xroga-execution-observability
+2026-10-27T20:18:49.6375483Z  * [new branch]        flyio-new-files         -> origin/flyio-new-files
+2026-10-27T20:18:49.6376008Z  * [new branch]        hands-free-xroga-voice-20261006 -> origin/hands-free-xroga-voice-20261006
+2026-10-27T20:18:49.6376481Z  * [new branch]        main                    -> origin/main
+2026-10-27T20:18:49.6376996Z  * [new branch]        preview/ai-runtime-ux-demo-20261004 -> origin/preview/ai-runtime-ux-demo-20261004
+2026-10-27T20:18:49.6377609Z  * [new branch]        preview/homepage-full-redesign -> origin/preview/homepage-full-redesign
+2026-10-27T20:18:49.6378165Z  * [new branch]        preview/outcome-engine-2026 -> origin/preview/outcome-engine-2026
+2026-10-27T20:18:49.6378802Z  * [new branch]        redesign/game-builder-creator-cockpit -> origin/redesign/game-builder-creator-cockpit
+2026-10-27T20:18:49.6379648Z  * [new branch]        repair/command3-frontend-audit-20261001 -> origin/repair/command3-frontend-audit-20261001
+2026-10-27T20:18:49.6380404Z  * [new branch]        review/s02-architectural-workspace -> origin/review/s02-architectural-workspace
+2026-10-27T20:18:49.6380964Z  * [new branch]        review/s03-recording    -> origin/review/s03-recording
+2026-10-27T20:18:49.6381469Z  * [new branch]        review/s03-s04-gallery-studio -> origin/review/s03-s04-gallery-studio
+2026-10-27T20:18:49.6382012Z  * [new branch]        review/s03-s04-product-led -> origin/review/s03-s04-product-led
+2026-10-27T20:18:49.6382538Z  * [new branch]        review/unified-dot-backdrop -> origin/review/unified-dot-backdrop
+2026-10-27T20:18:49.6383055Z  * [new branch]        seo/crypto-live-20260926 -> origin/seo/crypto-live-20260926
+2026-10-27T20:18:49.6383565Z  * [new branch]        seo/crypto-page-2026-09-26 -> origin/seo/crypto-page-2026-09-26
+2026-10-27T20:18:49.6384191Z  * [new branch]        simple-english-voice-20261007 -> origin/simple-english-voice-20261007
+2026-10-27T20:18:49.6384812Z  * [new branch]        step-7a-durable-recovery-20260929 -> origin/step-7a-durable-recovery-20260929
+2026-10-27T20:18:49.6385490Z  * [new branch]        step7-final-learning-strategy-20260930 -> origin/step7-final-learning-strategy-20260930
+2026-10-27T20:18:49.6386141Z  * [new branch]        step7a-durable-recovery-20260929 -> origin/step7a-durable-recovery-20260929
+2026-10-27T20:18:49.6386789Z  * [new branch]        step7b1-build-outcome-memory-20260930 -> origin/step7b1-build-outcome-memory-20260930
+2026-10-27T20:18:49.6387450Z  * [new branch]        step7b3-improvement-memory-20260930 -> origin/step7b3-improvement-memory-20260930
+2026-10-27T20:18:49.6388206Z  * [new branch]        step7c-reliability-learning-retirement-20260930 -> origin/step7c-reliability-learning-retirement-20260930
+2026-10-27T20:18:49.6388953Z  * [new branch]        step7c-retirement-evidence-20260930 -> origin/step7c-retirement-evidence-20260930
+2026-10-27T20:18:49.6389713Z  * [new branch]        ui/plugins-browser-polish-20260928 -> origin/ui/plugins-browser-polish-20260928
+2026-10-27T20:18:49.6390443Z  * [new branch]        ui/plugins-catalog-polish-20260928 -> origin/ui/plugins-catalog-polish-20260928
+2026-10-27T20:18:49.6391127Z  * [new branch]        ui/plugins-category-directory-20260929 -> origin/ui/plugins-category-directory-20260929
+2026-10-27T20:18:49.6391842Z  * [new branch]        ui/plugins-category-nav-polish-20260929 -> origin/ui/plugins-category-nav-polish-20260929
+2026-10-27T20:18:49.6392569Z  * [new branch]        ui/plugins-category-permissions-20260928 -> origin/ui/plugins-category-permissions-20260928
+2026-10-27T20:18:49.6393252Z  * [new branch]        ui/plugins-category-refine-20260928 -> origin/ui/plugins-category-refine-20260928
+2026-10-27T20:18:49.6393918Z  * [new branch]        ui/plugins-category-shelves-20260928 -> origin/ui/plugins-category-shelves-20260928
+2026-10-27T20:18:49.6394630Z  * [new branch]        ui/plugins-category-shelves-final-20260928 -> origin/ui/plugins-category-shelves-final-20260928
+2026-10-27T20:18:49.6395358Z  * [new branch]        ui/plugins-discovery-polish-20260928 -> origin/ui/plugins-discovery-polish-20260928
+2026-10-27T20:18:49.6395969Z  * [new branch]        ui/plugins-exact-tabs-20260929 -> origin/ui/plugins-exact-tabs-20260929
+2026-10-27T20:18:49.6396557Z  * [new branch]        ui/plugins-final-polish-20260929 -> origin/ui/plugins-final-polish-20260929
+2026-10-27T20:18:49.6397214Z  * [new branch]        ui/plugins-full-catalog-polish-20260927 -> origin/ui/plugins-full-catalog-polish-20260927
+2026-10-27T20:18:49.6397879Z  * [new branch]        ui/plugins-global-catalog-20260928 -> origin/ui/plugins-global-catalog-20260928
+2026-10-27T20:18:49.6398576Z  * [new branch]        ui/plugins-installed-permissions-20260928 -> origin/ui/plugins-installed-permissions-20260928
+2026-10-27T20:18:49.6399283Z  * [new branch]        ui/plugins-marketplace-step1-20260927 -> origin/ui/plugins-marketplace-step1-20260927
+2026-10-27T20:18:49.6400213Z  * [new branch]        ui/plugins-navigation-polish-20260929 -> origin/ui/plugins-navigation-polish-20260929
+2026-10-27T20:18:49.6400814Z  * [new branch]        ui/plugins-step2-20260927 -> origin/ui/plugins-step2-20260927
+2026-10-27T20:18:49.6401455Z  * [new branch]        ui/plugins-universal-marketplace-20260927 -> origin/ui/plugins-universal-marketplace-20260927
+2026-10-27T20:18:49.6402062Z  * [new branch]        ui/publish-step3-20260927 -> origin/ui/publish-step3-20260927
+2026-10-27T20:18:49.6402599Z  * [new branch]        ui/unified-app-canvas-20261003 -> origin/ui/unified-app-canvas-20261003
+2026-10-27T20:18:49.6403278Z  * [new branch]        ui/workspace-inner-spacing-polish-20261003 -> origin/ui/workspace-inner-spacing-polish-20261003
+2026-10-27T20:18:49.6403946Z  * [new branch]        verify/step7a-live-gates-20260930 -> origin/verify/step7a-live-gates-20260930
+2026-10-27T20:18:49.6404643Z  * [new branch]        voice-accessibility-release-fix-20261006 -> origin/voice-accessibility-release-fix-20261006
+2026-10-27T20:18:49.6405359Z  * [new branch]        voice-icon-transcription-v5-20261006 -> origin/voice-icon-transcription-v5-20261006
+2026-10-27T20:18:49.6405979Z  * [new branch]        voice-runtime-repair-20261006 -> origin/voice-runtime-repair-20261006
+2026-10-27T20:18:49.6406543Z  * [new branch]        voice-simple-wake-ui-20261006 -> origin/voice-simple-wake-ui-20261006
+2026-10-27T20:18:49.6407158Z  * [new branch]        voice-smooth-transcription-20261006 -> origin/voice-smooth-transcription-20261006
+2026-10-27T20:18:49.6407782Z  * [new branch]        voice-v5-2-recognition-20261006 -> origin/voice-v5-2-recognition-20261006
+2026-10-27T20:18:49.6408369Z  * [new branch]        voice-v5-fresh-session-20261006 -> origin/voice-v5-fresh-session-20261006
+2026-10-27T20:18:49.6409080Z  * [new branch]        voice-v6-authoritative-transcription-20261006 -> origin/voice-v6-authoritative-transcription-20261006
+2026-10-27T20:18:49.6409819Z  * [new branch]        voice-v7-production-trigger-20261006 -> origin/voice-v7-production-trigger-20261006
+2026-10-27T20:18:49.6410672Z  * [new branch]        voice-v7-recognizer-reset-20261006 -> origin/voice-v7-recognizer-reset-20261006
+2026-10-27T20:18:49.6411289Z  * [new branch]        voice-v8-final-runtime-20261007 -> origin/voice-v8-final-runtime-20261007
+2026-10-27T20:18:49.6411887Z  * [new branch]        voice-v8-vercel-release-20261007 -> origin/voice-v8-vercel-release-20261007
+2026-10-27T20:18:49.6412512Z  * [new branch]        voice-v8-wake-multilingual-20261007 -> origin/voice-v8-wake-multilingual-20261007
+2026-10-27T20:18:49.6413151Z  * [new branch]        xroga-universal-ux-live-20261003 -> origin/xroga-universal-ux-live-20261003
+2026-10-27T20:18:49.6414565Z [command]/usr/bin/git rev-parse --verify --quiet bd8812a037f22ff1cf6d19370549632734f5d24e^{object}
+2026-10-27T20:18:49.6415645Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin bd8812a037f22ff1cf6d19370549632734f5d24e
+2026-10-27T20:18:50.1129453Z From https://github.com/Xroga/xroga.com
+2026-10-27T20:18:50.1130031Z  * branch              bd8812a037f22ff1cf6d19370549632734f5d24e -> FETCH_HEAD
+2026-10-27T20:18:50.1134602Z ##[endgroup]
+2026-10-27T20:18:50.1134935Z ##[group]Determining the checkout info
+2026-10-27T20:18:50.1136343Z ##[endgroup]
+2026-10-27T20:18:50.1141018Z [command]/usr/bin/git sparse-checkout disable
+2026-10-27T20:18:50.1302913Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-27T20:18:50.1336389Z ##[group]Checking out the ref
+2026-10-27T20:18:50.1346134Z [command]/usr/bin/git checkout --progress --force bd8812a037f22ff1cf6d19370549632734f5d24e
+2026-10-27T20:18:50.9342071Z Note: switching to 'bd8812a037f22ff1cf6d19370549632734f5d24e'.
+2026-10-27T20:18:50.9342425Z
+2026-10-27T20:18:50.9342656Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-27T20:18:50.9343206Z changes and commit them, and you can discard any commits you make in this
+2026-10-27T20:18:50.9344241Z state without impacting any branches by switching back to a branch.
+2026-10-27T20:18:50.9344599Z
+2026-10-27T20:18:50.9344833Z If you want to create a new branch to retain commits you create, you may
+2026-10-27T20:18:50.9345383Z do so (now or later) by using -c with the switch command. Example:
+2026-10-27T20:18:50.9345675Z
+2026-10-27T20:18:50.9345804Z   git switch -c <new-branch-name>
+2026-10-27T20:18:50.9346029Z
+2026-10-27T20:18:50.9346152Z Or undo this operation with:
+2026-10-27T20:18:50.9346355Z
+2026-10-27T20:18:50.9346458Z   git switch -
+2026-10-27T20:18:50.9346644Z
+2026-10-27T20:18:50.9346875Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-27T20:18:50.9347267Z
+2026-10-27T20:18:50.9347712Z HEAD is now at bd8812a0 Merge a0ff83a32c23b04afbfb9847db93b56256afcbb9 into fb95f76bafc1b544b6655d435cddede260d9cd99
+2026-10-27T20:18:50.9431969Z ##[endgroup]
+2026-10-27T20:18:51.0851322Z [command]/usr/bin/git log -1 --format=%H
+2026-10-27T20:18:51.0884817Z bd8812a037f22ff1cf6d19370549632734f5d24e
+2026-10-27T20:18:51.1127420Z ##[group]Run actions/setup-node@v6
+2026-10-27T20:18:51.1127648Z with:
+2026-10-27T20:18:51.1127832Z   node-version-file: .node-version
+2026-10-27T20:18:51.1128039Z   cache: npm
+2026-10-27T20:18:51.1128212Z   check-latest: false
+2026-10-27T20:18:51.1130584Z   token: ***
+2026-10-27T20:18:51.1130780Z   package-manager-cache: true
+2026-10-27T20:18:51.1130998Z ##[endgroup]
+2026-10-27T20:18:51.2251389Z Node version file is not JSON file
+2026-10-27T20:18:51.2252655Z Resolved .node-version as 22.21.1
+2026-10-27T20:18:51.2394332Z Attempting to download 22.21.1...
+2026-10-27T20:18:52.2011828Z Acquiring 22.21.1 - x64 from https://github.com/actions/node-versions/releases/download/22.21.1-18894912842/node-22.21.1-linux-x64.tar.gz
+2026-10-27T20:18:52.7385860Z Extracting ...
+2026-10-27T20:18:52.7523332Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/c67d92c5-fbd8-4df8-a3fd-f3e918b61315 -f /home/runner/work/_temp/f0fe07f9-9c6f-4d85-a3a7-70a8d21a6973
+2026-10-27T20:18:53.7943733Z Adding to the cache ...
+2026-10-27T20:18:56.4599823Z ##[group]Environment details
+2026-10-27T20:18:56.6437509Z node: v22.21.1
+2026-10-27T20:18:56.6437816Z npm: 10.9.4
+2026-10-27T20:18:56.6438090Z yarn: 1.22.22
+2026-10-27T20:18:56.6438505Z ##[endgroup]
+2026-10-27T20:18:56.6452958Z [command]/opt/hostedtoolcache/node/22.21.1/x64/bin/npm config get cache
+2026-10-27T20:18:56.7178918Z /home/runner/.npm
+2026-10-27T20:18:56.9352301Z Cache hit for: node-cache-Linux-x64-npm-ec622c8bdc7fe7dfc282c8e117e07672d4202c294adccda3416bc630d8c2205a
+2026-10-27T20:18:58.1736909Z Received 37748736 of 296316113 (12.7%), 36.0 MBs/sec
+2026-10-27T20:18:59.1742295Z Received 176160768 of 296316113 (59.5%), 84.0 MBs/sec
+2026-10-27T20:18:59.9711132Z Received 296316113 of 296316113 (100.0%), 101.1 MBs/sec
+2026-10-27T20:18:59.9738774Z Cache Size: ~283 MB (296316113 B)
+2026-10-27T20:18:59.9787739Z [command]/usr/bin/tar -xf /home/runner/work/_temp/32de6ccd-452c-4a89-88dd-753b0dd0622e/cache.tzst -P -C /home/runner/work/xroga.com/xroga.com --use-compress-program unzstd
+2026-10-27T20:19:00.5694922Z Cache restored successfully
+2026-10-27T20:19:00.5816095Z Cache restored from key: node-cache-Linux-x64-npm-ec622c8bdc7fe7dfc282c8e117e07672d4202c294adccda3416bc630d8c2205a
+2026-10-27T20:19:00.6019450Z ##[group]Run npm ci
+2026-10-27T20:19:00.6019695Z [36;1mnpm ci[0m
+2026-10-27T20:19:00.6041673Z shell: /usr/bin/bash -e {0}
+2026-10-27T20:19:00.6041906Z ##[endgroup]
+2026-10-27T20:19:05.1149551Z npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+2026-10-27T20:19:05.1341930Z npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+2026-10-27T20:19:05.8086431Z npm warn deprecated fstream@1.0.12: This package is no longer supported.
+2026-10-27T20:19:08.7221822Z npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-10-27T20:19:30.3705333Z
+2026-10-27T20:19:30.3706165Z added 1133 packages, and audited 1136 packages in 30s
+2026-10-27T20:19:30.3706537Z
+2026-10-27T20:19:30.3706765Z 300 packages are looking for funding
+2026-10-27T20:19:30.3707299Z   run `npm fund` for details
+2026-10-27T20:19:30.4434691Z
+2026-10-27T20:19:30.4435703Z 35 vulnerabilities (5 low, 19 moderate, 10 high, 1 critical)
+2026-10-27T20:19:30.4435986Z
+2026-10-27T20:19:30.4436179Z To address issues that do not require attention, run:
+2026-10-27T20:19:30.4436466Z   npm audit fix
+2026-10-27T20:19:30.4436585Z
+2026-10-27T20:19:30.4436800Z To address all issues possible (including breaking changes), run:
+2026-10-27T20:19:30.4437400Z   npm audit fix --force
+2026-10-27T20:19:30.4437561Z
+2026-10-27T20:19:30.4437785Z Some issues need review, and may require choosing
+2026-10-27T20:19:30.4438159Z a different dependency.
+2026-10-27T20:19:30.4438327Z
+2026-10-27T20:19:30.4438521Z Run `npm audit` for details.
+2026-10-27T20:19:30.6462152Z ##[group]Run node scripts/ci/prepare-pr-integration.mjs
+2026-10-27T20:19:30.6462535Z [36;1mnode scripts/ci/prepare-pr-integration.mjs[0m
+2026-10-27T20:19:30.6480184Z shell: /usr/bin/bash -e {0}
+2026-10-27T20:19:30.6480399Z env:
+2026-10-27T20:19:30.6480621Z   PR_HEAD_SHA: a0ff83a32c23b04afbfb9847db93b56256afcbb9
+2026-10-27T20:19:30.6480933Z   PR_BASE_SHA: fb95f76bafc1b544b6655d435cddede260d9cd99
+2026-10-27T20:19:30.6481194Z ##[endgroup]
+2026-10-27T20:19:34.1131842Z {"result":"PASS_AUDIT_INTEGRITY_NOT_TENANT_SECURITY_ACCEPTANCE","counts":{"observedTables":118,"rlsEnabled":118,"privilegedFactorySites":194,"persistenceCandidates":818,"ownerPredicateCandidates":205,"reviewRequired":126,"reviewedCandidates":692,"unresolvedSafetyCandidates":159,"certifiedScopedPrivilegedCallers":0,"registeredNarrowGlobalExceptions":19},"releaseGate":"BLOCKED_CRITERION_EVIDENCE"}
+2026-10-27T20:19:35.8266461Z {"result":"PASS_CREDENTIAL_SOURCE_INVENTORY_NOT_SECURITY_ACCEPTANCE","candidates":117,"groups":38,"byKind":{"PRIVATE_CREDENTIAL_CONSUMER_CANDIDATE":92,"CREDENTIAL_RPC_WRITE_CANDIDATE":7,"CREDENTIAL_RPC_LIFECYCLE_CANDIDATE":6,"DATABASE_CREDENTIAL_WRITE_CANDIDATE":8,"PRIVATE_OBJECT_CREDENTIAL_WRITE_CANDIDATE":3,"BROWSER_CREDENTIAL_WRITE_CANDIDATE":1},"staticBackendVaultImporters":8}
+2026-10-27T20:19:38.4190823Z {"result":"GENERATED_PENDING_VALIDATION","dependencies":188,"envNames":292,"unresolvedBindings":0,"fallbackCandidates":829}
+2026-10-27T20:19:42.4392038Z {"result":"GENERATED_NOT_YET_VERIFIED","sourceSha":"bd8812a037f22ff1cf6d19370549632734f5d24e","counts":{"surfaces":1621,"routeRegistrations":294,"routes":244,"reachableRoutes":233,"queues":4,"migrations":148,"workflows":20,"testSuites":892,"declaredTests":6039,"classifiedMarkers":384,"reachableMarkers":324,"absentRequiredPaths":5,"duplicateIds":0}}
+2026-10-27T20:19:42.8092722Z {"result":"GENERATED","requirements":445,"sources":2046,"availableRows":527,"families":43,"candidates":23,"historicalFeatureRows":"119/119","historicalMissions":"72/72","historicalCoverageComplete":true,"implementationComplete":false}
+2026-10-27T20:19:42.8756109Z {"sourceSha":"bd8812a037f22ff1cf6d19370549632734f5d24e","baseSha":"fb95f76bafc1b544b6655d435cddede260d9cd99","reportedBaseSnapshot":"fb95f76bafc1b544b6655d435cddede260d9cd99","featureSha":"a0ff83a32c23b04afbfb9847db93b56256afcbb9","scope":"VIRTUAL_MERGE_CANDIDATE_NOT_COMMITTED_TRUTH_OR_RELEASE_APPROVAL"}
+2026-10-27T20:19:42.9070253Z ##[group]Run node scripts/xroga/phase-two.mjs
+2026-10-27T20:19:42.9070590Z [36;1mnode scripts/xroga/phase-two.mjs[0m
+2026-10-27T20:19:42.9070876Z [36;1mnode scripts/xroga/inventory.mjs --check[0m
+2026-10-27T20:19:42.9071206Z [36;1mnode scripts/xroga/validate-requirements-ledger.mjs[0m
+2026-10-27T20:19:42.9088592Z shell: /usr/bin/bash -e {0}
+2026-10-27T20:19:42.9088813Z ##[endgroup]
+2026-10-27T20:19:43.3841238Z {"result":"PASS_FINITE_PHASE_2_REGISTER","packets":73,"historicalRecords":371,"certifiedByGeneration":0}
+2026-10-27T20:19:50.2974676Z {"result":"PASS","sourceSha":"bd8812a037f22ff1cf6d19370549632734f5d24e","checks":["canonical-schema","unique-ids","registrations","named-paths","source-drift","deterministic-regeneration"],"counts":{"surfaces":1621,"routeRegistrations":294,"routes":244,"reachableRoutes":233,"queues":4,"migrations":148,"workflows":20,"testSuites":892,"declaredTests":6039,"classifiedMarkers":384,"reachableMarkers":324,"absentRequiredPaths":5,"duplicateIds":0}}
+2026-10-27T20:19:50.9623798Z {"result":"PASS_AVAILABLE_SOURCE_GATE","requirements":445,"mappedAvailableRows":527,"registeredCandidates":23,"emptyOwnerFields":0,"deferredOwnerAssignments":0,"historicalFeatureCoverage":"119/119 mapped (not implementation)","historicalMissionCoverage":"72/72 mapped (not implementation)","originalAcceptanceCriteriaComplete":true,"fullHistoricalNarrativeReviewComplete":false,"limitation":"Criterion-level source/row/owner integrity is distinct from complete historical narrative analysis and future feature implementation"}
+2026-10-27T20:19:50.9978054Z ##[group]Run npx playwright install --with-deps chromium
+2026-10-27T20:19:50.9978618Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-10-27T20:19:50.9999344Z shell: /usr/bin/bash -e {0}
+2026-10-27T20:19:50.9999561Z env:
+2026-10-27T20:19:50.9999843Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/batch-01-playwright
+2026-10-27T20:19:51.0000336Z ##[endgroup]
+2026-10-27T20:19:51.6120781Z Installing dependencies...
+2026-10-27T20:19:51.6171752Z Switching to root user to install dependencies...
+2026-10-27T20:19:51.7273362Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-27T20:19:51.7764312Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-27T20:19:51.7765021Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-27T20:19:51.7765827Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-27T20:19:51.7770897Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-27T20:19:51.7871583Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-27T20:19:51.9934069Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1401 kB]
+2026-10-27T20:19:52.0072378Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [310 kB]
+2026-10-27T20:19:52.0096105Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-10-27T20:19:52.0164612Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-10-27T20:19:52.0240175Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-10-27T20:19:52.0872288Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+2026-10-27T20:19:52.0911129Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-10-27T20:19:52.0921818Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1223 kB]
+2026-10-27T20:19:52.0999088Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-10-27T20:19:52.1262206Z Get:16 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [666 kB]
+2026-10-27T20:19:52.1340091Z Get:17 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [602 kB]
+2026-10-27T20:19:55.6584387Z Fetched 8271 kB in 1s (9734 kB/s)
+2026-10-27T20:19:56.4838452Z Reading package lists...
+2026-10-27T20:19:56.5110931Z Reading package lists...
+2026-10-27T20:19:56.7459428Z Building dependency tree...
+2026-10-27T20:19:56.7466251Z Reading state information...
+2026-10-27T20:19:56.9018911Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-27T20:19:56.9019585Z libasound2t64 set to manually installed.
+2026-10-27T20:19:56.9020416Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-27T20:19:56.9021104Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-27T20:19:56.9022120Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-27T20:19:56.9022647Z libatk1.0-0t64 set to manually installed.
+2026-10-27T20:19:56.9023160Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-27T20:19:56.9023636Z libatspi2.0-0t64 set to manually installed.
+2026-10-27T20:19:56.9024284Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-27T20:19:56.9024712Z libcairo2 set to manually installed.
+2026-10-27T20:19:56.9025173Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-27T20:19:56.9025635Z libcups2t64 set to manually installed.
+2026-10-27T20:19:56.9026100Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-27T20:19:56.9026658Z libdbus-1-3 set to manually installed.
+2026-10-27T20:19:56.9027147Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-27T20:19:56.9027591Z libdrm2 set to manually installed.
+2026-10-27T20:19:56.9028440Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-10-27T20:19:56.9028967Z libgbm1 set to manually installed.
+2026-10-27T20:19:56.9029520Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.10).
+2026-10-27T20:19:56.9030213Z libglib2.0-0t64 set to manually installed.
+2026-10-27T20:19:56.9030743Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-27T20:19:56.9031249Z libnspr4 set to manually installed.
+2026-10-27T20:19:56.9031742Z libnss3 is already the newest version (2:3.98-1ubuntu0.3).
+2026-10-27T20:19:56.9032239Z libnss3 set to manually installed.
+2026-10-27T20:19:56.9032778Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-27T20:19:56.9033324Z libpango-1.0-0 set to manually installed.
+2026-10-27T20:19:56.9033883Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-10-27T20:19:56.9034388Z libx11-6 set to manually installed.
+2026-10-27T20:19:56.9034894Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-27T20:19:56.9035393Z libxcb1 set to manually installed.
+2026-10-27T20:19:56.9035961Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-27T20:19:56.9036515Z libxcomposite1 set to manually installed.
+2026-10-27T20:19:56.9037104Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-27T20:19:56.9037643Z libxdamage1 set to manually installed.
+2026-10-27T20:19:56.9038173Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-27T20:19:56.9038674Z libxext6 set to manually installed.
+2026-10-27T20:19:56.9039189Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-27T20:19:56.9039700Z libxfixes3 set to manually installed.
+2026-10-27T20:19:56.9040393Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-27T20:19:56.9040930Z libxkbcommon0 set to manually installed.
+2026-10-27T20:19:56.9041484Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-27T20:19:56.9042003Z libxrandr2 set to manually installed.
+2026-10-27T20:19:56.9042526Z xvfb is already the newest version (2:21.1.12-1ubuntu1.9).
+2026-10-27T20:19:56.9043247Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-27T20:19:56.9043960Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-27T20:19:56.9044519Z libfontconfig1 set to manually installed.
+2026-10-27T20:19:56.9045136Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-10-27T20:19:56.9045732Z libfreetype6 set to manually installed.
+2026-10-27T20:19:56.9046305Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-27T20:19:56.9046870Z fonts-liberation set to manually installed.
+2026-10-27T20:19:56.9047418Z The following additional packages will be installed:
+2026-10-27T20:19:56.9047901Z   xfonts-encodings xfonts-utils
+2026-10-27T20:19:56.9048276Z Recommended packages:
+2026-10-27T20:19:56.9048657Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-10-27T20:19:56.9225510Z The following NEW packages will be installed:
+2026-10-27T20:19:56.9226031Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-27T20:19:56.9237855Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-27T20:19:56.9238210Z   xfonts-utils
+2026-10-27T20:19:56.9430556Z 0 upgraded, 9 newly installed, 0 to remove and 5 not upgraded.
+2026-10-27T20:19:56.9430960Z Need to get 21.1 MB of archives.
+2026-10-27T20:19:56.9431343Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-27T20:19:56.9431772Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-27T20:19:57.0045235Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-27T20:19:57.0998937Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-27T20:19:57.2393768Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-27T20:19:57.3154200Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-27T20:19:57.4085006Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-27T20:19:57.5717756Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-27T20:19:57.6868274Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-27T20:19:57.8408536Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-27T20:19:57.9173598Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-27T20:19:58.2087781Z Fetched 21.1 MB in 1s (21.2 MB/s)
+2026-10-27T20:19:58.2764220Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-27T20:19:58.2961176Z (Reading database ...
+2026-10-27T20:19:58.2961925Z (Reading database ... 5%
+2026-10-27T20:19:58.2962303Z (Reading database ... 10%
+2026-10-27T20:19:58.2962652Z (Reading database ... 15%
+2026-10-27T20:19:58.2962994Z (Reading database ... 20%
+2026-10-27T20:19:58.2963311Z (Reading database ... 25%
+2026-10-27T20:19:58.2963618Z (Reading database ... 30%
+2026-10-27T20:19:58.2963925Z (Reading database ... 35%
+2026-10-27T20:19:58.2964233Z (Reading database ... 40%
+2026-10-27T20:19:58.2964555Z (Reading database ... 45%
+2026-10-27T20:19:58.2964883Z (Reading database ... 50%
+2026-10-27T20:19:58.2995252Z (Reading database ... 55%
+2026-10-27T20:19:58.4104681Z (Reading database ... 60%
+2026-10-27T20:19:58.6177895Z (Reading database ... 65%
+2026-10-27T20:19:58.8742559Z (Reading database ... 70%
+2026-10-27T20:19:59.0991769Z (Reading database ... 75%
+2026-10-27T20:19:59.2631068Z (Reading database ... 80%
+2026-10-27T20:19:59.4045839Z (Reading database ... 85%
+2026-10-27T20:19:59.5628611Z (Reading database ... 90%
+2026-10-27T20:19:59.7353033Z (Reading database ... 95%
+2026-10-27T20:19:59.7353499Z (Reading database ... 100%
+2026-10-27T20:19:59.7354043Z (Reading database ... 215504 files and directories currently installed.)
+2026-10-27T20:19:59.7402088Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-27T20:19:59.7898218Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-27T20:20:00.4551803Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-27T20:20:00.4674522Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-27T20:20:00.4680093Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-27T20:20:00.5751345Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-27T20:20:00.5874364Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-27T20:20:00.5962618Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-27T20:20:00.6159839Z Selecting previously unselected package fonts-unifont.
+2026-10-27T20:20:00.6283353Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-27T20:20:00.6290008Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-27T20:20:01.0356304Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-27T20:20:01.0485533Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-27T20:20:01.0720487Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-27T20:20:01.6363657Z Selecting previously unselected package xfonts-encodings.
+2026-10-27T20:20:01.6488287Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-27T20:20:01.6493641Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-27T20:20:01.6765026Z Selecting previously unselected package xfonts-utils.
+2026-10-27T20:20:01.6888689Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-27T20:20:01.6894698Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-27T20:20:01.8881366Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-27T20:20:01.9005977Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-27T20:20:01.9011896Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-27T20:20:02.0939072Z Selecting previously unselected package xfonts-scalable.
+2026-10-27T20:20:02.1066836Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-27T20:20:02.1179634Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-27T20:20:02.1644511Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-27T20:20:02.7154878Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-27T20:20:03.0339739Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-27T20:20:03.0353138Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-27T20:20:03.0366825Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-27T20:20:03.0425386Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-27T20:20:03.0438363Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-27T20:20:03.0452004Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-27T20:20:03.0485712Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-27T20:20:03.2795936Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-27T20:20:03.5318933Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-27T20:20:03.5990840Z Not building database; man-db/auto-update is not 'true'.
+2026-10-27T20:20:03.8209533Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-27T20:20:04.7445035Z
+2026-10-27T20:20:04.7445633Z Running kernel seems to be up-to-date.
+2026-10-27T20:20:04.7445929Z
+2026-10-27T20:20:04.7446121Z No services need to be restarted.
+2026-10-27T20:20:04.7446332Z
+2026-10-27T20:20:04.7446514Z No containers need to be restarted.
+2026-10-27T20:20:04.7446748Z
+2026-10-27T20:20:04.7446961Z No user sessions are running outdated binaries.
+2026-10-27T20:20:04.7447227Z
+2026-10-27T20:20:04.7447610Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-27T20:20:05.6750732Z Downloading Chrome for Testing 151.0.7922.34 (playwright chromium v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-linux64.zip
+2026-10-27T20:20:06.6374174Z |                                                                                |   0% of 184.3 MiB
+2026-10-27T20:20:06.8150646Z |■■■■■■■■                                                                        |  10% of 184.3 MiB
+2026-10-27T20:20:06.9292920Z |■■■■■■■■■■■■■■■■                                                                |  20% of 184.3 MiB
+2026-10-27T20:20:07.0360316Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 184.3 MiB
+2026-10-27T20:20:07.1136571Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 184.3 MiB
+2026-10-27T20:20:07.2047579Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 184.3 MiB
+2026-10-27T20:20:07.2797019Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 184.3 MiB
+2026-10-27T20:20:07.3646539Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 184.3 MiB
+2026-10-27T20:20:07.4533992Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 184.3 MiB
+2026-10-27T20:20:07.5301948Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 184.3 MiB
+2026-10-27T20:20:07.5886011Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 184.3 MiB
+2026-10-27T20:20:09.5328664Z Chrome for Testing 151.0.7922.34 (playwright chromium v1234) downloaded to /home/runner/work/_temp/batch-01-playwright/chromium-1234
+2026-10-27T20:20:09.5332319Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-27T20:20:10.4464715Z |                                                                                |   0% of 2.3 MiB
+2026-10-27T20:20:10.4661284Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-27T20:20:10.4735040Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-27T20:20:10.4796931Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-27T20:20:10.4819192Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-27T20:20:10.4867654Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-27T20:20:10.4880947Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-27T20:20:10.4892621Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-27T20:20:10.4902028Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-27T20:20:10.4918167Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-27T20:20:10.4948912Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-27T20:20:10.5405658Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/work/_temp/batch-01-playwright/ffmpeg-1011
+2026-10-27T20:20:10.5408276Z Downloading Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-headless-shell-linux64.zip
+2026-10-27T20:20:11.4849720Z |                                                                                |   0% of 114.7 MiB
+2026-10-27T20:20:11.5862673Z |■■■■■■■■                                                                        |  10% of 114.7 MiB
+2026-10-27T20:20:11.6475983Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.7 MiB
+2026-10-27T20:20:11.6991207Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.7 MiB
+2026-10-27T20:20:11.7444030Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.7 MiB
+2026-10-27T20:20:11.7856938Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.7 MiB
+2026-10-27T20:20:11.8261685Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.7 MiB
+2026-10-27T20:20:11.8606964Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.7 MiB
+2026-10-27T20:20:11.8881424Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.7 MiB
+2026-10-27T20:20:11.9157989Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.7 MiB
+2026-10-27T20:20:11.9391908Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.7 MiB
+2026-10-27T20:20:13.3044202Z Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) downloaded to /home/runner/work/_temp/batch-01-playwright/chromium_headless_shell-1234
+2026-10-27T20:20:13.3248159Z ##[group]Run npm run verify:baseline
+2026-10-27T20:20:13.3248444Z [36;1mnpm run verify:baseline[0m
+2026-10-27T20:20:13.3248846Z [36;1mcp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-a-manifest.json[0m
+2026-10-27T20:20:13.3249276Z [36;1mnpm run verify:baseline[0m
+2026-10-27T20:20:13.3249658Z [36;1mcp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-b-manifest.json[0m
+2026-10-27T20:20:13.3250307Z [36;1mnode scripts/ci/compare-baseline-runs.mjs[0m
+2026-10-27T20:20:13.3268261Z shell: /usr/bin/bash -e {0}
+2026-10-27T20:20:13.3268470Z env:
+2026-10-27T20:20:13.3268743Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/batch-01-playwright
+2026-10-27T20:20:13.3269058Z ##[endgroup]
+2026-10-27T20:20:13.4006289Z
+2026-10-27T20:20:13.4006861Z > xroga@0.1.0 verify:baseline
+2026-10-27T20:20:13.4007402Z > node scripts/local/run-task.mjs verify:baseline
+2026-10-27T20:20:13.4007659Z
+2026-10-27T20:20:13.6618556Z {"step":"lockfile-integrity","exitCode":0,"durationMs":49,"tests":null}
+2026-10-27T20:20:14.6775725Z {"step":"focused-and-skipped-tests","exitCode":0,"durationMs":1016,"tests":null}
+2026-10-27T20:20:31.4329821Z {"step":"backend-typecheck","exitCode":0,"durationMs":16755,"tests":null}
+2026-10-27T20:20:51.2643732Z {"step":"backend-build","exitCode":0,"durationMs":19831,"tests":null}
+2026-10-27T20:24:07.1191767Z {"step":"backend-unit-tests","exitCode":0,"durationMs":195845,"tests":3945}
+2026-10-27T20:24:07.6189662Z {"step":"frontend-route-type-generation","exitCode":0,"durationMs":500,"tests":null}
+2026-10-27T20:24:30.8729873Z {"step":"frontend-typecheck","exitCode":0,"durationMs":23254,"tests":null}
+2026-10-27T20:24:42.5605717Z {"step":"frontend-lint","exitCode":0,"durationMs":11688,"tests":null}
+2026-10-27T20:26:16.9816588Z {"step":"frontend-build","exitCode":0,"durationMs":94420,"tests":null}
+2026-10-27T20:26:48.2360553Z {"step":"frontend-unit-tests","exitCode":0,"durationMs":31252,"tests":1186}
+2026-10-27T20:26:48.4775841Z {"step":"migration-syntax-and-order","exitCode":0,"durationMs":242,"tests":null}
+2026-10-27T20:26:55.4351573Z {"step":"inventory-drift","exitCode":0,"durationMs":6957,"tests":null}
+2026-10-27T20:26:55.9716281Z {"step":"requirements-integrity","exitCode":0,"durationMs":537,"tests":null}
+2026-10-27T20:27:00.2703156Z {"step":"runtime-config-integrity","exitCode":0,"durationMs":4298,"tests":null}
+2026-10-27T20:27:00.3720924Z {"step":"golden-contract-integrity","exitCode":0,"durationMs":101,"tests":null}
+2026-10-27T20:27:00.5542027Z {"step":"mission-operating-policy","exitCode":0,"durationMs":182,"tests":null}
+2026-10-27T20:27:02.2898237Z {"step":"tenant-audit-integrity","exitCode":0,"durationMs":1735,"tests":null}
+2026-10-27T20:27:04.3553403Z {"step":"baseline-negative-fixtures","exitCode":0,"durationMs":2065,"tests":49}
+2026-10-27T20:27:21.1197561Z {"step":"inventory-and-ledger-fixtures","exitCode":0,"durationMs":16764,"tests":136}
+2026-10-27T20:27:21.3252798Z {"step":"agent-dependency-resolution","exitCode":0,"durationMs":205,"tests":null}
+2026-10-27T20:27:21.4010967Z {"step":"git-diff-whitespace","exitCode":0,"durationMs":75,"tests":null}
+2026-10-27T20:27:21.4237476Z {"result":"PASS","exitCode":0,"steps":21,"sourceTreeMutated":false}
+2026-10-27T20:27:21.5052861Z
+2026-10-27T20:27:21.5053440Z > xroga@0.1.0 verify:baseline
+2026-10-27T20:27:21.5053877Z > node scripts/local/run-task.mjs verify:baseline
+2026-10-27T20:27:21.5054086Z
+2026-10-27T20:27:21.7550869Z {"step":"lockfile-integrity","exitCode":0,"durationMs":48,"tests":null}
+2026-10-27T20:27:22.7701856Z {"step":"focused-and-skipped-tests","exitCode":0,"durationMs":1014,"tests":null}
+2026-10-27T20:27:39.3551150Z {"step":"backend-typecheck","exitCode":0,"durationMs":16585,"tests":null}
+2026-10-27T20:28:00.3764930Z {"step":"backend-build","exitCode":0,"durationMs":21020,"tests":null}
+2026-10-27T20:31:12.5572550Z {"step":"backend-unit-tests","exitCode":0,"durationMs":192172,"tests":3945}
+2026-10-27T20:31:13.0511887Z {"step":"frontend-route-type-generation","exitCode":0,"durationMs":493,"tests":null}
+2026-10-27T20:31:37.3081548Z {"step":"frontend-typecheck","exitCode":0,"durationMs":24257,"tests":null}
+2026-10-27T20:31:38.7338712Z {"step":"frontend-lint","exitCode":0,"durationMs":1425,"tests":null}
+2026-10-27T20:32:44.8751595Z {"step":"frontend-build","exitCode":0,"durationMs":66141,"tests":null}
+2026-10-27T20:33:10.6171451Z {"step":"frontend-unit-tests","exitCode":0,"durationMs":25738,"tests":1186}
+2026-10-27T20:33:10.8408529Z {"step":"migration-syntax-and-order","exitCode":0,"durationMs":224,"tests":null}
+2026-10-27T20:33:17.6893655Z {"step":"inventory-drift","exitCode":0,"durationMs":6848,"tests":null}
+2026-10-27T20:33:18.2169097Z {"step":"requirements-integrity","exitCode":0,"durationMs":527,"tests":null}
+2026-10-27T20:33:22.3073147Z {"step":"runtime-config-integrity","exitCode":0,"durationMs":4090,"tests":null}
+2026-10-27T20:33:22.4086819Z {"step":"golden-contract-integrity","exitCode":0,"durationMs":101,"tests":null}
+2026-10-27T20:33:22.5913781Z {"step":"mission-operating-policy","exitCode":0,"durationMs":182,"tests":null}
+2026-10-27T20:33:24.3023135Z {"step":"tenant-audit-integrity","exitCode":0,"durationMs":1710,"tests":null}
+2026-10-27T20:33:26.3543670Z {"step":"baseline-negative-fixtures","exitCode":0,"durationMs":2051,"tests":49}
+2026-10-27T20:33:42.7884803Z {"step":"inventory-and-ledger-fixtures","exitCode":0,"durationMs":16433,"tests":136}
+2026-10-27T20:33:42.9983677Z {"step":"agent-dependency-resolution","exitCode":0,"durationMs":209,"tests":null}
+2026-10-27T20:33:43.0688902Z {"step":"git-diff-whitespace","exitCode":0,"durationMs":70,"tests":null}
+2026-10-27T20:33:43.0918556Z {"result":"PASS","exitCode":0,"steps":21,"sourceTreeMutated":false}
+2026-10-27T20:33:43.1259696Z {"result":"PASS_REPEATED_CLEAN_BASELINE","sourceSha":"bd8812a037f22ff1cf6d19370549632734f5d24e","stagesPerRun":21,"installedDependencySha256":"39cc1aa2beeb33d38f8f53441ca59834818ad68d6c4ab1f14c6962b2e4a82894","sourceTreeMutated":false}
+2026-10-27T20:33:43.1344654Z ##[group]Run actions/upload-artifact@v4
+2026-10-27T20:33:43.1344925Z with:
+2026-10-27T20:33:43.1345234Z   name: batch-01-integrated-candidate-bd8812a037f22ff1cf6d19370549632734f5d24e
+2026-10-27T20:33:43.1345683Z   path: artifacts/batch-01-baseline/
+artifacts/batch-01-integration/
+
+2026-10-27T20:33:43.1346001Z   if-no-files-found: error
+2026-10-27T20:33:43.1346201Z   retention-days: 14
+2026-10-27T20:33:43.1346389Z   compression-level: 6
+2026-10-27T20:33:43.1346582Z   overwrite: false
+2026-10-27T20:33:43.1346767Z   include-hidden-files: false
+2026-10-27T20:33:43.1346978Z ##[endgroup]
+2026-10-27T20:33:43.2711643Z (node:30227) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-27T20:33:43.2712314Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-27T20:33:43.2813881Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-27T20:33:43.2816127Z The least common ancestor is /home/runner/work/xroga.com/xroga.com/artifacts. This will be the root directory of the artifact
+2026-10-27T20:33:43.2817047Z With the provided path, there will be 47 files uploaded
+2026-10-27T20:33:43.2821213Z Artifact name is valid!
+2026-10-27T20:33:43.2821636Z Root directory input is valid!
+2026-10-27T20:33:43.7022840Z Beginning upload of artifact content to blob storage
+2026-10-27T20:33:43.9061930Z (node:30227) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-27T20:33:44.4698534Z Uploaded bytes 1689257
+2026-10-27T20:33:44.5333825Z Finished uploading artifact content to blob storage!
+2026-10-27T20:33:44.5334803Z SHA256 digest of uploaded artifact zip is 1b822bdcf38b35bad2635c8eace0d1fd3fdac0a9fddf34b3c863f8b9abf3f653
+2026-10-27T20:33:44.5335905Z Finalizing artifact upload
+2026-10-27T20:33:44.9993475Z Artifact batch-01-integrated-candidate-bd8812a037f22ff1cf6d19370549632734f5d24e.zip successfully finalized. Artifact ID 12768837092
+2026-10-27T20:33:44.9994681Z Artifact batch-01-integrated-candidate-bd8812a037f22ff1cf6d19370549632734f5d24e has been successfully uploaded! Final size is 1689257 bytes. Artifact ID is 12768837092
+2026-10-27T20:33:44.9998464Z Artifact download URL: https://github.com/Xroga/xroga.com/actions/runs/40576870681/artifacts/12768837092
+2026-10-27T20:33:45.0844085Z Post job cleanup.
+2026-10-27T20:33:45.1841728Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-ec622c8bdc7fe7dfc282c8e117e07672d4202c294adccda3416bc630d8c2205a, not saving cache.
+2026-10-27T20:33:45.1965446Z Post job cleanup.
+2026-10-27T20:33:45.2658921Z [command]/usr/bin/git version
+2026-10-27T20:33:45.2696796Z git version 2.56.0
+2026-10-27T20:33:45.2729146Z Temporarily overriding HOME='/home/runner/work/_temp/296bf98b-ae10-41eb-930a-5a5db17bc8bd' before making global git config changes
+2026-10-27T20:33:45.2730497Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-27T20:33:45.2734814Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/xroga.com/xroga.com
+2026-10-27T20:33:45.2775607Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-27T20:33:45.2808528Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-27T20:33:45.3067853Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-27T20:33:45.3090932Z http.https://github.com/.extraheader
+2026-10-27T20:33:45.3100634Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-27T20:33:45.3171691Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-27T20:33:45.3420351Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-27T20:33:45.3460353Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-27T20:33:45.3858888Z Cleaning up orphan processes
+2026-10-27T20:33:45.4211693Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

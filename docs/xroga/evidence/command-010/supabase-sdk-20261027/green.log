@@ -1,0 +1,59 @@
+TAP version 13
+# Subtest: actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests
+ok 1 - actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests
+  ---
+  duration_ms: 7750.0532
+  type: 'test'
+  ...
+# [userProviderKeys] storage upload unavailable
+# Subtest: real canonical credential mirror SDK cannot forward sealed credentials or service apikey through an HTTP redirect
+ok 2 - real canonical credential mirror SDK cannot forward sealed credentials or service apikey through an HTTP redirect
+  ---
+  duration_ms: 295.5765
+  type: 'test'
+  ...
+# Subtest: actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner
+ok 3 - actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner
+  ---
+  duration_ms: 88.7337
+  type: 'test'
+  ...
+# Subtest: canonical BYOK writer seals before private upload and revalidates ownership/revision after bucket waits
+ok 4 - canonical BYOK writer seals before private upload and revalidates ownership/revision after bucket waits
+  ---
+  duration_ms: 156.9156
+  type: 'test'
+  ...
+# Subtest: credential reads reject malformed envelopes and deploy classification follows the authoritative provider row
+ok 5 - credential reads reject malformed envelopes and deploy classification follows the authoritative provider row
+  ---
+  duration_ms: 626.8945
+  type: 'test'
+  ...
+# Subtest: BYOK save carries its admitted revision, rejects a concurrent revoke and permits a fresh reconnect
+ok 6 - BYOK save carries its admitted revision, rejects a concurrent revoke and permits a fresh reconnect
+  ---
+  duration_ms: 489.2007
+  type: 'test'
+  ...
+# Subtest: Supabase callback captures derived-key admissions before OAuth exchange and carries them through project selection
+ok 7 - Supabase callback captures derived-key admissions before OAuth exchange and carries them through project selection
+  ---
+  duration_ms: 1.9013
+  type: 'test'
+  ...
+# Subtest: unavailable credential authority never reads a legacy mirror or reports successful revocation
+ok 8 - unavailable credential authority never reads a legacy mirror or reports successful revocation
+  ---
+  duration_ms: 292.9824
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12198.3669

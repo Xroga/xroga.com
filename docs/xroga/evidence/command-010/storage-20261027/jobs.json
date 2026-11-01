@@ -1,0 +1,8 @@
+{
+  "lateCapabilityRevocationRed": "bd6fa613-fd08-4e9a-b9f1-b501dda9cc02",
+  "temporaryMultipartCleanupRed": "52cdf43d-3c53-4fae-9f06-dead4cea5221",
+  "completionAfterOwnershipDenialRed": "c7420d0c-ecbe-47ac-ba8a-c2935602c8fc",
+  "allBucketAndHostGuardsRed": "cc6ff616-0eb7-4f82-9fd8-6df84137cf5f",
+  "realAwsHttpRedirectAndDenialsGreen": "f8e27479-8782-4d41-80cb-a52a0254b4ef",
+  "storageDriveMigrationAndFactoryGreen120Tests": "3d86eb5f-720f-47b7-a1f3-78206609b0f6"
+}

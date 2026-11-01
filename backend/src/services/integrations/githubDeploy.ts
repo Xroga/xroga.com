@@ -1,3 +1,7 @@
+import {admitGitHubRequest,createGitHubRequestScope,type GitHubRequestScope} from './githubRequest.js';
+import {AuthorityError} from '../../security/authority/enforce.js';
+import {EgressDenied} from '../../security/egress/egressPolicy.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import {
   deployStaticSite,
@@ -12,36 +16,14 @@ import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 import { buildInlinePreviewDocument } from '../../lib/landingPreview.js';
 import { vercelStaticSiteJson } from '../../lib/vercelStaticConfig.js';
 import { getSecret } from '../../config/envSecrets.js';
-import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta, setGithubDefaultRepo } from './githubAuth.js';
+import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
 import { getVercelToken } from './vercelAuth.js';
-import {
-  DEFAULT_REPOSITORY_VISIBILITY,
-  MAX_NAME_COLLISION_RETRIES,
-  RepoCreateError,
-  classifyRepoCreateFailure,
-  describeRepoCreateFailure,
-  nextCandidateName,
-  readRepositoryResponse,
-  type GitHubErrorBody,
-  type RepoCreateFailure,
-  type RepositoryVisibility,
-} from './githubRepoCreation.js';
-import {
-  ExactBranchWriteError,
-  resolveExactWritableBranch,
-  verifyBranchHead,
-  type BranchApi,
-} from './githubBranchSafety.js';
-import {
-  AtomicWriteError,
-  describeAtomicWriteFailure,
-  writeAtomically,
-  type AtomicWriteRecord,
-} from './githubAtomicWrite.js';
+import type {RepositoryVisibility} from './githubRepoCreation.js';
+import {ExactBranchWriteError} from './githubBranchSafety.js';
+import {AtomicWriteError,describeAtomicWriteFailure} from './githubAtomicWrite.js';
 import { makeAtomicWriteApi } from './githubAtomicTransport.js';
 import {
   describeMutationRejection,
-  deriveFileSyncMutations,
   MutationPlanError,
 } from './githubMutationPlan.js';
 import {
@@ -50,18 +32,19 @@ import {
   TreeSnapshotError,
 } from './githubTreeSnapshot.js';
 import {
-  authorizeBranchWrite,
   BranchAuthorizationError,
   describeBranchAuthorizationRefusal,
 } from './githubBranchAuthorization.js';
-import { planRunBranch, RunBranchError } from './githubRunBranch.js';
+import { RunBranchError } from './githubRunBranch.js';
 import { resolveProviderEnvForDeploy } from './userProviderKeys.js';
 import {
   getCachedRepoAnalysis,
   setCachedRepoAnalysis,
-  invalidateRepoAnalysis,
 } from '../../lib/repoAnalysisCache.js';
 import { HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
+import { createGitHubSourceReader } from './githubSourceRead.js';
+import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
+import {publishingProviderRequest} from '../../lib/publishingProviderRequest.js';
 
 export interface ProjectFile {
   path: string;
@@ -69,6 +52,8 @@ export interface ProjectFile {
 }
 
 export interface GitHubPushResult {
+  needsConfirmation?: boolean;
+  reviewUrl?: string;
   repoName: string;
   repoUrl: string;
   htmlUrl: string;
@@ -199,7 +184,9 @@ export async function inspectConnectedRepositoryState(
   userId: string,
   repoFullName: string,
   branch = 'main',
+  tenantContext?: TenantContext,
 ): Promise<ConnectedRepositoryState> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) {
     return { status: 'unavailable', branch, reason: 'GitHub is not connected' };
@@ -210,7 +197,8 @@ export async function inspectConnectedRepositoryState(
     return { status: 'unavailable', branch, reason: 'Invalid GitHub repository target' };
   }
 
-  const repoResponse = await ghFetch(integration.access_token, `/repos/${owner}/${repo}`);
+  const source = await createGitHubSourceReader(userId, integration.access_token, `${owner}/${repo}`, tenantContext);
+  const repoResponse = await source.request(integration.access_token, `/repos/${owner}/${repo}`);
   if (!repoResponse.ok) {
     const reason =
       repoResponse.status === 404
@@ -221,7 +209,7 @@ export async function inspectConnectedRepositoryState(
 
   const repository = (await repoResponse.json()) as { size?: number };
 
-  const refResponse = await ghFetch(
+  const refResponse = await source.request(
     integration.access_token,
     `/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`,
   );
@@ -245,7 +233,7 @@ export async function inspectConnectedRepositoryState(
   let sourcePaths: string[];
   try {
     const api = makeAtomicWriteApi(
-      ghFetch,
+      source.request,
       integration.access_token,
       owner,
       repo,
@@ -259,12 +247,14 @@ export async function inspectConnectedRepositoryState(
       .map((entry) => entry.path)
       .sort();
   } catch (error) {
+    if(isTerminalModelFailure(error))throw error;
     const reason =
       error instanceof TreeSnapshotError
         ? describeTreeSnapshotFailure(error.reason)
         : 'GitHub could not verify the repository tree';
     return { status: 'unavailable', branch, reason };
   }
+  await source.assertCurrent();
   return {
     status: 'head',
     branch,
@@ -273,333 +263,32 @@ export async function inspectConnectedRepositoryState(
   };
 }
 
-export async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
-  return fetch(`https://api.github.com${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-      ...(init?.headers ?? {}),
-    },
-  });
+export async function ghFetch(token:string,path:string,init?:RequestInit,scope?:GitHubRequestScope):Promise<Response>{
+ const admitted=await admitGitHubRequest(scope,token,path,init),signal=AbortSignal.any([admitted.signal,AbortSignal.timeout(30000)]);
+ try{
+  await admitted.check();signal.throwIfAborted();
+  const response=await fetch(`https://api.github.com${path}`,{method:admitted.method,body:admitted.body,redirect:'manual',signal,headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json','Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'}});
+  await admitted.check();signal.throwIfAborted();
+  if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
+  if(response.status===401||response.status===403){await response.body?.cancel().catch(()=>undefined);throw new AuthorityError('GITHUB_PROVIDER_AUTHORIZATION_DENIED');}
+  const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let size=0;
+  try{if(reader)for(;;){const part=await reader.read();if(part.done)break;signal.throwIfAborted();size+=part.value.length;if(size>16*1024*1024)throw new EgressDenied('INVALID_EGRESS_INPUT');chunks.push(part.value);}}
+  finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+  signal.throwIfAborted();await admitted.check();let data:unknown=null;
+  if(size)try{data=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new AuthorityError('GITHUB_RESPONSE_NOT_VERIFIED');}
+  if(!response.ok){const raw=data as{errors?:Array<{resource?:unknown;field?:unknown;code?:unknown;message?:unknown}>}|null;data={message:'GitHub request failed.',...(response.status===422&&Array.isArray(raw?.errors)?{errors:raw.errors.slice(0,10).map(row=>({resource:row.resource==='Repository'?'Repository':'Unknown',field:row.field==='name'?'name':'unknown',code:row.code==='custom'?'custom':'invalid',message:typeof row.message==='string'&&/name.*already exists/i.test(row.message)?'name already exists on this account':'Provider validation failed.'}))}:{})};}
+  await admitted.after(response.status,data);
+  return new Response([204,205,304].includes(response.status)?null:JSON.stringify(data),{status:response.status,headers:{'content-type':'application/json'}});
+ }catch(error){
+  if(error instanceof AuthorityError||error instanceof EgressDenied)return admitted.fail(error);
+  if(admitted.signal.aborted)throw new DOMException('GitHub request cancelled.','AbortError');
+  throw new Error('GitHub request is unavailable. No automatic retry was made.');
+ }
 }
 
-async function getGitHubUsername(token: string): Promise<string> {
-  const res = await ghFetch(token, '/user');
-  if (!res.ok) throw new Error(`GitHub user lookup failed: ${res.status}`);
-  const user = (await res.json()) as { login: string };
-  return user.login;
-}
-
-interface GitCommitIdentity {
-  name: string;
-  email: string;
-}
-
-/** XROGA bot identity — set email to a verified GitHub account email for contribution graph avatar. */
-function xrogaBotIdentity(): GitCommitIdentity {
-  return {
-    name: process.env.XROGA_GITHUB_BOT_NAME?.trim() || 'XROGA AI',
-    email:
-      process.env.XROGA_GITHUB_BOT_EMAIL?.trim() ||
-      '41898282+xroga-ai@users.noreply.github.com',
-  };
-}
-
-async function getGitHubCoAuthor(token: string): Promise<GitCommitIdentity | null> {
-  try {
-    const res = await ghFetch(token, '/user');
-    if (!res.ok) return null;
-    const user = (await res.json()) as { login: string; name?: string | null; id: number };
-    return {
-      name: (user.name?.trim() || user.login).trim(),
-      email: `${user.id}+${user.login}@users.noreply.github.com`,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function buildBrandedCommitMessage(base: string, coAuthor?: GitCommitIdentity | null): string {
-  const bot = xrogaBotIdentity();
-  let msg = `${base}\n\nBuilt with ${bot.name} — Black Hole V∞ (https://xroga.com)`;
-  if (coAuthor) {
-    msg += `\n\nCo-authored-by: ${coAuthor.name} <${coAuthor.email}>`;
-  }
-  return msg;
-}
-
-function gitCommitAuthorFields() {
-  const bot = xrogaBotIdentity();
-  const date = new Date().toISOString();
-  return {
-    author: { name: bot.name, email: bot.email, date },
-    committer: { name: bot.name, email: bot.email, date },
-  };
-}
-
-async function createRepo(
-  token: string,
-  name: string,
-  visibility: RepositoryVisibility = DEFAULT_REPOSITORY_VISIBILITY,
-): Promise<{ fullName: string; htmlUrl: string; owner: string; repo: string; visibility: RepositoryVisibility; defaultBranch: string }> {
-  let lastFailure: RepoCreateFailure = 'unknown';
-
-  for (let attempt = 0; attempt < MAX_NAME_COLLISION_RETRIES; attempt += 1) {
-    const candidate = nextCandidateName(name, attempt);
-    const res = await ghFetch(token, '/user/repos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: candidate,
-        private: visibility === 'private',
-        auto_init: true,
-        description: 'Built with XROGA AI Swarm',
-      }),
-    });
-
-    if (res.ok) {
-      const created = readRepositoryResponse(await res.json());
-      if (!created) {
-        throw new RepoCreateError('unknown', res.status, 'GitHub returned an unrecognised repository response.');
-      }
-      return {
-        fullName: created.fullName,
-        htmlUrl: created.htmlUrl,
-        owner: created.owner,
-        repo: created.repo,
-        visibility: created.visibility,
-        defaultBranch: created.defaultBranch,
-      };
-    }
-
-    const body = (await res.json().catch(() => null)) as GitHubErrorBody | null;
-    lastFailure = classifyRepoCreateFailure(res.status, body);
-
-    if (lastFailure !== 'name_taken') {
-      throw new RepoCreateError(lastFailure, res.status, describeRepoCreateFailure(lastFailure, candidate));
-    }
-  }
-
-  throw new RepoCreateError(
-    lastFailure,
-    422,
-    `Could not find an available repository name based on "${name}" after ${MAX_NAME_COLLISION_RETRIES} attempts.`,
-  );
-}
-
-function makeBranchApi(token: string, owner: string, repo: string): BranchApi {
-  return {
-    async getRef(branch: string) {
-      const res = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/${branch}`);
-      if (!res.ok) return null;
-      const data = (await res.json()) as { object?: { sha?: string } };
-      return typeof data.object?.sha === 'string' ? { sha: data.object.sha } : null;
-    },
-    async createRef(branch: string, sha: string) {
-      const res = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ref: `refs/heads/${branch}`, sha }),
-      });
-      return res.ok;
-    },
-  };
-}
-
-export async function getBranchHeadSha(
-  token: string,
-  owner: string,
-  repo: string,
-  preferredBranch?: string
-): Promise<{ sha: string | null; branch: string }> {
-  const candidates = [
-    ...(preferredBranch ? [preferredBranch] : []),
-    'main',
-    'master',
-  ];
-  for (const branch of candidates) {
-    const res = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/${branch}`);
-    if (res.ok) {
-      const data = (await res.json()) as { object: { sha: string } };
-      return { sha: data.object.sha, branch };
-    }
-  }
-  return { sha: null, branch: preferredBranch ?? 'main' };
-}
-
-async function atomicWriteApiFor(token: string, owner: string, repo: string) {
-  return makeAtomicWriteApi(ghFetch, token, owner, repo, {
-    commitIdentity: gitCommitAuthorFields(),
-  });
-}
-
-export interface AtomicPushOptions {
-  /** Paths to remove from the target branch. */
-  deletePaths?: string[];
-  /** Set to open a pull request from the written branch back to this base. */
-  pullRequest?: { base: string; title: string; body: string };
-  /** Explicit approval to commit straight to a default or protected branch. */
-  directWriteAuthorized?: boolean;
-  /** Commit to create the branch from, when it does not exist yet. */
-  createBranchFromSha?: string | null;
-  /** The repository's default branch, so authorization can recognise it. */
-  defaultBranch?: string;
-}
-
-async function pushFilesAtomically(
-  token: string,
-  owner: string,
-  repo: string,
-  files: ProjectFile[],
-  message: string,
-  branch: string,
-  options: AtomicPushOptions = {},
-): Promise<AtomicWriteRecord> {
-  const api = await atomicWriteApiFor(token, owner, repo);
-
-  return writeAtomically(
-    api,
-    { owner, repo },
-    {
-      branch,
-      createBranchFromSha: options.createBranchFromSha ?? null,
-      mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths ?? []),
-      message,
-      ...(options.defaultBranch ? { defaultBranch: options.defaultBranch } : {}),
-      ...(options.pullRequest ? { pullRequest: options.pullRequest } : {}),
-      ...(options.directWriteAuthorized === true ? { directWriteAuthorized: true } : {}),
-    },
-  );
-}
-
-interface ConnectedRepositoryPushOptions {
-  requestedBranch: string;
-  deletePaths: string[];
-  runId?: string;
-  /** Refuse before writing unless this is still the exact branch HEAD. */
-  expectedStartingHeadSha?: string;
-  directWriteAuthorized: boolean;
-  allowEmptyBootstrap: boolean;
-}
-
-async function pushToConnectedRepository(
-  token: string,
-  owner: string,
-  repo: string,
-  files: ProjectFile[],
-  message: string,
-  options: ConnectedRepositoryPushOptions,
-): Promise<AtomicWriteRecord> {
-  const api = await atomicWriteApiFor(token, owner, repo);
-  const defaultBranch = await getDefaultBranch(token, owner, repo);
-
-  if (options.allowEmptyBootstrap && (await api.isRepositoryEmpty())) {
-    return writeAtomically(
-      api,
-      { owner, repo },
-      {
-        branch: options.requestedBranch,
-        mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
-        message,
-        defaultBranch: defaultBranch || options.requestedBranch,
-        directWriteAuthorized: true,
-        allowEmptyBootstrap: true,
-      },
-    );
-  }
-
-  const needsAuthorization = await branchWriteNeedsAuthorization(
-    api,
-    options.requestedBranch,
-    defaultBranch,
-  );
-
-  if (!needsAuthorization || options.directWriteAuthorized) {
-    return writeAtomically(
-      api,
-      { owner, repo },
-      {
-        branch: options.requestedBranch,
-        mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
-        message,
-        defaultBranch,
-        ...(options.expectedStartingHeadSha
-          ? { expectedStartingHeadSha: options.expectedStartingHeadSha }
-          : {}),
-        ...(options.directWriteAuthorized ? { directWriteAuthorized: true } : {}),
-      },
-    );
-  }
-
-  if (!options.runId) {
-    throw new BranchAuthorizationError(
-      'default_branch_requires_authorization',
-      options.requestedBranch,
-      `"${options.requestedBranch}" needs explicit approval before Xroga commits to it, and ` +
-        'this build has no run id to open a pull request from instead.',
-    );
-  }
-
-  const head = await api.getRef(options.requestedBranch);
-  if (!head) {
-    throw new ExactBranchWriteError(
-      'branch_missing',
-      options.requestedBranch,
-      `Branch "${options.requestedBranch}" does not exist, so there is nothing to base this build on.`,
-    );
-  }
-
-  const runBranch = await planRunBranch(api, {
-    runId: options.runId,
-    sourceSha: head.sha,
-    baseBranch: options.requestedBranch,
-  });
-
-  return writeAtomically(
-    api,
-    { owner, repo },
-    {
-      branch: runBranch.branch,
-      createBranchFromSha: runBranch.sourceSha,
-      mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
-      message,
-      defaultBranch,
-      pullRequest: {
-        base: runBranch.baseBranch,
-        title: message.split('\n')[0] ?? 'XROGA build update',
-        body:
-          `Built by XROGA from \`${runBranch.baseBranch}\` at \`${runBranch.sourceSha.slice(0, 7)}\`.\n\n` +
-          'Applied as a single commit. Review and merge when the change looks right.',
-      },
-    },
-  );
-}
-
-async function getDefaultBranch(token: string, owner: string, repo: string): Promise<string> {
-  try {
-    const res = await ghFetch(token, `/repos/${owner}/${repo}`);
-    if (!res.ok) return '';
-    const data = (await res.json()) as { default_branch?: string };
-    return typeof data.default_branch === 'string' ? data.default_branch : '';
-  } catch {
-    return '';
-  }
-}
-
-async function branchWriteNeedsAuthorization(
-  api: Awaited<ReturnType<typeof atomicWriteApiFor>>,
-  branch: string,
-  defaultBranch: string,
-): Promise<boolean> {
-  try {
-    const decision = await authorizeBranchWrite(api, { branch, defaultBranch });
-    return decision.requiresAuthorization;
-  } catch (error) {
-    if (error instanceof BranchAuthorizationError) return true;
-    throw error;
-  }
+export async function getBranchHeadSha(token:string,owner:string,repo:string,preferredBranch?:string,tenantContext?:TenantContext):Promise<{sha:string|null;branch:string}>{
+ const access=await createGitHubRequestScope(requireTenantContext(tenantContext),token,owner+'/'+repo);
+ try{for(const branch of preferredBranch?[preferredBranch]:['main','master']){const res=await ghFetch(token,`/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`,undefined,access.scope);if(res.ok){const data=await res.json() as{object?:{sha?:string}};if(!/^[a-f0-9]{40}$/.test(data.object?.sha??''))throw new AuthorityError('GITHUB_HEAD_NOT_VERIFIED');return{sha:data.object!.sha!,branch};}if(res.status!==404)throw new AuthorityError('GITHUB_HEAD_NOT_VERIFIED');}return{sha:null,branch:preferredBranch??'main'};}finally{access.close();}
 }
 
 export function describeGitHubWriteFailure(error: unknown): string {
@@ -619,6 +308,9 @@ export function describeGitHubWriteFailure(error: unknown): string {
 }
 
 export interface GitHubPushOptions {
+  tenantContext?: TenantContext;
+  projectId?: string;
+  signal?: AbortSignal;
   slug?: string;
   targetRepo?: string;
   targetBranch?: string;
@@ -632,85 +324,12 @@ export interface GitHubPushOptions {
   visibility?: RepositoryVisibility;
 }
 
-export async function pushBuildToGitHub(
-  userId: string,
-  files: ProjectFile[],
-  slugOrOpts?: string | GitHubPushOptions
-): Promise<GitHubPushResult> {
-  const opts: GitHubPushOptions =
-    typeof slugOrOpts === 'string' ? { slug: slugOrOpts } : slugOrOpts ?? {};
-
-  const integration = await getIntegration(userId);
-  if (!integration?.access_token) throw new Error('GitHub not connected');
-
-  const token = integration.access_token;
-  const coAuthor = await getGitHubCoAuthor(token);
-
-  const selectedRepo =
-    opts.targetRepo ??
-    (integration.default_repo?.includes('/') ? integration.default_repo : null);
-
-  if (selectedRepo?.includes('/')) {
-    const [owner, repo] = selectedRepo.split('/');
-    const requestedBranch = opts.targetBranch ?? 'main';
-    const htmlUrl = `https://github.com/${owner}/${repo}`;
-    const message = buildBrandedCommitMessage(
-      `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
-      coAuthor,
-    );
-
-    const record = await pushToConnectedRepository(token, owner!, repo!, files, message, {
-      requestedBranch,
-      deletePaths: opts.deletePaths ?? [],
-      runId: opts.runId,
-      expectedStartingHeadSha: opts.expectedStartingHeadSha,
-      directWriteAuthorized: opts.directWriteAuthorized === true,
-      allowEmptyBootstrap: opts.allowEmptyBootstrap === true,
-    });
-
-    invalidateRepoAnalysis(userId, selectedRepo);
-    await setGithubDefaultRepo(userId, selectedRepo).catch(() => undefined);
-    return {
-      repoName: `${owner}/${repo}`,
-      repoUrl: htmlUrl,
-      htmlUrl,
-      commitSha: record.resultingCommitSha,
-      branch: record.branch,
-      ...(record.pullRequest ? { pullRequestUrl: record.pullRequest.htmlUrl } : {}),
-      ...(record.pullRequestWarning ? { warning: record.pullRequestWarning } : {}),
-    };
-  }
-
-  const repoName = opts.slug ?? `xroga-build-${Date.now()}`;
-
-  const created = await createRepo(token, repoName, opts.visibility ?? DEFAULT_REPOSITORY_VISIBILITY);
-  const owner = created.owner;
-  const repo = created.repo;
-  const htmlUrl = created.htmlUrl;
-
-  const record = await pushFilesAtomically(
-    token,
-    owner,
-    repo,
-    files,
-    buildBrandedCommitMessage('Initial XROGA build', coAuthor),
-    created.defaultBranch,
-    { defaultBranch: created.defaultBranch, directWriteAuthorized: true },
-  );
-
-  const fullName = `${owner}/${repo}`;
-  await setGithubDefaultRepo(userId, fullName).catch((err) => {
-    console.warn('[githubDeploy] default_repo persist:', (err as Error).message);
-  });
-
-  return {
-    repoName: fullName,
-    repoUrl: `https://github.com/${owner}/${repo}`,
-    htmlUrl,
-    commitSha: record.resultingCommitSha,
-    branch: record.branch,
-  };
+export async function pushBuildToGitHub(userId:string,files:ProjectFile[],slugOrOpts?:string|GitHubPushOptions):Promise<GitHubPushResult>{
+ const opts=typeof slugOrOpts==='string'?{slug:slugOrOpts}:slugOrOpts??{};
+ const {prepareGitHubPush}=await import('./githubPublication.js');
+ return prepareGitHubPush(userId,files,opts);
 }
+export {executeApprovedGitHubPush,executeApprovedGitHubRestore} from './githubPublication.js';
 
 export function landingFilesFromOutput(html: string, css: string, js: string): ProjectFile[] {
   const normalized = normalizeBuildFiles(html, css, js);
@@ -830,7 +449,7 @@ export async function ensureVercelGitProject(opts: {
     'Content-Type': 'application/json',
   };
 
-  const existing = await fetch(
+  const existing = await publishingProviderRequest(
     `https://api.vercel.com/v9/projects/${encodeURIComponent(projectName)}${query}`,
     { headers },
   );
@@ -864,7 +483,7 @@ export async function ensureVercelGitProject(opts: {
     };
   }
 
-  const created = await fetch(`https://api.vercel.com/v11/projects${query}`, {
+  const created = await publishingProviderRequest(`https://api.vercel.com/v11/projects${query}`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
@@ -959,6 +578,7 @@ export async function deployManagedVercelPreview(
       ...(!verified ? { error: 'Vercel URL failed verification' } : {}),
     };
   } catch (error) {
+    if(isTerminalModelFailure(error))throw error;
     const message = (error as Error).message || 'Managed Vercel deployment failed';
     return {
       deployUrl: '',
@@ -1023,6 +643,7 @@ async function deployToVercelWithUserToken(
       console.log(`[vercel] synced ${envSync.upserted.length} env var(s) to project ${projectSlug}`);
     }
   } catch (err) {
+    if(isTerminalModelFailure(err))throw err;
     const msg = (err as Error).message;
     console.warn('[vercel] env sync skipped:', msg);
     envSync = {
@@ -1097,6 +718,7 @@ export async function deployStaticPreview(
       }
       console.warn(`[githubDeploy] ${attempt.name} URL failed verification: ${result.deployUrl}`);
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       console.warn(`[githubDeploy] ${attempt.name}:`, (err as Error).message);
     }
   }
@@ -1153,6 +775,7 @@ export async function deployToAllPlatforms(
       };
       if (!verified) errors.push('Vercel URL failed verification');
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       const msg = (err as Error).message;
       errors.push(`Vercel: ${msg.slice(0, 120)}`);
       vercel = {
@@ -1215,6 +838,7 @@ export async function deployPreviewToPlatform(
       netlifyDeployId: result.netlifyDeployId,
     };
   } catch (err) {
+    if(isTerminalModelFailure(err))throw err;
     const msg = (err as Error).message;
     console.warn(`[githubDeploy] ${platform} deploy:`, msg);
     return { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };
@@ -1265,11 +889,10 @@ export async function pushBuildFromSource(
   return pushBuildToGitHub(userId, files, opts);
 }
 
-export function parseRepoName(input: string): { owner: string; repo: string } {
-  const trimmed = input.trim().replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '');
-  const [owner, repo] = trimmed.split('/');
-  if (!owner || !repo) throw new Error('Invalid GitHub repo name');
-  return { owner, repo };
+export function parseRepoName(input:string):{owner:string;repo:string}{
+ const value=input.trim().replace(/^https:\/\/github\.com\//,'').replace(/\/$/,'').replace(/\.git$/,'');
+ if(!/^[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9_.-]{1,100}$/.test(value)||/^\.+$/.test(value.split('/')[1]!))throw new AuthorityError('GITHUB_REPOSITORY_INVALID');
+ const[owner,repo]=value.split('/');return{owner:owner!,repo:repo!};
 }
 
 async function fetchRepoTextFile(
@@ -1277,10 +900,11 @@ async function fetchRepoTextFile(
   owner: string,
   repo: string,
   path: string,
-  branch?: string
+  branch?: string,
+  read: typeof ghFetch = ghFetch,
 ): Promise<string | null> {
   const ref = branch ? `?ref=${encodeURIComponent(branch)}` : '';
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/contents/${path}${ref}`);
+  const res = await read(token, `/repos/${owner}/${repo}/contents/${path}${ref}`);
   if (!res.ok) return null;
   const data = (await res.json()) as { content?: string; encoding?: string };
   if (data.encoding !== 'base64' || !data.content) return null;
@@ -1318,17 +942,20 @@ const UPDATE_HYDRATE_PATHS = [
 export async function fetchBuildFilesFromGitHub(
   userId: string,
   repoName: string,
-  branch?: string
+  branch?: string,
+  tenantContext?: TenantContext,
 ): Promise<ProjectFile[]> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`, tenantContext);
 
   const out: ProjectFile[] = [];
   for (const path of UPDATE_HYDRATE_PATHS) {
-    const text = await fetchRepoTextFile(token, owner, repo, path, branch);
+    const text = await fetchRepoTextFile(token, owner, repo, path, branch, source.request);
     if (text != null) out.push({ path, content: text });
   }
 
@@ -1336,6 +963,7 @@ export async function fetchBuildFilesFromGitHub(
     throw new Error('No buildable files found in GitHub repo');
   }
 
+  await source.assertCurrent();
   return out;
 }
 
@@ -1365,19 +993,22 @@ export async function fetchRepositoryTextFilesFromGitHub(
   userId: string,
   repoName: string,
   branch: string,
+  tenantContext?: TenantContext,
 ): Promise<ProjectFile[]> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`, tenantContext);
 
-  const branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`);
+  const branchRes = await source.request(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`);
   if (!branchRes.ok) throw new Error(`GitHub branch lookup failed: ${branchRes.status}`);
   const branchData = (await branchRes.json()) as { commit?: { commit?: { tree?: { sha?: string } } } };
   const treeSha = branchData.commit?.commit?.tree?.sha;
   if (!treeSha) throw new Error('GitHub branch did not expose a source tree');
 
-  const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees/${encodeURIComponent(treeSha)}?recursive=1`);
+  const treeRes = await source.request(token, `/repos/${owner}/${repo}/git/trees/${encodeURIComponent(treeSha)}?recursive=1`);
   if (!treeRes.ok) throw new Error(`GitHub tree lookup failed: ${treeRes.status}`);
   const tree = (await treeRes.json()) as {
     truncated?: boolean;
@@ -1400,7 +1031,7 @@ export async function fetchRepositoryTextFilesFromGitHub(
   for (let offset = 0; offset < candidates.length && totalBytes < UNIVERSAL_REPOSITORY_TOTAL_BYTES; offset += 8) {
     const batch = candidates.slice(offset, offset + 8);
     const decoded = await Promise.all(batch.map(async (entry) => {
-      const response = await ghFetch(token, `/repos/${owner}/${repo}/git/blobs/${encodeURIComponent(entry.sha)}`);
+      const response = await source.request(token, `/repos/${owner}/${repo}/git/blobs/${encodeURIComponent(entry.sha)}`);
       if (!response.ok) return null;
       const blob = (await response.json()) as { content?: string; encoding?: string };
       const content = decodeRepositoryTextBlob(blob.content ?? '', blob.encoding);
@@ -1415,6 +1046,7 @@ export async function fetchRepositoryTextFilesFromGitHub(
     }
   }
   if (!files.length) throw new Error('No readable text files found in GitHub repository');
+  await source.assertCurrent();
   return files;
 }
 
@@ -1422,24 +1054,29 @@ export async function fetchGitHubFilesByPaths(
   userId: string,
   repoName: string,
   paths: string[],
-  branch?: string
+  branch?: string,
+  tenantContext?: TenantContext,
 ): Promise<ProjectFile[]> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`, tenantContext);
   const unique = [...new Set(paths.map((p) => p.replace(/^\//, '')))].slice(0, 40);
 
   const out: ProjectFile[] = [];
   for (const path of unique) {
-    const text = await fetchRepoTextFile(token, owner, repo, path, branch);
+    const text = await fetchRepoTextFile(token, owner, repo, path, branch, source.request);
     if (text != null) out.push({ path, content: text });
   }
 
   if (!out.length) {
-    return fetchBuildFilesFromGitHub(userId, repoName, branch);
+    await source.assertCurrent();
+    return fetchBuildFilesFromGitHub(userId, repoName, branch, tenantContext);
   }
+  await source.assertCurrent();
   return out;
 }
 
@@ -1492,40 +1129,45 @@ export async function analyzeGitHubRepo(
   userId: string,
   repoName: string,
   preferredBranch?: string,
-  opts?: { lite?: boolean; strictBranch?: boolean }
+  opts?: { lite?: boolean; strictBranch?: boolean; tenantContext?: TenantContext }
 ): Promise<GitHubRepoAnalysis> {
+  requireResourceOwner(requireTenantContext(opts?.tenantContext),userId);
   const lite = Boolean(opts?.lite);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
+  const access=await createGitHubRequestScope(requireTenantContext(opts?.tenantContext),token,`${owner}/${repo}`);
+  const read:typeof ghFetch=(token,path,init)=>ghFetch(token,path,init,access.scope);
+  const cacheRepo=repoName+"#"+access.fingerprint;
+  try {
 
-  const repoRes = await ghFetch(token, `/repos/${owner}/${repo}`);
+  const repoRes = await read(token, `/repos/${owner}/${repo}`);
   if (!repoRes.ok) throw new Error(`GitHub repo lookup failed: ${repoRes.status}`);
   const repoMeta = (await repoRes.json()) as { default_branch?: string; language?: string };
   const defaultBranch = repoMeta.default_branch ?? 'main';
   const scanBranch = preferredBranch?.trim() || defaultBranch;
 
-  const cached = getCachedRepoAnalysis(userId, repoName, scanBranch);
+  const cached = getCachedRepoAnalysis(userId, cacheRepo, scanBranch);
   if (cached) {
     console.info(`[githubDeploy] Repo cache hit: ${repoName}@${scanBranch}`);
     return cached;
   }
 
-  const langRes = await ghFetch(token, `/repos/${owner}/${repo}/languages`);
+  const langRes = await read(token, `/repos/${owner}/${repo}/languages`);
   const languages: Record<string, number> = langRes.ok ? ((await langRes.json()) as Record<string, number>) : {};
 
   let fileCount = 0;
   let treeSample: Array<{ path: string; size?: number }> = [];
   let topLevelEntries: string[] = [];
 
-  let branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(scanBranch)}`);
+  let branchRes = await read(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(scanBranch)}`);
   if (!branchRes.ok && opts?.strictBranch) {
     throw new Error('The selected repository branch could not be read.');
   }
   if (!branchRes.ok && scanBranch !== defaultBranch) {
-    branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(defaultBranch)}`);
+    branchRes = await read(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(defaultBranch)}`);
   }
   let treeSha: string | null = null;
   if (branchRes.ok) {
@@ -1534,7 +1176,7 @@ export async function analyzeGitHubRepo(
   }
 
   if (treeSha) {
-    const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees/${treeSha}?recursive=1`);
+    const treeRes = await read(token, `/repos/${owner}/${repo}/git/trees/${treeSha}?recursive=1`);
     if (treeRes.ok) {
       const tree = (await treeRes.json()) as { tree?: Array<{ path: string; type: string; size?: number }> };
       const blobs = (tree.tree ?? []).filter((t) => t.type === 'blob');
@@ -1551,7 +1193,7 @@ export async function analyzeGitHubRepo(
   let buildEvidencePaths: string[] = [];
   if (!lite) {
     try {
-      const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch);
+      const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch, opts?.tenantContext);
       buildEvidencePaths = repositoryBuildEvidencePaths(files.map((file) => file.path));
       hasBuildFiles = buildEvidencePaths.length > 0;
       buildFiles = {
@@ -1559,7 +1201,8 @@ export async function analyzeGitHubRepo(
         css: files.find((f) => f.path === 'styles.css')?.content ?? '',
         js: files.find((f) => f.path === 'script.js')?.content ?? '',
       };
-    } catch {
+    } catch(error) {
+      if(isTerminalModelFailure(error))throw error;
       /* repo may not have static build files yet */
     }
   } else {
@@ -1620,9 +1263,10 @@ export async function analyzeGitHubRepo(
     report,
   };
   if (!lite) {
-    setCachedRepoAnalysis(userId, repoName, scanBranch, analysis);
+    setCachedRepoAnalysis(userId, cacheRepo, scanBranch, analysis);
   }
-  return analysis;
+  await access.check();return analysis;
+  }finally{access.close();}
 }
 
 /** Redeploy live preview from code already on the exact GitHub branch. */
@@ -1630,6 +1274,7 @@ export async function redeployPreviewFromGitHub(
   userId: string,
   repoName: string,
   branch = 'main',
+  tenantContext?: TenantContext,
 ): Promise<{
   deployUrl: string;
   deployPlatform: 'vercel' | 'netlify' | 'none';
@@ -1638,7 +1283,8 @@ export async function redeployPreviewFromGitHub(
   netlifyDeployId?: string;
   files: ProjectFile[];
 }> {
-  const files = await fetchBuildFilesFromGitHub(userId, repoName, branch);
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
+  const files = await fetchBuildFilesFromGitHub(userId, repoName, branch, tenantContext);
   const slug = repoName.split('/').pop()?.replace(/^xroga-/, '') ?? 'xroga-build';
   const preview = await deployToAllPlatforms(slug, files, userId);
   return {
@@ -1655,14 +1301,16 @@ export async function pushAndDeployLivePreview(
   userId: string,
   files: ProjectFile[],
   projectSlug: string,
-  githubTarget?: { targetRepo?: string; targetBranch?: string; deletePaths?: string[] }
+  githubTarget?: { targetRepo?: string; targetBranch?: string; deletePaths?: string[];tenantContext?:TenantContext;projectId?:string }
 ): Promise<DeployPipelineResult> {
   const github = await pushBuildToGitHub(userId, files, {
+    tenantContext:githubTarget?.tenantContext,projectId:githubTarget?.projectId,
     slug: projectSlug,
     targetRepo: githubTarget?.targetRepo,
     targetBranch: githubTarget?.targetBranch,
     deletePaths: githubTarget?.deletePaths,
   });
+  if(github.needsConfirmation)return{github,deployUrl:'',deployPlatform:'none',deployVerified:false};
   const preview = await deployToAllPlatforms(projectSlug, files, userId);
   return {
     github,
@@ -1679,34 +1327,8 @@ export async function pushAndDeployLivePreview(
   };
 }
 
-/** Roll back a branch tip to a previous commit SHA (legacy route; kept for old conversations). */
-export async function rollbackRepoToCommit(
-  userId: string,
-  repoName: string,
-  commitSha: string,
-  branch = 'main',
-): Promise<{ ok: boolean; branch: string; commitSha: string; htmlUrl: string }> {
-  const integration = await getIntegration(userId);
-  if (!integration?.access_token) throw new Error('GitHub not connected');
-  if (!repoName.includes('/')) throw new Error('repoName must be owner/repo');
-  if (!/^[0-9a-f]{7,40}$/i.test(commitSha)) throw new Error('Invalid commit SHA');
-
-  const { owner, repo } = parseRepoName(repoName);
-  const token = integration.access_token;
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sha: commitSha, force: true }),
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Rollback failed: ${res.status} ${err.slice(0, 200)}`);
-  }
-  invalidateRepoAnalysis(userId, repoName);
-  return {
-    ok: true,
-    branch,
-    commitSha,
-    htmlUrl: `https://github.com/${owner}/${repo}/tree/${branch}`,
-  };
+/** Prepare an exact restoration commit without rewriting branch history. */
+export async function rollbackRepoToCommit(userId:string,repoName:string,commitSha:string,branch='main',tenantContext?:TenantContext){
+ const {prepareGitHubRestore}=await import('./githubPublication.js');
+ return prepareGitHubRestore(userId,repoName,commitSha,branch,tenantContext);
 }

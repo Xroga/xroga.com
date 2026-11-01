@@ -1,0 +1,340 @@
+{
+  "verdict": "XROGA_ZERO_FLY_MIGRATION_ACCEPTED",
+  "observedAtUtc": "2026-10-27T11:55:15.691159+00:00",
+  "googleCloudProductionMigration": "PASS",
+  "productionAcceptance": "PASS",
+  "productionCutover": "COMPLETE",
+  "flyRuntimeRetirement": "COMPLETE",
+  "remainingActiveFlyDependencies": [],
+  "permanentFlyAccountDeletion": "PENDING_FINAL_OWNER_AUTHORIZATION",
+  "mergeCommit": "5ada5db7526efb1e0a4e426dbf4feab3d538597f",
+  "verifiedHead": "f7ead2ea957618f0add591958c3d2c45fc83be4b",
+  "verifiedIntegrationTree": "1562214154b7f58c51d8d4bbd188d5d7540e4a31",
+  "bakedRuntimeSource": "b11841ead316913cb46316fa7c16e76c6519b392",
+  "imageDigest": "sha256:3374633058c62d7a205f4fe95d28a4b312de1eab21068555fde7c0f73ea9dc43",
+  "forwardImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-migration@sha256:3374633058c62d7a205f4fe95d28a4b312de1eab21068555fde7c0f73ea9dc43",
+  "recoveryImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-google-migration-recovery@sha256:3374633058c62d7a205f4fe95d28a4b312de1eab21068555fde7c0f73ea9dc43",
+  "forwardRevision": "xroga-api-google-b11841ea-r1",
+  "recoveryRevision": "xroga-api-google-b11841ea-recovery-r1",
+  "frontend": {
+    "localCli": "Different account, not authorized for this project. Use authenticated browser.",
+    "browserOwnerAccess": "VERIFIED_AFTER_USER_LOGIN",
+    "team": "xrogas-projects",
+    "project": "xrogaai.com",
+    "productionCommit": "3c3bc0f54b9e1f38e67641284de4b16073016fdb",
+    "deployment": "13C195qgr3vsaYs3GPB52tGnjJP4",
+    "status": "READY",
+    "origin": "https://api.xroga.com"
+  },
+  "publicEndpoints": [
+    "https://xroga.com",
+    "https://api.xroga.com",
+    "https://*.preview.xroga.com"
+  ],
+  "queue": {
+    "name": "xroga-canonical-production",
+    "state": "RUNNING",
+    "pendingTasks": 0,
+    "oidcDelivery204": 2,
+    "canonicalTemplateRestored": true
+  },
+  "productionWorkerFixture": {
+    "execution": "xroga-canonical-production-6trfc",
+    "checks": [
+      {
+        "atUtc": "2026-10-27T11:30:27.630Z",
+        "check": "NATIVE_KMS_STARTUP_PASS",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0
+      },
+      {
+        "atUtc": "2026-10-27T11:30:31.373Z",
+        "check": "PREVIOUS_SYNTHETIC_ALLOCATION_TOMBSTONE_SAVED",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0
+      },
+      {
+        "atUtc": "2026-10-27T11:30:35.792Z",
+        "bytes": 57,
+        "check": "PRIVATE_STORAGE_OWNER_HASH_AND_AUTHORITY_DENIAL_PASS",
+        "fileId": "eec971b1-4cb7-4ddb-95db-841f3aeefc8b",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0,
+        "sha256": "94667379ce94345fc636b03431ecaa3c522a12d75a2444f75433e38d3c728308"
+      },
+      {
+        "atUtc": "2026-10-27T11:30:35.793Z",
+        "check": "OPTIONAL_SIGNED_LINK_KNOWN_UNCONFIGURED",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0,
+        "notClaimedPassed": true
+      },
+      {
+        "atUtc": "2026-10-27T11:30:39.563Z",
+        "check": "NATIVE_CANONICAL_DURABLE_CLAIM_DUPLICATE_DENIAL_PASS",
+        "deliveryId": "8344c375-005e-4ffa-ad6c-9ecfdaa345b2",
+        "fixtureOnly": true,
+        "generation": "d25579c0-bd5f-4eab-b56a-2fa03d82a0b8",
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0,
+        "runId": "62eaed1c-2e91-4c1e-bbd4-e92fba6ce71a"
+      },
+      {
+        "atUtc": "2026-10-27T11:33:12.304Z",
+        "check": "GOOGLE_WORKER_PRIVATE_HTTP_WEBSOCKET_PASS",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0,
+        "previewDomain": "preview.xroga.com",
+        "provider": "google-gce",
+        "runId": "62eaed1c-2e91-4c1e-bbd4-e92fba6ce71a",
+        "sessionId": "147976df-9305-4398-9a07-17b5da3c4ccf"
+      },
+      {
+        "atUtc": "2026-10-27T11:36:09.079Z",
+        "check": "STOPPED",
+        "errorCode": "ERR_ASSERTION",
+        "errorName": "AssertionError",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0
+      },
+      {
+        "atUtc": "2026-10-27T11:36:12.961Z",
+        "check": "FAILURE_WORKER_CLEANUP_PASS",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0,
+        "sessionId": "147976df-9305-4398-9a07-17b5da3c4ccf"
+      },
+      {
+        "atUtc": "2026-10-27T11:36:13.984Z",
+        "check": "SYNTHETIC_PRIVATE_FILE_CLEANUP_PASS",
+        "fileId": "eec971b1-4cb7-4ddb-95db-841f3aeefc8b",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-fixture",
+        "modelCalls": 0
+      }
+    ],
+    "finalExecutionStatus": "FAILED_OPERATOR_ASSERTION_EXPECTED_404_INSTEAD_OF_EXISTING_410",
+    "nativeVmAndDiskAbsent": true,
+    "noModelCalls": true
+  },
+  "productionContinuation": {
+    "execution": "xroga-canonical-production-xzkhx",
+    "checks": [
+      {
+        "atUtc": "2026-10-27T11:41:46.783Z",
+        "check": "REVOKED_PREVIEW_HTTP_410_PASS",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-continuation",
+        "modelCalls": 0,
+        "sessionId": "147976df-9305-4398-9a07-17b5da3c4ccf",
+        "status": 410
+      },
+      {
+        "atUtc": "2026-10-27T11:41:48.969Z",
+        "check": "INTERRUPTED_FIXTURE_CANCELLED_RETRY_DENIED_PASS",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-continuation",
+        "modelCalls": 0
+      },
+      {
+        "atUtc": "2026-10-27T11:41:53.976Z",
+        "check": "DURABLE_DETERMINISTIC_RESULT_PASS",
+        "deliveryId": "54c3a474-7c9f-439c-b72c-23b0e5e52e11",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-continuation",
+        "modelCalls": 0,
+        "runId": "e9b07f8f-604c-46c1-b7ac-e18f846eb4ef"
+      },
+      {
+        "atUtc": "2026-10-27T11:41:54.353Z",
+        "check": "NATIVE_TASK_SUBMISSION_DEDUPLICATION_PASS",
+        "deliveryId": "54c3a474-7c9f-439c-b72c-23b0e5e52e11",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-continuation",
+        "modelCalls": 0,
+        "taskName": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/queues/xroga-canonical-production/tasks/b214141256c11c1a308be153fd9c54725c3304643c390061aecb36672504e063"
+      },
+      {
+        "atUtc": "2026-10-27T11:41:54.636Z",
+        "check": "NATIVE_TASK_SUBMISSION_DEDUPLICATION_PASS",
+        "deliveryId": "8344c375-005e-4ffa-ad6c-9ecfdaa345b2",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-continuation",
+        "modelCalls": 0,
+        "taskName": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/queues/xroga-canonical-production/tasks/b5d529db43c0d40f329aa215a537e89e4c7bed3a49e9f446a4ed050a6770d6e3"
+      },
+      {
+        "atUtc": "2026-10-27T11:41:54.637Z",
+        "check": "ALL_CONTINUATION_CHECKS_PASS",
+        "fixtureOnly": true,
+        "kind": "production-infrastructure-continuation",
+        "modelCalls": 0
+      }
+    ],
+    "executionSucceeded": true,
+    "newVmAllocations": 0
+  },
+  "durableRecoveryEvidenceReused": {
+    "approved": true,
+    "scope": "Model-free actual native worker cancellation, same-run fenced checkpoint recovery and duplicate denial. One private Job, one restored stageSA, existing SM2 only. No Compute/KMS/DNS/API/production mutation.",
+    "startedAtUtc": "2026-10-26T21:49:27.525567+00:00",
+    "cleanupStartUtc": "2026-10-26T22:09:27.525567+00:00",
+    "deadlineUtc": "2026-10-26T22:19:27.525567+00:00",
+    "watchPid": 6256,
+    "controllerPidInitially": 6257,
+    "maxCreditUsd": 0.25,
+    "maxModelMicroUsd": 0,
+    "package": "fly-to-gcp-20261025/DETERMINISTIC-WORKER-RECOVERY-APPROVAL.md",
+    "preflightCorrection": "Initial source-byte hash reader normalized CRLF beforehash and stopped before any cloud mutations. Fixed exact-byte decoding, resumedsamewindow, no clockreset.",
+    "status": "PASS_CONTROLLED_TERMINATION_AND_OWNED_RECOVERY",
+    "cleanupStatus": "Watchdog removed Job, exact secret binding, disabled SM2 and deleted stage identity at22:09:44 UTC. Readback inventory to be finalized.",
+    "actualRun": "6ba9835d-04ea-4f9d-81c6-04a1fa5029ff",
+    "firstExecution": "xroga-canonical-stage-20261027g-jfxc7",
+    "recoveryExecution": "xroga-canonical-stage-20261027g-jl7ms",
+    "additionalDuplicateExecution": "xroga-canonical-stage-20261027g-rhqpx stopped at cleanup margin before claim. NOT a new duplicate PASS. Reuse previously accepted C and database fencing evidence.",
+    "proof": "fly-to-gcp-20261025/G-NATIVE-RECOVERY-SUMMARY.json",
+    "liveContentSha256": "4433e7a642b46603ff67c10298aa4e819d50ebbbb74b497d332381cca8e4a380",
+    "controllerCorrections": [
+      "Byte-preserving hash read, no clock reset",
+      "Allow empty successful REST responses",
+      "Observe admitted execution directly rather than waiting for long-running Job completion"
+    ],
+    "modelGeneration": false
+  },
+  "flyRuntime": {
+    "atUtc": "2026-10-27T11:46:55.7948162Z",
+    "status": "PASS_ZERO_RUNNING_FLY_MACHINES_AUTOSTART_AND_RESTART_DISABLED",
+    "irreversibleDeletionPerformed": false,
+    "apiMachines": [
+      {
+        "id": "7845746ce20008",
+        "state": "stopped",
+        "image": "registry.fly.io/xroga-api@sha256:38fdca33fae4c0a9785fe6b859d4d986fc68408b324c85f15e57a6fbc5a54d24",
+        "autostart": false,
+        "restart": "no",
+        "volumes": [
+          null
+        ]
+      },
+      {
+        "id": "e820730b296098",
+        "state": "stopped",
+        "image": "registry.fly.io/xroga-api@sha256:38fdca33fae4c0a9785fe6b859d4d986fc68408b324c85f15e57a6fbc5a54d24",
+        "autostart": false,
+        "restart": "no",
+        "volumes": [
+          null
+        ]
+      }
+    ],
+    "sandboxMachines": [],
+    "retainedColdAssets": [
+      "xroga-api app and two stopped machines",
+      "Fly image and secret recovery metadata",
+      "xroga-api allocated shared IPv4 and IPv6",
+      "empty xroga-sandbox app"
+    ]
+  },
+  "flyFederation": {
+    "atUtc": "2026-10-27T11:47:44.807026+00:00",
+    "newIam": false,
+    "deletedResources": false,
+    "checks": [
+      {
+        "path": "health",
+        "status": 200,
+        "release": "b11841ead316913cb46316fa7c16e76c6519b392"
+      },
+      {
+        "path": "ready",
+        "status": 200,
+        "release": "b11841ead316913cb46316fa7c16e76c6519b392"
+      }
+    ],
+    "pool": {
+      "name": "projects/574998934848/locations/global/workloadIdentityPools/xroga-fly-production",
+      "disabled": true
+    },
+    "oldFlyIdentity": {
+      "email": "xroga-api-kms-20261024@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+      "disabled": true
+    },
+    "nativeIdentityEnabled": true,
+    "status": "PASS_FLY_RUNTIME_AND_FEDERATION_RETIRED_GOOGLE_HEALTHY"
+  },
+  "nativePreflight": {
+    "result": "PASS_NATIVE_API_PREFLIGHT_NOT_CUTOVER_ACCEPTANCE",
+    "unchangedEvaluator": true,
+    "scope": "Configuration gate plus independent live acceptance receipts"
+  },
+  "ci": {
+    "requiredChecks": "PASS",
+    "headAndIntegratedBaselineRun": "40492789633",
+    "authenticatedBrowserDatabaseRun": "40492789836",
+    "goldenRun": "40492789623",
+    "missionPolicyRun": "40492789580",
+    "dockerRun": "40492789489",
+    "tenantDatabaseRun": "40492789761",
+    "rerunForFinalReceiptOnly": false
+  },
+  "recovery": {
+    "backupPrefix": "gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/",
+    "isolatedRestore": "PASS_ACTUAL_ISOLATED_RESTORE_AND_LEGACY_RECOVERY",
+    "tables": 158,
+    "credentialObjects": 40,
+    "restoreCleanupVerified": true,
+    "managedKmsNativeIdentity": true,
+    "rollbackRequiresFly": false
+  },
+  "knownLimitations": [
+    "GLM insufficient provider balance, OpenRouter empty response and reservation failures preserved, no repeated model requests",
+    "Optional timed private-file links lack FILE_DELIVERY_SIGNING_KEY in both preserved configurations, not claimed verified",
+    "Intermittent laptop browser DNS lookup failure recovered by clearing local DNS cache, normal signed-in owner data loaded after Fly shutdown"
+  ],
+  "costs": {
+    "newRecurringResourcesThisClosure": 0,
+    "newIamGrantsThisClosure": 0,
+    "modelSpendUsd": 0,
+    "cashPurchaseOrTopupUsd": 0,
+    "lastReportedBilling": {
+      "newRecurringCashApproval": "EXACT_RUNTIME_PACKAGE_AND_ESTIMATED_65_70_USD_BASELINE_APPROVED_CREDITS_FIRST_CASH_ALLOCATION_30",
+      "grossAlwaysCpuBaselineEstimate": "About 47 USD/month for 1 vCPU and 1 GiB, before other services; verify region/prices and exact limits before provisioning",
+      "creditUsd": 298.85,
+      "initialCashAllocationUsd": 30,
+      "linkedAccount": "01D20E-3C6059-8BB147",
+      "enabled": true,
+      "expires": "2027-01-22",
+      "paidAccountVerified": true,
+      "netCurrentMonthReportedUsd": 0,
+      "grossCurrentMonthReportedUsd": 1.74,
+      "observedAtUtc": "2026-10-27T07:40:00Z",
+      "receipt": "fly-to-gcp-20261025/BILLING-CURRENT-20261027.json",
+      "alerts": "Existing $30 cash and $5 gross budgets, thresholds 50/80/100 percent. Not hard spending caps."
+    },
+    "actualLaterUsage": "Billing reporting lag, not represented as a current metered total",
+    "existingApprovedBaselineUsdPerMonth": "65-70 before worker and other usage, promotional credits first"
+  },
+  "retainedColdFlyAssets": [
+    "xroga-api app and two stopped machines",
+    "Fly image and secret recovery metadata",
+    "xroga-api allocated shared IPv4 and IPv6",
+    "empty xroga-sandbox app"
+  ],
+  "phase3": "B1_P3_VERIFIED_PRESERVED",
+  "phase4": "NOT_STARTED",
+  "batch15": "PRESERVED",
+  "receiptSha256": {
+    "xroga-final-production-acceptance-20261027.json": "bbab8f6339df9573a377ac4c921a99a83b5bfc7d15cbb654163ac9fd8c76cf43",
+    "xroga-final-native-release-actual-20261027.json": "816df539bc4d57b358f3a8f54b8da498333392d4ab5bcd3eac0425fe4ec0edc7",
+    "xroga-final-native-release-contract-20261027.json": "5a26965488e35f2bcb4eac6682120d0933257ce6221b8d9ebaafe187e36f0101",
+    "FLY-RUNTIME-RETIRED-20261027.json": "a54da31977d18f97c0acb2e976137f6aa3070b10991eb1fc7ac813c4665608f2",
+    "xroga-fly-federation-retired-20261027.json": "75bbcca13afd080ef3aba9a7b8a8415677776615718b2e0e3b29d896d0c6391f"
+  }
+}

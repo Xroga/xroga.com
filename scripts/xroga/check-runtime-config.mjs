@@ -33,7 +33,10 @@ export function validateRuntimeInventory(value, expectedNames = []) {
   if (inventory.source_endpoints.some(row => row.credentialsInUrl)) throw new Error('Credential-bearing source endpoint requires a security review; no secret values may be copied');
   for (const id of ['frontend', 'api', 'supabase', 'redis', 'r2']) if (!ids.has(id)) throw new Error(`Canonical dependency missing: ${id}`);
   const frontend = inventory.dependencies.find(row => row.dependency_id === 'frontend'), api = inventory.dependencies.find(row => row.dependency_id === 'api');
-  if (frontend.hostnames[0] !== 'xroga.com' || api.hostnames[0] !== 'xroga-api.fly.dev') throw new Error('Conflicting canonical public hostname definition');
+  if (frontend.hostnames[0] !== 'xroga.com' || api.hostnames[0] !== 'api.xroga.com' || api.provider !== 'Google Cloud Run') throw new Error('Conflicting canonical public hostname or Google API definition');
+  if(inventory.dependencies.some(row=>row.state==='ACTIVE'&&(/Fly\.io|Fly Machines/.test(row.provider)
+    ||row.hostnames.some(host=>/(?:^|\.)(?:fly\.dev|machines\.dev)$/.test(host))
+    ||row.outbound_dependencies.some(id=>id.startsWith('fly-')))))throw new Error('Active Fly runtime dependency is forbidden');
   if (inventory.dependencies.some(row => /local.*(?:fallback|storage)|filesystem/i.test(row.provider + row.purpose)) && !inventory.risks.some(row => row.id === 'EPHEMERAL_ARTIFACT_FALLBACK' && ['P0', 'P1'].includes(row.severity))) throw new Error('Production ephemeral fallback is not reported as high risk');
   const consequentialFallbacks = [
     ['backend/src/ai/providerBudget.ts', 'EPHEMERAL_BUDGET_FALLBACK'],
@@ -48,8 +51,8 @@ export function validateRuntimeInventory(value, expectedNames = []) {
     dynamicBindings: inventory.dynamic_bindings.length, highRisks: inventory.risks.filter(row => ['P0', 'P1'].includes(row.severity)).length,
     secretValuesRead: false, productionDeployed: false };
 }
-export function validateApiBuildContract(docker, fly, backend) {
-  if (!docker.includes('test -f dist/index.js') || !docker.includes('"dist/index.js"') || !fly.includes('node dist/index.js')
+export function validateApiBuildContract(docker, backend) {
+  if (!docker.includes('test -f dist/index.js') || !/CMD\s*\[\s*"node"\s*,\s*"dist\/index\.js"\s*\]/.test(docker)
     || backend.scripts.build !== 'node scripts/cline-git-compat.mjs --check && node scripts/security-dependency-patches.mjs --check && tsc'
     || backend.scripts.postinstall !== 'node scripts/cline-git-compat.mjs --apply && node scripts/security-dependency-patches.mjs --apply'
     || !docker.includes('RUN node scripts/cline-git-compat.mjs --apply')
@@ -69,11 +72,11 @@ export function main() {
   for (const source of inventory.source_hashes) {
     if (!existsSync(join(root, source.path)) || createHash('sha256').update(read(source.path)).digest('hex') !== source.sha256) throw new Error(`Runtime source/config drift: ${source.path}`);
   }
-  const docker = read('Dockerfile.api'), fly = read('fly.api.toml'), vercel = JSON.parse(read('vercel.json'));
+  const docker = read('Dockerfile.api'), vercel = JSON.parse(read('vercel.json'));
   const backend = JSON.parse(read('backend/package.json')), frontend = JSON.parse(read('frontend/package.json'));
-  validateApiBuildContract(docker, fly, backend);
+  validateApiBuildContract(docker, backend);
   if (!vercel.buildCommand.includes('build') || !vercel.buildCommand.includes('frontend') || frontend.scripts.build !== 'node ../backend/scripts/security-dependency-patches.mjs --check && next build') throw new Error('Unsupported frontend deployment build target');
-  const actualManifests = ['Dockerfile.api', 'fly.api.toml', 'vercel.json'];
+  const actualManifests = ['Dockerfile.api', 'vercel.json', 'scripts/infrastructure/cloud-run-release-gate.mjs'];
   for (const path of actualManifests) if (!inventory.manifests.some(row => row.path === path && row.presence === 'PRESENT')) throw new Error('Active deployment manifest is missing from inventory');
   for (const [path, content] of renderRuntimeOutputs(inventory)) if (!existsSync(join(root, path)) || read(path) !== content) throw new Error(`Runtime topology/docs drift: ${path}`);
   console.log(JSON.stringify(result));

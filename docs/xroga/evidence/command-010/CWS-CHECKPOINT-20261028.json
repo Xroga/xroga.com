@@ -1,0 +1,117 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "parent": "b346b38a95fbb7d91594b6b14b5e017dd53c2037",
+  "resolvedCandidateIds": [
+    "d9708e60456bb2d7e538"
+  ],
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 128,
+    "pending": 8,
+    "unresolvedHighRiskBypasses": 5
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "remainingCandidates": [
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "file": "backend/src/ai/parallelDispatch.ts",
+      "entryPoint": "executeParallelRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "807c2948cdfa16e19b84",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "file": "backend/src/services/integrations/composioClient.ts",
+      "entryPoint": "composioRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "file": "backend/src/services/integrations/supabaseProvision.ts",
+      "entryPoint": "mgmtFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "42cc7885da84d7295699",
+      "file": "backend/src/services/publish/easCredentials.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "602637659fcacb16c1ef",
+      "file": "backend/src/services/publish/easPublish.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    }
+  ],
+  "evidence": "docs/xroga/evidence/command-010/CWS-APPROVAL-BOUNDARY-20261028.json",
+  "focused": {
+    "total": 135,
+    "pass": 135,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Actual CWS service, canonical confirmation/claim/dispatch/finish, actual Express credential route and Supabase SDK protocol fixtures, actual pipeline block, unchanged OAuth epoch/consume/revoke/vault lease tests and both native GitHub publication regressions. Synthetic identities, credentials, source and HTTP responses only."
+  },
+  "backendTypes": {
+    "job": "940748a4-bacf-4f59-be51-c39a4e3ca483",
+    "status": "passed",
+    "exitCode": 0,
+    "stopReason": null,
+    "log": "docs/xroga/evidence/command-010/logs/cws-backend-types-20261028.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 1322076
+    }
+  },
+  "frontend": "UNCHANGED_FROM_PARENT_WITH_PASSING_TYPE_AND_BUILD_EVIDENCE_FINAL_CLOSURE_TYPE_CHECK_STILL_REQUIRED",
+  "precedingCi": "docs/xroga/evidence/command-010/CI-B346B38A-20261028.json",
+  "currentSourceCi": "REQUIRED_AFTER_PUSH",
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "externalBlocker": "NONE_IDENTIFIED_REMAINING_SECURITY_ENGINEERING",
+  "nextGroup": "Existing Expo credential delegation and EAS GraphQL build/publish callers, through original actor, current owned provider project, canonical bounded consequential authority and exact source/credential provenance.",
+  "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
+  "spending": 0,
+  "strictReceipt": {
+    "job": "b28fed2b-c0c9-4918-941a-8b05bc4c6015",
+    "exitCode": 1,
+    "log": "docs/xroga/evidence/command-010/logs/strict-incomplete-8pending-20261028.log",
+    "rawSha256": "985fac79a5352aa887c49bbd833e5fa428bdab6a537a8a6d9bd7938df5cc3042",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    }
+  },
+  "finalLocalGates": {
+    "job": "03b85125-5fe9-4c4e-a7df-2cb5b408c114",
+    "exitCode": 0,
+    "log": "docs/xroga/evidence/command-010/logs/cws-final-integrity-20261028.log",
+    "rawSha256": "aa5851111e5a9e7b858163247bda2da522ce845c69306667cb52bd7054123d33",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    },
+    "tests": 10,
+    "pass": 10,
+    "result": "PASS_INTEGRITY_NOT_ACCEPTANCE"
+  }
+}

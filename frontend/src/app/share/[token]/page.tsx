@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { SharedAnswerDownloads } from '@/components/terminal/SharedAnswerDownloads';
+import { API_URL, fetchApiResponse } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,12 +16,6 @@ type PublicShare = {
   prompt: string;
   response: string;
 };
-
-function apiOrigin(): string {
-  const configured = process.env.NEXT_PUBLIC_API_URL?.trim();
-  if (configured) return configured.replace(/\/$/, '');
-  return process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://api.xroga.com';
-}
 
 type ShareResult =
   | { status: 'ok'; share: PublicShare }
@@ -39,17 +34,26 @@ const loadShare = cache(async (token: string): Promise<ShareResult> => {
       // Public shares do not depend on auth configuration. A private one will
       // correctly receive 403 below when no verified session can be forwarded.
     }
-    const response = await fetch(`${apiOrigin()}/api/message-shares/${encodeURIComponent(token)}`, {
+    const response = await fetchApiResponse(`${API_URL}/api/message-shares/${encodeURIComponent(token)}`, {
       cache: 'no-store',
+      signal: AbortSignal.timeout(25000),
       headers: {
         Accept: 'application/json',
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
     });
-    if (response.status === 403) return { status: 'private' };
-    if (!response.ok) return { status: 'missing' };
-    const payload = await response.json() as { share?: PublicShare };
-    return payload.share ? { status: 'ok', share: payload.share } : { status: 'missing' };
+    if (!response.ok) {
+      await response.body?.cancel().catch(()=>undefined);
+      return { status: response.status===403?'private':'missing' };
+    }
+    const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let bytes=0;
+    try{if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.length;if(bytes>1024*1024)throw Error('Invalid share receipt');chunks.push(next.value);}}
+    finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    const payload = JSON.parse(Buffer.concat(chunks).toString('utf8')) as { share?: PublicShare };
+    const share=payload?.share;
+    if(!share||share.token!==token||!['public','private'].includes(share.visibility)||!['response','exchange'].includes(share.scope)
+      ||typeof share.prompt!=='string'||share.prompt.length>20000||typeof share.response!=='string'||share.response.length>100000)return{status:'missing'};
+    return { status: 'ok', share };
   } catch {
     return { status: 'missing' };
   }

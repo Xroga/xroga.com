@@ -15,19 +15,32 @@ test('revision persistence rejects misbound snapshots, malformed receipts and mu
   let override: Record<string, unknown> | null = null;
   let unavailable = false;
   let onPersist: (() => void) | undefined;
+  let readBack: 'ok' | 'tampered' | 'missing' | 'error' = 'ok';
+  const rows = new Map<string, Record<string, unknown>>();
   const persisted: SoftwareProject[] = [];
+  let reads = 0;
   const server = createServer(async (req, res) => {
     const url = new URL(req.url!, 'http://localhost');
     assert.equal(url.pathname, '/rest/v1/project_runtime_revisions');
+    if (req.method === 'GET') {
+      // the read-back: owner-bound, by the revision's own id
+      assert.match(url.search, new RegExp(`user_id=eq.${owner}`));
+      const id = /revision_id=eq.([0-9a-f-]+)/i.exec(url.search)?.[1] ?? '';
+      const row = rows.get(id);
+      reads++;
+      if (readBack === 'error') { res.writeHead(500, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ message: 'PRIVATE_READBACK_CANARY' })); return; }
+      const out = readBack === 'missing' || !row ? [] : [readBack === 'tampered' ? { ...row, software_project: { ...(row.software_project as object), workspace: { files: [{ path: 'index.html', content: 'TAMPERED_AT_REST' }] } } } : row];
+      res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(out)); return;
+    }
     assert.equal(req.method, 'POST');
     let raw = ''; for await (const chunk of req) raw += chunk;
     const body = JSON.parse(raw); requests++;
     persisted.push(body.software_project);
     onPersist?.();
     res.writeHead(unavailable ? 403 : 200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(unavailable ? { message: 'PRIVATE_REVISION_DATABASE_CANARY' } : {
-      ...body, revision_id: '22222222-2222-4222-8222-222222222222', revision_number: 1, created_at: new Date().toISOString(), ...override,
-    }));
+    const inserted = { ...body, revision_id: '22222222-2222-4222-8222-222222222222', revision_number: 1, created_at: new Date().toISOString(), ...override };
+    if (!unavailable && !override) rows.set(inserted.revision_id, inserted);
+    res.end(JSON.stringify(unavailable ? { message: 'PRIVATE_REVISION_DATABASE_CANARY' } : inserted));
   });
   const previous = { url: process.env.SUPABASE_URL, key: process.env.SUPABASE_SERVICE_ROLE_KEY };
   try {
@@ -61,7 +74,16 @@ test('revision persistence rejects misbound snapshots, malformed receipts and mu
     assert.equal(receipt.projectId, original.projectId);
     assert.equal(receipt.workspaceFingerprint, projectWorkspaceFingerprint(original));
     assert.notEqual(source.projectId, original.projectId);
+    assert.ok(reads >= 1, 'a saved revision is read back before it is reported durable');
     onPersist = undefined;
+    // stored bytes that no longer match their fingerprint, a row that is gone, and an unreadable store must each refuse the receipt
+    for (const mode of ['tampered', 'missing', 'error'] as const) {
+      readBack = mode;
+      await assert.rejects(store.saveRevision(owner, fixture()), (error: Error & { code?: string }) => error.code === 'REVISION_READBACK_FAILED' && !/PRIVATE_READBACK_CANARY/.test(error.message));
+      const unsaved = await persistSoftwareProjectRevision(owner, fixture());
+      assert.equal(unsaved.saved, false); assert.equal(unsaved.revisionId, null);
+    }
+    readBack = 'ok';
     unavailable = true;
     const failed = await persistSoftwareProjectRevision(owner, fixture());
     assert.equal(failed.saved, false); assert.equal(failed.revisionId, null);

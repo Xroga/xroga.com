@@ -1049,14 +1049,13 @@ describe(
             'none',
           );
 
-        const registry =
-          executableLine(
+        assert.throws(()=>executableLine(
             'npm',
             [
               'install',
             ],
             'registry-only',
-          );
+          ),/verified restricted-network/);
 
         assert.match(
           restricted,
@@ -1068,10 +1067,6 @@ describe(
           /^unshare -n /,
         );
 
-        assert.doesNotMatch(
-          registry,
-          /^unshare -n /,
-        );
       },
     );
 

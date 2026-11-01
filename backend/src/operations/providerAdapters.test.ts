@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createInternalAdapter, httpVerificationAdapter, ProviderAdapterRegistry } from './providerAdapters.js';
+import { createInternalAdapter, createHttpVerificationAdapter, httpVerificationAdapter, ProviderAdapterRegistry } from './providerAdapters.js';
+import { Readable } from 'node:stream';
+import type { IncomingMessage } from 'node:http';
+function network(body:()=>{text:string;status:number}|never) {
+  return createHttpVerificationAdapter({resolve:async()=>[{address:'8.8.8.8',family:4}],open:async()=>{
+    const item=body();return Object.assign(Readable.from([Buffer.from(item.text)]),{statusCode:item.status,headers:{}}) as IncomingMessage;
+  }});
+}
 
 test('HTTP adapter rejects local and credential-bearing targets', async () => {
   assert.equal((await httpVerificationAdapter.execute('refresh_health', { url: 'http://localhost:3000' })).status, 'blocked');
@@ -9,34 +16,23 @@ test('HTTP adapter rejects local and credential-bearing targets', async () => {
 });
 
 test('HTTP adapter verifies response and application marker without persisting body', async (t) => {
-  const original = globalThis.fetch;
-  globalThis.fetch = (async () => new Response('xroga-runtime-marker', { status: 200 })) as typeof fetch;
-  t.after(() => { globalThis.fetch = original; });
-  const result = await httpVerificationAdapter.execute('refresh_health', { url: 'https://example.com/ready', expectedMarker: 'xroga-runtime-marker' });
+  const result = await network(()=>({text:'xroga-runtime-marker',status:200})).execute('refresh_health', { url: 'https://example.com/ready', expectedMarker: 'xroga-runtime-marker' });
   assert.equal(result.status, 'verified'); assert.equal(JSON.stringify(result).includes('xroga-runtime-marker'), false);
 });
 
 test('HTTP adapter detects provider-ready but wrong application', async (t) => {
-  const original = globalThis.fetch;
-  globalThis.fetch = (async () => new Response('another application', { status: 200 })) as typeof fetch;
-  t.after(() => { globalThis.fetch = original; });
-  const result = await httpVerificationAdapter.execute('verify_domain', { url: 'https://example.com', expectedMarker: 'xroga' });
+  const result = await network(()=>({text:'another application',status:200})).execute('verify_domain', { url: 'https://example.com', expectedMarker: 'xroga' });
   assert.equal(result.status, 'failed'); assert.equal(result.errorCategory, 'serving_wrong_application');
 });
 
 test('HTTP adapter maps provider timeout safely', async (t) => {
-  const original = globalThis.fetch;
-  globalThis.fetch = (async () => { throw new DOMException('The operation was aborted', 'AbortError'); }) as typeof fetch;
-  t.after(() => { globalThis.fetch = original; });
-  const result = await httpVerificationAdapter.execute('refresh_health', { url: 'https://example.com' });
+  const result = await network(()=>{throw new DOMException('The operation was aborted','AbortError');}).execute('refresh_health', { url: 'https://example.com' });
   assert.equal(result.status, 'provider_unavailable'); assert.equal(result.errorCategory, 'timeout');
 });
 
 test('HTTP adapter retries a rate limit once without duplicating mutations', async (t) => {
-  const original = globalThis.fetch; let calls = 0;
-  globalThis.fetch = (async () => { calls += 1; return calls === 1 ? new Response('limited', { status: 429 }) : new Response('ok', { status: 200 }); }) as typeof fetch;
-  t.after(() => { globalThis.fetch = original; });
-  const result = await httpVerificationAdapter.execute('refresh_health', { url: 'https://example.com/ready' });
+  let calls=0;
+  const result = await network(()=>({text:'ok',status:++calls===1?429:200})).execute('refresh_health', { url: 'https://example.com/ready' });
   assert.equal(result.status, 'verified'); assert.equal(calls, 2);
 });
 

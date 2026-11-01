@@ -1,0 +1,260 @@
+TAP version 13
+# Subtest: /api/browser/runs
+    # Subtest: runs on the canonical scheduler, verifies the outcome, stores private evidence, and shows it only to its owner
+    ok 1 - runs on the canonical scheduler, verifies the outcome, stores private evidence, and shows it only to its owner
+      ---
+      duration_ms: 433.9015
+      type: 'test'
+      ...
+    # Subtest: an action happening is not the outcome: failed postconditions leave the task not completed
+    ok 2 - an action happening is not the outcome: failed postconditions leave the task not completed
+      ---
+      duration_ms: 38.6086
+      type: 'test'
+      ...
+    # Subtest: a client can never supply its own write grant: consequential steps need a grant only the server issues
+    ok 3 - a client can never supply its own write grant: consequential steps need a grant only the server issues
+      ---
+      duration_ms: 20.7312
+      type: 'test'
+      ...
+    # Subtest: needs an issued context; a body cannot name a user, and a hand-built context is refused
+    ok 4 - needs an issued context; a body cannot name a user, and a hand-built context is refused
+      ---
+      duration_ms: 49.4248
+      type: 'test'
+      ...
+    # Subtest: refuses another user's project, out-of-scope and private targets, and AI steps without a budget, before any run starts
+    ok 5 - refuses another user's project, out-of-scope and private targets, and AI steps without a budget, before any run starts
+      ---
+      duration_ms: 50.7236
+      type: 'test'
+      ...
+    # Subtest: cancellation stops the browser; only the owner can cancel
+    ok 6 - cancellation stops the browser; only the owner can cancel
+      ---
+      duration_ms: 537.0891
+      type: 'test'
+      ...
+    # Subtest: the frontend "Capture page" plan (BrowserRun.tsx) is accepted and verified as sent
+    ok 7 - the frontend "Capture page" plan (BrowserRun.tsx) is accepted and verified as sent
+      ---
+      duration_ms: 25.8769
+      type: 'test'
+      ...
+    # Subtest: answers 503 instead of falling back when the browser host or evidence storage is not configured
+    ok 8 - answers 503 instead of falling back when the browser host or evidence storage is not configured
+      ---
+      duration_ms: 4.9582
+      type: 'test'
+      ...
+    1..8
+ok 1 - /api/browser/runs
+  ---
+  duration_ms: 1175.9392
+  type: 'suite'
+  ...
+# Subtest: explicit browser plans cannot carry credential canaries to the worker outside the model gateway
+ok 2 - explicit browser plans cannot carry credential canaries to the worker outside the model gateway
+  ---
+  duration_ms: 64.6881
+  type: 'test'
+  ...
+# Subtest: legacy durable browser input denial is persisted terminally and never retried by another instance
+ok 3 - legacy durable browser input denial is persisted terminally and never retried by another instance
+  ---
+  duration_ms: 11.2483
+  type: 'test'
+  ...
+# Subtest: browser run dispatch
+    # Subtest: Cloud Tasks: enqueues an authenticated HTTP task naming the run, signed as the execute service account
+    ok 1 - Cloud Tasks: enqueues an authenticated HTTP task naming the run, signed as the execute service account
+      ---
+      duration_ms: 40.8401
+      type: 'test'
+      ...
+    # Subtest: Cloud Tasks: an already-enqueued run is a success, a refusal is an error the caller can see
+    ok 2 - Cloud Tasks: an already-enqueued run is a success, a refusal is an error the caller can see
+      ---
+      duration_ms: 3.235
+      type: 'test'
+      ...
+    # Subtest: Cloud Tasks: refuses a malformed queue, a non-https target and a missing identity before any call
+    ok 3 - Cloud Tasks: refuses a malformed queue, a non-https target and a missing identity before any call
+      ---
+      duration_ms: 1.015
+      type: 'test'
+      ...
+    # Subtest: in-process: starts the run without waiting for it and reports a failure to the handler instead of throwing
+    ok 4 - in-process: starts the run without waiting for it and reports a failure to the handler instead of throwing
+      ---
+      duration_ms: 10.6806
+      type: 'test'
+      ...
+    # Subtest: the environment picks in-process by default and refuses a half-configured cloud setting instead of silently falling back
+    ok 5 - the environment picks in-process by default and refuses a half-configured cloud setting instead of silently falling back
+      ---
+      duration_ms: 0.7048
+      type: 'test'
+      ...
+    1..5
+ok 4 - browser run dispatch
+  ---
+  duration_ms: 59.1574
+  type: 'suite'
+  ...
+# Subtest: Cloud Tasks never follows a redirect carrying the runtime service token
+ok 5 - Cloud Tasks never follows a redirect carrying the runtime service token
+  ---
+  duration_ms: 1.0581
+  type: 'test'
+  ...
+# Subtest: durable browser runs
+    # Subtest: a run accepted by one instance is executed by another, because it is a stored record and not a promise in the request process
+    ok 1 - a run accepted by one instance is executed by another, because it is a stored record and not a promise in the request process
+      ---
+      duration_ms: 117.3466
+      type: 'test'
+      ...
+    # Subtest: two instances executing the same run at once run the browser exactly once
+    ok 2 - two instances executing the same run at once run the browser exactly once
+      ---
+      duration_ms: 25.4193
+      type: 'test'
+      ...
+    # Subtest: a cancel set on one instance stops the browser running on another
+    ok 3 - a cancel set on one instance stops the browser running on another
+      ---
+      duration_ms: 29.0952
+      type: 'test'
+      ...
+    # Subtest: cancelling a run that never started finishes it as cancelled and never launches the browser
+    ok 4 - cancelling a run that never started finishes it as cancelled and never launches the browser
+      ---
+      duration_ms: 7.8149
+      type: 'test'
+      ...
+    # Subtest: only the owner can cancel or read a run
+    ok 5 - only the owner can cancel or read a run
+      ---
+      duration_ms: 6.102
+      type: 'test'
+      ...
+    # Subtest: a run left running by a dead instance is recovered, and is not recovered while a live worker holds it
+    ok 6 - a run left running by a dead instance is recovered, and is not recovered while a live worker holds it
+      ---
+      duration_ms: 14.6351
+      type: 'test'
+      ...
+    # Subtest: the active-run ceiling is counted from the shared record, so scaling out does not multiply it
+    ok 7 - the active-run ceiling is counted from the shared record, so scaling out does not multiply it
+      ---
+      duration_ms: 15.6266
+      type: 'test'
+      ...
+    # Subtest: lists only stale unfinished runs for recovery
+    ok 8 - lists only stale unfinished runs for recovery
+      ---
+      duration_ms: 17.0511
+      type: 'test'
+      ...
+    1..8
+ok 6 - durable browser runs
+  ---
+  duration_ms: 236.6909
+  type: 'suite'
+  ...
+# Subtest: both actual browser SDK boundaries deny raw job IDs before reserving or constructing a provider client
+ok 7 - both actual browser SDK boundaries deny raw job IDs before reserving or constructing a provider client
+  ---
+  duration_ms: 21.0527
+  type: 'test'
+  ...
+# Subtest: gateway: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+ok 8 - gateway: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+  ---
+  duration_ms: 291.9162
+  type: 'test'
+  ...
+# Subtest: planner: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+ok 9 - planner: actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement
+  ---
+  duration_ms: 170.6014
+  type: 'test'
+  ...
+# Subtest: Drive upload
+    # Subtest: single mode: one signed PUT with the signed headers, then complete; the recorded object is what comes back
+    ok 1 - single mode: one signed PUT with the signed headers, then complete; the recorded object is what comes back
+      ---
+      duration_ms: 70.323
+      type: 'test'
+      ...
+    # Subtest: single mode: a storage refusal is an error and the object is never completed
+    ok 2 - single mode: a storage refusal is an error and the object is never completed
+      ---
+      duration_ms: 3.7812
+      type: 'test'
+      ...
+    # Subtest: multipart: signs in batches of at most 100 just before use, sends each slice, and completes with the ETags in part order
+    ok 3 - multipart: signs in batches of at most 100 just before use, sends each slice, and completes with the ETags in part order
+      ---
+      duration_ms: 4.3096
+      type: 'test'
+      ...
+    # Subtest: multipart: more than 100 parts are signed in more than one batch
+    ok 4 - multipart: more than 100 parts are signed in more than one batch
+      ---
+      duration_ms: 34.0785
+      type: 'test'
+      ...
+    # Subtest: multipart: a part that fails is retried on its own and the others are not resent
+    ok 5 - multipart: a part that fails is retried on its own and the others are not resent
+      ---
+      duration_ms: 2.8967
+      type: 'test'
+      ...
+    # Subtest: multipart: gives up after the attempt limit and never completes a partial upload
+    ok 6 - multipart: gives up after the attempt limit and never completes a partial upload
+      ---
+      duration_ms: 4.0204
+      type: 'test'
+      ...
+    # Subtest: multipart: a bucket that does not expose ETag is reported as a configuration problem, not retried forever
+    ok 7 - multipart: a bucket that does not expose ETag is reported as a configuration problem, not retried forever
+      ---
+      duration_ms: 1.7681
+      type: 'test'
+      ...
+    # Subtest: a cancelled upload sends nothing more and is reported as aborted
+    ok 8 - a cancelled upload sends nothing more and is reported as aborted
+      ---
+      duration_ms: 1.2235
+      type: 'test'
+      ...
+    # Subtest: sends no hash when the file is too large to hash in the browser, and a generic type when none is known
+    ok 9 - sends no hash when the file is too large to hash in the browser, and a generic type when none is known
+      ---
+      duration_ms: 1.5969
+      type: 'test'
+      ...
+    1..9
+ok 10 - Drive upload
+  ---
+  duration_ms: 128.6478
+  type: 'suite'
+  ...
+# Subtest: multipart authorization denial is terminal and does not retry or complete
+ok 11 - multipart authorization denial is terminal and does not retry or complete
+  ---
+  duration_ms: 1.2061
+  type: 'test'
+  ...
+1..11
+# tests 37
+# suites 4
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11723.4129

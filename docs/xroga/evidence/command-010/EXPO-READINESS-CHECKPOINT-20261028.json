@@ -1,0 +1,136 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "parent": "a8c663defebf0a73a9895fffc5a6641b195042c9",
+  "resolvedCandidateIds": [
+    "42cc7885da84d7295699"
+  ],
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 129,
+    "pending": 7,
+    "unresolvedHighRiskBypasses": 4
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "remainingCandidates": [
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "file": "backend/src/ai/parallelDispatch.ts",
+      "entryPoint": "executeParallelRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "807c2948cdfa16e19b84",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "file": "backend/src/services/integrations/composioClient.ts",
+      "entryPoint": "composioRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "file": "backend/src/services/integrations/supabaseProvision.ts",
+      "entryPoint": "mgmtFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "602637659fcacb16c1ef",
+      "file": "backend/src/services/publish/easPublish.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    }
+  ],
+  "evidence": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+  "focused": {
+    "total": 88,
+    "pass": 88,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Synthetic HTTP fixtures exercising real Expo service, Supabase client, Express routes and actual pipeline block, with existing package, owned-target, build-receipt and CWS/native UI regressions. No live vendor operation or customer credential access."
+  },
+  "backendTypes": {
+    "job": "db8ae97b-900e-498e-bcca-fd166c28468e",
+    "status": "passed",
+    "exitCode": 0,
+    "stopReason": null,
+    "log": "docs/xroga/evidence/command-010/logs/expo-readiness-backend-types-20261028.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 1322012
+    }
+  },
+  "frontendTypes": {
+    "job": "0bf21d89-eb5a-4304-b750-a3fcdbf1f820",
+    "status": "passed",
+    "exitCode": 0,
+    "stopReason": null,
+    "log": "docs/xroga/evidence/command-010/logs/expo-readiness-frontend-types-20261028.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 1322132
+    }
+  },
+  "frontendLint": {
+    "job": "bfdbf41e-e432-4450-8b6f-2a8b60444ded",
+    "status": "passed",
+    "exitCode": 0,
+    "stopReason": null,
+    "log": "docs/xroga/evidence/command-010/logs/expo-readiness-frontend-lint-20261028.log",
+    "sha256": "65393dcd4438f40f67eab8542ffdb7f127d92044e3ee1f8312f9330f7c626fe0",
+    "rawSha256": "65393dcd4438f40f67eab8542ffdb7f127d92044e3ee1f8312f9330f7c626fe0",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    }
+  },
+  "precedingCi": "docs/xroga/evidence/command-010/CI-A8C663DE-20261028.json",
+  "currentSourceCi": "REQUIRED_AFTER_PUSH",
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "externalBlocker": "NONE_IDENTIFIED_REMAINING_SECURITY_ENGINEERING",
+  "nextGroup": "602637659fcacb16c1ef: original actor and current full connection, exact owned Expo app creation/selection, canonical exact immutable workflow source and consequential approval, terminal dispatch/receipt verification. Other original pending groups and browser/XResearch positive acceptance obligations remain.",
+  "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
+  "spending": 0,
+  "strictReceipt": {
+    "job": "0a2cf854-5bc0-4669-bd4b-ca43fd7ff1fc",
+    "exitCode": 1,
+    "log": "docs/xroga/evidence/command-010/logs/expo-strict-incomplete-7pending-20261028.log",
+    "rawSha256": "225c00d9e0d6581ba62157409485e0d1d2469073a61e2ccbaaad04bcfa95be7f",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    }
+  },
+  "finalLocalGates": {
+    "job": "d0f93588-ec76-4bed-a38a-1058acc3dc0b",
+    "exitCode": 0,
+    "log": "docs/xroga/evidence/command-010/logs/expo-readiness-integrity-20261028.log",
+    "rawSha256": "54897ab6636a2f19ea8f8eb442e0000b73b60edf18294109e514a99351fcd17f",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 0
+    },
+    "tests": 10,
+    "pass": 10,
+    "result": "PASS_INTEGRITY_NOT_ACCEPTANCE"
+  }
+}

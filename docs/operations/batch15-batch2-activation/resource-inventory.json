@@ -1,0 +1,87 @@
+{
+  "instances": [],
+  "queues": [
+    {
+      "name": "xroga-browser-runs",
+      "state": "RUNNING",
+      "rateLimits": {
+        "maxDispatchesPerSecond": 5,
+        "maxBurstSize": 10,
+        "maxConcurrentDispatches": 10
+      }
+    },
+    {
+      "name": "xroga-canonical-production",
+      "state": "RUNNING",
+      "rateLimits": {
+        "maxDispatchesPerSecond": 1,
+        "maxBurstSize": 10,
+        "maxConcurrentDispatches": 2
+      }
+    }
+  ],
+  "scheduler": [
+    {
+      "name": "xroga-business-automation-tick",
+      "state": "ENABLED",
+      "schedule": "*/5 * * * *",
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/business-automations/tick"
+    },
+    {
+      "name": "xroga-browser-recover",
+      "state": "PAUSED",
+      "schedule": "*/2 * * * *",
+      "url": "https://xroga-api-422lt7eujq-uk.a.run.app/internal/browser/recover"
+    }
+  ],
+  "secrets": [
+    "COMPOSIO_API_KEY",
+    "GEMINI_API_KEY",
+    "GITHUB_CLIENT_ID",
+    "GITHUB_CLIENT_SECRET",
+    "GLM_API_KEY",
+    "KIMI_API_KEY",
+    "OPENROUTER_API_KEY",
+    "PARALLEL_API_KEY",
+    "SUPABASE_CLIENT_SECRET",
+    "SUPABASE_OAUTH_CLIENT_ID",
+    "SUPABASE_OAUTH_CLIENT_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPBASE_CLIENT_ID",
+    "Supabase_Access_Token",
+    "Supabase_Callback_URL",
+    "Supabase_Project_ID",
+    "VERCEL_API_KEY",
+    "VERCEL_CLIENT_ID",
+    "VERCEL_CLIENT_SECRET",
+    "VERCEL_MANAGED_PROJECT_NAME",
+    "VERCEL_OAUTH_CALLBACK_URL",
+    "VERCEL_TEAM_ID",
+    "WHOP_API_KEY",
+    "WHOP_COMPANY_ID",
+    "WHOP_PLAN_ID",
+    "WHOP_WEBHOOK_SECRET",
+    "Whop_Account_ID",
+    "Whop_Api_Key",
+    "XAI_API_KEY",
+    "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+    "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+    "XROGA_SANDBOX_FLY_APP",
+    "XROGA_SANDBOX_FLY_TOKEN",
+    "XROGA_STAGING_SUPABASE_SERVICE_ROLE_KEY",
+    "xroga-platform-production",
+    "xroga-platform-stage-20261026",
+    "xroga-voice-cloudflare-token"
+  ],
+  "repositories": [
+    {
+      "name": "cloud-run-source-deploy",
+      "mode": "STANDARD_REPOSITORY"
+    },
+    {
+      "name": "ghcr-xroga",
+      "mode": "REMOTE_REPOSITORY"
+    }
+  ],
+  "atUtc": "2026-10-31T07:56:50.397886+00:00"
+}

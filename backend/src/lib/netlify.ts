@@ -1,5 +1,7 @@
 import crypto from 'crypto';
 import { getSecret } from '../config/envSecrets.js';
+import {publishingProviderRequest as fetch,snapshotPublishingSource} from './publishingProviderRequest.js';
+import {AuthorityError} from '../security/authority/enforce.js';
 
 interface NetlifyDeploy {
   id: string;
@@ -34,6 +36,7 @@ export async function deployToNetlify(
 ): Promise<{ deployUrl: string; deployId: string }> {
   const token = getNetlifyToken();
   if (!token) throw new Error('NETLIFY_ACCESS_TOKEN not configured');
+  files=snapshotPublishingSource(files);
 
   const slug = siteName.slice(0, 60).replace(/[^a-z0-9-]/gi, '-').toLowerCase();
 
@@ -57,12 +60,13 @@ export async function deployToNetlify(
     siteId = site.id;
     defaultUrl = site.ssl_url ?? site.url ?? `https://${slug}.netlify.app`;
   } else {
+    if(siteRes.status===401||siteRes.status===403)throw new AuthorityError('NETLIFY_PROVIDER_AUTHORIZATION_DENIED');
     const listRes = await fetch(`https://api.netlify.com/api/v1/sites?filter=all&name=${slug}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!listRes.ok) throw new Error(`Netlify site lookup failed: ${listRes.status}`);
     const sites = (await listRes.json()) as Array<{ id: string; ssl_url?: string; url?: string; name?: string }>;
-    const existing = sites.find((s) => s.name === slug) ?? sites[0];
+    const existing = sites.find((s) => s.name === slug);
     if (!existing) throw new Error('Netlify site creation failed');
     siteId = existing.id;
     defaultUrl = existing.ssl_url ?? existing.url ?? `https://${slug}.netlify.app`;

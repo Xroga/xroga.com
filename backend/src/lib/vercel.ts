@@ -1,4 +1,5 @@
 import { getSecret } from '../config/envSecrets.js';
+import {publishingProviderRequest as fetch,snapshotPublishingSource} from './publishingProviderRequest.js';
 
 interface VercelDeployment {
   id: string;
@@ -102,6 +103,7 @@ export async function deployStaticSiteWithToken(
   token: string,
   opts?: DeploySiteOptions,
 ): Promise<{ deployUrl: string; deploymentId: string }> {
+  files=snapshotPublishingSource(files.map(file=>({path:file.file,content:file.data}))).map(file=>({file:file.path,data:file.content}));
   const teamId = await resolveTeamId(token, opts?.teamId);
   const query = teamQuery(teamId);
   const framework =

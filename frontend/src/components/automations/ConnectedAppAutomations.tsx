@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import {connectReviewUrl,type XrogaConnectPending} from "@/lib/xrogaConnect";
 import { apiFetch } from "@/lib/api";
 
 interface Rule {
@@ -36,6 +37,7 @@ export function ConnectedAppAutomations() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [review,setReview]=useState<string|null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -66,7 +68,9 @@ export function ConnectedAppAutomations() {
       const schedule = kind === "interval"
         ? { kind, intervalSeconds: Math.round(hours * 3600) }
         : { kind, toolkit: toolkit.trim(), triggerSlug: triggerSlug.trim(), triggerConfig: config };
-      await apiFetch("/api/phase1/business-automations", { method: "POST", body: JSON.stringify({ name, request, schedule }) });
+      const result=await apiFetch<XrogaConnectPending|{automation:Rule}>("/api/phase1/business-automations", { method: "POST", body: JSON.stringify({ name, request, schedule }) });
+      if('needsConfirmation' in result){setReview(connectReviewUrl(result));setNotice('Review the exact event subscription before it is created. The workflow stays paused.');return;}
+      setReview(null);
       setName(""); setRequest(""); setNotice("Saved as a paused draft. Review it, then enable it below.");
       await load();
     } catch (cause) {
@@ -90,7 +94,7 @@ export function ConnectedAppAutomations() {
 
   return <section className="mt-8 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5 text-[var(--text-primary)]">
     <h2 className="text-xl font-semibold">Live connected-app rules</h2>
-    <p className="mt-2 text-sm text-[var(--text-secondary)]">Create a two-to-four-step workflow across your connected apps. Runs read automatically; every external write waits for your review. Event rules require a configured Composio webhook.</p>
+    <p className="mt-2 text-sm text-[var(--text-secondary)]">Create a two-to-four-step workflow across your connected apps. Private reads and external writes wait for exact review. Event rules require a configured Composio webhook.</p>
     <form className="mt-5 grid gap-3" onSubmit={(event) => { event.preventDefault(); void create(); }}>
       <label className="grid gap-1 text-sm">Name<input className="rounded-lg border border-[var(--border-subtle)] bg-transparent p-2" required minLength={3} maxLength={120} value={name} onChange={(event) => setName(event.target.value)} /></label>
       <label className="grid gap-1 text-sm">Workflow request<textarea className="min-h-24 rounded-lg border border-[var(--border-subtle)] bg-transparent p-2" required minLength={8} maxLength={1500} placeholder="Find new contacts in my CRM, add them to my sheet, and draft an email with the results" value={request} onChange={(event) => setRequest(event.target.value)} /></label>
@@ -104,6 +108,7 @@ export function ConnectedAppAutomations() {
       <button disabled={busy} className="w-fit rounded-lg bg-[var(--accent)] px-4 py-2 font-semibold text-white disabled:opacity-50">Save paused rule</button>
     </form>
     {error ? <p role="alert" className="mt-3 text-sm text-red-500">{error}</p> : null}
+    {review?<a href={review} className="block mt-3 underline">Review event subscription</a>:null}
     {notice ? <p role="status" className="mt-3 text-sm text-[var(--text-secondary)]">{notice}</p> : null}
     <div className="mt-6 grid gap-3">{rules.map((rule) => <article key={rule.id} className="rounded-xl border border-[var(--border-subtle)] p-4">
       <div className="flex items-center justify-between gap-3"><h3 className="font-semibold">{rule.name}</h3><span className="text-xs text-[var(--text-secondary)]">{rule.enabled ? "Enabled" : "Paused"}</span></div>

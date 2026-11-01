@@ -1,0 +1,221 @@
+TAP version 13
+# Subtest: each first-party client refuses API redirects without forwarding private request bodies
+    # Subtest: canonical API
+    not ok 1 - canonical API
+      ---
+      duration_ms: 71.2608
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: stream submission
+    not ok 2 - stream submission
+      ---
+      duration_ms: 21.4572
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: community
+    not ok 3 - community
+      ---
+      duration_ms: 92.1877
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: runtime
+    not ok 4 - runtime
+      ---
+      duration_ms: 44.4572
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: delivery status
+    not ok 5 - delivery status
+      ---
+      duration_ms: 39.8373
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: delivery download
+    not ok 6 - delivery download
+      ---
+      duration_ms: 10.7504
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: voice
+    not ok 7 - voice
+      ---
+      duration_ms: 38.0026
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: guest
+    not ok 8 - guest
+      ---
+      duration_ms: 20.7913
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:50:44'
+      failureType: 'testCodeFailure'
+      error: |-
+        No private request follows an API redirect
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:114)
+        process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///C:/Users/hp/Documents/Codex/2026-10-15/hi/work/xroga-phase4-prep/frontend/e2e/phase4-api-clients.security.mjs:50:36)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..8
+not ok 1 - each first-party client refuses API redirects without forwarding private request bodies
+  ---
+  duration_ms: 697.0505
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\frontend\\e2e\\phase4-api-clients.security.mjs:35:1'
+  failureType: 'subtestsFailed'
+  error: '8 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 9
+# suites 0
+# pass 0
+# fail 9
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1009.4592

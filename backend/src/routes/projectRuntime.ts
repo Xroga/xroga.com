@@ -39,6 +39,7 @@ import {
 
 import {
   livePreviewStatusFromFacts,
+  previewSourceState,
 } from '../synthesis/livePreview/status.js';
 
 const router =
@@ -584,6 +585,12 @@ router.get(
 
         message:
           plan.message,
+
+        sourceState:
+          previewSourceState(
+            revision.project.runtime?.sourceFingerprint,
+            revision.workspaceFingerprint,
+          ),
 
         updatedAt:
           session

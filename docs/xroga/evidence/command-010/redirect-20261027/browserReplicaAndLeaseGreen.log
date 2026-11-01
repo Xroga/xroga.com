@@ -1,0 +1,361 @@
+TAP version 13
+# Subtest: /api/browser/runs
+    # Subtest: runs on the canonical scheduler, verifies the outcome, stores private evidence, and shows it only to its owner
+    ok 1 - runs on the canonical scheduler, verifies the outcome, stores private evidence, and shows it only to its owner
+      ---
+      duration_ms: 619.4201
+      type: 'test'
+      ...
+    # Subtest: an action happening is not the outcome: failed postconditions leave the task not completed
+    ok 2 - an action happening is not the outcome: failed postconditions leave the task not completed
+      ---
+      duration_ms: 22.2652
+      type: 'test'
+      ...
+    # Subtest: needs an issued context; a body cannot name a user, and a hand-built context is refused
+    ok 3 - needs an issued context; a body cannot name a user, and a hand-built context is refused
+      ---
+      duration_ms: 23.5673
+      type: 'test'
+      ...
+    # Subtest: refuses another user's project, out-of-scope and private targets, and AI steps without a budget, before any run starts
+    ok 4 - refuses another user's project, out-of-scope and private targets, and AI steps without a budget, before any run starts
+      ---
+      duration_ms: 39.9584
+      type: 'test'
+      ...
+    # Subtest: cancellation stops the browser; only the owner can cancel
+    ok 5 - cancellation stops the browser; only the owner can cancel
+      ---
+      duration_ms: 25.4097
+      type: 'test'
+      ...
+    # Subtest: the frontend "Capture page" plan (BrowserRun.tsx) is accepted and verified as sent
+    ok 6 - the frontend "Capture page" plan (BrowserRun.tsx) is accepted and verified as sent
+      ---
+      duration_ms: 21.9537
+      type: 'test'
+      ...
+    # Subtest: answers 503 instead of falling back when the browser host or evidence storage is not configured
+    ok 7 - answers 503 instead of falling back when the browser host or evidence storage is not configured
+      ---
+      duration_ms: 10.4591
+      type: 'test'
+      ...
+    1..7
+ok 1 - /api/browser/runs
+  ---
+  duration_ms: 779.5598
+  type: 'suite'
+  ...
+# Subtest: separate API instances with the same Cloud Run revision and PID cannot share browser lease ownership
+ok 2 - separate API instances with the same Cloud Run revision and PID cannot share browser lease ownership
+  ---
+  duration_ms: 34.8701
+  type: 'test'
+  ...
+# Subtest: browser task handler on the canonical scheduler
+    # Subtest: security denials and uncertain completed accounting cannot retry a browser task
+    ok 1 - security denials and uncertain completed accounting cannot retry a browser task
+      ---
+      duration_ms: 32.5196
+      type: 'test'
+      ...
+    # Subtest: runs through ExecutionScheduler, stores verified private evidence, and releases the lease
+    ok 2 - runs through ExecutionScheduler, stores verified private evidence, and releases the lease
+      ---
+      duration_ms: 36.2333
+      type: 'test'
+      ...
+    # Subtest: builds the job from issued authority only; the worker sees the actor, project, run and task, not anything a scope could inject
+    ok 3 - builds the job from issued authority only; the worker sees the actor, project, run and task, not anything a scope could inject
+      ---
+      duration_ms: 11.1541
+      type: 'test'
+      ...
+    # Subtest: refuses a scope that smuggles a credential field, before any worker runs
+    ok 4 - refuses a scope that smuggles a credential field, before any worker runs
+      ---
+      duration_ms: 3.1865
+      type: 'test'
+      ...
+    # Subtest: a private or out-of-scope start page never reaches a worker
+    ok 5 - a private or out-of-scope start page never reaches a worker
+      ---
+      duration_ms: 7.4883
+      type: 'test'
+      ...
+    # Subtest: authority
+        # Subtest: another tenant cannot write into a project it does not own, even if the authorise hook is wrong (Drive itself refuses)
+        ok 1 - another tenant cannot write into a project it does not own, even if the authorise hook is wrong (Drive itself refuses)
+          ---
+          duration_ms: 4.3388
+          type: 'test'
+          ...
+        # Subtest: a denied authorisation stops before dispatch: no worker, no lease, no writes
+        ok 2 - a denied authorisation stops before dispatch: no worker, no lease, no writes
+          ---
+          duration_ms: 2.0451
+          type: 'test'
+          ...
+        # Subtest: permission revoked while the job runs: nothing is stored
+        ok 3 - permission revoked while the job runs: nothing is stored
+          ---
+          duration_ms: 2.1383
+          type: 'test'
+          ...
+        # Subtest: permission revoked between two artifact writes: the second is not written
+        ok 4 - permission revoked between two artifact writes: the second is not written
+          ---
+          duration_ms: 5.742
+          type: 'test'
+          ...
+        1..4
+    ok 6 - authority
+      ---
+      duration_ms: 16.0036
+      type: 'suite'
+      ...
+    # Subtest: leases and fencing
+        # Subtest: a worker that lost its lease mid-job cannot store anything and its result is discarded
+        ok 1 - a worker that lost its lease mid-job cannot store anything and its result is discarded
+          ---
+          duration_ms: 106.9477
+          type: 'test'
+          ...
+        # Subtest: a late result from a worker that lost its lease is refused even when it has no artifacts to store
+        ok 2 - a late result from a worker that lost its lease is refused even when it has no artifacts to store
+          ---
+          duration_ms: 115.6866
+          type: 'test'
+          ...
+        # Subtest: a lease lost between two artifact writes stops the second write
+        ok 3 - a lease lost between two artifact writes stops the second write
+          ---
+          duration_ms: 6.0555
+          type: 'test'
+          ...
+        # Subtest: two dispatches of the same task: one runs, the other is refused
+        ok 4 - two dispatches of the same task: one runs, the other is refused
+          ---
+          duration_ms: 49.4667
+          type: 'test'
+          ...
+        # Subtest: the heartbeat keeps a long job alive past its first ttl
+        ok 5 - the heartbeat keeps a long job alive past its first ttl
+          ---
+          duration_ms: 910.7833
+          type: 'test'
+          ...
+        1..5
+    ok 7 - leases and fencing
+      ---
+      duration_ms: 1190.286
+      type: 'suite'
+      ...
+    # Subtest: untrusted results
+        # Subtest: pages outside the scope or egress policy
+        ok 1 - pages outside the scope or egress policy
+          ---
+          duration_ms: 4.5963
+          type: 'test'
+          ...
+        # Subtest: counters over the job limits or not whole numbers
+        ok 2 - counters over the job limits or not whole numbers
+          ---
+          duration_ms: 16.6898
+          type: 'test'
+          ...
+        # Subtest: artifacts with bad names, types, sizes or duplicates
+        ok 3 - artifacts with bad names, types, sizes or duplicates
+          ---
+          duration_ms: 12.1294
+          type: 'test'
+          ...
+        # Subtest: credential-like artifacts are never stored, by name or by content, and the good ones in the same job are not stored either
+        ok 4 - credential-like artifacts are never stored, by name or by content, and the good ones in the same job are not stored either
+          ---
+          duration_ms: 3.8205
+          type: 'test'
+          ...
+        # Subtest: too many artifacts
+        ok 5 - too many artifacts
+          ---
+          duration_ms: 2.8769
+          type: 'test'
+          ...
+        # Subtest: a worker error never leaks its message into the task
+        ok 6 - a worker error never leaks its message into the task
+          ---
+          duration_ms: 1.6467
+          type: 'test'
+          ...
+        1..6
+    ok 8 - untrusted results
+      ---
+      duration_ms: 42.2939
+      type: 'suite'
+      ...
+    # Subtest: the worker's free-text summary is stored without any credential it may have copied from a page
+    ok 9 - the worker's free-text summary is stored without any credential it may have copied from a page
+      ---
+      duration_ms: 5.4769
+      type: 'test'
+      ...
+    # Subtest: idempotency and recovery
+        # Subtest: a retry reuses artifacts an earlier attempt stored, so a crash between writes leaves no duplicates
+        ok 1 - a retry reuses artifacts an earlier attempt stored, so a crash between writes leaves no duplicates
+          ---
+          duration_ms: 7.5094
+          type: 'test'
+          ...
+        # Subtest: reuse requires identical content: the same name with different bytes is a new object
+        ok 2 - reuse requires identical content: the same name with different bytes is a new object
+          ---
+          duration_ms: 5.5704
+          type: 'test'
+          ...
+        # Subtest: the same task in another tenant never reuses or sees this tenant's artifacts
+        ok 3 - the same task in another tenant never reuses or sees this tenant's artifacts
+          ---
+          duration_ms: 8.4088
+          type: 'test'
+          ...
+        1..3
+    ok 10 - idempotency and recovery
+      ---
+      duration_ms: 22.1013
+      type: 'suite'
+      ...
+    # Subtest: admission (bounded concurrency, tenant fairness)
+        # Subtest: the same tenant queues behind its own cap, one job at a time
+        ok 1 - the same tenant queues behind its own cap, one job at a time
+          ---
+          duration_ms: 159.4424
+          type: 'test'
+          ...
+        # Subtest: two tenants run side by side while each respects its own cap
+        ok 2 - two tenants run side by side while each respects its own cap
+          ---
+          duration_ms: 86.3115
+          type: 'test'
+          ...
+        # Subtest: a full queue fails fast with a typed error and never reaches the worker
+        ok 3 - a full queue fails fast with a typed error and never reaches the worker
+          ---
+          duration_ms: 82.9444
+          type: 'test'
+          ...
+        # Subtest: authority revoked while a job waits in the queue stops it: the worker is never started
+        ok 4 - authority revoked while a job waits in the queue stops it: the worker is never started
+          ---
+          duration_ms: 79.266
+          type: 'test'
+          ...
+        # Subtest: a failed or cancelled job gives its slot back
+        ok 5 - a failed or cancelled job gives its slot back
+          ---
+          duration_ms: 3.5453
+          type: 'test'
+          ...
+        1..5
+    ok 11 - admission (bounded concurrency, tenant fairness)
+      ---
+      duration_ms: 412.1333
+      type: 'suite'
+      ...
+    # Subtest: cancellation and limits
+        # Subtest: run cancellation reaches the worker, stores nothing and releases the lease
+        ok 1 - run cancellation reaches the worker, stores nothing and releases the lease
+          ---
+          duration_ms: 29.1521
+          type: 'test'
+          ...
+        # Subtest: the job deadline stops a worker that never answers
+        ok 2 - the job deadline stops a worker that never answers
+          ---
+          duration_ms: 65.014
+          type: 'test'
+          ...
+        1..2
+    ok 12 - cancellation and limits
+      ---
+      duration_ms: 94.4987
+      type: 'suite'
+      ...
+    1..12
+ok 3 - browser task handler on the canonical scheduler
+  ---
+  duration_ms: 1878.6642
+  type: 'suite'
+  ...
+# Subtest: LeaseStore contract: MemoryLeaseStore
+    # Subtest: grants one live holder at a time
+    ok 1 - grants one live holder at a time
+      ---
+      duration_ms: 3.6255
+      type: 'test'
+      ...
+    # Subtest: fencing tokens strictly increase across expiry and release, never repeat
+    ok 2 - fencing tokens strictly increase across expiry and release, never repeat
+      ---
+      duration_ms: 0.7993
+      type: 'test'
+      ...
+    # Subtest: a stalled worker cannot act after takeover (assertCurrent and renew both refuse)
+    ok 3 - a stalled worker cannot act after takeover (assertCurrent and renew both refuse)
+      ---
+      duration_ms: 1.5604
+      type: 'test'
+      ...
+    # Subtest: a late release by the old holder never frees the new holder
+    ok 4 - a late release by the old holder never frees the new holder
+      ---
+      duration_ms: 0.5272
+      type: 'test'
+      ...
+    # Subtest: renew extends the expiry; an unrenewed lease expires
+    ok 5 - renew extends the expiry; an unrenewed lease expires
+      ---
+      duration_ms: 0.4421
+      type: 'test'
+      ...
+    # Subtest: released leases are immediately available
+    ok 6 - released leases are immediately available
+      ---
+      duration_ms: 0.3485
+      type: 'test'
+      ...
+    # Subtest: is scoped by tenant: identical run and task ids in two tenants are independent
+    ok 7 - is scoped by tenant: identical run and task ids in two tenants are independent
+      ---
+      duration_ms: 0.561
+      type: 'test'
+      ...
+    # Subtest: rejects blank identifiers and unreasonable ttls
+    ok 8 - rejects blank identifiers and unreasonable ttls
+      ---
+      duration_ms: 1.4559
+      type: 'test'
+      ...
+    # Subtest: a forged token is refused even for the right worker
+    ok 9 - a forged token is refused even for the right worker
+      ---
+      duration_ms: 0.7618
+      type: 'test'
+      ...
+    1..9
+ok 4 - LeaseStore contract: MemoryLeaseStore
+  ---
+  duration_ms: 12.9927
+  type: 'suite'
+  ...
+1..4
+# tests 48
+# suites 9
+# pass 48
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14966.7807

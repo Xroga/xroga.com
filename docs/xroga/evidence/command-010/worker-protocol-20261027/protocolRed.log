@@ -1,0 +1,91 @@
+TAP version 13
+# Subtest: untrusted coordinator job IDs cannot select signed follow-up paths
+not ok 1 - untrusted coordinator job IDs cannot select signed follow-up paths
+  ---
+  duration_ms: 12.2009
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\browserCoordinatorProtocol.security.test.ts:1:1012'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\browserCoordinatorProtocol.security.test.ts:15:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: oversized coordinator records are cancelled and cannot become retryable failures
+not ok 2 - oversized coordinator records are cancelled and cannot become retryable failures
+  ---
+  duration_ms: 19.1684
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\browserCoordinatorProtocol.security.test.ts:1:1465'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BrowserTaskError: the browser host closed the stream without a result
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\browserCoordinatorProtocol.security.test.ts:23:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: malformed coordinator records are terminal protocol denials
+not ok 3 - malformed coordinator records are terminal protocol denials
+  ---
+  duration_ms: 2.1597
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\browserCoordinatorProtocol.security.test.ts:1:1988'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BrowserTaskError: the browser host closed the stream without a result
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\browserCoordinatorProtocol.security.test.ts:28:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: coordinator redirect rejection stays terminal through signed transport
+not ok 4 - coordinator redirect rejection stays terminal through signed transport
+  ---
+  duration_ms: 0.722
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\browserCoordinatorProtocol.security.test.ts:1:2351'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BrowserTaskError: the browser host refused the job (307)
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\browserCoordinatorProtocol.security.test.ts:33:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a cancelled coordinator cannot publish a late successful result
+ok 5 - a cancelled coordinator cannot publish a late successful result
+  ---
+  duration_ms: 1.0044
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 1
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 802.9359

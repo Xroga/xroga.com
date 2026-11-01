@@ -1,0 +1,39 @@
+{
+  "scope": "TWO_EXACT_CURRENT_SOURCE_DORMANT_ADAPTERS_NOT_AUTHORITY_OR_LATER_BATCH_ACTIVATION",
+  "baseline": "5ada5db7526efb1e0a4e426dbf4feab3d538597f",
+  "modules": [
+    {
+      "id": "2ca37ae73a723e2b988c",
+      "path": "backend/src/synthesis/chain/advancedWeb3.ts",
+      "callSha256": "30d5b6c0667a89d33db7a124cf4c89bb7d31881d6d1905fec0f19d5ce53cc944",
+      "sourceFileSha256": "d188a38214d7827bda99f738a7f2146cb123f29ce363158fc0c0e043365bb6ad",
+      "baselineIdentical": true
+    },
+    {
+      "id": "09c93cfa5ff3fbb6deb9",
+      "path": "backend/src/synthesis/integrations/communicationAi.ts",
+      "callSha256": "76292d3a64157e9c06a2ff47914166733b28d6cfa1480ecc66a613c341cba64f",
+      "sourceFileSha256": "00ced58a0e80e1a065f01e55b2c3876ffae4ee9ee0dec435ba01417c192090fc",
+      "baselineIdentical": true
+    }
+  ],
+  "sourceTrace": "No current production module, browser/worker/operator source under backend/src,frontend/src,workers,scripts or deploy imports/reexports either exact module or references either outbound export. Source search and AST regression include mts and mjs scripts. Only the existing synthetic tests invoke injected storage/communication ports. No cloud operation, message, upload or later-batch code was executed or changed.",
+  "limitations": "Known current-source graph only. Reflection, generated code, future routes/imports and activation need explicit renewed review. This does not certify adapter authorization, consent, egress, accounting or tenant isolation for activation. Future production import or export use causes the included regression to fail.",
+  "evidence": {
+    "path": "backend/src/security/egress/dormantConsequentialAdapters.test.ts",
+    "marker": "the two dormant content-upload and communication adapters have no current production importer or exported-call reference",
+    "sha256": "3c8a908f6f53c5c3fe3e577ccf59e186660a0b09c1b6086734b41cdeb06d3d67"
+  },
+  "receipt": {
+    "jobId": "98ec823e-bd37-40b2-913e-cfc359a7a3fb",
+    "status": "passed",
+    "exitCode": 0,
+    "log": "docs/xroga/evidence/command-010/dormant-consequential-20261027.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 3567
+    }
+  },
+  "productionChanged": false,
+  "spending": 0
+}

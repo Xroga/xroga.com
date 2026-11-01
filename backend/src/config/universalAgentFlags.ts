@@ -98,6 +98,7 @@ export interface RoutingDecision {
 export function routeProject(
   projectId: string | null | undefined,
   flags: UniversalAgentFlags = readUniversalAgentFlags(),
+  options: { builderBound?: boolean } = {},
 ): RoutingDecision {
   if (flags.mode === 'off' || flags.mode === 'legacy') {
     return { useUniversal: false, shadow: false, reason: 'the universal agent is disabled' };
@@ -115,6 +116,12 @@ export function routeProject(
     return { useUniversal: true, shadow: false, reason: flags.mode === 'default'
       ? 'the universal agent is the default path with the legacy fallback still available'
       : 'the universal agent is active and legacy retirement is in progress' };
+  }
+  // An AI Product Builder project has no repository, and the legacy path can only write to a
+  // connected repository, so a server-bound Builder run can only succeed on the universal path.
+  // The operator modes above (off, legacy, shadow) still win.
+  if (options.builderBound) {
+    return { useUniversal: true, shadow: false, reason: 'AI Product Builder projects use the universal path' };
   }
   if (flags.allowlist.includes(projectId)) {
     return { useUniversal: true, shadow: false, reason: 'the project is on the universal agent allowlist' };

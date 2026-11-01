@@ -1,0 +1,23 @@
+{
+  "scope": "CURRENT_SOURCE_METADATA_ONLY_ALL_UNRESOLVED_OBLIGATIONS_RETAINED",
+  "changes": [
+    {
+      "packetId": "B1-P2-b8b2050b4efeeb5b",
+      "reference": "b7c56d22",
+      "path": "backend/src/ai/executionRuntime.ts",
+      "previousSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+      "currentSha256": "ff68eb6fdd3eb85a3f7c2c96149ba47acad7995329488ae095d3e3e5574e53cc",
+      "reason": "Accepted Google SandboxAdmissionError and Phase4 terminal model/security denial prevent unauthorized retries. Existing task graph and persistence remain unchanged, no new authority. Focused scheduler proof retained, exact-source CI still required."
+    },
+    {
+      "packetId": "B1-P2-9557fb9d0f7a38f5",
+      "reference": "415daf50",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "previousSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
+      "currentSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
+      "reason": "Finite official OAuth issuer transport bounds receipts and denies redirects without refresh/identity fallback. Existing exact PKCE/vault/revision persistence bindings retained. No publishing or new financial authority certified."
+    }
+  ],
+  "frozenWorklistChanged": false,
+  "securityCertificationAdded": false
+}

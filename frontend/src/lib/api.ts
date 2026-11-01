@@ -387,6 +387,7 @@ async function waitForPersistedSwarmRun(
 
   let lastSequence =
     afterSequence;
+  let notedHistoryGap = false;
 
   while (
     Date.now() <
@@ -427,7 +428,7 @@ async function waitForPersistedSwarmRun(
 
     try {
       response =
-        await fetch(
+        await fetchApiResponse(
           `${API_URL}/api/swarm/runs/${runId}?afterSequence=${Math.max(
             0,
             lastSequence,
@@ -449,6 +450,7 @@ async function waitForPersistedSwarmRun(
     } catch (
       error
     ) {
+      if(error instanceof ApiError&&error.data.code==='API_DESTINATION_DENIED')throw error;
       if (
         error instanceof
           DOMException &&
@@ -498,6 +500,16 @@ async function waitForPersistedSwarmRun(
     const run =
       await response.json() as
         SwarmRunSummary;
+    // The server keeps only the most recent events. If it reports that some between our cursor and the oldest it still holds are gone, say so once
+    // instead of presenting the jump as an unbroken history.
+    if (run.eventsTruncated && !notedHistoryGap) {
+      notedHistoryGap = true;
+      options.onProgress?.({
+        agent: 'runtime',
+        status: 'running',
+        message: 'Some earlier progress is no longer available. Showing the latest steps.',
+      });
+    }
 
     for (
       const event of
@@ -729,7 +741,7 @@ export async function streamSwarmExecute(
     );
 
   const res =
-    await fetch(
+    await fetchApiResponse(
       `${API_URL}/api/swarm/execute`,
 
       {
@@ -1422,6 +1434,27 @@ export class ApiError extends Error {
   }
 }
 
+/** First-party transport only. This doesn't issue authentication or authorize a
+ * backend effect. Credentials and private bodies stay at the configured API
+ * origin, and a redirect denial cannot become durable-polling recovery.
+ */
+export async function fetchApiResponse(destination:string,options:RequestInit={}):Promise<Response>{
+  const denied=()=>new ApiError('The API destination was denied by security policy.',403,{code:'API_DESTINATION_DENIED'});
+  let target:URL;
+  try{target=new URL(destination);if(target.origin!==API_URL||target.username||target.password||target.hash)throw new Error();}
+  catch{throw denied();}
+  const assertActive=()=>{if(options.signal?.aborted)throw new DOMException('Request cancelled.','AbortError');};
+  assertActive();
+  const response=await fetch(target.href,{...options,redirect:'manual'});
+  if(options.signal?.aborted){await response.body?.cancel().catch(()=>undefined);assertActive();}
+  // Browsers intentionally hide manual cross-origin redirects as opaque
+  // responses. Node exposes status. Both representations are a terminal denial.
+  if(response.type==='opaqueredirect'||response.redirected||response.status>=300&&response.status<400){
+    await response.body?.cancel().catch(()=>undefined);throw denied();
+  }
+  return response;
+}
+
 let cachedAccessToken:
   string |
   null =
@@ -1653,7 +1686,7 @@ export async function apiFetch<
 
   try {
     res =
-      await fetch(
+      await fetchApiResponse(
         `${API_URL}${path}`,
 
         {
@@ -1664,6 +1697,7 @@ export async function apiFetch<
   } catch (
     err
   ) {
+    if(err instanceof ApiError&&err.data.code==='API_DESTINATION_DENIED')throw err;
     const raw =
       (
         err as Error
@@ -2116,6 +2150,8 @@ export const api = {
         },
       ) =>
         apiFetch<{
+          needsConfirmation?:boolean;
+          reviewUrl?:string;
           ok:
             boolean;
 
@@ -2554,6 +2590,8 @@ export const api = {
         },
       ) =>
         apiFetch<{
+          needsConfirmation?:boolean;
+          reviewUrl?:string;
           githubRepoUrl:
             string;
 
@@ -3134,6 +3172,9 @@ export const api = {
             boolean;
 
           provision?: {
+            needsConfirmation?: boolean;
+            reviewUrl?: string;
+            memoryTablesReady?: boolean;
             ok?:
               boolean;
 
@@ -3241,6 +3282,9 @@ export const api = {
             boolean;
 
           provision?: {
+            needsConfirmation?: boolean;
+            reviewUrl?: string;
+            memoryTablesReady?: boolean;
             ok?:
               boolean;
 
@@ -3319,10 +3363,16 @@ export const api = {
           ok:
             boolean;
 
+          needsConfirmation?: boolean;
+          reviewUrl?: string;
+
           projectRef?:
             string;
 
           provision?: {
+            needsConfirmation?: boolean;
+            reviewUrl?: string;
+            memoryTablesReady?: boolean;
             message?:
               string;
           };
@@ -3961,6 +4011,8 @@ export const api = {
           string,
       ) =>
         apiFetch<{
+          needsConfirmation?: boolean;
+          reviewUrl?: string;
           ok:
             boolean;
 
@@ -4094,6 +4146,8 @@ export const api = {
         },
       ) =>
         apiFetch<{
+          needsConfirmation?: boolean;
+          reviewUrl?: string;
           ok:
             boolean;
 
@@ -4273,7 +4327,7 @@ export const api = {
         ),
 
     syncPlayCredentials:
-      () =>
+      (body?: {projectId?: string; applicationIdentifier?: string}) =>
         apiFetch<{
           ok:
             boolean;
@@ -4289,7 +4343,7 @@ export const api = {
 
             body:
               JSON.stringify(
-                {},
+                body || {},
               ),
           },
         ),
@@ -4297,6 +4351,7 @@ export const api = {
     syncAppleCredentials:
       (
         body?: {
+          projectId?: string;
           bundleIdentifier?:
             string;
         },
@@ -4336,6 +4391,8 @@ export const api = {
 
           synced?:
             string[];
+          needsConfirmation?:boolean;
+          confirmations?:Array<{id:string;summary:string;status:string;toolkit:string;toolSlug?:string;expiresAt:string}>;
         }>(
           '/api/publish/sync-electron-secrets',
 
@@ -4349,6 +4406,8 @@ export const api = {
               }),
           },
         ),
+
+    confirmElectronSecret:(id:string)=>apiFetch<{ok:boolean;synced:string[];message:string}>(`/api/publish/sync-electron-secrets/${encodeURIComponent(id)}/confirm`,{method:'POST'}),
 
     easBuilds:
       () =>
@@ -4740,12 +4799,7 @@ concurrency:
           'spark',
       ) =>
         apiFetch<{
-          purchaseUrl:
-            string;
-
-          checkoutConfigurationId:
-            string |
-            null;
+          confirmation:{id:string;summary:string;toolkit:string;toolSlug?:string;expiresAt:string};
         }>(
           '/api/billing/checkout',
 
@@ -4759,6 +4813,8 @@ concurrency:
               }),
           },
         ),
+
+    confirmCheckout:(id:string)=>apiFetch<{purchaseUrl:string;checkoutConfigurationId:string|null}>(`/api/billing/checkout/${encodeURIComponent(id)}/confirm`,{method:'POST'}),
 
     portal:
       () =>
@@ -5749,6 +5805,12 @@ export interface SwarmRunSummary {
 
   lastSequence?:
     number;
+
+  /** Oldest event the server still retains; absent on older servers. */
+  firstRetainedSequence?: number | null;
+
+  /** True when events between the requested cursor and the oldest retained event are no longer available. */
+  eventsTruncated?: boolean;
 }
 
 export interface DashboardSummary {
@@ -6628,4 +6690,17 @@ export interface AnalyticsDashboard {
     marketplacePurchases:
       number;
   };
+}
+
+/** Downloads a file from an authenticated API route (a patch or ZIP), with the signed-in session; errors are the same ApiError as apiFetch. */
+export async function apiDownload(path: string): Promise<{ blob: Blob; filename: string | null }> {
+  const accessToken = await getAccessToken();
+  let res: Response;
+  try { res = await fetchApiResponse(`${API_URL}${path}`, { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {} }); }
+  catch (error) { if (error instanceof ApiError) throw error; throw new ApiError('Cannot reach the Xroga API. Check your connection and try again.', 0, { code: 'NETWORK_ERROR' }); }
+  if (!res.ok) {
+    const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    throw new ApiError(typeof data.error === 'string' ? data.error : 'Download failed', res.status, data);
+  }
+  return { blob: await res.blob(), filename: /filename="([^"]+)"/.exec(res.headers.get('content-disposition') ?? '')?.[1] ?? null };
 }

@@ -6,6 +6,7 @@ import {
 
 import {
   API_URL,
+  fetchApiResponse,
 } from '@/lib/api';
 
 import type {
@@ -51,7 +52,7 @@ async function request<T>(
     await token();
 
   const response =
-    await fetch(
+    await fetchApiResponse(
       `${API_URL}${path}`,
 
       {

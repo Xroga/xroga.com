@@ -90,6 +90,25 @@ describe('the capability router decides, not the legacy router', () => {
 });
 
 describe('a run cannot report success without a real commit', () => {
+  it('returns a blocked result without a commit or alternate interpretation after a security denial', async t => {
+    const prior = process.env.OPENROUTER_API_KEY;
+    process.env.OPENROUTER_API_KEY = 'synthetic-routing-only';
+    t.after(() => { if (prior === undefined) delete process.env.OPENROUTER_API_KEY; else process.env.OPENROUTER_API_KEY = prior; });
+    let interpretations = 0, commits = 0;
+    const result = await tryUniversalBuild({
+      ...base, projectId: 'demo-project', flags: enabledForDemo, store: new InMemoryUniversalStore(),
+      goalInterpreter: async () => { interpretations++; throw Object.assign(Error('Local policy denial'), { code: 'MODEL_CREDENTIAL_EGRESS_DENIED' }); },
+      commit: async () => { commits++; throw Error('A denied interpretation must never reach a commit'); },
+    });
+    assert.equal(interpretations, 1);
+    assert.equal(commits, 0);
+    assert.equal(result?.result.outcome, 'blocked');
+    assert.equal(result?.result.mutationBegan, false);
+    assert.equal(result?.result.verified, false);
+    assert.equal(result?.result.commitSha, null);
+    assert.deepEqual(result?.routing.fallbacks, []);
+  });
+
   // Returning a fake SHA, or skipping the commit and reporting success, would produce a
   // "completed" build with nothing in source control.
   it('refuses to commit and says why', async () => {

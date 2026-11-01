@@ -1,0 +1,243 @@
+{
+  "scope": "ONLY_AURA_PUBLIC_MANUAL_GUEST_BOUNDARY_NOT_PHASE4_ACCEPTANCE",
+  "parent": "2a7e7604d7ebba352e5cf914b09f8b7cf1fa8309",
+  "resolvedCandidateIds": [
+    "805931ff0dc022677403"
+  ],
+  "path": "Actual AiSaas manual conversation -> same-origin Next POST -> server-created guest cookie and platform-authenticated address -> canonical durable guest counters/reservation/lease -> fixed Groq POST -> bounded SSE and valid usage -> safe content publication -> exact lease release.",
+  "authority": "Anonymous guest authority only, no fabricated TenantContext, raw-user-ID fallback, tenant repository, upload, vault, tool, connected action or private database input. UUID/IP are quota keys, never authenticated account ownership.",
+  "defectsFixed": [
+    "Direct funded provider dispatch without durable admission.",
+    "Process-local quota reset and spoofable forwarded-origin/IP admission.",
+    "Unbounded request/response body, redirect following and absent total lifetime.",
+    "Raw provider streaming before valid usage, credential floor or revocation checks."
+  ],
+  "controls": [
+    "Existing guest session/IP limits and 16000-token conservative counter shared with guestChat, no new ledger.",
+    "Full byte-bound input plus maximum output reserved before one provider attempt, failed/uncertain reservations never refunded.",
+    "Production missing Redis, malformed receipts, claimed session, active foreign lease or capacity denial sends zero provider bytes.",
+    "Original issued lease checked before dispatch and completion. Cancellation, expiry and credential rotation are terminal.",
+    "Manual fixed HTTPS provider POST, 40-second overall deadline, 1 MiB response limit, 210000-byte Next request limit independent of Content-Length.",
+    "No provider/model fallback after any denial. A fresh admitted request can recover after ordinary provider outage.",
+    "Output buffered until matching model/request ID, terminal stream marker, allowed finish, valid integer usage and existing secret floor. Only plain delta content is reconstructed.",
+    "Four existing models, personas and temperature/token controls retained. No model tuning or real model spending."
+  ],
+  "canonicalContinuity": {
+    "originalPath": "backend/src/routes/guestChat.ts",
+    "originalSha256": "260a5f28139ce66b174efbf9f17d6a03045ff0738a56dd07685e6f0fd8306d36",
+    "extractedFunctions": [
+      {
+        "name": "guestAccountingDenied",
+        "sha256": "c87b466b1b9aba2463b39a296962c5a75edb8b5bd36c9769a96d10c61fe3ae9f"
+      },
+      {
+        "name": "requireGuestRedis",
+        "sha256": "f2d0c7ae25e4cc8993d509be02ad421022eacb03a2552b0a665c47b4076406a0"
+      },
+      {
+        "name": "issueGuestLease",
+        "sha256": "9b870698458e8087d5fb3121be7ef54f38c218c3ce19d2155c89c90994df9eba"
+      },
+      {
+        "name": "consumeBucket",
+        "sha256": "c348d03da102e515edc46377ee86e9d9f3693b7db6cd1035a76e85c579691f47"
+      },
+      {
+        "name": "consumeTokenBucket",
+        "sha256": "0382a997323b7d3349bd95868433e337a184f22232fd536a2a469275c2401956"
+      },
+      {
+        "name": "cleanExpired",
+        "sha256": "c18b50dffad8105dd9743f60f6bec5e7351ce2342993692404fc46d168301767"
+      },
+      {
+        "name": "stableAddressKey",
+        "sha256": "947a54785ae694614ca3c60f1fc991f6de8d8e7316e9f1b25ff9cb664577ce7c"
+      },
+      {
+        "name": "fixedWindow",
+        "sha256": "e4abf3198b7b94d27fee46cacb6816cde42e1293afe35ad99d4d64b151708459"
+      },
+      {
+        "name": "redisIncrement",
+        "sha256": "f6e661abdaca1334d568f738e247c6cf8f18fc6cf739edeaec29ec93d9ab039c"
+      },
+      {
+        "name": "consumeGuestAllowanceDistributed",
+        "sha256": "f1e6778c677becb41b817d3337b1b30ed2da952da4765bd318f7856925752a26"
+      },
+      {
+        "name": "consumeGuestTokenBudgetDistributed",
+        "sha256": "d31446477348e6d0f9fda1153a4558af68c5b77fac5e6e2b254442617e825681"
+      },
+      {
+        "name": "acquireGuestLease",
+        "sha256": "84aac422f71061d355a0d7b532bff04ea235586f5a666620b167c74af9b40d26"
+      },
+      {
+        "name": "releaseGuestLease",
+        "sha256": "ff6e2693eecc62b4e66161c620cfe24155d845c4c2d85770f8e392a018b21262"
+      },
+      {
+        "name": "isGuestSessionClaimed",
+        "sha256": "ff6e7ad97076418e7fb68fcdfa75e13cf23b8c54d35e1d50b484094451a59ac6"
+      },
+      {
+        "name": "markGuestSessionClaimed",
+        "sha256": "5f34ba2769a14f6df454c4cb83978a22bfb77ffd90c3be6b71293e767ade0087"
+      },
+      {
+        "name": "consumeGuestAllowance",
+        "sha256": "0c29459ac9da220d1096c52c8335de5221693f56a36e860a8408b0ed53aa06b7"
+      },
+      {
+        "name": "consumeGuestTokenBudget",
+        "sha256": "c7a2dd65284cdcbde88299a34fd0d44129dd6ac451001c92a22cff3952a4c473"
+      },
+      {
+        "name": "beginGuestConcurrencyForTest",
+        "sha256": "23c7a81d6c08dba78c6d5aa4a4e4d1f8e3815650c325cf1a6de88b22d27f473f"
+      },
+      {
+        "name": "endGuestConcurrencyForTest",
+        "sha256": "d74dabcd1f9c1d361334127cb2514820e385b46c8405e1081375f2e48ab66e0d"
+      },
+      {
+        "name": "resetGuestChatRateLimitsForTest",
+        "sha256": "39c2fdd72e1f12cd9b9619d4a97ea2a872ad76058fb454d8e8a88567e12daecd"
+      },
+      {
+        "name": "requireCurrentGuestLease",
+        "sha256": "61ab48aed3e10d843c051203a1b8628b41d5be23e4bff60614c0a7ea79c8b401"
+      }
+    ],
+    "retainedFunctionsUnchanged": [
+      "guestClientAddress",
+      "guestCompletion",
+      "guestRoute"
+    ],
+    "constantsAndNamespaces": "Existing source extracted verbatim, only explicit export modifiers added. Redis namespaces, quotas, TTLs, claimed-session semantics and original guestCompletion preserved."
+  },
+  "protocolSources": [
+    "https://raw.githubusercontent.com/groq/groq-typescript/main/src/resources/chat/completions.ts",
+    "https://vercel.com/docs/headers/request-headers"
+  ],
+  "protocolNote": "Official Groq streaming type places final usage at x_groq.usage. Existing max token cap uses max_completion_tokens. Vercel overwrites x-vercel-forwarded-for, outside that deployment production fails closed.",
+  "evidence": {
+    "negative": {
+      "job": "d474c536-6cb6-44a6-97c0-e6ce6d204124",
+      "status": "failed",
+      "exitCode": 1,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/aura-server-before-fix-20261028.log",
+      "sha256": "168954306a114975ff889dc608bc04bf360b5c22d3f9c6ffa90dcd499fa8a245",
+      "rawSha256": "367fd8239d561febd5308f27783fc8b6ba5232dfc9d269bad359d5b47f366ae3",
+      "cleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 8675
+      }
+    },
+    "focused": {
+      "job": "03dc539a-d997-4908-9139-816716f0b682",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/aura-server-and-guest-32tests-20261028.log",
+      "sha256": "80273698a021fefb922830e5b1eb8c196350d12ed26ab1029e1e3d272becae65",
+      "rawSha256": "80273698a021fefb922830e5b1eb8c196350d12ed26ab1029e1e3d272becae65",
+      "cleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 361657
+      }
+    },
+    "backendTypes": {
+      "job": "1b9da936-bb6a-4ab9-9426-55ac17974832",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/aura-backend-types-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322084
+      }
+    },
+    "frontendTypes": {
+      "job": "194b8fc5-0ef6-442f-96de-e0c91c37de0f",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/aura-frontend-types-20261028.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322028
+      }
+    },
+    "lint": {
+      "job": "f7354086-cc54-42b8-a1f6-0ceae240c62f",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "log": "docs/xroga/evidence/command-010/logs/aura-targeted-lint-20261028.log",
+      "sha256": "a0e63e9ee2cd7052847d0457110184b5d83b448e7c894d2a9bbba6e6720f3b55",
+      "rawSha256": "65393dcd4438f40f67eab8542ffdb7f127d92044e3ee1f8312f9330f7c626fe0",
+      "cleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  },
+  "tests": {
+    "total": 32,
+    "pass": 32,
+    "fail": 0,
+    "skip": 0,
+    "environment": "Real Next handler, canonical guest helpers and real local redirect HTTP transport, controlled Redis/provider fixtures, synthetic keys only. No live Groq, customer data or production configuration claim."
+  },
+  "limitations": [
+    "Exact-source production frontend build/CI and deployment configuration preflight remain required. Local isolated build stopped before verification because the cleanup guard refuses dependency junctions.",
+    "Its inactive 106031109-byte source snapshot remains retained after automatic approval review rejected cleanup as blocked by policy. Existing dependencies remain untouched.",
+    "Production requires existing Redis configuration in the frontend runtime. Missing configuration fails closed and health reports unavailable. No credentials transferred or new service provisioned.",
+    "This review does not promote other SDK, release, voice, provision, Composio or upstream callers."
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/guestBudget.ts",
+      "sha256": "6358b705a38c305f9602c6e67eca9b31e13f0ab2df5bbab8c3853f40691c55d9"
+    },
+    {
+      "path": "backend/src/ai/guestProviderBudget.ts",
+      "sha256": "1bf3f8e211dc202fab78b5f4703ccb790dbc9ace7ee1f0c1e56031486440f416"
+    },
+    {
+      "path": "backend/src/routes/guestChat.ts",
+      "sha256": "00dd98d8b24bdcd52c2f36e77315037ad4a196aa414f0239529be7656d421941"
+    },
+    {
+      "path": "frontend/src/lib/showcase/auraGroq.ts",
+      "sha256": "33d4a40bb972d7ddf02fe2565581f94097fa0e73a3f8e68341a907a11a5e3970"
+    },
+    {
+      "path": "frontend/src/lib/showcase/auraGroq.security.test.ts",
+      "sha256": "0cf30d52719560b66043306c53bd5f5be0bd825e82000289fabae0dddb1f1f71"
+    },
+    {
+      "path": "frontend/src/app/api/showcase/aura/chat/route.ts",
+      "sha256": "ba680aed2e0ab15f8793578cd68cf993d10fae1a925728edcadc17ad2729783b"
+    },
+    {
+      "path": "frontend/src/app/api/showcase/aura/health/route.ts",
+      "sha256": "c1bd409fd77f9002cffeb2b45cef8419452cdb38ba80e939a1d6f3dc483c57ed"
+    },
+    {
+      "path": "frontend/next.config.mjs",
+      "sha256": "2cad7878da6a56b4fd08d781e3dd9832535629fe43497ec588398c109e931135"
+    }
+  ],
+  "phase4Accepted": false,
+  "productionEffects": false,
+  "spending": 0
+}

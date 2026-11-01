@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hold": true,
+  "reason": "Founder build-first strategy. Complete Batch1 development/integration before a separately approved coordinated production activation.",
+  "scope": "AUTOMATIC_MAIN_PRODUCTION_FRONTEND_DEPLOYMENT",
+  "releasePrerequisites": [
+    "Exact integrated source CI and Batch1 development acceptance",
+    "Coordinated founder production activation authorization",
+    "Pinned API and browser images, compatible schema and recovery",
+    "Production verification remains separate from development acceptance"
+  ]
+}

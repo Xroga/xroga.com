@@ -1,0 +1,90 @@
+{
+  "scope": "FIXED_EXPO_IDENTITY_READ_ONLY_NOT_MOBILE_PUBLISH_OR_PROJECT_CREATION_AUTHORITY",
+  "candidate": {
+    "id": "af32a0c4970ae3e8f71e",
+    "file": "backend/src/services/publish/userOwnedPublish.ts",
+    "line": 76,
+    "entryPoint": "verifyExpoToken",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "745dc2600e4759cbecd0af57785eeaae416129d99fecfd7db898c6d6b339ae37",
+    "destination": "https://exp.host",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "FIXED_ORIGIN_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "Actual probe followed real HTTP307 to a second endpoint",
+    "Provider error body could echo the selected credential into the returned error",
+    "Empty200JSON was reported as an authorized expo-user identity"
+  ],
+  "corrections": [
+    "Same literal official HTTPS GET endpoint, manual redirects, existing12s timeout",
+    "Input8..4096non-control characters, actual receipt64KiB ceiling, cancel bounded reader",
+    "Static status-only provider errors and static transport failures",
+    "Real finite username required, selected credential cannot become returned username"
+  ],
+  "verification": {
+    "passed": 4,
+    "skipped": 0,
+    "negative": "Real local HTTP redirect/sink yields0redirectedrequests and failed verification. Credential echo absent, empty/malformed/oversized identity denied, invalid token reaches0network.",
+    "positive": "Normal fixed-provider data.user.username is accepted. Existing short-token denial remains."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "5fdc9639-072e-4beb-8dd2-120bcd44d931",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/expo-identity-20261027/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 529469
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "5132a36e-e0f1-472c-a237-217bbc463a36",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/expo-identity-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 533304
+      }
+    }
+  ],
+  "callerTrace": [
+    "routes/publish.ts POST/expo-token checks verified.ok before saveUserProviderKey or ensureExpoProjectLinked",
+    "POST/verify-expo checks verified.ok and returns only identity",
+    "getPublishStatus uses the current canonical vault token for a read-only readiness flag"
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/publish/userOwnedPublish.ts",
+      "sha256": "5dd9bf3f4db350462eb197321f9c73c343e3ba4a33247157c47502ce6737b3e7"
+    },
+    {
+      "path": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
+      "sha256": "5d4819e281eb7f0ab0d996cce8aed2978271a8a022552bebecb981475cf1994e"
+    },
+    {
+      "path": "backend/src/services/publish/userOwnedPublish.test.ts",
+      "sha256": "cdec683eef1893827de415112a7ad960e7daf88c9ce48fea7ccdc70494976803"
+    },
+    {
+      "path": "backend/src/routes/publish.ts",
+      "sha256": "9bfe08af4193a2a6924a5102c67e647d1469ab71996d25640dc05b52bdf4a99b"
+    }
+  ],
+  "limitations": [
+    "No Expo project creation, credential attachment, EAS build, publishing, export or consequential-action authority promoted. Separate EAS candidates remain pending.",
+    "The transport consumes only the selected provider credential, no tenant files, generated source, arbitrary origin or request-body URL."
+  ],
+  "productionChanged": false,
+  "liveProviderCalls": 0,
+  "spending": 0
+}

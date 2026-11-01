@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
+import { createServer } from 'node:http';
 import { after, before, describe, it } from 'node:test';
 import { parseBrowserJob } from './browserJob.js';
 import { createCoordinatorServer, NonceCache, RemoteBrowserWorker, signRequest, verifyRequest } from './browserCoordinator.js';
@@ -36,6 +37,18 @@ before(async () => { server = createCoordinatorServer({ secret: SECRET, worker: 
 after(() => { server.close(); });
 
 describe('coordinator authentication', () => {
+  it('never forwards signed jobs to a redirected coordinator destination',async()=>{
+    let leaked=0;
+    const destination=createServer((_req,res)=>{leaked++;res.writeHead(500).end();});
+    const redirect=createServer((_req,res)=>res.writeHead(307,{location:`http://127.0.0.1:${(destination.address() as AddressInfo).port}/v1/jobs`}).end());
+    await new Promise<void>(r=>destination.listen(0,'127.0.0.1',r));
+    await new Promise<void>(r=>redirect.listen(0,'127.0.0.1',r));
+    try{
+      const remote=new RemoteBrowserWorker({baseUrl:`http://127.0.0.1:${(redirect.address() as AddressInfo).port}`,secret:SECRET});
+      await assert.rejects(remote.run(job,{signal:new AbortController().signal,lease,plan}));
+      assert.equal(leaked,0,'Redirects cannot copy signed user job payloads to another destination');
+    }finally{redirect.closeAllConnections();destination.closeAllConnections();await Promise.all([new Promise<void>(r=>redirect.close(()=>r())),new Promise<void>(r=>destination.close(()=>r()))]);}
+  });
   it('accepts a valid signature once; refuses tampered body, wrong secret, stale or future time, and nonce reuse', () => {
     const nonces = new NonceCache(); const body = '{"a":1}';
     const h = signRequest(SECRET, 'POST', '/v1/jobs', body);

@@ -1,0 +1,59 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_SUPABASE_SDK_AND_PRIVATE_MIRROR_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T19:01:54.114190+00:00",
+  "parent": "b5ff890cc00c2213de7731ffbb0a476a408289fd",
+  "trace": "docs/xroga/evidence/command-010/supabase-sdk-20261027/trace.json",
+  "strictAudit": {
+    "total": 135,
+    "reviewed": 111,
+    "pending": 24,
+    "unresolvedHighRiskBypasses": 15
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "backendTypes",
+      "jobId": "1b7294f4-ab93-47db-a6db-c09011c9c406",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322124
+      }
+    },
+    {
+      "name": "strictIncomplete",
+      "jobId": "de1d4447-19b7-4949-9be1-c5260894207e",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/supabase-sdk-20261027/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "tenantInventoryIntegrity",
+      "jobId": "e0b377f2-f6bb-4efb-82a0-9b5ee384cd68",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/supabase-sdk-20261027/tenantInventoryIntegrity.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "backendTypes": "PASS_CURRENT_SOURCE",
+  "frontendTypes": "PASS_UNCHANGED_072ee6b6",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "next": "Continue exact pending callers. Public Auth settings preflight, then remaining provider and consequential action paths. Do not weaken original criteria or promote shared callers automatically."
+}

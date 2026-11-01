@@ -1,0 +1,60 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_VERCEL_ROUTE_AND_LOCAL_CANDIDATE_CHECKPOINT_NOT_RELEASE_ACCEPTANCE",
+  "atUtc": "2026-10-27T17:54:48.211590+00:00",
+  "parent": "e4b314d3468c4f64fc3c61eb3f8134dfaf4f6871",
+  "trace": "docs/xroga/evidence/command-010/vercel-routes-20261027/trace.json",
+  "localCandidateTrace": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+  "strictAudit": {
+    "total": 141,
+    "reviewed": 102,
+    "pending": 39,
+    "unresolvedHighRiskBypasses": 22
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "receipts": [
+    {
+      "name": "strictIncomplete",
+      "jobId": "adb2953f-e1f4-4024-8071-7876f98cc72b",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/vercel-routes-20261027/strictIncomplete.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "backendTypes",
+      "jobId": "0d77f316-7ea4-4d90-98ab-db56846a2c0c",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322020
+      }
+    },
+    {
+      "name": "tenantInventoryIntegrity",
+      "jobId": "04860437-bb79-4ea1-a388-bb4720c7280f",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/vercel-routes-20261027/tenantInventoryIntegrity.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "backendTypes": "PASS_CURRENT_SOURCE",
+  "frontendTypes": "PASS_UNCHANGED_4e0a3b9e",
+  "phase4": "NOT_VERIFIED",
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "productionChanged": false,
+  "spending": 0,
+  "next": "Canonical security/admission/accounting for the already-pending xAI research caller, followed by remaining real provider, data provenance and external action caller gaps. No model-quality work."
+}

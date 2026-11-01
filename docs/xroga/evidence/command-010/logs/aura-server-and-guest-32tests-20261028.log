@@ -1,0 +1,207 @@
+TAP version 13
+# [guest/chat] { category: 'invalid_request' }
+# [guest/chat] { category: 'invalid_request' }
+# [guest/chat] { category: 'transient' }
+# [guest/chat] { category: 'invalid_request' }
+# Subtest: actual guest HTTP route preserves anonymous text and cannot launder a rejected primary credential through fallback
+ok 1 - actual guest HTTP route preserves anonymous text and cannot launder a rejected primary credential through fallback
+  ---
+  duration_ms: 1228.1519
+  type: 'test'
+  ...
+# Subtest: guest chat requires structured components for explicit visual requests
+ok 2 - guest chat requires structured components for explicit visual requests
+  ---
+  duration_ms: 2.4167
+  type: 'test'
+  ...
+# Subtest: guest chat allows only the bounded preview count per session
+ok 3 - guest chat allows only the bounded preview count per session
+  ---
+  duration_ms: 2.2764
+  type: 'test'
+  ...
+# Subtest: guest allowance resets after its window
+ok 4 - guest allowance resets after its window
+  ---
+  duration_ms: 1.8597
+  type: 'test'
+  ...
+# Subtest: guest token budget is cumulative and bounded
+ok 5 - guest token budget is cumulative and bounded
+  ---
+  duration_ms: 0.559
+  type: 'test'
+  ...
+# Subtest: guest session permits only one in-flight reply and releases it safely
+ok 6 - guest session permits only one in-flight reply and releases it safely
+  ---
+  duration_ms: 1.5644
+  type: 'test'
+  ...
+# Subtest: Aura cannot dispatch platform-funded inference without durable production accounting
+ok 7 - Aura cannot dispatch platform-funded inference without durable production accounting
+  ---
+  duration_ms: 6.7153
+  type: 'test'
+  ...
+# Subtest: actual Aura provider and Next route use the existing durable guest boundary
+    # Subtest: authorized request validates usage before publishing only plain content
+    ok 1 - authorized request validates usage before publishing only plain content
+      ---
+      duration_ms: 24.5096
+      type: 'test'
+      ...
+    # Subtest: badClaimReceipt sends zero provider requests
+    ok 2 - badClaimReceipt sends zero provider requests
+      ---
+      duration_ms: 1.1241
+      type: 'test'
+      ...
+    # Subtest: badReservationReceipt sends zero provider requests
+    ok 3 - badReservationReceipt sends zero provider requests
+      ---
+      duration_ms: 1.0805
+      type: 'test'
+      ...
+    # Subtest: rotateBeforeDispatch sends zero provider requests
+    ok 4 - rotateBeforeDispatch sends zero provider requests
+      ---
+      duration_ms: 1.0815
+      type: 'test'
+      ...
+    # Subtest: revokeAfterDispatch never publishes or falls back
+    ok 5 - revokeAfterDispatch never publishes or falls back
+      ---
+      duration_ms: 2.9575
+      type: 'test'
+      ...
+    # Subtest: claimAfterDispatch never publishes or falls back
+    ok 6 - claimAfterDispatch never publishes or falls back
+      ---
+      duration_ms: 2.5138
+      type: 'test'
+      ...
+    # Subtest: rotateAfterDispatch never publishes or falls back
+    ok 7 - rotateAfterDispatch never publishes or falls back
+      ---
+      duration_ms: 1.6189
+      type: 'test'
+      ...
+    # Subtest: cancelAfterDispatch never publishes or falls back
+    ok 8 - cancelAfterDispatch never publishes or falls back
+      ---
+      duration_ms: 2.8244
+      type: 'test'
+      ...
+    # Subtest: 401 never publishes or falls back
+    ok 9 - 401 never publishes or falls back
+      ---
+      duration_ms: 2.0059
+      type: 'test'
+      ...
+    # Subtest: 403 never publishes or falls back
+    ok 10 - 403 never publishes or falls back
+      ---
+      duration_ms: 2.1625
+      type: 'test'
+      ...
+    # Subtest: 429 never publishes or falls back
+    ok 11 - 429 never publishes or falls back
+      ---
+      duration_ms: 2.0993
+      type: 'test'
+      ...
+    # Subtest: 503 never publishes or falls back
+    ok 12 - 503 never publishes or falls back
+      ---
+      duration_ms: 1.9482
+      type: 'test'
+      ...
+    # Subtest: 307 never publishes or falls back
+    ok 13 - 307 never publishes or falls back
+      ---
+      duration_ms: 1.6265
+      type: 'test'
+      ...
+    # Subtest: missingUsage never publishes or falls back
+    ok 14 - missingUsage never publishes or falls back
+      ---
+      duration_ms: 2.019
+      type: 'test'
+      ...
+    # Subtest: invalidUsage never publishes or falls back
+    ok 15 - invalidUsage never publishes or falls back
+      ---
+      duration_ms: 3.3505
+      type: 'test'
+      ...
+    # Subtest: secretOutput never publishes or falls back
+    ok 16 - secretOutput never publishes or falls back
+      ---
+      duration_ms: 8.2268
+      type: 'test'
+      ...
+    # Subtest: toolResponse never publishes or falls back
+    ok 17 - toolResponse never publishes or falls back
+      ---
+      duration_ms: 3.7967
+      type: 'test'
+      ...
+    # Subtest: truncated never publishes or falls back
+    ok 18 - truncated never publishes or falls back
+      ---
+      duration_ms: 4.1341
+      type: 'test'
+      ...
+    # Subtest: oversized never publishes or falls back
+    ok 19 - oversized never publishes or falls back
+      ---
+      duration_ms: 6.9179
+      type: 'test'
+      ...
+    # Subtest: full reservation, shared concurrency and claimed sessions prevent dispatch
+    ok 20 - full reservation, shared concurrency and claimed sessions prevent dispatch
+      ---
+      duration_ms: 3.7928
+      type: 'test'
+      ...
+    # Subtest: failed provider request permits a fresh authorized recovery request
+    ok 21 - failed provider request permits a fresh authorized recovery request
+      ---
+      duration_ms: 12.243
+      type: 'test'
+      ...
+    # Subtest: real HTTP redirect is not followed and hung response cancellation is bounded
+    ok 22 - real HTTP redirect is not followed and hung response cancellation is bounded
+      ---
+      duration_ms: 119.8982
+      type: 'test'
+      ...
+    # Subtest: secret-bearing input and cancelled admission send no bytes
+    ok 23 - secret-bearing input and cancelled admission send no bytes
+      ---
+      duration_ms: 1.1386
+      type: 'test'
+      ...
+    # Subtest: actual Next route uses a host-only cookie and denies forged origin and unbounded input
+    ok 24 - actual Next route uses a host-only cookie and denies forged origin and unbounded input
+      ---
+      duration_ms: 10.8556
+      type: 'test'
+      ...
+    1..24
+ok 8 - actual Aura provider and Next route use the existing durable guest boundary
+  ---
+  duration_ms: 230.9941
+  type: 'test'
+  ...
+1..8
+# tests 32
+# suites 0
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5384.7707

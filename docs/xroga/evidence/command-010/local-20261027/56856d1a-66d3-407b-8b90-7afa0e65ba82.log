@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: permit context access returns only the original issued actor within its exact unused lifetime
+ok 1 - permit context access returns only the original issued actor within its exact unused lifetime
+  ---
+  duration_ms: 8.1962
+  type: 'test'
+  ...
+# Subtest: canonical executor dispatches only an exact issued actor and durable adapter claim, once
+ok 2 - canonical executor dispatches only an exact issued actor and durable adapter claim, once
+  ---
+  duration_ms: 1.5438
+  type: 'test'
+  ...
+# Subtest: boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+ok 3 - boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+  ---
+  duration_ms: 2.4201
+  type: 'test'
+  ...
+# Subtest: expiry, revocation and substituted durable receipt after a wait fail before effect
+ok 4 - expiry, revocation and substituted durable receipt after a wait fail before effect
+  ---
+  duration_ms: 2.6944
+  type: 'test'
+  ...
+# Subtest: all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+ok 5 - all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+  ---
+  duration_ms: 7.9087
+  type: 'test'
+  ...
+# Subtest: dependent business evidence requires explicit review before discovery or model dispatch
+ok 6 - dependent business evidence requires explicit review before discovery or model dispatch
+  ---
+  duration_ms: 3.4492
+  type: 'test'
+  ...
+# Subtest: explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+ok 7 - explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+  ---
+  duration_ms: 43.3479
+  type: 'test'
+  ...
+# Subtest: actual business selectors preserve invalid reservation denial before trying another model
+ok 8 - actual business selectors preserve invalid reservation denial before trying another model
+  ---
+  duration_ms: 8.2445
+  type: 'test'
+  ...
+# Subtest: actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+ok 9 - actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+  ---
+  duration_ms: 38.9937
+  type: 'test'
+  ...
+# Subtest: business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+ok 10 - business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+  ---
+  duration_ms: 907.375
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1942.5485

@@ -9,6 +9,7 @@ import {
 
 export type SupabaseOAuthSuccess = {
   provisioned?: boolean;
+  reviewUrl?: string;
   needsProjectPick?: boolean;
   projects?: Array<{ id: string; ref: string; name: string; region?: string }>;
   message?: string;
@@ -126,6 +127,7 @@ export function listenSupabaseOAuthMessages(
         needsProjectPick: Boolean(data.needsProjectPick),
         projects: (data.projects as SupabaseOAuthSuccess['projects']) ?? [],
         message: typeof data.message === 'string' ? data.message : undefined,
+        reviewUrl:typeof data.reviewUrl==='string'&&/^\/dashboard\/actions\/confirm\/[a-f0-9-]{36}$/i.test(data.reviewUrl)?data.reviewUrl:undefined,
       });
     } else if (data.type === 'xroga-supabase-error') {
       finishErr(typeof data.message === 'string' ? data.message : 'Supabase connection failed');
@@ -143,8 +145,8 @@ export function listenSupabaseOAuthMessages(
         const status = await api.supabase.status();
         if (status.oauthConnected || status.connected) {
           finishOk({
-            provisioned: Boolean(status.provisioned || status.ready),
-            needsProjectPick: !status.provisioned && !status.ready,
+            provisioned: status.provisioned===true,
+            needsProjectPick: status.provisioned!==true,
             message: status.message,
           });
         }

@@ -1,3 +1,5 @@
+import {publishingProviderRequest as fetch} from './publishingProviderRequest.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
 /**
  * Sync decrypted user vault secrets → Vercel project environment variables.
  * Requires a Vercel OAuth credential with project environment write access.
@@ -210,6 +212,7 @@ export async function syncEnvVarsToVercelProject(opts: {
           : undefined,
     };
   } catch (err) {
+    if(err instanceof EgressDenied)throw err;
     return {
       ok: false,
       projectName,

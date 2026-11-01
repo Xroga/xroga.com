@@ -1,3 +1,4 @@
+import { boundedPublicGet, publicHttpsUrl } from '../security/egress/urlPolicy.js';
 const NETLIFY_NOT_FOUND = /site not found/i;
 const GENERIC_NOT_FOUND = /<title>\s*404/i;
 
@@ -7,25 +8,21 @@ function sleep(ms: number): Promise<void> {
 
 /** Returns true when the URL serves real HTML (not Netlify/Vercel placeholder 404 pages). */
 export async function verifyLivePreviewUrl(url: string, maxWaitMs = 90_000): Promise<boolean> {
-  if (!url?.startsWith('http')) return false;
+  try { publicHttpsUrl(url); } catch { return false; }
+  if(!Number.isFinite(maxWaitMs)||maxWaitMs<1||maxWaitMs>90_000)return false;
 
   const deadline = Date.now() + maxWaitMs;
 
   while (Date.now() < deadline) {
     try {
-      const res = await fetch(url, {
-        method: 'GET',
-        redirect: 'follow',
-        headers: { 'User-Agent': 'XROGA-Deploy-Verify/1.0' },
-        signal: AbortSignal.timeout(12_000),
-      });
+      const res = await boundedPublicGet(url,{maxBytes:1024*1024,timeoutMs:12_000,maxRedirects:3,allowHttpErrors:true});
 
-      if (!res.ok) {
+      if (res.statusCode<200||res.statusCode>=300) {
         await sleep(3000);
         continue;
       }
 
-      const text = (await res.text()).slice(0, 12_000);
+      const text = res.bytes.toString('utf8').slice(0, 12_000);
       if (NETLIFY_NOT_FOUND.test(text)) {
         await sleep(3000);
         continue;

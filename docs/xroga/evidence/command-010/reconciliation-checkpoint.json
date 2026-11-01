@@ -1,0 +1,27 @@
+{
+  "phase4": "e337c56f",
+  "main": "b496482a",
+  "scope": "LOCAL_MAIN_INTEGRATION_CANDIDATE_NOT_COMMITTED_OR_RELEASED",
+  "preservedConflictResolution": [
+    "backend/src/routes/browserRuns.ts",
+    "backend/src/routes/browserRuns.test.ts",
+    "backend/src/routes/guestChat.ts",
+    "backend/src/workers/browserCapability.ts"
+  ],
+  "focusedBrowserGuestTests": {
+    "job": "f75cffa1-b6c1-4043-b206-e9d12f14c4c1",
+    "passed": 37
+  },
+  "typeCheck": "FAILED_TEST_ONLY_WORKER_DOM_NAME_REQUIRES_TEST_TYPE_FIX",
+  "laterBatchDependencies": [
+    {
+      "path": "backend/src/builder/github/restPort.ts",
+      "cause": "Default ghFetch receives no original actor scope and converts security denial to generic availability error."
+    },
+    {
+      "path": "backend/src/builder/data/restPort.ts",
+      "cause": "Separate raw Supabase fetch does not use the Phase4 native approval/current-owner transport."
+    }
+  ],
+  "decision": "Preserve patches for Claude-owned later-batch integration. Do not activate or rewrite Batch1.5/2."
+}

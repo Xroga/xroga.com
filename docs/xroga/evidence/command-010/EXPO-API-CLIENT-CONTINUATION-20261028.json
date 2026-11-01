@@ -1,0 +1,36 @@
+{
+  "scope": "UNCHANGED_FIRST_PARTY_API_TRANSPORT_AND_AUTH_FUNCTIONS_ONLY_NOT_EXPO_WORKFLOW_ACCEPTANCE",
+  "parent": "a8c663defebf0a73a9895fffc5a6641b195042c9",
+  "path": "frontend/src/lib/api.ts",
+  "previousSha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920",
+  "currentSha256": "dfd6cb0926e5c496d7c0561a9cb5ddeeb1b8ca92542a21cf12d3e14183dd0c85",
+  "unchangedFunctions": [
+    {
+      "name": "resolveApiUrl",
+      "sha256": "cdfa2bc8476f789a0a01c919a9f9edd263f469b9deffcfe24a276f3b011e73b2"
+    },
+    {
+      "name": "fetchApiResponse",
+      "sha256": "8d1099f77da5112591b4c74885b37ef8f10bb9f62aa720f0e572bc764c3549e5"
+    },
+    {
+      "name": "apiFetch",
+      "sha256": "5e067385f100a1cb5c702b0fbc9630c23b7ac66197c4edbe649ebeb070d5fa07"
+    },
+    {
+      "name": "getAccessToken",
+      "sha256": "14a65bc0a26938b69d94277bdf8471ba3eae71a8bd6d152376aef685659cc39e"
+    },
+    {
+      "name": "uploadChatImage",
+      "sha256": "f7ddfa1a888183e124bd2ff75933246329e5121262ed8244df96f6e36c792fd7"
+    },
+    {
+      "name": "uploadChatFile",
+      "sha256": "14b0ea7fe9e5ddfb44d626896ad83e6257bb6987559e75f2d7732d03169bdbca"
+    }
+  ],
+  "change": "Only store-readiness request types and optional selected project/identifier JSON bodies changed. The first-party origin, bearer-token selection, redirect denial, HTTP transport and authentication helpers are byte-identical. Backend exact actor/ownership/readiness admission has separate regression evidence.",
+  "readinessEvidence": "docs/xroga/evidence/command-010/EXPO-STORE-READINESS-20261028.json",
+  "phase4Accepted": false
+}

@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: real HTTP proxy retains paths and public origin and rewrites only the worker redirect
+ok 1 - real HTTP proxy retains paths and public origin and rewrites only the worker redirect
+  ---
+  duration_ms: 58.9526
+  type: 'test'
+  ...
+# Subtest: real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect
+ok 2 - real WebSocket messages and authorized reconnect work, then expiry closes both channels and rejects reconnect
+  ---
+  duration_ms: 225.6401
+  type: 'test'
+  ...
+# Subtest: expired admission and authority failure do not make any upstream connection or expose private errors
+ok 3 - expired admission and authority failure do not make any upstream connection or expose private errors
+  ---
+  duration_ms: 6.6465
+  type: 'test'
+  ...
+# Subtest: actual shared HTTP/WebSocket resolver binds signed grant, persisted owner/project/session, lifetime and declared target
+ok 4 - actual shared HTTP/WebSocket resolver binds signed grant, persisted owner/project/session, lifetime and declared target
+  ---
+  duration_ms: 7112.8589
+  type: 'test'
+  ...
+# Subtest: real local HTTP and WebSocket preview transports enforce scoped targets, header separation and lifetime revocation
+ok 5 - real local HTTP and WebSocket preview transports enforce scoped targets, header separation and lifetime revocation
+  ---
+  duration_ms: 2178.1345
+  type: 'test'
+  ...
+# Subtest: active Preview checks are serialized and explicit connection cleanup stops future reads
+ok 6 - active Preview checks are serialized and explicit connection cleanup stops future reads
+  ---
+  duration_ms: 138.8367
+  type: 'test'
+  ...
+# Subtest: Preview revoked terminates once without retrying or reconnecting
+ok 7 - Preview revoked terminates once without retrying or reconnecting
+  ---
+  duration_ms: 78.7535
+  type: 'test'
+  ...
+# Subtest: Preview unavailable terminates once without retrying or reconnecting
+ok 8 - Preview unavailable terminates once without retrying or reconnecting
+  ---
+  duration_ms: 60.3834
+  type: 'test'
+  ...
+# Subtest: Preview stalled terminates once without retrying or reconnecting
+ok 9 - Preview stalled terminates once without retrying or reconnecting
+  ---
+  duration_ms: 76.8529
+  type: 'test'
+  ...
+# Subtest: Preview expired terminates once without retrying or reconnecting
+ok 10 - Preview expired terminates once without retrying or reconnecting
+  ---
+  duration_ms: 63.7987
+  type: 'test'
+  ...
+# Subtest: Google Preview uses only the authenticated physical address and declared port
+ok 11 - Google Preview uses only the authenticated physical address and declared port
+  ---
+  duration_ms: 4.12
+  type: 'test'
+  ...
+# Subtest: Google Preview denies declared non-Preview service ports before native identity or address lookup
+ok 12 - Google Preview denies declared non-Preview service ports before native identity or address lookup
+  ---
+  duration_ms: 0.7829
+  type: 'test'
+  ...
+# Subtest: foreign, expired, revoked and substituted sessions deny before control-plane lookup
+ok 13 - foreign, expired, revoked and substituted sessions deny before control-plane lookup
+  ---
+  duration_ms: 1.0503
+  type: 'test'
+  ...
+# Subtest: metadata/public address, physical denial, identity denial and expiry during admission cannot route
+ok 14 - metadata/public address, physical denial, identity denial and expiry during admission cannot route
+  ---
+  duration_ms: 1.1024
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8706.434

@@ -60,8 +60,12 @@ export class R2ObjectStore implements ObjectStore {
   readonly provider = 'r2' as const;
   readonly #s3: S3Client;
   readonly #signLength: boolean;
+  readonly #bucket: string;
 
   constructor(cfg: R2Config, client?: S3Client) {
+    if(!/^[A-Za-z0-9]{1,64}$/.test(cfg.accountId))throw new Error('Invalid R2 account identifier.');
+    if(typeof cfg.bucket!=='string'||!cfg.bucket)throw new Error('Missing configured private bucket.');
+    this.#bucket=cfg.bucket;
     const opts: S3ClientConfig = {
       region: 'auto',
       endpoint: `https://${cfg.accountId}.r2.cloudflarestorage.com`,
@@ -69,12 +73,18 @@ export class R2ObjectStore implements ObjectStore {
       requestChecksumCalculation: 'WHEN_REQUIRED',
       responseChecksumValidation: 'WHEN_REQUIRED',
       maxAttempts: 3,
+      followRegionRedirects: false,
     };
     this.#s3 = client ?? new S3Client(opts);
     this.#signLength = cfg.signContentLength !== false;
   }
 
+  #assertBucket(bucket:string):void {
+    if(bucket!==this.#bucket)throw Object.assign(new Error('The operation requires its configured private bucket.'),{code:'R2_SCOPE_DENIED',retryable:false});
+  }
+
   async presignPut(i: PresignPutInput): Promise<SignedRequest> {
+    this.#assertBucket(i.bucket);
     const headers: Record<string, string> = { 'Content-Type': i.contentType };
     const input: ConstructorParameters<typeof PutObjectCommand>[0] = {
       Bucket: i.bucket, Key: i.key, ContentType: i.contentType, ContentLength: i.size,
@@ -94,6 +104,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async presignGet(i: PresignGetInput): Promise<SignedRequest> {
+    this.#assertBucket(i.bucket);
     const url = await getSignedUrl(
       this.#s3,
       new GetObjectCommand({
@@ -107,6 +118,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async head(bucket: string, key: string): Promise<HeadResult | null> {
+    this.#assertBucket(bucket);
     try {
       const r = await wrap(this.#s3.send(new HeadObjectCommand({ Bucket: bucket, Key: key, ChecksumMode: 'ENABLED' })));
       return {
@@ -121,17 +133,20 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async readRange(bucket: string, key: string, start: number, length: number): Promise<Uint8Array> {
+    this.#assertBucket(bucket);
     const r = await wrap(this.#s3.send(new GetObjectCommand({ Bucket: bucket, Key: key, Range: `bytes=${start}-${start + length - 1}` })));
     return r.Body ? r.Body.transformToByteArray() : new Uint8Array();
   }
 
   async openRead(bucket: string, key: string): Promise<AsyncIterable<Uint8Array>> {
+    this.#assertBucket(bucket);
     const r = await wrap(this.#s3.send(new GetObjectCommand({ Bucket: bucket, Key: key })));
     if (!r.Body) throw new Error('empty body');
     return r.Body as unknown as AsyncIterable<Uint8Array>;
   }
 
   async put(bucket: string, key: string, body: Buffer, contentType: string, sha256Hex: string) {
+    this.#assertBucket(bucket);
     const r = await wrap(this.#s3.send(new PutObjectCommand({
       Bucket: bucket, Key: key, Body: body, ContentType: contentType, ContentLength: body.length,
       ChecksumSHA256: hexToBase64(sha256Hex),
@@ -140,6 +155,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async putStream(bucket: string, key: string, body: AsyncIterable<Uint8Array>, size: number, contentType: string) {
+    this.#assertBucket(bucket);
     const { Readable } = await import('node:stream');
     const r = await wrap(this.#s3.send(new PutObjectCommand({
       Bucket: bucket, Key: key, Body: Readable.from(body), ContentType: contentType, ContentLength: size,
@@ -148,16 +164,19 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async delete(bucket: string, key: string): Promise<void> {
+    this.#assertBucket(bucket);
     await wrap(this.#s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key })));
   }
 
   async createMultipart(bucket: string, key: string, contentType: string) {
+    this.#assertBucket(bucket);
     const r = await wrap(this.#s3.send(new CreateMultipartUploadCommand({ Bucket: bucket, Key: key, ContentType: contentType })));
     if (!r.UploadId) throw new Error('no upload id');
     return { uploadId: r.UploadId };
   }
 
   async presignPart(bucket: string, key: string, uploadId: string, partNumber: number, ttlSeconds: number, contentLength: number): Promise<SignedRequest> {
+    this.#assertBucket(bucket);
     const url = await getSignedUrl(
       this.#s3,
       new UploadPartCommand({ Bucket: bucket, Key: key, UploadId: uploadId, PartNumber: partNumber, ContentLength: contentLength }),
@@ -167,6 +186,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async uploadPart(bucket: string, key: string, uploadId: string, partNumber: number, body: Buffer) {
+    this.#assertBucket(bucket);
     const r = await wrap(this.#s3.send(new UploadPartCommand({
       Bucket: bucket, Key: key, UploadId: uploadId, PartNumber: partNumber, Body: body, ContentLength: body.length,
     })));
@@ -175,6 +195,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async listParts(bucket: string, key: string, uploadId: string) {
+    this.#assertBucket(bucket);
     const out: Array<{ partNumber: number; size: number; etag: string }> = [];
     let marker: string | undefined;
     for (;;) {
@@ -186,6 +207,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async completeMultipart(bucket: string, key: string, uploadId: string, parts: CompletedPart[]) {
+    this.#assertBucket(bucket);
     const r = await wrap(this.#s3.send(new CompleteMultipartUploadCommand({
       Bucket: bucket, Key: key, UploadId: uploadId,
       MultipartUpload: { Parts: parts.map((p) => ({ PartNumber: p.partNumber, ETag: p.etag })) },
@@ -194,6 +216,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async abortMultipart(bucket: string, key: string, uploadId: string) {
+    this.#assertBucket(bucket);
     try {
       await wrap(this.#s3.send(new AbortMultipartUploadCommand({ Bucket: bucket, Key: key, UploadId: uploadId })));
     } catch (err) {
@@ -202,6 +225,7 @@ export class R2ObjectStore implements ObjectStore {
   }
 
   async list(bucket: string, prefix: string, cursor?: string, limit = 1000) {
+    this.#assertBucket(bucket);
     const r = await wrap(this.#s3.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: prefix, ContinuationToken: cursor, MaxKeys: limit })));
     return {
       keys: (r.Contents ?? []).map((o) => ({ key: o.Key ?? '', size: Number(o.Size ?? 0), etag: o.ETag })),

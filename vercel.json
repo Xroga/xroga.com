@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm ci --prefix frontend --workspaces=false",
+  "installCommand": "npm ci",
   "buildCommand": "npm run build --prefix frontend --workspaces=false",
   "framework": "nextjs",
   "ignoreCommand": "node scripts/ci/ignore-vercel-build.mjs",

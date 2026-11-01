@@ -70,34 +70,41 @@ export async function verifyExpoToken(token: string): Promise<{
 }> {
   const trimmed = token.trim();
   if (trimmed.length < 8) return { ok: false, error: 'Token too short' };
+  if(trimmed.length>4096||/[\x00-\x20\x7f]/.test(trimmed))return{ok:false,error:'Invalid Expo token format'};
 
   try {
     const res = await fetch('https://exp.host/--/api/v2/auth/userInfo', {
+      redirect: 'manual',
       headers: {
         Authorization: `Bearer ${trimmed}`,
         Accept: 'application/json',
       },
       signal: AbortSignal.timeout(12_000),
     });
+    if(res.redirected||res.status>=300&&res.status<400){await res.body?.cancel().catch(()=>undefined);return{ok:false,error:'Expo identity request denied by security policy'};}
     if (!res.ok) {
-      const text = await res.text().catch(() => '');
+      await res.body?.cancel().catch(()=>undefined);
       return {
         ok: false,
         error:
           res.status === 401 || res.status === 403
             ? 'Expo rejected this token — create a new Access Token at expo.dev → Settings → Access tokens'
-            : `Expo API ${res.status}${text ? `: ${text.slice(0, 120)}` : ''}`,
+            : `Expo API ${res.status}`,
       };
     }
-    const data = (await res.json()) as {
+    const reader=res.body?.getReader(),chunks:Uint8Array[]=[];let bytes=0;
+    try{if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.length;if(bytes>65536)throw Error('Invalid identity receipt');chunks.push(next.value);}}
+    finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    const data = JSON.parse(Buffer.concat(chunks).toString('utf8')) as {
       data?: { username?: string; user?: { username?: string } };
       username?: string;
     };
     const username =
-      data?.data?.username || data?.data?.user?.username || data?.username || 'expo-user';
+      data?.data?.username || data?.data?.user?.username || data?.username;
+    if(typeof username!=='string'||!/^[A-Za-z0-9._-]{1,128}$/.test(username)||username.includes(trimmed))return{ok:false,error:'Expo identity receipt is invalid'};
     return { ok: true, username };
-  } catch (err) {
-    return { ok: false, error: (err as Error).message || 'Could not reach Expo API' };
+  } catch {
+    return { ok: false, error: 'Could not verify Expo identity' };
   }
 }
 
@@ -254,7 +261,7 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       label: '2. Connect Expo (access token)',
       done: Boolean(expoKey),
       required: true,
-      hint: 'Paste once — next mobile ship auto-creates/links EAS and starts a build',
+      hint: 'Connect Expo, select an owned project, then review the exact build request',
       href: 'https://expo.dev/settings/access-tokens',
     },
     {
@@ -347,9 +354,9 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       easProjectLinked: Boolean(easProject),
       checklist: mobileChecklist,
       commands: [
-        '# Preferred: Connect Expo once → describe mobile app → Xroga ships + starts EAS',
-        '# Sync Play / Apple ASC buttons push vault creds into Expo via real GraphQL',
-        '# Start EAS Android / iOS with submit when store creds are synced',
+        '# Connect Expo, select an owned project, then review the exact action',
+        '# Configure store keys directly in Expo and verify them here. Saved private keys are not uploaded',
+        '# Each EAS build or submission requires exact durable confirmation',
       ],
     },
     costs: {

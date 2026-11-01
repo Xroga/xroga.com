@@ -1,0 +1,40 @@
+{
+  "scope": "BOUNDED_DENIAL_AND_CURRENT_CANONICAL_FIXTURES_NOT_NEW_AUTHORITY",
+  "reference": "d394fba5e9478b18dc31563dbf4b478e285b70cf",
+  "route": "backend/src/routes/github.ts",
+  "persistenceMappings": [
+    {
+      "beforeId": "105bf445742d0d40d7cc",
+      "afterId": "c9f24908f3902e3cf2a8"
+    },
+    {
+      "beforeId": "126af63b441c91019028",
+      "afterId": "e452f3e3a2f1263c0716"
+    },
+    {
+      "beforeId": "fa85a7affe57fe8615c1",
+      "afterId": "e7cc8bded28a4afc05db"
+    },
+    {
+      "beforeId": "0b8393ef789df9e76d18",
+      "afterId": "f2da94bb96f753a44a0d"
+    },
+    {
+      "beforeId": "9ccaf29d98b973526d7b",
+      "afterId": "286d73d18019adf7e9b7"
+    }
+  ],
+  "unchangedQueries": true,
+  "existingDispositionsPreserved": true,
+  "defect": "Invalid raw stored custody escaped the Express4 async handler and left a status request unfinished.",
+  "fix": "Return sanitized503 with no provider lookup on the same denial. No raw credential authorization fallback.",
+  "negativeJob": "07d092be-15cc-447d-9019-4167e1204799",
+  "positiveNegativeJob": "d2e4b077-0b41-4fbf-8899-70fce608db51",
+  "realFixtureChanges": [
+    "Private connected read now uses the existing owner-only durable confirmation endpoint, with foreign confirmation denied and no dispatch before approval.",
+    "Private OAuth fixture now uses consumed owned PKCE and canonical v3 credential storage. It still verifies browser/foreign download and signing denial, preserves synthetic data and removes both mirrors."
+  ],
+  "evidenceContinuations": [],
+  "realDatabaseRetest": "REQUIRED_ON_FINAL_SOURCE",
+  "productionEffects": false
+}

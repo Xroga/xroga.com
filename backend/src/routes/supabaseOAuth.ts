@@ -1,3 +1,4 @@
+import {supabaseProjectCreationInput,prepareSupabaseProjectCreation} from '../services/integrations/supabaseProjectCreation.js';
 /**
  * Supabase OAuth + project select + auto-provision routes.
  * User only authorizes — AI runs SQL / storage / keys automatically.
@@ -5,7 +6,6 @@
 
 import { Router } from 'express';
 import { z } from 'zod';
-import { randomBytes } from 'crypto';
 import type { AuthRequest } from '../middleware/auth.js';
 import { requireTenantContext, requireResourceOwner, type TenantContext } from '../security/tenantContext.js';
 import {
@@ -37,6 +37,11 @@ import {
   resolveVercelProjectForEnvSync,
 } from '../services/integrations/vercelAuth.js';
 import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js';
+import {loadProviderToken} from '../services/integrations/oauthPkceStore.js';
+import {AuthorityError} from '../security/authority/enforce.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
+import {SupabaseManagementDenied} from '../services/integrations/supabaseProvision.js';
+import {captureSupabaseAccess,type SupabaseAccess} from '../services/integrations/supabaseAccess.js';
 
 const router = Router();
 
@@ -160,8 +165,9 @@ router.post('/connect', async (req: AuthRequest, res) => {
     let projects: Array<{ id: string; ref: string; name: string; region?: string }> = [];
     let projectsError: string | undefined;
     try {
-      projects = await listSupabaseProjects(accessToken);
+      projects = await listSupabaseProjects(accessToken, context);
     } catch (err) {
+      if(err instanceof AuthorityError||err instanceof EgressDenied||err instanceof SupabaseManagementDenied)throw err;
       projectsError = (err as Error).message;
       console.warn('[supabaseOAuth] list projects after authorize:', projectsError);
     }
@@ -176,7 +182,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
       autoSelected = p.ref;
       try {
         const result = await oneClickConnectSupabase({
-          userId: req.userId!,
+          userId: req.userId!, tenantContext: context,
           accessToken,
           projectRef: p.ref,
           projectName: p.name,
@@ -184,12 +190,13 @@ router.post('/connect', async (req: AuthRequest, res) => {
         });
         provision = result.provision;
         status = result.status;
-        envSync = await maybeSyncVaultToVercel(req.userId!);
+        envSync = result.provision.needsConfirmation ? null : await maybeSyncVaultToVercel(req.userId!);
       } catch (err) {
         if ((err as { code?: string }).code === 'CREDENTIAL_WRITE_CONFLICT') {
           res.status(409).json({ ok: false, error: 'Supabase connection changed during authorization. Authorize again.' });
           return;
         }
+        if(err instanceof AuthorityError||err instanceof EgressDenied||err instanceof SupabaseManagementDenied)throw err;
         console.warn('[supabaseOAuth] auto-provision failed:', (err as Error).message);
         provision = { ok: false, message: (err as Error).message };
       }
@@ -236,12 +243,14 @@ router.post('/connect', async (req: AuthRequest, res) => {
 
 router.get('/projects', async (req: AuthRequest, res) => {
   try {
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
     const accessToken = await getSupabaseOAuthAccessToken(req.userId!);
     if (!accessToken) {
       res.status(403).json({ error: 'Authorize Supabase first', projects: [] });
       return;
     }
-    const projects = await listSupabaseProjects(accessToken);
+    const projects = await listSupabaseProjects(accessToken, context);
     res.json({ projects });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message, projects: [] });
@@ -265,6 +274,8 @@ router.post('/select-project', async (req: AuthRequest, res) => {
   }
 
   try {
+    const context = requireTenantContext(req.tenantContext);
+    requireResourceOwner(context, req.userId);
     const writeAdmissions = await prepareSupabaseConnectionWrite(req.userId!);
     let accessToken = await getSupabaseOAuthAccessToken(req.userId!);
     if (!accessToken) {
@@ -276,7 +287,7 @@ router.post('/select-project', async (req: AuthRequest, res) => {
     }
 
     const result = await oneClickConnectSupabase({
-      userId: req.userId!,
+      userId: req.userId!, tenantContext: context,
       accessToken,
       projectRef: parsed.data.projectRef,
       projectName: parsed.data.projectName,
@@ -284,7 +295,7 @@ router.post('/select-project', async (req: AuthRequest, res) => {
       writeAdmissions,
     });
 
-    const envSync = await maybeSyncVaultToVercel(
+    const envSync = result.provision.needsConfirmation ? null : await maybeSyncVaultToVercel(
       req.userId!,
       parsed.data.vercelProject,
     );
@@ -301,122 +312,62 @@ router.post('/select-project', async (req: AuthRequest, res) => {
   }
 });
 
-/** Create a new project under the authorized org, then provision it. */
-router.post('/create-project', async (req: AuthRequest, res) => {
-  const schema = z.object({
-    name: z.string().min(2).max(64),
-    organizationId: z.string().min(2).max(64),
-    region: z.string().min(2).max(32).default('us-east-1'),
-    vercelProject: z.string().min(2).max(64).optional(),
-  });
-  const parsed = schema.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.flatten() });
-    return;
-  }
-
-  try {
-    const context = requireTenantContext(req.tenantContext);
-    requireResourceOwner(context, req.userId);
-    const { userId } = context;
-    const writeAdmissions = await prepareSupabaseConnectionWrite(userId);
-    const accessToken = await getSupabaseOAuthAccessToken(userId);
-    if (!accessToken) {
-      res.status(403).json({ error: 'Authorize Supabase first' });
-      return;
-    }
-
-    const dbPass = randomBytes(24).toString('base64url');
-    const createRes = await fetch('https://api.supabase.com/v1/projects', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: parsed.data.name,
-        organization_id: parsed.data.organizationId,
-        region: parsed.data.region,
-        db_pass: dbPass,
-      }),
-    });
-    const created = (await createRes.json().catch(() => ({}))) as {
-      id?: string;
-      ref?: string;
-      name?: string;
-      message?: string;
-      error?: string;
-    };
-    if (!createRes.ok) {
-      throw new Error(created.message || created.error || `Create project failed (${createRes.status})`);
-    }
-
-    const ref = String(created.id || created.ref || '');
-    if (!ref) throw new Error('Project created but ref missing');
-
-    // Wait briefly for project to become active before keys/SQL
-    await new Promise((r) => setTimeout(r, 4000));
-
-    // Retry key fetch — new projects may need a moment
-    let keys: { url: string; anonKey: string; serviceRoleKey: string } | null = null;
-    for (let i = 0; i < 8; i++) {
-      try {
-        keys = await fetchProjectApiKeys(accessToken, ref);
-        break;
-      } catch {
-        await new Promise((r) => setTimeout(r, 3000));
-      }
-    }
-    if (!keys) throw new Error('Project created but API keys not ready yet — click the project in a minute');
-
-    await saveSupabaseBundle(writeAdmissions.bundle, { projectUrl: keys.url, anonKey: keys.anonKey, serviceRoleKey: keys.serviceRoleKey, dbPassword: dbPass });
-    await saveUserProviderKey(userId, 'supabase_pat', accessToken, { writeAdmission: writeAdmissions.pat });
-
-    const provision = await provisionUserSupabase({
-      projectUrl: keys.url,
-      serviceRoleKey: keys.serviceRoleKey,
-      accessToken,
-      dbPassword: dbPass,
-      projectName: parsed.data.name,
-      region: parsed.data.region,
-    });
-
-    const envSync = await maybeSyncVaultToVercel(
-      req.userId!,
-      parsed.data.vercelProject,
-    );
-
-    const status = await getUserSupabaseStatus(req.userId!);
-    res.json({
-      ok: true,
-      projectRef: ref,
-      status: { ...status, provisioned: provision.ok && provision.schemaApplied && provision.memoryTablesReady },
-      provision,
-      envSync,
-      message: provision.message || `Created and provisioned ${parsed.data.name}`,
-    });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
-  }
+/** Creation is a separate exact native action. It cannot imply SQL or key export. */
+router.post('/create-project',async(req:AuthRequest,res)=>{
+ const parsed=supabaseProjectCreationInput.safeParse(req.body);
+ if(!parsed.success)return res.status(400).json({error:parsed.error.flatten()});
+ const lifetime=new AbortController(),abort=()=>lifetime.abort();req.once('aborted',abort);res.once('close',abort);
+ try{
+  const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId);
+  const pending=await prepareSupabaseProjectCreation(context,parsed.data,lifetime.signal);
+  return res.status(202).json(pending);
+ }catch(error){
+  if(res.destroyed||res.headersSent)return;
+  return res.status(error instanceof AuthorityError||error instanceof EgressDenied?403:400).json({error:'Project creation is unavailable for the current connection or selected organization. Only a verified Free-plan organization is supported. No automatic retry or plan upgrade is performed.'});
+ }finally{lifetime.abort();req.off('aborted',abort);res.off('close',abort);}
 });
 
 router.get('/organizations', async (req: AuthRequest, res) => {
+  const lifetime=new AbortController();
+  const abort=()=>lifetime.abort();
+  req.once('aborted',abort);res.once('close',abort);
   try {
-    const accessToken = await getSupabaseOAuthAccessToken(req.userId!);
+    const context=requireTenantContext(req.tenantContext);
+    requireResourceOwner(context,req.userId);
+    lifetime.signal.throwIfAborted();
+    const accessToken = await getSupabaseOAuthAccessToken(context.userId);
     if (!accessToken) {
       res.status(403).json({ error: 'Authorize Supabase first', organizations: [] });
       return;
     }
+    const current=async()=>{
+      lifetime.signal.throwIfAborted();requireResourceOwner(context,req.userId);
+      const value=await loadProviderToken(context.userId,'supabase_oauth',{authoritativeOnly:true});
+      if(!value||value.access_token!==accessToken||typeof value.credential_revision!=='string'||!value.credential_revision)throw new Error('Supabase connection changed.');
+      lifetime.signal.throwIfAborted();
+      return JSON.stringify([value.credential_revision,value.metadata,value.refresh_token]);
+    };
+    const selected=await current();
     const r = await fetch('https://api.supabase.com/v1/organizations', {
+      method:'GET',redirect:'manual',
+      signal:AbortSignal.any([lifetime.signal,AbortSignal.timeout(15_000)]),
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const data = (await r.json().catch(() => [])) as Array<{ id: string; name: string; slug?: string }>;
-    if (!r.ok) {
-      throw new Error((data as unknown as { message?: string }).message || 'Failed to list orgs');
+    if(r.redirected||!r.ok){await r.body?.cancel().catch(()=>undefined);throw new Error('Supabase organization read denied.');}
+    const reader=r.body?.getReader(),chunks:Uint8Array[]=[];let size=0;
+    try{
+      if(reader)for(;;){const item=await reader.read();if(item.done)break;size+=item.value.byteLength;if(size>65_536)throw new Error('Supabase organization receipt exceeds safe limit.');chunks.push(item.value);}
+    }finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    const parsed=z.array(z.object({id:z.string().min(1).max(128),name:z.string().max(256),slug:z.string().max(128).optional()})).max(1000).safeParse(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+    if(!parsed.success||await current()!==selected)throw new Error('Supabase organization receipt or connection changed.');
+    lifetime.signal.throwIfAborted();
+    res.json({ organizations: parsed.data });
+  } catch {
+    if(!res.destroyed&&!res.headersSent){
+      res.status(400).json({ error: 'Supabase organizations are unavailable. Check your connection and retry.', organizations: [] });
     }
-    res.json({ organizations: Array.isArray(data) ? data : [] });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message, organizations: [] });
+  } finally {
+    lifetime.abort();req.off('aborted',abort);res.off('close',abort);
   }
 });
 

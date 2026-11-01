@@ -26,6 +26,11 @@ import {
   type GoalContract,
 } from './goalContract.js';
 import { readFileSync } from 'node:fs';
+import { TenantAccessError } from '../../security/tenantErrors.js';
+import { AuthorityError } from '../../security/authority/enforce.js';
+import { EgressDenied } from '../../security/egress/egressPolicy.js';
+import { RuntimeFailure } from './runtimeFailure.js';
+import { PostCompletionAccountingError } from '../postCompletionAccounting.js';
 
 function goal(overrides: Partial<GoalContract> = {}): GoalContract {
   return goalContractSchema.parse({
@@ -391,6 +396,75 @@ describe('semantic authority blockers', () => {
 });
 
 describe('semantic planner provider fallback', () => {
+  it('does not hedge across tenant, authority, egress, stale execution or shared capacity refusal', async () => {
+    const denials = [new TenantAccessError(404, 'RESOURCE_NOT_FOUND'), new AuthorityError('AUTHORITY_EXPIRED'),
+      new EgressDenied('FOREIGN_FILE_OWNER'), Object.assign(Error('Stale execution'), { code: 'RUN_STATE_CONFLICT' }),
+      new RuntimeFailure('CAPABILITY_TEMPORARILY_UNAVAILABLE', 'Account capacity unavailable'), new PostCompletionAccountingError()];
+    for (const denial of denials) {
+      let calls = 0;
+      await assert.rejects(executeHedgedPlannerFallback({
+        routes: ['deepseek_v4_flash', 'glm_5_3_flash'], signal: new AbortController().signal,
+        routeTimeoutMs: 1_000, hedgeDelayMs: 100,
+        execute: async () => { calls++; throw denial; },
+      }), error => error === denial);
+      assert.equal(calls, 1);
+    }
+  });
+
+  it('aborts an already running hedge when either route rejects local security authority', async () => {
+    for (const deniedModel of ['deepseek_v4_flash', 'glm_5_3_flash']) {
+      const denial = Object.assign(Error('Local policy denial'), { code: 'MODEL_DISPATCH_BINDING_DENIED' });
+      let rejectDenied!: (error: unknown) => void;
+      let competitorAborted = false;
+      const called: string[] = [];
+      await assert.rejects(executeHedgedPlannerFallback({
+        routes: ['deepseek_v4_flash', 'glm_5_3_flash'], signal: new AbortController().signal,
+        routeTimeoutMs: 1_000, hedgeDelayMs: 0,
+        execute: async (modelId, signal) => {
+          called.push(modelId);
+          if (modelId === deniedModel) {
+            return new Promise<string>((_resolve, reject) => {
+              rejectDenied = reject;
+              if (called.length === 2) rejectDenied(denial);
+            });
+          }
+          return new Promise<string>((_resolve, reject) => {
+            signal.addEventListener('abort', () => { competitorAborted = true; reject(Error('Cancelled hedge')); }, { once: true });
+            if (called.length === 2) rejectDenied(denial);
+          });
+        },
+      }), error => error === denial);
+      assert.equal(competitorAborted, true);
+      assert.deepEqual(called, ['deepseek_v4_flash', 'glm_5_3_flash']);
+    }
+  });
+
+  it('still uses an approved fallback for an ordinary provider outage', async () => {
+    const called: string[] = [];
+    const result = await executeHedgedPlannerFallback({
+      routes: ['deepseek_v4_flash', 'glm_5_3_flash'], signal: new AbortController().signal,
+      routeTimeoutMs: 1_000, hedgeDelayMs: 100,
+      execute: async modelId => { called.push(modelId); if (called.length === 1) throw Object.assign(Error('Service unavailable'), { status: 503 }); return 'valid plan'; },
+    });
+    assert.equal(result.value, 'valid plan');
+    assert.deepEqual(called, ['deepseek_v4_flash', 'glm_5_3_flash']);
+  });
+
+  it('preserves local security denial identity and never starts another planning route', async () => {
+    for (const code of ['MODEL_DISPATCH_BINDING_DENIED', 'MODEL_CREDENTIAL_EGRESS_DENIED', 'MODEL_PAYLOAD_INVALID', 'MODEL_DESTINATION_DENIED']) {
+      const denial = Object.assign(new Error('Local policy denial'), { code });
+      const calls: string[] = [];
+      await assert.rejects(executeHedgedPlannerFallback({
+        routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
+        signal: new AbortController().signal,
+        routeTimeoutMs: 1_000,
+        hedgeDelayMs: 100,
+        execute: async modelId => { calls.push(modelId); throw denial; },
+      }), error => error === denial);
+      assert.deepEqual(calls, ['deepseek_v4_flash']);
+    }
+  });
+
   it('spends the bounded planner budget on the JSON decision instead of hidden reasoning', () => {
     const signal = new AbortController().signal;
     assert.deepEqual(semanticPlannerCompletionOptions(signal), {

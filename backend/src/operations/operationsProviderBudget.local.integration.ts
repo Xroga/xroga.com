@@ -70,13 +70,16 @@ export function registerOperationsProviderBudgetTests(
 
     assert.equal((await admin.from('profiles').update({ role: 'member' }).eq('id', requester.id)).error, null);
     assert.equal((await admin.rpc('reserve_operations_provider_budget', args(randomUUID(), 1_000))).error?.code, '42501');
+    assert.equal((await admin.rpc('reserve_operations_provider_budget', args(firstKey, 200_000))).error?.code, '42501','Existing reservation cannot bypass revoked requester authority on SDK retry');
     assert.equal((await admin.from('profiles').update({ role: 'admin' }).eq('id', requester.id)).error, null);
     assert.equal((await admin.from('profiles').update({ role: 'member' }).eq('id', owner.id)).error, null);
     assert.equal((await admin.rpc('reserve_operations_provider_budget', args(randomUUID(), 1_000))).error?.code, '42501');
+    assert.equal((await admin.rpc('reserve_operations_provider_budget', args(firstKey, 200_000))).error?.code, '42501','Existing reservation cannot bypass revoked approver authority');
     assert.equal((await admin.from('profiles').update({ role: 'admin' }).eq('id', owner.id)).error, null);
     assert.equal((await admin.from('operations_action_approvals').update({ expires_at: new Date(Date.now() - 1000).toISOString() })
       .eq('action_id', actionId)).error, null);
     assert.equal((await admin.rpc('reserve_operations_provider_budget', args(randomUUID(), 1_000))).error?.code, '40001');
+    assert.equal((await admin.rpc('reserve_operations_provider_budget', args(firstKey, 200_000))).error?.code, '40001','Existing reservation cannot bypass expired approval');
 
     for (const token of [undefined, requester.token]) {
       const browser = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {

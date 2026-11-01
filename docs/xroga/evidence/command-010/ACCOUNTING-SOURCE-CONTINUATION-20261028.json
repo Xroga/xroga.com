@@ -1,0 +1,16 @@
+{
+  "scope": "SOURCE_BINDING_ONLY_NO_ACCEPTANCE_PROMOTION",
+  "reference": "87e33b94b3d85deaac12d4bcc691363f4876fa64",
+  "path": "backend/src/ai/providerBudget.ts",
+  "previousSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+  "currentSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+  "exactWholeFileComparisonAfterRemovingOnlyListedDeltas": true,
+  "deltas": [
+    "Import existing MODEL_REDIRECT_AFTER_DISPATCH classification",
+    "Preserve uncertain reservation after dispatched redirect rather than release as known failure",
+    "Type-only optional idempotencyKey field from accepted Google integration"
+  ],
+  "verification": "Existing terminal redirect regression retained. No RPC, balance arithmetic or settlement contract changed. Exact-source integration still required.",
+  "originalCriteriaChanged": false,
+  "historicalEvidenceReusedAsNewSource": false
+}

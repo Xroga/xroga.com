@@ -1,3 +1,4 @@
+import {executeCheckoutWithFixtureClaim} from './fixtures/checkoutApproval.js';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {BillingService,resetBillingMemoryForTests} from './BillingService.js';
@@ -31,7 +32,7 @@ for(const kind of ['payment.succeeded','membership.activated'] as const)test(`bi
     }
     throw new Error('Unexpected persistence path');
   });
-  const issued=await BillingService.createCheckout(owner);assert.equal(issued.checkoutConfigurationId,checkout);
+  const issued=await executeCheckoutWithFixtureClaim(owner);assert.equal(issued.checkoutConfigurationId,checkout);
   const event={type:kind,account_id:plan.account_id,data:{id:kind==='payment.succeeded'?'pay_fixture':'mem_fixture',status:kind==='payment.succeeded'?'succeeded':'active',plan_id:plan.id,account_id:plan.account_id,checkout_configuration_id:checkout,metadata:{...metadata,xroga_user_id:other}}};
   await assert.rejects(BillingService.handleWebhookEvent(event,'synthetic_delivery'),/owner_mismatch/);
   assert.equal(writes,0,'Callback metadata cannot select another app user for an issued checkout');

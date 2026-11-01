@@ -1,0 +1,69 @@
+TAP version 13
+# Subtest: native artifact preparation cannot publish or delete before exact durable approval
+    # Subtest: chrome
+    not ok 1 - chrome
+      ---
+      duration_ms: 136.2258
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\nativeArtifactApproval.security.test.ts:1:2885'
+      failureType: 'testCodeFailure'
+      error: |-
+        Preparing an artifact must not create a public release, delete an asset or upload source
+
+        1 !== 0
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\nativeArtifactApproval.security.test.ts:40:12)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\nativeArtifactApproval.security.test.ts:36:40)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: electron
+    not ok 2 - electron
+      ---
+      duration_ms: 47.7003
+      type: 'test'
+      location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\nativeArtifactApproval.security.test.ts:1:2885'
+      failureType: 'testCodeFailure'
+      error: |-
+        Preparing an artifact must not create a public release, delete an asset or upload source
+
+        1 !== 0
+
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\nativeArtifactApproval.security.test.ts:40:12)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\services\publish\nativeArtifactApproval.security.test.ts:36:40)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..2
+not ok 1 - native artifact preparation cannot publish or delete before exact durable approval
+  ---
+  duration_ms: 194.4025
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\services\\publish\\nativeArtifactApproval.security.test.ts:1:245'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3507.0603

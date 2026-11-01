@@ -1,0 +1,43 @@
+TAP version 13
+# Subtest: GitHub private mirror cannot grant access when both canonical authority rows are absent
+ok 1 - GitHub private mirror cannot grant access when both canonical authority rows are absent
+  ---
+  duration_ms: 10.7899
+  type: 'test'
+  ...
+# Subtest: BYOK private mirror cannot grant a key when canonical authority stays absent
+ok 2 - BYOK private mirror cannot grant a key when canonical authority stays absent
+  ---
+  duration_ms: 6.2347
+  type: 'test'
+  ...
+# Subtest: legacy downloads recheck authoritative revocation, rotation and outages before returning credentials
+ok 3 - legacy downloads recheck authoritative revocation, rotation and outages before returning credentials
+  ---
+  duration_ms: 267.7258
+  type: 'test'
+  ...
+# Subtest: actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner
+ok 4 - actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner
+  ---
+  duration_ms: 16.4174
+  type: 'test'
+  ...
+# [githubTokenStore] save failed
+# [githubTokenStore] save failed
+# [githubTokenStore] save failed
+# Subtest: legacy GitHub mirror writes require original issued context before bucket or transport
+ok 5 - legacy GitHub mirror writes require original issued context before bucket or transport
+  ---
+  duration_ms: 19.7167
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7258.7876

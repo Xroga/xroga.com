@@ -144,7 +144,7 @@ describe(
 
         assert.match(
           routing,
-          /routeProject\(canonicalProjectId\)/,
+          /routeProject\(canonicalProjectId[,)]/,
         );
 
         assert.match(
@@ -154,7 +154,7 @@ describe(
 
         assert.doesNotMatch(
           routing,
-          /routeProject\(resolvedProjectId\)/,
+          /routeProject\(resolvedProjectId[,)]/,
         );
       },
     );

@@ -1,0 +1,108 @@
+{
+  "scope": "SCOPED_IMAGE_CLIENT_PROXY_DENIAL_ENFORCEMENT_NOT_UPSTREAM_IMAGE_GENERATION_SHARING_OR_UPLOAD_AUTHORITY",
+  "parent": "edbc9f2cc5af537913b303f73d39278d087e7aaa",
+  "originalCandidates": [
+    {
+      "id": "4411ebbe68c6e8ba24f8",
+      "entryPoint": "imageUrlToPngBlob",
+      "callSha256": "02080ee9df2029343f4a9ce242af5ea993a030cc7d8e206f90eb5ab207dd5d52"
+    },
+    {
+      "id": "5c6a31a60bdfe573ba0f",
+      "entryPoint": "imageUrlToPngBlob",
+      "callSha256": "1cb5850e6e56722cf23d9ab54152edd80a177d13fc350168c95e657802e85377"
+    },
+    {
+      "id": "c13ab0d785effcabf422",
+      "entryPoint": "imageUrlToPngBlob",
+      "callSha256": "079cd39d78664c093c7c0a36c2e282581c854a4f9476d826048bdc01e0d0bd79"
+    }
+  ],
+  "replacementCandidate": {
+    "id": "3b970c32a8efb294a7fd",
+    "file": "frontend/src/lib/imageStudioUtils.ts",
+    "line": 66,
+    "entryPoint": "admittedImageBlob",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "41f7d3340a897e2f2b5880451a0426e924282874510c1c46b7bf398dd785e39c",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "reachableCallers": [
+    "Image Studio downloadImage and copyImageToClipboard call these conversion and transformation helpers",
+    "shareImage uses imageUrlToPngBlob for conversion. Its separate upload/export authorization is not promoted"
+  ],
+  "defect": "Actual Chromium attempted one direct outside request after a synthetic proxy403, both in the fetch fallback and transformed Image.src path. Original denied network was intercepted and never reached the Internet.",
+  "solution": "All HTTP(S) images use the existing same-origin image-fetch route, whose canonical URL/DNS-pinned boundedPublicGet remains unchanged. Proxy denial cannot trigger direct fetch or remote Image.src. Only generated local object URLs reach Image.src. Local image data and same-origin blob capabilities remain usable with a16MiB actual-body ceiling and25second retrieval deadline. Terminal admission errors survive transformation/download fallback.",
+  "positive": [
+    "Authorized proxy PNG download",
+    "Data and same-origin blob conversion",
+    "90degree rotation yields3by2 pixels from2by3 fixture"
+  ],
+  "negative": [
+    "Proxy403 stops direct fetch and transformed loading,0outside attempts",
+    "SVG script and linked-image payload yields0outside attempts in actual Chromium151",
+    "16MiB+1 local body denied"
+  ],
+  "sourceBindings": [
+    {
+      "path": "frontend/src/lib/imageStudioUtils.ts",
+      "sha256": "0b84a79c7fc9f30b9c35e18b8c3e2b556bde0152abb3c751f47205a8bbd6a38b"
+    },
+    {
+      "path": "frontend/e2e/phase4-image-client.browser.mjs",
+      "sha256": "9aa9d3f21ad1c3908f6d60b8ff4c9e7dffedcd4e2fb7fbb7ff51ba1095116450"
+    },
+    {
+      "path": "frontend/src/app/api/image-fetch/route.ts",
+      "sha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1"
+    },
+    {
+      "path": ".github/workflows/command3-auth-browser.yml",
+      "sha256": "99a963557bc56d998c5652f2b1848a8d38f39a5171a1d1cdc9c088a67418522b"
+    }
+  ],
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "334b0686-7b6b-46b6-aaec-6d5bd0177664",
+      "status": "failed",
+      "log": "docs/xroga/evidence/command-010/image-client-20261027/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "0275bf69-dc7b-4324-bc6c-4c4fd408a452",
+      "status": "passed",
+      "log": "docs/xroga/evidence/command-010/image-client-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    }
+  ],
+  "limitations": [
+    "Local actual Chromium with synthetic fixtures, not Google live production or model acceptance",
+    "Original image-fetch proxy policy unchanged, this verifies client denial propagation",
+    "No sharing API, upload caller, image generation model or tenant authorization automatically certified",
+    "Original12criteria, remaining caller obligations and exact-source integration/release gates remain required"
+  ],
+  "frontendTypecheck": {
+    "jobId": "e1b6e15d-78df-430c-aec3-6d35ad08137b",
+    "status": "passed",
+    "exitCode": 0,
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 1322060
+    }
+  }
+}

@@ -1,0 +1,232 @@
+TAP version 13
+# Subtest: GJ action egress retains the original issued actor context rather than rebuilding one from a user ID
+ok 1 - GJ action egress retains the original issued actor context rather than rebuilding one from a user ID
+  ---
+  duration_ms: 63.0479
+  type: 'test'
+  ...
+# Subtest: GJ raw-user-ID connected read cannot dispatch without the original issued context
+ok 2 - GJ raw-user-ID connected read cannot dispatch without the original issued context
+  ---
+  duration_ms: 0.7399
+  type: 'test'
+  ...
+# Subtest: GJ unknown tool metadata cannot create a connected read capability
+ok 3 - GJ unknown tool metadata cannot create a connected read capability
+  ---
+  duration_ms: 1.464
+  type: 'test'
+  ...
+# Subtest: GJ connected read refuses credential canaries before discovery or execution
+ok 4 - GJ connected read refuses credential canaries before discovery or execution
+  ---
+  duration_ms: 1.1668
+  type: 'test'
+  ...
+# Subtest: GJ changed remote session ownership during egress receipt prevents the confirmed action
+ok 5 - GJ changed remote session ownership during egress receipt prevents the confirmed action
+  ---
+  duration_ms: 11.7426
+  type: 'test'
+  ...
+# Subtest: GJ cancellation during tool discovery prevents connected execution and fallback
+ok 6 - GJ cancellation during tool discovery prevents connected execution and fallback
+  ---
+  duration_ms: 2.9524
+  type: 'test'
+  ...
+# Subtest: GJ contracts use the real typed GoalContract boundary and conversational planning dispatch
+ok 7 - GJ contracts use the real typed GoalContract boundary and conversational planning dispatch
+  ---
+  duration_ms: 5.5183
+  type: 'test'
+  ...
+# Subtest: GJ business preparation finds only the relevant disconnected provider and never executes
+ok 8 - GJ business preparation finds only the relevant disconnected provider and never executes
+  ---
+  duration_ms: 4.1242
+  type: 'test'
+  ...
+# Subtest: GJ unsupported action remains unavailable instead of a fabricated success
+ok 9 - GJ unsupported action remains unavailable instead of a fabricated success
+  ---
+  duration_ms: 1.782
+  type: 'test'
+  ...
+# Subtest: GJ business write rejects absent user authority and changed prepared arguments
+ok 10 - GJ business write rejects absent user authority and changed prepared arguments
+  ---
+  duration_ms: 1.6967
+  type: 'test'
+  ...
+# Subtest: GJ exact prepared destructive action requires confirmation before the actual adapter executes
+ok 11 - GJ exact prepared destructive action requires confirmation before the actual adapter executes
+  ---
+  duration_ms: 9.7739
+  type: 'test'
+  ...
+# Subtest: GJ second tenant cannot execute through the owner session; read lane rejects mutations
+ok 12 - GJ second tenant cannot execute through the owner session; read lane rejects mutations
+  ---
+  duration_ms: 2.7436
+  type: 'test'
+  ...
+# Subtest: GJ changed or disconnected account blocks the real action adapter before dispatch
+ok 13 - GJ changed or disconnected account blocks the real action adapter before dispatch
+  ---
+  duration_ms: 4.9803
+  type: 'test'
+  ...
+# Subtest: GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result
+ok 14 - GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result
+  ---
+  duration_ms: 2.643
+  type: 'test'
+  ...
+# Subtest: GJ a forged permit fails before provider metadata or execution
+ok 15 - GJ a forged permit fails before provider metadata or execution
+  ---
+  duration_ms: 1.3824
+  type: 'test'
+  ...
+# Subtest: GJ anonymous identity and unconfirmed direct provider action are rejected
+ok 16 - GJ anonymous identity and unconfirmed direct provider action are rejected
+  ---
+  duration_ms: 0.6022
+  type: 'test'
+  ...
+# Subtest: GJ provider failure is sanitized and cannot become a success receipt
+ok 17 - GJ provider failure is sanitized and cannot become a success receipt
+  ---
+  duration_ms: 7.8808
+  type: 'test'
+  ...
+# Subtest: GJ provider timeout is classified; uncertain writes are not blindly replayed
+ok 18 - GJ provider timeout is classified; uncertain writes are not blindly replayed
+  ---
+  duration_ms: 6.1659
+  type: 'test'
+  ...
+# Subtest: GJ input_required provider response cannot be recorded as completion or automatically resubmitted
+ok 19 - GJ input_required provider response cannot be recorded as completion or automatically resubmitted
+  ---
+  duration_ms: 3.8002
+  type: 'test'
+  ...
+# Subtest: GJ incomplete provider response cannot be recorded as completion or automatically resubmitted
+ok 20 - GJ incomplete provider response cannot be recorded as completion or automatically resubmitted
+  ---
+  duration_ms: 7.3117
+  type: 'test'
+  ...
+# Subtest: GJ malformed provider response cannot be recorded as completion or automatically resubmitted
+ok 21 - GJ malformed provider response cannot be recorded as completion or automatically resubmitted
+  ---
+  duration_ms: 3.4037
+  type: 'test'
+  ...
+# Subtest: GJ false-success and runtime diagnostic leakage are refused by existing output helpers
+ok 22 - GJ false-success and runtime diagnostic leakage are refused by existing output helpers
+  ---
+  duration_ms: 0.4378
+  type: 'test'
+  ...
+# Subtest: GJ browser refresh detaches transport once without cancelling execution
+ok 23 - GJ browser refresh detaches transport once without cancelling execution
+  ---
+  duration_ms: 0.1859
+  type: 'test'
+  ...
+# Subtest: GJ actual HTTP auth denial and SSE serialization use loopback only
+ok 24 - GJ actual HTTP auth denial and SSE serialization use loopback only
+  ---
+  duration_ms: 45.1972
+  type: 'test'
+  ...
+# Subtest: permit context access returns only the original issued actor within its exact unused lifetime
+ok 25 - permit context access returns only the original issued actor within its exact unused lifetime
+  ---
+  duration_ms: 10.3217
+  type: 'test'
+  ...
+# Subtest: canonical executor dispatches only an exact issued actor and durable adapter claim, once
+ok 26 - canonical executor dispatches only an exact issued actor and durable adapter claim, once
+  ---
+  duration_ms: 2.4319
+  type: 'test'
+  ...
+# Subtest: boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+ok 27 - boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch
+  ---
+  duration_ms: 7.7348
+  type: 'test'
+  ...
+# Subtest: expiry, revocation and substituted durable receipt after a wait fail before effect
+ok 28 - expiry, revocation and substituted durable receipt after a wait fail before effect
+  ---
+  duration_ms: 5.0236
+  type: 'test'
+  ...
+# Subtest: all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+ok 29 - all twelve server policies exist, read is lighter, and financial authority needs exact spend binding
+  ---
+  duration_ms: 11.3182
+  type: 'test'
+  ...
+# Subtest: dependent business evidence requires explicit review before discovery or model dispatch
+ok 30 - dependent business evidence requires explicit review before discovery or model dispatch
+  ---
+  duration_ms: 3.4959
+  type: 'test'
+  ...
+# Subtest: explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+ok 31 - explicitly reviewed dependent action keeps confirmation and a snapshot of its evidence
+  ---
+  duration_ms: 44.8844
+  type: 'test'
+  ...
+# Subtest: actual business selectors preserve invalid reservation denial before trying another model
+ok 32 - actual business selectors preserve invalid reservation denial before trying another model
+  ---
+  duration_ms: 5.7445
+  type: 'test'
+  ...
+# Subtest: actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+ok 33 - actual business model callers bind issued owner and immutable input through SDK and canonical accounting
+  ---
+  duration_ms: 34.8081
+  type: 'test'
+  ...
+# Subtest: business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+ok 34 - business model selectors still recover from an ordinary provider outage without duplicating completion accounting
+  ---
+  duration_ms: 859.2578
+  type: 'test'
+  ...
+# Subtest: external read-only metadata cannot downgrade server-side destructive, write or unknown tool risk
+ok 35 - external read-only metadata cannot downgrade server-side destructive, write or unknown tool risk
+  ---
+  duration_ms: 1.3502
+  type: 'test'
+  ...
+# Subtest: fixed Composio transport refuses credential-bearing redirects before following them
+ok 36 - fixed Composio transport refuses credential-bearing redirects before following them
+  ---
+  duration_ms: 43.8885
+  type: 'test'
+  ...
+# Subtest: Composio response byte ceiling stops and cancels a dishonest unbounded stream
+ok 37 - Composio response byte ceiling stops and cancels a dishonest unbounded stream
+  ---
+  duration_ms: 4.6635
+  type: 'test'
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2344.9329

@@ -1,0 +1,285 @@
+{
+  "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
+  "atUtc": "2026-10-27T22:13:57.194Z",
+  "parent": "a0ff83a32c23b04afbfb9847db93b56256afcbb9",
+  "resolvedSinceLastPush": [
+    "151aa103d929fb10c020",
+    "96fbfea42a399a233486",
+    "fcad57247cfb79779f95",
+    "fe9ce5d32d8c52cdd3c3",
+    "52851686fc818e0e4c5f"
+  ],
+  "newGuardedLifecycleHelper": "5e931ac391ece81659aa",
+  "strictAudit": {
+    "total": 136,
+    "reviewed": 121,
+    "pending": 15,
+    "unresolvedHighRiskBypasses": 8
+  },
+  "strictResult": "INCOMPLETE_EXIT1",
+  "strictReceipt": {
+    "job": "37fd5985-c3ca-4501-8a79-fd3b4b460ead",
+    "node": "22.21.1",
+    "log": "docs/xroga/evidence/command-010/strict-incomplete-15pending-20261028.log"
+  },
+  "remainingCandidates": [
+    {
+      "id": "5baa649b7c2c9b6b6f30",
+      "file": "backend/src/ai/parallelDispatch.ts",
+      "entryPoint": "executeParallelRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "807c2948cdfa16e19b84",
+      "file": "backend/src/routes/supabaseOAuth.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "fcbe4c75dea0e59bcb3a",
+      "file": "backend/src/routes/voice.ts",
+      "entryPoint": "<module-or-callback>",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7b6e1f490ce974fc3971",
+      "file": "backend/src/services/integrations/composioClient.ts",
+      "entryPoint": "composioRequest",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "90eeada0337da120131f",
+      "file": "backend/src/services/integrations/githubDeploy.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "15dcdf4bce3cfa3abf94",
+      "file": "backend/src/services/integrations/supabaseProvision.ts",
+      "entryPoint": "mgmtFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "d9708e60456bb2d7e538",
+      "file": "backend/src/services/publish/chromeWebStore.ts",
+      "entryPoint": "cwsFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "42cc7885da84d7295699",
+      "file": "backend/src/services/publish/easCredentials.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "602637659fcacb16c1ef",
+      "file": "backend/src/services/publish/easPublish.ts",
+      "entryPoint": "expoFetch",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "cf71505267ebcf357a5c",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "entryPoint": "putRepoSecret",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "7cd9f7585381cfe94c57",
+      "file": "backend/src/services/publish/electronSecrets.ts",
+      "entryPoint": "putRepoSecret",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "99ec2dc4769b5eced6a5",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "ghFetch",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    },
+    {
+      "id": "094a251245ce9b6ab659",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipChromeExtensionZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "07ca232e98dcc1720801",
+      "file": "backend/src/services/publish/nonWebShip.ts",
+      "entryPoint": "shipElectronPortableZip",
+      "risk": "HIGH_RISK_PENDING_REVIEW"
+    },
+    {
+      "id": "805931ff0dc022677403",
+      "file": "frontend/src/lib/showcase/auraGroq.ts",
+      "entryPoint": "requestGroqStream",
+      "risk": "FIXED_ORIGIN_REVIEW"
+    }
+  ],
+  "formalAcceptedCriteria": 0,
+  "localEvidenceCriteria": 7,
+  "criterionCount": 12,
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "verification": {
+    "checkoutFocused51": "PASS",
+    "additionalCanonicalIntegration26": "PASS",
+    "finalCheckoutTerminalDenialAndRoute23": "PASS",
+    "auraManualClientTransportAndParsing9": "PASS",
+    "organizationRoutes14": "PASS",
+    "containerCurrentSource": "45checks pass in batch; running-cancellation observation precondition timed out, then its single bounded unchanged-source recheck passed exact ownership labels and removal. No all-green single46check batch claimed.",
+    "types": "PASS_BACKEND_AND_FRONTEND_CURRENT_LOCAL_PRODUCTION_SOURCE"
+  },
+  "evidenceRefs": [
+    "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
+    "docs/xroga/evidence/command-010/CONTAINER-LIFECYCLE-BOUNDARY-20261028.json",
+    "docs/xroga/evidence/command-010/SUPABASE-ORGANIZATION-READ-BOUNDARY-20261028.json",
+    "docs/xroga/evidence/command-010/AURA-FIRST-PARTY-CLIENTS-20261028.json"
+  ],
+  "lastExactSourceCI": {
+    "source": "9db3921f93c1c384f853847148f6ec65ccca19bc",
+    "testedMerge": "69547cddb78a38f804a73595bac25f883a075336",
+    "sameTree": "dbc16f81e14fe843ba47e35700b4916306db3f29",
+    "conclusion": "FAIL",
+    "workflows": {
+      "pass": [
+        40596467535,
+        40596467590,
+        40596467385,
+        40596467142
+      ],
+      "fail": [
+        40596467420,
+        40596467351,
+        40596467449
+      ]
+    },
+    "causes": [
+      "One cleanup-label unit assertion assumed the managed Windows job variable exists on Linux. Runtime correctly uses its own nonce when absent.",
+      "Nine explicit-any annotations in the new Aura test violated existing frontend lint. No lint rule changed."
+    ],
+    "correction": "Test-only changes. Explicitly exercise valid, absent and invalid managed owner IDs. Replace any with narrow view interfaces and unknown at VM boundaries. Production implementations unchanged.",
+    "logs": [
+      {
+        "id": "122513526802",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513526802.log.original.gz",
+        "originalBytes": 128470,
+        "originalSha256": "cb877d231f215e9f1aa9148a6279bdf6aebcde774ba3c4ef15633f611965cf7a"
+      },
+      {
+        "id": "122513527225",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513527225.log.original.gz",
+        "originalBytes": 125526,
+        "originalSha256": "2c9d5009706d521fe2164ec8c8a22ef23715eadb0f56d06ce513cab20bb73a68"
+      },
+      {
+        "id": "122513526779",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513526779.log.original.gz",
+        "originalBytes": 58111,
+        "originalSha256": "86a6b654d226f13099b1fffae8419e4081f6411141dfad19b0e7352833e5d3f2"
+      },
+      {
+        "id": "122513527292",
+        "path": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/122513527292.log.original.gz",
+        "originalBytes": 453281,
+        "originalSha256": "086f940106f1844fbe0146681dca7603f295d625bdeb9f71eb17430e7ef7cdc5"
+      }
+    ]
+  },
+  "productionChanged": false,
+  "spending": 0,
+  "batch15And2": "CLAUDE_OWNS_OUTSIDE_ASSIGNMENT",
+  "next": "Close remaining15original callers including8high-risk. Native publishing/provisioning and Composio must each prove original actor, account/target, provenance, canonical approval, current credentials and egress. Voice and Aura server accounting remain unreviewed. Do not infer server closure from the two manual frontend callers.",
+  "finalLocalSourceGates": [
+    {
+      "name": "stableLocalGates",
+      "job": "84346ad9-15ef-4bdc-b9f5-2b10742e1e04",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/final-local-stableLocalGates-20261028.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 0
+      }
+    },
+    {
+      "name": "backendTypes",
+      "job": "cd307ff2-3f63-4723-abbc-ae99d4141ee8",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322036
+      }
+    },
+    {
+      "name": "frontendTypes",
+      "job": "d4c4a61a-a322-42f1-8845-22ca50563ec9",
+      "status": "passed",
+      "exitCode": 0,
+      "log": null,
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1322012
+      }
+    }
+  ],
+  "testFixtureProductionGuardChecks": [
+    {
+      "name": "fixtureProductionRed",
+      "job": "8109881a-7843-42b9-aa76-6f96fd12d8d0",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/native-checkout-fixtureProductionRed-20261028.log",
+      "rawArchive": "docs\\xroga\\evidence\\command-010\\native-checkout-fixtureProductionRed-20261028.log.original.gz",
+      "originalSha256": "dd34d85f79b1b484817e8b66f80c2cf7fe6e492fc2e4764653c57a3ee27b08ce",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 909314
+      }
+    },
+    {
+      "name": "fixtureProductionAndRoutesGreen",
+      "job": "743eabb4-7e95-4335-b29f-4fb831e7b32e",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/native-checkout-fixtureProductionAndRoutesGreen-20261028.log",
+      "rawArchive": null,
+      "originalSha256": "88eb8c35390010017ef3d83f03c55b551042de85db5c30afb659b26358b585a6",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 958186
+      }
+    }
+  ],
+  "finalBackendTypecheckAfterTestOnlyGuard": {
+    "job": "a4686c35-a926-41f4-9b8e-fb102835dd1f",
+    "status": "passed",
+    "exitCode": 0,
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 1322052
+    }
+  },
+  "finalStableGateRun": {
+    "job": "5054c030-0621-4353-89c5-0548fca6cebf",
+    "status": "passed",
+    "scope": "Runtime config, source inventories, original73packet/371record continuity, mission policy and10focused register checks. Not phase acceptance."
+  },
+  "ciPortabilityContinuation": {
+    "scope": "TEST_PORTABILITY_AND_EXISTING_LINT_ONLY",
+    "verification": "docs/xroga/evidence/command-010/ci-9db3921f-20261028/verification.json",
+    "job": "61de11b2-18f8-405c-8008-01056ee7dea6",
+    "status": "passed",
+    "exitCode": 0,
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "log": "docs/xroga/evidence/command-010/ci-portability-focused-20261028.log",
+    "temporaryCleanup": {
+      "status": "COMPLETE",
+      "logicalBytesRemoved": 582216
+    },
+    "productionChanged": false,
+    "strictCountsChanged": false
+  }
+}

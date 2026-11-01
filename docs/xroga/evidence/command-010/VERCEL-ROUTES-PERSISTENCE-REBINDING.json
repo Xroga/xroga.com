@@ -1,0 +1,138 @@
+{
+  "scope": "FIVE_UNCHANGED_VERCEL_AUTH_RECORDS_NO_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "currentSourceSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
+      "semanticReview": "The existing fixed auth transport is exported for the four original route callbacks, adds finite limit50project and limit20team reads plus validated team IDs, and preserves terminal-denial identity. No credential persistence statement, revision/tombstone check, refresh lease or ownership predicate changed. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without acceptance promotion.",
+      "mapping": [
+        {
+          "previousId": "12c9bb0d0c73ee6e60e3",
+          "currentId": "4944361facec046a2f80",
+          "enclosing": "encodeVercelRefreshLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "bbef4dc370cba405c98f08419f55353043e28e2cccd88d306f6a8932f6198189"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "currentSourceSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
+      "semanticReview": "The existing fixed auth transport is exported for the four original route callbacks, adds finite limit50project and limit20team reads plus validated team IDs, and preserves terminal-denial identity. No credential persistence statement, revision/tombstone check, refresh lease or ownership predicate changed. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without acceptance promotion.",
+      "mapping": [
+        {
+          "previousId": "fbf3c4a33e40d8cdd380",
+          "currentId": "440f430607c30871cdc7",
+          "enclosing": "parseVercelRefreshLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "882313924d2da09f0bbce1fe40f4b8c90f03c32bd25b888a8d07966e90111688"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "currentSourceSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
+      "semanticReview": "The existing fixed auth transport is exported for the four original route callbacks, adds finite limit50project and limit20team reads plus validated team IDs, and preserves terminal-denial identity. No credential persistence statement, revision/tombstone check, refresh lease or ownership predicate changed. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without acceptance promotion.",
+      "mapping": [
+        {
+          "previousId": "d04965754963fdbd9233",
+          "currentId": "ba97ba36d23ddc612610",
+          "enclosing": "buildVercelAuthorizeUrl",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "f5364b427cb9511bb72053c8f8943763fab7db99558a06b5eb949e3449721086"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "NOT_PERSISTENCE",
+      "previousSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "currentSourceSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
+      "semanticReview": "The existing fixed auth transport is exported for the four original route callbacks, adds finite limit50project and limit20team reads plus validated team IDs, and preserves terminal-denial identity. No credential persistence statement, revision/tombstone check, refresh lease or ownership predicate changed. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without acceptance promotion.",
+      "mapping": [
+        {
+          "previousId": "169a608ac63c88456351",
+          "currentId": "815833191bc3b91eddf0",
+          "enclosing": "parseVercelOAuthState",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "f35a51e459c9843dafa157634fcb85d115d86a4d974d8aa25f3fbead22ca59ad"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "currentSourceSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
+      "semanticReview": "The existing fixed auth transport is exported for the four original route callbacks, adds finite limit50project and limit20team reads plus validated team IDs, and preserves terminal-denial identity. No credential persistence statement, revision/tombstone check, refresh lease or ownership predicate changed. Existing NOT_PERSISTENCE and SCOPED_BOUNDARY outcomes are preserved without acceptance promotion.",
+      "mapping": [
+        {
+          "previousId": "bfa9c37b741565a62ccf",
+          "currentId": "4022858d2bb37bc8fbed",
+          "enclosing": "deleteVercelTokenFromStorage",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "7f7950ebdd403fc9af4f",
+          "currentId": "7bc02d7c4101a33d0666",
+          "enclosing": "deleteVercelTokenFromStorage",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "unchangedExpressionSha256": "25bae07d9f52425f11a7769f2732c1571383eac137a0379f298023aff4ac3760"
+        },
+        {
+          "previousId": "84c192f7c2170d985a33",
+          "currentId": "8645a877081274061679",
+          "enclosing": "refreshVercelOAuthTokenWithLease",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "64f1d4bef6d0e36d1656",
+          "currentId": "8d8cca43f4e4530dd1e0",
+          "enclosing": "refreshVercelOAuthTokenWithLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+        },
+        {
+          "previousId": "8d37b17d181b3f2e73ce",
+          "currentId": "0ff81b747f13643cf083",
+          "enclosing": "refreshVercelOAuthTokenWithLease",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "09371b515df625b7c63bf6b86cd14fa6926d089b6420ba5bfea15d668b22ab63"
+        },
+        {
+          "previousId": "698baf51e3e7301a6e15",
+          "currentId": "a21e5c97646b2bef894a",
+          "enclosing": "clearVercelConnection",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "unchangedExpressionSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "previousId": "59c54838d170716bad08",
+          "currentId": "011226346256904a9409",
+          "enclosing": "clearVercelConnection",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "b68d5eac4e01276d54e1702e12250e1fd210b9f78904b2de60e1f4efe54d0af3"
+        }
+      ]
+    }
+  ]
+}

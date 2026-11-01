@@ -1,0 +1,158 @@
+{
+  "scope": "TWELVE_FIXED_FIRST_PARTY_R2_SDK_DEPENDENCIES_NOT_ARBITRARY_UPLOAD_OR_BATCH15_ACTIVATION",
+  "methods": [
+    {
+      "candidateId": "ff5705ad221b1e6169e6",
+      "method": "head",
+      "callSha256": "8efc214866b00779d8cc79b61f77de470ad33d7e20bf58ba5e1a6eb857df88db",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "0ea8c09563919a601d87",
+      "method": "readRange",
+      "callSha256": "665f971ff4a7886a8681aab543f73342cf5bb0a4e0baa06f51e0cbf282b1c04b",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "929b90c450fdeb68c7a3",
+      "method": "openRead",
+      "callSha256": "78e2d081d7f9bd41025d08b2244d7756e6af9d28997dd37c5d4c835cd90e64ad",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "18bc491b9155e5452bf0",
+      "method": "put",
+      "callSha256": "f69d5b3a51b4db40d42603e1a5aed296596458fcaeeda1a0a0d239f2b3790c03",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "6782e9bfadcd4eef2da6",
+      "method": "putStream",
+      "callSha256": "01cfce66fae4942a1f7ac7749adbccfcf2f51cce6fd5717f4ea7ca1a6734a7b2",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "e0735a9a514b6ba7bf73",
+      "method": "delete",
+      "callSha256": "e0ea13c8852c7a0ae3385958e540da2dccd39b8986671bc4a2dce2ed8cd4fbb7",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "8dd51a5fe4aed1ff5859",
+      "method": "createMultipart",
+      "callSha256": "c4f2d7fdf6aede04ee777ccc09c5af5c4e783b2c5b00f7b03aa4acaf26a92ca1",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "1112c9944c5f1a0fed49",
+      "method": "uploadPart",
+      "callSha256": "484d41716046a01c377b5c67cb3fce409b312cff2dd412c6f76384aa44aa14b9",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "f752a96c35c5aeb68b7f",
+      "method": "listParts",
+      "callSha256": "dc3285bf3fa403cef7270041d8fadd4a8a49b07457c7c835de0c2225d93264e9",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "9ef7eeca256fed04e9cb",
+      "method": "completeMultipart",
+      "callSha256": "85b01ec82b2475a98bd148c7426e3bb72b20aaa39f5ab4ab680a5898395c1979",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "f19d5282590fa6928ae9",
+      "method": "abortMultipart",
+      "callSha256": "c669e70b933c3ed412a069e12598122e37aa2614b9de2594651bb8c9d2101ca7",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "candidateId": "63b7f73d6ad5e5d67ab1",
+      "method": "list",
+      "callSha256": "d6f4125847ad40747e2d5ee920a8627a1042924c7f6a9bdc8193c33e94538295",
+      "sourceFileSha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    }
+  ],
+  "configuration": "Production API storage runtime resolves server configuration only. Account identifiers cannot select a different URL host. All15 SDK/presigner operations reject any bucket outside their constructor configuration before provider use. Native SDK region redirects are explicitly disabled. SDK retries preserve the same fixed destination and bucket.",
+  "callerPaths": {
+    "canonicalApi": [
+      "routes/drive.ts original authenticated TenantContext to actorFromTenantContext, strict request fields cannot name owner/tenant/bucket/key",
+      "StorageService metadata requires tenant+owner, canonical key identity and current project ownership",
+      "Provider object key and bucket come from owned server metadata, never an arbitrary outbound URL",
+      "New capability publication repeats current ownership/state after signing and audit waits",
+      "Multipart completion repeats current binding after provider list-parts waits",
+      "Failed new multipart allocation attempts abort only their own upload; failed-row identity remains available to existing reconciliation"
+    ],
+    "operatorPaths": [
+      "storage/migration/cliContext.ts creates distinct source/destination configured clients. Signed migration approval/manifest, persisted owner and fenced ledger are separate existing operator obligations, not promoted by this SDK review",
+      "scripts/storage/inventory-storage.mts is an explicit read-only operator inventory using configured legacy source, not an API endpoint",
+      "scripts/browser/run-workflows.mts contains explicit test-fixture clients. It is not a production API factory or activation approval. Old model-refusal fallback expectations need the new security-denial semantics before any future rerun, no such suite was run here"
+    ]
+  },
+  "limitations": [
+    "Private-first-party storage is not a universal external file-export permission. Composio/publishing/external-upload callers remain separate",
+    "Already delivered presigned capabilities retain their existing bounded TTL, not immediate provider-side revocation",
+    "No live Drive configuration, quota, customer credentials, customer data, production storage migration or Batch1.5/2 activation performed",
+    "Controlled local provider/HTTP fixtures are not live Cloudflare provider acceptance. Reuse dated accepted Google/private-storage receipts only for their unchanged exact scope",
+    "Low-level SDK operations do not issue tenant identity, approvals, budget entitlements or grant new bucket access"
+  ],
+  "regressions": {
+    "lateCapabilityRevocationRed": "bd6fa613-fd08-4e9a-b9f1-b501dda9cc02",
+    "temporaryMultipartCleanupRed": "52cdf43d-3c53-4fae-9f06-dead4cea5221",
+    "completionAfterOwnershipDenialRed": "c7420d0c-ecbe-47ac-ba8a-c2935602c8fc",
+    "allBucketAndHostGuardsRed": "cc6ff616-0eb7-4f82-9fd8-6df84137cf5f",
+    "realAwsHttpRedirectAndDenialsGreen": "f8e27479-8782-4d41-80cb-a52a0254b4ef",
+    "storageDriveMigrationAndFactoryGreen120Tests": "3d86eb5f-720f-47b7-a1f3-78206609b0f6"
+  },
+  "sourceBindings": [
+    {
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "sha256": "adb960dee1dc4a754c8f47da37e021bd8e74b1ef506fc1d580120989499423e4"
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "sha256": "91e045a4bb607e6272e8fce5a8b05396447b901fe2ce9141f077b2f76c07a596"
+    },
+    {
+      "path": "backend/src/storage/runtime.ts",
+      "sha256": "087bec8f0ab60210f9e5a3f6a6f7a32aa47f0288de9cdaeeba044f217348d1cc"
+    },
+    {
+      "path": "backend/src/routes/drive.ts",
+      "sha256": "82e83b1911f78196329573dcd7086312ce047d9e3ccff349f661598313475cfd"
+    },
+    {
+      "path": "backend/src/storage/keys.ts",
+      "sha256": "7bf9fa78c663e5f60a8800621a6065a6536429619a71fd8193ca7c17a31e5530"
+    },
+    {
+      "path": "backend/src/storage/migration/cliContext.ts",
+      "sha256": "08baeffc5fa11e6099b90833c862ed2d1748be9a6aab49b3dedac06e27929b4c"
+    },
+    {
+      "path": "backend/src/storage/migration/engine.ts",
+      "sha256": "e1ceaec9dece80c7410457d7c9acaebf9d533577f62881a11ad64da3ca9bbf9d"
+    },
+    {
+      "path": "scripts/storage/inventory-storage.mts",
+      "sha256": "6a915e4f7be302a854f00cd98072baa3a4033a4321619d2f8cb8014125468079"
+    },
+    {
+      "path": "scripts/browser/run-workflows.mts",
+      "sha256": "f20b95a4b9ba68c6cf229ca34400c7b32475fbc2a4d01d9cd7dfe2be492f4ef3"
+    },
+    {
+      "path": "backend/src/security/egress/privateR2DependencyReachability.test.ts",
+      "sha256": "d43dc232544ae5884053831e2bb04921d9133be6cad248f0fa0cac26fa97a4ff"
+    },
+    {
+      "path": "backend/src/storage/r2BucketBoundary.security.test.ts",
+      "sha256": "8b2c756cb93c7ea2f4c3d3a485e8d92665efddab41e163146bcda240ba6fb06b"
+    },
+    {
+      "path": "backend/src/storage/storageCapabilityRevocation.security.test.ts",
+      "sha256": "82c54f6f304d465319d7945763db2b9a77d1025f0b72d097c4fb473ba8dd5ddb"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+TAP version 13
+# [providerRuntime] health persist skipped: AssertionError: Unexpected database protocol /rest/v1/model_provider_health
+# [providerRuntime] health persist skipped: AssertionError: Unexpected database protocol /rest/v1/model_provider_health
+# Subtest: real SDK redirects cannot become retries or another provider fallback
+not ok 1 - real SDK redirects cannot become retries or another provider fallback
+  ---
+  duration_ms: 632.1295
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\ai\\modelRedirectFallback.security.test.ts:1:515'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'MODEL_DESTINATION_DENIED'
+  operator: 'rejects'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\ai\modelRedirectFallback.security.test.ts:25:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# {"initial":2,"forwarded":0,"fallback":1}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1780.8169

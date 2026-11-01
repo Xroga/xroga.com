@@ -1,0 +1,120 @@
+{
+  "scope": "CONFIGURED_SUPABASE_SDK_ORIGIN_AND_ONE_CANONICAL_ENCRYPTED_MIRROR_NOT_ALL_CALLER_AUTHORITY",
+  "originalMirrorCandidate": {
+    "id": "c7711580844b520345cf",
+    "file": "backend/src/services/integrations/userProviderKeys.ts",
+    "line": 48,
+    "entryPoint": "saveKeyToStorage",
+    "transport": "upload",
+    "callee": "supabase.storage.from(KEY_BUCKET).upload",
+    "callSha256": "89ee36190deb9acd207e31b721521ab1ee9173c7baab3e9621d74b8472dfe8a2",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "currentFixedSDKTransport": {
+    "id": "512f0f91c11bbb5fe617",
+    "file": "backend/src/config/supabase.ts",
+    "line": 21,
+    "entryPoint": "supabaseFetchFor",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "b58590432a31d0492880a03e383b79cfb9322aa42fca51c2e27be9c5842e0073",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defect": "Actual saveUserProviderKey encrypted private mirror followed real HTTP307to another endpoint. Negative before correction observed1redirectedrequest.",
+  "corrections": [
+    "Existing admin and user SDK factories now install the supported global.fetch callback. It pins the configured project origin, rejects userinfo/fragments/foreign destinations before network, forces manual redirects, preserves caller cancellation and adds30s deadline.",
+    "A redirect becomes a safe terminal403with canonical CAPABILITY_AUTH_REQUIRED code. Real installed SDK GET produces1source request and0forwardedrequests, without network retry.",
+    "Canonical current owner/provider/sealed-row/revision/metadata checks, private-bucket admission, ciphertext-only mirror and post-upload revocation checks remain unchanged. No raw credential is uploaded or logged."
+  ],
+  "verification": {
+    "passed": 8,
+    "skipped": 0,
+    "negative": "Actual installed Supabase SDK and canonical vault writer with synthetic ephemeral encryption and real local HTTP. Mirror redirect0outside. Admin/user GET redirects0outside and1source request each. Foreign origin/userinfo/hash/pre-abort0wire. Existing bucket privacy, foreign row, same-token revision, revocation and malformed-envelope cases remain effective.",
+    "positive": "Real SDK admin RPC and user RLS transport preserve separate service/anon apikey and user JWT headers. Normal requests after denial and ordinary503failure recover. Existing successful private encrypted mirror can be read only through canonical current authority."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "bfc073c1-2c65-4b11-bb32-fbe0e3474052",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/supabase-sdk-20261027/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 154741
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "ad972743-9f48-430b-b37e-c54175e61ebb",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/supabase-sdk-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 256137
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/config/supabase.ts",
+      "sha256": "3366dd3460e19bc66af8743005d0bf91a288c8173c3126dec1749bf5a44ecf0f"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
+    },
+    {
+      "path": "backend/src/config/supabaseTransport.security.test.ts",
+      "sha256": "b7658f5d0f03c0fdd40f4e96c7bc9192500f0e1028c61c29392a5a8945c1ddef"
+    },
+    {
+      "path": "backend/src/config/supabaseClientTransport.security.test.ts",
+      "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
+      "sha256": "86624aa421843f07159f6e921d75a6596b74db2db515e0a52982b6e689a18084"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+      "sha256": "6562354400b3c747a1efb8257b28f70489a445e13401824699aca8836eb99cc8"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+      "sha256": "f67d8f344ab8b5039d8121d1d98bf39a4fae7e05c55f5c3e918c21574c07a927"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.readIntegrity.test.ts",
+      "sha256": "192080f998738ce53071c039aa72256019b1e3918256b96ce300c1f9311870e3"
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
+      "sha256": "ae7f52342e1569ceeb34b570bd1d74b284a3bf5ad1f1722d91b090fcb97ce17c"
+    }
+  ],
+  "installedSDK": "2.110.7",
+  "officialReference": "https://supabase.com/docs/reference/javascript/initializing",
+  "limitations": [
+    "This guard grants no SQL, row, tenant, storage or credential-write authority. Every other SDK or upper-layer caller retains its separate original acceptance obligations.",
+    "Only the existing configured Xroga Supabase private ciphertext mirror is reviewed here. No external-project provisioning, arbitrary export, new vault, data store, production SQL or credential migration is certified.",
+    "An already-started encrypted upload cannot be unsent by later revocation. A stale mirror cannot recreate canonical authority, revisions or tombstones. Exact existing lifecycle tests verify this distinction.",
+    "Frontend browser SDK and Supabase Management/OAuth transports remain independent boundaries."
+  ],
+  "productionChanged": false,
+  "customerDataAccessed": false,
+  "spending": 0
+}

@@ -1,0 +1,42 @@
+TAP version 13
+# Subtest: untrusted Preview response cannot set parent-domain cookies or clear the main application cookies
+not ok 1 - untrusted Preview response cannot set parent-domain cookies or clear the main application cookies
+  ---
+  duration_ms: 37.6038
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\middleware\\runtimePreviewGateway.integration.test.ts:1:4542'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'preview-session=synthetic; Domain=.xroga.com; Path=/; HttpOnly; Secure; SameSite=Lax',
+    -   'preview-session=synthetic; Path=/; HttpOnly; Secure; SameSite=Lax',
+        'owned=synthetic; Path=/; Secure'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'preview-session=synthetic; Path=/; HttpOnly; Secure; SameSite=Lax'
+    1: 'owned=synthetic; Path=/; Secure'
+  actual:
+    0: 'preview-session=synthetic; Domain=.xroga.com; Path=/; HttpOnly; Secure; SameSite=Lax'
+    1: 'owned=synthetic; Path=/; Secure'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\middleware\runtimePreviewGateway.integration.test.ts:62:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 930.365

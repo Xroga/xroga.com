@@ -26,7 +26,7 @@
 
 import { chatCompletion, type ChatMessage } from '../ai/openaiCompat.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
-import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { normalizeProviderError,isTerminalModelFailure } from '../ai/providerRuntime.js';
 import type { ProjectFile } from '../ai/patches.js';
 import { extractSymbols } from './repositoryIndex.js';
 
@@ -498,6 +498,7 @@ async function completeWithFallback(input: {
             ...(input.json ? { json: true } : {}),
           });
         } catch (error) {
+          if(isTerminalModelFailure(error))throw error;
           if (normalizeProviderError(error).retryable) {
             input.unavailableCandidates?.add(candidate.modelId);
           }
@@ -518,6 +519,7 @@ async function completeWithFallback(input: {
           : `${candidate.modelId} returned ${reply.text.trim() ? 'an unusable reply' : 'an empty completion'}`,
       );
     } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       if (error instanceof CandidateQuarantinedError) {
         failures.push(error.message);
         continue;

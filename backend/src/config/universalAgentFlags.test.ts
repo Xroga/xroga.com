@@ -176,3 +176,13 @@ describe('shadow comparison surfaces the failure this command fixes', () => {
     assert.ok(comparison.differences.some((difference) => /would have refused/.test(difference)));
   });
 });
+
+it('a server-bound Builder run takes the universal path at 0% rollout but never overrides the operator modes', () => {
+  const controlled = { mode: 'controlled', percentage: 0, allowlist: [] } as any;
+  assert.equal(routeProject('p1', controlled).useUniversal, false);
+  assert.equal(routeProject('p1', controlled, { builderBound: true }).useUniversal, true);
+  for (const mode of ['off', 'legacy', 'shadow']) {
+    assert.equal(routeProject('p1', { mode, percentage: 100, allowlist: ['p1'] } as any, { builderBound: true }).useUniversal, false);
+  }
+  assert.equal(routeProject(null, controlled, { builderBound: true }).useUniversal, false);
+});
