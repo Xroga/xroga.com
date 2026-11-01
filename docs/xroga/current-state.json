@@ -131549,6 +131549,13 @@
       "version": "20261029110000",
       "order": 160,
       "sha256": "3bb41db387dc750d45748fdcde883626f7dc3203aeaefb1c08c6b274eddbd118"
+    },
+    {
+      "id": "migration:36abca5d5c4f6e15cd9b",
+      "sourcePath": "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+      "version": "20261101160136",
+      "order": 161,
+      "sha256": "c7465f9d2d5e2ed9ac329b4084f3d6253085d353e4716444225a402f128be731"
     }
   ],
   "workflows": [

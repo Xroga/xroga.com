@@ -57,8 +57,8 @@
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
-      "currentCallerId": "ab2d80d0f7212a9482f2",
-      "reason": "The self-account DELETE route retains its tenant-scoped privileged factory after an earlier contact-only PATCH route shifted source positions. This is an identity remapping, not current-source tenant security certification."
+      "currentCallerId": "09c2429c570684fed7d0",
+      "reason": "The self-account DELETE route retains its tenant-scoped privileged factory after the optional contact-only PATCH route shifted source positions. This is an identity remapping, not current-source tenant security certification."
     },
     {
       "previousCallerId": "f2dfbe03e9a73e2d27f2",
@@ -1699,10 +1699,10 @@
     },
     {
       "packetId": "B1-P2-8df15cca7cda10a6",
-      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
+      "sourceSha256": "18907d297ff881dcdc7e681e06f02ec7e39157bd594d407df3142c379fd0fcef",
       "authContactSourceDelta": {
         "historicalSourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
-        "scope": "Contact-only phone PATCH validation and storage change this source and shift its caller positions. Earlier account-deletion and profile-owner proofs remain historical; current-source authenticated and foreign-owner regression is required.",
+        "scope": "Optional contact-only phone PATCH accepts null to remove the number, while E.164 validation remains for nonempty values. This shifts caller positions but does not change the issued-context owner boundary. Earlier account-deletion and profile-owner proofs remain historical; current-source authenticated and foreign-owner regression is required.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
       },
       "executionStatus": "IN_PROGRESS",
