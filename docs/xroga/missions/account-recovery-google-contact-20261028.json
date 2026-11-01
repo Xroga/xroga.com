@@ -35,6 +35,13 @@
     "frontend/src/lib/supabase/authErrors.ts",
     "frontend/src/lib/supabase/authProviders.ts",
     "frontend/src/lib/supabase/middleware.ts",
+    "frontend/e2e/batch01-founder-local.spec.ts",
+    "frontend/e2e/command3-auth.spec.ts",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
     "supabase/migrations/20261028000100_contact_phone.sql",
     "docs/xroga/missions/account-recovery-google-contact-20261028.json"
   ],

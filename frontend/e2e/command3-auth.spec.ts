@@ -75,9 +75,10 @@ test.beforeAll(async () => {
    */
   const onboarded = { status: 'completed', current_step: 'complete', backfilled: true };
   for (const [id,display_name] of [[ownerId,'Command 3 Owner'],[outsiderId,'Command 3 Outsider']]) {
-    const receipt = await admin.from('profiles').update({display_name,onboarding:onboarded}).eq('id',id).select('id,display_name,onboarding').single();
+    const contact_phone = id === ownerId ? '+12025550141' : '+12025550142';
+    const receipt = await admin.from('profiles').update({display_name,onboarding:onboarded,contact_phone}).eq('id',id).select('id,display_name,onboarding,contact_phone').single();
     expect(receipt.error).toBeNull();
-    expect(receipt.data).toEqual({id,display_name,onboarding:onboarded});
+    expect(receipt.data).toEqual({id,display_name,onboarding:onboarded,contact_phone});
   }
   const projects = await admin.from('projects').insert([
     { user_id: ownerId, name: `command3-demo-owner-${run}`, type: 'app', status: 'in_progress' },

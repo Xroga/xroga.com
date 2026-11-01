@@ -2991,11 +2991,12 @@
     },
     {
       "path": "frontend/src/app/(shell)/layout.tsx",
-      "sourceSha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084",
+      "sourceSha256": "2a1f25f3f48e1f0c05b815f9f7fa8d2973c9b05fc5cda5996d2b85ebe89b48dc",
       "callIds": [
         "3ea0392dbd30934afb02"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
+      "currentSourceReview": "The new contact-phone RPC changes this layout source. Prior 007 authenticated proof is historical only; current-source owner and foreign-session browser proof is pending.",
       "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
       "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
@@ -3081,11 +3082,12 @@
     },
     {
       "path": "frontend/src/app/(workspace)/layout.tsx",
-      "sourceSha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
+      "sourceSha256": "fbca4e61f25ab72ad44f0784b86e9a8124c47e37b3238d908dcf560be9d43488",
       "callIds": [
         "5740af96dff28fda6f3f"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
+      "currentSourceReview": "The new contact-phone RPC changes this layout source. Prior 007 authenticated proof is historical only; current-source owner and foreign-session browser proof is pending.",
       "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
       "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
@@ -3171,11 +3173,12 @@
     },
     {
       "path": "frontend/src/app/onboarding/page.tsx",
-      "sourceSha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40",
+      "sourceSha256": "74d415a422488dc3f9f1b9ca3f1f2167b7aa208231e12bea4129b2537fe3b92d",
       "callIds": [
-        "40dcc370930a78bd99cd"
+        "a7d608b129d4bebf063f"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
+      "currentSourceReview": "The new contact-phone RPC changes this page source and shifts the existing profile-setup caller identity. Prior 007 authenticated proof is historical only; current-source browser proof is pending.",
       "authority": "These seven conservative inventory entries are genuine public-key server component or middleware queries, not service-role factories or false positives. The shared server creator uses only validated publishable configuration and verified Auth cookies. Three profile setup RPCs accept no owner argument, derive auth.uid() inside fixed SQL and return only that subject id/display name/onboarding. Pages check the returned subject and fail closed on query errors or mismatch. Public community profile column grants remain restrictive. Four current_community_role calls also take no owner argument and derive current identity from the validated JWT. Admin/community pages use current database role. Founder middleware and layout independently require configured founder identity, current role and real AAL2 before returning private HTML/RSC. Query owner/role fields grant nothing.",
       "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. One exact query per listed file. New actual Next HTTP fixture uses real local Auth-cookie issuance, distinct owner/member profiles and onboarding states, own dashboard/workspace metadata, completed versus pending onboarding, legitimate admin/community rendering and member denial despite forged query identity. Current role changes affect the same session. Real local TOTP admits the correct founder and demotion denies its still-AAL2 cookie, exercising both middleware and layout RPCs. Exact foreign profile remains unchanged. Installed Next streaming redirect markers are validated explicitly, while private founder denial remains strict403. No backend service-role or external account grant is inferred. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
       "evidence": [
@@ -3321,11 +3324,12 @@
     },
     {
       "path": "frontend/src/lib/supabase/middleware.ts",
-      "sourceSha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e",
+      "sourceSha256": "86f19b944b1a6f2397c3d9298330687dd0f6426221512ac3b71e785b9bbd29c6",
       "callIds": [
         "5c64aa680a603f460991"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
+      "currentSourceReview": "Authenticated reset-password and contact pages now bypass the usual auth-page redirect. The role RPC is unchanged but the middleware source is new; current-source page and founder denial proof is pending.",
       "authority": "Inspected full page or middleware, cookie-bound publishable server client and current_community_role SQL. The no-argument RPC derives auth.uid(), reads only that profile role with a fixed search_path, and cannot choose another identity. Founder routes additionally require confirmed identity and AAL2; admin routes preserve their broader staff policy.",
       "reason": "Scoped source review only, not whole tenant certification. The caller cannot grant roles or authorize backend operations. Staged session revocation, profile lifecycle, downstream API enforcement and full release acceptance remain independently required.",
       "evidence": [
@@ -5348,16 +5352,17 @@
     },
     {
       "path": "backend/src/routes/profile.ts",
-      "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
+      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
       "callIds": [
-        "69348e841941208b2323",
-        "0d86495063002c4ecffb",
-        "5051a4856f4fe27770f4",
-        "7db18803d9573b2c4c27",
-        "c63711764b566827ca55",
-        "385dc97c4ae6fabe7be9"
+        "64717458bf109fdf13a6",
+        "d32149151d5316c196da",
+        "112876f29808dc73515d",
+        "1e9cad9298b039191655",
+        "5f358bca6c78bcdea0e4",
+        "6bb9f38e1571c40f454f"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
+      "currentSourceReview": "The new owner-bound contact-phone PATCH field changes this route source and shifts caller identities. Prior authenticated profile proof is historical only; current-source owner, malformed-input and foreign-owner integration proof is pending.",
       "authority": "GET/PATCH/activity only. index.ts mounts profile router behind authMiddleware, router requires issued context and overwrites req.userId. GET/PATCH bind exact actor ID, strict PATCH allowlist excludes role and identity, companion/onboarding transforms cannot grant server privileges. Activity binds actor and strips a mismatched project's joined label.",
       "reason": "Verified unchanged source at5fa74cd4244b61736cccb076d073fcfdda469b1a disposable38820218030: authenticated GET returns own member profile, unsigned401, privilege/foreign-ID PATCH400, valid display/timezone PATCH returns same owner and leaves other profile unchanged. Own/projectless activity retained, corrupt foreign join redacted. Single owner-bound statements establish these narrow data boundaries. Excludes account deletion, global token revocation and complete tenant acceptance.",
       "evidence": [
@@ -5369,11 +5374,12 @@
     },
     {
       "path": "backend/src/routes/profile.ts",
-      "sourceSha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
+      "sourceSha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
       "callIds": [
-        "f060c7afeb1437072a23"
+        "ab2d80d0f7212a9482f2"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
+      "currentSourceReview": "The contact-phone field changes this route source and shifts the delete-account factory identity without modifying its deletion logic. Prior authenticated deletion proof is historical only; current-source regression proof is pending.",
       "authority": "Destructive account deletion requires issued owner context, exact DELETE confirmation and a fresh Auth getUser response matching that owner immediately before admin deletion. It never accepts an independently supplied target user ID.",
       "reason": "Original007 self-account owner admission only, reconciled to unchanged source and actual disposable Auth proof atb762157a21e9c709aba3d8a6a87b9c83f88cc617 run39168773496. Even a deliberately misissued initial context cannot delete the other actor because the fresh token owner must match. Own deletion succeeds, the foreign account remains intact and deleted-identity replay denies. Current route mounts and issued-context requirements are preserved. Canonical DELETE grants, atomic logout revocation, recent-login/MFA and complete FK/Storage cleanup are not certified by this one factory and remain independent later authority/custody/lifecycle obligations. No customer account was touched.",
       "evidence": [
