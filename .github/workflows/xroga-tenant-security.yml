@@ -57,7 +57,10 @@ jobs:
         env:
           XB01_DISPOSABLE_DATABASE: '1'
           XB01_LEDGER_TEST_DATABASE_URL: postgres://postgres:disposable-fixture-only@127.0.0.1:5432/xb01_tenant_test
-        run: node node_modules/tsx/dist/cli.mjs --test backend/tests/engineeringResourceLedger.local.integration.ts backend/tests/engineeringResourceLedger.processes.local.integration.ts
+        # These files reapply DDL in before hooks against the same disposable DB.
+        # Keep setup from overlapping another file's live table queries. The six
+        # child-process workers and cancellation races inside each test stay parallel.
+        run: node node_modules/tsx/dist/cli.mjs --test --test-concurrency=1 backend/tests/engineeringResourceLedger.local.integration.ts backend/tests/engineeringResourceLedger.processes.local.integration.ts
       - name: Operator diagnostics real database tests
         env:
           XB01_DISPOSABLE_DATABASE: '1'

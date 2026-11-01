@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f67e423f4d28d8f46d57b17d509a73167fc75532",
+  "source_sha": "2eaf5dc5b898ad6ee99301ebfac007d0ee22f5d6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15673,7 +15673,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "c1c34123f29e073d2bf814d5ac4140b04895c350af18b70656d7ddaf475af9a4"
+      "sha256": "27fc60ac8580b910ccaaeea95bbda060798f40815c0ff8bff6183c493d0b2b2f"
     },
     {
       "path": "Dockerfile.api",
