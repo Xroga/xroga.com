@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "13c4c55ce59a59926556582e626b6870714732fb1afa999eef59d1ac0e44a35c",
+  "reviewRegistrySha256": "a6fca73abf317c3c7496e3162839738256089478cb6c274361f786dd2b143a85",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3620,11 +3620,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c3617170cdd8b722b96f"
+        "id": "0ba0abee8a68acf83b99"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2e78e5aba21ba282d65c"
+        "id": "ef5cbae7bd65f3397666"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6900,11 +6900,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c3617170cdd8b722b96f"
+        "id": "0ba0abee8a68acf83b99"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2e78e5aba21ba282d65c"
+        "id": "ef5cbae7bd65f3397666"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10624,7 +10624,7 @@
       }
     },
     {
-      "id": "c3617170cdd8b722b96f",
+      "id": "0ba0abee8a68acf83b99",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3801,
       "enclosing": "runBuildPipeline",
@@ -10632,10 +10632,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sourceSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -10645,7 +10645,7 @@
       }
     },
     {
-      "id": "2e78e5aba21ba282d65c",
+      "id": "ef5cbae7bd65f3397666",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3985,
       "enclosing": "runBuildPipeline",
@@ -10653,10 +10653,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sourceSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
