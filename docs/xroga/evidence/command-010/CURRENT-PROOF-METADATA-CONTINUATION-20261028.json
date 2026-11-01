@@ -34,7 +34,7 @@
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "edfbc914afac4123a09e47f09284a21314474a9ad5a0c8c0ad614d52976462ef",
+      "currentSha256": "8a5df989f484c8a9c6e3b52bc3f92b15736a25ae55d27372a431042ca9634b16",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
       "beforeCwsApprovalSha256": "ca3969dcc33e1c8d40133d088ec652598cdc1b983b97349349184e9017bea73b",
@@ -44,7 +44,8 @@
       "beforeExpoWorkflowSha256": "b8c6e311e1fab56e00dd25127af1d4575c8a55a31f8b363975203ad96012fe64",
       "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
       "beforeCurrentMainIntegrationSha256": "617065c06447a93a5cc974c03fbdfd32f139a0605045cc78c2c3e7449b80ee4f",
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforeResearchHandoffSha256": "edfbc914afac4123a09e47f09284a21314474a9ad5a0c8c0ad614d52976462ef"
     }
   ],
   "exactPersistenceRemaps": [
