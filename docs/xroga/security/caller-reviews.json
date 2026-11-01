@@ -28423,13 +28423,13 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sourceSha256": "fbc7c82e0bb6e088b0ef2dcda6ef73f91e096d8af5f44aea83418498afa95ba7",
+      "sourceSha256": "474feb6ff62caf461886fe9cfff937285377d267efead4b1ff863c12be2cd137",
       "callIds": [
         "b7da7c544e1d23eb4355"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from creates local grid ranks from already validated graph node IDs when the graph contains a cycle. The callback slices and maps an in-memory node array. No database, storage, network, credential or execution API is called.",
-      "reason": "Reviewed the complete graphPositionsV2 and graphLayersV2 functions. Native Array is not shadowed or reassigned. This disposition covers only local array construction, not upstream validation or any authority boundary.",
+      "reason": "Reviewed graphPositionsV2, graphLayersV2 and graphCanvasV2. Native Array is not shadowed or reassigned. All graph ranking, dimensions and edge lanes are computed from local validated nodes and edges. This disposition covers only local array construction, not upstream validation or any authority boundary.",
       "evidence": [
         {
           "path": "frontend/src/components/response-experience-v2/graphLayout.ts",

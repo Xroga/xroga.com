@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "85895d2816baf8c475cab8e5d9f534a3b464d2ad",
+  "source_sha": "4e78eb2a8b2d2994f89f9daf6df7c92ec11b2ce9",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2680,6 +2680,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-cloudflare-com",
+      "provider": "Source-defined endpoint cloudflare.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "cloudflare.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-coordinator",
       "provider": "Source-defined endpoint coordinator",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -3121,6 +3155,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/lib/hackathonResearch.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-docker-com",
+      "provider": "Source-defined endpoint docker.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "docker.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4205,6 +4273,7 @@
         "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
         "frontend/src/components/marketing/AiCodingAgentLanding.tsx",
         "frontend/src/components/marketing/SoftwareLanding.tsx",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
@@ -4261,6 +4330,7 @@
         "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
         "frontend/src/components/marketing/AiCodingAgentLanding.tsx",
         "frontend/src/components/marketing/SoftwareLanding.tsx",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
@@ -4895,6 +4965,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-n8n-io",
+      "provider": "Source-defined endpoint n8n.io",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "n8n.io"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-neon-com",
       "provider": "Source-defined endpoint neon.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -4936,6 +5040,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoExpansionContent.ts"
       ],
       "hostnames": [
@@ -4957,7 +5062,42 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoExpansionContent.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-nodejs-org",
+      "provider": "Source-defined endpoint nodejs.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "nodejs.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5221,6 +5361,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-postgresql-org",
+      "provider": "Source-defined endpoint postgresql.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "postgresql.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-posthog-com",
       "provider": "Source-defined endpoint posthog.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5228,7 +5402,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+        "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "hostnames": [
         "posthog.com"
@@ -5249,7 +5424,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+        "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5306,6 +5482,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-python-org",
+      "provider": "Source-defined endpoint python.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "python.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-railway-app",
       "provider": "Source-defined endpoint railway.app",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5347,6 +5557,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoExpansionContent.ts"
       ],
       "hostnames": [
@@ -5368,6 +5579,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoExpansionContent.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -5503,7 +5715,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+        "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "hostnames": [
         "sentry.io"
@@ -5524,7 +5737,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+        "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5575,7 +5789,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+        "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "hostnames": [
         "stripe.com"
@@ -5596,7 +5811,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+        "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5714,6 +5930,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "hostnames": [
@@ -5735,6 +5952,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -5776,6 +5994,40 @@
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-temporal-io",
+      "provider": "Source-defined endpoint temporal.io",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "temporal.io"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5850,6 +6102,40 @@
         "frontend/src/lib/messageShare.ts",
         "frontend/src/lib/shareImage.ts",
         "frontend/src/lib/socialSharePack.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-typescriptlang-org",
+      "provider": "Source-defined endpoint typescriptlang.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "typescriptlang.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5971,6 +6257,7 @@
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/integrations/domainAutopilot.ts",
         "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "hostnames": [
@@ -6004,6 +6291,7 @@
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/synthesis/integrations/domainAutopilot.ts",
         "frontend/src/components/homepage-next/phase1/providerMarks.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/lib/seoPhase2Content.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -20610,7 +20898,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "sha256": "1ef628083952a406bd885e55706ee1f712afefb5b25450ba9a86f3a260db5925"
+      "sha256": "7a743c131de1824f94902875130c958a189192da37d6c0c77346943cbe83d789"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ChartV2.tsx",
@@ -20638,7 +20926,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "66c67679e3da73774110a82af0bcfc17cfd1671ccb1a46378cd3457d1cc5e751"
+      "sha256": "b20ce4997f8c85e56471f880cdc0fec3a2f13f3fcc5a23a6020877910d55c3f4"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
@@ -20654,7 +20942,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "fbd9bb693f337bf1e81b7825fc8be8de81462560a66403976ceb9e357a23f212"
+      "sha256": "19b8c9b2a43d585271579236dbcc4cb5d1efdd93554a602257230db90123607f"
     },
     {
       "path": "frontend/src/components/response-experience-v2/access.ts",
@@ -20666,7 +20954,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
-      "sha256": "f3897addd0ef61eb6d5631cf44790cd150135561f1581e1be8a1d3f667267fd2"
+      "sha256": "7afbe391617dbf0d6729b7e35c2144d87ddb81bd4ea002ada62dfcf1cc6a99a4"
     },
     {
       "path": "frontend/src/components/response-experience-v2/conversation.ts",
@@ -20677,12 +20965,16 @@
       "sha256": "8a504e929cdbbc73a3c35521accd0cea7a23a1a02e04e681dce0716974ad371a"
     },
     {
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "sha256": "11a6ab60022a3ec94fce026711f6756ba29a76f440503eb120884818c308add9"
+    },
+    {
       "path": "frontend/src/components/response-experience-v2/exportText.ts",
       "sha256": "231e78246ce45dde6d57a79059a72a1085c4971573aa04003f18fd2596939806"
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sha256": "fbc7c82e0bb6e088b0ef2dcda6ef73f91e096d8af5f44aea83418498afa95ba7"
+      "sha256": "474feb6ff62caf461886fe9cfff937285377d267efead4b1ff863c12be2cd137"
     },
     {
       "path": "frontend/src/components/response-experience-v2/interactionContext.ts",
@@ -20702,7 +20994,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
-      "sha256": "5ae0edc093f07f6b36631fd14b4c1168dcdaa6649b19595f093707a743a9ad13"
+      "sha256": "36d093e98e21248f75a108d9e37f2a73a8ada5372aaac6caeb88cf6b372d4bd8"
     },
     {
       "path": "frontend/src/components/response-experience-v2/sourceRegistry.ts",
@@ -21450,7 +21742,7 @@
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
-      "sha256": "32a65afa93773b836c1a275e7f0e64db2907be322ba6afe688b84a1f0680b5b8"
+      "sha256": "f436dabcb0a1eba1bd3e94521d21259fc480ae81ce8c0c017395a6e0b8591417"
     },
     {
       "path": "frontend/src/lib/authQuotes.ts",
@@ -27683,6 +27975,118 @@
       "protocol": "https:",
       "path": "frontend/src/components/response-experience-v2/document.ts",
       "line": 142,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "nextjs.org",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 4,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "supabase.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 5,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "stripe.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 6,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "postgresql.org",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 7,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "react.dev",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 8,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "typescriptlang.org",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 9,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "nodejs.org",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 11,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cloudflare.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 12,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "vercel.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 13,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docker.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "python.org",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 15,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "n8n.io",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 16,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "temporal.io",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 17,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "sentry.io",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 18,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "posthog.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 19,
       "credentialsInUrl": false
     },
     {
@@ -35123,7 +35527,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
-      "line": 22,
+      "line": 37,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35158,28 +35562,28 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
-      "line": 69,
+      "line": 74,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
-      "line": 83,
+      "line": 88,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
-      "line": 106,
+      "line": 111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
-      "line": 116,
+      "line": 121,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35228,14 +35632,21 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "line": 26,
+      "line": 23,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "line": 27,
+      "line": 43,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "line": 44,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

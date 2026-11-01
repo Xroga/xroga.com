@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "22013b2bc41e6a2c7b63078afcd16edf71f8a44330f50cbdf5bc534fb69f2c3b",
+  "reviewRegistrySha256": "c9f7195e72ebedaf2cca83ed93b8a97688f7058a34561b1e05bb2600b1bfb23f",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -28867,10 +28867,10 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fbc7c82e0bb6e088b0ef2dcda6ef73f91e096d8af5f44aea83418498afa95ba7",
+      "sourceSha256": "474feb6ff62caf461886fe9cfff937285377d267efead4b1ff863c12be2cd137",
       "semanticReview": {
         "authority": "Native Array.from creates local grid ranks from already validated graph node IDs when the graph contains a cycle. The callback slices and maps an in-memory node array. No database, storage, network, credential or execution API is called.",
-        "reason": "Reviewed the complete graphPositionsV2 and graphLayersV2 functions. Native Array is not shadowed or reassigned. This disposition covers only local array construction, not upstream validation or any authority boundary.",
+        "reason": "Reviewed graphPositionsV2, graphLayersV2 and graphCanvasV2. Native Array is not shadowed or reassigned. All graph ranking, dimensions and edge lanes are computed from local validated nodes and edges. This disposition covers only local array construction, not upstream validation or any authority boundary.",
         "evidence": [
           {
             "path": "frontend/src/components/response-experience-v2/graphLayout.ts",

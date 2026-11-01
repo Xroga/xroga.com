@@ -60,6 +60,7 @@ flowchart LR
   endpoint_cheatsheetseries_owasp_org["Source-defined endpoint cheatsheetseries.owasp.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_chrome_google_com["Source-defined endpoint chrome.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_chromewebstore_googleapis_com["Source-defined endpoint chromewebstore.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_cloudflare_com["Source-defined endpoint cloudflare.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_coordinator["Source-defined endpoint coordinator - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_design_intuit_com["Source-defined endpoint design.intuit.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_dev_whop_com["Source-defined endpoint dev.whop.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -73,6 +74,7 @@ flowchart LR
   endpoint_developers_google_com["Source-defined endpoint developers.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developers_stellar_org["Source-defined endpoint developers.stellar.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_devpost_com["Source-defined endpoint devpost.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_docker_com["Source-defined endpoint docker.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_anthropic_com["Source-defined endpoint docs.anthropic.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_aws_amazon_com["Source-defined endpoint docs.aws.amazon.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_base44_com["Source-defined endpoint docs.base44.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -119,8 +121,10 @@ flowchart LR
   endpoint_memory_invalid["Source-defined endpoint memory.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_metadata_google_internal["Source-defined endpoint metadata.google.internal - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_mixpanel_com["Source-defined endpoint mixpanel.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_n8n_io["Source-defined endpoint n8n.io - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_neon_com["Source-defined endpoint neon.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_nextjs_org["Source-defined endpoint nextjs.org - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_nodejs_org["Source-defined endpoint nodejs.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_oauth2_googleapis_com["Source-defined endpoint oauth2.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_open_bigmodel_cn["Source-defined endpoint open.bigmodel.cn - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_openrouter_ai["Source-defined endpoint openrouter.ai - CONFIGURED_BUT_UNVERIFIED"]
@@ -128,8 +132,10 @@ flowchart LR
   endpoint_play_google_com["Source-defined endpoint play.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_pollinations_ai["Source-defined endpoint pollinations.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_polygon_technology["Source-defined endpoint polygon.technology - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_postgresql_org["Source-defined endpoint postgresql.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_posthog_com["Source-defined endpoint posthog.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_public_example_invalid["Source-defined endpoint public.example.invalid - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_python_org["Source-defined endpoint python.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_railway_app["Source-defined endpoint railway.app - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_react_dev["Source-defined endpoint react.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_registry_npmjs_org["Source-defined endpoint registry.npmjs.org - CONFIGURED_BUT_UNVERIFIED"]
@@ -143,8 +149,10 @@ flowchart LR
   endpoint_supabase_management_tests_invalid["Source-defined endpoint supabase-management-tests.invalid - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_supabase_com["Source-defined endpoint supabase.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_support_bolt_new["Source-defined endpoint support.bolt.new - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_temporal_io["Source-defined endpoint temporal.io - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_token_actions_githubusercontent_com["Source-defined endpoint token.actions.githubusercontent.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_twitter_com["Source-defined endpoint twitter.com - CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_typescriptlang_org["Source-defined endpoint typescriptlang.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_upload_wikimedia_org["Source-defined endpoint upload.wikimedia.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_uploads_github_com["Source-defined endpoint uploads.github.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_v0_dev["Source-defined endpoint v0.dev - CONFIGURED_BUT_UNVERIFIED"]
@@ -250,6 +258,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_cheatsheetseries_owasp_org
   api -. "source host/reference; unverified" .-> endpoint_chrome_google_com
   api -. "source host/reference; unverified" .-> endpoint_chromewebstore_googleapis_com
+  frontend -. "source host/reference; unverified" .-> endpoint_cloudflare_com
   api -. "source host/reference; unverified" .-> endpoint_coordinator
   frontend -. "source host/reference; unverified" .-> endpoint_design_intuit_com
   frontend -. "source host/reference; unverified" .-> endpoint_dev_whop_com
@@ -263,6 +272,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_developers_google_com
   api -. "source host/reference; unverified" .-> endpoint_developers_stellar_org
   frontend -. "source host/reference; unverified" .-> endpoint_devpost_com
+  frontend -. "source host/reference; unverified" .-> endpoint_docker_com
   frontend -. "source host/reference; unverified" .-> endpoint_docs_anthropic_com
   api -. "source host/reference; unverified" .-> endpoint_docs_aws_amazon_com
   frontend -. "source host/reference; unverified" .-> endpoint_docs_base44_com
@@ -309,8 +319,10 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_memory_invalid
   api -. "source host/reference; unverified" .-> endpoint_metadata_google_internal
   frontend -. "source host/reference; unverified" .-> endpoint_mixpanel_com
+  frontend -. "source host/reference; unverified" .-> endpoint_n8n_io
   frontend -. "source host/reference; unverified" .-> endpoint_neon_com
   frontend -. "source host/reference; unverified" .-> endpoint_nextjs_org
+  frontend -. "source host/reference; unverified" .-> endpoint_nodejs_org
   api -. "source host/reference; unverified" .-> endpoint_oauth2_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_open_bigmodel_cn
   api -. "source host/reference; unverified" .-> endpoint_openrouter_ai
@@ -318,8 +330,10 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_play_google_com
   frontend -. "source host/reference; unverified" .-> endpoint_pollinations_ai
   frontend -. "source host/reference; unverified" .-> endpoint_polygon_technology
+  frontend -. "source host/reference; unverified" .-> endpoint_postgresql_org
   frontend -. "source host/reference; unverified" .-> endpoint_posthog_com
   api -. "source host/reference; unverified" .-> endpoint_public_example_invalid
+  frontend -. "source host/reference; unverified" .-> endpoint_python_org
   frontend -. "source host/reference; unverified" .-> endpoint_railway_app
   frontend -. "source host/reference; unverified" .-> endpoint_react_dev
   api -. "source host/reference; unverified" .-> endpoint_registry_npmjs_org
@@ -333,8 +347,10 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_supabase_management_tests_invalid
   frontend -. "source host/reference; unverified" .-> endpoint_supabase_com
   frontend -. "source host/reference; unverified" .-> endpoint_support_bolt_new
+  frontend -. "source host/reference; unverified" .-> endpoint_temporal_io
   api -. "source host/reference; unverified" .-> endpoint_token_actions_githubusercontent_com
   frontend -. "source host/reference; unverified" .-> endpoint_twitter_com
+  frontend -. "source host/reference; unverified" .-> endpoint_typescriptlang_org
   frontend -. "source host/reference; unverified" .-> endpoint_upload_wikimedia_org
   api -. "source host/reference; unverified" .-> endpoint_uploads_github_com
   frontend -. "source host/reference; unverified" .-> endpoint_v0_dev
