@@ -1,3 +1,4 @@
+import { readResearchResult } from '../services/integrations/researchResult.js';
 import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { requireTenantContext } from '../security/tenantContext.js';
 import {
@@ -1901,9 +1902,19 @@ router.get(
           ),
         );
 
+      let researchResult = null;
+      let researchResultUnavailable = false;
+      if (confirmation.toolkit === 'xroga-native-research' && confirmation.status === 'consumed') {
+        try { researchResult = await readResearchResult(requireTenantContext(req.tenantContext), confirmation); }
+        catch { researchResultUnavailable = true; }
+        researchResultUnavailable ||= researchResult === null;
+      }
+
       return res.json(
         {
           confirmation,
+          researchResult,
+          researchResultUnavailable,
         },
       );
     } catch (error) {

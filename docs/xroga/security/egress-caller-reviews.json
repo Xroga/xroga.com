@@ -4088,7 +4088,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
         }
       ]
     },
@@ -4108,7 +4108,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
         }
       ]
     },
