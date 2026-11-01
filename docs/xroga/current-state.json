@@ -81475,7 +81475,7 @@
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
-        "frontend/src/components/response-experience-v2/document.test.ts:156",
+        "frontend/src/components/response-experience-v2/document.test.ts:175",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
       "reachable": true,
@@ -81684,7 +81684,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "a7e373be62078308246978fcd0ec42dfa94e46a147b48f131216f49427f77816",
+      "sha256": "01c3220cba94a671bfe2cc95b2c1c1c36d88b925c8ee541507269eaf527bdead",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -81704,6 +81704,7 @@
         "nodeSchema",
         "nodes",
         "ordered",
+        "originalText",
         "output",
         "parsed",
         "raw",
@@ -107664,7 +107665,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "ae820ae77af6f4dfb43b2ef2084e894612e7616e56a6a46ed59a0ec8969ff374",
+      "sha256": "24e4596c4f9eb504dd687db5fc64f09010d2cdbe96981562746446ba2b647ec5",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -107690,10 +107691,12 @@
         "cursor",
         "decoded",
         "dividers",
+        "edges",
         "end",
         "enhanceAiResponse",
         "fence",
         "heading",
+        "ids",
         "index",
         "input",
         "item",
@@ -139431,7 +139434,7 @@
     {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
-      "declaredTests": 25,
+      "declaredTests": 26,
       "skipLocations": [],
       "focusLocations": []
     },

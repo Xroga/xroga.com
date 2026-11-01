@@ -40,6 +40,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
   try {
     if (input.content.length > 200_000) return { supported: false, reason: 'text-limit' };
     const nodes: unknown[] = [];
+    let originalText = input.content;
     if (input.content) nodes.push({ id: `${input.id}:text`, kind: 'prose', text: input.content });
     if (input.featureOutput != null) {
       // Bound raw depth/size before invoking the canonical parser.
@@ -58,6 +59,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
           const narrative = output.blocks.flatMap(b => b.type === 'narrative' ? [b.text] : []).join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
           if (narrative !== input.content.trim()) return { supported: false, reason: 'conflicting-ordered-content' };
           nodes.length = 0;
+          originalText = output.sourceText ?? input.content;
         }
         for (const b of output.blocks) {
           const common = { id: b.id, title: b.title, description: 'description' in b ? b.description : undefined };
@@ -94,7 +96,7 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
         }
       }
     }
-    const parsed = responseDocumentSchema.safeParse({ version: 2, id: input.id, originalText: input.content, streaming, nodes, sources: input.webSources ?? [] });
+    const parsed = responseDocumentSchema.safeParse({ version: 2, id: input.id, originalText, streaming, nodes, sources: input.webSources ?? [] });
     if (!parsed.success || new Set(parsed.data.nodes.map(n => n.id)).size !== parsed.data.nodes.length) return { supported: false, reason: 'invalid-document' };
     for (const n of parsed.data.nodes) {
       if (n.kind === 'cards' && new Set(n.items.map(item => item.id)).size !== n.items.length) return { supported: false, reason: 'duplicate-cards' };

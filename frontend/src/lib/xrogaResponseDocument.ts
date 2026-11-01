@@ -76,7 +76,16 @@ function canonicalRichBlock(value: unknown, documentId: string, index: number): 
       : `${safeIdPart(documentId)}-${safeIdPart(input.type)}-${index + 1}`,
     ...('state' in input ? {} : { state: 'ready' }),
   };
-  return adaptTrustedA2uiBlock(candidate);
+  const block = adaptTrustedA2uiBlock(candidate);
+  if (block?.type === 'graph') {
+    const ids = new Set(block.nodes.map(node => node.id));
+    const edges = new Set(block.edges.map(edge => JSON.stringify([edge.source, edge.target, edge.label ?? ''])));
+    // Reject at ingestion so persistence carries the explicit partial notice.
+    // Deferring this to V2 would silently switch the entire answer to legacy.
+    if (!ids.size || ids.size !== block.nodes.length || edges.size !== block.edges.length ||
+      block.edges.some(edge => !ids.has(edge.source) || !ids.has(edge.target))) return null;
+  }
+  return block;
 }
 
 function parseProtocolBlocks(content: string, documentId: string): { blocks: XrogaBlock[]; rejected: boolean } {

@@ -17,8 +17,27 @@ test('generated prose, table and graph retain their positions across persistence
   assert.ok(result.supported);
   assert.deepEqual(result.document.nodes.map(n => n.kind), ['prose', 'table', 'prose', 'graph', 'prose']);
   assert.equal(saved.featureOutput.sourceText, source);
+  assert.equal(result.document.originalText, source);
   assert.equal(result.document.nodes.filter(n => n.kind === 'prose').map(n => n.text).join('\n\n'), enhanced.content);
   assert.deepEqual(adaptResponseV2(saved), adaptResponseV2({ ...saved, featureOutput: enhanced.output }));
+});
+
+test('invalid generated graph preserves the ordered answer and an explicit notice after reopening', () => {
+  for (const graph of [
+    { nodes: [], edges: [] },
+    { nodes: [{ id: 'a', label: 'A' }], edges: [{ source: 'a', target: 'missing' }] },
+    { nodes: [{ id: 'a', label: 'A' }, { id: 'a', label: 'B' }], edges: [] },
+    { nodes: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], edges: [{ source: 'a', target: 'b' }, { source: 'a', target: 'b' }] },
+  ]) {
+    const source = '## Architecture\nExplanation before.\n```xroga-ui\n' + JSON.stringify({ type: 'graph', ...graph }) + '\n```\nExplanation after.';
+    const enhanced = enhanceAiResponse(source, 'invalid-graph');
+    assert.equal(enhanced.output?.status, 'partial');
+    const saved = JSON.parse(JSON.stringify({ id: 'invalid-graph', content: enhanced.content, featureOutput: enhanced.output }));
+    const result = adaptResponseV2(saved);
+    assert.ok(result.supported);
+    assert.equal(result.document.originalText, source);
+    assert.deepEqual(result.document.nodes.map(node => node.kind), ['prose', 'notice', 'prose']);
+  }
 });
 
 test('incomplete generated visual is explicit, preserved and never executed', () => {
