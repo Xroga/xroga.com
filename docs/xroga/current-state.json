@@ -5134,7 +5134,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelApproval.ts:92",
-        "backend/src/ai/parallelWeb.security.test.ts:13",
+        "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
       "reachable": true,
@@ -7941,7 +7941,7 @@
         "backend/src/ai/failRun.test.ts:4",
         "backend/src/ai/parallelApproval.ts:16",
         "backend/src/ai/parallelDispatch.ts:9",
-        "backend/src/ai/parallelWeb.security.test.ts:18",
+        "backend/src/ai/parallelWeb.security.test.ts:20",
         "backend/src/ai/pipeline.ts:86",
         "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
@@ -30498,7 +30498,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelApproval.ts:13",
-        "backend/src/ai/parallelWeb.security.test.ts:14",
+        "backend/src/ai/parallelWeb.security.test.ts:16",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/routes/billingCheckout.security.test.ts:5",
         "backend/src/routes/electronSigning.security.test.ts:3",
@@ -30660,7 +30660,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelApproval.ts:12",
-        "backend/src/ai/parallelWeb.security.test.ts:16",
+        "backend/src/ai/parallelWeb.security.test.ts:18",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:4",
         "backend/src/routes/billing.ts:6",
         "backend/src/routes/billingCheckout.security.test.ts:4",
@@ -32017,7 +32017,7 @@
         "backend/src/ai/black-hole/webIntelligence.test.ts:9",
         "backend/src/ai/modelContext.security.test.ts:9",
         "backend/src/ai/parallelApproval.ts:11",
-        "backend/src/ai/parallelWeb.security.test.ts:17",
+        "backend/src/ai/parallelWeb.security.test.ts:19",
         "backend/src/ai/repoSummarize.security.test.ts:7",
         "backend/src/ai/tenantModelDispatch.test.ts:5",
         "backend/src/routes/cwsCredentialAdmission.security.test.ts:3",
@@ -35956,7 +35956,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:8",
-        "backend/src/ai/parallelWeb.security.test.ts:15",
+        "backend/src/ai/parallelWeb.security.test.ts:17",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioControl.security.test.ts:7",
@@ -40566,6 +40566,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/parallelWeb.security.test.ts:13",
         "backend/src/index.ts:57",
         "backend/src/routes/browserRuns.ts:20",
         "backend/src/routes/drive.ts:4",
@@ -40593,6 +40594,7 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/services/integrations/researchResult.test.ts",
         "backend/src/storage/config.matrix.test.ts",
         "backend/src/storage/quotaConfig.test.ts"
@@ -40988,6 +40990,7 @@
       ],
       "entryPoints": [],
       "callers": [
+        "backend/src/ai/parallelWeb.security.test.ts:12",
         "backend/src/routes/browserRunInternal.test.ts:6",
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/drive.test.ts:7",
@@ -41011,6 +41014,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/routes/browserRunInternal.test.ts",
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/drive.test.ts",
