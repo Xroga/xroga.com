@@ -1,0 +1,65 @@
+{
+  "observedAtUtc": "2026-11-01T22:50:00Z",
+  "scope": "SOURCE_CORRECTION_AND_PREVIEW_REGRESSION_NOT_PRODUCT_ACCEPTANCE",
+  "backendCandidate": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+  "frontendCandidate": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
+  "approvalPackageCommit": "7d097ab5e1b2700b909ffe3813e45f51a014ee0d",
+  "newFunctionalReleaseApproval": "REQUESTED_NOT_RECEIVED",
+  "candidateBuilt": false,
+  "candidateProductionChanges": false,
+  "candidateModelCalls": 0,
+  "production": {
+    "apiSource": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
+    "apiRevision": "xroga-api-response-4500d0-serving-1102",
+    "canonicalJob": "xroga-canonical-production",
+    "imageDigest": "sha256:bb429763e6ac0c2791e31c88c3cb05dab70fb07ea8c417cfb3b552c23d7a6a7a",
+    "frontendSource": "e8feb297673c856b34034d30851e0c0ba82561ac",
+    "frontendDeployment": "AesRbbThqvzgh2Y2Rgc34MfkdVXK",
+    "olderRecoverySource": "fd3b663290cf150da51768171021860b032df025"
+  },
+  "backendGates": {
+    "passedRuns": [41357491888, 41357488248, 41357484962, 41357481276, 41357477838],
+    "pendingRun": 41357474141
+  },
+  "frontendGates": {
+    "passedRuns": [41358360664, 41358325010, 41358325121, 41358325044, 41358324969, 41358325005],
+    "pendingRuns": [41358357688, 41358324861],
+    "strictEgress": { "reviewed": 150, "pending": 0, "unresolvedHighRisk": 0 },
+    "pr": 909,
+    "draft": true
+  },
+  "savedPartialAnswerRegression": {
+    "previewSource": "e8256aa27e444ccf1b47e9583598512cec0c4de9",
+    "graphNodes": 4,
+    "graphEdges": 5,
+    "mobileViewportWidth": 390,
+    "mobilePageWidth": 390,
+    "mobileDiagramClientAndScrollWidth": 293,
+    "desktopViewportWidth": 1440,
+    "desktopDiagramClientAndScrollWidth": 822,
+    "tabletViewportWidth": 1024,
+    "tabletDiagramClientAndScrollWidth": 683,
+    "lightProseFont": "Inter 16px 400",
+    "sharePreviewPreservesIdentifiersAndAllConnections": true,
+    "shareLinkCreated": false,
+    "originalThemeRestored": true,
+    "viewportOverrideReset": true,
+    "freshGenerationAcceptance": false
+  },
+  "lastNewAnswer": {
+    "source": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
+    "result": "FAIL_INCOMPLETE_LENGTH_STOP",
+    "providerChargeUsd": 0.00217355,
+    "ledgerEstimateUsd": 0.001225,
+    "historicalDifferenceReconciled": false,
+    "previousUnknownAnswerHoldUsd": 0.001265,
+    "previousUnknownAnswerHoldReleased": false
+  },
+  "storageHousekeeping": {
+    "state": "OPTIONAL_NOT_SCHEDULED",
+    "contract": "docs/infra/batch-1.5/runbook-storage.md section 6",
+    "impact": "Abandoned upload reservations require authorized operator reconciliation until a schedule is separately configured.",
+    "newSchedulerCreated": false
+  },
+  "nextAction": "Inspect final CI outcomes without restarting successful runs. Correct only demonstrated failures. After exact approval and all gates pass, follow the single-build, guarded paired cutover runbook. Perform bounded fresh new-chat acceptance before frontend promotion or acceptance claims."
+}
