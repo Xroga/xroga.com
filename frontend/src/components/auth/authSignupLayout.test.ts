@@ -16,6 +16,15 @@ test('signup does not ask for workspace theme or profile selection', () => {
   assert.match(form, /id="signup-email"/);
 });
 
+test('contact number is optional at signup and the later prompt can be skipped', () => {
+  const signup = read('./SignupForm.tsx');
+  const prompt = read('../../app/auth/contact/page.tsx');
+  assert.match(signup, /phone\.trim\(\) && !contactPhone/);
+  assert.match(signup, /contactPhone \? \{ contact_phone: contactPhone \} : \{\}/);
+  assert.match(prompt, /skip_current_contact_phone_prompt/);
+  assert.match(prompt, /Skip for now/);
+});
+
 test('capability slides use text rather than feature images', () => {
   const showcase = read('./AuthShowcase.tsx');
   assert.doesNotMatch(showcase, /auth-stories|<figure/);

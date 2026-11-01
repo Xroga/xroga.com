@@ -15,8 +15,9 @@ test.afterAll(async()=>{for(const id of createdIds){const result=await admin.aut
 async function identity(email:string,role:'owner'|'member') {
   const result=await admin.auth.admin.createUser({email,password,email_confirm:true});expect(result.error).toBeNull();expect(result.data.user).toBeTruthy();
   const id=result.data.user!.id;createdIds.push(id);
-  const updated=await admin.from('profiles').update({role,onboarding:{status:'completed',current_step:'complete'}}).eq('id',id).select('role').single();
-  expect(updated.error).toBeNull();expect(updated.data?.role).toBe(role);return id;
+  const contact_phone='+12025550143';
+  const updated=await admin.from('profiles').update({role,contact_phone,onboarding:{status:'completed',current_step:'complete'}}).eq('id',id).select('role,contact_phone').single();
+  expect(updated.error).toBeNull();expect(updated.data).toEqual({role,contact_phone});return id;
 }
 function session(context:BrowserContext) {
   return createServerClient(url,process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,{cookies:{

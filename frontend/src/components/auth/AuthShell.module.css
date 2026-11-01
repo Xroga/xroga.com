@@ -31,6 +31,9 @@
 .form [data-auth-github] svg { width: 24px; height: 24px; }
 .form [data-auth-github]:hover:not(:disabled) { color: #181717; background: #fff; transform: none; }
 .form [data-auth-github]:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.form [data-auth-google] { height: 44px; border: 1px solid #d7d7d7; border-radius: 5px; color: #151515; background: #fff; box-shadow: none; }
+.form [data-auth-google]:hover:not(:disabled) { color: #151515; background: #eee; transform: none; }
+.form [data-auth-google]:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .form h1 { font-family: Arial, Helvetica, sans-serif; font-size: 32px; font-weight: 500; letter-spacing: -.045em; line-height: 1.1; }
 .form input { border-radius: 9px; }
 .form button[type='submit'] { border: 1px solid #fff; border-radius: 9px; color: #111; background: #fff; box-shadow: 0 5px 12px #0006; }
