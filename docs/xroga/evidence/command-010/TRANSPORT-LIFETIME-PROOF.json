@@ -292,7 +292,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -562,7 +562,12 @@
         "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforeResponsePresentationBinding": {
+        "reference": "fded88f45384d0514ae9a6c69d87a726b61d9669",
+        "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+        "scope": "SOURCE_POSITION_RECONCILIATION_ONLY_NOT_NEW_SECURITY_ACCEPTANCE"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",

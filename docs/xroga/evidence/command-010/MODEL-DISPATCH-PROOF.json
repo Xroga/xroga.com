@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "currentSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "c3617170cdd8b722b96f",
-        "2e78e5aba21ba282d65c"
+        "0ba0abee8a68acf83b99",
+        "ef5cbae7bd65f3397666"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4227,7 +4227,16 @@
         },
         "githubPublicationContinuation": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/SOURCE-RECONCILIATION.json",
+      "beforeResponsePresentationBinding": {
+        "reference": "fded88f45384d0514ae9a6c69d87a726b61d9669",
+        "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+        "scope": "SOURCE_POSITION_RECONCILIATION_ONLY_NOT_NEW_SECURITY_ACCEPTANCE",
+        "afterIds": [
+          "c3617170cdd8b722b96f",
+          "2e78e5aba21ba282d65c"
+        ]
+      }
     },
     {
       "path": "backend/src/routes/phase1.ts",
