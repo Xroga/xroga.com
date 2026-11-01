@@ -15,6 +15,11 @@ class PresentationBoundary extends Component<{ children: ReactNode; fallback: Re
   static getDerivedStateFromError() { return { failed: true }; }
   render() { return this.state.failed ? this.props.fallback : this.props.children; }
 }
+export function useResponseExperienceEnabled() {
+  const authorizedUserId = useContext(PresentationAccessContext);
+  const profileId = useAppStore(s => s.profile?.id);
+  return Boolean(authorizedUserId && authorizedUserId === profileId);
+}
 export function ResponseExperienceGate({ message, streaming, children }: { message: ResponseInputV2; streaming: boolean; children: ReactNode }) {
   const authorizedUserId = useContext(PresentationAccessContext);
   const profileId = useAppStore(s => s.profile?.id);

@@ -123,3 +123,13 @@ Calculator exploration now has optional tab-session persistence scoped to the se
 Four persistence tests and ten composition tests passed in local job 01fd8b0c-be81-468e-beb4-8a350ffcb284. Frontend TypeScript and scoped ESLint passed. Browser interaction changed the synthetic risk from 500 to 1000 USD, reopened the serialized response with 1000 intact, then reset to 500. No model request was submitted. Two earlier test invocations failed due to missing tsconfig alias resolution in the runner, corrected by passing the explicit frontend tsconfig to tsx.
 
 Release remains gated on final exact-source CI and final Preview verification. No production promotion has occurred.
+
+## Whole-conversation integration, 2026-11-01, release pending
+
+Founder comments 6555247319 and 6555126424 expand the boundary to the entire conversation. The attached 139.136-second reference was inspected across its full timeline at one-second sampling. This is frame review, not a claim of uninterrupted audiovisual playback.
+
+Added independent V2 user/assistant turns, compact real streaming status, copy/share actions and a common transcript/composer width and typography. Essential user text is fully visible. Ordinary understand/respond/summarize lifecycle events no longer produce task panels, and generic next-step rows are absent in V2. Real operation receipts, approval/error/cancellation states, build recovery and rollback handlers stay connected to the canonical components. The existing controlled composer retains draft, voice, upload, stop and submit behavior. The server-authorized presentation gate controls both paths. Legacy components and global styles remain unchanged.
+
+Before evidence from the signed-in Preview at 1440x1000 confirms three V2 answer bodies inside zero V2 conversation turns, with the old thinking panels and surrounding chrome. Capture: parent outputs/response-experience-v2-906/conversation-redesign/workspace-before-desktop.jpg. Existing saved answers have no source metadata. No prompts, model calls, production changes or other-batch activation were performed for this review.
+
+Focused conversation/composition/source tests passed 16/16 in local job 80ee8a90-ec7b-4406-b5df-785130d2ab66. The unchanged strict audit reports 150 reviewed, zero pending and zero unresolved high-risk candidates. New-source Preview screenshots, interactions, final CI and production acceptance remain required. This checkpoint does not claim the complete conversation redesign is live.

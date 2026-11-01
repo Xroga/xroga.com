@@ -1,0 +1,37 @@
+.scope:global(.xv-terminal-body) {
+  font-family: var(--font-inter, Arial), system-ui, sans-serif;
+  font-size: 16px; font-weight: 400; line-height: 1.65;
+  width: min(100%, 880px); margin-inline: auto;
+  padding: 24px 28px 40px;
+}
+.scope > :global(.xv-terminal-turn) { display: block; margin-block: 0 36px; }
+.turn { width: 100%; min-width: 0; color: var(--foreground); text-align: start; font: inherit; }
+.userMessage { width: fit-content; max-width: min(82%, 640px); margin-inline-start: auto; padding: 12px 18px; border-radius: 22px; background: color-mix(in srgb, var(--foreground) 7%, var(--background)); white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; text-align: start; }
+.turn[data-conversation-turn-v2=user] .actions { justify-content: flex-end; }
+.answer { min-width: 0; }
+.actions { display: flex; align-items: center; gap: 4px; margin-block-start: 14px; min-height: 32px; color: var(--muted); }
+.actions button { display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
+.actions button:hover { color: var(--foreground); background: color-mix(in srgb, var(--foreground) 6%, transparent); }
+.actions button:focus-visible { outline: 2px solid #6e94d5; outline-offset: 3px; }
+.actions svg { width: 16px; height: 16px; stroke-width: 1.6; }
+.actions span { font-size: 12px; }
+.status { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 13px; margin-block: 4px 16px; }
+.status > span { width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: breathe 1.8s ease-in-out infinite; }
+.activity, .controls { margin-block-end: 20px; }
+.controls:empty { display: none; }
+@keyframes breathe { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .status > span { animation: none; } }
+/* The existing controlled composer keeps every draft, upload, voice and stop
+   handler. This appearance applies only while a server-authorized V2 scope exists. */
+:global(body):has(.scope) :global([data-testid=persistent-terminal-dock]) :global(.xv-terminal-dock-inner) { max-width: 880px; padding-inline: 28px; }
+/* Existing composer rules use !important. Keep the override scoped to V2,
+   rather than changing the legacy stylesheet or any composer behavior. */
+:global(body):has(.scope) :global([data-testid=persistent-terminal-dock]) :global(.xv-kimi-composer-frame[data-composer-frame=single]) :global(.xv-chatbar-solid) { border: 1px solid color-mix(in srgb, var(--foreground) 14%, transparent) !important; border-radius: 24px !important; background: var(--background) !important; box-shadow: 0 4px 24px #0000000a !important; }
+:global(body):has(.scope) :global([data-testid=persistent-terminal-dock]) :global(.xv-kimi-composer-frame[data-composer-frame=single]) :global(textarea[data-terminal-composer]) { font: 400 16px/1.5 var(--font-inter, Arial), system-ui, sans-serif !important; letter-spacing: normal; }
+@media (max-width: 600px) {
+  .scope:global(.xv-terminal-body) { padding: 16px 16px 24px; }
+  .scope > :global(.xv-terminal-turn) { margin-block-end: 28px; }
+  .userMessage { max-width: 90%; padding: 11px 15px; border-radius: 19px; }
+  .actions button { width: 40px; height: 40px; }
+  :global(body):has(.scope) :global([data-testid=persistent-terminal-dock]) :global(.xv-terminal-dock-inner) { padding-inline: 12px; }
+}

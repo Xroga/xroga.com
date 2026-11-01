@@ -9,7 +9,11 @@ import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
-import { ResponseExperienceGate } from '@/components/response-experience-v2/ResponseExperienceGate';
+import { ConversationTurnV2 } from '@/components/response-experience-v2/ConversationTurnV2';
+import { conversationActivityV2 } from '@/components/response-experience-v2/conversation';
+import { coalesceActivity } from '@/lib/terminal/activityPresentation';
+import conversationStyles from '@/components/response-experience-v2/conversation-v2.module.css';
+import { useResponseExperienceEnabled, ResponseExperienceGate } from '@/components/response-experience-v2/ResponseExperienceGate';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
@@ -91,6 +95,7 @@ function transcriptScrollRoot(): HTMLElement {
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
+  const conversationV2 = useResponseExperienceEnabled();
   const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
@@ -401,6 +406,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
         <div
           className={cn(
             'xv-terminal-body space-y-3 font-coding text-[13px]',
+            conversationV2 && conversationStyles.scope,
             chromeless ? 'xv-terminal-body--flush' : 'px-4 py-3 overflow-visible rounded-b-xl'
           )}
         >
@@ -459,70 +465,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             const discoveryBlock = msg.role === 'assistant' && (!isRenderedFeature || featureType === 'xroga.output') && !(msg.id === animatingId && loading)
               ? webSourcesToRichResults(msg.webSources, msg.id, messagePrompt) : null;
 
-            return (
-              <div
-                key={msg.id}
-                ref={(el) => { messageRefs.current[msg.id] = el; }}
-                data-turn-id={msg.role === 'user' || msg.role === 'assistant' ? msg.id : undefined}
-                className={cn(
-                  'xv-terminal-turn group flex gap-2',
-                  msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
-                  msg.role === 'system' && 'justify-center',
-                  searchHit === msg.id && 'ring-1 ring-[#006aff]/40 rounded-lg'
-                )}
-              >
-                {msg.role === 'user' && (
-                  <div className="xv-user-avatar-reveal">{isIncognito ? (
-                    <IncognitoProfileBox size="terminal" />
-                  ) : (
-                    <UserProfileBox
-                      url={profile?.avatar_url}
-                      initial={displayInitial}
-                      size="terminalCompact"
-                    />
-                  )}</div>
-                )}
-                <div
-                  className={cn(
-                    'min-w-0 w-full',
-                    msg.role === 'user' ? 'max-w-[85%] text-right' : 'max-w-full',
-                    msg.role === 'system' && (AGENT_STYLES[msg.agent ?? ''] ?? 'text-[var(--muted)] text-center max-w-full')
-                  )}
-                >
-                  {msg.role === 'user' ? (
-                    <>
-                      <UserPromptBubble content={msg.content} />
-                      <MessageBubbleActions
-                        role="user"
-                        content={msg.content}
-                        messageId={msg.id}
-                      />
-                    </>
-                  ) : msg.role === 'system' ? (
-                    <p className="py-0.5 text-xs xv-swarm-agent-line">{msg.content}</p>
-                  ) : (
-                    <>
-                      <div className="py-1 text-left space-y-2">
-                        {/* The pending shell is transient request-lifecycle feedback only.
-                            It is never persisted as execution evidence. Real canonical
-                            activity replaces it as soon as the backend emits a step. */}
-                        {msg.executionActivity?.length || (!loading && msg.thinkingSteps?.length) ? (
-                          <TerminalLiveActivity
-                            activity={msg.executionActivity}
-                            thinkingSteps={msg.thinkingSteps}
-                            requestText={messagePrompt}
-                          />
-                        ) : loading &&
-                          msg.id === (buildPanelMessageId ?? animatingId) &&
-                          !suppressGreetingActivity ? (
-                          <TerminalLiveActivity
-                            run={terminalRun}
-                            pending
-                            pendingIntent={pendingIntent}
-                            pendingLabel={pendingActivityLabel}
-                            requestText={messagePrompt}
-                          />
-                        ) : null}
+            const taskControls = <>
                         {msg.buildStopped ? (
                           <StoppedBuildResumeCard
                             meta={{
@@ -593,6 +536,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             }
                           />
                         ) : null}
+            </>;
+            const answer = (
                         <ResponseExperienceGate message={msg} streaming={msg.id === animatingId && loading}>
                         {isRenderedFeature ? (
                           <ChatErrorBoundary>
@@ -647,6 +592,87 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           <ResponseSources sources={msg.webSources} />
                         ) : null}
                         </ResponseExperienceGate>
+            );
+            const currentTurn = loading && msg.id === (buildPanelMessageId ?? animatingId);
+            const operationRows = conversationActivityV2(currentTurn ? coalesceActivity(terminalRun.events) : msg.executionActivity);
+
+            return (
+              <div
+                key={msg.id}
+                ref={(el) => { messageRefs.current[msg.id] = el; }}
+                data-turn-id={msg.role === 'user' || msg.role === 'assistant' ? msg.id : undefined}
+                className={cn(
+                  'xv-terminal-turn group flex gap-2',
+                  msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
+                  msg.role === 'system' && 'justify-center',
+                  searchHit === msg.id && 'ring-1 ring-[#006aff]/40 rounded-lg'
+                )}
+              >
+                {conversationV2 && msg.role !== 'system' ? (
+                  <ConversationTurnV2 role={msg.role} content={msg.content}
+                    copyContent={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
+                    prompt={promptByAssistantId.get(msg.id)}
+                    streaming={msg.id === animatingId && loading}
+                    controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : undefined}
+                    activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} requestText={messagePrompt} /> : undefined}>
+                    {msg.role === 'assistant' ? answer : null}
+                  </ConversationTurnV2>
+                ) : <>
+                {msg.role === 'user' && (
+                  <div className="xv-user-avatar-reveal">{isIncognito ? (
+                    <IncognitoProfileBox size="terminal" />
+                  ) : (
+                    <UserProfileBox
+                      url={profile?.avatar_url}
+                      initial={displayInitial}
+                      size="terminalCompact"
+                    />
+                  )}</div>
+                )}
+                <div
+                  className={cn(
+                    'min-w-0 w-full',
+                    msg.role === 'user' ? 'max-w-[85%] text-right' : 'max-w-full',
+                    msg.role === 'system' && (AGENT_STYLES[msg.agent ?? ''] ?? 'text-[var(--muted)] text-center max-w-full')
+                  )}
+                >
+                  {msg.role === 'user' ? (
+                    <>
+                      <UserPromptBubble content={msg.content} />
+                      <MessageBubbleActions
+                        role="user"
+                        content={msg.content}
+                        messageId={msg.id}
+                      />
+                    </>
+                  ) : msg.role === 'system' ? (
+                    <p className="py-0.5 text-xs xv-swarm-agent-line">{msg.content}</p>
+                  ) : (
+                    <>
+                      <div className="py-1 text-left space-y-2">
+                        {/* The pending shell is transient request-lifecycle feedback only.
+                            It is never persisted as execution evidence. Real canonical
+                            activity replaces it as soon as the backend emits a step. */}
+                        {msg.executionActivity?.length || (!loading && msg.thinkingSteps?.length) ? (
+                          <TerminalLiveActivity
+                            activity={msg.executionActivity}
+                            thinkingSteps={msg.thinkingSteps}
+                            requestText={messagePrompt}
+                          />
+                        ) : loading &&
+                          msg.id === (buildPanelMessageId ?? animatingId) &&
+                          !suppressGreetingActivity ? (
+                          <TerminalLiveActivity
+                            run={terminalRun}
+                            pending
+                            pendingIntent={pendingIntent}
+                            pendingLabel={pendingActivityLabel}
+                            requestText={messagePrompt}
+                          />
+                        ) : null}
+                        {taskControls}
+                        {answer}
+
                       </div>
                       {msg.content && (
                         <MessageBubbleActions
@@ -675,6 +701,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                     </>
                   )}
                 </div>
+                </>}
               </div>
             );
           })}
