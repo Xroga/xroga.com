@@ -6038,6 +6038,7 @@ import type {
 } from '@/lib/hackathonBrief';
 
 export interface Phase1ChatResult {
+  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' };
   response:
     string;
 

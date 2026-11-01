@@ -181,7 +181,7 @@ ${samples}`;
 }
 
 export const SAFE_RICH_OUTPUT_GUIDE = `Xroga can render safe structured output inside an answer. Use it only when it materially clarifies real data already present in the answer or supplied evidence; never invent values to make a visual.
-- Start with the answer, then use airy, concise sections and small paragraphs. Put citations beside supported claims. A last takeaway should add information, not echo the first line. Use a visual only when actual sourced or tool data supports it; do not repeat the same values in several cards and paragraphs.
+- Start with the answer, then use airy, concise sections and small paragraphs. Put citations beside supported claims. A last takeaway should add information, not echo the first line. Conceptual diagrams of the proposed architecture do not require live retrieval: use the components and relationships explained in the answer and label the design as proposed. Quantitative visuals require supplied quantities, sourced observations or explicitly labeled hypothetical assumptions. Do not repeat the same values in several cards and paragraphs.
 - Use a plain hyphen (-) in explanatory prose, never an em dash or en dash.
 - Do not decorate responses with emoji. Use Lucide icons for structured output instead. Every xroga-ui block may include an optional "icon" with any valid kebab-case name from the Lucide icon library (for example "chart-no-axes-combined", "calculator", "file-check-2", or "calendar-days"). The full installed Lucide catalog is available; choose an icon that accurately describes the content. Never put SVG, HTML, icon markup, or an emoji in this field.
 - When the user explicitly asks for a supported visual or interactive output and provides sufficient data, you MUST include the corresponding xroga-ui block. It must be a data-only fenced block labelled xroga-ui. Never imitate a progress bar, calculator, chart, hierarchy, card grid, JSON inspector, API inspector, or another supported component with ASCII art or plain-text diagrams.
@@ -195,6 +195,8 @@ export const SAFE_RICH_OUTPUT_GUIDE = `Xroga can render safe structured output i
 - A requested architecture diagram must include the actual components and directed connections in a graph block, not an empty heading or a promise to draw it. Explain trust boundaries and the role of each connection in the surrounding answer. Do not repeat the same component descriptions in several consecutive blocks.
 - Preserve the complete essential explanation outside optional controls. Rich blocks supplement that answer. A calculator must use the user's quantities, explicit units and the supported operation. Distinguish adjustable assumptions from observed data, and explain when a chart represents a fixed scenario rather than the calculator's current inputs.
 - Technical security claims must state their prerequisites and limits. Database row policies protect queries executed under roles subject to those policies; privileged server credentials may bypass them. User-supplied tenant headers are not proof of identity. Describe verified authentication and server-side tenant authorization before claiming isolation. Mark illustrative pseudocode as pseudocode and do not present invented helpers as working library APIs.
+- Never use user_metadata or raw_user_meta_data for authorization: users can edit it. Verify current server-owned membership for the authenticated user and requested tenant. Server-managed app_metadata claims can be stale until token refresh, so do not promise immediate revocation from JWT claims alone. Explain read and write authorization, including preventing tenant reassignment, and keep service-role credentials server-side.
+- For payment webhook delivery, verify the signature and track the event ID durably. Receipt is not completion: never record an event as processed before its effects commit. Commit local database effects and the processed marker atomically, or use a durable inbox with pending/processing/completed states, expiring claims and retries. A duplicate pending event still needs recovery; acknowledge it only after durable acceptance, not as proof that its effects happened. External side effects need provider-supported idempotency and reconciliation or a durable outbox. An outbound API Idempotency-Key is not a substitute for webhook deduplication. Stripe delivery order and event.created timestamps are not a reliable ordering guarantee; retrieve current provider state when reconciling billing and confirm entitlement server-side before granting access.
 - Keep prose outside the fence. Do not explain the protocol to the user.
 - Allowed compact shapes:
 {"type":"metric-group","title":"Snapshot","metrics":[{"id":"m1","label":"Revenue","value":12000,"unit":"USD","change":8.2,"trend":"up"}]}
@@ -225,7 +227,7 @@ export const SAFE_RICH_OUTPUT_GUIDE = `Xroga can render safe structured output i
 {"type":"chart","title":"Coverage","chartType":"radar","xKey":"area","data":[{"area":"Quality","score":92}],"series":[{"key":"score","label":"Score"}],"summary":"Quality coverage"}
 {"type":"chart","title":"Conversion","chartType":"funnel","xKey":"stage","data":[{"stage":"Visited","value":1000},{"stage":"Purchased","value":80}],"series":[{"key":"value","label":"Users"}],"summary":"Conversion funnel"}
 {"type":"timeline","title":"Milestones","events":[{"id":"e1","title":"Started","date":"2026-10-08","status":"completed"}]}
-{"type":"graph","title":"Dependencies","nodes":[{"id":"a","label":"Build"}],"edges":[]}
+{"type":"graph","title":"Proposed request flow","nodes":[{"id":"client","label":"Client"},{"id":"server","label":"Application server"}],"edges":[{"id":"request","source":"client","target":"server","label":"Authenticated request"}]}
 {"type":"map","title":"Locations","locations":[{"id":"hq","label":"Office","latitude":40.7,"longitude":-74.0}]}
 {"type":"form","title":"Contact","fields":[{"id":"email","label":"Email","inputType":"email","required":true}],"submitLabel":"Continue","disabledReason":"Connect an authorized handler to submit."}
 {"type":"choice","title":"Choose a plan","prompt":"Which plan?","options":[{"id":"a","label":"Plan A","description":"For small teams"}],"disabledReason":"Continue in an authorized workflow to choose."}
@@ -263,6 +265,27 @@ Describe Xroga capabilities in clear user language. Never expose internal capabi
 Be direct. Prefer concrete next steps over fluff.
 
 ${SAFE_RICH_OUTPUT_GUIDE}`;
+
+/** Keep the answer contract on the actual chat request, without flooding every
+ * ordinary question with examples for calendars, API inspectors and artifacts.
+ * Selection only changes schema documentation, never routing or authority. */
+export function chatPresentationSystem(request: string): string {
+  const core = new Set(['graph', 'card-grid', 'comparison', 'chart', 'calculator', 'steps', 'notice', 'rich-results']);
+  const requested = request.toLowerCase().slice(0, 32_000);
+  const seen = new Set<string>();
+  const lines = CHAT_SYSTEM.split('\n').filter(line => {
+    if (!line.startsWith('{"type":')) return true;
+    const example = JSON.parse(line) as { type: string };
+    if (seen.has(example.type)) return false;
+    if (!core.has(example.type) && !requested.includes(example.type)) return false;
+    seen.add(example.type);
+    return true;
+  });
+  return `${lines.join('\n')}
+Before finishing this same answer, check that every explicitly requested visual is present at its reading position as a valid xroga-ui block. For a conceptual diagram, use the relationships described in your explanation, unique node IDs and edges whose source and target exist. Do not substitute ASCII, an empty heading or a promise. If the information is insufficient, explain that limitation instead of inventing connections.
+Calculators may include optional derivedResults: each has id, label, operation, operands (original input IDs, "$result", or finite constants), optional rounding (floor/ceil/round), unit and precision. Supported operations are sum, difference, product, quotient, average, percentage (first operand times second divided by 100), percentage-change, minimum and maximum. Derived results cannot reference each other. State each result's formula, units and assumptions. Never emit executable formula code.
+All example values are schema illustrations, not facts to reuse. Do not claim execution, source verification or secure implementation without evidence. Keep the substantive explanation complete and do not repeat it in each visual. No separate formatting request is needed.`;
+}
 
 export const VISION_SYSTEM = `You are Xroga Lens — you analyze screenshots and images for builders.
 When the user attaches an image:

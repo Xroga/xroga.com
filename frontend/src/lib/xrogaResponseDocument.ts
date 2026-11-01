@@ -252,13 +252,17 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
 }
 
 /** Convert a completed assistant answer into the canonical, persisted Xroga output document. */
-export function enhanceAiResponse(content: string, documentId: string): EnhancedAiResponse {
+export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }): EnhancedAiResponse {
   const source = typeof content === 'string' ? content : '';
   if (source.length > 200_000) return { content: source };
   const blocks: XrogaBlock[] = [];
   let cursor = 0;
   let segment = 0;
-  let rejected = false;
+  let rejected = completion?.status === 'partial';
+  if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
+    text: completion?.reason === 'output_limit'
+      ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
+      : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
   const appendText = (value: string) => blocks.push(...tableBlocksFromMarkdown(value, `${documentId}-${segment++}`).ordered);
   for (const match of source.matchAll(XROGA_UI_FENCE)) {
     appendText(source.slice(cursor, match.index));

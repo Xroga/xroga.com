@@ -111,7 +111,14 @@
     "frontend/src/lib/supabase/oauthReturn.ts",
     ".github/workflows/xroga-tenant-security.yml",
     "supabase/migrations/20261028000100_contact_phone.sql",
-    "supabase/migrations/20261101160136_optional_contact_prompt.sql"
+    "supabase/migrations/20261101160136_optional_contact_prompt.sql",
+    "backend/src/ai/models.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/ai/providerBudget.test.ts",
+    "backend/src/ai/tenantModelDispatch.ts",
+    "backend/src/ai/openaiCompat.test.ts",
+    "frontend/src/lib/runLightLaneChat.ts",
+    "frontend/src/components/response-experience-v2/exportText.test.ts"
   ],
   "decisions": {
     "keep": [
@@ -152,16 +159,16 @@
       "description": "Existing boundary preserved, no provider calls or authorization change."
     },
     "egress": {
-      "changed": false,
-      "description": "Inline supplied public HTTPS images reuse the existing bounded SSRF-protected image proxy. Rich-result images retain the canonical image permission policy. No new proxy or provider."
+      "changed": true,
+      "description": "Existing selected official API destination, secret rejection, redirect denial and tenant admission preserved. Price and reasoning controls are checked on serialized provider bytes. No new endpoint or credential."
     },
     "cost": {
-      "changed": false,
-      "description": "Existing boundary preserved, no provider calls or authorization change."
+      "changed": true,
+      "description": "Existing model and output limit preserved. Forward the supported direct-output control and enforce catalogue price ceilings on the serialized request. Reserve conservatively and retain uncertain holds. No second formatting call or new provider."
     },
     "billing": {
-      "changed": false,
-      "description": "Existing boundary preserved, no provider calls or authorization change."
+      "changed": true,
+      "description": "Settle validated provider usage.cost when supplied at integer micro-USD precision and bind it to the SDK completion and existing atomic receipt. Historical settled discrepancies are retained without manual financial SQL."
     }
   },
   "tests": [
@@ -190,7 +197,7 @@
     "rfc": null
   },
   "rollout": "Controlled source-pinned Vercel release authorized in PR #909 comment 6549571336 after exact CI and authenticated Workspace verification. RESPONSE_EXPERIENCE_V2=authenticated enables ordinary verified sessions, off restores legacy.",
-  "rollback": "Keep existing serving API and canonical Job pair, frontend deployment 9qVigJYwiaa4hgT553mRcH1VeY1d and legacy renderer flag. Restore the compatible API/Job pair together through the admission-fence release procedure. Retain private result objects and consumed confirmations, never replay them.",
+  "rollback": "Keep current Google API/Job source 4500d039 and image bb429763e6ac0c2791e31c88c3cb05dab70fb07ea8c417cfb3b552c23d7a6a7a, prior fd3b recovery pair, production frontend e8feb297 deployment AesRbbThqvzgh2Y2Rgc34MfkdVXK and legacy renderer flag. Restore compatible API/Job together through the fenced release procedure. Preserve private results, consumed confirmations, data and microphone routes.",
   "knownGaps": [
     "Fresh SaaS explanation on live fd3b6632 backend returned EMPTY_PROVIDER_RESPONSE on 2026-11-01 at 19:49:47 UTC. No answer or rich-response acceptance. No retry was submitted.",
     "Literal Share and safe provider-error corrections are source changes awaiting exact-source CI and compatible release. Shared links currently render escaped text, not interactive rich documents.",
@@ -198,21 +205,24 @@
     "Historical research bodies absent from older releases cannot be reconstructed from receipt digests. Do not repeat the paid search.",
     "Production readiness reports storage_reconcile_not_scheduled. Database, storage connectivity and quota checks passed, but housekeeping is not accepted.",
     "2026-11-02: legacy empty completion has no retained provider request ID or usage. New content-free diagnostic receipts and vertical mobile graphs are source changes, not live-provider recovery proof. No new model attempt or accounting mutation.",
-    "2026-11-02 production frontend e8feb297 is preserved in the V2 candidate. Optional current-subject contact migrations are copied as source only, not applied. Exact-source combined release gates and live response acceptance remain required."
+    "2026-11-02 production frontend e8feb297 is preserved in the V2 candidate. Optional current-subject contact migrations are copied as source only, not applied. Exact-source combined release gates and live response acceptance remain required.",
+    "2026-11-02: one new SaaS submission produced a real 4-node/5-edge graph but stopped at the output limit after 3467 reasoning tokens. Provider charge $0.00217355 differs from ledger estimate $0.001225. New direct-output, price-bound and public partial-status corrections are source-only until exact release approval and new-chat acceptance. Historical discrepancy remains unreconciled."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
     "docs/xroga/evidence/response-experience-v2-906/checkpoint.md",
-    "docs/xroga/evidence/response-experience-v2-906/fd3b-release-and-new-chat-20261102.md"
+    "docs/xroga/evidence/response-experience-v2-906/fd3b-release-and-new-chat-20261102.md",
+    "docs/xroga/evidence/response-v2-direct-output/diagnostic-observation.json",
+    "docs/xroga/evidence/response-v2-direct-output/provider-contract.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Fresh SaaS request produced no provider answer. Upstream cause beyond empty completion is unproven.",
-      "New Share/error corrections need exact-source gates and separately approved backend source/fence release.",
-      "Genuine production response quality, research delivery and mobile/persistence acceptance remain incomplete."
+      "Corrected direct-output backend needs exact-source gates and separately approved paired source/fence release.",
+      "One bounded fresh SaaS/workshop and unrelated response-class acceptance remains required after correction, without replaying known failures.",
+      "Production frontend promotion and real mobile/persistence/Share acceptance remain incomplete."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

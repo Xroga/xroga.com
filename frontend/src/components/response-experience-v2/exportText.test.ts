@@ -48,3 +48,14 @@ test('unsupported contracts retain legacy export rather than dropping data', () 
   assert.equal(responseTextV2({ id: 'm', content: 'Keep me', featureOutput: { type: 'unknown-action' } }), undefined);
   assert.equal(responseTextV2({ id: 'm', content: 'Simple reply.' }), 'Simple reply.');
 });
+
+test('reopening and Copy or Share retain the incomplete-answer warning and exact received content', () => {
+  const source='The constraint is tenant_id = auth.uid(), but';
+  const enhanced=enhanceAiResponse(source,'partial-export',{status:'partial',reason:'output_limit'});
+  const saved=JSON.parse(JSON.stringify({id:'partial-export',content:enhanced.content,featureOutput:enhanced.output}));
+  const exported=responseTextV2(saved)!;
+  assert.match(exported,/output limit and is incomplete/);
+  assert.ok(exported.endsWith(source));
+  assert.ok(serializeAssistantCopy(exported).includes('tenant_id = auth.uid()'));
+  assert.equal(saved.featureOutput.sourceText,source);
+});

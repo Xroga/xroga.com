@@ -4410,9 +4410,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
       "callIds": [
-        "c3617170cdd8b722b96f"
+        "d23d6bc9b4e588b32dcf"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -5891,9 +5891,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
       "callIds": [
-        "2e78e5aba21ba282d65c"
+        "0e9d2d78b2724eef8c51"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -15889,10 +15889,10 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "callIds": [
-        "aae055d92faa16ae4e2e",
-        "54326930ab9ec884b6cd"
+        "bebfcf0f4ba426a71be1",
+        "67b1241b9b70b5f136ae"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
@@ -16881,7 +16881,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "710ec917c3e9aae4864fd3eaf012fb8e2130066b01508ef5aae2633c301ceb26",
+      "sourceSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91",
       "callIds": [
         "78696e27dd5c1ca37c3a"
       ],
@@ -20991,18 +20991,18 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "callIds": [
-        "53446e75ca49c95522af",
-        "4c4451bbec61aecb23d3",
-        "9d05c85f5bfac4989a75",
-        "469b0a4a0957a0d982b1",
-        "4a9c1469b879166fe52c",
-        "0b3ff8ce7a456a8a2acf",
-        "f6f4b355a8c80fc166f4",
-        "c2adb020f37811ce7849",
-        "9d0558fe12707a8a2949",
-        "65acb9b03435995fdeb0"
+        "33169c5e9ad22ce0655f",
+        "7836681966b6d9215ec8",
+        "86106178c4a136dd921d",
+        "26e1c49e68e89b7b14bd",
+        "5c9be0f2e0f652c62e49",
+        "597ad99cc551e28182ea",
+        "5b2500bca0819c0cfbca",
+        "48608e9c8e68e6683453",
+        "298b5f4095b683f456b6",
+        "e052915067b01ca6077d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
@@ -23541,12 +23541,12 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "callIds": [
-        "9cce2ff19e247ce9c5d5",
-        "670197ad89640f5a6242",
-        "774dd446f08cb58fbc9b",
-        "706f26c27c2b32064580"
+        "0aa6642b9d69de06f3b2",
+        "64c63cbd2cbdc0d0e6f6",
+        "54e741be8699adc0e781",
+        "f4a361a7bbed04369e1b"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
@@ -25263,9 +25263,9 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "callIds": [
-        "536064ea8ac2c56348ec"
+        "139fd59ee7c339b62229"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -25391,9 +25391,9 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "callIds": [
-        "2a28f5bad97e04e53770"
+        "9e7cbeb3febc798d1112"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -25519,9 +25519,9 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "callIds": [
-        "49aa84226917135702d4"
+        "5d93190042e0b745b0a2"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -25647,9 +25647,9 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "callIds": [
-        "7e2f36090a4523cf0a8d"
+        "9e8105658847ab6f70b2"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -28423,7 +28423,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sourceSha256": "0427bc8da2d548892942149a799b33518861bc4e8d4c82c31483d64216abb742",
+      "sourceSha256": "1a097a40b5095dc6a9842b0b24be8af91aaa66a0b23c35a047d9d1c47c8b89e5",
       "callIds": [
         "b7da7c544e1d23eb4355"
       ],

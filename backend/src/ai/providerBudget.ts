@@ -11,10 +11,11 @@ import type { BoundModelDispatch, ModelPayload } from './tenantModelDispatch.js'
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
-export const PROVIDER_PRICE_VERSION = '2026-07-28-v1';
+export const PROVIDER_PRICE_VERSION = '2026-11-02-v2';
 export type BudgetPurpose = 'daily_work' | 'complexity' | 'completion';
 
 export interface ProviderUsageResult {
+  providerCostMicroUsd?: number;
   providerRequestId?: string;
   inputTokens: number;
   cachedInputTokens?: number;
@@ -96,8 +97,13 @@ export function actualProviderCostMicroUsd(input: {
   cachedInputTokens?: number;
   outputTokens: number;
   reasoningTokens?: number;
+  providerCostMicroUsd?: number;
 }): number {
   requireUsageCounts(input.inputTokens, input.outputTokens, input.cachedInputTokens ?? 0, input.reasoningTokens ?? 0);
+  if (input.providerCostMicroUsd !== undefined) {
+    requireUsageCounts(input.providerCostMicroUsd);
+    return input.providerCostMicroUsd;
+  }
   const price = requirePricing(input.modelId);
   const cachedInput = Math.min(Math.max(0, input.cachedInputTokens ?? 0), Math.max(0, input.inputTokens));
   const billableInput = Math.max(0, input.inputTokens - cachedInput);

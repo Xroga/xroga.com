@@ -73,3 +73,17 @@ test('cyclic SaaS graph receives distinct positions without losing nodes or chan
   assert.deepEqual(mobile.map(p=>p.y),[0,280,560,840]);
   assert.equal(JSON.stringify(graph),original);
 });
+
+test('the generated four-node five-edge architecture fits a desktop answer without sentence-sized routing gutters', () => {
+  const graph: Extract<ResponseNodeV2,{kind:'graph'}> = {id:'actual-shape',kind:'graph',nodes:['Browser','Next.js','Supabase','Stripe'].map(id=>({id,label:id})),edges:[
+    {source:'Browser',target:'Next.js',label:'Server Actions / Pages'},
+    {source:'Browser',target:'Supabase',label:'RLS via user JWT'},
+    {source:'Next.js',target:'Supabase',label:'Service Role'},
+    {source:'Next.js',target:'Stripe',label:'Checkout / Portal'},
+    {source:'Stripe',target:'Next.js',label:'Verified webhook events'},
+  ]};
+  const before=JSON.stringify(graph),layout=graphCanvasV2(graph);
+  assert.ok(layout.width<=824,`Unexpected desktop width ${layout.width}`);
+  assert.equal(layout.edgeLanes.length,5);
+  assert.equal(JSON.stringify(graph),before);
+});

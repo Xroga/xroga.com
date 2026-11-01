@@ -147,10 +147,12 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   if(completion){
     try {
       if(result.inputTokens!==completion.result.inputTokens||result.outputTokens!==completion.result.outputTokens
+        ||result.providerCostMicroUsd!==completion.result.providerCostMicroUsd
         ||('modelId' in result&&result.modelId!==modelId))throw Error('Changed completion usage');
       await persistUsageAccounting(context,{receiptId:randomUUID(),modelId,poolRole:poolRoleFor(modelId),
         inputTokens:completion.result.inputTokens,outputTokens:completion.result.outputTokens,
-        costUsd:costUsdForTokens(modelId,completion.result.inputTokens,completion.result.outputTokens)});
+        costUsd:completion.result.providerCostMicroUsd === undefined ? costUsdForTokens(modelId,completion.result.inputTokens,completion.result.outputTokens)
+          : completion.result.providerCostMicroUsd / 1_000_000});
     }catch{throw new PostCompletionAccountingError();}
     completion.checkCancellation();validateResponse?.(result);completion.publish();
   }

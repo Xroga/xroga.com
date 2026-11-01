@@ -25,3 +25,14 @@ test('authored role labels gain local identity links without changing prose or s
   remarkEntityRolesV2()(root);
   assert.equal(JSON.stringify(root), once);
 });
+
+test('plain leading technology roles receive authentic navigation without rewriting text or linking lookalikes', () => {
+  const root=unified().use(remarkParse).parse('- Next.js: application layer.\n- Supabase Auth handles identity.\n- Stripe.evil.test must stay unlinked.\n- `Stripe` is code.\n\nNext.js is prose.') as EntitySyntaxV2;
+  const text=(n:EntitySyntaxV2):string=>n.value??n.children?.map(text).join('')??'';
+  const before=text(root),links:string[]=[];
+  remarkEntityRolesV2()(root);
+  const visit=(n:EntitySyntaxV2)=>{if(n.type==='link')links.push(n.url!);n.children?.forEach(visit);};visit(root);
+  assert.equal(text(root),before);
+  assert.deepEqual(links,['https://nextjs.org','https://supabase.com']);
+  const once=JSON.stringify(root);remarkEntityRolesV2()(root);assert.equal(JSON.stringify(root),once);
+});

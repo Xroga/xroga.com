@@ -37,11 +37,13 @@ export function remarkEntityRolesV2() {
   return (root: EntitySyntaxV2) => {
     const visit = (node: EntitySyntaxV2) => {
       if (node.type === 'listItem') {
-        const first = node.children?.[0]?.children?.[0];
-        const text = first?.type === 'strong' && first.children?.[0];
+        const paragraph = node.children?.[0];
+        const first = paragraph?.type === 'paragraph' ? paragraph.children?.[0] : undefined;
+        const text = first?.type === 'strong' ? first.children?.[0] : first?.type === 'text' ? first : undefined;
         const entity = text && text.type === 'text' && leadingEntityV2(text.value ?? '');
-        if (entity && first?.children) {
-          first.children.splice(0, 1,
+        const children = first?.type === 'strong' ? first.children : paragraph?.children;
+        if (entity && children) {
+          children.splice(0, 1,
             { type: 'link', url: entity.url, children: [{ type: 'text', value: entity.name }] },
             { type: 'text', value: text.value!.slice(entity.name.length) });
           node.data = { ...node.data, hProperties: { ...node.data?.hProperties, 'data-resource-v2': 'true' } };

@@ -9,6 +9,19 @@ test('ordinary answers stay lightweight text', () => {
   assert.equal(result.output, undefined);
 });
 
+test('a length-limited answer retains its exact source and partial warning through persistence', () => {
+  const source='Tenant access must be checked against the user\'s';
+  const result=enhanceAiResponse(source,'partial',{status:'partial',reason:'output_limit'});
+  assert.equal(result.content,source);
+  assert.equal(result.output?.sourceText,source);
+  assert.equal(result.output?.status,'partial');
+  const saved=JSON.parse(JSON.stringify(result));
+  assert.equal(saved.output.blocks[0].type,'notice');
+  assert.match(saved.output.blocks[0].text,/output limit.*incomplete/);
+  assert.equal(saved.output.blocks[1].text,source);
+  assert.equal(enhanceAiResponse(source,'complete',{status:'complete'}).output,undefined);
+});
+
 test('primary model graph subtitles survive canonicalization without replacing detail', () => {
   const source = '```xroga-ui\n' + JSON.stringify({ type: 'graph', nodes: [
     { id: 'api', label: 'API', subtitle: 'Server routes' },

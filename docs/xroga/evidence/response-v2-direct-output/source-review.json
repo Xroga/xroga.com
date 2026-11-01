@@ -1,0 +1,68 @@
+{
+  "base": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
+  "scope": "DIRECT_CHAT_COMPLETION_AND_ACCOUNTING_CORRECTION_NOT_LIVE_ACCEPTANCE",
+  "records": [
+    {
+      "path": "backend/src/ai/completionDiagnostics.test.ts",
+      "preservedOriginalTests": 2
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.egress.test.ts",
+      "preservedOriginalTests": 6
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.test.ts",
+      "preservedOriginalTests": 0
+    },
+    {
+      "path": "backend/src/ai/providerBudget.test.ts",
+      "preservedOriginalTests": 12
+    },
+    {
+      "path": "backend/src/ai/completionDiagnostics.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "677bb2771f0aef0c07081cd7b6e401089870e483640b5b0fe448bdcfd9b45005"
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "bfc71690a84aba032ca7685f035e94fdd2a7ca69fdb3f703a0c15cd16929c9ae"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "egress": 3,
+      "persistence": 0,
+      "sourceSha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "egress": 0,
+      "persistence": 2,
+      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "egress": 0,
+      "persistence": 20,
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "egress": 0,
+      "persistence": 5,
+      "sourceSha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc"
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "egress": 0,
+      "persistence": 1,
+      "sourceSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91"
+    }
+  ],
+  "historicalProofsUnchanged": true,
+  "modelCalls": 0,
+  "productionSQL": false,
+  "review": "Existing actor, project, lease, credential, approval, outbound origin, secret and cancellation boundaries remain. Only additive public completion status, explicit existing direct-output control, serialized price ceilings and validated provider cost settlement change. Original tests remain byte-identical, new tests are additive."
+}

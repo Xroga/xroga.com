@@ -1,7 +1,27 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { CHAT_SYSTEM } from './prompts.js';
+import { CHAT_SYSTEM, chatPresentationSystem } from './prompts.js';
+
+test('actual chat contract keeps essential schemas and safety without unrelated example overload', () => {
+  const system = chatPresentationSystem('Explain a proposed application architecture with a diagram.');
+  const examples = system.split('\n').filter(line => line.startsWith('{"type":')).map(line => JSON.parse(line));
+  assert.equal(examples.length, 8);
+  assert.equal(new Set(examples.map(example => example.type)).size, examples.length);
+  assert.ok(examples.some(example => example.type === 'graph' && example.edges.length));
+  assert.ok(examples.some(example => example.type === 'calculator'));
+  assert.doesNotMatch(system, /\{"type":"api-request"/);
+  assert.match(system, /Never use user_metadata or raw_user_meta_data for authorization/);
+  assert.match(system, /Do not substitute ASCII/);
+  assert.ok(system.length < CHAT_SYSTEM.length);
+  assert.match(chatPresentationSystem('Explain this calendar'), /\{"type":"calendar"/);
+  const calculator = chatPresentationSystem('Calculate a risk budget with a calculator and chart');
+  assert.match(calculator, /\{"type":"calculator"/);
+  assert.match(calculator, /\{"type":"chart"/);
+  assert.match(chatPresentationSystem('Explain an architecture with a calculator'), /\{"type":"graph"/);
+  assert.match(calculator, /derivedResults/);
+  assert.match(calculator, /Derived results cannot reference each other/);
+});
 
 test('chat answers may request safe rich output without fabricating visual data', () => {
   assert.match(CHAT_SYSTEM, /```xroga-ui|labelled xroga-ui/i);
@@ -33,6 +53,36 @@ test('every compact rich-output example is strict JSON', () => {
   const examples = CHAT_SYSTEM.split('\n').map((line) => line.trim()).filter((line) => line.startsWith('{'));
   assert.ok(examples.length >= 10);
   for (const example of examples) assert.doesNotThrow(() => JSON.parse(example));
+});
+
+test('conceptual architecture does not require a live data tool and demonstrates connected nodes', () => {
+  assert.match(CHAT_SYSTEM, /Conceptual diagrams.*do not require live retrieval/);
+  assert.doesNotMatch(CHAT_SYSTEM, /Use a visual only when actual sourced or tool data supports it/);
+  const graph = CHAT_SYSTEM.split('\n').filter(line => line.startsWith('{')).map(line => JSON.parse(line)).find(block => block.type === 'graph');
+  assert.ok(graph.nodes.length >= 2);
+  assert.ok(graph.edges.length >= 1);
+  for (const edge of graph.edges) {
+    assert.ok(graph.nodes.some((node: {id: string}) => node.id === edge.source));
+    assert.ok(graph.nodes.some((node: {id: string}) => node.id === edge.target));
+  }
+});
+
+test('security guidance excludes user-editable authorization and distinguishes webhook deduplication', () => {
+  assert.match(CHAT_SYSTEM, /Never use.*raw_user_meta_data.*authorization/);
+  assert.match(CHAT_SYSTEM, /current server-owned membership/);
+  assert.match(CHAT_SYSTEM, /webhook.*event ID/);
+});
+
+test('the reachable chat guide distinguishes durable receipt from completed webhook effects', () => {
+  const system = chatPresentationSystem('Explain subscription webhooks in a SaaS architecture');
+  assert.match(system, /Receipt is not completion/);
+  assert.match(system, /effects and the processed marker atomically/);
+  assert.match(system, /duplicate pending event still needs recovery/);
+  assert.match(system, /expiring claims and retries/);
+  assert.match(system, /External side effects need provider-supported idempotency/);
+  assert.match(system, /event\.created timestamps are not a reliable ordering guarantee/);
+  assert.match(system, /retrieve current provider state/);
+  assert.doesNotMatch(system, /durably deduplicate the event ID before applying effects/);
 });
 
 test('rich output is composed in the original answer with truthful boundaries', () => {

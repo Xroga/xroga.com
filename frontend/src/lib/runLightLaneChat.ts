@@ -8,6 +8,7 @@ export interface LightLaneHistoryTurn {
 }
 
 export interface LightLaneChatResult {
+  completion?: import('./api').Phase1ChatResult['completion'];
   response: string;
   webSources?: Array<{
     title: string;

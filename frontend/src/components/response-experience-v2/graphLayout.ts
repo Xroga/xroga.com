@@ -23,8 +23,10 @@ export function graphCanvasV2(node: Extract<ResponseNodeV2, { kind: 'graph' }>, 
   const byId = new Map(base.map(p => [p.id, p]));
   let lanes = 0;
   const edgeLanes = node.edges.map(edge => byId.get(edge.target)!.y - byId.get(edge.source)!.y === rowHeight ? null : lanes++);
-  const positions = base.map(item => ({ ...item, x: compact ? 64 : item.x + 48 + lanes * 196, y: item.y + 32 }));
-  return { nodeWidth, nodeHeight, positions, edgeLanes: edgeLanes.map(lane => lane === null ? null : compact ? 16 + (lane % 3) * 12 : 98 + lane * 196),
+  // Edge badges refer to the full connection legend. Routing lanes don't need
+  // the width of a sentence, which pushed cyclic diagrams off-screen.
+  const positions = base.map(item => ({ ...item, x: compact ? 64 : item.x + 124 + lanes * 24, y: item.y + 32 }));
+  return { nodeWidth, nodeHeight, positions, edgeLanes: edgeLanes.map(lane => lane === null ? null : compact ? 16 + (lane % 3) * 12 : 20 + lane * 24),
     width: Math.max(320, ...positions.map(item => item.x + nodeWidth + 48)),
     height: Math.max(240, ...positions.map(item => item.y + nodeHeight + 48)) };
 }

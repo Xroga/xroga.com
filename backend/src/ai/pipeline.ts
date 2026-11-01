@@ -21,6 +21,7 @@ import { decideConversion } from './black-hole/converterPolicy.js';
 import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
+import { publicCompletionState } from './completionDiagnostics.js';
 import {
   buildVisionUserContent,
   chatCompletion,
@@ -47,7 +48,7 @@ import {
 } from './builderAttempt.js';
 import {
   BUILDER_SYSTEM,
-  CHAT_SYSTEM,
+  chatPresentationSystem,
   DOC_SYSTEM,
   VISION_SYSTEM,
   incrementalUpdateContext,
@@ -383,6 +384,7 @@ export interface BuildClientMeta {
 }
 
 export interface ChatPipelineResult {
+  completion?: ReturnType<typeof publicCompletionState>;
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
@@ -702,6 +704,7 @@ export async function callBuilderStream(
   opts: {
     maxTokens?: number;
     temperature?: number;
+    reasoningMode?: import('./openaiCompat.js').ReasoningMode;
     onDelta?: DeltaFn;
     userId?: string;
     tenantContext?: TenantContext;
@@ -772,6 +775,7 @@ export async function callBuilderStream(
             const completion = await chatCompletionStream(modelId, dispatch.payload.messages as ChatMessage[], {
               maxTokens: opts.maxTokens,
               temperature: opts.temperature,
+              reasoningMode: opts.reasoningMode,
               onDelta: (delta) => {
                 opts.onStreamDelta?.(delta);
                 opts.onDelta?.(delta);
@@ -1114,10 +1118,11 @@ export async function runChatPipeline(opts: {
   if (research?.sources.length) truthAuthorities.add('network:public-read');
   const result = await callBuilderStream(
     route.builder,
-    [{ role: 'system', content: `${CHAT_SYSTEM}\n\n${currentPublicProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
+    [{ role: 'system', content: `${chatPresentationSystem(opts.prompt)}\n\n${currentPublicProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
+      reasoningMode: 'none',
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
       temperature: 0.5,
@@ -1129,6 +1134,7 @@ export async function runChatPipeline(opts: {
 
   return {
     response: result.text,
+    completion: publicCompletionState(result.finishReason),
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,
