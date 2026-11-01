@@ -63,7 +63,17 @@
     "backend/src/storage/storageService.ts",
     "frontend/src/lib/researchHandoff.ts",
     "frontend/src/lib/researchHandoff.test.ts",
-    "frontend/src/context/TerminalChatContext.tsx"
+    "frontend/src/context/TerminalChatContext.tsx",
+    "backend/src/ai/universal/runtimeFailure.ts",
+    "backend/src/ai/universal/runtimeFailure.test.ts",
+    "backend/src/lib/messageShareText.ts",
+    "backend/src/lib/messageShareText.test.ts",
+    "backend/src/routes/messageShares.ts",
+    "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+    "frontend/src/components/terminal/MessageShareModal.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/messageShare.ts",
+    "frontend/src/lib/messageShare.test.ts"
   ],
   "decisions": {
     "keep": [
@@ -125,6 +135,12 @@
       "negative": true,
       "scope": "Private storage receipt matching, cross-owner and revoked-project denial, page deduplication, exact conversation attachment and ordered blocks retained through reopen. Tests run separately within each workspace.",
       "reference": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md"
+    },
+    {
+      "command": "tsx --test backend/src/lib/messageShareText.test.ts backend/src/routes/messageShares.test.ts backend/src/ai/universal/runtimeFailure.test.ts",
+      "negative": true,
+      "scope": "Literal Share fidelity, unchanged owner/privacy controls and safe non-retrying empty-provider errors. No live-provider proof.",
+      "reference": "docs/xroga/evidence/response-experience-v2-906/fd3b-release-and-new-chat-20261102.md"
     }
   ],
   "architecture": {
@@ -135,22 +151,25 @@
   "rollout": "Controlled source-pinned Vercel release authorized in PR #909 comment 6549571336 after exact CI and authenticated Workspace verification. RESPONSE_EXPERIENCE_V2=authenticated enables ordinary verified sessions, off restores legacy.",
   "rollback": "Keep existing serving API and canonical Job pair, frontend deployment 9qVigJYwiaa4hgT553mRcH1VeY1d and legacy renderer flag. Restore the compatible API/Job pair together through the admission-fence release procedure. Retain private result objects and consumed confirmations, never replay them.",
   "knownGaps": [
-    "Exact-source CI and authenticated Workspace visual/reload acceptance pending",
-    "Unsupported action and private artifact contracts retain the original authorization-aware renderer",
-    "No new model requests or live-fact verification claimed by presentation",
-    "Historical research results not stored by the prior release cannot be reconstructed from receipt digests. Do not repeat the paid search. Source tests do not prove live delivery or crash-atomic provider/storage completion."
+    "Fresh SaaS explanation on live fd3b6632 backend returned EMPTY_PROVIDER_RESPONSE on 2026-11-01 at 19:49:47 UTC. No answer or rich-response acceptance. No retry was submitted.",
+    "Literal Share and safe provider-error corrections are source changes awaiting exact-source CI and compatible release. Shared links currently render escaped text, not interactive rich documents.",
+    "Production rich-response acceptance for new SaaS, sourced research, calculations and mobile/reopen remains incomplete.",
+    "Historical research bodies absent from older releases cannot be reconstructed from receipt digests. Do not repeat the paid search.",
+    "Production readiness reports storage_reconcile_not_scheduled. Database, storage connectivity and quota checks passed, but housekeeping is not accepted."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
-    "docs/xroga/evidence/response-experience-v2-906/checkpoint.md"
+    "docs/xroga/evidence/response-experience-v2-906/checkpoint.md",
+    "docs/xroga/evidence/response-experience-v2-906/fd3b-release-and-new-chat-20261102.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact-source CI for research handoff, authenticated storage/confirmation integration and compatible backend release remain required",
-      "Real production SaaS, research and calculation acceptance with final source is incomplete"
+      "Fresh SaaS request produced no provider answer. Upstream cause beyond empty completion is unproven.",
+      "New Share/error corrections need exact-source gates and separately approved backend source/fence release.",
+      "Genuine production response quality, research delivery and mobile/persistence acceptance remain incomplete."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

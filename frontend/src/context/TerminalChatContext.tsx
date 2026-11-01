@@ -4510,7 +4510,7 @@ active.applyBuild({
               : null;
           const friendly =
             capacityLine ??
-            (codeBuildActive || semanticBuildPlanned
+            (semanticBuildPlanned
               ? isBuildUpdateEarly
                 ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
                 : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`

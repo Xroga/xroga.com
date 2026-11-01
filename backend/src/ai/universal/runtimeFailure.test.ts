@@ -21,3 +21,14 @@ test('unknown exceptions do not expose their internal message', () => {
   assert.equal(failure.body.code, 'RUNTIME_FAILED');
   assert.doesNotMatch(failure.body.error, /secret provider payload/);
 });
+
+test('empty provider completions have a safe operational error without automatic retry', () => {
+  const failure = publicRuntimeFailure(Object.assign(new Error('private upstream diagnostic'), {
+    code: 'EMPTY_PROVIDER_RESPONSE',
+  }));
+  assert.equal(failure.status, 502);
+  assert.equal(failure.body.code, 'PROVIDER_UNAVAILABLE');
+  assert.equal(failure.body.retryable, false);
+  assert.match(failure.body.error, /returned no answer/);
+  assert.doesNotMatch(failure.body.error, /private upstream|internal runtime|safety/i);
+});

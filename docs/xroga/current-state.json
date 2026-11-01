@@ -11294,7 +11294,7 @@
       "id": "surface:83161f863865ef91f964",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/runtimeFailure.ts",
-      "sha256": "9003e328225367c4662cf6c0c767ee0c2cf1f5b8a22eb34a5310e7f1c587ff27",
+      "sha256": "8eecda995351e195eaacf2192b35e341a99fa52224bfa9112aa8190fb1b26f3a",
       "symbols": [
         "RUNTIME_FAILURE_CODES",
         "RuntimeFailure",
@@ -18521,7 +18521,7 @@
       "id": "surface:0c4d7faabb2332fd4595",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/messageShareText.ts",
-      "sha256": "12ba7eb8920d5d04b43ed282087b8ed3c31f82cc01f3243d5b34cf09ecdcfe2e",
+      "sha256": "e443e6f1bc83a8b4f2bf8b95a1f91bc260439145dc6164277620e5d63f0d05e8",
       "symbols": [
         "cleanSharedText"
       ],
@@ -24891,7 +24891,7 @@
       "id": "surface:689012372a18e20a2b6f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "sha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609",
+      "sha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
       "symbols": [
         "ShareRow",
         "authorization",
@@ -24947,7 +24947,7 @@
         "backend/src/routes/messageShares.ts#verifyAccessToken"
       ],
       "tenantBoundary": [
-        "backend/src/routes/messageShares.ts:145 (owner_id)"
+        "backend/src/routes/messageShares.ts:146 (owner_id)"
       ],
       "approvalBoundary": [
         "backend/src/routes/messageShares.ts#authorization"
@@ -80940,7 +80940,7 @@
       "id": "surface:25cc0a5b860692abe56d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
-      "sha256": "8a80068c42fe0e64873db82ce0e61a85d669b57934beec4fc11ba445b979f875",
+      "sha256": "7b304c564f48d28cc9bc9d7ad11979aee4da2e87f598325a3949549d2b6e0064",
       "symbols": [
         "ConversationTurnV2",
         "TurnActions",
@@ -86617,7 +86617,7 @@
       "id": "surface:33d78a7d2ee718859b5a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "sha256": "30426f1c7a03f12681f9662a62ca71e40ab73ba530da027d44e9e82e67fac6c5",
+      "sha256": "14cc2107228c27e9c3752507c7bf7f519d3e1fdedba20c4a01988605e7059af8",
       "symbols": [
         "BrandDefinition",
         "BrandIcon",
@@ -92583,7 +92583,7 @@
       "id": "surface:c5f31b4c34d87af3ac75",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "f8d9014730d3e4105bd826f5b8daeadae66b3e8e1a5e5ca7ea4debaf6176aad7",
+      "sha256": "78ef5eef3f6d867836b0d2882046e8f96215698664e46af4e9ed80f31e396bac",
       "symbols": [
         "ChatMessage",
         "GENERIC_SWARM_FALLBACK",
@@ -93783,7 +93783,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "32dc22a8e533c4fc4e5f2faafbc19f9bc48c226ba9335a950258a3b810eca32d",
+      "sha256": "376301471cdb2fa9763ee31080aab5fb80ee70e279c4806340ad7cf889fa43c0",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -94152,7 +94152,8 @@
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:5",
         "frontend/src/components/response-experience-v2/exportText.test.ts:5",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:17",
-        "frontend/src/lib/assistantCopy.test.ts:4"
+        "frontend/src/lib/assistantCopy.test.ts:4",
+        "frontend/src/lib/messageShare.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -94164,7 +94165,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/components/response-experience-v2/exportText.test.ts",
-        "frontend/src/lib/assistantCopy.test.ts"
+        "frontend/src/lib/assistantCopy.test.ts",
+        "frontend/src/lib/messageShare.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -98852,7 +98854,7 @@
       "id": "surface:ce60b0c5a39bfd8747c9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/messageShare.ts",
-      "sha256": "ffa3323d68753afbc1c6a61a1f636d3a9c2d1259ee777c4468d9e3ecd1f8ab58",
+      "sha256": "b5a20b243cf0722f816721e4090eaf37f38ed8b9af598ce33ffca01d2c8a3e92",
       "symbols": [
         "MessageSharePlatform",
         "MessageShareScope",
@@ -98861,6 +98863,7 @@
         "encodedUrl",
         "messageShareUrl",
         "origin",
+        "prepareShareText",
         "socialShareUrl",
         "text"
       ],
@@ -119374,9 +119377,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d95df64510b580287180",
+      "id": "registration:11c5e486f0a67daea5ac",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 48,
+      "line": 49,
       "receiver": "router",
       "method": "post",
       "path": "/",
@@ -119388,9 +119391,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0b0e2182bf71ce8cdecf",
+      "id": "registration:b2d518756f7b380632c7",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 89,
+      "line": 90,
       "receiver": "router",
       "method": "get",
       "path": "/:token",
@@ -119400,9 +119403,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5e44674b0a641bcca68a",
+      "id": "registration:eb9873473561385927f1",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 138,
+      "line": 139,
       "receiver": "router",
       "method": "delete",
       "path": "/:token",
@@ -122011,10 +122014,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5db548ca36ba35cc398c",
-      "registrationId": "registration:d95df64510b580287180",
+      "id": "route:45d186ca24e7739fa6a8",
+      "registrationId": "registration:11c5e486f0a67daea5ac",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 48,
+      "line": 49,
       "method": "POST",
       "path": "/api/message-shares",
       "mountChain": [
@@ -122028,10 +122031,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:cd217eec92c3a8c45986",
-      "registrationId": "registration:0b0e2182bf71ce8cdecf",
+      "id": "route:7d6d14cdd2f9beb62db4",
+      "registrationId": "registration:b2d518756f7b380632c7",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 89,
+      "line": 90,
       "method": "GET",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -122043,10 +122046,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a7ad0e8fd2ae6788406a",
-      "registrationId": "registration:5e44674b0a641bcca68a",
+      "id": "route:abaabad585850d392d6a",
+      "registrationId": "registration:eb9873473561385927f1",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 138,
+      "line": 139,
       "method": "DELETE",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -133216,16 +133219,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:b6d47d1540b96681d971",
+      "id": "frontend-call:37f370ad8c06b45ee932",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "line": 107,
+      "line": 109,
       "callee": "api.messageShares.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:1055ea021dc97ec06d83",
+      "id": "frontend-call:ebfa5806919d5bfc451d",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "line": 145,
+      "line": 148,
       "callee": "api.messageShares.revoke",
       "reachable": true
     },
@@ -133699,14 +133702,14 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:48cccb9a5d2858e8e6c0",
+      "id": "frontend-call:1a6bc5b6e63950ac8ed7",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4728,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:2659ca94d4b9c6acdeef",
+      "id": "frontend-call:14c78bf60c557572a510",
       "sourcePath": "frontend/src/context/TerminalChatContext.tsx",
       "line": 4728,
       "callee": "api.github.status",
@@ -135306,7 +135309,7 @@
     {
       "id": "test-suite:9ac9d369aae35a3391cb",
       "sourcePath": "backend/src/ai/universal/runtimeFailure.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -135929,7 +135932,7 @@
     {
       "id": "test-suite:c10c6508d07a3a74b6e7",
       "sourcePath": "backend/src/lib/messageShareText.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -140101,7 +140104,7 @@
     {
       "id": "test-suite:f7b9daab2bfdf8a483ed",
       "sourcePath": "frontend/src/lib/messageShare.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

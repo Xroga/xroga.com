@@ -2071,6 +2071,8 @@ export const api = {
           prompt?:
             string;
 
+          literalContent?: boolean;
+
           response:
             string;
         },

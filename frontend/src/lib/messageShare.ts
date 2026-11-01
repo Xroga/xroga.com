@@ -2,6 +2,11 @@ export type MessageShareScope = 'response' | 'exchange';
 export type MessageShareVisibility = 'private' | 'public';
 export type MessageSharePlatform = 'x' | 'linkedin' | 'facebook' | 'whatsapp' | 'reddit';
 
+/** Serialized rich answers already contain literal code, units and source URLs. */
+export function prepareShareText(value: string, literalContent = false): string {
+  return literalContent ? value : cleanShareText(value);
+}
+
 export function cleanShareText(value: string): string {
   return value
     .replace(/\r\n?/g, '\n')

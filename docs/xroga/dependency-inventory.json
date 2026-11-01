@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4e78eb2a8b2d2994f89f9daf6df7c92ec11b2ce9",
+  "source_sha": "ff2850de6f598563c5b6ff1ff5d484f5b8628b6c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16314,7 +16314,7 @@
     },
     {
       "path": "backend/src/ai/universal/runtimeFailure.ts",
-      "sha256": "9003e328225367c4662cf6c0c767ee0c2cf1f5b8a22eb34a5310e7f1c587ff27"
+      "sha256": "8eecda995351e195eaacf2192b35e341a99fa52224bfa9112aa8190fb1b26f3a"
     },
     {
       "path": "backend/src/ai/universal/safeApi.ts",
@@ -16814,7 +16814,7 @@
     },
     {
       "path": "backend/src/lib/messageShareText.ts",
-      "sha256": "12ba7eb8920d5d04b43ed282087b8ed3c31f82cc01f3243d5b34cf09ecdcfe2e"
+      "sha256": "e443e6f1bc83a8b4f2bf8b95a1f91bc260439145dc6164277620e5d63f0d05e8"
     },
     {
       "path": "backend/src/lib/netlify.ts",
@@ -17254,7 +17254,7 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sha256": "6ca440f7db2d4a533b0f68d802033931a1dfd59bdccf8eb539981232032e7609"
+      "sha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53"
     },
     {
       "path": "backend/src/routes/notifications.ts",
@@ -20910,7 +20910,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
-      "sha256": "8a80068c42fe0e64873db82ce0e61a85d669b57934beec4fc11ba445b979f875"
+      "sha256": "7b304c564f48d28cc9bc9d7ad11979aee4da2e87f598325a3949549d2b6e0064"
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
@@ -21290,7 +21290,7 @@
     },
     {
       "path": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "sha256": "30426f1c7a03f12681f9662a62ca71e40ab73ba530da027d44e9e82e67fac6c5"
+      "sha256": "14cc2107228c27e9c3752507c7bf7f519d3e1fdedba20c4a01988605e7059af8"
     },
     {
       "path": "frontend/src/components/terminal/MessageSuggestionChips.tsx",
@@ -21690,7 +21690,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "f8d9014730d3e4105bd826f5b8daeadae66b3e8e1a5e5ca7ea4debaf6176aad7"
+      "sha256": "78ef5eef3f6d867836b0d2882046e8f96215698664e46af4e9ed80f31e396bac"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -21738,7 +21738,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "32dc22a8e533c4fc4e5f2faafbc19f9bc48c226ba9335a950258a3b810eca32d"
+      "sha256": "376301471cdb2fa9763ee31080aab5fb80ee70e279c4806340ad7cf889fa43c0"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22094,7 +22094,7 @@
     },
     {
       "path": "frontend/src/lib/messageShare.ts",
-      "sha256": "ffa3323d68753afbc1c6a61a1f636d3a9c2d1259ee777c4468d9e3ecd1f8ab58"
+      "sha256": "b5a20b243cf0722f816721e4090eaf37f38ed8b9af598ce33ffca01d2c8a3e92"
     },
     {
       "path": "frontend/src/lib/normalizeBuildSource.ts",
@@ -29192,42 +29192,42 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/lib/messageShare.ts",
-      "line": 27,
+      "line": 32,
       "credentialsInUrl": false
     },
     {
       "hostname": "twitter.com",
       "protocol": "https:",
       "path": "frontend/src/lib/messageShare.ts",
-      "line": 37,
+      "line": 42,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.linkedin.com",
       "protocol": "https:",
       "path": "frontend/src/lib/messageShare.ts",
-      "line": 39,
+      "line": 44,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.facebook.com",
       "protocol": "https:",
       "path": "frontend/src/lib/messageShare.ts",
-      "line": 41,
+      "line": 46,
       "credentialsInUrl": false
     },
     {
       "hostname": "wa.me",
       "protocol": "https:",
       "path": "frontend/src/lib/messageShare.ts",
-      "line": 43,
+      "line": 48,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.reddit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/messageShare.ts",
-      "line": 45,
+      "line": 50,
       "credentialsInUrl": false
     },
     {

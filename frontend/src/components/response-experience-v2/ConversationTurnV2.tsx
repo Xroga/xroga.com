@@ -26,7 +26,7 @@ function TurnActions({ role, content, prompt }: { role: 'user' | 'assistant'; co
       <button type="button" onClick={() => setSharing(true)} aria-label="Share message" title="Share message"><Share2 /></button>
       <span role="status">{copyState === 'failed' ? 'Could not copy. Select the text to copy it.' : copyState === 'copied' ? 'Copied' : ''}</span>
     </div>
-    <MessageShareModal open={sharing} onClose={() => setSharing(false)} prompt={role === 'assistant' ? prompt : undefined} response={content} contentLabel={role === 'user' ? 'prompt' : 'answer'} />
+    <MessageShareModal open={sharing} onClose={() => setSharing(false)} prompt={role === 'assistant' ? prompt : undefined} response={role === 'assistant' ? serializeAssistantCopy(content) : content} literalContent contentLabel={role === 'user' ? 'prompt' : 'answer'} />
   </>;
 }
 
