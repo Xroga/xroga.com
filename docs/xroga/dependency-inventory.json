@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "959c1778ecd823a505cd736dfe79a527616a6755",
+  "source_sha": "43ed343c2af35f49f7959684f7e692a04a750218",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -24,6 +24,7 @@
       "auth_mechanism": "Supabase SSR session; individual protected routes require server authorization",
       "secret_names": [
         "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_AUTH_RECOVERY_ENABLED",
         "NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION",
         "NEXT_PUBLIC_PROMO_FULL_ACCESS_END",
         "NEXT_PUBLIC_SITE_URL",
@@ -10514,6 +10515,25 @@
         "frontend",
         "endpoint-127-0-0-1",
         "endpoint-localhost"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_AUTH_RECOVERY_ENABLED",
+      "consuming_sources": [
+        "frontend/src/lib/supabase/authRecovery.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
       ]
     },
     {
@@ -22474,6 +22494,10 @@
     {
       "path": "frontend/src/lib/supabase/authProviders.ts",
       "sha256": "cd66348cf8622a3c42ec0754fbdf0d627c5b4d8194127e06047a2545c028df92"
+    },
+    {
+      "path": "frontend/src/lib/supabase/authRecovery.ts",
+      "sha256": "827aa7dcba46c87def586936dfda9268893f866dafbf165afe7567da4e3d9c07"
     },
     {
       "path": "frontend/src/lib/supabase/client.ts",
