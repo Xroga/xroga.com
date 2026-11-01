@@ -80658,6 +80658,55 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:16d6f2c41ccfbf63f014",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
+      "sha256": "947235c527e024a639f7ac964618992ec67694df09d96cae597aa90c19cfa364",
+      "symbols": [
+        "ArchitectureV2",
+        "edges",
+        "nodes",
+        "positions"
+      ],
+      "imports": [
+        "./document",
+        "./graphLayout",
+        "./response-v2.module.css",
+        "@xyflow/react",
+        "@xyflow/react/dist/style.css",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/graphLayout.ts",
+        "frontend/src/components/response-experience-v2/response-v2.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@xyflow/react",
+        "@xyflow/react/dist/style.css",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:0c8b0091101aa8b07903",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ChartV2.tsx",
@@ -80806,8 +80855,9 @@
       "id": "surface:7408bdfee403df48ceaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "4b1adad0434724afb3750767bd1609cbf31527f19238ba27b5185ae2be06c621",
+      "sha256": "22cad49faeadb7e18ffef18e28feabe51067a2c3b4ca43f53189a3a70596d830",
       "symbols": [
+        "CellV2",
         "DataTableV2",
         "GraphV2",
         "TableNode",
@@ -80827,7 +80877,8 @@
         "./graphLayout",
         "./response-v2.module.css",
         "lucide-react",
-        "react"
+        "react",
+        "react-markdown"
       ],
       "runtimeImports": [
         "frontend/src/components/response-experience-v2/document.ts",
@@ -80839,14 +80890,14 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
-        "react"
+        "react",
+        "react-markdown"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -81082,7 +81133,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "e0aa738eb94ee158272ff4769a5d3b3716c10203a7dde4735937dad69981855f",
+      "sha256": "d2f7f7d4e5e9f06de63d381bb810a4ab0fab04a16ad3522a487a9f6dc17a380e",
       "symbols": [
         "Calculator",
         "Chart",
@@ -81104,6 +81155,7 @@
         "source"
       ],
       "imports": [
+        "./ArchitectureV2",
         "./ChartV2",
         "./DataV2",
         "./InteractiveV2",
@@ -81118,6 +81170,7 @@
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
         "frontend/src/components/response-experience-v2/ChartV2.tsx",
         "frontend/src/components/response-experience-v2/DataV2.tsx",
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
@@ -81368,7 +81421,7 @@
       "id": "surface:22b5c3c585341331ff1c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/composition.ts",
-      "sha256": "9ec8a5ccb6c068b0d09da968d714a85f1dae85ae25d045f496a516144282a89d",
+      "sha256": "833958be2d38e92e08981b07ecbc1af1a5d4f7299e7cbab8f3f48c0a378e400e",
       "symbols": [
         "CompositionV2",
         "SemanticPartV2",
@@ -81385,6 +81438,8 @@
         "end",
         "first",
         "flattenCompositionV2",
+        "heading",
+        "headingText",
         "id",
         "index",
         "key",
@@ -81548,6 +81603,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/DataV2.tsx:4",
+        "frontend/src/components/response-experience-v2/DataV2.tsx:8",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:4",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:3",
@@ -81587,10 +81643,12 @@
       "id": "surface:e4f7133e3c2806c74c97",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/graphLayout.ts",
-      "sha256": "2cfe9d85ffd1cf464a65a248faf7c70611915ddb1f28e1c36426d1c7199a8b99",
+      "sha256": "949f15d0ab215822c63c7c9a30fac81ade98a4b7f1e0347233788b31f99d9261",
       "symbols": [
+        "columns",
         "edge",
         "graphLayersV2",
+        "graphPositionsV2",
         "id",
         "isLinearFlowV2",
         "item",
@@ -81608,6 +81666,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:6",
         "frontend/src/components/response-experience-v2/DataV2.tsx:6",
         "frontend/src/components/response-experience-v2/graphLayout.test.ts:3"
       ],
@@ -93763,9 +93822,10 @@
       "id": "surface:de28da0ba53d843fc648",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/assistantCopy.ts",
-      "sha256": "08efdd4c447aaa19dd5081c8d285210308a5964bb07dbe75951a3ad329510a8d",
+      "sha256": "32a65afa93773b836c1a275e7f0e64db2907be322ba6afe688b84a1f0680b5b8",
       "symbols": [
         "cleanInline",
+        "code",
         "inFence",
         "index",
         "line",
@@ -93773,6 +93833,7 @@
         "next",
         "normalized",
         "output",
+        "pieces",
         "serializeAssistantCopy",
         "tableCells"
       ],
@@ -107340,7 +107401,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "0fc49fce082ed32d8208b62cb5be5b18f9f00b5b055e571608e0f15872444d97",
+      "sha256": "ae820ae77af6f4dfb43b2ef2084e894612e7616e56a6a46ed59a0ec8969ff374",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -107372,6 +107433,7 @@
         "heading",
         "index",
         "input",
+        "item",
         "key",
         "keyFor",
         "keys",
@@ -139083,7 +139145,7 @@
     {
       "id": "test-suite:0fe3fdc59edbe6f5d3d3",
       "sourcePath": "frontend/src/components/response-experience-v2/composition.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139104,7 +139166,7 @@
     {
       "id": "test-suite:4aaace318211abef1d52",
       "sourcePath": "frontend/src/components/response-experience-v2/graphLayout.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139223,7 +139285,7 @@
     {
       "id": "test-suite:0d9655cb673ddb25aff3",
       "sourcePath": "frontend/src/lib/assistantCopy.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -140441,7 +140503,7 @@
     {
       "id": "test-suite:4d9cddb74c619162723f",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.test.ts",
-      "declaredTests": 15,
+      "declaredTests": 16,
       "skipLocations": [],
       "focusLocations": []
     },
