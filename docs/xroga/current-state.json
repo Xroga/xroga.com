@@ -23708,10 +23708,11 @@
       "id": "surface:4681d564b0f04020f4a8",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/profile.ts",
-      "sha256": "4c55d68bca625d2e9ad25901be39de518e2046fd8d2619d1edb607e2de4244f1",
+      "sha256": "161ec0cd0b84f15777758a539543bbbec430cb7a7b944af5d13eca63992c0538",
       "symbols": [
         "accessToken",
         "companionPreferencesSchema",
+        "contactPhoneSchema",
         "context",
         "deleteAccountSchema",
         "fresh",
@@ -23742,6 +23743,7 @@
       "callers": [
         "backend/src/index.ts:18",
         "backend/src/routes/profile.companion.test.ts:3",
+        "backend/src/routes/profile.contactPhone.test.ts:3",
         "backend/src/routes/profile.deleteAccount.test.ts:3",
         "backend/src/routes/profile.deletionIdentity.test.ts:5",
         "backend/src/security/accountRoutes.test.ts:8",
@@ -23760,13 +23762,14 @@
         "backend/src/routes/profile.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/profile.ts:202 (user_id)"
+        "backend/src/routes/profile.ts:206 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/profile.companion.test.ts",
+        "backend/src/routes/profile.contactPhone.test.ts",
         "backend/src/routes/profile.deleteAccount.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
         "backend/src/security/accountRoutes.test.ts",
@@ -42916,7 +42919,7 @@
       "id": "surface:9e2dfcc099cb58de66e2",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/types/index.ts",
-      "sha256": "38b7acfeef14671c49714336ee8bea15c3b9458cabf56f7019b975c306e263b7",
+      "sha256": "d747caaedde55dd658f29414b42c38542e0d68e1f83420192916d7400213f43f",
       "symbols": [
         "ACTION_COSTS",
         "PLAN_ALLOCATIONS",
@@ -46891,11 +46894,12 @@
       "id": "surface:0fef06ce2b0ef25ac5b7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/layout.tsx",
-      "sha256": "4f4c3cd46dd888ca83cc7c0cc7517b61d1cd520f0191c225776f12e764d1d084",
+      "sha256": "2a1f25f3f48e1f0c05b815f9f7fa8d2973c9b05fc5cda5996d2b85ebe89b48dc",
       "symbols": [
         "ShellLayout",
         "displayName",
         "metadata",
+        "phone",
         "profile",
         "setup",
         "status",
@@ -47030,11 +47034,12 @@
       "id": "surface:41f1a217bdd7df6425b2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(workspace)/layout.tsx",
-      "sha256": "2958f2226458632dd06bfe25fceb74b7f2b665c10a92ff8470e810ce1943a810",
+      "sha256": "fbca4e61f25ab72ad44f0784b86e9a8124c47e37b3238d908dcf560be9d43488",
       "symbols": [
         "WorkspaceLayout",
         "displayName",
         "metadata",
+        "phone",
         "profile",
         "setup",
         "status",
@@ -47844,19 +47849,26 @@
       "id": "surface:7416bf67e7524ae492c3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/auth/callback/route.ts",
-      "sha256": "c7ed1160e2b095c2370b1b62fe7ca5076a6222ca0e054f02985c4626cc9d4305",
+      "sha256": "5d50e40da11f4591d95c2f5201cbdcc8ebdd636db997d34a6c52ad4784203d13",
       "symbols": [
         "GET",
         "code",
+        "cookieNext",
+        "decodedCookieNext",
         "next",
+        "recoveryType",
         "requestedNext",
-        "supabase"
+        "response",
+        "supabase",
+        "tokenHash"
       ],
       "imports": [
+        "@/lib/supabase/oauthReturn",
         "@/lib/supabase/server",
         "next/server"
       ],
       "runtimeImports": [
+        "frontend/src/lib/supabase/oauthReturn.ts",
         "frontend/src/lib/supabase/server.ts"
       ],
       "entryPoints": [
@@ -47868,7 +47880,10 @@
       "externalProviderDependencies": [
         "next/server"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/app/auth/callback/route.ts#OAUTH_NEXT_COOKIE",
+        "frontend/src/app/auth/callback/route.ts#safeAuthNextPath"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -47878,6 +47893,119 @@
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6ba93cc56870dd90fcd0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/auth/contact/page.tsx",
+      "sha256": "8a93497f15a67e8209c44a94471827d36317032072e34a78f74ec268442250f3",
+      "symbols": [
+        "ContactForm",
+        "ContactPage",
+        "next",
+        "normalized",
+        "requestedNext",
+        "router",
+        "safeNext",
+        "save",
+        "searchParams",
+        "signOut"
+      ],
+      "imports": [
+        "@/components/auth/AuthFlowFrame",
+        "@/components/auth/AuthModern",
+        "@/lib/contactPhone",
+        "@/lib/supabase/client",
+        "@/lib/supabase/oauthReturn",
+        "lucide-react",
+        "next/navigation",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/auth/AuthFlowFrame.tsx",
+        "frontend/src/components/auth/AuthModern.tsx",
+        "frontend/src/lib/contactPhone.ts",
+        "frontend/src/lib/supabase/client.ts",
+        "frontend/src/lib/supabase/oauthReturn.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/auth/contact/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "next/navigation",
+        "react"
+      ],
+      "authBoundary": [
+        "frontend/src/app/auth/contact/page.tsx#AuthFlowFrame",
+        "frontend/src/app/auth/contact/page.tsx#AuthGradientButton",
+        "frontend/src/app/auth/contact/page.tsx#AuthModernInput",
+        "frontend/src/app/auth/contact/page.tsx#AuthModernLabel",
+        "frontend/src/app/auth/contact/page.tsx#safeAuthNextPath"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0f05d38ac59baa354235",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/auth/forgot-password/page.tsx",
+      "sha256": "5009c49978ceb24ba294a4a996d64354ee8c2297109dcb680f76a71f9024bed7",
+      "symbols": [
+        "ForgotPasswordPage",
+        "requestReset"
+      ],
+      "imports": [
+        "@/components/auth/AuthFlowFrame",
+        "@/components/auth/AuthModern",
+        "@/lib/supabase/client",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/auth/AuthFlowFrame.tsx",
+        "frontend/src/components/auth/AuthModern.tsx",
+        "frontend/src/lib/supabase/client.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/auth/forgot-password/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [
+        "frontend/src/app/auth/forgot-password/page.tsx#AuthFlowFrame",
+        "frontend/src/app/auth/forgot-password/page.tsx#AuthGradientButton",
+        "frontend/src/app/auth/forgot-password/page.tsx#AuthModernInput",
+        "frontend/src/app/auth/forgot-password/page.tsx#AuthModernLabel"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -48001,6 +48129,60 @@
       ],
       "authBoundary": [
         "frontend/src/app/auth/login/page.tsx#AuthShell"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f477275a901ed4bad863",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/auth/reset-password/page.tsx",
+      "sha256": "52cd9497464e59cc1249c67cb6ce92b83320594cb82a1f1cfdbcb02ee9cdbd87",
+      "symbols": [
+        "ResetPasswordPage",
+        "router",
+        "save"
+      ],
+      "imports": [
+        "@/components/auth/AuthFlowFrame",
+        "@/components/auth/AuthModern",
+        "@/lib/passwordStrength",
+        "@/lib/supabase/client",
+        "lucide-react",
+        "next/navigation",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/auth/AuthFlowFrame.tsx",
+        "frontend/src/components/auth/AuthModern.tsx",
+        "frontend/src/lib/passwordStrength.ts",
+        "frontend/src/lib/supabase/client.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/auth/reset-password/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "next/navigation",
+        "react"
+      ],
+      "authBoundary": [
+        "frontend/src/app/auth/reset-password/page.tsx#AuthFlowFrame",
+        "frontend/src/app/auth/reset-password/page.tsx#AuthGradientButton",
+        "frontend/src/app/auth/reset-password/page.tsx#AuthModernInput",
+        "frontend/src/app/auth/reset-password/page.tsx#AuthModernLabel"
       ],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -50040,10 +50222,11 @@
       "id": "surface:4f50c98aec9373d33805",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/onboarding/page.tsx",
-      "sha256": "ad060ff937f7ed8d90560c583c3fa178a05630429f9450d116facfaadeb97d40",
+      "sha256": "74d415a422488dc3f9f1b9ca3f1f2167b7aa208231e12bea4129b2537fe3b92d",
       "symbols": [
         "OnboardingPage",
         "metadata",
+        "phone",
         "state",
         "supabase"
       ],
@@ -50614,7 +50797,7 @@
       "id": "surface:575632c7224c96ed7f86",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/privacy/page.tsx",
-      "sha256": "3aeba98f0717b9f7171c8b9ade554e886c11a7faa483ba68be90359e59099299",
+      "sha256": "d6db98f89aa68bda72431c33f174f30ad8d701c69ede3220b0d2952ac0c4a142",
       "symbols": [
         "PrivacyPage",
         "metadata"
@@ -51835,6 +52018,54 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:0660ace6b3c0aa9f2fd9",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/auth/AuthFlowFrame.tsx",
+      "sha256": "dd42f0021c62d7a4400a97b7606c03bd4c86cbb9ace88c5cc8362a6dc703cb66",
+      "symbols": [
+        "AuthFlowFrame"
+      ],
+      "imports": [
+        "./AuthModern",
+        "./AuthShell.module.css",
+        "next/link"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/auth/AuthModern.tsx",
+        "frontend/src/components/auth/AuthShell.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/auth/contact/page.tsx:6",
+        "frontend/src/app/auth/forgot-password/page.tsx:5",
+        "frontend/src/app/auth/reset-password/page.tsx:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/link"
+      ],
+      "authBoundary": [
+        "frontend/src/components/auth/AuthFlowFrame.tsx#AuthFlowFrame",
+        "frontend/src/components/auth/AuthFlowFrame.tsx#AuthModernCard"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:5c334da9a677fd235f72",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/auth/AuthGitHubIcon.tsx",
@@ -51852,7 +52083,7 @@
       ],
       "callers": [
         "frontend/src/components/auth/LoginForm.tsx:20",
-        "frontend/src/components/auth/SignupForm.tsx:26"
+        "frontend/src/components/auth/SignupForm.tsx:27"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -51873,10 +52104,44 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:606b8026c8603523e767",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/auth/AuthGoogleIcon.tsx",
+      "sha256": "1628739d8e1fd22d9546701dfdb86314defa98a00afc3e1665b3c7931d06388b",
+      "symbols": [
+        "GoogleIcon"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/signup/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/auth/LoginForm.tsx:21",
+        "frontend/src/components/auth/SignupForm.tsx:28"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:40b3a257c9c503c7a9b4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/auth/AuthModern.tsx",
-      "sha256": "5faa98c0207d46a07adc20e4a3ea3e746a438a4856956a304149bc55c8e4f7a2",
+      "sha256": "9989facfd2c4349c826f78b20cdadb8b1f1ebd5328a9566c55d1a6a90397c92e",
       "symbols": [
         "AuthBackHome",
         "AuthDivider",
@@ -51899,12 +52164,19 @@
         "frontend/src/lib/utils.ts"
       ],
       "entryPoints": [
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/LoginForm.tsx:31",
-        "frontend/src/components/auth/SignupForm.tsx:58"
+        "frontend/src/app/auth/contact/page.tsx:7",
+        "frontend/src/app/auth/forgot-password/page.tsx:6",
+        "frontend/src/app/auth/reset-password/page.tsx:7",
+        "frontend/src/components/auth/AuthFlowFrame.tsx:2",
+        "frontend/src/components/auth/LoginForm.tsx:34",
+        "frontend/src/components/auth/SignupForm.tsx:62"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -52039,11 +52311,11 @@
       "id": "surface:73ffd844396db361cdcd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/auth/LoginForm.tsx",
-      "sha256": "3b6050ef660ad10386ee56c9c2ee2823f9f410370d391e60bcf6eda992c73a60",
+      "sha256": "81e65b9595865de26c2d1ac8154e492b7b286d8849fafa92e6e54a6f2a530e95",
       "symbols": [
         "LoginForm",
         "err",
-        "handleGitHub",
+        "handleOAuth",
         "handleSubmit",
         "nextPath",
         "requestedNext",
@@ -52053,20 +52325,25 @@
       ],
       "imports": [
         "./AuthGitHubIcon",
+        "./AuthGoogleIcon",
         "./AuthModern",
         "@/lib/supabase/authErrors",
         "@/lib/supabase/authProviders",
         "@/lib/supabase/client",
+        "@/lib/supabase/oauthReturn",
         "lucide-react",
+        "next/link",
         "next/navigation",
         "react"
       ],
       "runtimeImports": [
         "frontend/src/components/auth/AuthGitHubIcon.tsx",
+        "frontend/src/components/auth/AuthGoogleIcon.tsx",
         "frontend/src/components/auth/AuthModern.tsx",
         "frontend/src/lib/supabase/authErrors.ts",
         "frontend/src/lib/supabase/authProviders.ts",
-        "frontend/src/lib/supabase/client.ts"
+        "frontend/src/lib/supabase/client.ts",
+        "frontend/src/lib/supabase/oauthReturn.ts"
       ],
       "entryPoints": [
         "frontend/src/app/auth/login/page.tsx",
@@ -52079,6 +52356,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
+        "next/link",
         "next/navigation",
         "react"
       ],
@@ -52090,7 +52368,11 @@
         "frontend/src/components/auth/LoginForm.tsx#AuthModernLabel",
         "frontend/src/components/auth/LoginForm.tsx#AuthSocialButton",
         "frontend/src/components/auth/LoginForm.tsx#AuthSwitchText",
+        "frontend/src/components/auth/LoginForm.tsx#handleOAuth",
+        "frontend/src/components/auth/LoginForm.tsx#rememberOAuthNextPath",
+        "frontend/src/components/auth/LoginForm.tsx#requireOAuthProvider",
         "frontend/src/components/auth/LoginForm.tsx#safeAuthError",
+        "frontend/src/components/auth/LoginForm.tsx#safeAuthNextPath",
         "frontend/src/components/auth/LoginForm.tsx#withAuthTimeout"
       ],
       "tenantBoundary": [],
@@ -52109,15 +52391,16 @@
       "id": "surface:54faac9361c20cee791b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "sha256": "f73e91dd02b7428815f57c3b0d2b38d5379937d8d1c5bf6c785dc3796df6e490",
+      "sha256": "30a108fd3fa7bcefd74bae9099244535be699a758a060bff3c491a5e252a1f9e",
       "symbols": [
         "SignupForm",
         "avatarUrl",
         "code",
+        "contactPhone",
         "err",
         "getStrengthLabel",
         "globalTheme",
-        "handleGitHub",
+        "handleOAuth",
         "handleSignup",
         "message",
         "nextPath",
@@ -52133,9 +52416,11 @@
       ],
       "imports": [
         "./AuthGitHubIcon",
+        "./AuthGoogleIcon",
         "./AuthModern",
         "./SignupForm.module.css",
         "@/lib/api",
+        "@/lib/contactPhone",
         "@/lib/emailValidation",
         "@/lib/passwordStrength",
         "@/lib/profileAvatars",
@@ -52143,6 +52428,7 @@
         "@/lib/supabase/authErrors",
         "@/lib/supabase/authProviders",
         "@/lib/supabase/client",
+        "@/lib/supabase/oauthReturn",
         "@/lib/theme",
         "@/store/useThemeStore",
         "lucide-react",
@@ -52152,9 +52438,11 @@
       ],
       "runtimeImports": [
         "frontend/src/components/auth/AuthGitHubIcon.tsx",
+        "frontend/src/components/auth/AuthGoogleIcon.tsx",
         "frontend/src/components/auth/AuthModern.tsx",
         "frontend/src/components/auth/SignupForm.module.css",
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/contactPhone.ts",
         "frontend/src/lib/emailValidation.ts",
         "frontend/src/lib/passwordStrength.ts",
         "frontend/src/lib/profileAvatars.ts",
@@ -52162,6 +52450,7 @@
         "frontend/src/lib/supabase/authErrors.ts",
         "frontend/src/lib/supabase/authProviders.ts",
         "frontend/src/lib/supabase/client.ts",
+        "frontend/src/lib/supabase/oauthReturn.ts",
         "frontend/src/lib/theme.ts",
         "frontend/src/store/useThemeStore.ts"
       ],
@@ -52187,7 +52476,11 @@
         "frontend/src/components/auth/SignupForm.tsx#AuthModernLabel",
         "frontend/src/components/auth/SignupForm.tsx#AuthSocialButton",
         "frontend/src/components/auth/SignupForm.tsx#AuthSwitchText",
+        "frontend/src/components/auth/SignupForm.tsx#handleOAuth",
+        "frontend/src/components/auth/SignupForm.tsx#rememberOAuthNextPath",
+        "frontend/src/components/auth/SignupForm.tsx#requireOAuthProvider",
         "frontend/src/components/auth/SignupForm.tsx#safeAuthError",
+        "frontend/src/components/auth/SignupForm.tsx#safeAuthNextPath",
         "frontend/src/components/auth/SignupForm.tsx#withAuthTimeout"
       ],
       "tenantBoundary": [],
@@ -75448,11 +75741,12 @@
       "id": "surface:7c50ba5c0ee7137f68de",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "sha256": "4d75903475cf56eb78df430207affec727e4daf8daa0081b5e95b22f8c3b6e03",
+      "sha256": "aa4d0515158e2b3763ca04696cf3ebe3666592a4d7739247e0de9068ab43902a",
       "symbols": [
         "GeneralSettingsPanel",
         "LANGUAGES",
         "TIMEZONES",
+        "contactPhone",
         "err",
         "handleAvatarPick",
         "handleAvatarUpload",
@@ -75473,6 +75767,7 @@
         "@/components/ui/Select",
         "@/hooks/useAvatarUpdate",
         "@/lib/api",
+        "@/lib/contactPhone",
         "@/store/useAppStore",
         "lucide-react",
         "react",
@@ -75488,6 +75783,7 @@
         "frontend/src/components/ui/Select.tsx",
         "frontend/src/hooks/useAvatarUpdate.ts",
         "frontend/src/lib/api.ts",
+        "frontend/src/lib/contactPhone.ts",
         "frontend/src/store/useAppStore.ts"
       ],
       "entryPoints": [
@@ -75512,7 +75808,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -86328,7 +86624,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "116704929995824de85b32e4520d2af21723e3e9d9c14304860084db8bf78b76",
+      "sha256": "b175a4a2befb686366f9956b521ba4e7b8b313b46c4616ef50ea8e42fde3e1fe",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -86496,8 +86792,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -86530,7 +86829,7 @@
         "frontend/src/app/(shell)/dashboard/publish/cws/callback/page.tsx:5",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx:5",
         "frontend/src/app/auth/github/callback/page.tsx:5",
-        "frontend/src/components/auth/SignupForm.tsx:39",
+        "frontend/src/components/auth/SignupForm.tsx:43",
         "frontend/src/components/automations/Activity.tsx:9",
         "frontend/src/components/automations/BrowserRun.tsx:3",
         "frontend/src/components/automations/ConnectedAppAutomations.tsx:4",
@@ -88363,6 +88662,47 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:d77bea3a61cb97ed2a6c",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/contactPhone.ts",
+      "sha256": "a701a0391e6eab968ef8473d4a5cd17537cd2ad6086bfc25f25555fdfdb1ad6a",
+      "symbols": [
+        "compact",
+        "normalizeContactPhone"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/settings/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/signup/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/auth/contact/page.tsx:8",
+        "frontend/src/components/auth/SignupForm.tsx:29",
+        "frontend/src/components/settings/GeneralSettingsPanel.tsx:16",
+        "frontend/src/lib/contactPhone.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/contactPhone.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:da4edc457ff585f2c819",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/creationIntelligence.ts",
@@ -88887,7 +89227,7 @@
         "frontend/src/app/auth/signup/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/SignupForm.tsx:41"
+        "frontend/src/components/auth/SignupForm.tsx:45"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -89022,8 +89362,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -90579,8 +90922,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -92115,10 +92461,12 @@
       "runtimeImports": [],
       "entryPoints": [
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/SignupForm.tsx:43"
+        "frontend/src/app/auth/reset-password/page.tsx:8",
+        "frontend/src/components/auth/SignupForm.tsx:47"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -92562,7 +92910,7 @@
         "frontend/src/app/auth/signup/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/SignupForm.tsx:37",
+        "frontend/src/components/auth/SignupForm.tsx:41",
         "frontend/src/components/profile/AvatarPickerModal.tsx:5",
         "frontend/src/components/profile/UserProfileBox.tsx:4"
       ],
@@ -93106,7 +93454,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "30c3a17e1f6737f0226ba1ce6b5652631eb8ba487ef2b2ad8f4255e1a927ab87",
+      "sha256": "45c3e39ad34a451c244eee9f3b2f9c322a7e5fd94f85c906d50e449a7a6be920",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -93332,8 +93680,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -93398,7 +93749,7 @@
         "frontend/src/app/ref/[code]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/SignupForm.tsx:52",
+        "frontend/src/components/auth/SignupForm.tsx:56",
         "frontend/src/components/referrals/ReferralRedirectClient.tsx:5"
       ],
       "reachable": true,
@@ -95630,8 +95981,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -95739,7 +96093,7 @@
       "id": "surface:e0cff05eb3f2ab142942",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/authErrors.ts",
-      "sha256": "164ac6d7e25ca68551bdbaa9527054cff1230b81dbb9893314eff2975aeb3cd8",
+      "sha256": "06f14e96326b5760f0e54791dc8d5da02d635dd6427ea0b09c60d83c288e456c",
       "symbols": [
         "message",
         "safeAuthError",
@@ -95759,8 +96113,8 @@
         "frontend/src/app/auth/signup/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/LoginForm.tsx:24",
-        "frontend/src/components/auth/SignupForm.tsx:30",
+        "frontend/src/components/auth/LoginForm.tsx:26",
+        "frontend/src/components/auth/SignupForm.tsx:33",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:25",
         "frontend/src/lib/supabase/authErrors.test.ts:3"
       ],
@@ -95789,10 +96143,11 @@
       "id": "surface:1e6c9ffc22fb992d60f6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/authProviders.ts",
-      "sha256": "34d867af97d0419d907b38d5e7a04d71436de6910b3a85faf80ce7f4dbdc5d10",
+      "sha256": "e15b73caaeb94917c1295ea07a8ae9a1c5f8021be3f5f6502f87cf4f4dbdcce9",
       "symbols": [
         "config",
         "requireGitHubProvider",
+        "requireOAuthProvider",
         "response",
         "settings"
       ],
@@ -95813,14 +96168,16 @@
         "frontend/src/app/auth/signup/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/LoginForm.tsx:29",
-        "frontend/src/components/auth/SignupForm.tsx:35",
+        "frontend/src/components/auth/LoginForm.tsx:31",
+        "frontend/src/components/auth/SignupForm.tsx:38",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:29"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/lib/supabase/authProviders.ts#requireOAuthProvider"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -95886,8 +96243,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -95910,9 +96270,12 @@
       ],
       "callers": [
         "frontend/src/app/(shell)/admin/AdminPageClient.tsx:4",
+        "frontend/src/app/auth/contact/page.tsx:9",
+        "frontend/src/app/auth/forgot-password/page.tsx:7",
+        "frontend/src/app/auth/reset-password/page.tsx:9",
         "frontend/src/app/crypto/CryptoPromptBar.tsx:14",
-        "frontend/src/components/auth/LoginForm.tsx:22",
-        "frontend/src/components/auth/SignupForm.tsx:28",
+        "frontend/src/components/auth/LoginForm.tsx:24",
+        "frontend/src/components/auth/SignupForm.tsx:31",
         "frontend/src/components/companion/CompanionProvider.tsx:6",
         "frontend/src/components/feedback/FeedbackModal.tsx:8",
         "frontend/src/components/homepage-next/phase1/CommandBar.tsx:14",
@@ -96021,8 +96384,11 @@
         "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
         "frontend/src/app/api/session/route.ts",
         "frontend/src/app/auth/callback/route.ts",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -96083,7 +96449,7 @@
       "id": "surface:3429bc7b9d142e3943e4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/middleware.ts",
-      "sha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e",
+      "sha256": "86f19b944b1a6f2397c3d9298330687dd0f6426221512ac3b71e785b9bbd29c6",
       "symbols": [
         "authUnavailableResponse",
         "config",
@@ -96134,6 +96500,54 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:19637725c0c91e1e8702",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/supabase/oauthReturn.ts",
+      "sha256": "a4412f4a08e89ca7e4f74612eb75b1cc876fb5cec5ce694376da3ce5b906be45",
+      "symbols": [
+        "COOKIE_NAME",
+        "OAUTH_NEXT_COOKIE",
+        "rememberOAuthNextPath",
+        "safeAuthNextPath"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/auth/callback/route.ts",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/signup/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/auth/callback/route.ts:3",
+        "frontend/src/app/auth/contact/page.tsx:10",
+        "frontend/src/components/auth/LoginForm.tsx:32",
+        "frontend/src/components/auth/SignupForm.tsx:39",
+        "frontend/src/lib/supabase/oauthReturn.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "frontend/src/lib/supabase/oauthReturn.ts#OAUTH_NEXT_COOKIE",
+        "frontend/src/lib/supabase/oauthReturn.ts#rememberOAuthNextPath",
+        "frontend/src/lib/supabase/oauthReturn.ts#safeAuthNextPath"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/supabase/oauthReturn.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -96372,8 +96786,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -96968,8 +97385,11 @@
         "frontend/src/app/admin/community/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/github/callback/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/community/[postId]/page.tsx",
@@ -97420,7 +97840,7 @@
         "frontend/src/app/vercel-ai-deployment/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/SignupForm.tsx:48",
+        "frontend/src/components/auth/SignupForm.tsx:52",
         "frontend/src/components/billing/XrogaPricingCard.tsx:9",
         "frontend/src/components/companion/HomepageThemeSwitcher.tsx:7",
         "frontend/src/components/homepage/HomepageWorkspaceTour.tsx:32",
@@ -97818,7 +98238,10 @@
         "frontend/src/app/(workspace)/workspace/page.tsx",
         "frontend/src/app/ai-app-builder/page.tsx",
         "frontend/src/app/ai-coding-agent/page.tsx",
+        "frontend/src/app/auth/contact/page.tsx",
+        "frontend/src/app/auth/forgot-password/page.tsx",
         "frontend/src/app/auth/login/page.tsx",
+        "frontend/src/app/auth/reset-password/page.tsx",
         "frontend/src/app/auth/signup/page.tsx",
         "frontend/src/app/build-saas-with-ai/page.tsx",
         "frontend/src/app/cybersecurity/page.tsx",
@@ -100483,7 +100906,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/auth/SignupForm.tsx:46",
+        "frontend/src/components/auth/SignupForm.tsx:50",
         "frontend/src/components/browser/XrogaBrowser.tsx:19",
         "frontend/src/components/companion/HomepageThemeSwitcher.tsx:8",
         "frontend/src/components/dashboard/DashboardView.tsx:8",
@@ -111155,9 +111578,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5e8ba56ea0d99a7b6b31",
+      "id": "registration:674ab99c1642e1f1934d",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 82,
+      "line": 84,
       "receiver": "router",
       "method": "get",
       "path": "/",
@@ -111167,9 +111590,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8298405180807955989f",
+      "id": "registration:21eda57ff89eec7657fb",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 97,
+      "line": 99,
       "receiver": "router",
       "method": "patch",
       "path": "/",
@@ -111179,9 +111602,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c7279e03c3add2f6ca3a",
+      "id": "registration:85f43c5b4739f1de3353",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 155,
+      "line": 159,
       "receiver": "router",
       "method": "delete",
       "path": "/",
@@ -111191,9 +111614,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7ab1e25d9f1e9127124c",
+      "id": "registration:49de08c227c317ae83ae",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 200,
+      "line": 204,
       "receiver": "router",
       "method": "get",
       "path": "/activity",
@@ -114259,10 +114682,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5e735e53bfad9083c133",
-      "registrationId": "registration:5e8ba56ea0d99a7b6b31",
+      "id": "route:0d3e092a49b745ac7de2",
+      "registrationId": "registration:674ab99c1642e1f1934d",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 82,
+      "line": 84,
       "method": "GET",
       "path": "/api/profile",
       "mountChain": [
@@ -114276,10 +114699,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:12ac382561eb945d9f64",
-      "registrationId": "registration:8298405180807955989f",
+      "id": "route:e4273ba811b51122f6c8",
+      "registrationId": "registration:21eda57ff89eec7657fb",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 97,
+      "line": 99,
       "method": "PATCH",
       "path": "/api/profile",
       "mountChain": [
@@ -114293,10 +114716,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1321b31bd8acf954fb7d",
-      "registrationId": "registration:c7279e03c3add2f6ca3a",
+      "id": "route:f8363cd81ef0849cf2aa",
+      "registrationId": "registration:85f43c5b4739f1de3353",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 155,
+      "line": 159,
       "method": "DELETE",
       "path": "/api/profile",
       "mountChain": [
@@ -114310,10 +114733,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3fa80a35d0928164078b",
-      "registrationId": "registration:7ab1e25d9f1e9127124c",
+      "id": "route:e02963efb129ae177607",
+      "registrationId": "registration:49de08c227c317ae83ae",
       "sourcePath": "backend/src/routes/profile.ts",
-      "line": 200,
+      "line": 204,
       "method": "GET",
       "path": "/api/profile/activity",
       "mountChain": [
@@ -118175,6 +118598,13 @@
       "version": "20261026100000",
       "order": 153,
       "sha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b"
+    },
+    {
+      "id": "migration:9e1a6bf697929cce779c",
+      "sourcePath": "supabase/migrations/20261028000100_contact_phone.sql",
+      "version": "20261028000100",
+      "order": 154,
+      "sha256": "000f5333e5247f5d122cc04faffe3f857b9e0068a19cc9a08c49e94fbb69c54d"
     }
   ],
   "workflows": [
@@ -119160,6 +119590,26 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:214cf792058a3d4aa309",
+      "sourcePath": "frontend/src/app/auth/contact/page.tsx",
+      "line": 53,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:9e99014e0d260cf4b4cb",
+      "sourcePath": "frontend/src/app/auth/forgot-password/page.tsx",
+      "line": 39,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:46caf1b793e5c8221369",
       "sourcePath": "frontend/src/app/crypto/CryptoPromptBar.tsx",
       "line": 129,
@@ -119240,9 +119690,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:045795d631dbe05f80b7",
+      "id": "finding:f0754e0923468f1b6b26",
       "sourcePath": "frontend/src/components/auth/LoginForm.tsx",
-      "line": 272,
+      "line": 277,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -119250,9 +119700,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:03b6510d1a7bf72005f6",
+      "id": "finding:667c6c6a4bc1603a8889",
       "sourcePath": "frontend/src/components/auth/LoginForm.tsx",
-      "line": 356,
+      "line": 367,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -119260,9 +119710,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:feb68cde076f76e7562c",
+      "id": "finding:2ae81b5adb70536fd86f",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "line": 595,
+      "line": 610,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -119270,9 +119720,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:1f0bebda4caf705f12fb",
+      "id": "finding:83c30fd353f95bf90542",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "line": 627,
+      "line": 642,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -119280,9 +119730,19 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5deb75dd195ab92a3178",
+      "id": "finding:5518208fe02cfa7e713e",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "line": 735,
+      "line": 657,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:7084f461da60cec9ef26",
+      "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
+      "line": 767,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -120790,6 +121250,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:e4f894db606c2e91b27e",
+      "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
+      "line": 148,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:9fc7a8b1747fa2057ca3",
       "sourcePath": "frontend/src/components/settings/SecuritySettingsPanel.tsx",
       "line": 172,
@@ -122279,86 +122749,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:2eb1b16aa21aae3228d9",
+      "id": "frontend-call:78294b29cfb2c0c84c4d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 182,
+      "line": 183,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:142163a074f904d6cbe7",
+      "id": "frontend-call:2ee99d192bac0a9b93b4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 185,
+      "line": 186,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:427fdd89335e8ccc9a66",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 949,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:faafed77b554f77b94e9",
+      "id": "frontend-call:a41502998d146d51095d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 950,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:4d7d92469406bee2c3fe",
+      "id": "frontend-call:d00922d58a6062031ca9",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 955,
+      "line": 951,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:27b40b3b17f726059b65",
+      "id": "frontend-call:fb36e1c945850e5275b2",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 956,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8e46dbd2026936679247",
+      "id": "frontend-call:08c769afe12d75400c02",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 962,
+      "line": 957,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:5bb3c35c47613571f54b",
+      "id": "frontend-call:621293f06027eb889243",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 967,
+      "line": 963,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0de83f183b54977b685d",
+      "id": "frontend-call:b3dc912d19cf7338dbd5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1015,
+      "line": 968,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:d9d66fa9a152caaafbd3",
+      "id": "frontend-call:3d9a341470e7a546ce96",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 1016,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:ada8f5e6241e1218ccc0",
+      "id": "frontend-call:391a9fdbc008552efd2a",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1023,
+      "line": 1017,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:9538dda1ebaf33a33392",
+      "id": "frontend-call:db5758851a2671bd4305",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1037,
+      "line": 1024,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:b3d53f388716708c3c03",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1038,
       "callee": "fetch",
       "reachable": false
     },
@@ -122517,16 +122987,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:d451bf4c292bc05bf9d7",
+      "id": "frontend-call:c2693136606e39a27f97",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "line": 401,
+      "line": 408,
       "callee": "api.profile.update",
       "reachable": true
     },
     {
-      "id": "frontend-call:323d143bec1a342f2efa",
+      "id": "frontend-call:68e1793c18666d8e6701",
       "sourcePath": "frontend/src/components/auth/SignupForm.tsx",
-      "line": 425,
+      "line": 432,
       "callee": "api.referrals.apply",
       "reachable": true
     },
@@ -123938,37 +124408,37 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:8e753cd9cfb346586296",
+      "id": "frontend-call:4986e6ba1bde9d5f9c24",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "line": 47,
+      "line": 48,
       "callee": "api.profile.get().then().catch().finally",
       "reachable": true
     },
     {
-      "id": "frontend-call:564e878baabcd506ed59",
+      "id": "frontend-call:c0e5ff03f11fd3494e4a",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "line": 47,
+      "line": 48,
       "callee": "api.profile.get().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:697bd66e8bbe6223838f",
+      "id": "frontend-call:fbb273a20705fd9f3b17",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "line": 47,
+      "line": 48,
       "callee": "api.profile.get().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:b79020c4826b97ea9985",
+      "id": "frontend-call:733677746c3284ce9151",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "line": 47,
+      "line": 48,
       "callee": "api.profile.get",
       "reachable": true
     },
     {
-      "id": "frontend-call:d8c533b8adce98b6691b",
+      "id": "frontend-call:7541d166d93b92b8b04a",
       "sourcePath": "frontend/src/components/settings/GeneralSettingsPanel.tsx",
-      "line": 67,
+      "line": 73,
       "callee": "api.profile.update",
       "reachable": true
     },
@@ -124988,7 +125458,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:6ae511b9ae2cf0aa3fd5",
+      "id": "frontend-call:486f51fac0f6e06467f8",
       "sourcePath": "frontend/src/lib/supabase/authProviders.ts",
       "line": 5,
       "callee": "fetch",
@@ -127116,6 +127586,13 @@
       "id": "test-suite:e84ee5914816d0bcec26",
       "sourcePath": "backend/src/routes/profile.companion.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8fc8a69ed7e7392ae2ba",
+      "sourcePath": "backend/src/routes/profile.contactPhone.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -129827,6 +130304,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:ada641e20328b29a3ed3",
+      "sourcePath": "frontend/src/lib/contactPhone.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:397ac46db83146d551a2",
       "sourcePath": "frontend/src/lib/credentialVault.test.ts",
       "declaredTests": 2,
@@ -130467,6 +130951,13 @@
       "id": "test-suite:59f55f895caee2add039",
       "sourcePath": "frontend/src/lib/supabase/config.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c559e9a21fa75959c8cf",
+      "sourcePath": "frontend/src/lib/supabase/oauthReturn.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
