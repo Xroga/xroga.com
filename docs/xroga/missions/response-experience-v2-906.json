@@ -139,7 +139,10 @@
     "backend/src/ai/universal/semanticRequestPlanner.test.ts",
     "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
     "frontend/src/components/response-experience-v2/testdata/generated-saas-cd5541.json",
-    "backend/src/ai/responsePresentation.test.ts"
+    "backend/src/ai/responsePresentation.test.ts",
+    "frontend/src/components/response-experience-v2/testdata/captured-4c6319-role-table.json",
+    "scripts/xroga/test-response-table-resources.mjs",
+    "frontend/src/components/response-experience-v2/tableResources.test.ts"
   ],
   "decisions": {
     "keep": [
@@ -217,12 +220,13 @@
     "reason": "Existing single-answer prompt and renderer plus existing confirmation and private storage handoff. No new scheduler, provider, model-formatting call or database schema.",
     "rfc": null
   },
-  "rollout": "Development correction only. Live backend cd5541 and frontend d86c8 remain unchanged. New source requires final CI, exact-source paired-release approval and bounded fresh acceptance.",
+  "rollout": "Production recovered to cd5541 API/Job and d86c8 frontend after failed bounded 4c6319/3fce acceptance. This table identity correction is development-only. Keep draft and preserve rollback.",
   "rollback": "Retain cd5541 API/Job and d86c8 frontend, the legacy renderer and all earlier recovery assets. Existing SQL fence and drain procedure is required for a backend rollback.",
   "knownGaps": [
-    "Fresh generation on the corrected source is not tested. The last cd5541 SaaS attempt failed full product acceptance.",
-    "Exact-source CI and specific paired-release authorization for this new source are pending.",
-    "Workshop, research and unrelated new-chat acceptance remain unrun."
+    "Fresh production generation on backend 4c6319/frontend 3fce045c failed full product acceptance and the cd5541/d86c8 recovery pair was restored.",
+    "Required obligation-to-answer coverage remains incomplete. The exact planner binding failure was not persisted, so its precise cause is not asserted as confirmed.",
+    "The cancelled Moonshot planner reservation has a new unresolved 38282 micro-USD hold. It and the historical GLM hold remain counted. Further paid acceptance is stopped.",
+    "Workshop, research and unrelated new-chat prompts remain unrun. Full fresh streaming, Copy/Share and product-quality acceptance are incomplete."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
@@ -236,13 +240,14 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Corrected direct-output backend needs exact-source gates and separately approved paired source/fence release.",
-      "One bounded fresh SaaS/workshop and unrelated response-class acceptance remains required after correction, without replaying known failures.",
-      "Production frontend promotion and real mobile/persistence/Share acceptance remain incomplete."
+      "Fresh production generation on backend 4c6319/frontend 3fce045c failed full product acceptance and the cd5541/d86c8 recovery pair was restored.",
+      "Required obligation-to-answer coverage remains incomplete. The exact planner binding failure was not persisted, so its precise cause is not asserted as confirmed.",
+      "The cancelled Moonshot planner reservation has a new unresolved 38282 micro-USD hold. It and the historical GLM hold remain counted. Further paid acceptance is stopped.",
+      "Workshop, research and unrelated new-chat prompts remain unrun. Full fresh streaming, Copy/Share and product-quality acceptance are incomplete."
     ],
-    "authenticatedE2e": "BLOCKED",
+    "authenticatedE2e": "FAIL_PRODUCT_ACCEPTANCE_RECOVERY_VERIFIED",
     "stagedSecurity": "BLOCKED",
-    "liveUrl": null,
-    "deployedSha": null
+    "liveUrl": "https://xroga.com/workspace",
+    "deployedSha": "d86c8c44fae0777fb1e2a503bb316f7f314b196a"
   }
 }

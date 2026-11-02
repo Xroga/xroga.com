@@ -45,7 +45,7 @@ export function leadingEntityV2(label: string): { name: string; url: string } | 
     if (label.slice(0, name.length).toLowerCase() !== name.toLowerCase()) continue;
     const next = label.slice(name.length, name.length + 1);
     // Avoid attaching official identities to lookalike domains or longer names.
-    if (next && !/[\s:+\u2013\u2014]/u.test(next)) continue;
+    if (next && !/[\s:(+\u2013\u2014]/u.test(next)) continue;
     return { name: label.slice(0, name.length), url: entity.url };
   }
 }

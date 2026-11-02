@@ -8,10 +8,14 @@ import ReactMarkdown from 'react-markdown';
 import { safeLinkV2 } from './document';
 import { leadingEntityV2 } from './entityRegistry';
 import { SourceMarkV2 } from './SourceV2';
+import { EntityIdentityV2 } from './EntityIdentityV2';
 
-function CellV2({ value }: { value: string | number | boolean | null | undefined }) {
+function CellV2({ value, resourceLabel = false }: { value: string | number | boolean | null | undefined; resourceLabel?: boolean }) {
   if (value == null) return <>Unavailable</>;
   const entity = typeof value === 'string' ? leadingEntityV2(value) : undefined;
+  // A table's authored row label uses the same verified identity as a role card.
+  // Preserve Markdown links and ordinary descriptive cells exactly as authored.
+  if (resourceLabel && entity && typeof value === 'string' && value.length <= 160 && !/[\r\n\[\]`<>]/u.test(value)) return <EntityIdentityV2 label={value} />;
   if (entity && entity.name === value) return <a href={entity.url} target="_blank" rel="noopener noreferrer"><SourceMarkV2 url={entity.url} /> {value}</a>;
   return <ReactMarkdown skipHtml allowedElements={['p', 'strong', 'em', 'code', 'a', 'br']} unwrapDisallowed
     urlTransform={url => safeLinkV2(url) ?? ''}
@@ -30,7 +34,7 @@ export function DataTableV2({ node, stacked = false }: { node: TableNode; stacke
   const current = Math.min(page, Math.max(0, Math.ceil(rows.length / 50) - 1));
   return <section className={styles.data}>
     {node.rows.length > 10 && <label className={styles.filter}>Filter rows<input type="search" value={query} onChange={e => { setQuery(e.target.value); setPage(0); }} /></label>}
-    {stacked ? <div className={styles.comparisonRows}>{displayTitleV2(node.title) && <h3>{node.title}</h3>}{rows.map((row, index) => <section key={index}><h4>{<CellV2 value={row[node.columns[0].key]} />}</h4><dl>{node.columns.slice(1).map(column => <div key={column.key}><dt>{column.label}</dt><dd>{<CellV2 value={row[column.key]} />}</dd></div>)}</dl></section>)}</div> : <div className={styles.tableScroll} tabIndex={0} role="region" aria-label={node.title || 'Response data'}><table><caption className={displayTitleV2(node.title) ? undefined : styles.visuallyHidden}>{displayTitleV2(node.title) || node.columns.map(c => c.label).join(', ')}</caption><thead><tr>{node.columns.map(c => <th key={c.key} scope="col" aria-sort={sort?.key === c.key ? sort.descending ? 'descending' : 'ascending' : 'none'}><button type="button" onClick={() => { setSort({ key: c.key, descending: sort?.key === c.key && !sort.descending }); setPage(0); }}>{c.label}{sort?.key === c.key && (sort.descending ? <ArrowDown size={12} /> : <ArrowUp size={12} />)}</button></th>)}</tr></thead><tbody>{rows.slice(current * 50, (current + 1) * 50).map((row, index) => <tr key={current * 50 + index}>{node.columns.map(c => <td key={c.key} data-numeric={typeof row[c.key] === 'number'}>{<CellV2 value={row[c.key]} />}</td>)}</tr>)}</tbody></table></div>}
+    {stacked ? <div className={styles.comparisonRows}>{displayTitleV2(node.title) && <h3>{node.title}</h3>}{rows.map((row, index) => <section key={index}><h4>{<CellV2 value={row[node.columns[0].key]} resourceLabel />}</h4><dl>{node.columns.slice(1).map(column => <div key={column.key}><dt>{column.label}</dt><dd>{<CellV2 value={row[column.key]} />}</dd></div>)}</dl></section>)}</div> : <div className={styles.tableScroll} tabIndex={0} role="region" aria-label={node.title || 'Response data'}><table><caption className={displayTitleV2(node.title) ? undefined : styles.visuallyHidden}>{displayTitleV2(node.title) || node.columns.map(c => c.label).join(', ')}</caption><thead><tr>{node.columns.map(c => <th key={c.key} scope="col" aria-sort={sort?.key === c.key ? sort.descending ? 'descending' : 'ascending' : 'none'}><button type="button" onClick={() => { setSort({ key: c.key, descending: sort?.key === c.key && !sort.descending }); setPage(0); }}>{c.label}{sort?.key === c.key && (sort.descending ? <ArrowDown size={12} /> : <ArrowUp size={12} />)}</button></th>)}</tr></thead><tbody>{rows.slice(current * 50, (current + 1) * 50).map((row, index) => <tr key={current * 50 + index}>{node.columns.map(c => <td key={c.key} data-numeric={typeof row[c.key] === 'number'}>{<CellV2 value={row[c.key]} resourceLabel={c.key === node.columns[0].key} />}</td>)}</tr>)}</tbody></table></div>}
     {!rows.length && <p>No matching rows.</p>}
     {rows.length > 50 && <nav aria-label="Table pages" className={styles.pagination}><button type="button" disabled={current === 0} onClick={() => setPage(current - 1)}>Previous</button><span>Page {current + 1} of {Math.ceil(rows.length / 50)} · {rows.length} rows</span><button type="button" disabled={(current + 1) * 50 >= rows.length} onClick={() => setPage(current + 1)}>Next</button></nav>}
   </section>;

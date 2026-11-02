@@ -7,6 +7,7 @@ import { leadingEntityV2, resourceIdentityV2, remarkEntityRolesV2, type EntitySy
 test('typed role cards resolve the actual captured titles with authentic navigation', () => {
   for (const [title, url] of [
     ['Next.js app layer', 'https://nextjs.org'],
+    ['Next.js(App Router)', 'https://nextjs.org'],
     ['Supabase Auth', 'https://supabase.com'],
     ['Supabase Postgres + RLS', 'https://supabase.com'],
     ['Supabase Storage', 'https://supabase.com'],
@@ -16,7 +17,7 @@ test('typed role cards resolve the actual captured titles with authentic navigat
   assert.equal(resourceIdentityV2('Stripe webhooks', undefined, 'stripe')?.url, 'https://stripe.com');
   assert.equal(resourceIdentityV2('Stripe webhooks', 'https://docs.stripe.com/webhooks', 'Stripe')?.url, 'https://docs.stripe.com/webhooks');
   for (const args of [
-    ['Stripe.evil.test'], ['SupabaseFake'], ['Tenant A'],
+    ['Stripe.evil.test'], ['SupabaseFake'], ['Next.js/AppRouter.evil.test'], ['Tenant A'],
     ['Supabase Auth', undefined, 'stripe'], ['Stripe', undefined, 'unverified'],
     ['Stripe', 'https://stripe.com.evil.test'], ['Stripe', 'https://example.com'],
     ['Stripe', 'javascript:alert(1)'], ['Stripe', 'https://user:password@stripe.com'],

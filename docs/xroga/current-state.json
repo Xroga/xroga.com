@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "769ee9671a6793bf95e5ae414672eb3c0b30f4ea",
-    "sourceTimestampUtc": "2026-11-03T00:53:04+05:00",
-    "auditStartedUtc": "2026-11-02T20:09:09.428Z",
+    "sha": "3fce045c4ddbda805672dcf6cb3d06fade3d9924",
+    "sourceTimestampUtc": "2026-11-03T01:09:49+05:00",
+    "auditStartedUtc": "2026-11-02T22:12:03.319Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -81547,7 +81547,7 @@
       "id": "surface:7408bdfee403df48ceaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "10d56cec8d4ac5468a1f7fe7d1f6c0ef9c46d0161dbec7ccc836eee28fb0b5be",
+      "sha256": "66cee83156a299fa57f4b4134b6c8ad6b57aaac77dcc90889731642c8242e0e4",
       "symbols": [
         "CellV2",
         "DataTableV2",
@@ -81566,6 +81566,7 @@
         "y"
       ],
       "imports": [
+        "./EntityIdentityV2",
         "./SourceV2",
         "./document",
         "./entityRegistry",
@@ -81576,6 +81577,7 @@
         "react-markdown"
       ],
       "runtimeImports": [
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
         "frontend/src/components/response-experience-v2/SourceV2.tsx",
         "frontend/src/components/response-experience-v2/document.ts",
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
@@ -81597,7 +81599,9 @@
         "react",
         "react-markdown"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/components/response-experience-v2/DataV2.tsx#EntityIdentityV2"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -81639,6 +81643,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/DataV2.tsx:11",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9"
       ],
       "reachable": true,
@@ -82565,7 +82570,7 @@
       "id": "surface:6fc29287ecabfd9ced0b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/entityRegistry.ts",
-      "sha256": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d",
+      "sha256": "7f2b2d1c5adc8d22ceddfa2718d947a0ecee79c6c3d9b3a36a37602420cd1419",
       "symbols": [
         "EntitySyntaxV2",
         "authoredEntityParagraphV2",

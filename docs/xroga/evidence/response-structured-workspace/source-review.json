@@ -35,12 +35,12 @@
       "current": "47fe9faf3787cd74159929caac140d3eec11e859caa31d26f851060a4db62d27"
     },
     "frontend/src/components/response-experience-v2/entityRegistry.test.ts": {
-      "before": "5969e49e9e02bd2599c71313e01e413b120590b2535617115155a42a23344429",
-      "current": "3796be72a51165fdc62c8466dda303c5080b764bb8518bc8ea6d89b829a695a1"
+      "before": "e64c6dd05329b21d56204398e1067aaf9767044b503f59e0543ed830da9a9d9f",
+      "current": "ce12f36432fb693b87761edf374e615a22e0e1bd77c4e472e146595a900905e4"
     },
     "frontend/src/components/response-experience-v2/entityRegistry.ts": {
-      "before": "47422827a9deca07259c9c00ca27b9f56c86ac0f991f412c5d65d6b265174926",
-      "current": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d"
+      "before": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d",
+      "current": "7f2b2d1c5adc8d22ceddfa2718d947a0ecee79c6c3d9b3a36a37602420cd1419"
     },
     "frontend/src/context/TerminalChatContext.tsx": {
       "before": "961518473899c8b1128c252d7b736e8f44b6fe10aa8ecf987cf102966676ac6b",
@@ -86,6 +86,10 @@
     },
     "backend/src/ai/completionDiagnostics.ts": {
       "current": "b174790bd7a6eade5585d90c14b060a691ee196d3efbb5ac30d3655aacf059fa"
+    },
+    "frontend/src/components/response-experience-v2/DataV2.tsx": {
+      "before": "10d56cec8d4ac5468a1f7fe7d1f6c0ef9c46d0161dbec7ccc836eee28fb0b5be",
+      "current": "66cee83156a299fa57f4b4134b6c8ad6b57aaac77dcc90889731642c8242e0e4"
     }
   },
   "beforeWorkspaceBoundsContractSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
@@ -111,5 +115,27 @@
     },
     "modelCalls": 0,
     "productionChanged": false
+  },
+  "capturedTableIdentityCorrection": {
+    "scope": "LOCAL_CAPTURE_REGRESSION_NOT_LIVE_PRODUCT_ACCEPTANCE",
+    "bindings": {
+      "frontend/src/components/response-experience-v2/DataV2.tsx": {
+        "before": "10d56cec8d4ac5468a1f7fe7d1f6c0ef9c46d0161dbec7ccc836eee28fb0b5be",
+        "current": "66cee83156a299fa57f4b4134b6c8ad6b57aaac77dcc90889731642c8242e0e4"
+      },
+      "frontend/src/components/response-experience-v2/entityRegistry.ts": {
+        "before": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d",
+        "current": "7f2b2d1c5adc8d22ceddfa2718d947a0ecee79c6c3d9b3a36a37602420cd1419"
+      },
+      "frontend/src/components/response-experience-v2/entityRegistry.test.ts": {
+        "before": "e64c6dd05329b21d56204398e1067aaf9767044b503f59e0543ed830da9a9d9f",
+        "current": "ce12f36432fb693b87761edf374e615a22e0e1bd77c4e472e146595a900905e4"
+      }
+    },
+    "actualComponentRenderJob": "4b4c2a3a-5c02-4121-9283-173c2fa61eaa",
+    "focusedTestsJob": "553d442b-6ca7-464a-ad5e-dfd8dd000234",
+    "focusedTestsPassed": 48,
+    "modelCalls": 0,
+    "newNetworkOrPersistenceCalls": 0
   }
 }

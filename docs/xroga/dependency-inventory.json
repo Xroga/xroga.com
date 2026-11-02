@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "769ee9671a6793bf95e5ae414672eb3c0b30f4ea",
+  "source_sha": "3fce045c4ddbda805672dcf6cb3d06fade3d9924",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21040,7 +21040,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "10d56cec8d4ac5468a1f7fe7d1f6c0ef9c46d0161dbec7ccc836eee28fb0b5be"
+      "sha256": "66cee83156a299fa57f4b4134b6c8ad6b57aaac77dcc90889731642c8242e0e4"
     },
     {
       "path": "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
@@ -21104,7 +21104,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
-      "sha256": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d"
+      "sha256": "7f2b2d1c5adc8d22ceddfa2718d947a0ecee79c6c3d9b3a36a37602420cd1419"
     },
     {
       "path": "frontend/src/components/response-experience-v2/exportText.ts",
@@ -35783,7 +35783,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "line": 40,
+      "line": 44,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
