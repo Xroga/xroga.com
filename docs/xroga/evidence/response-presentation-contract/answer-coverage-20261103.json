@@ -8,6 +8,7 @@
   "factualCertification": false,
   "newModelRequests": 0,
   "newCloudResources": 0,
+  "boundedRequestCorrection": {"strictSchemaRetainedInBoundSdkResponseFormat": true, "duplicateSystemSchemaRemoved": true, "maximumEmptyChatMicroUsd": 448110, "remainingAllowanceMicroUsd": 492420, "offlineBoundJob": "8c43f48b-00dd-459b-a85b-37a6a793dee8", "regressionJob": "70f53c60-4ea5-419b-9f70-c000ffe24e5b"},
   "productionChanged": false,
   "remaining": ["Exact-source CI", "Separately approved source-pinned paired release and fresh acceptance exception", "New generated SaaS, calculation, research and unrelated conversation acceptance"],
   "legacyRendererPreserved": true,

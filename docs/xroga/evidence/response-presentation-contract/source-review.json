@@ -54,10 +54,10 @@
       "current": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95"
     },
     "backend/src/ai/responsePresentation.ts": {
-      "current": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48"
+      "current": "2612ca97f954c970cafc8b6cf33cbd5ed8a803acd5ee34b0aa787ed83db9df01"
     }
   },
-  "newPresentationSourceSha256": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
+  "newPresentationSourceSha256": "2612ca97f954c970cafc8b6cf33cbd5ed8a803acd5ee34b0aa787ed83db9df01",
   "noNewDestinationOrModelRequest": true,
   "schemaTokensReserved": true,
   "paidTestsStopped": true,
@@ -90,30 +90,9 @@
   "answerCoverageCorrection": {
     "scope": "LOCAL_REGRESSIONS_NOT_NEW_GENERATION_OR_PRODUCTION_ACCEPTANCE",
     "bindings": {
-      "backend/src/ai/pipeline.ts": {
-        "before": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47",
-        "current": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
-        "egressCalls": 0,
-        "persistenceCallRebase": [
-          [
-            "ea7c651e80706e5b0594",
-            "ce9a7215efde02d1062f"
-          ],
-          [
-            "2d018144911c29a2d98a",
-            "7c670691a53343271d29"
-          ]
-        ]
-      },
       "backend/src/ai/responsePresentation.ts": {
-        "before": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
-        "current": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
-        "egressCalls": 0,
-        "persistenceCallRebase": []
-      },
-      "backend/src/ai/universal/goalContract.ts": {
-        "before": "c9738a38a56d135f65f018bd091a64c063d80c5f87f758cf6c74b4da49a74908",
-        "current": "6ae6297abbbba8033018aeae2c5fb693810bd063a591e25957f7938b87506e94",
+        "before": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
+        "current": "2612ca97f954c970cafc8b6cf33cbd5ed8a803acd5ee34b0aa787ed83db9df01",
         "egressCalls": 0,
         "persistenceCallRebase": []
       }
