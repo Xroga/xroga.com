@@ -245,9 +245,9 @@
       "The cancelled Moonshot planner reservation has a new unresolved 38282 micro-USD hold. It and the historical GLM hold remain counted. Further paid acceptance is stopped.",
       "Workshop, research and unrelated new-chat prompts remain unrun. Full fresh streaming, Copy/Share and product-quality acceptance are incomplete."
     ],
-    "authenticatedE2e": "FAIL_PRODUCT_ACCEPTANCE_RECOVERY_VERIFIED",
+    "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",
-    "liveUrl": "https://xroga.com/workspace",
-    "deployedSha": "d86c8c44fae0777fb1e2a503bb316f7f314b196a"
+    "liveUrl": null,
+    "deployedSha": null
   }
 }

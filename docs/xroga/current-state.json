@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "3fce045c4ddbda805672dcf6cb3d06fade3d9924",
-    "sourceTimestampUtc": "2026-11-03T01:09:49+05:00",
-    "auditStartedUtc": "2026-11-02T22:12:03.319Z",
+    "sha": "f458273ce1dc9102e46eab6736623a5770c37d07",
+    "sourceTimestampUtc": "2026-11-03T03:15:33+05:00",
+    "auditStartedUtc": "2026-11-02T22:29:26.228Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -116843,6 +116843,50 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:67fac819a3e43625839f",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/test-response-table-resources.mjs",
+      "sha256": "2109201e3bdc8f48cfe380ddd8ff80b895d25c0fbb10250ef478bd81691c4c7b",
+      "symbols": [
+        "artifactRoot",
+        "outfile",
+        "owned"
+      ],
+      "imports": [
+        "esbuild",
+        "node:assert/strict",
+        "node:fs/promises",
+        "node:os",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "esbuild",
+        "node:assert/strict",
+        "node:fs/promises",
+        "node:os",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:cbe3dce25f41f9a3a240",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/validate-golden-journeys.mjs",
@@ -140780,6 +140824,13 @@
       "id": "test-suite:da1d74c4b89f9a7b7e58",
       "sourcePath": "frontend/src/components/response-experience-v2/sourceRegistry.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:21406c4b115246d4f0e8",
+      "sourcePath": "frontend/src/components/response-experience-v2/tableResources.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
