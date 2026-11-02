@@ -1,0 +1,8 @@
+{
+  "closed": true,
+  "nonterminalCanonical": 0,
+  "checkedEpoch": 1793645575.785324,
+  "checkedAtUtc": "2026-11-02T18:52:55.785324+00:00",
+  "evidence": "Supabase read-only post-SQL01 result",
+  "sourcePaused": "7a1b4da064c643a02e60dd61369fa741bf481499"
+}

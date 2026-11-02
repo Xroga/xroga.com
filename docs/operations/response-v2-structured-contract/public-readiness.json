@@ -1,0 +1,65 @@
+{
+  "atUtc": "2026-11-02T18:57:20.434105+00:00",
+  "status": "PASS_PUBLIC_READINESS_NOT_PRODUCT_ACCEPTANCE",
+  "results": [
+    {
+      "url": "https://api.xroga.com/health",
+      "httpStatus": 200,
+      "body": {
+        "status": "ok",
+        "service": "xroga-api",
+        "version": "3.0.0-ai-swarm",
+        "release": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+        "capabilities": [
+          "chat",
+          "build",
+          "github",
+          "deployment"
+        ],
+        "timestamp": "2026-11-02T18:57:18.533Z"
+      }
+    },
+    {
+      "url": "https://api.xroga.com/ready",
+      "httpStatus": 200,
+      "body": {
+        "status": "ready",
+        "service": "xroga-api",
+        "release": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+        "checks": [
+          {
+            "name": "environment",
+            "status": "ok"
+          },
+          {
+            "name": "database",
+            "status": "ok"
+          },
+          {
+            "name": "storage",
+            "status": "ok"
+          },
+          {
+            "name": "storage_quota",
+            "status": "ok"
+          },
+          {
+            "name": "storage_housekeeping",
+            "status": "fail",
+            "reason": "storage_reconcile_not_scheduled"
+          }
+        ],
+        "timestamp": "2026-11-02T18:57:19.723Z"
+      }
+    },
+    {
+      "url": "https://xroga.com/api/release",
+      "httpStatus": 200,
+      "body": {
+        "service": "xroga-web",
+        "release": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+        "environment": "production"
+      }
+    }
+  ]
+}

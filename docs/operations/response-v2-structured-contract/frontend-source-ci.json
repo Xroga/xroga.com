@@ -1,0 +1,70 @@
+{
+  "atUtc": "2026-11-02T18:45:55.128363+00:00",
+  "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "status": "PASS",
+  "checks": {
+    "unit": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125464233630,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499645378/job/125464233630"
+    },
+    "integrated-candidate": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125464234104,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499645378/job/125464234104"
+    },
+    "build": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125463809784,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499731620/job/125463809784"
+    },
+    "authenticated-browser": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125463827970,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499737910/job/125463827970"
+    },
+    "deterministic-golden": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125463511358,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499646960/job/125463511358"
+    },
+    "structured-mission-policy": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125463505691,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499645451/job/125463505691"
+    },
+    "disposable-policy-database": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125463505629,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499645460/job/125463505629"
+    },
+    "lock": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125463506095,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499645540/job/125463506095"
+    },
+    "static-contracts": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125463505352,
+      "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41499645324/job/125463505352"
+    }
+  }
+}

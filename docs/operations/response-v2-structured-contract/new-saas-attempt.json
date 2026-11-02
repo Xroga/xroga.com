@@ -1,0 +1,17 @@
+{
+  "backendSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "frontendSource": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "productionUrl": "https://xroga.com/workspace",
+  "prompt": "Explain a small multi-tenant SaaS architecture using Next.js, Supabase and Stripe. Include a useful architecture diagram and describe tenant isolation and the role of each component. This is an explanation only, do not build or execute anything.",
+  "submissionCount": 1,
+  "firstReservationCreatedAtUtc": "2026-11-02T18:58:43.233227+00:00",
+  "firstReservationId": "aa670580-10b6-4811-a459-86fd5960b878",
+  "emptyChatObserved": true,
+  "noAttachmentsObserved": true,
+  "syntheticProjectRepository": null,
+  "state": "FAILED_FULL_ACCEPTANCE_NO_MANUAL_RETRY",
+  "noManualRetryAllowed": true,
+  "chatId": "567d40a0-3c58-40ab-bacf-ec9f64fd39a5",
+  "providerCostUsd": 0.0017835999999999998,
+  "remainingPromptsSubmitted": 0
+}

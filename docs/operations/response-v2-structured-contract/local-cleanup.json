@@ -1,0 +1,93 @@
+{
+  "freeBeforeBytes": 132627894272,
+  "freeAfterBytes": 132644753408,
+  "jobs": [
+    {
+      "job": "2487c3ab-0a3f-4e7e-a508-27c79206268f",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "5ca28a51-b2f5-44b1-891f-5b37a6d12389",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "a0cb57bf-ac58-4729-a0b9-3621ae0d58f7",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "6fbd55e3-356d-47b8-8fa4-14804313ea36",
+      "temporaryFilesRemoved": 17000567,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "98bced09-6cc1-449f-9a08-f0e17268ed78",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "5afb1051-d96b-45c4-934f-c32443ba941e",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "02824784-156f-49c1-bf5e-e41958bf3631",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "ce2ba351-e426-44e2-a788-8060349d3e0a",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "9884a262-2bde-4908-8d17-1c81de07dfbb",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "e92b4895-fd64-4c05-80fa-5a58ae0ac112",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "4ec05b3f-aa05-493c-a74b-8482f8333811",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "ff9442be-3733-45b1-8e58-9439e201eb5d",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "e4eeb1bb-92a1-48a4-b705-8fd53dbf9d2a",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "1cade03a-274e-4089-ba55-10c81a972398",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "98ea8790-90f1-4879-9f86-19decc51f2db",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "8b98b9f9-2487-49f5-b262-ca6276ef12d2",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "7b32f11d-819b-485d-9d86-dd7f4db2787b",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    }
+  ],
+  "sourceOrRecoveryDeleted": false,
+  "freeChangeBytes": 16859136
+}

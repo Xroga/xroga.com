@@ -1,0 +1,11 @@
+{
+  "startedAtUtc": "2026-11-02T18:52:49.236074+00:00",
+  "deadlineUtc": "2026-11-02T19:52:49.236074+00:00",
+  "source": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "recoverySource": "7a1b4da064c643a02e60dd61369fa741bf481499",
+  "productionFrontend": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "frontendRecoveryDeployment": "GwPNLTadwd3XtJ1JpxrSu1Poqa1V",
+  "completedAtUtc": "2026-11-02T18:57:47.785401+00:00",
+  "durationSeconds": 298.549327,
+  "status": "COMPLETE_PAIR_READY_ADMISSION_OPEN_QUEUE_RUNNING"
+}

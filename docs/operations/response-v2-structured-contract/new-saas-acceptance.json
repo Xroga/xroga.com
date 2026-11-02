@@ -1,0 +1,75 @@
+{
+  "atUtc": "2026-11-02T19:11:15.399659+00:00",
+  "status": "FAIL_FULL_PRODUCT_ACCEPTANCE_PARTIAL_PIPELINE_VERIFIED",
+  "backendSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "frontendSource": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "chatId": "567d40a0-3c58-40ab-bacf-ec9f64fd39a5",
+  "createdAtUtc": "2026-11-02T18:58:43.817+00:00",
+  "savedAtUtc": "2026-11-02T18:59:02.756+00:00",
+  "singleUserSubmission": true,
+  "modelRequests": 2,
+  "modelPurpose": [
+    "existing semantic planning",
+    "existing answer generation"
+  ],
+  "extraFormattingRequests": 0,
+  "provider": "DeepSeek through OpenRouter / Crusoe",
+  "providerCostUsd": 0.0017836,
+  "ledgerSettledMicroUsd": 1785,
+  "originalCombinedRemainingMicroUsd": 492420,
+  "historicalGlmHoldMicroUsd": 1385,
+  "newGlmRequests": 0,
+  "sourceDocumentCharacters": 10037,
+  "sourceDocumentSha256": "66f9f2d90b1d6bbd5e4676a047f101a3f4f31a56ee29510f9fb5169b17d1a5a7",
+  "savedReceiptSha256": "c3aabd7e9249e340f96dd65c4936fbdc17e3ab7af6fae3c55f64f90f72ab13ea",
+  "copyCharacters": 8508,
+  "copySha256": "205d48df9680c37b429491e179752f8942c4048b99774cec9f3e41d05f95974f",
+  "preservedSections": 6,
+  "graphNodes": 7,
+  "graphEdges": 7,
+  "componentRoleCards": 6,
+  "workflowSteps": 6,
+  "reopenRenderedTextIdentical": true,
+  "privateShare": {
+    "ownerOnly": true,
+    "sections": 6,
+    "nodes": 7,
+    "edges": 7,
+    "rawProtocolExposed": false
+  },
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "pageOverflow": false
+    },
+    {
+      "width": 1024,
+      "height": 900,
+      "pageOverflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "pageOverflow": false,
+      "bodyFont": "Inter",
+      "bodyFontSize": "16px",
+      "bodyFontWeight": "400",
+      "articleWidth": 294.4
+    }
+  ],
+  "failures": [
+    "No proposed data/schema table was authored in the six-section plan.",
+    "No tenant-comparison cards were authored; tenant isolation remains prose.",
+    "Typed component cards have no URLs, and the card renderer supplies no reviewed identity fallback. No official brand links were rendered."
+  ],
+  "notTested": [
+    "The three later paid prompts, because the SaaS gate failed.",
+    "Fresh production calculator interaction and sourced-research continuation.",
+    "Incremental HTTP/Workspace streaming; provider streaming and local projection are independently evidenced."
+  ],
+  "afterUiInteractionReservationCount": 2,
+  "afterUiInteractionSettledMicroUsd": 1785,
+  "nextPaidAttemptAuthorized": false,
+  "productionRollbackExecuted": false
+}

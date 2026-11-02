@@ -1,0 +1,13 @@
+{
+  "checkedAtUtc": "2026-11-02T18:46:56.092969+00:00",
+  "source": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "deploymentId": "7BGA23cKzRxXcYHKMpSHBp7v4KGY",
+  "deploymentUrl": "https://xrogaai-mnggocifz-xrogas-projects.vercel.app",
+  "environment": "preview",
+  "vercelStatus": "Ready",
+  "apiReleaseIdentityMatched": true,
+  "authenticatedWorkspaceLoaded": true,
+  "consoleErrors": [],
+  "productionPromoted": false,
+  "newModelAcceptancePassed": false
+}

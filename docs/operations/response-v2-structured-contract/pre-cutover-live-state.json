@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-11-02T18:38:02.485809+00:00",
+  "stage": "READ_ONLY_STATUS",
+  "traffic": [
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-response-7a1b4d-serving-1102",
+      "percent": 100
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4"
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-fe2c6486c",
+      "tag": "voice-9f62bba5"
+    }
+  ],
+  "jobImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:e4a91c189f3a287472874a51889c3091dd39855ee3126df0ed92c9736226a23c",
+  "queue": "RUNNING"
+}

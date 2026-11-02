@@ -1,0 +1,43 @@
+{
+  "observedAtUtc": "2026-11-02T19:06:01.327872+00:00",
+  "source": "OpenRouter generation metadata GET",
+  "newModelRequests": 0,
+  "credentialPersisted": false,
+  "storedContentRequested": false,
+  "generations": [
+    {
+      "id": "gen-1793645923-gZuOHFacllze4aaKPRgd",
+      "model": "deepseek/deepseek-v4-flash-20260423",
+      "provider_name": "Crusoe",
+      "streamed": true,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "tokens_prompt": 2994,
+      "tokens_completion": 606,
+      "native_tokens_prompt": 2479,
+      "native_tokens_completion": 548,
+      "native_tokens_reasoning": 0,
+      "latency": 540,
+      "generation_time": 2864,
+      "cancelled": false,
+      "total_cost": 0.0005005
+    },
+    {
+      "id": "gen-1793645929-LMYS18Dl70yC0ieheEBD",
+      "model": "deepseek/deepseek-v4-flash-20260423",
+      "provider_name": "Crusoe",
+      "streamed": true,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "tokens_prompt": 5632,
+      "tokens_completion": 2536,
+      "native_tokens_prompt": 4683,
+      "native_tokens_completion": 2241,
+      "native_tokens_reasoning": 0,
+      "latency": 1464,
+      "generation_time": 10844,
+      "cancelled": false,
+      "total_cost": 0.0012831
+    }
+  ]
+}
