@@ -1,0 +1,45 @@
+{
+  "health": {
+    "status": "ok",
+    "service": "xroga-api",
+    "version": "3.0.0-ai-swarm",
+    "release": "7a1b4da064c643a02e60dd61369fa741bf481499",
+    "capabilities": [
+      "chat",
+      "build",
+      "github",
+      "deployment"
+    ],
+    "timestamp": "2026-11-02T17:08:03.198Z"
+  },
+  "ready": {
+    "status": "ready",
+    "service": "xroga-api",
+    "release": "7a1b4da064c643a02e60dd61369fa741bf481499",
+    "checks": [
+      {
+        "name": "environment",
+        "status": "ok"
+      },
+      {
+        "name": "database",
+        "status": "ok"
+      },
+      {
+        "name": "storage",
+        "status": "ok"
+      },
+      {
+        "name": "storage_quota",
+        "status": "ok"
+      },
+      {
+        "name": "storage_housekeeping",
+        "status": "fail",
+        "reason": "storage_reconcile_not_scheduled"
+      }
+    ],
+    "timestamp": "2026-11-02T17:08:04.706Z"
+  },
+  "observedAtUtc": "2026-11-02T17:08:05.485163+00:00"
+}

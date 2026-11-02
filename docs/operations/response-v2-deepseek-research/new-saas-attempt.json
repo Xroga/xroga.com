@@ -1,0 +1,36 @@
+{
+  "state": "FAIL_FULL_SAAS_CONTRACT_STOP_PAID_ACCEPTANCE",
+  "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+  "frontendSource": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
+  "projectId": "85730a9a-fca9-4eb8-aa89-4e9c6172e2c5",
+  "preparedAtUtc": "2026-11-02T17:09:33.257240+00:00",
+  "thisSubmission": 4,
+  "maximumTotalSubmissions": 7,
+  "remainingAcceptanceMicroUsd": 494205,
+  "requestReservationEstimateMicroUsd": 377418,
+  "previousCycleSettledMicroUsd": 85446,
+  "previousCycleReservedMicroUsd": 517928,
+  "unknownHistoricalGlmHoldMicroUsd": 1385,
+  "freshVisibleResponses": 0,
+  "attachmentsOrRepository": false,
+  "noManualRetry": true,
+  "submissionActionAtUtc": "2026-11-02T17:09:46.043750+00:00",
+  "confirmedAtUtc": "2026-11-02T17:10:43.872018+00:00",
+  "automationNote": "Initial DOM click failed. UI and ledger showed no dispatch. Native Send then produced one visible working response. Navigation overlay dismissed. No additional Send action.",
+  "chatId": "b3f09bc2-3359-4c93-9acb-3d7cf2c6bedd",
+  "settledMicroUsd": 1124,
+  "providerCostUsd": "0.001122716",
+  "conservativeConsumedMicroUsd": 5795,
+  "missingRequired": [
+    "Tenant isolation cards",
+    "Scoped schema table",
+    "Billing steps",
+    "Explicit service-role/RLS bypass caveat"
+  ],
+  "renderedGraph": {
+    "nodes": 4,
+    "edges": 5
+  },
+  "credentialConflationCorrected": true,
+  "otherThreePromptsSubmitted": false
+}
