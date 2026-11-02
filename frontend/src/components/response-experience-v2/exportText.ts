@@ -12,7 +12,16 @@ export function responseTextV2(input: ResponseInputV2): string | undefined {
   const result = adaptResponseV2(input);
   if (!result.supported) return undefined;
   const document = result.document;
-  const body = document.nodes.map(node => lines([node.title, node.description, nodeText(node)])).join('\n\n');
+  const body = document.nodes.map((node, index) => {
+    const previous = document.nodes[index - 1];
+    const previousHeading = previous?.kind === 'prose'
+      ? /^#{1,6}\s+(.+?)\s*#*\s*$/.exec(previous.text.trim().split('\n').at(-1) ?? '')?.[1]
+      : undefined;
+    // A structured table can inherit the immediately preceding authored heading.
+    // Emit that heading once while retaining every cell and nonadjacent section.
+    const title = previousHeading === node.title?.trim() ? undefined : node.title;
+    return lines([title, node.description, nodeText(node)]);
+  }).join('\n\n');
   const sources = [...sourceRegistryV2(document).values()];
   return lines([body, sources.length ? '\nReferences\n' + sources.map(source => `${source.title}: ${source.url}`).join('\n') : undefined]);
 }

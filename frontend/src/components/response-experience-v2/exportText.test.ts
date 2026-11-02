@@ -36,6 +36,16 @@ test('calculator export distinguishes original inputs and computes without a pro
   assert.match(text!, /Monthly revenue: 1000.00 USD/);
 });
 
+test('Copy and Share emit an adjacent inherited table heading once without dropping cells or later sections', () => {
+  const source = '## Component roles\n\n| Component | Role |\n| --- | --- |\n| Supabase | Database |\n\n## Other details\n\nComponent roles remain important.';
+  const enhanced = enhanceAiResponse(source, 'headings');
+  const text = responseTextV2({id:'headings',content:enhanced.content,featureOutput:enhanced.output})!;
+  assert.equal(text.match(/^Component roles$/gm)?.length ?? 0,0);
+  assert.equal(text.match(/^## Component roles$/gm)?.length,1);
+  assert.match(text,/Supabase\tDatabase/);
+  assert.match(text,/Component roles remain important\./);
+});
+
 test('resource export retains qualifiers and literals through the existing clipboard formatter', () => {
   const item = { id: 'r', domain: 'travel', kind: 'flight', title: 'Example only', status: 'demo', demo: true, price: { amount: 0, currency: 'USD', basis: 'round-trip', taxesIncluded: false, feesIncluded: false }, limitations: 'Not bookable: literal_a_b', route: [{ from: 'A', to: 'B', departureLocal: '09:00', departureTimeZone: 'UTC' }] };
   const text = responseTextV2({ id: 'm', content: '', featureOutput: { schemaVersion: 1, id: 'o', status: 'completed', blocks: [{ schemaVersion: 1, id: 'r', type: 'rich-results', items: [item] }] } });

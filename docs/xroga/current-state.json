@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "810a32f88eab4398043b91cc14de9e09ae966cdc",
-    "sourceTimestampUtc": "2026-11-02T14:47:14+05:00",
-    "auditStartedUtc": "2026-11-02T09:47:55.433Z",
+    "sha": "5535e14e08da7fb2dd00aac34af391262f120ab6",
+    "sourceTimestampUtc": "2026-11-02T14:49:51+05:00",
+    "auditStartedUtc": "2026-11-02T10:04:46.221Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -82320,16 +82320,19 @@
       "id": "surface:a979c2e1f1ae5fb4eaf1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/exportText.ts",
-      "sha256": "231e78246ce45dde6d57a79059a72a1085c4971573aa04003f18fd2596939806",
+      "sha256": "0cbb25ef3afa3ea6fa9b93547c9241f80e0eda6cb512c475b740f7bca0d946df",
       "symbols": [
         "body",
         "document",
         "lines",
         "nodeText",
+        "previous",
+        "previousHeading",
         "responseTextV2",
         "result",
         "scalar",
         "sources",
+        "title",
         "values"
       ],
       "imports": [
@@ -140279,7 +140282,7 @@
     {
       "id": "test-suite:d9eeccf3b3da58cbd35c",
       "sourcePath": "frontend/src/components/response-experience-v2/exportText.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
