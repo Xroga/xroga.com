@@ -6,8 +6,10 @@ import {
 
 import {
   callableModelIds,
+  MODELS,
   type ModelId,
 } from '../models.js';
+import { getRouterAdminConfig } from '../routerConfig.js';
 
 import {
   withTenantModelReservation,
@@ -750,6 +752,7 @@ export function interpreterModelOrder(
     callableModelIds(
       env,
     );
+  const policy = getRouterAdminConfig(env);
 
   const ordered =
     (
@@ -765,7 +768,7 @@ export function interpreterModelOrder(
     )
       .filter(
         (modelId) =>
-          callable.includes(
+          policy.enabledProviders.includes(MODELS[modelId].provider) && policy.allowedModels.includes(modelId) && callable.includes(
             modelId,
           ),
       );

@@ -1134,7 +1134,7 @@ export async function runChatPipeline(opts: {
 
   return {
     response: result.text,
-    completion: publicCompletionState(result.finishReason),
+    completion: publicCompletionState(result.finishReason, result.text),
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,

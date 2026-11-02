@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "e7cdde742d617d9a000dbf4a4d69d0f6bc692d013e2a1d16ef5dd4b73c8f868f",
+  "reviewRegistrySha256": "6bb789dd8deb432eafdc5604e279f0b22d319e6eecdca1f761e8ae2d36f02677",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 214,
-    "persistenceCandidates": 927,
+    "persistenceCandidates": 928,
     "ownerPredicateCandidates": 259,
     "reviewRequired": 122,
-    "reviewedCandidates": 805,
+    "reviewedCandidates": 806,
     "unresolvedSafetyCandidates": 155,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
     "REVIEW_REQUIRED": 122,
-    "SCOPED_BOUNDARY": 527,
+    "SCOPED_BOUNDARY": 528,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 205,
     "REVIEWED_GAP": 33
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 82,
-    "unresolvedCandidateBoundaries": 845,
+    "unresolvedCandidateBoundaries": 846,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3576,11 +3576,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d23d6bc9b4e588b32dcf"
+        "id": "1dc5b14f8d4eb831d8bf"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0e9d2d78b2724eef8c51"
+        "id": "bab7cb9676b8369a55a7"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4216,27 +4216,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8b17459285690a49b155"
+        "id": "c9a009f6baa9e3a3bbad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4bb5cd82397688351d8d"
+        "id": "000d28d21ea7dba70f24"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "acc2d6ec920ed57add31"
+        "id": "db7f2c7b53d05936f3da"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b2954d5c32ecb797fbcb"
+        "id": "ea4d7ecf3043636a2883"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "15290800ba879fff883d"
+        "id": "2f60349dbbab02755103"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "374ef098d8a33ca2b471"
+        "id": "c4dcd4d97035ff02f08f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5716,6 +5716,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "d9642208258b6b210b66"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "3ad8e86821c6c844e666"
       },
       {
@@ -6592,11 +6596,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d23d6bc9b4e588b32dcf"
+        "id": "1dc5b14f8d4eb831d8bf"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "0e9d2d78b2724eef8c51"
+        "id": "bab7cb9676b8369a55a7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7624,27 +7628,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8b17459285690a49b155"
+        "id": "c9a009f6baa9e3a3bbad"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4bb5cd82397688351d8d"
+        "id": "000d28d21ea7dba70f24"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "acc2d6ec920ed57add31"
+        "id": "db7f2c7b53d05936f3da"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b2954d5c32ecb797fbcb"
+        "id": "ea4d7ecf3043636a2883"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "15290800ba879fff883d"
+        "id": "2f60349dbbab02755103"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "374ef098d8a33ca2b471"
+        "id": "c4dcd4d97035ff02f08f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9200,6 +9204,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d9642208258b6b210b66"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "229f69845215b3f79181"
       },
       {
@@ -9265,11 +9273,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 927,
+    "currentCallers": 928,
     "structuredVerified": 82,
-    "structuredUnproven": 845,
+    "structuredUnproven": 846,
     "manualUnresolved": 155,
-    "manualUnsupported": 690,
+    "manualUnsupported": 691,
     "agreedVerified": 82,
     "proofAwaitingManualReconciliation": 0
   },
@@ -9941,7 +9949,7 @@
       }
     },
     {
-      "id": "d23d6bc9b4e588b32dcf",
+      "id": "1dc5b14f8d4eb831d8bf",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3807,
       "enclosing": "runBuildPipeline",
@@ -9949,7 +9957,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "sourceSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -9962,7 +9970,7 @@
       }
     },
     {
-      "id": "0e9d2d78b2724eef8c51",
+      "id": "bab7cb9676b8369a55a7",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3991,
       "enclosing": "runBuildPipeline",
@@ -9970,7 +9978,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "sourceSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -17142,18 +17150,18 @@
       }
     },
     {
-      "id": "8b17459285690a49b155",
+      "id": "c9a009f6baa9e3a3bbad",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 69,
+      "line": 70,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -17167,18 +17175,18 @@
       }
     },
     {
-      "id": "4bb5cd82397688351d8d",
+      "id": "000d28d21ea7dba70f24",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 69,
+      "line": 70,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -17192,18 +17200,18 @@
       }
     },
     {
-      "id": "acc2d6ec920ed57add31",
+      "id": "db7f2c7b53d05936f3da",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 97,
+      "line": 98,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -17217,18 +17225,18 @@
       }
     },
     {
-      "id": "b2954d5c32ecb797fbcb",
+      "id": "ea4d7ecf3043636a2883",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 97,
+      "line": 98,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -17242,18 +17250,18 @@
       }
     },
     {
-      "id": "15290800ba879fff883d",
+      "id": "2f60349dbbab02755103",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 146,
+      "line": 147,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -17267,18 +17275,18 @@
       }
     },
     {
-      "id": "374ef098d8a33ca2b471",
+      "id": "c4dcd4d97035ff02f08f",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 146,
+      "line": 147,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -28448,6 +28456,39 @@
           {
             "path": "supabase/migrations/20261019000600_current_profile_setup.sql",
             "marker": "CREATE OR REPLACE FUNCTION public.read_current_profile_setup()"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d9642208258b6b210b66",
+      "path": "frontend/src/app/share/[token]/page.tsx",
+      "line": 97,
+      "enclosing": "canPresentRichShare",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16",
+      "semanticReview": {
+        "authority": "Existing user-bound Supabase server client calls the fixed self-role RPC with no user-supplied arguments. The migration scopes it to auth.uid(). The result is consumed only by the unchanged confirmed-founder/owner/AAL2 presentation decision. Share ownership is independently enforced by the existing API before any response is rendered.",
+        "reason": "New read-only self-role caller reviewed for rich Share presentation. No role grant, identity override, customer table read, SQL change, tool handler, or execution authority is added. Existing authenticated/canary rollout rules remain unchanged, and failures retain the plain-text fallback. Source review is not a substitute for required authenticated CI and live acceptance.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/share/[token]/page.tsx",
+            "marker": "client.rpc('current_community_role')"
+          },
+          {
+            "path": "frontend/src/components/response-experience-v2/access.ts",
+            "marker": "return authorizeFounderRequest(deps);"
+          },
+          {
+            "path": "supabase/migrations/20260729192159_community_platform.sql",
+            "marker": "when (select auth.uid()) is null then 'guest'"
+          },
+          {
+            "path": "frontend/src/lib/osFounderAccess.test.ts",
+            "marker": "only confirmed target email plus owner role plus AAL2 passes"
           }
         ]
       }

@@ -73,6 +73,15 @@ test('security guidance excludes user-editable authorization and distinguishes w
   assert.match(CHAT_SYSTEM, /webhook.*event ID/);
 });
 
+test('the reachable answer contract requires a current membership gate rather than only token-derived tenant context', () => {
+  const guide=chatPresentationSystem('Explain a multi-tenant architecture');
+  assert.match(guide,/active tenant_memberships row/);
+  assert.match(guide,/missing or revoked membership denies access/);
+  assert.match(guide,/never replace that current gate/);
+  assert.match(guide,/WITH CHECK for inserts\/updates/);
+  assert.match(guide,/not a claim that a user's implementation was inspected/);
+});
+
 test('the reachable chat guide distinguishes durable receipt from completed webhook effects', () => {
   const system = chatPresentationSystem('Explain subscription webhooks in a SaaS architecture');
   assert.match(system, /Receipt is not completion/);

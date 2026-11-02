@@ -5,6 +5,7 @@ import { getTenantSupabaseAdmin, getGlobalSupabaseAdmin } from '../security/serv
 import { requireTenantContext } from '../security/tenantContext.js';
 import { authMiddleware, verifyAccessToken, type AuthRequest } from '../middleware/auth.js';
 import { cleanSharedText } from '../lib/messageShareText.js';
+import { projectRichShare } from '../lib/richShareSnapshot.js';
 
 const router = Router();
 
@@ -41,7 +42,7 @@ function toShare(row: ShareRow) {
     visibility: row.visibility,
     scope: row.scope,
     prompt: row.prompt,
-    response: row.response,
+    ...projectRichShare(row.response),
     createdAt: row.created_at,
   };
 }

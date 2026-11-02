@@ -99,7 +99,15 @@ export function adaptResponseV2(input: ResponseInputV2, streaming = false): Adap
         }
       }
     }
-    const parsed = responseDocumentSchema.safeParse({ version: 2, id: input.id, originalText, streaming, nodes, sources: input.webSources ?? [] });
+    return validateResponseDocumentV2({ version: 2, id: input.id, originalText, streaming, nodes, sources: input.webSources ?? [] });
+  } catch { return { supported: false, reason: 'malformed-output' }; }
+}
+
+/** The same semantic checks apply to live, persisted and shared documents. */
+export function validateResponseDocumentV2(value: unknown): AdaptedResponse {
+  try {
+    if (!boundedData(value)) return { supported: false, reason: 'payload-limit' };
+    const parsed = responseDocumentSchema.safeParse(value);
     if (!parsed.success || new Set(parsed.data.nodes.map(n => n.id)).size !== parsed.data.nodes.length) return { supported: false, reason: 'invalid-document' };
     for (const n of parsed.data.nodes) {
       if (n.kind === 'calculator' && !validDerivedResults(n)) return { supported: false, reason: 'invalid-derived-calculation' };

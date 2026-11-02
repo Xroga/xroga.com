@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "2c2405f8972cca0d77afd9492c3cae8ae165df2d",
-    "sourceTimestampUtc": "2026-11-02T15:07:24+05:00",
-    "auditStartedUtc": "2026-11-02T10:08:46.263Z",
+    "sha": "a9860e28c23063b3204ca6afd610bf5e2b6cef68",
+    "sourceTimestampUtc": "2026-11-02T15:11:42+05:00",
+    "auditStartedUtc": "2026-11-02T11:02:29.532Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -1670,7 +1670,7 @@
       "callers": [
         "backend/src/ai/black-hole/structuredOutput.test.ts:4",
         "backend/src/ai/qa.ts:7",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:34",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:36",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:5",
         "backend/src/services/integrations/businessAction.ts:22",
         "backend/src/services/integrations/businessRead.ts:13",
@@ -3083,19 +3083,24 @@
       "id": "surface:ef3623f65fc045e92013",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "677bb2771f0aef0c07081cd7b6e401089870e483640b5b0fe448bdcfd9b45005",
+      "sha256": "a5b9472e38f19f2f8461f237fbee0c7650f42dd10ee5470d6c33e0714b2feeb2",
       "symbols": [
         "CompletionDiagnostics",
         "choice",
         "choices",
         "cost",
         "count",
+        "derivesTenantFromJwt",
         "key",
+        "mentionsCurrentMembership",
         "message",
+        "prose",
         "providerCostMicroUsd",
         "publicCompletionState",
         "receipt",
         "requirePublicCompletion",
+        "requiresAuthorizationReview",
+        "sentences",
         "value"
       ],
       "imports": [
@@ -3116,9 +3121,13 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/completionDiagnostics.ts#requiresAuthorizationReview"
+      ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/ai/completionDiagnostics.ts#requiresAuthorizationReview"
+      ],
       "costBoundary": [
         "backend/src/ai/completionDiagnostics.ts#cost",
         "backend/src/ai/completionDiagnostics.ts#providerCostMicroUsd"
@@ -5619,7 +5628,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "sha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6465,7 +6474,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "54c0dc824badfce11194c7c6f9ec7d8a0f045300715ff05a0fc5d5f3e203d2bf",
+      "sha256": "c7d7868c63c4a21304aa72f9c26f09176d926272bc2236bd5835ba5ea7d7989e",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -7045,7 +7054,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:14",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:6",
         "backend/src/ai/tenantModelDispatch.test.ts:12",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:17",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:19",
         "backend/src/index.ts:66",
         "backend/src/lib/resilience/callWithFallback.ts:4",
         "backend/src/lib/resilience/retry.test.ts:3",
@@ -7313,7 +7322,7 @@
         "backend/src/ai/quota.test.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:25",
         "backend/src/ai/tenantModelDispatch.ts:12",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:25",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:27",
         "backend/src/routes/phase1.ts:20",
         "backend/src/routes/phase1BusinessPreflight.ts:5",
         "backend/src/security/budgetOwner.local.integration.ts:6",
@@ -7703,13 +7712,15 @@
         "backend/src/ai/models.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/intelligentRouter.ts:8",
         "backend/src/ai/modelCapabilityRegistry.ts:5",
         "backend/src/ai/providerPolicy.test.ts:395",
-        "backend/src/ai/routerConfig.test.ts:3"
+        "backend/src/ai/routerConfig.test.ts:3",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10749,7 +10760,7 @@
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:3",
         "backend/src/ai/tenantModelDispatch.test.ts:6",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:12",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:14",
         "backend/src/security/genericSdk.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.ts:16",
         "backend/src/services/integrations/businessRead.ts:7",
@@ -11031,7 +11042,7 @@
         "backend/src/ai/pipeline.ts:159",
         "backend/src/ai/universal/goalContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:23",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:38",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:40",
         "backend/src/ai/universal/universalContracts.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
         "backend/src/routes/phase1.ts:42",
@@ -11183,7 +11194,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/universal/semanticRequestPlanner.ts:47",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:49",
         "backend/src/ai/universal/universalContracts.test.ts:13",
         "backend/src/synthesis/universalEntrypoint.ts:123"
       ],
@@ -11232,7 +11243,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:160",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:51",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:53",
         "backend/src/lib/xrogaCapabilities.ts:1"
       ],
       "reachable": true,
@@ -11394,7 +11405,7 @@
         "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:32",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:55",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:57",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:19",
         "backend/src/routes/phase1.ts:51"
       ],
@@ -11512,7 +11523,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "b84aeadc18565ac0916ab5b1dd5d248e7f604e0f58a424563d1116dd65c88c9e",
+      "sha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d",
       "symbols": [
         "PlannerRouteOutcome",
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
@@ -11588,6 +11599,7 @@
         "planSemanticRequest",
         "planned",
         "plannerContractCoherenceError",
+        "policy",
         "primary",
         "protocolSocialResponse",
         "readiness",
@@ -11625,6 +11637,7 @@
         "../openaiCompat.js",
         "../providerRuntime.js",
         "../quota.js",
+        "../routerConfig.js",
         "../tenantModelDispatch.js",
         "./goalContract.js",
         "./planner.js",
@@ -11637,6 +11650,7 @@
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/quota.ts",
+        "backend/src/ai/routerConfig.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/ai/universal/goalContract.ts",
         "backend/src/ai/universal/planner.ts",
@@ -15861,7 +15875,7 @@
         "backend/src/ai/universal/capabilityReadiness.test.ts:3",
         "backend/src/ai/universal/productTruth.ts:1",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:3",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:30",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:32",
         "backend/src/synthesis/universalEntrypoint.ts:119"
       ],
       "reachable": true,
@@ -19500,6 +19514,43 @@
       "testCoverage": [
         "backend/src/lib/authRoundTrips.test.ts",
         "backend/src/security/githubConsumer.local.integration.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:73a33d490a8f12d2efdf",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/lib/richShareSnapshot.ts",
+      "sha256": "bbf7a23a87f5229c305fdf346afea769db172c0a32f58d66f84af7d2bca1354d",
+      "symbols": [
+        "PREFIX",
+        "data",
+        "projectRichShare"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/lib/richShareSnapshot.test.ts:3",
+        "backend/src/routes/messageShares.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/lib/richShareSnapshot.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -24968,7 +25019,7 @@
       "id": "surface:689012372a18e20a2b6f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "sha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "symbols": [
         "ShareRow",
         "authorization",
@@ -24989,6 +25040,7 @@
       ],
       "imports": [
         "../lib/messageShareText.js",
+        "../lib/richShareSnapshot.js",
         "../middleware/auth.js",
         "../security/serviceRoleGuard.js",
         "../security/tenantContext.js",
@@ -24998,6 +25050,7 @@
       ],
       "runtimeImports": [
         "backend/src/lib/messageShareText.ts",
+        "backend/src/lib/richShareSnapshot.ts",
         "backend/src/middleware/auth.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts"
@@ -25024,7 +25077,7 @@
         "backend/src/routes/messageShares.ts#verifyAccessToken"
       ],
       "tenantBoundary": [
-        "backend/src/routes/messageShares.ts:146 (owner_id)"
+        "backend/src/routes/messageShares.ts:147 (owner_id)"
       ],
       "approvalBoundary": [
         "backend/src/routes/messageShares.ts#authorization"
@@ -29504,7 +29557,7 @@
         "backend/src/ai/tenantModelDispatch.ts:3",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:4",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:15",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:17",
         "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/ai/voiceBudget.ts:3",
         "backend/src/builder/cancel.test.ts:12",
@@ -31185,7 +31238,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/universal/semanticRequestPlanner.ts:63",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:65",
         "backend/src/routes/phase1.ts:73",
         "backend/src/services/integrations/businessAutomations.ts:6",
         "backend/src/services/integrations/businessWorkflow.test.ts:4"
@@ -32754,7 +32807,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:165",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:59",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:61",
         "backend/src/builder/providerTransports.ts:6",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:9",
@@ -57100,26 +57153,36 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "3dbc690246e5ccedfe88365fe55c8a35d278820b5441e02c40d7b908658df2f7",
+      "sha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
         "ShareResult",
         "accessToken",
         "bytes",
+        "canPresentRichShare",
         "chunks",
+        "client",
+        "decision",
         "dynamic",
         "generateMetadata",
         "loadShare",
+        "matchingText",
         "next",
         "payload",
+        "presentation",
         "reader",
         "response",
         "result",
+        "richAllowed",
         "share",
+        "snapshot",
         "supabase"
       ],
       "imports": [
+        "@/components/response-experience-v2/SharedResponseV2",
+        "@/components/response-experience-v2/access",
+        "@/components/response-experience-v2/shareSnapshot",
         "@/components/terminal/SharedAnswerDownloads",
         "@/lib/api",
         "@/lib/supabase/server",
@@ -57130,6 +57193,9 @@
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/response-experience-v2/SharedResponseV2.tsx",
+        "frontend/src/components/response-experience-v2/access.ts",
+        "frontend/src/components/response-experience-v2/shareSnapshot.ts",
         "frontend/src/components/terminal/SharedAnswerDownloads.tsx",
         "frontend/src/lib/api.ts",
         "frontend/src/lib/supabase/server.ts"
@@ -81189,7 +81255,8 @@
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:18",
@@ -81238,7 +81305,8 @@
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:11",
@@ -81286,7 +81354,8 @@
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:14"
@@ -81313,17 +81382,20 @@
       "id": "surface:25cc0a5b860692abe56d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
-      "sha256": "7b304c564f48d28cc9bc9d7ad11979aee4da2e87f598325a3949549d2b6e0064",
+      "sha256": "3f38bc7c5d17a6d00d3874eb1b231aa006a1c64e9a888dedd0704734c3037430",
       "symbols": [
         "ConversationTurnV2",
         "TurnActions",
         "copy",
+        "snapshot",
         "status",
         "timer"
       ],
       "imports": [
         "./conversation",
         "./conversation-v2.module.css",
+        "./document",
+        "./shareSnapshot",
         "@/components/terminal/MessageShareModal",
         "@/lib/assistantCopy",
         "lucide-react",
@@ -81332,6 +81404,7 @@
       "runtimeImports": [
         "frontend/src/components/response-experience-v2/conversation-v2.module.css",
         "frontend/src/components/response-experience-v2/conversation.ts",
+        "frontend/src/components/response-experience-v2/shareSnapshot.ts",
         "frontend/src/components/terminal/MessageShareModal.tsx",
         "frontend/src/lib/assistantCopy.ts"
       ],
@@ -81400,7 +81473,8 @@
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
@@ -81467,7 +81541,8 @@
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14",
@@ -81510,7 +81585,8 @@
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:17"
@@ -81582,7 +81658,8 @@
         "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:7",
@@ -81632,7 +81709,8 @@
         "frontend/src/lib/xrogaRichResults.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:8"
@@ -81708,10 +81786,12 @@
         "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:6",
+        "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:3",
         "frontend/src/components/response-experience-v2/review/LocalReview.tsx:3"
       ],
       "reachable": true,
@@ -81792,6 +81872,50 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:62e447d1d890cb0f8029",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/SharedResponseV2.tsx",
+      "sha256": "a2bd3542889779db585bae7d6d2c7d59734fbca2951a19ee89e011ec14050f3b",
+      "symbols": [
+        "SharePresentationBoundary",
+        "SharedResponseV2",
+        "fallback",
+        "result"
+      ],
+      "imports": [
+        "./ResponseCanvasV2",
+        "./shareSnapshot",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
+        "frontend/src/components/response-experience-v2/shareSnapshot.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/share/[token]/page.tsx:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:f8646cfeb40e43123392",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/SourceV2.tsx",
@@ -81824,7 +81948,8 @@
         "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:8",
@@ -81870,10 +81995,12 @@
         "frontend/src/lib/osFounderAccess.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
+        "frontend/src/app/share/[token]/page.tsx:11",
         "frontend/src/components/response-experience-v2/document.test.ts:206",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
@@ -81927,7 +82054,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:6",
@@ -82024,7 +82152,8 @@
         "frontend/src/components/response-experience-v2/sourceRegistry.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9",
@@ -82130,7 +82259,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:16",
@@ -82158,7 +82288,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "8a504e929cdbbc73a3c35521accd0cea7a23a1a02e04e681dce0716974ad371a",
+      "sha256": "388a194283e0d8edb83b60d8df7d330820f33d74c9d8e15261977f107e0c2723",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -82191,6 +82321,7 @@
         "source",
         "text",
         "u",
+        "validateResponseDocumentV2",
         "value"
       ],
       "imports": [
@@ -82206,7 +82337,8 @@
         "frontend/src/lib/xrogaRichResults.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/DataV2.tsx:4",
@@ -82222,6 +82354,7 @@
         "frontend/src/components/response-experience-v2/document.test.ts:3",
         "frontend/src/components/response-experience-v2/exportText.ts:1",
         "frontend/src/components/response-experience-v2/review/LocalReview.tsx:4",
+        "frontend/src/components/response-experience-v2/shareSnapshot.ts:1",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:4",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts:2"
       ],
@@ -82272,7 +82405,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:7",
@@ -82352,6 +82486,7 @@
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts:6",
         "frontend/src/components/response-experience-v2/document.test.ts:9",
         "frontend/src/components/response-experience-v2/exportText.test.ts:3",
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13"
       ],
       "reachable": true,
@@ -82365,7 +82500,8 @@
       "testCoverage": [
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
-        "frontend/src/components/response-experience-v2/exportText.test.ts"
+        "frontend/src/components/response-experience-v2/exportText.test.ts",
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -82408,7 +82544,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:6",
@@ -82446,7 +82583,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:8",
@@ -82499,7 +82637,8 @@
         "frontend/src/components/response-experience-v2/calculations.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:9",
@@ -82535,7 +82674,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10",
@@ -82576,7 +82716,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:7",
@@ -82654,6 +82795,54 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:5d8cfb36402823042c48",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/shareSnapshot.ts",
+      "sha256": "0e12591dd36b84dfa2dabf3364775d8b3d9994448be95876a687e06928324f6b",
+      "symbols": [
+        "RICH_SHARE_PREFIX",
+        "SHARE_LIMIT",
+        "raw",
+        "readRichShareSnapshot",
+        "result",
+        "richShareSnapshot",
+        "snapshot"
+      ],
+      "imports": [
+        "./document"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/document.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/share/[token]/page.tsx:10",
+        "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:9",
+        "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:fee428dd693a0255629e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/sourceRegistry.ts",
@@ -82683,7 +82872,8 @@
         "frontend/src/lib/xrogaCitations.ts"
       ],
       "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:11",
@@ -87071,7 +87261,7 @@
       "id": "surface:33d78a7d2ee718859b5a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "sha256": "14cc2107228c27e9c3752507c7bf7f519d3e1fdedba20c4a01988605e7059af8",
+      "sha256": "b4d0f713f8e809ec97baa95835834996e6541e40133792b5a5517df063a8b3bc",
       "symbols": [
         "BrandDefinition",
         "BrandIcon",
@@ -88083,7 +88273,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "3726daf9eb73ba5850181994221d86ebc546a33b61cbbb1f5aa51023a11fdb6a",
+      "sha256": "c81cd724d7ddd20482c989468cd7ee2bcf4e0183b14b0ea0c8a9f7bf19d158b9",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -99766,6 +99956,7 @@
         "frontend/src/app/admin/feedback/page.tsx",
         "frontend/src/app/os-preview/founder/page.tsx",
         "frontend/src/app/os-preview/layout.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/middleware.ts"
       ],
       "callers": [
@@ -107658,7 +107849,8 @@
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
-        "frontend/src/app/os-preview/rich-results/page.tsx"
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/document.ts:2",
@@ -107869,7 +108061,8 @@
         "frontend/src/app/(workspace)/dashboard/page.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
-        "frontend/src/app/os-preview/rich-results/page.tsx"
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/sourceRegistry.ts:1",
@@ -108526,6 +108719,7 @@
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts:3",
         "frontend/src/components/response-experience-v2/document.test.ts:8",
         "frontend/src/components/response-experience-v2/exportText.test.ts:4",
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:3",
         "frontend/src/context/TerminalChatContext.tsx:98",
         "frontend/src/lib/xrogaResponseDocument.test.ts:4",
         "frontend/src/lib/xrogaRichResults.test.ts:4"
@@ -108542,6 +108736,7 @@
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts",
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
         "frontend/src/lib/xrogaResponseDocument.test.ts",
         "frontend/src/lib/xrogaRichResults.test.ts"
       ],
@@ -108624,7 +108819,8 @@
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(workspace)/layout.tsx",
         "frontend/src/app/(workspace)/workspace/page.tsx",
-        "frontend/src/app/os-preview/rich-results/page.tsx"
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:2",
@@ -120029,9 +120225,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:11c5e486f0a67daea5ac",
+      "id": "registration:57b6a990c518629c0edf",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 49,
+      "line": 50,
       "receiver": "router",
       "method": "post",
       "path": "/",
@@ -120043,9 +120239,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b2d518756f7b380632c7",
+      "id": "registration:7861c36d8a56559a390a",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 90,
+      "line": 91,
       "receiver": "router",
       "method": "get",
       "path": "/:token",
@@ -120055,9 +120251,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:eb9873473561385927f1",
+      "id": "registration:2f61866f9eb95c6062e8",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 139,
+      "line": 140,
       "receiver": "router",
       "method": "delete",
       "path": "/:token",
@@ -122666,10 +122862,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:45d186ca24e7739fa6a8",
-      "registrationId": "registration:11c5e486f0a67daea5ac",
+      "id": "route:3d4828f38fb645e90d47",
+      "registrationId": "registration:57b6a990c518629c0edf",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 49,
+      "line": 50,
       "method": "POST",
       "path": "/api/message-shares",
       "mountChain": [
@@ -122683,10 +122879,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:7d6d14cdd2f9beb62db4",
-      "registrationId": "registration:b2d518756f7b380632c7",
+      "id": "route:2fc570ab39dcbdaaeb4e",
+      "registrationId": "registration:7861c36d8a56559a390a",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 90,
+      "line": 91,
       "method": "GET",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -122698,10 +122894,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:abaabad585850d392d6a",
-      "registrationId": "registration:eb9873473561385927f1",
+      "id": "route:49bd476e3cf2dc7f6664",
+      "registrationId": "registration:2f61866f9eb95c6062e8",
       "sourcePath": "backend/src/routes/messageShares.ts",
-      "line": 139,
+      "line": 140,
       "method": "DELETE",
       "path": "/api/message-shares/:token",
       "mountChain": [
@@ -127940,7 +128136,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ff0638e9750b28a58cab",
+      "id": "finding:bfb9cdd114dd546a1c0a",
       "sourcePath": "backend/src/ai/prompts.ts",
       "line": 239,
       "kind": "TODO",
@@ -132228,9 +132424,9 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:aa4d9ce973e5a63d140f",
+      "id": "frontend-call:28a266db3514c3d83afa",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "line": 37,
+      "line": 42,
       "callee": "fetchApiResponse",
       "reachable": true
     },
@@ -133915,16 +134111,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:37f370ad8c06b45ee932",
+      "id": "frontend-call:552dc2309fa87972a6f1",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "line": 109,
+      "line": 112,
       "callee": "api.messageShares.create",
       "reachable": true
     },
     {
-      "id": "frontend-call:ebfa5806919d5bfc451d",
+      "id": "frontend-call:5814bebe94d0928bdff3",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "line": 148,
+      "line": 151,
       "callee": "api.messageShares.revoke",
       "reachable": true
     },
@@ -135207,7 +135403,7 @@
     {
       "id": "test-suite:3ba52610d111186305bc",
       "sourcePath": "backend/src/ai/completionDiagnostics.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -135648,7 +135844,7 @@
     {
       "id": "test-suite:de9619c7c3ade1d8da4c",
       "sourcePath": "backend/src/ai/richResponsePrompt.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -136033,7 +136229,7 @@
     {
       "id": "test-suite:4c7f0731a324fb7d047d",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.test.ts",
-      "declaredTests": 40,
+      "declaredTests": 41,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -136664,6 +136860,13 @@
       "id": "test-suite:796a05e009d6cef9ba79",
       "sourcePath": "backend/src/lib/resilience/retry.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0175e909907155f58619",
+      "sourcePath": "backend/src/lib/richShareSnapshot.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -137988,7 +138191,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 74,
+      "declaredTests": 75,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -140311,6 +140514,13 @@
       "id": "test-suite:cc6bd4d38d23693519cc",
       "sourcePath": "frontend/src/components/response-experience-v2/mathSyntax.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:67a9ada9d82af2bb3cfe",
+      "sourcePath": "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

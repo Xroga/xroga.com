@@ -1265,16 +1265,16 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "callIds": [
-        "8b17459285690a49b155",
-        "4bb5cd82397688351d8d",
-        "15290800ba879fff883d",
-        "374ef098d8a33ca2b471"
+        "c9a009f6baa9e3a3bbad",
+        "000d28d21ea7dba70f24",
+        "2f60349dbbab02755103",
+        "c4dcd4d97035ff02f08f"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -1300,14 +1300,14 @@
     },
     {
       "path": "backend/src/routes/messageShares.ts",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "callIds": [
-        "acc2d6ec920ed57add31",
-        "b2954d5c32ecb797fbcb"
+        "db7f2c7b53d05936f3da",
+        "ea4d7ecf3043636a2883"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
-      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance.",
+      "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed opt-in literal text storage. Authentication, owner predicates, visibility, revocation and size bounds are unchanged. The share page escapes text through React. This review does not claim new live acceptance. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
       "evidence": [
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -4410,9 +4410,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "sourceSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
       "callIds": [
-        "d23d6bc9b4e588b32dcf"
+        "1dc5b14f8d4eb831d8bf"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -5891,9 +5891,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "sourceSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
       "callIds": [
-        "0e9d2d78b2724eef8c51"
+        "bab7cb9676b8369a55a7"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -28555,6 +28555,34 @@
         {
           "path": "backend/src/security/frontendScope.local.integration.ts",
           "marker": "assert.ok((await anonymousClient.rpc('save_current_contact_phone'"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/share/[token]/page.tsx",
+      "sourceSha256": "02be162aa110db0a216d12681f621023bd0c5737a2c48f484a7244b856a7bb16",
+      "callIds": [
+        "d9642208258b6b210b66"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Existing user-bound Supabase server client calls the fixed self-role RPC with no user-supplied arguments. The migration scopes it to auth.uid(). The result is consumed only by the unchanged confirmed-founder/owner/AAL2 presentation decision. Share ownership is independently enforced by the existing API before any response is rendered.",
+      "reason": "New read-only self-role caller reviewed for rich Share presentation. No role grant, identity override, customer table read, SQL change, tool handler, or execution authority is added. Existing authenticated/canary rollout rules remain unchanged, and failures retain the plain-text fallback. Source review is not a substitute for required authenticated CI and live acceptance.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/share/[token]/page.tsx",
+          "marker": "client.rpc('current_community_role')"
+        },
+        {
+          "path": "frontend/src/components/response-experience-v2/access.ts",
+          "marker": "return authorizeFounderRequest(deps);"
+        },
+        {
+          "path": "supabase/migrations/20260729192159_community_platform.sql",
+          "marker": "when (select auth.uid()) is null then 'guest'"
+        },
+        {
+          "path": "frontend/src/lib/osFounderAccess.test.ts",
+          "marker": "only confirmed target email plus owner role plus AAL2 passes"
         }
       ]
     }

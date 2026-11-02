@@ -611,6 +611,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               >
                 {conversationV2 && msg.role !== 'system' ? (
                   <ConversationTurnV2 role={msg.role} content={msg.content}
+                    message={msg}
                     copyContent={responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
