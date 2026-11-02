@@ -54,7 +54,7 @@
       "current": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95"
     }
   },
-  "newPresentationSourceSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
+  "newPresentationSourceSha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
   "noNewDestinationOrModelRequest": true,
   "schemaTokensReserved": true,
   "paidTestsStopped": true,
@@ -75,5 +75,13 @@
       "job": "4803318d-a20d-42de-b9ee-04e453711348",
       "backendTypecheck": "PASS"
     }
-  ]
+  ],
+  "beforeWorkspaceBoundsContractSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
+  "workspaceBoundsCorrection": {
+    "backendCommit": "6b924d4cdea315d87845a8ad62c54d84a36f3c53",
+    "scope": "DATA_LIMIT_COMPATIBILITY_NOT_LIVE_ACCEPTANCE",
+    "codecTestsJob": "18cf280e-6c35-481c-9767-5411f05f4d9c",
+    "crossLayerTestsJob": "74290d3d-3a03-46ae-8b6b-9eb935137677",
+    "originalDataRetainedOnRejection": true
+  }
 }

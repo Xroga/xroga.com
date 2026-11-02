@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-structured-contract-20261102",
-    "sha": "a6f5f9daa7ad4f2c7ad4c71fdf5d3dbe45b91479",
-    "sourceTimestampUtc": "2026-11-02T22:54:44+05:00",
-    "auditStartedUtc": "2026-11-02T17:59:22.841Z",
+    "sha": "6b924d4cdea315d87845a8ad62c54d84a36f3c53",
+    "sourceTimestampUtc": "2026-11-02T23:18:03+05:00",
+    "auditStartedUtc": "2026-11-02T18:19:11.327Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -8000,7 +8000,7 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
+      "sha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
       "symbols": [
         "JsonSchema",
         "Kind",
@@ -8012,6 +8012,7 @@
         "block",
         "c",
         "calculator",
+        "cellText",
         "chart",
         "chartTypes",
         "completedRoot",
@@ -8021,6 +8022,7 @@
         "dataSchemas",
         "depth",
         "derivedSchema",
+        "encoded",
         "escaped",
         "finite",
         "graph",
@@ -8050,10 +8052,12 @@
         "raw",
         "response",
         "section",
+        "shortText",
         "str",
         "strings",
         "table",
         "text",
+        "unitText",
         "validateSection",
         "validators",
         "value"
@@ -8069,6 +8073,7 @@
       "callers": [
         "backend/src/ai/openaiCompat.egress.test.ts:9",
         "backend/src/ai/pipeline.ts:25",
+        "backend/src/ai/responsePresentation.limits.test.ts:3",
         "backend/src/ai/responsePresentation.test.ts:3",
         "backend/src/ai/tenantModelDispatch.test.ts:10",
         "backend/src/ai/universal/goalContract.ts:2",
@@ -8086,6 +8091,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/openaiCompat.egress.test.ts",
+        "backend/src/ai/responsePresentation.limits.test.ts",
         "backend/src/ai/responsePresentation.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts"
       ],
@@ -139550,6 +139556,13 @@
       "id": "test-suite:808bf4865334cd9932bd",
       "sourcePath": "backend/src/ai/resourceMeter.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d5fcaa881691852f97f1",
+      "sourcePath": "backend/src/ai/responsePresentation.limits.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
