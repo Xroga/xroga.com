@@ -1,0 +1,186 @@
+{
+  "observedAtUtc": "2026-11-02T10:30:53.068473+00:00",
+  "frontendSource": "a9860e28c23063b3204ca6afd610bf5e2b6cef68",
+  "backendSource": "93474a05881c8ff171fc9ae371ef04d76a780ff3",
+  "backendAppCommit": "aebd333e",
+  "frontendExportAppCommit": "2c2405f8",
+  "frontendDiagramAppCommits": [
+    "42096872",
+    "a31ce56f",
+    "810a32f8"
+  ],
+  "newBackendDeployed": false,
+  "productionFrontendPromoted": false,
+  "visualPreview": {
+    "source": "5535e14e08da7fb2dd00aac34af391262f120ab6",
+    "deployment": "3z8uFgaHSvisyH43sBn3ZwbnoDB6",
+    "status": "READY",
+    "actualAuthenticatedWorkspace": true,
+    "actualStoredChat": "5214480f-7622-4566-b8aa-d712e73efc33",
+    "notAnotherGeneration": true,
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "mobilePageWidth": 390,
+    "mobileDiagramWidths": [
+      293,
+      293
+    ],
+    "mobileDiagramScrollWidths": [
+      293,
+      293
+    ],
+    "graphNodes": [
+      5,
+      4
+    ],
+    "graphEdges": [
+      6,
+      7
+    ],
+    "proseFont": "Inter",
+    "proseFontSizePx": 16,
+    "proseFontWeight": 400,
+    "newModelCalls": 0,
+    "factualAcceptance": false
+  },
+  "visualCodeIdenticalInFinalFrontend": [
+    {
+      "path": "frontend/src/components/response-experience-v2/diagramSyntax.ts",
+      "gitBlob": "bab6054d2f35f7e868dd498b0bc54113566e0387"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
+      "gitBlob": "0e7f76a6debcbd81c3b5cbd59ac805e0b32640a1"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/DataV2.tsx",
+      "gitBlob": "8a06f2b1d49bde0291e18c25aa743994d88974c9"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/ProseV2.tsx",
+      "gitBlob": "e832831c6c67b9eead2dd13bdd6ee36899cc1529"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "gitBlob": "bba05e7a31fc2c7bd08b90bd6722d7a4812cedcd"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
+      "gitBlob": "2bc358857e0ff9d234e2404fe352aeb281c52075"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/response-v2.module.css",
+      "gitBlob": "7f277356aa65547d9fe4c9148b64ddf5358854a9"
+    }
+  ],
+  "capturedAnswerExport": {
+    "scope": "REGRESSION_OF_CAPTURED_GENUINE_NEW_RESPONSE_NOT_A_NEW_GENERATION",
+    "chat": "5214480f-7622-4566-b8aa-d712e73efc33",
+    "exportCharacters": 4683,
+    "exportSha256": "71f8149073d0c6ecd080ba6aa855d88906480ebbb86cd5005d2839e49c118042",
+    "diagramCounts": [
+      {
+        "nodes": 5,
+        "edges": 6
+      },
+      {
+        "nodes": 4,
+        "edges": 7
+      }
+    ],
+    "headingCount": 1,
+    "newModelRequests": 0,
+    "factualAcceptance": false,
+    "clipboardOsReadVerified": false
+  },
+  "clipboard": {
+    "uiCopiedState": true,
+    "independentClipboardContent": "NOT_VERIFIED_BROWSER_READ_RETURNED_STALE_EARLIER_CONTENT",
+    "noUnprovenClipboardBugFix": true
+  },
+  "share": {
+    "observedDuplicateHeading": true,
+    "sourceCorrectionFocusedTestsPassed": true,
+    "finalAuthenticatedPreviewRecheck": "PASS_FOR_COMPLETE_TEXT_EXPORT_ONLY",
+    "ownerOnlyLinkCreated": true,
+    "publicShareCreated": false,
+    "exportCharacters": 4683,
+    "componentRolesHeadingCount": 1,
+    "flowSourcePresent": true,
+    "sequenceSourcePresent": true,
+    "conclusionPreserved": true,
+    "ownerOnlyLinkOpened": true,
+    "ownerOnlyLinkRevoked": true,
+    "revokedLinkReturnedNotFound": true,
+    "sharedPageInteractiveGraphs": false,
+    "remainingLimitation": "Existing Share contract stores and displays complete text, not interactive structured response blocks."
+  },
+  "localChecks": {
+    "frontendPriorCombinedTests": 20,
+    "frontendExportFollowupTests": 8,
+    "backendCompletionTests": 6,
+    "backendTypeCheck": "PASS",
+    "sourceAndRuntimeChecks": "PASS",
+    "strictAudit": {
+      "total": 150,
+      "reviewed": 150,
+      "pending": 0,
+      "unresolvedHighRisk": 0
+    },
+    "historicalProofs": "UNCHANGED"
+  },
+  "founderGlmDecision": "Owner plans future GLM removal. No further GLM login requested. Production routing and credentials unchanged. Unknown reservation remains held.",
+  "paidAcceptance": "STOPPED_NO_FURTHER_SUBMISSIONS",
+  "productAcceptance": "FAIL",
+  "finalPromotion": "BLOCKED",
+  "pr909": "DRAFT",
+  "finalPreview": {
+    "source": "a9860e28c23063b3204ca6afd610bf5e2b6cef68",
+    "deployment": "6KciCT9tri4M3r9DqWMSBK7GBW2M",
+    "url": "https://xrogaai-k7ipopcx5-xrogas-projects.vercel.app",
+    "environment": "Preview",
+    "status": "READY",
+    "buildDurationSeconds": 264,
+    "authenticatedStoredAnswerReopened": true,
+    "newGeneration": false,
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "mobilePageWidth": 390,
+    "mobileDiagramWidths": [
+      293,
+      293
+    ],
+    "mobileDiagramScrollWidths": [
+      293,
+      293
+    ],
+    "graphNodes": [
+      5,
+      4
+    ],
+    "graphEdges": [
+      6,
+      7
+    ],
+    "viewportOverrideReset": true,
+    "newModelCalls": 0,
+    "productionPromotion": false,
+    "qualityAcceptance": false
+  }
+}
