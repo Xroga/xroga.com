@@ -1,0 +1,70 @@
+{
+  "scope": "OFFLINE_INTEGRATION_NOT_LIVE_ACCEPTANCE",
+  "reference": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
+  "backendContractSource": "a6f5f9daa7ad4f2c7ad4c71fdf5d3dbe45b91479",
+  "contractSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
+  "unchangedPersistenceAndEgressCalls": true,
+  "noModelCallsOrNewProvider": true,
+  "legacyUntouched": true,
+  "localTests": {
+    "responsePersistenceAndShare": {
+      "job": "ed75e720-5a76-483c-8452-6d846f93a1da",
+      "passed": 58
+    },
+    "crossLayerContract": {
+      "job": "8901f33f-a99b-4eb7-8382-1bfa35961014",
+      "passed": 1
+    },
+    "typecheck": {
+      "job": "d119f0ca-5a74-41e5-9609-100f08a91a96",
+      "result": "PASS"
+    }
+  },
+  "realGeneratedContractAcceptance": "PENDING_NOT_TESTED",
+  "sourceBindings": {
+    "frontend/src/components/response-experience-v2/ProseV2.tsx": {
+      "before": "a74645677144584888cf76406b849ef87d9397c787df07d2424b0c6b435417b0",
+      "current": "f0bba995948e2f513002d25085c7d08d09f59c9e68a903b991dd652d66e3559b"
+    },
+    "frontend/src/components/response-experience-v2/composition.test.ts": {
+      "before": "186c471e81dad2a99a49a38eec671fb0860a8f73c70f6dd68a0c4642dcd69c6d",
+      "current": "fb897ffbbb221d7ee69cafff193f35c739ccfab3ea4caa1282319cd2848d1eb0"
+    },
+    "frontend/src/components/response-experience-v2/composition.ts": {
+      "before": "7afbe391617dbf0d6729b7e35c2144d87ddb81bd4ea002ada62dfcf1cc6a99a4",
+      "current": "47fe9faf3787cd74159929caac140d3eec11e859caa31d26f851060a4db62d27"
+    },
+    "frontend/src/components/response-experience-v2/entityRegistry.test.ts": {
+      "before": "5969e49e9e02bd2599c71313e01e413b120590b2535617115155a42a23344429",
+      "current": "3796be72a51165fdc62c8466dda303c5080b764bb8518bc8ea6d89b829a695a1"
+    },
+    "frontend/src/components/response-experience-v2/entityRegistry.ts": {
+      "before": "47422827a9deca07259c9c00ca27b9f56c86ac0f991f412c5d65d6b265174926",
+      "current": "24efdb288e9c885ee695d6c67b3b762ea9f68a85eef4577584078d01f2c68d02"
+    },
+    "frontend/src/context/TerminalChatContext.tsx": {
+      "before": "961518473899c8b1128c252d7b736e8f44b6fe10aa8ecf987cf102966676ac6b",
+      "current": "d5cda324984e321abc52418abf449408d1a76bae5d2f34e3145f0f9c1c39fab5"
+    },
+    "frontend/src/lib/api.ts": {
+      "before": "7e442f5db8f0da1a4a618be641d639881030f98329fc34f782103f2a5b19827a",
+      "current": "0e2f8ba330c0a479e8aa3ac7fbf88c1141fe650f67790edd57fa25927deb4a20"
+    },
+    "frontend/src/lib/runLightLaneChat.ts": {
+      "before": "672d07640d6fb6184274d5b6e080acdd347be5317437a838347884b77207a7a9",
+      "current": "c56592637fe2a74c344c471dfc93b246133acba8db0882826b5e9cf595a80e83"
+    },
+    "frontend/src/lib/xrogaBlocks.ts": {
+      "before": "685fdbdb94902996573d1066215ade86e6e33991012b2a153a1741bb151c30fc",
+      "current": "bdad296992542fce270dc1d4913a5b29f2881c075276827e04e2f22ae61acea4"
+    },
+    "frontend/src/lib/xrogaResponseDocument.test.ts": {
+      "before": "452ab53396b0f91733c3197d0a1fabdda01e6d60a698264d99f58b92101c6696",
+      "current": "b020a670e175e029548af013e9f732ec92f3556201f02791139d8787866234ff"
+    },
+    "frontend/src/lib/xrogaResponseDocument.ts": {
+      "before": "c452243b525f07a92527ccecc610d46f7c2842ee671d894434a035a0ec8aa720",
+      "current": "77dce0e0b3983fa1af2dcbec5235da53f945d2f27e6d3180fdc9db0fa80cf303"
+    }
+  }
+}

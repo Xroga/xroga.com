@@ -23,7 +23,8 @@
       "freeVoiceCallerContinuation": "docs/xroga/evidence/local-voice-20261030/free-source-boundary.json",
       "beforeGuestRichGuideSha256": "3840396b75b53b16bdde022098e2bbf623e5263d072bf8301e198e2f5f008e06",
       "guestRichGuideContinuation": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md",
-      "beforeCompletionSDKBindingSha256": "b52400f8baec06ca69c642b519bb53fa81d98cdffc8a490f5f821022318efd6f"
+      "beforeCompletionSDKBindingSha256": "b52400f8baec06ca69c642b519bb53fa81d98cdffc8a490f5f821022318efd6f",
+      "beforeStructuredWorkspaceSha256": "7a44e2551379a4a160f350a9b1c7ecb3e3fd63f5df6e4304545b97b335443f47"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",

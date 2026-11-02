@@ -9,6 +9,8 @@
   "risk": "high",
   "scope": "Independent response V2 with complete visible answers and source-backed rich presentation. Founder-authorized controlled authenticated-user rollout. Legacy renderer retained.",
   "changedFiles": [
+    "backend/src/ai/responsePresentation.ts",
+    "frontend/src/lib/responsePresentation.integration.test.ts",
     "backend/src/ai/prompts.ts",
     "backend/src/ai/richResponsePrompt.test.ts",
     "frontend/src/lib/xrogaBlocks.ts",

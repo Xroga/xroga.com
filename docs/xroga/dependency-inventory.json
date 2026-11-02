@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2259f30c06bd8c6179354012fdbf751298fdd2ff",
+  "source_sha": "047c6d722907bdb1bb56225377f1e2ad1d41f9ae",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20980,7 +20980,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "a74645677144584888cf76406b849ef87d9397c787df07d2424b0c6b435417b0"
+      "sha256": "f0bba995948e2f513002d25085c7d08d09f59c9e68a903b991dd652d66e3559b"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
@@ -21012,7 +21012,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/composition.ts",
-      "sha256": "7afbe391617dbf0d6729b7e35c2144d87ddb81bd4ea002ada62dfcf1cc6a99a4"
+      "sha256": "47fe9faf3787cd74159929caac140d3eec11e859caa31d26f851060a4db62d27"
     },
     {
       "path": "frontend/src/components/response-experience-v2/conversation.ts",
@@ -21028,7 +21028,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
-      "sha256": "47422827a9deca07259c9c00ca27b9f56c86ac0f991f412c5d65d6b265174926"
+      "sha256": "24efdb288e9c885ee695d6c67b3b762ea9f68a85eef4577584078d01f2c68d02"
     },
     {
       "path": "frontend/src/components/response-experience-v2/exportText.ts",
@@ -21756,7 +21756,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "961518473899c8b1128c252d7b736e8f44b6fe10aa8ecf987cf102966676ac6b"
+      "sha256": "d5cda324984e321abc52418abf449408d1a76bae5d2f34e3145f0f9c1c39fab5"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -21804,7 +21804,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "7e442f5db8f0da1a4a618be641d639881030f98329fc34f782103f2a5b19827a"
+      "sha256": "0e2f8ba330c0a479e8aa3ac7fbf88c1141fe650f67790edd57fa25927deb4a20"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22364,7 +22364,7 @@
     },
     {
       "path": "frontend/src/lib/runLightLaneChat.ts",
-      "sha256": "672d07640d6fb6184274d5b6e080acdd347be5317437a838347884b77207a7a9"
+      "sha256": "c56592637fe2a74c344c471dfc93b246133acba8db0882826b5e9cf595a80e83"
     },
     {
       "path": "frontend/src/lib/safeDates.ts",
@@ -22676,7 +22676,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "685fdbdb94902996573d1066215ade86e6e33991012b2a153a1741bb151c30fc"
+      "sha256": "bdad296992542fce270dc1d4913a5b29f2881c075276827e04e2f22ae61acea4"
     },
     {
       "path": "frontend/src/lib/xrogaBrand.ts",
@@ -22732,7 +22732,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "c452243b525f07a92527ccecc610d46f7c2842ee671d894434a035a0ec8aa720"
+      "sha256": "77dce0e0b3983fa1af2dcbec5235da53f945d2f27e6d3180fdc9db0fa80cf303"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",
