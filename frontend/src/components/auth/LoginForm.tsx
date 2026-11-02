@@ -288,12 +288,6 @@ export function LoginForm() {
           />
         </div>
 
-        <div className="text-right">
-          <Link className="text-xs font-semibold text-[#006aff] hover:underline" href="/auth/forgot-password">
-            Forgot password?
-          </Link>
-        </div>
-
         <div>
           <AuthModernLabel
             htmlFor="login-password"
@@ -376,6 +370,11 @@ export function LoginForm() {
             required
             autoComplete="current-password"
           />
+          <div className="mt-1 text-right leading-none">
+            <Link className="text-xs font-semibold text-[#006aff] hover:underline" href="/auth/forgot-password">
+              Forgot password?
+            </Link>
+          </div>
         </div>
 
         {error ? (
