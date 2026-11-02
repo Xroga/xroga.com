@@ -10,6 +10,7 @@ import {
   type ModelId,
 } from '../models.js';
 import { getRouterAdminConfig } from '../routerConfig.js';
+import { PRESENTATION_PLAN_INSTRUCTIONS } from '../responsePresentation.js';
 
 import {
   withTenantModelReservation,
@@ -1680,7 +1681,7 @@ export async function planSemanticRequest(
       authorities,
     )}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED. Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; publicationRequirement=NONE|REQUESTED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(
       availableSummary,
-    )}`;
+    )}\n\n${PRESENTATION_PLAN_INSTRUCTIONS}`;
 
   const interpretationInput:
     GoalInterpretationInput = {

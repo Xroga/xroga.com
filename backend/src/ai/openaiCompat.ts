@@ -16,6 +16,7 @@ import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH} from './modelSdkAdmission.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 import { CompletionDiagnostics, requirePublicCompletion, providerCostMicroUsd } from './completionDiagnostics.js';
+import type { PresentationResponseFormat } from './responsePresentation.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -291,6 +292,7 @@ export async function chatCompletion(
     maxTokens?: number;
     temperature?: number;
     json?: boolean;
+    responseFormat?: PresentationResponseFormat;
     /** Provider-specific reasoning control for compact structured workloads. */
     reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
@@ -299,18 +301,22 @@ export async function chatCompletion(
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
-  opts={...opts};
+  opts={...opts,...(opts.responseFormat ? {responseFormat:structuredClone(opts.responseFormat)} : {})};
   try {
     const admission=requireModelSdkAdmission(opts.beforeDispatch,modelId,opts.credentialOverride);
     const checkCancellation=()=>{if(opts.signal?.aborted)throw Object.assign(Error('Build cancelled'),{name:'AbortError',code:'BUILD_CANCELLED'});};
     checkCancellation();
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    const responseFormat = opts.responseFormat
+      ? endpoint.provider === 'openrouter' ? opts.responseFormat : { type: 'json_object' as const }
+      : opts.json ? { type: 'json_object' as const } : undefined;
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
     const client = createModelProviderClient(endpoint,async wire=>{
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
       assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
+      if(!isDeepStrictEqual(JSON.parse(wire).response_format,responseFormat))modelAdmissionDenied();
       await opts.beforeDispatch!(wire);checkCancellation();
     });
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
@@ -322,7 +328,7 @@ export async function chatCompletion(
           ...(temperature === undefined ? {} : { temperature }),
           ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
           ...providerPriceControls(modelId, endpoint.provider),
-          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+          ...(responseFormat ? { response_format: responseFormat } : {}),
         },
         opts.signal ? { signal: opts.signal } : undefined,
       ),
@@ -373,24 +379,29 @@ export async function chatCompletionStream(
     reasoningMode?: ReasoningMode;
     /** Ask the compatible endpoint to constrain the response to one JSON object. */
     json?: boolean;
+    responseFormat?: PresentationResponseFormat;
     signal?: AbortSignal;
     credentialOverride?: string;
     beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
-  opts={...opts};
+  opts={...opts,...(opts.responseFormat ? {responseFormat:structuredClone(opts.responseFormat)} : {})};
   try {
     const admission=requireModelSdkAdmission(opts.beforeDispatch,modelId,opts.credentialOverride);
     const checkCancellation=()=>{if(opts.signal?.aborted)throw Object.assign(Error('Build cancelled'),{name:'AbortError',code:'BUILD_CANCELLED'});};
     checkCancellation();
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    const responseFormat = opts.responseFormat
+      ? endpoint.provider === 'openrouter' ? opts.responseFormat : { type: 'json_object' as const }
+      : opts.json ? { type: 'json_object' as const } : undefined;
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
     const client = createModelProviderClient(endpoint,async wire=>{
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
       assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
+      if(!isDeepStrictEqual(JSON.parse(wire).response_format,responseFormat))modelAdmissionDenied();
       await opts.beforeDispatch!(wire);checkCancellation();
     });
     if (opts.signal?.aborted) {
@@ -410,7 +421,7 @@ export async function chatCompletionStream(
           ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
           ...providerPriceControls(modelId, endpoint.provider),
           ...(endpoint.provider === 'openrouter' ? { stream_options: { include_usage: true } } : {}),
-          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+          ...(responseFormat ? { response_format: responseFormat } : {}),
           stream: true,
         } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
         opts.signal ? { signal: opts.signal } : undefined,

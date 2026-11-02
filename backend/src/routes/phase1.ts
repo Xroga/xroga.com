@@ -1585,6 +1585,8 @@ router.post(
           completion:
             result.completion,
 
+          ...(result.responseSource ? { responseSource: result.responseSource } : {}),
+
           intent:
             result.intent,
 
