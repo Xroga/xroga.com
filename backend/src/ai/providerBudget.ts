@@ -8,6 +8,7 @@ import { capacityUnavailableError } from './capacityUnavailable.js';
 import { PostCompletionAccountingError, recordCompletedProviderUsage } from './postCompletionAccounting.js';
 import { registerModelSdkAdmission, modelAdmissionDenied, MODEL_REDIRECT_AFTER_DISPATCH } from './modelSdkAdmission.js';
 import type { BoundModelDispatch, ModelPayload } from './tenantModelDispatch.js';
+import { assertProviderEnabled } from './providerPolicy.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
@@ -324,6 +325,7 @@ export async function reserveProviderBudget(input: {
   purpose?: BudgetPurpose;
   idempotencyKey?: string;
 }): Promise<ProviderReservation> {
+  assertProviderEnabled(MODELS[input.modelId].provider);
   const purpose = input.purpose ?? 'daily_work';
   const idempotencyKey = input.idempotencyKey ?? randomUUID();
   const amount = estimateProviderReservationMicroUsd(input);
@@ -423,6 +425,7 @@ export async function reserveOperationsProviderBudget(input: {
   maximumOutputTokens: number;
   idempotencyKey: string;
 }): Promise<ProviderReservation> {
+  assertProviderEnabled(MODELS[input.modelId].provider);
   const amount = estimateProviderReservationMicroUsd(input);
   if (!hasDurableStore()) throw new Error('Durable Operations provider accounting is unavailable');
   const request = () => getSupabaseAdmin().rpc('reserve_operations_provider_budget', {

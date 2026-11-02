@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "0c65f6fba962a5a74cb3a25183d5d6dd45cc95f21ebcc91d91e7cc589f52c403",
+  "sourceTreeDigest": "971a74d71555ba4001a3e7af26a9238ec292845d3caba350cc107b5ac22a0c89",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 234,
+      "line": 238,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -53,7 +53,7 @@
         {
           "path": "backend/src/ai/providerPolicy.ts",
           "marker": "assertModelProviderDestination",
-          "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          "sha256": "7d417af23d41a2850e0dd3eed8cbf6b8aa761be43b7c7583ca31eb502b358583"
         },
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
@@ -75,7 +75,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 313,
+      "line": 317,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -117,7 +117,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 400,
+      "line": 404,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",

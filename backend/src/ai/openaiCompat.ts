@@ -225,6 +225,10 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
     fetch:async (input,init)=>{
       const url=new URL(typeof input==='string'?input:'url' in input?input.url:input.href);
       if(url.href!==endpoint.baseUrl+'/chat/completions'||init?.method?.toUpperCase()!=='POST'||typeof init.body!=='string')return deniedResponse('MODEL_DESTINATION_DENIED');
+      // Recheck at every wire attempt, including SDK retries and clients created
+      // before an operator disabled the provider. Never send those bytes first.
+      try { assertModelProviderDestination(endpoint.provider,endpoint.baseUrl); }
+      catch { return deniedResponse('MODEL_DESTINATION_DENIED'); }
       try { await beforeDispatch?.(init.body); }
       catch {
         // Let the SDK preserve the local policy code, rather than wrapping a

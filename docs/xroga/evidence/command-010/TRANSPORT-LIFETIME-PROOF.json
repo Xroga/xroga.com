@@ -276,7 +276,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8",
+      "sha256": "65cc0676da6cbae9a8b0488540bba268e9971bb1500e9920ea4977ae4b50ff24",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -571,7 +571,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "previousGenericSdkBinding": {
         "sha256": "be8bff52c0a19cd2a19c8235902191d954ef6cc1af4f631a3bfc1d2508600fdd",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -934,5 +934,16 @@
   "currentMainIntegration": {
     "evidence": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
     "scope": "CURRENT_SOURCE_BINDINGS_AND_INDIVIDUAL_NEW_CALLER_REVIEW_NOT_PRODUCTION_ACCEPTANCE"
+  },
+  "disabledProviderGuard": {
+    "reference": "756c95e3ad484c3f9b949e837bacd98609dfe3e3",
+    "paths": [
+      "backend/src/ai/openaiCompat.ts",
+      "backend/src/ai/providerBudget.ts",
+      "backend/src/ai/providerPolicy.ts"
+    ],
+    "tests": "backend/src/ai/disabledProviderDispatch.test.ts",
+    "scope": "PRE_DISPATCH_POLICY_DENIAL_NOT_LIVE_ACCEPTANCE",
+    "historicalReservationsChanged": false
   }
 }

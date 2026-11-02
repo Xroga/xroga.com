@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "db5be97b2fddbe9b813e94e88c8da27dda174601",
+  "source_sha": "756c95e3ad484c3f9b949e837bacd98609dfe3e3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15933,7 +15933,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8"
+      "sha256": "65cc0676da6cbae9a8b0488540bba268e9971bb1500e9920ea4977ae4b50ff24"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -15981,7 +15981,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48"
+      "sha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -15993,7 +15993,7 @@
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+      "sha256": "7d417af23d41a2850e0dd3eed8cbf6b8aa761be43b7c7583ca31eb502b358583"
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
@@ -23776,21 +23776,21 @@
       "hostname": "api.moonshot.ai",
       "protocol": "https:",
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 97,
+      "line": 108,
       "credentialsInUrl": false
     },
     {
       "hostname": "open.bigmodel.cn",
       "protocol": "https:",
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 98,
+      "line": 109,
       "credentialsInUrl": false
     },
     {
       "hostname": "openrouter.ai",
       "protocol": "https:",
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 99,
+      "line": 110,
       "credentialsInUrl": false
     },
     {
@@ -30419,7 +30419,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 254,
+      "line": 258,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30664,14 +30664,14 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 60,
+      "line": 61,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 61,
+      "line": 62,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30692,14 +30692,14 @@
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 70,
+      "line": 71,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 71,
+      "line": 72,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

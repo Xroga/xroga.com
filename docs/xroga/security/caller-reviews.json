@@ -4366,14 +4366,14 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "callIds": [
-        "bebfcf0f4ba426a71be1",
-        "67b1241b9b70b5f136ae"
+        "94489aa32a68c7a4fdda",
+        "44ec0e3d9e5e1d2b7b66"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
-      "reason": "Four exact dormant original007 callable budget contracts verified at f703fd6a46b441d7d7a4e58abb0a371e50ead020, disposable39408219627/job118579265766 and aggregate39408219586. Original issued context, exact captured subject and payment period, full paid-cycle receipt, owner/tier/budget read-back, actual two-owner concurrent replay, browser denial and forced SQL rollback/recovery pass. Four complete21-stage branch/integrated baselines pass. No active payment producer is invented, no real provider payment is made, and Phase3 grant/approval/financial authority isn't certified. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "reason": "Four exact dormant original007 callable budget contracts verified at f703fd6a46b441d7d7a4e58abb0a371e50ead020, disposable39408219627/job118579265766 and aggregate39408219586. Original issued context, exact captured subject and payment period, full paid-cycle receipt, owner/tier/budget read-back, actual two-owner concurrent replay, browser denial and forced SQL rollback/recovery pass. Four complete21-stage branch/integrated baselines pass. No active payment producer is invented, no real provider payment is made, and Phase3 grant/approval/financial authority isn't certified. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. 2026-11-02 disabled-provider guard: existing persistence expressions, owner/authority checks and settlement history remain unchanged. New provider denial occurs before reservations and at every HTTP dispatch. Focused synthetic negative tests do not certify live acceptance.",
       "evidence": [
         {
           "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -5234,22 +5234,22 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "callIds": [
-        "33169c5e9ad22ce0655f",
-        "7836681966b6d9215ec8",
-        "86106178c4a136dd921d",
-        "26e1c49e68e89b7b14bd",
-        "5c9be0f2e0f652c62e49",
-        "597ad99cc551e28182ea",
-        "5b2500bca0819c0cfbca",
-        "48608e9c8e68e6683453",
-        "298b5f4095b683f456b6",
-        "e052915067b01ca6077d"
+        "2d610e46c439e9273a5e",
+        "2e5880992f488282984b",
+        "f5130aa9b8cd2cdb67bb",
+        "b1a1e477694b3d7bee34",
+        "ae220f84048529472df9",
+        "2888978942dd62fb17c5",
+        "88760c47295d65236e97",
+        "13f890fb2df92a4cdd79",
+        "67bcc861839777c109be",
+        "1561091d3fa5485ba281"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
-      "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. 2026-11-02 disabled-provider guard: existing persistence expressions, owner/authority checks and settlement history remain unchanged. New provider denial occurs before reservations and at every HTTP dispatch. Focused synthetic negative tests do not certify live acceptance.",
       "evidence": [
         {
           "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -6266,16 +6266,16 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "callIds": [
-        "0aa6642b9d69de06f3b2",
-        "64c63cbd2cbdc0d0e6f6",
-        "54e741be8699adc0e781",
-        "f4a361a7bbed04369e1b"
+        "e10d2b38ae99fc4c6856",
+        "431d8f853fd12797ac83",
+        "f6c3765eabebd02c088e",
+        "c111f8bf7ac47bb9de43"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
-      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. 2026-11-02 disabled-provider guard: existing persistence expressions, owner/authority checks and settlement history remain unchanged. New provider denial occurs before reservations and at every HTTP dispatch. Focused synthetic negative tests do not certify live acceptance.",
       "evidence": [
         {
           "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -7260,13 +7260,13 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "callIds": [
-        "139fd59ee7c339b62229"
+        "d77d1dfc3b0307d6d704"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
-      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers. 2026-11-02 disabled-provider guard: existing persistence expressions, owner/authority checks and settlement history remain unchanged. New provider denial occurs before reservations and at every HTTP dispatch. Focused synthetic negative tests do not certify live acceptance.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
@@ -7388,13 +7388,13 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "callIds": [
-        "9e7cbeb3febc798d1112"
+        "e1e2dbde2c01de6d5963"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
-      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers. 2026-11-02 disabled-provider guard: existing persistence expressions, owner/authority checks and settlement history remain unchanged. New provider denial occurs before reservations and at every HTTP dispatch. Focused synthetic negative tests do not certify live acceptance.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
@@ -7516,13 +7516,13 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "callIds": [
-        "5d93190042e0b745b0a2"
+        "2d67ba2d9ee1eb89b2f8"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
-      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers. 2026-11-02 disabled-provider guard: existing persistence expressions, owner/authority checks and settlement history remain unchanged. New provider denial occurs before reservations and at every HTTP dispatch. Focused synthetic negative tests do not certify live acceptance.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
@@ -7644,13 +7644,13 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
+      "sourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
       "callIds": [
-        "9e8105658847ab6f70b2"
+        "38a124e43ac0190f4e76"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
-      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers.",
+      "reason": "This new Phase3 spend boundary is retained as current-source work until the disposable database and integrated regression jobs pass. It does not change or extend the accepted Phase2 conclusion for the earlier provider-budget callers. 2026-11-02 disabled-provider guard: existing persistence expressions, owner/authority checks and settlement history remain unchanged. New provider denial occurs before reservations and at every HTTP dispatch. Focused synthetic negative tests do not certify live acceptance.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
