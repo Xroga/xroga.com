@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "89d6305f35b7d4fc18af2c94f0e81a47546d6a87",
+  "source_sha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5805,9 +5805,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "a36daa9b6c7876155d9f42ec8ba7d970a4305ae0bfeae6585dc6e9442eeff6b9",
-      "byte_size": 5308034,
-      "modified_timestamp": "2026-11-02T08:33:28.190Z",
+      "sha256": "c761f1366c976da63fd82de828176130d52f2df5d6dbeb10a2efb404328a9f7f",
+      "byte_size": 5308124,
+      "modified_timestamp": "2026-11-02T09:56:15.729Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -6390,9 +6390,9 @@
       "source_id": "SRC-ef3623f65fc045e9",
       "filename": "completionDiagnostics.ts",
       "path_or_url": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "137462a0259883faacdd25352442dd0929b8b37b3d487044e2692223872fc390",
-      "byte_size": 4611,
-      "modified_timestamp": "2026-11-02T08:20:47.649Z",
+      "sha256": "a5b9472e38f19f2f8461f237fbee0c7650f42dd10ee5470d6c33e0714b2feeb2",
+      "byte_size": 5151,
+      "modified_timestamp": "2026-11-02T09:49:12.446Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

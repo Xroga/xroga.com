@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-completion-diagnostics-20261102",
-    "sha": "89d6305f35b7d4fc18af2c94f0e81a47546d6a87",
-    "sourceTimestampUtc": "2026-11-02T13:32:52+05:00",
-    "auditStartedUtc": "2026-11-02T08:33:26.423Z",
+    "sha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+    "sourceTimestampUtc": "2026-11-02T13:34:46+05:00",
+    "auditStartedUtc": "2026-11-02T09:56:13.463Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -3084,14 +3084,16 @@
       "id": "surface:ef3623f65fc045e92013",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "137462a0259883faacdd25352442dd0929b8b37b3d487044e2692223872fc390",
+      "sha256": "a5b9472e38f19f2f8461f237fbee0c7650f42dd10ee5470d6c33e0714b2feeb2",
       "symbols": [
         "CompletionDiagnostics",
         "choice",
         "choices",
         "cost",
         "count",
+        "derivesTenantFromJwt",
         "key",
+        "mentionsCurrentMembership",
         "message",
         "prose",
         "providerCostMicroUsd",
@@ -3099,6 +3101,7 @@
         "receipt",
         "requirePublicCompletion",
         "requiresAuthorizationReview",
+        "sentences",
         "value"
       ],
       "imports": [
@@ -138894,7 +138897,7 @@
     {
       "id": "test-suite:3ba52610d111186305bc",
       "sourcePath": "backend/src/ai/completionDiagnostics.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

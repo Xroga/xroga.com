@@ -1,0 +1,22 @@
+{
+  "base": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "scope": "NARROW_OBSERVED_OMISSION_WARNING_NOT_FACTUAL_CERTIFICATION",
+  "bindings": [
+    {
+      "path": "backend/src/ai/completionDiagnostics.ts",
+      "sha256": "a5b9472e38f19f2f8461f237fbee0c7650f42dd10ee5470d6c33e0714b2feeb2"
+    },
+    {
+      "path": "backend/src/ai/completionDiagnostics.test.ts",
+      "sha256": "a66d2daef154c31119bb539149474b7e849976404017c2c2d9a8b02faffa5a61"
+    }
+  ],
+  "originalTestsPreserved": true,
+  "newModelRequests": 0,
+  "productionDeployed": false,
+  "productionSql": false,
+  "modelRoutingChanged": false,
+  "budgetOrLedgerChanged": false,
+  "sourceTextRewritten": false,
+  "review": "Observed token-derived tenant authority without current membership now produces existing partial authorization_review state. Original content, cost, identity and permissions remain unchanged. A cleared negative check does not prove factual accuracy."
+}

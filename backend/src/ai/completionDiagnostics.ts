@@ -54,7 +54,13 @@ export function publicCompletionState(finishReason: string | null | undefined, a
 
 export function requiresAuthorizationReview(answer: string): boolean {
   const prose = answer.replace(/```[^\n]*\n[\s\S]*?```/g, '').replace(/^\s*>.*$/gm, '').replace(/[`*_]/g, '');
-  return prose.split(/(?<=[.!?])\s+|\n+/).some(sentence => {
+  const sentences = prose.split(/(?<=[.!?])\s+|\n+/);
+  // The observed answer omitted revocation entirely while deriving tenant
+  // authority from a token. A normal stop is not evidence of current access.
+  const derivesTenantFromJwt = sentences.some(sentence => /\b(?:reads|extracts|derives)\b[^.!?\n]{0,160}\btenant\b[^.!?\n]{0,160}\bJWT\b/i.test(sentence));
+  const mentionsCurrentMembership = /\b(?:current|live|fresh)[^.!?\n]{0,80}\b(?:membership|permissions?|roles?)\b/i.test(prose);
+  if (derivesTenantFromJwt && !mentionsCurrentMembership) return true;
+  return sentences.some(sentence => {
     if (/^\s*(?:incorrect|false|myth|do not|don't|never|avoid|wrong)\b/i.test(sentence)) return false;
     return /\b(?:RLS|row.level security)\b[^.!?\n]{0,180}\b(?:cannot|can't|can not) be bypassed\b/i.test(sentence)
       || /\b(?:JWT(?: claims| tokens)?|appmetadata(?: claims)?)\s+(?:alone\s+)?(?:provides?|guarantees?|ensures?|proves?|supports?)\s+(?:immediate|instant)\s+revocation\b/i.test(sentence);

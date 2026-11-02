@@ -17,6 +17,15 @@ test('the observed RLS contradiction cannot claim verified completion or trigger
   assert.equal(received.includes('cannot be bypassed'), true, 'The review does not rewrite or discard original content');
 });
 
+test('observed token-derived tenant authority without current membership remains visibly unaccepted', () => {
+  const received = "Application code never trusts a `tenant_id` from the client; it reads the tenant from the authenticated session's JWT claim. The service_role bypasses RLS entirely.";
+  assert.deepEqual(publicCompletionState('stop', received), { status:'partial', reason:'authorization_review' });
+  assert.equal(publicCompletionState('stop', received + ' Check current server-owned membership and role for this user and tenant.').status,'complete');
+  assert.equal(requiresAuthorizationReview('```text\n' + received + '\n```\nThis unsafe example omits revocation.'),false);
+  assert.equal(requiresAuthorizationReview('The application reads tenant labels from the database. A JWT identifies the user.'),false);
+  assert.ok(received.includes('JWT claim'), 'The original generated claim is preserved for review, not silently rewritten');
+});
+
 test('empty reasoning, tools, filters and missing choices remain failures with content-free receipts', t => {
   t.mock.method(console, 'warn', () => {});
   for (const message of [{reasoning_content:'PRIVATE reasoning'}, {reasoning:'PRIVATE reasoning'}, {tool_calls:[{arguments:'PRIVATE tool'}]}, {refusal:'PRIVATE refusal'}, {}]) {
