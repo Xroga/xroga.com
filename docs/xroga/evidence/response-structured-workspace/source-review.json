@@ -2,7 +2,7 @@
   "scope": "OFFLINE_INTEGRATION_NOT_LIVE_ACCEPTANCE",
   "reference": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
   "backendContractSource": "a6f5f9daa7ad4f2c7ad4c71fdf5d3dbe45b91479",
-  "contractSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
+  "contractSha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
   "unchangedPersistenceAndEgressCalls": true,
   "noModelCallsOrNewProvider": true,
   "legacyUntouched": true,
@@ -66,5 +66,13 @@
       "before": "c452243b525f07a92527ccecc610d46f7c2842ee671d894434a035a0ec8aa720",
       "current": "77dce0e0b3983fa1af2dcbec5235da53f945d2f27e6d3180fdc9db0fa80cf303"
     }
+  },
+  "beforeWorkspaceBoundsContractSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
+  "workspaceBoundsCorrection": {
+    "backendCommit": "6b924d4cdea315d87845a8ad62c54d84a36f3c53",
+    "scope": "DATA_LIMIT_COMPATIBILITY_NOT_LIVE_ACCEPTANCE",
+    "codecTestsJob": "18cf280e-6c35-481c-9767-5411f05f4d9c",
+    "crossLayerTestsJob": "74290d3d-3a03-46ae-8b6b-9eb935137677",
+    "originalDataRetainedOnRejection": true
   }
 }
