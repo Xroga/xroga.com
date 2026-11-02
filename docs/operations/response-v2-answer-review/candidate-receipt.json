@@ -1,0 +1,17 @@
+{
+  "status": "PASS_GUARDED_ZERO_TRAFFIC_CONFIG_NOT_FULL_LIVE_ACCEPTANCE",
+  "atUtc": "2026-11-02T09:00:54.217865+00:00",
+  "source": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "digest": "sha256:09708ffde98bb350d0c9809faf46810ac8b31adabb11fb6a015a38263dd24fbc",
+  "revision": "xroga-api-response-f80319-check-1102",
+  "tag": "response-f80319-check",
+  "minInstances": 0,
+  "maxInstances": 1,
+  "startupGuard": true,
+  "workerImageMatchesCandidate": true,
+  "voiceTagsPreserved": true,
+  "defaultRevision": "xroga-api-response-a2b972-serving-1102",
+  "defaultPercent": 100,
+  "jobChanged": false,
+  "productionSqlApplied": false
+}

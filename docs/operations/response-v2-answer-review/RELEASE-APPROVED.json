@@ -1,0 +1,18 @@
+{
+  "approved": true,
+  "answerReviewCorrectionApproved": true,
+  "packageId": "response-v2-answer-review-f803191c",
+  "sourceSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.5,
+  "conditionalOnAllSixExactSourceGates": true,
+  "acceptanceCombinedOriginalCeilingUsd": 0.5,
+  "acceptanceAlreadyConsumedMicroUsd": 1140,
+  "maximumRemainingSubmissions": 4,
+  "oneCorrectedSaasRecheckAllowed": true,
+  "ownerDecision": "Approve this exact correction and bounded recheck",
+  "decisionReference": "call_0e9c63cbc8134ecaabfb1659cc33132f",
+  "recordedAtUtc": "2026-11-02T08:50:28.626666+00:00"
+}

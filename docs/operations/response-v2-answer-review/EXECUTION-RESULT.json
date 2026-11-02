@@ -1,0 +1,77 @@
+{
+  "observedAtUtc": "2026-11-02T09:31:57.204456+00:00",
+  "status": "BLOCKED_PRODUCT_ACCEPTANCE",
+  "backendRelease": "PASS_PINNED_PAIRED_CUTOVER",
+  "source": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:09708ffde98bb350d0c9809faf46810ac8b31adabb11fb6a015a38263dd24fbc",
+  "build": "74a173f3-b967-4d0d-bd17-a485416caf8f",
+  "servingRevision": "xroga-api-response-f80319-serving-1102",
+  "canonicalJob": "xroga-canonical-production",
+  "queue": "RUNNING",
+  "trafficPercent": 100,
+  "maintenanceSeconds": 229.483415,
+  "recovery": {
+    "source": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+    "revision": "xroga-api-response-a2b972-serving-1102",
+    "digest": "sha256:6d755ef8375c762c00848c9fee0702b1f2a87bc7c91b4c3da61840ccc7e08c66",
+    "jobExport": "response-a2b972-job-recovery.json"
+  },
+  "frontend": {
+    "productionSource": "e8feb297673c856b34034d30851e0c0ba82561ac",
+    "productionDeployment": "AesRbbThqvzgh2Y2Rgc34MfkdVXK",
+    "newPromotion": false,
+    "previewSource": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+    "previewDeployment": "HBNnvjJzFADArTSsmMk3bD7HkSar",
+    "previewState": "READY"
+  },
+  "genuineAcceptance": {
+    "chatId": "5214480f-7622-4566-b8aa-d712e73efc33",
+    "modelSubmissions": 1,
+    "combinedSubmissionsIncludingEarlierFailedSaas": 2,
+    "result": "FAIL",
+    "diagramAuthoredAs": "Mermaid flow and sequence fences",
+    "flowNodes": 5,
+    "flowEdges": 6,
+    "sequenceEdges": 7,
+    "persistedOrderedComposition": true,
+    "repositoryFreeSelectionAndReload": "PASS",
+    "currentMembershipAdvice": "FAIL_MISSING_CURRENT_MEMBERSHIP_REVOCATION_CHECK",
+    "remainingDistinctPrompts": "NOT_RUN_STOPPED_ON_UNCERTAIN_ACCOUNTING"
+  },
+  "accounting": {
+    "knownProviderCostUsd": 0.00102537,
+    "settledMicroUsd": 1027,
+    "pendingGlmMicroUsd": 1385,
+    "pendingReservation": "f91a8a7c-1309-49ca-afd9-7bfb259ba4db",
+    "providerRequestId": null,
+    "glmProvider": "zhipu direct, not OpenRouter",
+    "heldFundsReleased": false,
+    "newPaidCallsAfterUnknown": 0,
+    "combinedOriginalCeilingUsd": 0.5,
+    "conservativelyConsumedMicroUsdIncludingEarlierA2": 3552,
+    "conservativelyRemainingMicroUsd": 496448,
+    "olderUncertainReservationsPreserved": true
+  },
+  "cleanup": {
+    "readinessTasks": "DELETED_VERIFIED",
+    "newCheckAndServingTags": "REMOVED",
+    "voiceTags": "UNCHANGED",
+    "newVm": false,
+    "newService": false,
+    "newIam": false,
+    "newMinimumInstances": false
+  },
+  "cost": {
+    "newBuildCount": 1,
+    "buildSeconds": 178.258,
+    "actualGoogleBillingUsd": null,
+    "approvedOneTimeCeilingUsd": 0.5,
+    "approvedMonthlyImageStorageCeilingUsd": 0.1,
+    "ceilingsAreNotActualCosts": true
+  },
+  "productionSql": "ONLY_APPROVED_EXISTING_ADMISSION_FENCE_SINGLETON",
+  "schemaChanges": false,
+  "microphone": "UNCHANGED",
+  "legacyRenderer": "PRESERVED",
+  "pr909": "DRAFT_NOT_ACCEPTED"
+}

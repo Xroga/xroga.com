@@ -1,0 +1,23 @@
+{
+  "revision": "xroga-api-response-f80319-serving-1102",
+  "window": [
+    "2026-11-02T09:06:20Z",
+    "2026-11-02T09:07:00Z"
+  ],
+  "entryCount": 262,
+  "markers": {
+    "model-empty-completion": 0,
+    "model-stream-interrupted": 0,
+    "provider-budget": 0,
+    "semantic-planner": 0
+  },
+  "httpStatusCandidates": [],
+  "models": [],
+  "payloadKinds": {
+    "text": 131,
+    "json": 1
+  },
+  "rawLogsSaved": false,
+  "newModelRequests": 0,
+  "noInferenceAboutMissingProviderReceipt": true
+}

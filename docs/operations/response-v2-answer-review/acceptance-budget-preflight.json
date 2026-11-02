@@ -1,0 +1,16 @@
+{
+  "observedAtUtc": "2026-11-02T09:06:07.037079+00:00",
+  "source": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "totalAllowanceMicroUsd": 500000,
+  "alreadyConsumedMicroUsd": 1140,
+  "remainingMicroUsd": 498860,
+  "conservativeNextRequestBoundMicroUsd": 381306,
+  "accountSettledBeforeMicroUsd": 83300,
+  "accountReservedBeforeMicroUsd": 516543,
+  "accountSafetyHoldBeforeMicroUsd": 0,
+  "nextSubmission": "single corrected-source exact SaaS explanation",
+  "manualRetryException": "call_0e9c63cbc8134ecaabfb1659cc33132f",
+  "repositoryFreeProject": "85730a9a-fca9-4eb8-aa89-4e9c6172e2c5",
+  "currentFreshConversationEmpty": true,
+  "newServices": 0
+}
