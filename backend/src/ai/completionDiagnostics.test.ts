@@ -26,6 +26,20 @@ test('observed token-derived tenant authority without current membership remains
   assert.ok(received.includes('JWT claim'), 'The original generated claim is preserved for review, not silently rewritten');
 });
 
+test('the new production credential/session contradiction stays unaccepted despite a later disclaimer', () => {
+  const received = "The Supabase client is configured with the user's service role session. RLS policies enforce tenant isolation. The server's service-role key bypasses RLS and must be kept server-side.";
+  assert.deepEqual(publicCompletionState('stop', received), {status:'partial',reason:'authorization_review'});
+  assert.equal(requiresAuthorizationReview('The service_role respects RLS.'), true);
+  for (const safe of [
+    "Use the authenticated user's access token for user-scoped queries. A service-role credential bypasses RLS.",
+    "Never configure the client with a user's service role session.",
+    'The phrase service-role session is invalid.',
+    '> The user has a service role session.\nThat quoted claim is incorrect.',
+    '```text\nThe user has a service role session.\n```\nThis is an unsafe example.',
+  ]) assert.equal(requiresAuthorizationReview(safe),false,safe);
+  assert.ok(received.includes("user's service role session"), 'Review preserves the received answer and does not retry inference');
+});
+
 test('empty reasoning, tools, filters and missing choices remain failures with content-free receipts', t => {
   t.mock.method(console, 'warn', () => {});
   for (const message of [{reasoning_content:'PRIVATE reasoning'}, {reasoning:'PRIVATE reasoning'}, {tool_calls:[{arguments:'PRIVATE tool'}]}, {refusal:'PRIVATE refusal'}, {}]) {
