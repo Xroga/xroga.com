@@ -1,0 +1,56 @@
+{
+  "atUtc": "2026-11-02T16:54:34.445262+00:00",
+  "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+  "status": "PASS",
+  "checks": {
+    "unit": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125401996587,
+      "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41481866662/job/125401996587"
+    },
+    "integrated-candidate": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125401996735,
+      "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41481866662/job/125401996735"
+    },
+    "build": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125403016497,
+      "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41482157686/job/125403016497"
+    },
+    "authenticated-browser": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125403050474,
+      "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41482167553/job/125403050474"
+    },
+    "deterministic-golden": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125401996808,
+      "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41481866595/job/125401996808"
+    },
+    "structured-mission-policy": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125401998464,
+      "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41481866750/job/125401998464"
+    },
+    "disposable-policy-database": {
+      "status": "completed",
+      "conclusion": "success",
+      "id": 125401996195,
+      "source": "7a1b4da064c643a02e60dd61369fa741bf481499",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41481866594/job/125401996195"
+    }
+  }
+}

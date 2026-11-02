@@ -1,0 +1,13 @@
+{
+  "checkedAtUtc": "2026-11-02T16:45:03.743740+00:00",
+  "cycleId": "b8cb143d-6eb6-48e7-9935-5624cb15ae6d",
+  "status": "active",
+  "entitlementMicroUsd": 1650000,
+  "settledMicroUsd": 85446,
+  "reservedMicroUsd": 517928,
+  "accountingSafetyHoldMicroUsd": 0,
+  "originalScopeRemainingMicroUsd": 495329,
+  "offlineRequestReservationEstimateMicroUsd": 377418,
+  "providerCallsMade": 0,
+  "condition": "Recheck current availability immediately before the permitted submission. Fresh empty history, no repository and no attachments."
+}
