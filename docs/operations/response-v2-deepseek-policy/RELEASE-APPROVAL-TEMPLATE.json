@@ -1,0 +1,18 @@
+{
+  "approved": false,
+  "deepseekProviderPolicyApproved": false,
+  "packageId": "response-v2-deepseek-policy-bccd300a",
+  "sourceSha": "bccd300a71454711154791ce5714c44d11b0d027",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.5,
+  "conditionalOnAllSevenExactSourceGates": true,
+  "acceptanceCombinedOriginalCeilingUsd": 0.5,
+  "acceptanceAlreadyConsumedMicroUsd": 3552,
+  "maximumRemainingSubmissions": 4,
+  "oneCorrectedSaasRecheckAllowed": false,
+  "retainUnknownHoldsAndBoundedAcceptanceApproved": false,
+  "originalCombinedRemainingMicroUsd": 496448,
+  "maximumTotalSubmissionsIncludingPrior": 6
+}

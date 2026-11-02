@@ -1,5 +1,5 @@
 """Submit exactly one approved source build. Journal unknown outcomes, never retry blindly."""
-import datetime,json,os,pathlib,subprocess,tarfile,time
+import datetime,gzip,json,os,pathlib,shutil,subprocess,tarfile,time
 ROOT=pathlib.Path(__file__).resolve().parent
 APP=pathlib.Path(r'C:/Users/hp/Documents/Codex/2026-10-23/g/work/xroga-response-backend-compatible')
 SHA='756c95e3ad484c3f9b949e837bacd98609dfe3e3'
@@ -22,16 +22,21 @@ assert subprocess.check_output(['git','rev-parse',SHA],cwd=APP,text=True).strip(
 work=pathlib.Path(os.environ['TEMP'])/'response-rich-share-source-build';work.mkdir()
 archive=work/'context.tar'
 subprocess.run(['git','archive','--format=tar','--output='+str(archive),SHA,'--','Dockerfile.api','.dockerignore','backend'],cwd=APP,check=True,timeout=45)
-context=work/'context';context.mkdir()
-with tarfile.open(archive) as t:t.extractall(context,filter='data')
-assert (context/'Dockerfile.api').is_file()
-assert not list(context.rglob('.env')) and not list(context.rglob('node_modules'))
+# Submit the exact Git archive directly. gcloud supports local .tgz sources.
+# Extracting then repacking under the owned Windows temp root hits MAX_PATH.
+with tarfile.open(archive) as t:
+ names=t.getnames()
+ assert 'Dockerfile.api' in names
+ assert all(not pathlib.PurePosixPath(name).is_absolute() and '..' not in pathlib.PurePosixPath(name).parts for name in names)
+ assert not any('.env' in pathlib.PurePosixPath(name).parts or 'node_modules' in pathlib.PurePosixPath(name).parts for name in names)
+packed=work/'context.tgz'
+with archive.open('rb') as source,gzip.open(packed,'wb') as target:shutil.copyfileobj(source,target)
 config={'steps':[{'name':'gcr.io/cloud-builders/docker','args':['build','-f','Dockerfile.api','--build-arg','XROGA_RELEASE_SHA='+SHA,'-t',IMAGE,'.']}],
  'images':[IMAGE],'timeout':'900s','serviceAccount':f'projects/{P}/serviceAccounts/574998934848-compute@developer.gserviceaccount.com',
  'options':{'logging':'CLOUD_LOGGING_ONLY'},'tags':['xroga-focused-response-756c95-1102']}
 cfg=work/'build.json';cfg.write_text(json.dumps(config))
 record('PREPARED_SOURCE_ONLY',archiveBytes=archive.stat().st_size,oneTimeCeilingUsd=a['maximumOneTimeGoogleUsd'],ci=ci_receipts)
-args=[GC,'builds','submit',str(context),'--config='+str(cfg),'--project='+P,'--region=us-east4','--account=mabdullah.built@gmail.com',
+args=[GC,'builds','submit',str(packed),'--config='+str(cfg),'--project='+P,'--region=us-east4','--account=mabdullah.built@gmail.com',
  '--gcs-source-staging-dir=gs://'+P+'_cloudbuild/source','--async','--format=json','--quiet']
 cmd='& '+' '.join("'"+v.replace("'","''")+"'" for v in args)
 record('SUBMITTING_INSPECT_IF_INTERRUPTED')

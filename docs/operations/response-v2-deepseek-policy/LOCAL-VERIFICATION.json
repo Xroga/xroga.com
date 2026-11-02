@@ -1,0 +1,19 @@
+{
+  "source": "bccd300a71454711154791ce5714c44d11b0d027",
+  "applicationCodeCommit": "077396339e0752e772769a765c1ce8dc429385cb",
+  "approvedSourceUnchanged": "756c95e3ad484c3f9b949e837bacd98609dfe3e3",
+  "scope": "DEVELOPMENT_AND_OPERATOR_NEGATIVE_TESTS_NOT_LIVE_ACCEPTANCE",
+  "focusedTests": {"passed": 74, "failed": 0, "job": "625af662-bd63-4ce2-8681-9db970344f0b"},
+  "backendTypeCheck": {"status": "PASS", "job": "084d5e77-677f-4a61-b008-c974d02a1482"},
+  "frozenRegisterAndBindingTests": {"passed": 10, "failed": 0, "job": "0653e8dd-f625-4c77-a52e-778912acfb54"},
+  "operatorTests": {"passed": 11, "failed": 0, "job": "87e61242-418f-421d-9ed0-f6e1bd4611aa"},
+  "strictEgress": {"total": 150, "reviewed": 150, "pending": 0, "unresolvedHighRiskCandidates": 0},
+  "newModelCalls": 0,
+  "productionSqlApplied": false,
+  "productionRelease": false,
+  "futureGlmAllowed": false,
+  "historicalGlmHold": {"microUsd": 1385, "status": "pending_reconciliation", "settledMicroUsd": null, "providerRequestId": null, "readOnlyDatabaseRechecked": true},
+  "remainingAcceptance": {"combinedOriginalMicroUsd": 500000, "conservativeConsumedMicroUsd": 3552, "scopeMaximumRemainingMicroUsd": 496448, "submissionsRemaining": 4},
+  "productionObserved": {"apiRevision": "xroga-api-response-f80319-serving-1102", "defaultTrafficPercent": 100, "canonicalJobSource": "f803191cd7f04bc3539782aa71e212e37c0ce4fb", "admissionFenceSource": "f803191cd7f04bc3539782aa71e212e37c0ce4fb", "voiceTagsUnchanged": true},
+  "pending756Build": {"cloudBuildCreated": false, "scopedTagListResult": [], "failure": "LOCAL_WINDOWS_MAX_PATH_DURING_SDK_SOURCE_PACKING", "automaticResubmission": false, "preparedCorrection": "UPLOAD_COMPRESSED_EXACT_GIT_ARCHIVE_WITHOUT_EXTRACTION"}
+}
