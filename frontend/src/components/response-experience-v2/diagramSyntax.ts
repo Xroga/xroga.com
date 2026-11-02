@@ -38,7 +38,7 @@ export function supportedDiagramV2(source: string): Graph | undefined {
       if (sequence) {
         const participant = /^(?:participant|actor) ([A-Za-z][\w.-]{0,79})(?: as (.{1,500}))?$/.exec(statement);
         if (participant) { add(participant[1], participant[2]); continue; }
-        const message = /^([A-Za-z][\w.-]{0,79})\s*(?:-->>|->>)\s*([A-Za-z][\w.-]{0,79})\s*:\s*(.{1,500})$/.exec(statement);
+        const message = /^([A-Za-z][\w.-]{0,79}?)\s*(?:-->>|->>)\s*([A-Za-z][\w.-]{0,79})\s*:\s*(.{1,500})$/.exec(statement);
         if (!message) return undefined;
         add(message[1]); add(message[2]);
         edges.push({ source: message[1], target: message[2], label: message[3] });

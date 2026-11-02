@@ -23,6 +23,9 @@ Stripe->>Next.js: POST /api/webhook (checkout.session.completed)
 Next.js->>Supabase: Update tenant.subscription_status
 Next.js-->>User: Redirect to dashboard`)!;
   assert.equal(sequence.edges.length, 7);
+  assert.deepEqual(sequence.nodes.map(n=>n.id), ['User','Next.js','Stripe','Supabase']);
+  assert.deepEqual(sequence.edges[2], {source:'Stripe', target:'User',label:'Redirect to Stripe Checkout'});
+  assert.deepEqual(sequence.edges[6], {source:'Next.js', target:'User',label:'Redirect to dashboard'});
   assert.equal(sequence.edges[4].label, 'POST /api/webhook (checkout.session.completed)');
   assert.equal(sequence.edges[5].target, 'Supabase');
 });
