@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "2be62f5f303adc9281089794371da392ab6190fe42cb3176f85709ad55fb1d52",
+  "sourceTreeDigest": "b43132b3db6f4ffb770c514c42376c2e7546091f9c821f32306e233c096c5f0e",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 238,
+      "line": 239,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -58,7 +58,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de"
+          "sha256": "f28ee8c83c32ab99c29aea7cc8de31009cd138895ec53c6af60d39b9cdcddfab"
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -75,11 +75,11 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 317,
+      "line": 323,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "e7967923786a9678929ac76c86e28e2fa47de4de88b6a1f2c9a2aba1484336f6",
+      "callSha256": "1272507b3b4fc0dc96e8f30f6c122f486c86ad127365b90f2710cc9ecc40ae05",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -95,7 +95,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
@@ -111,17 +111,22 @@
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
           "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+        },
+        {
+          "path": "backend/src/ai/responsePresentation.test.ts",
+          "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
+          "sha256": "26cee890b0b4898b4f5a9dbd525589dd462f5f6888bb5dc42726a3135ffae629"
         }
       ]
     },
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 404,
+      "line": 415,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "52730c15b2b7368bbe4f4e4ad09116a7d6004a026fd13054f8e05e6b409168ca",
+      "callSha256": "b3cd9d5da6af7abdfd225d8418cf388214b03722b9e50904dec218308bda664d",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -137,7 +142,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
@@ -153,6 +158,11 @@
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
           "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+        },
+        {
+          "path": "backend/src/ai/responsePresentation.test.ts",
+          "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
+          "sha256": "26cee890b0b4898b4f5a9dbd525589dd462f5f6888bb5dc42726a3135ffae629"
         }
       ]
     },
@@ -233,7 +243,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "SDK retry rechecks revocation",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",

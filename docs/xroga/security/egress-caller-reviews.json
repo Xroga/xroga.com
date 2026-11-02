@@ -195,7 +195,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "callSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
-      "sourceFileSha256": "65cc0676da6cbae9a8b0488540bba268e9971bb1500e9920ea4977ae4b50ff24",
+      "sourceFileSha256": "c0fb0d187ca94d7baff5caf73d0004642f8a950e473031be13ca0741bbb083f6",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -208,7 +208,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de"
+          "sha256": "f28ee8c83c32ab99c29aea7cc8de31009cd138895ec53c6af60d39b9cdcddfab"
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -491,7 +491,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "SDK retry rechecks revocation",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
@@ -581,8 +581,8 @@
     },
     {
       "id": "31380a8d5b9454a98a98",
-      "callSha256": "e7967923786a9678929ac76c86e28e2fa47de4de88b6a1f2c9a2aba1484336f6",
-      "sourceFileSha256": "65cc0676da6cbae9a8b0488540bba268e9971bb1500e9920ea4977ae4b50ff24",
+      "callSha256": "1272507b3b4fc0dc96e8f30f6c122f486c86ad127365b90f2710cc9ecc40ae05",
+      "sourceFileSha256": "c0fb0d187ca94d7baff5caf73d0004642f8a950e473031be13ca0741bbb083f6",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -595,7 +595,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
@@ -611,6 +611,11 @@
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
           "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+        },
+        {
+          "path": "backend/src/ai/responsePresentation.test.ts",
+          "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
+          "sha256": "26cee890b0b4898b4f5a9dbd525589dd462f5f6888bb5dc42726a3135ffae629"
         }
       ],
       "beforeRealRedirectFix": {
@@ -637,12 +642,13 @@
             "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
           }
         ]
-      }
+      },
+      "presentationContractReview": "Same existing model endpoint and canonical admission. Added cloned response schema is bound at the serialized wire boundary. Actual SDK transport and mutation-denial test retained with tenant, price and settlement tests."
     },
     {
       "id": "9c345e07b723c086440e",
-      "callSha256": "52730c15b2b7368bbe4f4e4ad09116a7d6004a026fd13054f8e05e6b409168ca",
-      "sourceFileSha256": "65cc0676da6cbae9a8b0488540bba268e9971bb1500e9920ea4977ae4b50ff24",
+      "callSha256": "b3cd9d5da6af7abdfd225d8418cf388214b03722b9e50904dec218308bda664d",
+      "sourceFileSha256": "c0fb0d187ca94d7baff5caf73d0004642f8a950e473031be13ca0741bbb083f6",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -655,7 +661,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
@@ -671,6 +677,11 @@
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
           "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+        },
+        {
+          "path": "backend/src/ai/responsePresentation.test.ts",
+          "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
+          "sha256": "26cee890b0b4898b4f5a9dbd525589dd462f5f6888bb5dc42726a3135ffae629"
         }
       ],
       "beforeRealRedirectFix": {
@@ -697,7 +708,8 @@
             "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
           }
         ]
-      }
+      },
+      "presentationContractReview": "Same existing model endpoint and canonical admission. Added cloned response schema is bound at the serialized wire boundary. Actual SDK transport and mutation-denial test retained with tenant, price and settlement tests."
     },
     {
       "id": "7359a41f4a615f5b0a81",

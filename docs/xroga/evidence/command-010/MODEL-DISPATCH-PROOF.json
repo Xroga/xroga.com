@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
+      "currentSha256": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "cf80432cc0d9a4cf8a4b",
-        "d83269b99a822f0eb5d1"
+        "ea7c651e80706e5b0594",
+        "2d018144911c29a2d98a"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4241,12 +4241,20 @@
       "beforeAnswerReviewAfterIds": [
         "d23d6bc9b4e588b32dcf",
         "0e9d2d78b2724eef8c51"
-      ]
+      ],
+      "beforePresentationContractBinding": {
+        "reference": "7a1b4da064c643a02e60dd61369fa741bf481499",
+        "sha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
+        "afterIds": [
+          "cf80432cc0d9a4cf8a4b",
+          "d83269b99a822f0eb5d1"
+        ]
+      }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91",
+      "currentSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4458,6 +4466,13 @@
           "fb2bffffc91cc072976a"
         ],
         "scope": "HISTORICAL_BINDING_ONLY_NO_NEW_ACCEPTANCE"
+      },
+      "beforePresentationContractBinding": {
+        "reference": "7a1b4da064c643a02e60dd61369fa741bf481499",
+        "sha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91",
+        "afterIds": [
+          "78696e27dd5c1ca37c3a"
+        ]
       }
     },
     {
@@ -4615,5 +4630,10 @@
     ],
     "scope": "HISTORICAL_CURRENT_MAPPING_NOT_NEW_SOURCE_ACCEPTANCE"
   },
-  "repositoryContextContinuation": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
+  "repositoryContextContinuation": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json",
+  "presentationContractReview": {
+    "reference": "7a1b4da064c643a02e60dd61369fa741bf481499",
+    "scope": "CURRENT_SOURCE_BINDING_NOT_LIVE_OR_FACTUAL_ACCEPTANCE",
+    "review": "docs/xroga/evidence/response-presentation-contract/source-review.json"
+  }
 }

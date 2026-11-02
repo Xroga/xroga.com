@@ -44,7 +44,8 @@
     {"command": "tsx --test src/ai/responsePresentation.test.ts src/ai/openaiCompat.egress.test.ts src/ai/universal/semanticRequestPlanner.test.ts", "scope": "Ordered sections, negative validation, actual SDK schema binding and no display repair dispatch", "negative": true, "reference": "backend/src/ai/responsePresentation.test.ts"},
     {"command": "tsx --test src/ai/tenantModelDispatch.test.ts", "scope": "Actual pipeline, transport, settlement and partial publication with synthetic external responses", "negative": true, "reference": "backend/src/ai/tenantModelDispatch.test.ts"}
   ],
-  "controlPlaneException": null,
+  "architecture": {"change": "extends_canonical", "reason": "Extend the existing semantic planner and read-only answer request with data-only presentation requirements. No new scheduler or formatting call.", "rfc": null},
+  "rollout": "Development only until the exact-source release gates and production approval pass. The serving 7a1b4da0 pair stays unchanged.",
   "rollback": "Preserve live 7a1b4da0 and the bccd recovery pair. Do not deploy this source until its required gates and exact-source release approval pass.",
   "knownGaps": ["No live provider validation of this new contract", "The latest approved SaaS attempt failed full product acceptance, so further paid attempts are stopped", "Frontend integration and exact-source CI remain in progress"],
   "placeholderClaimsRemaining": [],

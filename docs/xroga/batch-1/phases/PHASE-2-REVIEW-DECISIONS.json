@@ -2534,12 +2534,13 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
+          "sha256": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47",
           "responseV2Review": "Reviewed bc6cbc43..bd1ca28d: only the prompt import and system text passed to the existing runChatPipeline callBuilderStream changed. runBuildPipeline admission, issued actor, ownership, persistence and cancellation code remain unchanged. This source binding retains the historical verification and IN_PROGRESS status; it is not new database or production acceptance.",
           "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
           "beforeDirectOutputSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
           "beforeAnswerReviewSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
-          "beforeDeepSeekResearchSha256": "b536745bb0f0209280d459895d16c04057ae40ab7dbc28bc24ea9f976b861e88"
+          "beforeDeepSeekResearchSha256": "b536745bb0f0209280d459895d16c04057ae40ab7dbc28bc24ea9f976b861e88",
+          "beforePresentationContractSha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93"
         },
         {
           "path": "backend/src/routes/swarm.ts",
