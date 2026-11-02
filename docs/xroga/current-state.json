@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/deepseek-provider-policy-20261102",
-    "sha": "756c95e3ad484c3f9b949e837bacd98609dfe3e3",
-    "sourceTimestampUtc": "2026-11-02T16:46:48+05:00",
-    "auditStartedUtc": "2026-11-02T15:08:25.352Z",
+    "sha": "077396339e0752e772769a765c1ce8dc429385cb",
+    "sourceTimestampUtc": "2026-11-02T20:10:14+05:00",
+    "auditStartedUtc": "2026-11-02T15:17:31.770Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5066,6 +5066,7 @@
         "backend/src/ai/black-hole/providerAdapter.ts:29",
         "backend/src/ai/black-hole/webIntelligence.ts:9",
         "backend/src/ai/converter.ts:1",
+        "backend/src/ai/disabledProviderDispatch.test.ts:4",
         "backend/src/ai/genericSdkAdmission.test.ts:3",
         "backend/src/ai/modelCapabilityRegistry.ts:6",
         "backend/src/ai/modelRedirectFallback.security.test.ts:7",
@@ -5106,6 +5107,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/black-hole/providerAdapter.test.ts",
+        "backend/src/ai/disabledProviderDispatch.test.ts",
         "backend/src/ai/genericSdkAdmission.test.ts",
         "backend/src/ai/modelRedirectFallback.security.test.ts",
         "backend/src/ai/openaiCompat.egress.test.ts",
@@ -6790,6 +6792,7 @@
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:6",
+        "backend/src/ai/disabledProviderDispatch.test.ts:5",
         "backend/src/ai/operationsSdkAdmission.test.ts:4",
         "backend/src/ai/parallelDispatch.ts:11",
         "backend/src/ai/providerBudget.evidence.test.ts:4",
@@ -6846,6 +6849,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/budgetOwnerBoundary.test.ts",
+        "backend/src/ai/disabledProviderDispatch.test.ts",
         "backend/src/ai/operationsSdkAdmission.test.ts",
         "backend/src/ai/providerBudget.evidence.test.ts",
         "backend/src/ai/providerBudget.settlement.test.ts",
@@ -7045,6 +7049,7 @@
         "backend/src/ai/black-hole/registry.test.ts:5",
         "backend/src/ai/black-hole/registry.ts:40",
         "backend/src/ai/black-hole/registryDrift.test.ts:14",
+        "backend/src/ai/disabledProviderDispatch.test.ts:3",
         "backend/src/ai/measuredEvidence.test.ts:21",
         "backend/src/ai/modelCapabilityRegistry.ts:2",
         "backend/src/ai/openaiCompat.ts:12",
@@ -7075,6 +7080,7 @@
       "testCoverage": [
         "backend/src/ai/black-hole/registry.test.ts",
         "backend/src/ai/black-hole/registryDrift.test.ts",
+        "backend/src/ai/disabledProviderDispatch.test.ts",
         "backend/src/ai/measuredEvidence.test.ts",
         "backend/src/ai/providerPolicy.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
@@ -7172,6 +7178,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:16",
         "backend/src/ai/black-hole/xResearchAdmission.security.test.ts:5",
         "backend/src/ai/blackBoxExecution.test.ts:7",
+        "backend/src/ai/disabledProviderDispatch.test.ts:6",
         "backend/src/ai/executionRuntime.ts:12",
         "backend/src/ai/modelCapabilityRegistry.ts:4",
         "backend/src/ai/modelRedirectFallback.security.test.ts:8",
@@ -7232,6 +7239,7 @@
       "testCoverage": [
         "backend/src/ai/black-hole/xResearchAdmission.security.test.ts",
         "backend/src/ai/blackBoxExecution.test.ts",
+        "backend/src/ai/disabledProviderDispatch.test.ts",
         "backend/src/ai/modelRedirectFallback.security.test.ts",
         "backend/src/ai/parallelWeb.security.test.ts",
         "backend/src/ai/postCompletionAccounting.test.ts",
@@ -138964,6 +138972,13 @@
       "id": "test-suite:69bfa75fa798e3028a19",
       "sourcePath": "backend/src/ai/conversationPersist.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d29e455cdec3788e7a72",
+      "sourcePath": "backend/src/ai/disabledProviderDispatch.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
