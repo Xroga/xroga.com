@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPresentationProjection, presentationPlanSchema, presentationResponseFormat, type PresentationPlan } from './responsePresentation.js';
+import { createPresentationProjection, presentationPlanSchema, presentationRequestInstructions, presentationResponseFormat, type PresentationPlan } from './responsePresentation.js';
 import {publicCompletionState} from './completionDiagnostics.js';
 
 const plan: PresentationPlan = [
@@ -21,6 +21,15 @@ test('the same answer schema requires every planned section without domain-speci
   assert.equal(format.json_schema.schema.additionalProperties, false);
   assert.throws(() => presentationPlanSchema.parse([{ ...plan[0], kind: 'execute', authority: 'admin' }]));
   assert.throws(() => presentationResponseFormat([]));
+});
+
+test('answer instructions avoid duplicate schemas and server-only coverage IDs while retaining the strict SDK contract', () => {
+  const covered = plan.map(section => ({ ...section, covers: ['server-coverage-id'] }));
+  const instruction = presentationRequestInstructions(covered);
+  assert.match(instruction, /supplied response_format schema/);
+  for (const section of plan) { assert.ok(instruction.includes(section.heading)); assert.ok(instruction.includes(section.instruction)); }
+  assert.doesNotMatch(instruction, /server-coverage-id|JSON schema:|additionalProperties/);
+  assert.deepEqual(presentationResponseFormat(covered), presentationResponseFormat(plan));
 });
 
 test('streaming every character publishes ordered complete sections and retains the full original', () => {

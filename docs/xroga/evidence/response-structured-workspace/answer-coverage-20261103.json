@@ -9,6 +9,7 @@
   "copyShareRegression": "PASS_FULL_CAPTURED_CONTENT_AND_STRUCTURED_IDENTITY_ROUNDTRIP",
   "missingDataInvented": false,
   "newModelRequests": 0,
+  "sharedContractFollowup": {"duplicateSystemSchemaRemoved": true, "strictSdkSchemaUnchanged": true, "adapterRegressionJob": "7643a461-ea00-4aab-9b72-74044f5e45aa"},
   "productionChanged": false,
   "legacyRendererPreserved": true,
   "remaining": ["Exact-source CI", "Authenticated source-pinned Preview", "Fresh generated production acceptance after specific release authorization"]

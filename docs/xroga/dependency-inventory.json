@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "source_sha": "ee156488ae9660601fa26ec0fa42c63254c4e692",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16192,7 +16192,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48"
+      "sha256": "2612ca97f954c970cafc8b6cf33cbd5ed8a803acd5ee34b0aa787ed83db9df01"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -31037,28 +31037,21 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 116,
+      "line": 119,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 117,
+      "line": 120,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 118,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/responsePresentation.ts",
-      "line": 125,
+      "line": 121,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31072,7 +31065,14 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 129,
+      "line": 131,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 132,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
