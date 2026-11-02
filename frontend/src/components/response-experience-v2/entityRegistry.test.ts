@@ -36,3 +36,14 @@ test('plain leading technology roles receive authentic navigation without rewrit
   assert.deepEqual(links,['https://nextjs.org','https://supabase.com']);
   const once=JSON.stringify(root);remarkEntityRolesV2()(root);assert.equal(JSON.stringify(root),once);
 });
+
+test('authored component headings receive authentic identities while code, existing links and lookalikes remain untouched', () => {
+  const root = unified().use(remarkParse).parse('### Next.js Application Server\n\n### Supabase (Postgres + Auth)\n\n### Stripe.evil.test\n\n### [Stripe](https://example.com/context)\n\n`Next.js`') as EntitySyntaxV2;
+  const text = (n: EntitySyntaxV2): string => n.value ?? n.children?.map(text).join('') ?? '';
+  const before = text(root), links: string[] = [];
+  remarkEntityRolesV2()(root);
+  const visit = (n: EntitySyntaxV2) => { if (n.type === 'link') links.push(n.url!); n.children?.forEach(visit); }; visit(root);
+  assert.equal(text(root), before);
+  assert.deepEqual(links, ['https://nextjs.org', 'https://supabase.com', 'https://example.com/context']);
+  const once = JSON.stringify(root); remarkEntityRolesV2()(root); assert.equal(JSON.stringify(root), once);
+});

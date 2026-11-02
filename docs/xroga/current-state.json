@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "1c2ebd57134f54310942e76024295cf3862d2990",
-    "sourceTimestampUtc": "2026-11-02T13:26:04+05:00",
-    "auditStartedUtc": "2026-11-02T08:33:28.414Z",
+    "sha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+    "sourceTimestampUtc": "2026-11-02T13:34:53+05:00",
+    "auditStartedUtc": "2026-11-02T09:27:59.733Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -81192,6 +81192,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:18",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
       ],
       "reachable": true,
@@ -81363,7 +81364,7 @@
       "id": "surface:7408bdfee403df48ceaf",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/DataV2.tsx",
-      "sha256": "22cad49faeadb7e18ffef18e28feabe51067a2c3b4ca43f53189a3a70596d830",
+      "sha256": "10d56cec8d4ac5468a1f7fe7d1f6c0ef9c46d0161dbec7ccc836eee28fb0b5be",
       "symbols": [
         "CellV2",
         "DataTableV2",
@@ -81371,6 +81372,7 @@
         "TableNode",
         "current",
         "diff",
+        "entity",
         "filtered",
         "item",
         "layers",
@@ -81381,7 +81383,9 @@
         "y"
       ],
       "imports": [
+        "./SourceV2",
         "./document",
+        "./entityRegistry",
         "./graphLayout",
         "./response-v2.module.css",
         "lucide-react",
@@ -81389,7 +81393,9 @@
         "react-markdown"
       ],
       "runtimeImports": [
+        "frontend/src/components/response-experience-v2/SourceV2.tsx",
         "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/response-experience-v2/graphLayout.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css"
       ],
@@ -81507,7 +81513,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ProseV2.tsx:16"
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81532,19 +81538,25 @@
       "id": "surface:c37a54594bd9bc390b5b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ProseV2.tsx",
-      "sha256": "b20ce4997f8c85e56471f880cdc0fec3a2f13f3fcc5a23a6020877910d55c3f4",
+      "sha256": "a74645677144584888cf76406b849ef87d9397c787df07d2424b0c6b435417b0",
       "symbols": [
+        "ArchitectureV2",
         "CodeV2",
         "MathV2",
+        "PlainCodeV2",
         "ProseV2",
         "data",
+        "diagram",
+        "id",
         "match",
         "source"
       ],
       "imports": [
+        "./ArchitectureV2",
         "./ComparisonV2",
         "./MathV2",
         "./SourceV2",
+        "./diagramSyntax",
         "./document",
         "./entityRegistry",
         "./mathSyntax",
@@ -81558,9 +81570,11 @@
         "remark-math"
       ],
       "runtimeImports": [
+        "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
         "frontend/src/components/response-experience-v2/ComparisonV2.tsx",
         "frontend/src/components/response-experience-v2/MathV2.tsx",
         "frontend/src/components/response-experience-v2/SourceV2.tsx",
+        "frontend/src/components/response-experience-v2/diagramSyntax.ts",
         "frontend/src/components/response-experience-v2/document.ts",
         "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/response-experience-v2/mathSyntax.ts",
@@ -81814,6 +81828,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:8",
+        "frontend/src/components/response-experience-v2/DataV2.tsx:10",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:5",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:6"
@@ -82080,6 +82095,66 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:1254269797ff9cacbb9a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/diagramSyntax.ts",
+      "sha256": "b956f9723a649560953d8080797817cc7f0ae1cd21fab69bda870c1b4b6c15aa",
+      "symbols": [
+        "Graph",
+        "add",
+        "arrow",
+        "brackets",
+        "c",
+        "edges",
+        "from",
+        "header",
+        "i",
+        "label",
+        "match",
+        "message",
+        "nodes",
+        "participant",
+        "previous",
+        "quoted",
+        "remaining",
+        "sequence",
+        "start",
+        "statement",
+        "statements",
+        "supportedDiagramV2",
+        "takeNode",
+        "to"
+      ],
+      "imports": [
+        "./document"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ProseV2.tsx:16",
+        "frontend/src/components/response-experience-v2/diagramSyntax.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/response-experience-v2/diagramSyntax.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
@@ -82179,7 +82254,7 @@
       "id": "surface:6fc29287ecabfd9ced0b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/entityRegistry.ts",
-      "sha256": "ac627f71ec1c030916d7b8e8db5ee2e54de5438243c573c90160e378463946fa",
+      "sha256": "47422827a9deca07259c9c00ca27b9f56c86ac0f991f412c5d65d6b265174926",
       "symbols": [
         "EntitySyntaxV2",
         "children",
@@ -82201,6 +82276,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:7",
+        "frontend/src/components/response-experience-v2/DataV2.tsx:9",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:15",
         "frontend/src/components/response-experience-v2/composition.ts:7",
         "frontend/src/components/response-experience-v2/entityRegistry.test.ts:5"
@@ -140180,6 +140256,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:3ffc5b9e1cfa5b0a58da",
+      "sourcePath": "frontend/src/components/response-experience-v2/diagramSyntax.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
       "declaredTests": 28,
@@ -140189,7 +140272,7 @@
     {
       "id": "test-suite:04b8e36497b5056f650e",
       "sourcePath": "frontend/src/components/response-experience-v2/entityRegistry.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

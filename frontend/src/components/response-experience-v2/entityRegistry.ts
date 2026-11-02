@@ -36,6 +36,15 @@ export type EntitySyntaxV2 = { type: string; value?: string; url?: string; child
 export function remarkEntityRolesV2() {
   return (root: EntitySyntaxV2) => {
     const visit = (node: EntitySyntaxV2) => {
+      if (node.type === 'heading') {
+        const first = node.children?.[0];
+        const text = first?.type === 'strong' ? first.children?.[0] : first?.type === 'text' ? first : undefined;
+        const entity = text?.type === 'text' ? leadingEntityV2(text.value ?? '') : undefined;
+        const children = first?.type === 'strong' ? first.children : node.children;
+        if (entity && children) children.splice(0, 1,
+          { type: 'link', url: entity.url, children: [{ type: 'text', value: entity.name }] },
+          { type: 'text', value: text!.value!.slice(entity.name.length) });
+      }
       if (node.type === 'listItem') {
         const paragraph = node.children?.[0];
         const first = paragraph?.type === 'paragraph' ? paragraph.children?.[0] : undefined;

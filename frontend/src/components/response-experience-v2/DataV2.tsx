@@ -6,9 +6,13 @@ import styles from './response-v2.module.css';
 import { isLinearFlowV2, graphLayersV2 } from './graphLayout';
 import ReactMarkdown from 'react-markdown';
 import { safeLinkV2 } from './document';
+import { leadingEntityV2 } from './entityRegistry';
+import { SourceMarkV2 } from './SourceV2';
 
 function CellV2({ value }: { value: string | number | boolean | null | undefined }) {
   if (value == null) return <>Unavailable</>;
+  const entity = typeof value === 'string' ? leadingEntityV2(value) : undefined;
+  if (entity && entity.name === value) return <a href={entity.url} target="_blank" rel="noopener noreferrer"><SourceMarkV2 url={entity.url} /> {value}</a>;
   return <ReactMarkdown skipHtml allowedElements={['p', 'strong', 'em', 'code', 'a', 'br']} unwrapDisallowed
     urlTransform={url => safeLinkV2(url) ?? ''}
     components={{ p: ({ children }) => <>{children}</>, a: ({ href, children }) => href ? <a href={href} target="_blank" rel="noopener noreferrer">{children}</a> : <>{children}</> }}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { isValidElement, lazy, Suspense, useState, useEffect, type ReactNode } from 'react';
+import { isValidElement, lazy, Suspense, useId, useState, useEffect, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -13,9 +13,18 @@ import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
 import { ComparisonV2 } from './ComparisonV2';
 import { remarkEntityRolesV2 } from './entityRegistry';
+import { supportedDiagramV2 } from './diagramSyntax';
 const MathV2 = lazy(() => import('./MathV2'));
+const ArchitectureV2 = lazy(() => import('./ArchitectureV2'));
 
 export function CodeV2({ text, language }: { text: string; language?: string }) {
+  const id = useId();
+  const diagram = language?.toLowerCase() === 'mermaid' ? supportedDiagramV2(text) : undefined;
+  if (diagram) return <><Suspense fallback={<PlainCodeV2 text={text} language={language} />}><ArchitectureV2 node={{ ...diagram, id: `diagram-${id.replaceAll(':', '')}` }} /></Suspense><details><summary>Diagram source</summary><PlainCodeV2 text={text} language={language} /></details></>;
+  return <PlainCodeV2 text={text} language={language} />;
+}
+
+function PlainCodeV2({ text, language }: { text: string; language?: string }) {
   const [copied, setCopied] = useState(false);
   const [failed, setFailed] = useState(false);
   useEffect(() => { setCopied(false); setFailed(false); }, [text]);
