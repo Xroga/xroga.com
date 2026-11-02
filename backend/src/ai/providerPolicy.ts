@@ -18,6 +18,7 @@
  */
 
 import type { ModelId } from './models.js';
+import { getRouterAdminConfig } from './routerConfig.js';
 
 /**
  * Providers permitted to perform software-engineering work, with their required transport.
@@ -90,9 +91,19 @@ export function requiredCodingTransport(modelId: string): string | null {
   return isCodingModel(modelId) ? CODING_MODEL_TRANSPORT[modelId] : null;
 }
 
+/** Disabled providers must be denied even when a legacy caller bypasses ranking.
+ * Keep historical model IDs and accounting intact. This grants no routing fallback. */
+export function assertProviderEnabled(provider: string): void {
+  if (!getRouterAdminConfig().enabledProviders.some(enabled => enabled === provider)) {
+    throw Object.assign(new Error('This model provider is disabled by execution policy.'),
+      { code: 'MODEL_DESTINATION_DENIED', status: 400 });
+  }
+}
+
 /** Provider identity binds both its credential namespace and exact API base.
  * This is separate from model-id configuration and cannot be supplied by a prompt. */
 export function assertModelProviderDestination(provider: string, baseUrl: string, secretName?: string): void {
+  assertProviderEnabled(provider);
   const allowed:Record<string,{url:string;secret:string}>={
     moonshot:{url:'https://api.moonshot.ai/v1',secret:'KIMI_API_KEY'},
     zhipu:{url:'https://open.bigmodel.cn/api/paas/v4',secret:'GLM_API_KEY'},
