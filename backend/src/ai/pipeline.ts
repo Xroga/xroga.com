@@ -69,7 +69,7 @@ import {
   type UsageSnapshot,
 } from './quota.js';
 import type { ResearchBundle } from './research.js';
-import { isBuildPrompt, routePrompt, type RouteDecision } from './router.js';
+import { isBuildPrompt, routePrompt, routeReadOnlyConversation, type RouteDecision } from './router.js';
 import {
   extractProjectFiles,
   extractSiteFiles,
@@ -1018,21 +1018,7 @@ export async function runChatPipeline(opts: {
     };
   }
 
-  const inferredRoute = routePrompt(opts.prompt);
-  const semanticResearch = Boolean(
-    opts.goalContract?.requiredCapabilities.includes('research.public-web')
-    || opts.goalContract?.requiredCapabilities.includes('research.x')
-    || (opts.goalContract && opts.goalContract.freshnessRequirement !== 'NONE'),
-  );
-  const route: RouteDecision = opts.goalContract
-    ? {
-        ...inferredRoute,
-        kind: semanticResearch ? 'research' : 'chat',
-        builder: semanticResearch ? 'glm_5_3_flash' : 'deepseek_v4_flash',
-        useResearch: semanticResearch,
-        reason: 'The validated semantic goal contract selected this read-only execution path.',
-      }
-    : inferredRoute;
+  const route = routeReadOnlyConversation(opts.prompt, opts.goalContract);
 
   if (!opts.goalContract && isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
     const err = new Error('USE_BUILD_PIPELINE');

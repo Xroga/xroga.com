@@ -6,6 +6,7 @@ import {
   classifyTaskRequest,
   type TaskClassification,
 } from '../lib/taskClassifier.js';
+import type { GoalContract } from './universal/goalContract.js';
 
 export type TaskKind =
   | 'chat'
@@ -30,6 +31,19 @@ export interface RouteDecision {
 
   classification:
     TaskClassification;
+}
+
+/** The admitted semantic contract owns retrieval intent, not the synthesis provider. */
+export function routeReadOnlyConversation(
+  prompt: string,
+  goal?: Pick<GoalContract, 'requiredCapabilities' | 'freshnessRequirement'>,
+): RouteDecision {
+  const inferred = routePrompt(prompt);
+  if (!goal) return inferred;
+  const research = goal.requiredCapabilities.includes('research.public-web')
+    || goal.requiredCapabilities.includes('research.x') || goal.freshnessRequirement !== 'NONE';
+  return { ...inferred, kind: research ? 'research' : 'chat', builder: 'deepseek_v4_flash',
+    useResearch: research, reason: 'The validated semantic goal contract selected this read-only execution path.' };
 }
 
 /**
@@ -119,13 +133,13 @@ export function routePrompt(
         'deepseek_v4_flash',
 
       builder:
-        'glm_5_3_flash',
+        'deepseek_v4_flash',
 
       useResearch:
         true,
 
       reason:
-        'External evidence is retrieved separately and synthesized by the efficient GLM route',
+        'External evidence is retrieved separately and synthesized by the primary DeepSeek route',
 
       classification,
     };

@@ -62,6 +62,11 @@ export function requiresAuthorizationReview(answer: string): boolean {
   if (derivesTenantFromJwt && !mentionsCurrentMembership) return true;
   return sentences.some(sentence => {
     if (/^\s*(?:incorrect|false|myth|do not|don't|never|avoid|wrong)\b/i.test(sentence)) return false;
+    // An affirmative credential/session conflation is unsafe even when a later
+    // paragraph correctly describes RLS. A disclaimer cannot validate that step.
+    const serviceRoleSession = /\b(?:user(?:'s)?\s+)?service[- ]?role\s+session\b/i.test(sentence);
+    if (serviceRoleSession && !/\b(?:incorrect|invalid|unsafe|misleading|not a valid|does not exist)\b/i.test(sentence)) return true;
+    if (/\bservice[- ]?role\b[^.!?\n]{0,100}\b(?:enforces?|honou?rs?|obeys?|respects?)\s+(?:tenant\s+)?(?:RLS|row.level security)\b/i.test(sentence)) return true;
     return /\b(?:RLS|row.level security)\b[^.!?\n]{0,180}\b(?:cannot|can't|can not) be bypassed\b/i.test(sentence)
       || /\b(?:JWT(?: claims| tokens)?|appmetadata(?: claims)?)\s+(?:alone\s+)?(?:provides?|guarantees?|ensures?|proves?|supports?)\s+(?:immediate|instant)\s+revocation\b/i.test(sentence);
   });

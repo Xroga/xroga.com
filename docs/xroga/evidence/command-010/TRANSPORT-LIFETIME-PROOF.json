@@ -292,7 +292,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b536745bb0f0209280d459895d16c04057ae40ab7dbc28bc24ea9f976b861e88",
+      "sha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -945,5 +945,11 @@
     "tests": "backend/src/ai/disabledProviderDispatch.test.ts",
     "scope": "PRE_DISPATCH_POLICY_DENIAL_NOT_LIVE_ACCEPTANCE",
     "historicalReservationsChanged": false
+  },
+  "deepSeekResearchContinuation": {
+    "reference": "bccd300a71454711154791ce5714c44d11b0d027",
+    "scope": "SYNTHESIS_SELECTION_AND_UNCHANGED_TRANSPORT_EXPRESSIONS_NOT_LIVE_ACCEPTANCE",
+    "source": "197210a8",
+    "productionChanged": false
   }
 }

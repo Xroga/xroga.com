@@ -7,7 +7,38 @@ import {
 import {
   isBuildPrompt,
   routePrompt,
+  routeReadOnlyConversation,
 } from './router.js';
+
+describe('admitted read-only synthesis', () => {
+  it('uses DeepSeek for public and X evidence without removing the retrieval requirement', () => {
+    for (const capability of ['research.public-web', 'research.x']) {
+      const route = routeReadOnlyConversation('Explain the verified evidence.', {
+        requiredCapabilities: [capability], freshnessRequirement: 'NONE',
+      });
+      assert.equal(route.kind, 'research');
+      assert.equal(route.builder, 'deepseek_v4_flash');
+      assert.equal(route.useResearch, true);
+    }
+  });
+  it('keeps freshness-required retrieval and ordinary no-research answers distinct', () => {
+    const current = routeReadOnlyConversation('What changed?', {
+      requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'CURRENT_REQUIRED',
+    });
+    assert.equal(current.kind, 'research');
+    assert.equal(current.useResearch, true);
+    const plain = routeReadOnlyConversation('Explain a SaaS architecture, do not build it.', {
+      requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE',
+    });
+    assert.equal(plain.kind, 'chat');
+    assert.equal(plain.builder, 'deepseek_v4_flash');
+    assert.equal(plain.useResearch, false);
+  });
+  it('preserves the existing legacy build routing when no semantic contract is supplied', () => {
+    const prompt = 'build a simple landing page';
+    assert.deepEqual(routeReadOnlyConversation(prompt), routePrompt(prompt));
+  });
+});
 
 describe(
   'routePrompt',
@@ -118,7 +149,7 @@ describe(
     );
 
     it(
-      'routes generic research synthesis to GLM-5.3 Flash',
+      'routes generic research synthesis to primary DeepSeek while preserving retrieval',
       () => {
         const route =
           routePrompt(
@@ -132,7 +163,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'glm_5_3_flash',
+          'deepseek_v4_flash',
         );
 
         assert.equal(
@@ -152,7 +183,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'glm_5_3_flash',
+          'deepseek_v4_flash',
         );
 
         assert.notEqual(
