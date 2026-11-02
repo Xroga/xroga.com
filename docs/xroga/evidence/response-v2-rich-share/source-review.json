@@ -7,6 +7,12 @@
       "beforeSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
       "afterSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "unchangedPersistenceCalls": 6
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "beforeSha256": "b84aeadc18565ac0916ab5b1dd5d248e7f604e0f58a424563d1116dd65c88c9e",
+      "afterSha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d",
+      "scope": "Only existing router policy is consulted before planner model selection. Existing model transport, cancellation, egress, ledger and approval calls are unchanged. Additive tests cover disabled provider and allowlist rejection. No live acceptance inferred."
     }
   ],
   "liveAcceptance": false
