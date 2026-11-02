@@ -31,11 +31,27 @@ export function leadingEntityV2(label: string): { name: string; url: string } | 
 
 export type EntitySyntaxV2 = { type: string; value?: string; url?: string; children?: EntitySyntaxV2[]; data?: { hProperties?: Record<string, unknown> } };
 
+/** A model-authored bold resource label is a role, even without list syntax. */
+export function authoredEntityParagraphV2(node: EntitySyntaxV2) {
+  const first = node.type === 'paragraph' ? node.children?.[0] : undefined;
+  const text = first?.type === 'strong' && first.children?.length === 1 ? first.children[0] : undefined;
+  return text?.type === 'text' ? leadingEntityV2(text.value ?? '') : undefined;
+}
+
 /** Enrich explicit leading resource labels only, never ordinary prose, code,
  * citations, existing links, or untrusted URLs. Original text is unchanged. */
 export function remarkEntityRolesV2() {
   return (root: EntitySyntaxV2) => {
-    const visit = (node: EntitySyntaxV2) => {
+    const visit = (node: EntitySyntaxV2, parentType?: string) => {
+      const paragraphEntity = parentType === 'root' ? authoredEntityParagraphV2(node) : undefined;
+      if (paragraphEntity) {
+        const children = node.children![0].children!;
+        const original = children[0].value!;
+        children.splice(0, 1,
+          { type: 'link', url: paragraphEntity.url, children: [{ type: 'text', value: paragraphEntity.name }] },
+          { type: 'text', value: original.slice(paragraphEntity.name.length) });
+        node.data = { ...node.data, hProperties: { ...node.data?.hProperties, 'data-resource-v2': 'true' } };
+      }
       if (node.type === 'heading') {
         const first = node.children?.[0];
         const text = first?.type === 'strong' ? first.children?.[0] : first?.type === 'text' ? first : undefined;
@@ -58,7 +74,7 @@ export function remarkEntityRolesV2() {
           node.data = { ...node.data, hProperties: { ...node.data?.hProperties, 'data-resource-v2': 'true' } };
         }
       }
-      node.children?.forEach(visit);
+      node.children?.forEach(child => visit(child, node.type));
     };
     visit(root);
   };

@@ -10,6 +10,14 @@ function compose(content: string) {
   return composeResponseV2(result.document);
 }
 
+test('real generated paragraph-shaped component roles use the shared resource composition', () => {
+  const content = '## Core Components and Their Roles\n\n**Next.js** serves as both the frontend framework and the application server.\n\n**Supabase** provides the PostgreSQL database, authentication, and row-level security (RLS).\n\n**Stripe** handles payment processing, subscription management, and billing events.\n\nAn ordinary explanation remains plain.\n\n**Stripe.evil.test** is a lookalike, not a resource.';
+  const units = flattenCompositionV2(compose(content).parts);
+  assert.equal(units.filter(unit => unit.role === 'resource').length, 3);
+  assert.equal(units.map(unit => unit.node.kind === 'prose' ? unit.node.text : '').join(''), content);
+  assert.equal(units.at(-1)?.role, 'narrative');
+});
+
 test('semantic hierarchy preserves exact source including whitespace and fenced heading lookalikes', () => {
   const content = '  Intro.\n\n# Title\n\nWords **unchanged**.\n\n## Part\n\n```md\n# not a heading\n```\n\n### Detail\n\n42.50 USD\n\n## Next\n\nنص عربي\n';
   const result = compose(content);

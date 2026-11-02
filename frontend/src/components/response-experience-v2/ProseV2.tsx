@@ -38,7 +38,7 @@ export function ProseV2({ text, sources = [] }: { text: string; sources?: Citati
     remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }], remarkMathPresentationV2, remarkEntityRolesV2, ...(sources.length ? [remarkCitationsV2(sources)] : [])]}
     urlTransform={url => safeLinkV2(url) ?? ''}
     components={{
-      p: ({ children }) => <p dir="auto">{children}</p>,
+      p: ({ children, node }) => <p dir="auto" className={node?.properties?.['data-resource-v2'] === 'true' ? styles.entityRole : undefined}>{children}</p>,
       li: ({ children, node }) => <li dir="auto" className={node?.properties?.['data-resource-v2'] === 'true' ? styles.entityRole : undefined}>{children}</li>,
       a: ({ href, children }) => {
         if (!href) return <span>{children}</span>;

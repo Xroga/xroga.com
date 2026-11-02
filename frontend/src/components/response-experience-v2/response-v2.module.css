@@ -61,6 +61,9 @@
 .entityRole :is(strong,p) > a:first-child > svg,.entityRole > a:first-child > svg { position:absolute; inset-inline-start:0; top:3px; width:22px; height:22px; }
 .semanticUnit[data-role=resource] .prose > ul > li.entityRole { margin-inline-start:0; }
 .semanticUnit[data-role=resource] .entityRole :is(strong,p) > a:first-child > svg,.semanticUnit[data-role=resource] .entityRole > a:first-child > svg { top:19px; }
+.prose p.entityRole { position:relative; margin:0; padding-inline-start:34px; padding-block-end:16px; border-block-end:1px solid var(--v2-line); }
+.prose p.entityRole > strong:first-child { display:block; margin-block-end:4px; }
+.semanticUnit[data-role=resource] .prose p.entityRole > strong > a:first-child > svg { top:3px; }
 .prose li > :where(ul,ol) { margin-block: .3em; }
 .prose blockquote { border-inline-start: 2px solid var(--v2-line); padding-inline-start: 1em; color: var(--v2-muted); }
 .prose hr { border: 0; border-block-start: 1px solid var(--v2-line); margin-block: 1.5em; }

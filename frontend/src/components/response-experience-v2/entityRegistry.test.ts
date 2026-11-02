@@ -4,6 +4,19 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import { leadingEntityV2, remarkEntityRolesV2, type EntitySyntaxV2 } from './entityRegistry';
 
+test('generated bold role paragraphs receive identities without altering words or quoted content', () => {
+  const source = '**Next.js** serves as the application server.\n\n**Supabase** provides PostgreSQL.\n\n**Stripe** handles billing.\n\n**Stripe.evil.test** is not an official identity.\n\n> **Stripe** is quoted.\n\n```md\n**Next.js** is code.\n```\n\n**[Stripe](https://example.com/context)** keeps its authored link.\n\nNext.js remains ordinary prose.';
+  const root = unified().use(remarkParse).parse(source) as EntitySyntaxV2;
+  const text = (n: EntitySyntaxV2): string => n.value ?? n.children?.map(text).join('') ?? '';
+  const original = text(root), links: string[] = [];
+  remarkEntityRolesV2()(root);
+  const visit = (n: EntitySyntaxV2) => { if (n.type === 'link') links.push(n.url!); n.children?.forEach(visit); }; visit(root);
+  assert.equal(text(root), original);
+  assert.deepEqual(links, ['https://nextjs.org', 'https://supabase.com', 'https://stripe.com', 'https://example.com/context']);
+  assert.equal(root.children?.filter(n => n.data?.hProperties?.['data-resource-v2'] === 'true').length, 3);
+  const once = JSON.stringify(root); remarkEntityRolesV2()(root); assert.equal(JSON.stringify(root), once);
+});
+
 test('entity navigation recognizes exact identities, never lookalike hosts or arbitrary brands', () => {
   assert.equal(leadingEntityV2('Supabase Auth:')?.url, 'https://supabase.com');
   assert.equal(leadingEntityV2('Next.js server')?.url, 'https://nextjs.org');

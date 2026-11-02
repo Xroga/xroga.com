@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { sameChartTableV2, type ResponseDocumentV2, type ResponseNodeV2 } from './document';
 import { sourceKeyV2, remarkCitationsV2 } from './sourceRegistry';
-import { leadingEntityV2 } from './entityRegistry';
+import { authoredEntityParagraphV2, leadingEntityV2 } from './entityRegistry';
 
 type Syntax = { type: string; depth?: number; url?: string; value?: string; position?: { start: { offset?: number }; end: { offset?: number } }; children?: Syntax[] };
 export type SemanticRoleV2 = 'narrative' | 'steps' | 'comparison' | 'series' | 'scenario' | 'resource' | 'workflow' | 'code' | 'mathematics' | 'notice' | 'progress' | 'evidence';
@@ -53,7 +53,7 @@ function proseParts(node: Extract<ResponseNodeV2, { kind: 'prose' }>): SemanticP
       const first = item.children?.[0]?.children?.[0];
       return first?.type === 'link' && !!first.url && !/^\[?\d+\]?$/.test(first.children?.map(child => child.value ?? '').join('') ?? '');
     });
-    const role = resourceList ? 'resource' : syntax.type === 'list' ? 'steps' : syntax.type === 'code' ? 'code' : syntax.type === 'math' ? 'mathematics' : syntax.type === 'table' ? 'comparison' : 'narrative';
+    const role = resourceList || authoredEntityParagraphV2(syntax) ? 'resource' : syntax.type === 'list' ? 'steps' : syntax.type === 'code' ? 'code' : syntax.type === 'math' ? 'mathematics' : syntax.type === 'table' ? 'comparison' : 'narrative';
     const unit: SemanticUnitV2 = { type: 'unit', id, role, node: { ...node, id, title: index === 0 ? node.title : undefined, description: index === 0 ? node.description : undefined, text: node.text.slice(start, end) }, range: { start, end }, sourceKeys: [] };
     if (syntax.type === 'heading') {
       const level = syntax.depth ?? 2;
