@@ -1,0 +1,49 @@
+{
+  "atUtc": "2026-11-02T20:36:52.719718+00:00",
+  "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "status": "PASS",
+  "checks": {
+    "unit": {
+      "id": 125518162257,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41515573115/job/125518162257",
+      "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+      "conclusion": "success"
+    },
+    "integrated-candidate": {
+      "id": 125518162939,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41515573115/job/125518162939",
+      "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+      "conclusion": "success"
+    },
+    "build": {
+      "id": 125519566953,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41515987533/job/125519566953",
+      "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+      "conclusion": "success"
+    },
+    "authenticated-browser": {
+      "id": 125519588166,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41515993582/job/125519588166",
+      "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+      "conclusion": "success"
+    },
+    "deterministic-golden": {
+      "id": 125518164834,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41515573106/job/125518164834",
+      "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+      "conclusion": "success"
+    },
+    "structured-mission-policy": {
+      "id": 125518162745,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41515573240/job/125518162745",
+      "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+      "conclusion": "success"
+    },
+    "disposable-policy-database": {
+      "id": 125518161879,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41515573126/job/125518161879",
+      "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+      "conclusion": "success"
+    }
+  }
+}

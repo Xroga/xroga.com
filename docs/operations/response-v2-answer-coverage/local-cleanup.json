@@ -1,0 +1,53 @@
+{
+  "freeBeforeBytes": 132459945984,
+  "freeAfterBytes": 132476981248,
+  "jobs": [
+    {
+      "job": "587d512a-ee49-4b16-bb70-03f069973cce",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "8c838add-fc9c-4d94-b008-eafc07046abc",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "1616383c-85e6-4b2d-a701-710a228eeb6c",
+      "temporaryFilesRemoved": 17024055,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "7b103d24-16a7-49af-b180-af80bba33b5d",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "0146bee4-c39d-46e7-92f8-00ed982300ca",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "3d6263d9-a951-4024-aa37-b4923d4f383c",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "93399a96-17e6-4781-aa4d-92bf04a8146f",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "d5867224-2365-4b31-8211-7743aaeb9e92",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    },
+    {
+      "job": "3e91c9f8-8f37-4922-9797-a8894009be38",
+      "temporaryFilesRemoved": 0,
+      "evidenceCopiedAndVerified": true
+    }
+  ],
+  "sourceOrRecoveryDeleted": false,
+  "freeChangeBytes": 17035264
+}
