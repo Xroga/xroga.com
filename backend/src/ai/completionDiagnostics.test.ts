@@ -1,6 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CompletionDiagnostics, requirePublicCompletion, publicCompletionState, providerCostMicroUsd } from './completionDiagnostics.js';
+import { CompletionDiagnostics, requirePublicCompletion, publicCompletionState, providerCostMicroUsd, requiresAuthorizationReview } from './completionDiagnostics.js';
+
+test('the observed RLS contradiction cannot claim verified completion or trigger a second request', () => {
+  const received = "RLS policies are the single enforcement point - they cannot be bypassed by the application layer. Privileged service-role queries bypass RLS.";
+  assert.deepEqual(publicCompletionState('stop', received), {status:'partial',reason:'authorization_review'});
+  assert.equal(requiresAuthorizationReview('JWT claims provide immediate revocation.'), true);
+  for (const safe of [
+    'RLS constrains roles subject to its policies. A service-role credential may bypass RLS.',
+    'Do not claim RLS cannot be bypassed.',
+    '> RLS cannot be bypassed.\nThat assertion is incorrect.',
+    '```text\nRLS cannot be bypassed.\n```\nThe example above is unsafe.',
+    'JWT claims can be stale. Check current membership for revocation.',
+    'JWT claims do not provide immediate revocation.',
+  ]) assert.equal(requiresAuthorizationReview(safe), false, safe);
+  assert.equal(received.includes('cannot be bypassed'), true, 'The review does not rewrite or discard original content');
+});
 
 test('empty reasoning, tools, filters and missing choices remain failures with content-free receipts', t => {
   t.mock.method(console, 'warn', () => {});

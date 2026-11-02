@@ -1,0 +1,32 @@
+{
+  "base": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+  "scope": "KNOWN_AUTHORIZATION_CLAIM_REVIEW_NOT_FACTUAL_CERTIFICATION",
+  "records": [
+    {
+      "path": "backend/src/ai/completionDiagnostics.test.ts",
+      "preservedOriginalTests": 4
+    },
+    {
+      "path": "backend/src/ai/completionDiagnostics.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "137462a0259883faacdd25352442dd0929b8b37b3d487044e2692223872fc390"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "egress": 0,
+      "persistence": 2,
+      "sourceSha256": "b536745bb0f0209280d459895d16c04057ae40ab7dbc28bc24ea9f976b861e88"
+    },
+    {
+      "path": "backend/src/ai/prompts.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "41dc0e44722f526d98415abb0c1896331af5b82a0cb3013180353a418cf2f7e4"
+    }
+  ],
+  "historicalProofsUnchanged": true,
+  "modelCalls": 0,
+  "productionSQL": false,
+  "review": "Existing actor, project, lease, credential, approval, outbound origin, secret and cancellation boundaries remain. Only an additive known-claim review reason, final guidance ordering and conceptual step examples change. Original complete test calls remain unchanged and new tests are additive. No global factual accuracy or live acceptance is certified."
+}

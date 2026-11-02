@@ -1201,5 +1201,6 @@
   "currentPositionContinuation": "docs/xroga/evidence/command-010/GITHUB-ACTOR-SEMANTIC-POSITIONS-20261028.json",
   "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json",
   "nativeCheckoutPositionContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
-  "directOutputPositionContinuation": "docs/xroga/evidence/response-v2-direct-output/position-continuation.json"
+  "directOutputPositionContinuation": "docs/xroga/evidence/response-v2-direct-output/position-continuation.json",
+  "answerReviewPositionContinuation": "docs/xroga/evidence/response-v2-answer-review/position-continuation.json"
 }

@@ -43,10 +43,22 @@ export function requirePublicCompletion(text: string, modelId: string, diagnosti
 }
 
 /** Public completion state, without provider identity or private reasoning. */
-export function publicCompletionState(finishReason: string | null | undefined):
-  { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' } {
+export function publicCompletionState(finishReason: string | null | undefined, answer = ''):
+  { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' } {
+  // This is a narrow negative check, not a certificate that other facts are true.
+  // Preserve the received answer and its accounting, without retrying or rewriting it.
+  if (requiresAuthorizationReview(answer)) return { status: 'partial', reason: 'authorization_review' };
   return finishReason === 'stop' ? { status: 'complete' }
     : { status: 'partial', reason: finishReason === 'length' ? 'output_limit' : 'unconfirmed_stop' };
+}
+
+export function requiresAuthorizationReview(answer: string): boolean {
+  const prose = answer.replace(/```[^\n]*\n[\s\S]*?```/g, '').replace(/^\s*>.*$/gm, '').replace(/[`*_]/g, '');
+  return prose.split(/(?<=[.!?])\s+|\n+/).some(sentence => {
+    if (/^\s*(?:incorrect|false|myth|do not|don't|never|avoid|wrong)\b/i.test(sentence)) return false;
+    return /\b(?:RLS|row.level security)\b[^.!?\n]{0,180}\b(?:cannot|can't|can not) be bypassed\b/i.test(sentence)
+      || /\b(?:JWT(?: claims| tokens)?|appmetadata(?: claims)?)\s+(?:alone\s+)?(?:provides?|guarantees?|ensures?|proves?|supports?)\s+(?:immediate|instant)\s+revocation\b/i.test(sentence);
+  });
 }
 
 /** OpenRouter usage.cost is the charge for the whole request, including reasoning.

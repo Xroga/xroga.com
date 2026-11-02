@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
+  "source_sha": "a2b972fcd50b2f6a431795e393e552aac26454a7",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15833,7 +15833,7 @@
     },
     {
       "path": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "677bb2771f0aef0c07081cd7b6e401089870e483640b5b0fe448bdcfd9b45005"
+      "sha256": "137462a0259883faacdd25352442dd0929b8b37b3d487044e2692223872fc390"
     },
     {
       "path": "backend/src/ai/contextPreparation.ts",
@@ -15961,7 +15961,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6"
+      "sha256": "b536745bb0f0209280d459895d16c04057ae40ab7dbc28bc24ea9f976b861e88"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -15977,7 +15977,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "54c0dc824badfce11194c7c6f9ec7d8a0f045300715ff05a0fc5d5f3e203d2bf"
+      "sha256": "41dc0e44722f526d98415abb0c1896331af5b82a0cb3013180353a418cf2f7e4"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
