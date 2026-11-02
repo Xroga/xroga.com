@@ -20,10 +20,12 @@ import { OptionalVisualErrorBoundary } from '@/components/homepage/OptionalVisua
 import { Ambient } from '@/components/homepage-next/ambient/Ambient';
 import { useSeen } from '@/components/homepage-next/ambient/useSeen';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
+import { GoogleOneTap } from '@/components/auth/GoogleOneTap';
 
 export function HomepageClient() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const closingRef = useRef<HTMLElement>(null);
   const closingSeen = useSeen(closingRef, 0.35);
@@ -91,9 +93,11 @@ export function HomepageClient() {
       createClient().auth.getSession().then(({ data: { session } }) => {
         if (!active) return;
         setLoggedIn(!!session);
-      }).catch(() => { if (active) setLoggedIn(false); });
+        setSessionChecked(true);
+      }).catch(() => { if (active) { setLoggedIn(false); setSessionChecked(true); } });
     } catch {
       setLoggedIn(false);
+      setSessionChecked(true);
     }
     return () => { active = false; };
   }, []);
@@ -102,6 +106,7 @@ export function HomepageClient() {
 
   return (
   <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
+    <GoogleOneTap enabled={sessionChecked && !loggedIn} />
     {/* S00: the final locked hero (docs/homepage-implementation/S00_FINAL_LOCK.md) */}
     <div className="hpx-root">
       <S00Hero />

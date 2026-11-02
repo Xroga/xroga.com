@@ -39,6 +39,7 @@ const connectSources = (authBuildConfiguration.projectRef==='self-hosted-staging
   'https://*.clarity.ms',
   'https://c.bing.com',
   'https://analytics.ahrefs.com',
+  'https://accounts.google.com',
   configuredApiOrigin,
   driveStorageOrigin,
   ...(authBuildConfiguration.projectRef === 'local-disposable' ? ['http://127.0.0.1:54321', 'ws://127.0.0.1:54321'] : []),
@@ -51,11 +52,12 @@ const scriptSources = [
   'https://www.clarity.ms',
   'https://*.clarity.ms',
   'https://analytics.ahrefs.com',
+  'https://accounts.google.com',
   ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
 ].join(' ');
 
 const csp = (frameAncestors) =>
-  `default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors ${frameAncestors}; object-src 'none'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src ${connectSources}; frame-src 'self' https:; worker-src 'self' blob:`;
+  `default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors ${frameAncestors}; object-src 'none'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src ${connectSources}; frame-src 'self' https:; worker-src 'self' blob:`;
 
 const baseSecurityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
