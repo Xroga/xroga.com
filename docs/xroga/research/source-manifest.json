@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "source_sha": "aebd333eb52c46180194b11e979b193809f58f8e",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5805,9 +5805,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "c761f1366c976da63fd82de828176130d52f2df5d6dbeb10a2efb404328a9f7f",
+      "sha256": "1c698340de5232f8e809ac57ecdcc242ccb70fb10a3dc84bc07cd507634a7e2e",
       "byte_size": 5308124,
-      "modified_timestamp": "2026-11-02T09:56:15.729Z",
+      "modified_timestamp": "2026-11-02T10:08:15.522Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
