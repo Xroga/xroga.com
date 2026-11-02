@@ -1,0 +1,12 @@
+{
+  "scope": "READ_ONLY_NON_SECRET_ROUTING_CONTROLS",
+  "atDateUtc": "2026-11-02",
+  "sourceRevision": "xroga-api-response-f80319-serving-1102",
+  "disabledProviders": "zhipu",
+  "allowedModels": null,
+  "observation": "Existing protected configuration already disables Zhipu. Planner ignored that control before the source correction.",
+  "secretVersionChanged": false,
+  "credentialValuesLogged": false,
+  "productionConfigurationChanged": false,
+  "unknownGlmHoldReleased": false
+}

@@ -1,0 +1,10 @@
+{
+  "scope": "NO_CLOUD_OPERATOR_GUARD_TESTS",
+  "testsPassed": 10,
+  "testsFailed": 0,
+  "jobId": "ab840877-85d1-48f2-b131-d0aed4a9018c",
+  "productionContacted": false,
+  "productionChanges": false,
+  "approved": false,
+  "source": "756c95e3ad484c3f9b949e837bacd98609dfe3e3"
+}

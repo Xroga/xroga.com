@@ -1,0 +1,71 @@
+{
+  "observedAtUtc": "2026-11-02T11:45:54.979132+00:00",
+  "scope": "AUTHENTICATED_PREVIEW_REGRESSION_OF_CAPTURED_GENUINE_ANSWER_NOT_FRESH_GENERATION",
+  "frontendSource": "a2b7e5422db00fd5a21208231227d599f3a33bff",
+  "deployment": "Ftym8cmkJfsBZSUaroBWS95TtFpn",
+  "immutableUrl": "https://xrogaai-2rx1xosrp-xrogas-projects.vercel.app",
+  "environment": "Preview",
+  "buildDurationSeconds": 262,
+  "actualWorkspaceAuthenticated": true,
+  "share": {
+    "privateOwnerOnly": true,
+    "completeExportCharacters": 4683,
+    "componentRolesHeadingCount": 1,
+    "graphs": [
+      {
+        "nodes": 5,
+        "edges": 6
+      },
+      {
+        "nodes": 4,
+        "edges": 7
+      }
+    ],
+    "originalDiagramSourcesPreserved": true,
+    "originalConclusionPreserved": true,
+    "snapshotEnvelopeNotVisible": true,
+    "reopenedAfterReload": true,
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "mobileDocumentWidth": 375,
+    "mobileDiagramViewportWidth": 300,
+    "mobileDiagramScrollWidth": 300,
+    "revoked": true,
+    "revokedPageNotFound": true,
+    "temporaryShareTabClosed": true,
+    "viewportReset": true,
+    "publicShareCreated": false
+  },
+  "newModelRequests": 0,
+  "newResearchRequests": 0,
+  "productionPromoted": false,
+  "factualAcceptance": false,
+  "founderVisualAcceptance": false,
+  "knownContentLimitation": "Captured f803 tenant authority explanation remains failed. Rendering preservation is not factual correction.",
+  "screenshots": [
+    {
+      "file": "a2b7e542-preview-ready.png",
+      "sha256": "6db950ca138ee1de91cc2bb9d5453edcf996fc9fc81788de17f61e61b31c0d7d"
+    },
+    {
+      "file": "a2b7e542-private-share-1440.png",
+      "sha256": "fb967ef9c6d7b6696ae0c750e31b982ae504308e04099161172b5f85c52c6271"
+    },
+    {
+      "file": "a2b7e542-private-share-reopened-390.png",
+      "sha256": "9565804c773d7b67a6bf860f9803be3ebb0bb8acb39b3e26993b75ab2251058d"
+    },
+    {
+      "file": "a2b7e542-share-revoked.png",
+      "sha256": "7a65f1bc5f7570873d23a33ca171503889a15d82a45b4bbe028703484f54158a"
+    }
+  ]
+}
