@@ -1,0 +1,20 @@
+{
+  "approved": false,
+  "structuredPresentationContractApproved": false,
+  "packageId": "response-v2-structured-contract-cd5541c6",
+  "sourceSha": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.5,
+  "conditionalOnAllSevenExactSourceGates": true,
+  "acceptanceCombinedOriginalCeilingUsd": 0.5,
+  "acceptanceAlreadyConsumedMicroUsd": 5795,
+  "maximumRemainingSubmissions": 4,
+  "oneCorrectedSaasRecheckAllowed": false,
+  "retainUnknownHoldsAndBoundedAcceptanceApproved": false,
+  "originalCombinedRemainingMicroUsd": 494205,
+  "maximumTotalSubmissionsIncludingPrior": 8,
+  "futureGlmDispatchAuthorized": false,
+  "newSaasExceptionRequiresApproval": true
+}

@@ -1,0 +1,16 @@
+{
+  "source": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "observedAtUtc": "2026-11-02T18:22:36.670Z",
+  "freshEmptyHistoryRequired": true,
+  "noAttachmentsOrRepositoryRequired": true,
+  "maximumPlanSections": 8,
+  "allSupportedSectionKindsConsidered": true,
+  "answerTokensBound": 16641,
+  "plannerTokensBound": 4044,
+  "plannerBoundMicroUsd": 187384,
+  "answerBoundMicroUsd": 304212,
+  "combinedBoundMicroUsd": 491596,
+  "remainingAcceptanceMicroUsd": 494205,
+  "providerRequests": 0,
+  "glmPermitted": false
+}
