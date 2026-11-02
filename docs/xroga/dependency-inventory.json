@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "6b924d4cdea315d87845a8ad62c54d84a36f3c53",
+  "source_sha": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15961,7 +15961,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47"
+      "sha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16033,7 +16033,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655"
+      "sha256": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -16229,7 +16229,7 @@
     },
     {
       "path": "backend/src/ai/universal/goalContract.ts",
-      "sha256": "c9738a38a56d135f65f018bd091a64c063d80c5f87f758cf6c74b4da49a74908"
+      "sha256": "6ae6297abbbba8033018aeae2c5fb693810bd063a591e25957f7938b87506e94"
     },
     {
       "path": "backend/src/ai/universal/modelRequirements.ts",
@@ -23773,7 +23773,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4046,
+      "line": 4047,
       "credentialsInUrl": false
     },
     {
@@ -30605,35 +30605,35 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1501,
+      "line": 1502,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2253,
+      "line": 2254,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3812,
+      "line": 3813,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3996,
+      "line": 3997,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4775,
+      "line": 4776,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30808,42 +30808,63 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 87,
+      "line": 28,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 88,
+      "line": 31,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 89,
+      "line": 34,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 96,
+      "line": 116,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 99,
+      "line": 117,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 100,
+      "line": 118,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 125,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 128,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 129,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31200,7 +31221,7 @@
     },
     {
       "path": "backend/src/ai/universal/goalContract.ts",
-      "line": 298,
+      "line": 299,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -2,7 +2,10 @@
   "version": "1.0",
   "missionId": "RESPONSE-PRESENTATION-CONTRACT-20261102",
   "baseSha": "7a1b4da064c643a02e60dd61369fa741bf481499",
-  "requirementIds": ["XR-MISSION-054", "XR-MISSION-055"],
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
   "state": "IN_PROGRESS",
   "risk": "high",
   "scope": "Ordered data-only presentation requirements in the existing semantic decision and answer request. Validate complete structured sections, project to existing xroga-ui blocks and retain the received source. No second formatting request, scheduler, provider, infrastructure or schema migration.",
@@ -18,11 +21,19 @@
     "backend/src/ai/universal/goalContract.ts",
     "backend/src/ai/universal/semanticRequestPlanner.ts",
     "backend/src/ai/universal/semanticRequestPlanner.test.ts",
-    "backend/src/routes/phase1.ts"
+    "backend/src/routes/phase1.ts",
+    "backend/src/ai/responseCoverage.test.ts"
   ],
   "decisions": {
-    "keep": ["Existing model requests, canonical authorization, tenant and budget enforcement", "Legacy output protocol and rollback assets"],
-    "extend": ["Semantic decision with bounded presentation sections", "Existing answer SDK with source-bound structured output", "Existing response envelope with retained original data and explicit partial state"],
+    "keep": [
+      "Existing model requests, canonical authorization, tenant and budget enforcement",
+      "Legacy output protocol and rollback assets"
+    ],
+    "extend": [
+      "Semantic decision with bounded presentation sections",
+      "Existing answer SDK with source-bound structured output",
+      "Existing response envelope with retained original data and explicit partial state"
+    ],
     "replace": [],
     "deprecate": []
   },
@@ -33,25 +44,76 @@
     "rollback": "Restore the existing verified paired release. Retain received documents and the legacy renderer."
   },
   "securityImpact": {
-    "auth": {"changed": false, "description": "Presentation metadata cannot grant execution or identity."},
-    "tenant": {"changed": false, "description": "Current tenant, account and project binding remain enforced at dispatch."},
-    "approval": {"changed": false, "description": "No external actions. A future source-pinned production cutover requires specific approval."},
-    "credentials": {"changed": false, "description": "Existing server-only credentials and egress policy remain unchanged."},
-    "egress": {"changed": true, "description": "Existing provider requests include a cloned response schema. Actual serialized response_format must match it before dispatch. Existing destinations, redirects, credential and payload checks remain enforced."},
-    "cost": {"changed": true, "description": "Schema metadata tokens are included in the existing reservation. No formatting request, schema repair call or new spending allowance."},
-    "billing": {"changed": false, "description": "Existing settlement and unknown historical GLM hold remain intact. GLM stays disabled."}
+    "auth": {
+      "changed": false,
+      "description": "Presentation metadata cannot grant execution or identity."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Current tenant, account and project binding remain enforced at dispatch."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No external actions. A future source-pinned production cutover requires specific approval."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Existing server-only credentials and egress policy remain unchanged."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Existing provider requests include a cloned response schema. Actual serialized response_format must match it before dispatch. Existing destinations, redirects, credential and payload checks remain enforced."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Schema metadata tokens are included in the existing reservation. No formatting request, schema repair call or new spending allowance."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Existing settlement and unknown historical GLM hold remain intact. GLM stays disabled."
+    }
   },
   "tests": [
-    {"command": "tsx --test src/ai/responsePresentation.test.ts src/ai/openaiCompat.egress.test.ts src/ai/universal/semanticRequestPlanner.test.ts", "scope": "Ordered sections, negative validation, actual SDK schema binding and no display repair dispatch", "negative": true, "reference": "backend/src/ai/responsePresentation.test.ts"},
-    {"command": "tsx --test src/ai/tenantModelDispatch.test.ts", "scope": "Actual pipeline, transport, settlement and partial publication with synthetic external responses", "negative": true, "reference": "backend/src/ai/tenantModelDispatch.test.ts"}
+    {
+      "command": "tsx --test src/ai/responsePresentation.test.ts src/ai/openaiCompat.egress.test.ts src/ai/universal/semanticRequestPlanner.test.ts",
+      "scope": "Ordered sections, negative validation, actual SDK schema binding and no display repair dispatch",
+      "negative": true,
+      "reference": "backend/src/ai/responsePresentation.test.ts"
+    },
+    {
+      "command": "tsx --test src/ai/tenantModelDispatch.test.ts",
+      "scope": "Actual pipeline, transport, settlement and partial publication with synthetic external responses",
+      "negative": true,
+      "reference": "backend/src/ai/tenantModelDispatch.test.ts"
+    }
   ],
-  "architecture": {"change": "extends_canonical", "reason": "Extend the existing semantic planner and read-only answer request with data-only presentation requirements. No new scheduler or formatting call.", "rfc": null},
-  "rollout": "Development only until the exact-source release gates and production approval pass. The serving 7a1b4da0 pair stays unchanged.",
-  "rollback": "Preserve live 7a1b4da0 and the bccd recovery pair. Do not deploy this source until its required gates and exact-source release approval pass.",
-  "knownGaps": ["No live provider validation of this new contract", "The latest approved SaaS attempt failed full product acceptance, so further paid attempts are stopped", "Frontend integration and exact-source CI remain in progress"],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extend the existing semantic planner and read-only answer request with data-only presentation requirements. No new scheduler or formatting call.",
+    "rfc": null
+  },
+  "rollout": "Development correction only. Live backend cd5541 and frontend d86c8 remain unchanged. New source requires final CI, exact-source paired-release approval and bounded fresh acceptance.",
+  "rollback": "Retain cd5541 API/Job and d86c8 frontend, the legacy renderer and all earlier recovery assets. Existing SQL fence and drain procedure is required for a backend rollback.",
+  "knownGaps": [
+    "Fresh generation on the corrected source is not tested. The last cd5541 SaaS attempt failed full product acceptance.",
+    "Exact-source CI and specific paired-release authorization for this new source are pending.",
+    "Workshop, research and unrelated new-chat acceptance remain unrun."
+  ],
   "placeholderClaimsRemaining": [],
-  "evidenceRefs": ["backend/src/ai/responsePresentation.test.ts", "backend/src/ai/tenantModelDispatch.test.ts"],
+  "evidenceRefs": [
+    "backend/src/ai/responsePresentation.test.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts"
+  ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
-  "release": {"state": "BLOCKED", "blockers": ["Integration, exact-source CI and separate source-pinned release authorization are pending"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Integration, exact-source CI and separate source-pinned release authorization are pending"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
 }

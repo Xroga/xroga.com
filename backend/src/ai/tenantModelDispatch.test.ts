@@ -242,9 +242,9 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
 
   // Exercise the real read-only pipeline, SDK transport, canonical settlement
   // and publication boundary together. All external responses are synthetic.
-  const presentation:PresentationPlan=[{kind:'prose',heading:'Explanation',instruction:'Preserve the supplied content.'},{kind:'graph',heading:'Relationships',instruction:'Connect the supplied systems.'}];
+  const presentation:PresentationPlan=[{kind:'prose',heading:'Explanation',instruction:'Preserve the supplied content.',covers:['explanation']},{kind:'graph',heading:'Relationships',instruction:'Connect the supplied systems.',covers:['relationships']}];
   const semantic=goalContractSchema.parse({version:'1.0',goal:'Explain the supplied system',desiredOutcome:'An explanation',semanticIntent:'ANSWER',
-    requiredCapabilities:['conversation.respond'],confidence:0.9,presentation});
+    requiredCapabilities:['conversation.respond'],confidence:0.9,presentation,answerObligations:[{id:'explanation',description:'Explain the supplied system.',origin:'requested',formats:['prose']},{id:'relationships',description:'Connect the supplied components.',origin:'requested',formats:['graph']}]});
   const document={s0:{markdown:'Keep `tenant_id` unchanged.',data:null},s1:{markdown:'Client requests reach the server.',data:{nodes:[{id:'client',label:'Client'},{id:'api',label:'API'}],edges:[{id:'request',source:'client',target:'api',label:'Request'}]}}};
   for (const valid of [true,false]) {
     reset('presentation');resetModelRuntimeHealth();receivedAnswer=JSON.stringify(valid?document:{s0:document.s0});
@@ -259,6 +259,15 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     assert.equal(result.response.includes('"type":"graph"'),valid);
     assert.ok(lastReservedInput>JSON.stringify(presentationResponseFormat(presentation)).length/5,'Schema metadata is included in the token reservation');
   }
+  reset('presentation');resetModelRuntimeHealth();receivedAnswer=JSON.stringify(document);
+  const incompleteSemantic=goalContractSchema.parse({...semantic,answerObligations:[...semantic.answerObligations!,{id:'data-shape',description:'Show the requested data structure.',origin:'requested',formats:['table']}]});
+  const beforeCoverage:number=effects,receiptsCoverage:number=atomicReceipts;
+  const incomplete=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied system and data structure. No external research.',goalContract:incompleteSemantic});
+  assert.deepEqual(incomplete.completion,{status:'partial',reason:'presentation_contract'},'A valid document cannot conceal a missing answer obligation');
+  assert.equal(effects,beforeCoverage+1,'Coverage failure never triggers a paid formatting repair');
+  assert.equal(atomicReceipts,receiptsCoverage+1);
+  assert.deepEqual(incomplete.responseSource,{format:'xroga-response-json-v1',text:receivedAnswer});
+  assert.match(incomplete.response,/Keep `tenant_id` unchanged/);
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{

@@ -99,6 +99,11 @@ test('invalid quantitative controls retain their source without publishing an un
     const raw = JSON.stringify({ s0: { markdown: 'Supplied scenario.', data: changed } });
     const projection = createPresentationProjection(p);
     assert.equal(projection.append(raw), '');
-    assert.deepEqual(projection.finish(raw), { ok: false, response: '', original: raw, reviewText: '' });
+    const final = projection.finish(raw);
+    assert.equal(final.ok, false);
+    assert.equal(final.original, raw);
+    assert.match(final.response, /Supplied scenario/);
+    assert.match(final.response, /could not be validated/);
+    assert.doesNotMatch(final.response, /```xroga-ui/);
   }
 });

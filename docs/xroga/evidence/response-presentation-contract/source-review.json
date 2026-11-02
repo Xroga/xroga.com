@@ -31,7 +31,7 @@
     },
     "backend/src/ai/pipeline.ts": {
       "before": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
-      "current": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47"
+      "current": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b"
     },
     "backend/src/ai/tenantModelDispatch.test.ts": {
       "before": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc",
@@ -39,7 +39,7 @@
     },
     "backend/src/ai/universal/goalContract.ts": {
       "before": "931ca2f1d876d2a99a7e3064391b19fe118661d5e8d607a83ac07830620769c5",
-      "current": "c9738a38a56d135f65f018bd091a64c063d80c5f87f758cf6c74b4da49a74908"
+      "current": "6ae6297abbbba8033018aeae2c5fb693810bd063a591e25957f7938b87506e94"
     },
     "backend/src/ai/universal/semanticRequestPlanner.test.ts": {
       "before": "c37b64b69416fbc4544f90ad4c2aefebba95821ea2abb25464d6b22526cffb0d",
@@ -52,9 +52,12 @@
     "backend/src/routes/phase1.ts": {
       "before": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91",
       "current": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95"
+    },
+    "backend/src/ai/responsePresentation.ts": {
+      "current": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48"
     }
   },
-  "newPresentationSourceSha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
+  "newPresentationSourceSha256": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
   "noNewDestinationOrModelRequest": true,
   "schemaTokensReserved": true,
   "paidTestsStopped": true,
@@ -83,5 +86,39 @@
     "codecTestsJob": "18cf280e-6c35-481c-9767-5411f05f4d9c",
     "crossLayerTestsJob": "74290d3d-3a03-46ae-8b6b-9eb935137677",
     "originalDataRetainedOnRejection": true
+  },
+  "answerCoverageCorrection": {
+    "scope": "LOCAL_REGRESSIONS_NOT_NEW_GENERATION_OR_PRODUCTION_ACCEPTANCE",
+    "bindings": {
+      "backend/src/ai/pipeline.ts": {
+        "before": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47",
+        "current": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
+        "egressCalls": 0,
+        "persistenceCallRebase": [
+          [
+            "ea7c651e80706e5b0594",
+            "ce9a7215efde02d1062f"
+          ],
+          [
+            "2d018144911c29a2d98a",
+            "7c670691a53343271d29"
+          ]
+        ]
+      },
+      "backend/src/ai/responsePresentation.ts": {
+        "before": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
+        "current": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
+        "egressCalls": 0,
+        "persistenceCallRebase": []
+      },
+      "backend/src/ai/universal/goalContract.ts": {
+        "before": "c9738a38a56d135f65f018bd091a64c063d80c5f87f758cf6c74b4da49a74908",
+        "current": "6ae6297abbbba8033018aeae2c5fb693810bd063a591e25957f7938b87506e94",
+        "egressCalls": 0,
+        "persistenceCallRebase": []
+      }
+    },
+    "modelCalls": 0,
+    "productionChanged": false
   }
 }

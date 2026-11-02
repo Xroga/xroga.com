@@ -22,7 +22,7 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
-import { createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, type PresentationResponseFormat } from './responsePresentation.js';
+import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, type PresentationResponseFormat } from './responsePresentation.js';
 import {
   buildVisionUserContent,
   chatCompletion,
@@ -1135,7 +1135,8 @@ export async function runChatPipeline(opts: {
   const completion = publicCompletionState(result.finishReason, document?.reviewText ?? response);
   // A valid semantic decision with invalid display metadata, or an incomplete
   // document, is preserved as partial. Never repair it with another model call.
-  const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid';
+  const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid'
+    || (presentation && !assessPresentationCoverage(presentation, opts.goalContract?.answerObligations).complete);
 
   return {
     response,

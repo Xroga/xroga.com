@@ -491,7 +491,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "SDK retry rechecks revocation",
-          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
+          "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff"
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
@@ -595,7 +595,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
+          "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
@@ -615,7 +615,7 @@
         {
           "path": "backend/src/ai/responsePresentation.test.ts",
           "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
-          "sha256": "26cee890b0b4898b4f5a9dbd525589dd462f5f6888bb5dc42726a3135ffae629"
+          "sha256": "4d994ab6cab5f9400386b42c3032d65b32552ff556b5c92730314f50a27b872d"
         }
       ],
       "beforeRealRedirectFix": {
@@ -661,7 +661,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
+          "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
@@ -681,7 +681,7 @@
         {
           "path": "backend/src/ai/responsePresentation.test.ts",
           "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
-          "sha256": "26cee890b0b4898b4f5a9dbd525589dd462f5f6888bb5dc42726a3135ffae629"
+          "sha256": "4d994ab6cab5f9400386b42c3032d65b32552ff556b5c92730314f50a27b872d"
         }
       ],
       "beforeRealRedirectFix": {

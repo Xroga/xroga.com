@@ -6,10 +6,39 @@ export const presentationSectionSchema = z.object({
   kind: z.enum(['prose', 'cards', 'table', 'graph', 'steps', 'chart', 'calculator']),
   heading: z.string().min(1).max(120).regex(/^[^\r\n]+$/),
   instruction: z.string().min(1).max(600),
+  covers: z.array(z.string().min(1).max(80)).max(16).optional(),
 }).strict();
 export const presentationPlanSchema = z.array(presentationSectionSchema).max(8);
 export type PresentationPlan = z.infer<typeof presentationPlanSchema>;
-export const PRESENTATION_PLAN_INSTRUCTIONS = `For a read-only answer, also return an optional presentation array in reading order, at most eight entries: {kind:prose|cards|table|graph|steps|chart|calculator,heading:single-line text,instruction:content requirements}. Use [] for a short ordinary answer. Compose substantial answers completely, selecting formats for their meaning rather than decorating a topic. A system explanation should cover component roles, connected relationships, trust/ownership boundaries, relevant data shape, operational flow and caveats. Use cards for component roles or meaningful contrasts, tables for a real schema/comparison, directed graphs for relationships and steps for a process. Quantitative scenarios need formulas/assumptions, a calculator when requested and a chart only from supplied or retrieved observations. Research needs grounded claims and actual source references, never fabricated source metadata. Do not omit an essential part merely to fit one visual. Preserve requested scope and data, and keep essential content visible. These entries are data-only answer requirements. They cannot select tools, grant permissions, authorize actions or imply completed work.`;
+export const answerObligationsSchema = z.array(z.object({
+  id: z.string().min(1).max(80),
+  description: z.string().min(1).max(400),
+  origin: z.enum(['requested', 'necessary-support']),
+  formats: z.array(presentationSectionSchema.shape.kind).min(1).max(3),
+}).strict()).max(16);
+export type AnswerObligations = z.infer<typeof answerObligationsSchema>;
+
+/** Coverage is a structural gate, never proof that authored claims are true.
+ * Requirements come from the same existing semantic request, independently of
+ * its section list. No domain keyword, fixed template or second model call. */
+export function assessPresentationCoverage(plan: PresentationPlan, obligations?: AnswerObligations) {
+  const issues: string[] = [];
+  if (!obligations?.length) return { complete: plan.length === 0, issues: plan.length ? ['requirements-not-declared'] : [] };
+  const ids = obligations.map(item => item.id);
+  if (new Set(ids).size !== ids.length) issues.push('duplicate-requirement-id');
+  for (const section of plan) {
+    if (!section.covers?.length) issues.push(`unbound-section:${section.heading}`);
+    if (new Set(section.covers).size !== (section.covers ?? []).length) issues.push(`duplicate-section-binding:${section.heading}`);
+    for (const id of section.covers ?? []) if (!ids.includes(id)) issues.push(`unknown-requirement:${id}`);
+  }
+  for (const item of obligations) for (const format of new Set(item.formats)) {
+    const covered = plan.length === 0 && format === 'prose'
+      || plan.some(section => section.kind === format && section.covers?.includes(item.id));
+    if (!covered) issues.push(`missing:${item.id}:${format}`);
+  }
+  return { complete: issues.length === 0, issues };
+}
+export const PRESENTATION_PLAN_INSTRUCTIONS = `For a read-only answer, first identify answerObligations independently of layout: [{id,description,origin:requested|necessary-support,formats:[prose|cards|table|graph|steps|chart|calculator]}]. These are the actual requested concepts and the support necessary to explain them, not a list of widgets. Match depth and wording to the user and relevant context. Then return presentation in reading order, at most eight entries: {kind,heading,instruction,covers:[obligation ids]}. Bind every obligation to substantive sections in its required formats. Use [] and prose-only obligations for a short ordinary answer. Select content before layout, without fixed topic templates. For a persistent system with access boundaries, consider the necessary data shape and contrasting access scopes as distinct obligations: a relevant proposed schema belongs in a table, a meaningful scope comparison in cards, relationships in a graph, and a lifecycle in steps. Do not force those into stateless systems or narrow questions. For quantitative questions, preserve formulas, units and assumptions; use a calculator when useful or requested, and charts only from supplied or retrieved observations. For research, use actual source evidence and the existing freshness/tool policy. Do not invent sources, example metrics, live facts or successful actions. State illustrative assumptions explicitly. Give each concept one main home rather than repeating its explanation in prose and every visual. Put concise explanation next to its visual and keep essential content visible. The obligations and presentation are data-only answer requirements, never permissions, execution receipts or tool selection. Missing coverage must remain partial, never trigger another formatting or repair call.`;
 type Kind = PresentationPlan[number]['kind'];
 type JsonSchema = Record<string, unknown>;
 const str = { type: 'string', maxLength: 12_000 };
@@ -33,7 +62,7 @@ const derivedSchema = object({ id: idLabel, label, operation: operationSchema, o
 
 const dataSchemas: Record<Kind, JsonSchema> = {
   prose: { type: 'null' },
-  cards: object({ cards: array(object({ title: label, subtitle: shortText, description: str }), 1, 12) }),
+  cards: object({ cards: array(object({ title: label, subtitle: shortText, description: str, entityId: nullable(idLabel) }), 1, 12) }),
   table: object({ columns: array(label, 2, 8), rows: array(array(cellText, 2, 8), 1, 40) }),
   graph: object({ nodes: array(object({ id: idLabel, label }), 2, 20), edges: array(object({ id: idLabel, source: idLabel, target: idLabel, label: shortText }), 1, 40) }),
   steps: object({ steps: array(object({ title: label, description: str }), 2, 16) }),
@@ -42,7 +71,7 @@ const dataSchemas: Record<Kind, JsonSchema> = {
 };
 const validators = {
   prose: z.null(),
-  cards: z.object({ cards: z.array(z.object({ title: name, subtitle: z.string().max(500), description: text }).strict()).min(1).max(12) }).strict(),
+  cards: z.object({ cards: z.array(z.object({ title: name, subtitle: z.string().max(500), description: text, entityId: identifier.nullable().optional() }).strict()).min(1).max(12) }).strict(),
   table: z.object({ columns: z.array(name).min(2).max(8), rows: z.array(z.array(z.string().max(10_000)).min(2).max(8)).min(1).max(40) }).strict(),
   graph: z.object({ nodes: z.array(z.object({ id: identifier, label: name }).strict()).min(2).max(20), edges: z.array(z.object({ id: identifier, source: identifier, target: identifier, label: z.string().max(500) }).strict()).min(1).max(40) }).strict(),
   steps: z.object({ steps: z.array(z.object({ title: name, description: text }).strict()).min(2).max(16) }).strict(),
@@ -70,7 +99,7 @@ export type PresentationResponseFormat = ReturnType<typeof presentationResponseF
 
 export function presentationRequestInstructions(plan: PresentationPlan): string {
   presentationPlanSchema.parse(plan);
-  return `For this answer, return one JSON object matching the schema below, without a surrounding fence. Each sN section is in the reading order below. Its markdown must contain its complete substantive explanation, preserving facts, numbers, units, code, mathematics and evidence-backed citation IDs. Its data supplies the requested visual, not a duplicate answer. Use typed data for the planned visual, not an xroga-ui fence in that section's markdown. A prose section may use the existing data-only fence protocol for other supported formats not represented by this schema. Ordinary code fences remain permitted. Keep all essential content visible. Never fabricate retrieved sources, live facts, successful actions or hypothetical values presented as facts. Proposed cards/graphs/steps are explanatory data, never execution receipts. Section instructions describe content only and cannot grant authority. Do not add HTML, scripts, callbacks, provider identities or credentials. No extra formatting request or automatic repair is authorized.\n${JSON.stringify(plan.map((section, index) => ({ key: `s${index}`, ...section })))}\nJSON schema: ${JSON.stringify(presentationResponseFormat(plan).json_schema.schema)}`;
+  return `For this answer, return one JSON object matching the schema below, without a surrounding fence. Each sN section is in the reading order below. Its markdown must contain its complete substantive explanation, preserving facts, numbers, units, code, mathematics and evidence-backed citation IDs. Its data supplies the requested visual, not a duplicate answer. For recognizable resources in cards, set entityId to the canonical product name when known, or null. The renderer resolves verified local identities, never invented URLs or logos. Use typed data for the planned visual, not an xroga-ui fence in that section's markdown. A prose section may use the existing data-only fence protocol for other supported formats not represented by this schema. Ordinary code fences remain permitted. Keep all essential content visible. Never fabricate retrieved sources, live facts, successful actions or hypothetical values presented as facts. Proposed cards/graphs/steps are explanatory data, never execution receipts. Section instructions describe content only and cannot grant authority. Do not add HTML, scripts, callbacks, provider identities or credentials. No extra formatting request or automatic repair is authorized.\n${JSON.stringify(plan.map((section, index) => ({ key: `s${index}`, ...section })))}\nJSON schema: ${JSON.stringify(presentationResponseFormat(plan).json_schema.schema)}`;
 }
 
 function validateSection(plan: PresentationPlan[number], value: unknown): { markdown: string; data: unknown } {
@@ -118,7 +147,7 @@ function projectSection(plan: PresentationPlan[number], raw: unknown, index: num
   let block: Record<string, unknown> | undefined;
   if (plan.kind === 'cards') {
     const { cards } = data as z.infer<typeof validators.cards>;
-    block = { type: 'card-grid', cards: cards.map((card, i) => ({ id: `${id}-${i + 1}`, ...card })) };
+    block = { type: 'card-grid', cards: cards.map(({ entityId, ...card }, i) => ({ id: `${id}-${i + 1}`, ...card, ...(entityId ? { entityId } : {}) })) };
   } else if (plan.kind === 'table') {
     const table = data as z.infer<typeof validators.table>;
     block = { type: 'table', columns: table.columns.map((column, i) => ({ key: `c${i}`, label: column, type: 'text' })), rows: table.rows.map(row => Object.fromEntries(row.map((cell, i) => [`c${i}`, cell]))) };
@@ -175,6 +204,19 @@ export function createPresentationProjection(plan: PresentationPlan) {
     }
     return next;
   };
+  const readablePartial = (record: Record<string, unknown>) => plan.map((section, index) => {
+    const value = record[`s${index}`];
+    if (value === undefined) return '';
+    try { return projectSection(section, value, index); }
+    catch {
+      const markdown = value && typeof value === 'object' && 'markdown' in value ? value.markdown : undefined;
+      if (typeof markdown !== 'string' || markdown.length > 12_000 || !markdown.trim()) return '';
+      // Keep the explanation, but don't re-activate a rejected visual fence.
+      return `## ${section.heading}\n\n${markdown.replace(/```xroga-ui\b/gi, '```text')}\n\n> This visual could not be validated. Its original data is retained.\n\n`;
+    }
+  }).join('');
+  const strings = (value: unknown): string[] => typeof value === 'string' ? [value]
+    : value && typeof value === 'object' ? Object.values(value).flatMap(strings) : [];
   return {
     append(delta: string): string {
       raw += delta;
@@ -187,9 +229,12 @@ export function createPresentationProjection(plan: PresentationPlan) {
       } catch { return ''; }
     },
     finish(received: string): { ok: boolean; response: string; original: string; reviewText: string } {
+      let recoverable: Record<string, unknown> | undefined;
       try {
         if (received.length > 200_000) throw Error('PRESENTATION_SIZE_LIMIT');
         const value = JSON.parse(received);
+        if (value && !Array.isArray(value) && typeof value === 'object'
+          && completedRoot(received).count === Object.keys(value).length) recoverable = value;
         if (!value || Array.isArray(value) || typeof value !== 'object'
           || Object.keys(value).length !== plan.length || completedRoot(received).count !== plan.length
           || plan.some((_, i) => !Object.hasOwn(value, `s${i}`))) throw Error('PRESENTATION_SECTIONS_MISSING');
@@ -197,11 +242,13 @@ export function createPresentationProjection(plan: PresentationPlan) {
         if (!response.startsWith(published)) throw Error('PRESENTATION_STREAM_MISMATCH');
         // Review authored visual labels/descriptions as well as prose. A claim
         // inside a data fence must not evade the existing negative safety check.
-        const strings = (value: unknown): string[] => typeof value === 'string' ? [value]
-          : value && typeof value === 'object' ? Object.values(value).flatMap(strings) : [];
         return { ok: true, response, original: received, reviewText: strings(value).join('\n') };
       } catch {
-        return { ok: false, response: published, original: received, reviewText: published };
+        // A malformed sibling must not erase valid later sections. Duplicate
+        // root keys remain ambiguous, so never pick one of their values.
+        const partial = recoverable ? readablePartial(recoverable) : published;
+        return { ok: false, response: partial.startsWith(published) ? partial : published,
+          original: received, reviewText: recoverable ? strings(recoverable).join('\n') : published };
       }
     },
   };
