@@ -1,0 +1,20 @@
+{
+  "priorSubmissions": 2,
+  "preparedAtUtc": "2026-11-02T21:08:40.8292431+05:00",
+  "projectId": "85730a9a-fca9-4eb8-aa89-4e9c6172e2c5",
+  "noManualRetry": true,
+  "maximumRemainingMicroUsd": 495329,
+  "priorSettledMicroUsd": 84327,
+  "priorReservedMicroUsd": 517928,
+  "originalUnknownGlmHoldMicroUsd": 1385,
+  "source": "bccd300a71454711154791ce5714c44d11b0d027",
+  "state": "FAIL_INVALID_AUTHORIZATION_GUIDANCE_STOP_NO_RETRY",
+  "frontendSource": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
+  "thisSubmission": 3,
+  "maximumAttemptBoundMicroUsd": 376484,
+  "submissionActionAtUtc": "2026-11-02T16:09:08.3848213+00:00",
+  "chatId": "12ad6182-0420-4fd7-9891-59ec3a7c28f4",
+  "latestSettledMicroUsd": 1119,
+  "latestProviderCostUsd": "0.00111810",
+  "futurePaidTestsStopped": true
+}

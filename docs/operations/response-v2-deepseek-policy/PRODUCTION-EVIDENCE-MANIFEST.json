@@ -1,0 +1,55 @@
+{
+  "scope": "Actual founder-only synthetic production acceptance. Not customer data. Private artifacts retained locally.",
+  "files": [
+    {
+      "fileName": "994e1dab-production-ready.jpg",
+      "bytes": 99306,
+      "sha256": "f7ee26dde18c21cacc94e1c135b327c30d8a892dd4a40c99aeae4bc33d101a12"
+    },
+    {
+      "fileName": "bccd300a-new-saas-production-1440.jpg",
+      "bytes": 117730,
+      "sha256": "7d0fab9b76fa553acc02c0312f5f1f33f5b0e95acc2b0c20d573cebbdf8d5203"
+    },
+    {
+      "fileName": "bccd300a-new-saas-diagram-1440.jpg",
+      "bytes": 87580,
+      "sha256": "d53b386832049595b54d95574ae91ca799fd61158e744909ee80437a7d463c07"
+    },
+    {
+      "fileName": "bccd300a-new-saas-reopened-390.jpg",
+      "bytes": 54070,
+      "sha256": "6226584874eb05f0659d47443347c67cc060bf2d9f26ec9af60ba0c57c2edb17"
+    },
+    {
+      "fileName": "bccd300a-new-saas-diagram-390.jpg",
+      "bytes": 37734,
+      "sha256": "6433295970eca30012146d738fe83cc8201ded6b4e4e452ac54a0651b4e957a7"
+    },
+    {
+      "fileName": "bccd300a-private-share-1440.jpg",
+      "bytes": 77965,
+      "sha256": "f8cb57d55b7e487526b61708f6507147d1a00cdf2e6ecfd815c1fc3df5d2c9dd"
+    },
+    {
+      "fileName": "bccd300a-new-chat-ui-verification.json",
+      "bytes": 1170,
+      "sha256": "c6c26ec93af021948bf1c75123843ff2553a2709622fb9abac3e7807a53027b5"
+    },
+    {
+      "fileName": "bccd300a-captured-regression.json",
+      "bytes": 497,
+      "sha256": "fe00f46b55f105ede032979c6605c9654708adc13906dd1fb6ba4180696b500a"
+    },
+    {
+      "fileName": "bccd300a-fresh-saas-persisted.json",
+      "bytes": 24719,
+      "sha256": "603e6f4afc2402c62fd3f974df13d1424b76ee0c01e99d94859cf4921cc94ac8"
+    },
+    {
+      "fileName": "bccd300a-new-saas-export.txt",
+      "bytes": 6981,
+      "sha256": "fb1dc144be82f100bb4870743988e6adddce13dae0089046619c9bd7fb2e38ca"
+    }
+  ]
+}

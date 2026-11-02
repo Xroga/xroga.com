@@ -1,0 +1,92 @@
+{
+  "observedAtUtc": "2026-11-02T16:37:28.773306+00:00",
+  "backendRelease": "PASS_PINNED_PAIRED_CUTOVER",
+  "productAcceptance": "FAIL_NEW_SAAS_AUTHORIZATION_CONTRADICTION",
+  "source": "bccd300a71454711154791ce5714c44d11b0d027",
+  "digest": "sha256:bac1e1791ac44124c8b4c60b9b36613b511305ce4393f2144a52dcb32c47efaf",
+  "buildId": "4b8a3999-1d60-4608-b2c6-0d51145cd4a1",
+  "servingRevision": "xroga-api-response-bccd30-serving-1102",
+  "canonicalJob": "xroga-canonical-production",
+  "queue": "RUNNING",
+  "trafficPercent": 100,
+  "admissionSource": "bccd300a71454711154791ce5714c44d11b0d027",
+  "maintenanceStartedAtUtc": "2026-11-02T15:53:13.6200218+00:00",
+  "maintenanceEndedAtUtc": "2026-11-02T15:58:19.775532+00:00",
+  "maintenanceSeconds": 306.155511,
+  "recovery": {
+    "source": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+    "revision": "xroga-api-response-f80319-serving-1102",
+    "digest": "sha256:09708ffde98bb350d0c9809faf46810ac8b31adabb11fb6a015a38263dd24fbc",
+    "jobExport": "response-f80319-job-recovery.json",
+    "limitation": "Recovery restores the known missing disabled-provider guard. Stop paid acceptance on recovery."
+  },
+  "cleanup": {
+    "readinessTasksRemoved": true,
+    "temporaryCheckTagsRemoved": true,
+    "voiceTagsPreserved": true,
+    "newVm": false,
+    "newService": false,
+    "newIam": false,
+    "minimumInstancesAdded": false
+  },
+  "accounting": {
+    "newModelRequests": 2,
+    "historicalUnknownGlmHoldMicroUsd": 1385,
+    "historicalHoldReleased": false,
+    "conservativePriorConsumptionMicroUsd": 4671,
+    "remainingCombinedAllowanceMicroUsd": 495329,
+    "latestProviderCostUsd": "0.00111810",
+    "latestSettledMicroUsd": 1119,
+    "newUnknownHolds": 0
+  },
+  "cost": {
+    "buildCount": 1,
+    "buildSeconds": 183.338319,
+    "imageCompressedBytes": 154696271,
+    "actualGoogleBillingUsd": null,
+    "approvedGoogleCeilingUsd": 0.5,
+    "approvedImageRetentionCeilingUsdPerMonth": 0.1,
+    "ceilingsAreNotActualCosts": true
+  },
+  "remainingBlockers": [
+    "Fresh SaaS answer gave contradictory service-role authorization advice. Paid acceptance stopped.",
+    "Research synthesis directly selects GLM; deployed disabled-provider guard denies it. Draft PR 913 corrects selection.",
+    "Workshop, sourced research and unrelated new-chat acceptance remain unrun. No additional paid retry is authorized after the observed failure.",
+    "Clipboard fidelity is unverified because the browser clipboard bridge returned empty."
+  ],
+  "existingNonblockingWarning": "storage_reconcile_not_scheduled",
+  "pr909": "DRAFT_NOT_ACCEPTED",
+  "pr912": "DRAFT",
+  "frontendBuild": {
+    "source": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
+    "deployment": "GwPNLTadwd3XtJ1JpxrSu1Poqa1V",
+    "immutableUrl": "https://xrogaai-hgcar2awi-xrogas-projects.vercel.app",
+    "state": "READY_CURRENT_PRODUCTION_VERIFIED",
+    "ownerReauthenticated": true
+  },
+  "pr913": "DRAFT_NOT_DEPLOYED",
+  "acceptance": {
+    "chatId": "12ad6182-0420-4fd7-9891-59ec3a7c28f4",
+    "graphNodes": 4,
+    "graphEdges": 4,
+    "persistedRenderedCharacters": 7090,
+    "reopenIdentical": true,
+    "privateShareRichRendering": true,
+    "privateShareOwnerOnly": true,
+    "privateShareRetainedForFailureReview": true,
+    "privateShareRevocationRetested": false,
+    "desktopCssViewport": [
+      1440,
+      1000
+    ],
+    "mobileCssViewport": [
+      390,
+      844
+    ],
+    "mobilePageOverflow": false,
+    "copyClipboardFidelity": "UNVERIFIED",
+    "presentationInferenceRequests": 0,
+    "totalSubmissionsUsed": 3,
+    "paidTestingStopped": true
+  }
+}
