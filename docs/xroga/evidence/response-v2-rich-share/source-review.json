@@ -1,0 +1,13 @@
+{
+  "reference": "93474a05881c8ff171fc9ae371ef04d76a780ff3",
+  "scope": "READ_ONLY_RICH_SHARE_WITH_UNCHANGED_STORAGE_ACL",
+  "records": [
+    {
+      "path": "backend/src/routes/messageShares.ts",
+      "beforeSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "afterSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
+      "unchangedPersistenceCalls": 6
+    }
+  ],
+  "liveAcceptance": false
+}

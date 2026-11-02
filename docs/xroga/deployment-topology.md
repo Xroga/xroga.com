@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `aebd333eb52c46180194b11e979b193809f58f8e`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `93474a05881c8ff171fc9ae371ef04d76a780ff3`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |

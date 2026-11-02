@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "178b12800773d6c691a3fc9285bfd9d9d30d49b806a37c08b1bc57b0e7fc584b",
+  "reviewRegistrySha256": "3f76f4898e948cf920a3b71d7bc2a80121b01d9d0308e2972b6f63fc616e3758",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -4536,27 +4536,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8b17459285690a49b155"
+        "id": "c9a009f6baa9e3a3bbad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4bb5cd82397688351d8d"
+        "id": "000d28d21ea7dba70f24"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "acc2d6ec920ed57add31"
+        "id": "db7f2c7b53d05936f3da"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b2954d5c32ecb797fbcb"
+        "id": "ea4d7ecf3043636a2883"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "15290800ba879fff883d"
+        "id": "2f60349dbbab02755103"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "374ef098d8a33ca2b471"
+        "id": "c4dcd4d97035ff02f08f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -8160,27 +8160,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8b17459285690a49b155"
+        "id": "c9a009f6baa9e3a3bbad"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4bb5cd82397688351d8d"
+        "id": "000d28d21ea7dba70f24"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "acc2d6ec920ed57add31"
+        "id": "db7f2c7b53d05936f3da"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b2954d5c32ecb797fbcb"
+        "id": "ea4d7ecf3043636a2883"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "15290800ba879fff883d"
+        "id": "2f60349dbbab02755103"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "374ef098d8a33ca2b471"
+        "id": "c4dcd4d97035ff02f08f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -18942,18 +18942,18 @@
       }
     },
     {
-      "id": "8b17459285690a49b155",
+      "id": "c9a009f6baa9e3a3bbad",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 69,
+      "line": 70,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -18967,18 +18967,18 @@
       }
     },
     {
-      "id": "4bb5cd82397688351d8d",
+      "id": "000d28d21ea7dba70f24",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 69,
+      "line": 70,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -18992,18 +18992,18 @@
       }
     },
     {
-      "id": "acc2d6ec920ed57add31",
+      "id": "db7f2c7b53d05936f3da",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 97,
+      "line": 98,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -19017,18 +19017,18 @@
       }
     },
     {
-      "id": "b2954d5c32ecb797fbcb",
+      "id": "ea4d7ecf3043636a2883",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 97,
+      "line": 98,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Validated random token and unrevoked row identify the share. Named message_share_resolution exception is followed by verified viewer equality for private visibility; public access is explicit owner opt-in.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -19042,18 +19042,18 @@
       }
     },
     {
-      "id": "15290800ba879fff883d",
+      "id": "2f60349dbbab02755103",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 146,
+      "line": 147,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "message_shares",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -19067,18 +19067,18 @@
       }
     },
     {
-      "id": "374ef098d8a33ca2b471",
+      "id": "c4dcd4d97035ff02f08f",
       "path": "backend/src/routes/messageShares.ts",
-      "line": 146,
+      "line": 147,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "b3aa4a3c9b4be0c9a393823e5188298f3fb5a839ae5aae03baabedd4b1dffa53",
+      "sourceSha256": "e69821ae544aecfe8073586f737f2e39e9344360c034705f41f005d457427ac1",
       "semanticReview": {
         "authority": "Create/revoke use authMiddleware and issued context. Create stores server req.userId; revoke constrains token, owner_id and unrevoked state. Submitted content grants no authority over other resources.",
-        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged.",
+        "reason": "Real disposable tests prove owner-bound creation, foreign/anonymous private denial, foreign revoke denial, public opt-in, immediate revocation and no-store. Closes these fixed query boundaries only, not bootstrap authority, content safety, quotas or whole-product acceptance. 2026-11-02: reviewed literal Share opt-in. Persistence expressions, owner predicates, public opt-in, private viewer checks, revocation, escaped rendering and bounds remain unchanged. 2026-11-02 rich Share: reviewed backward-compatible text projection after the existing ACL. Persistence expressions, verified owner checks, explicit visibility, revocation and size limits are unchanged. Structured content is read-only data, not authority or execution.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
