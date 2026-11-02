@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
-    "sourceTimestampUtc": "2026-11-02T13:34:53+05:00",
-    "auditStartedUtc": "2026-11-02T09:27:59.733Z",
+    "sha": "420968727999e3aed87a601b21839d2e712e7087",
+    "sourceTimestampUtc": "2026-11-02T14:30:03+05:00",
+    "auditStartedUtc": "2026-11-02T09:30:53.838Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
