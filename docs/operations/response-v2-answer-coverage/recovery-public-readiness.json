@@ -1,0 +1,56 @@
+{
+  "observedAtUtc": "2026-11-02T21:47:33.607293+00:00",
+  "status": "RECOVERY_CORE_READINESS_PASS_RETAINED_HOUSEKEEPING_WARNING",
+  "results": [
+    {
+      "url": "https://api.xroga.com/health",
+      "httpStatus": 200,
+      "body": {
+        "status": "ok",
+        "service": "xroga-api",
+        "version": "3.0.0-ai-swarm",
+        "release": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+        "capabilities": [
+          "chat",
+          "build",
+          "github",
+          "deployment"
+        ],
+        "timestamp": "2026-11-02T21:47:31.109Z"
+      }
+    },
+    {
+      "url": "https://api.xroga.com/ready",
+      "httpStatus": 200,
+      "body": {
+        "status": "ready",
+        "service": "xroga-api",
+        "release": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+        "checks": [
+          {
+            "name": "environment",
+            "status": "ok"
+          },
+          {
+            "name": "database",
+            "status": "ok"
+          },
+          {
+            "name": "storage",
+            "status": "ok"
+          },
+          {
+            "name": "storage_quota",
+            "status": "ok"
+          },
+          {
+            "name": "storage_housekeeping",
+            "status": "fail",
+            "reason": "storage_reconcile_not_scheduled"
+          }
+        ],
+        "timestamp": "2026-11-02T21:47:32.995Z"
+      }
+    }
+  ]
+}

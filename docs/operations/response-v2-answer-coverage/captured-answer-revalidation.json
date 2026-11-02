@@ -1,0 +1,19 @@
+{
+  "scope": "OFFLINE_CAPTURE_REVALIDATION_NOT_NEW_GENERATION",
+  "sourceSha256": "dfd091da5ea9ed8d2f200305d79d55b35ebde9cb515ba82fa9765a2bbad6dbf4",
+  "sectionCount": 5,
+  "kindCounts": {
+    "prose": 2,
+    "graph": 1,
+    "table": 1,
+    "steps": 1
+  },
+  "allReceivedSectionShapesValid": true,
+  "authorizationNegativeCheck": {
+    "status": "complete"
+  },
+  "originalSourceRetained": true,
+  "plannerObligationsAvailable": false,
+  "exactCoverageIssue": "NOT_RECOVERABLE_FROM_EXISTING_CONTENT_FREE_LOGS",
+  "modelCalls": 0
+}

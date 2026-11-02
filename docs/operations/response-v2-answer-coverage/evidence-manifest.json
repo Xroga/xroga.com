@@ -1,0 +1,48 @@
+{
+  "screenshots": [
+    {
+      "file": "coverage-recovered-new-chat-1440.png",
+      "sha256": "872d898d1bb58004fd55063e531449e7901d8f8fa78c39fe7365b9097d233f2f",
+      "bytes": 163561,
+      "actualMimeType": "image/jpeg",
+      "width": 1440,
+      "height": 1000,
+      "scope": "recovered production persistence, not candidate acceptance"
+    },
+    {
+      "file": "coverage-recovered-new-chat-390.png",
+      "sha256": "e54725ece35ec9b85147e2cfa3f6f6b7a984d9cd758928a9eab82c7ce6acb50d",
+      "bytes": 50183,
+      "actualMimeType": "image/jpeg",
+      "width": 390,
+      "height": 843,
+      "scope": "recovered production persistence, not candidate acceptance"
+    },
+    {
+      "file": "coverage-new-saas-1440.png",
+      "sha256": "e41c2918165a596573057eef24ae72176ea4101dc21059f09b4e4b43b69a0bb6",
+      "bytes": 50584,
+      "actualMimeType": "image/jpeg",
+      "width": 580,
+      "height": 668,
+      "scope": "misnamed 580px capture, excluded as desktop acceptance"
+    },
+    {
+      "file": "coverage-frontend-recovered.png",
+      "sha256": "0d9bff291cd5db780f875f7d745db696d13ac31a08bb5e766723fef2394d9dc9",
+      "bytes": 43177,
+      "actualMimeType": "image/jpeg",
+      "width": 565,
+      "height": 651,
+      "scope": "Vercel rollback confirmation"
+    }
+  ],
+  "originalImagesRetainedLocally": true,
+  "publicEvidenceExportsNoCustomerData": true,
+  "recoveryExportLiteralCredentialCheck": "PASS_NATIVE_REFERENCES_ONLY",
+  "temporaryLocalTestBundles": "Removed by guarded owned-directory finally; original logs and evidence retained.",
+  "localStorageChange512MiBOrMore": false,
+  "backendSourceChangedAfterFailedAttempt": false,
+  "paidSubmissionsAfterFailure": 0,
+  "modelHoldReleasedWithoutProviderEvidence": false
+}

@@ -1,0 +1,66 @@
+{
+  "atUtc": "2026-11-02T21:39:01.641996+00:00",
+  "status": "PASS_CORE_READINESS_NOT_PRODUCT_ACCEPTANCE",
+  "results": [
+    {
+      "url": "https://api.xroga.com/health",
+      "httpStatus": 200,
+      "body": {
+        "status": "ok",
+        "service": "xroga-api",
+        "version": "3.0.0-ai-swarm",
+        "release": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+        "capabilities": [
+          "chat",
+          "build",
+          "github",
+          "deployment"
+        ],
+        "timestamp": "2026-11-02T21:38:58.335Z"
+      }
+    },
+    {
+      "url": "https://api.xroga.com/ready",
+      "httpStatus": 200,
+      "body": {
+        "status": "ready",
+        "service": "xroga-api",
+        "release": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+        "checks": [
+          {
+            "name": "environment",
+            "status": "ok"
+          },
+          {
+            "name": "database",
+            "status": "ok"
+          },
+          {
+            "name": "storage",
+            "status": "ok"
+          },
+          {
+            "name": "storage_quota",
+            "status": "ok"
+          },
+          {
+            "name": "storage_housekeeping",
+            "status": "fail",
+            "reason": "storage_reconcile_not_scheduled"
+          }
+        ],
+        "timestamp": "2026-11-02T21:39:00.174Z"
+      }
+    },
+    {
+      "url": "https://xroga.com/api/release",
+      "httpStatus": 200,
+      "body": {
+        "service": "xroga-web",
+        "release": "3fce045c4ddbda805672dcf6cb3d06fade3d9924",
+        "environment": "production"
+      }
+    }
+  ],
+  "retainedKnownWarning": "storage_reconcile_not_scheduled"
+}

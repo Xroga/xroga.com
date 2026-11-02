@@ -1,0 +1,7 @@
+{
+  "source": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "nonterminalCanonical": 0,
+  "checkedEpoch": 1793656103.2268355,
+  "checkedAtUtc": "2026-11-02T21:48:23.226835+00:00",
+  "verifiedBy": "Supabase execute_sql recovered singleton and zero nonterminal deliveries"
+}

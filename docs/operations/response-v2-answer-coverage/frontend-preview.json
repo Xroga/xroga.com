@@ -1,0 +1,35 @@
+{
+  "observedAtUtc": "2026-11-02T21:27:42.320335+00:00",
+  "source": "3fce045c4ddbda805672dcf6cb3d06fade3d9924",
+  "deployment": "A9ZCjXN6tBWUkZZQG4gmMwXMUxcH",
+  "url": "https://xrogaai-oc09zlg8r-xrogas-projects.vercel.app",
+  "environment": "preview",
+  "status": "READY_AUTHENTICATED_REGRESSION_ONLY",
+  "v2Confirmed": true,
+  "capturedAnswerChat": "567d40a0-3c58-40ab-bacf-ec9f64fd39a5",
+  "authenticLinkedIdentities": 6,
+  "identityWidthCssPx": 22,
+  "bodyCssPx": 16,
+  "bodyWeight": "400",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "pageOverflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "pageOverflow": false
+    }
+  ],
+  "newGenerationTested": false,
+  "modelCalls": 0,
+  "productionChanged": false,
+  "ownerTriggeredCanceledDeployment": "25hw5KBRZ9K9ENYauaHpk1EgJ4Hn",
+  "cancellationCause": "Existing Ignore Build Step returned zero",
+  "correctedBuildOptions": {
+    "cache": true,
+    "ignoreBuildStep": false
+  }
+}

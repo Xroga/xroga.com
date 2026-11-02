@@ -1,0 +1,7 @@
+{
+  "closed": true,
+  "nonterminalCanonical": 0,
+  "checkedEpoch": 1793655788.0968208,
+  "checkedAtUtc": "2026-11-02T21:43:08.096820+00:00",
+  "verifiedBy": "Supabase execute_sql exact singleton and nonterminal query"
+}

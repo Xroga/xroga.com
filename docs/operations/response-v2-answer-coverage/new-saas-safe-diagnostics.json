@@ -1,0 +1,11 @@
+{
+  "observedAtUtc": "2026-11-02T21:58:36.087229+00:00",
+  "syntheticIntervalUtc": [
+    "2026-11-02T21:40:10Z",
+    "2026-11-02T21:40:45Z"
+  ],
+  "entryCount": 128,
+  "safeDiagnosticReceipts": [],
+  "rawLogBodiesExported": false,
+  "presentationPlanNotLogged": true
+}

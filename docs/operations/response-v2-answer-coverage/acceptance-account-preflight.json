@@ -1,0 +1,20 @@
+{
+  "recordedAtUtc": "2026-11-02T21:27:42.320335+00:00",
+  "cycleId": "b8cb143d-6eb6-48e7-9935-5624cb15ae6d",
+  "status": "active",
+  "endsAtUtc": "2026-11-08T21:05:55.358485+00:00",
+  "entitlementMicroUsd": 1650000,
+  "settledMicroUsd": 88355,
+  "reservedMicroUsd": 517928,
+  "accountingSafetyHoldMicroUsd": 0,
+  "historicalGlmHoldMicroUsd": 1385,
+  "originalScopeRemainingMicroUsd": 492420,
+  "offlineMaximumRequestBoundMicroUsd": 448110,
+  "syntheticProjectId": "85730a9a-fca9-4eb8-aa89-4e9c6172e2c5",
+  "repositoryAttached": false,
+  "ownedByAcceptanceAccount": true,
+  "freshEmptyChatRequired": true,
+  "attachmentsAllowed": false,
+  "futureGlmAllowed": false,
+  "verifiedBy": "Read-only Supabase cycle, historical reservation and project queries"
+}

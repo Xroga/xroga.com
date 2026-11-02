@@ -1,0 +1,22 @@
+{
+  "observedAtUtc": "2026-11-02T21:51:17.165040+00:00",
+  "status": "PASS_EXECUTED_RECOVERY_NOT_RESPONSE_ACCEPTANCE",
+  "apiRevision": "xroga-api-response-cd5541-serving-1102",
+  "apiSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "jobSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:70a2be6f9f8b2452e7e6505ff13f9d1c571899aca18f011e5bbacc731daef28d",
+  "queue": "RUNNING",
+  "defaultTrafficPercent": 100,
+  "voiceTags": {
+    "voice-054d7ae4": "xroga-api-voice-054d7ae4",
+    "voice-9f62bba5": "xroga-api-voice-fe2c6486c"
+  },
+  "temporaryReleaseTagsRemoved": true,
+  "frontend": {
+    "service": "xroga-web",
+    "release": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+    "environment": "production"
+  },
+  "frontendDeployment": "G7cvCHDqZJPZm9B4kYMB1LpRMAWe",
+  "productionSqlSchemaChanged": false
+}

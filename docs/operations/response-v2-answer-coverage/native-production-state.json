@@ -1,0 +1,20 @@
+{
+  "observedAtUtc": "2026-11-02T21:37:08.288468+00:00",
+  "status": "PASS_NATIVE_PAIR_AND_RECOVERY_CONFIG_NOT_PRODUCT_ACCEPTANCE",
+  "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "revision": "xroga-api-response-4c6319-serving-1103",
+  "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:d6b41af5f1ea5c83d0d021d7f9e49d2dd3565bffb3f018385bcdbd60b03426fd",
+  "defaultPercent": 100,
+  "canonicalJobImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:d6b41af5f1ea5c83d0d021d7f9e49d2dd3565bffb3f018385bcdbd60b03426fd",
+  "queue": "RUNNING",
+  "trafficTags": {
+    "voice-054d7ae4": "xroga-api-voice-054d7ae4",
+    "voice-9f62bba5": "xroga-api-voice-fe2c6486c"
+  },
+  "temporaryCheckTagsRemoved": true,
+  "candidateMinimumInstances": 0,
+  "recoveryRevision": "xroga-api-response-cd5541-serving-1102",
+  "recoveryImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:70a2be6f9f8b2452e7e6505ff13f9d1c571899aca18f011e5bbacc731daef28d",
+  "recoveryRevisionReady": true,
+  "recoveryExecutedThisRelease": false
+}

@@ -1,0 +1,7 @@
+{
+  "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "nonterminalCanonical": 0,
+  "checkedEpoch": 1793655192.5785682,
+  "checkedAtUtc": "2026-11-02T21:33:12.578568+00:00",
+  "verifiedBy": "Supabase execute_sql exact singleton and nonterminal query"
+}

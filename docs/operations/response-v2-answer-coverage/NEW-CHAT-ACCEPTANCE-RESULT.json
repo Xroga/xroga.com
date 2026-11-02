@@ -1,0 +1,103 @@
+{
+  "status": "FAIL_PRODUCT_ACCEPTANCE_RECOVERED",
+  "chatId": "b12a86b4-d20f-4ef0-ac33-f5809aa2ec86",
+  "projectId": "85730a9a-fca9-4eb8-aa89-4e9c6172e2c5",
+  "backendSource": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "frontendSource": "3fce045c4ddbda805672dcf6cb3d06fade3d9924",
+  "generation": "ONE_NEW_AUTHENTICATED_PRODUCTION_SUBMISSION",
+  "response": {
+    "status": "partial",
+    "sections": 5,
+    "graph": {
+      "nodes": 6,
+      "edges": 9
+    },
+    "roleTableRows": 7,
+    "missingRequiredPresentation": [
+      "tenant access-scope comparison",
+      "proposed database schema table"
+    ],
+    "originalStructuredSourcePreserved": true,
+    "availableSourceMetadata": 0,
+    "liveResearchPerformed": false
+  },
+  "checks": {
+    "freshChat": true,
+    "noAttachments": true,
+    "noRepository": true,
+    "persistenceAndReopen": true,
+    "recoveredRendererDesktop": {
+      "width": 1440,
+      "height": 1000,
+      "pageOverflow": false
+    },
+    "recoveredRendererMobile": {
+      "width": 390,
+      "height": 844,
+      "pageOverflow": false
+    },
+    "candidateSourceDesktopMobileVisualAcceptance": "NOT_PASSED",
+    "streamingAcceptance": "NOT_VERIFIED",
+    "copyShareOfFreshAnswer": "NOT_VERIFIED",
+    "workshop": "NOT_RUN_STOP_CONDITION",
+    "research": "NOT_RUN_STOP_CONDITION",
+    "unrelatedSimple": "NOT_RUN_STOP_CONDITION"
+  },
+  "accounting": {
+    "unit": "microUSD",
+    "settledThisAttempt": 1649,
+    "newUnresolvedCancelledKimiHold": 38282,
+    "historicalGlmHoldRetained": 1385,
+    "remainingOriginalCombinedAllowanceConservative": 452489,
+    "newModelOrResearchAllowance": 0,
+    "furtherPaidSubmissionsAllowed": false,
+    "noGlmDispatchedThisAttempt": true,
+    "googleActualBilledCost": "NOT_INDEPENDENTLY_AVAILABLE",
+    "googleApprovedCeilingOnceUsd": 0.5,
+    "imageApprovedCeilingMonthlyUsd": 0.1
+  },
+  "reservations": [
+    {
+      "id": "f374604c-edf2-4d7d-b172-9fa3cc52baee",
+      "route": "deepseek_v4_flash",
+      "purpose": "complexity",
+      "status": "settled",
+      "settledMicroUsd": 546,
+      "outputTokens": 651,
+      "providerRequestId": "gen-1793655613-B0Rr6rAa5gtd8OisqxCG"
+    },
+    {
+      "id": "6d33d7e6-e376-484d-95e0-10d50dae55f9",
+      "route": "kimi_k3",
+      "purpose": "complexity",
+      "status": "pending_reconciliation",
+      "errorCategory": "cancelled",
+      "reservedMicroUsd": 38282,
+      "providerRequestId": null,
+      "provider": "moonshot",
+      "note": "No proof of zero provider cost. Hold retained."
+    },
+    {
+      "id": "5bfa30f5-512e-41c7-bc0e-bedefcc4cfa0",
+      "route": "deepseek_v4_flash",
+      "purpose": "daily_work",
+      "status": "settled",
+      "settledMicroUsd": 1103,
+      "outputTokens": 2123,
+      "providerRequestId": "gen-1793655619-kMyoW0WY6G9lOgZVUNbn"
+    }
+  ],
+  "disposition": "Remaining three prompts stopped. Approved compatible backend and frontend recovery executed. Keep PRs draft.",
+  "diagnosis": "Received section shapes validate offline. The exact missing/invalid planner obligation binding was not retained in existing logs, so its root cause is not asserted as verified.",
+  "screenshots": {
+    "recoveredProductionDesktop": "coverage-recovered-new-chat-1440.png",
+    "recoveredProductionMobile": "coverage-recovered-new-chat-390.png",
+    "misnamedCandidateCapture": {
+      "file": "coverage-new-saas-1440.png",
+      "actualWidth": 580,
+      "actualHeight": 668,
+      "valid1440Evidence": false
+    }
+  },
+  "recovery": "recovery-final-state.json"
+}

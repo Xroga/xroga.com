@@ -1,0 +1,14 @@
+{
+  "startedAtUtc": "2026-11-02T21:27:54.308252+00:00",
+  "deadlineUtc": "2026-11-02T22:27:54.308252+00:00",
+  "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "recoverySource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "productionFrontend": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "frontendRecoveryDeployment": "G7cvCHDqZJPZm9B4kYMB1LpRMAWe",
+  "status": "RECOVERED_AFTER_FAILED_PRODUCT_ACCEPTANCE",
+  "completedAtUtc": "2026-11-02T21:33:51.600600+00:00",
+  "durationSeconds": 357.292348,
+  "recoveryCompletedAtUtc": "2026-11-02T21:51:17.165040+00:00",
+  "recoveryExecuted": true,
+  "failedAcceptanceChat": "b12a86b4-d20f-4ef0-ac33-f5809aa2ec86"
+}
