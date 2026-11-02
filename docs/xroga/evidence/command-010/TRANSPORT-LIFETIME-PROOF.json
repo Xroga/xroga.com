@@ -300,7 +300,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47",
+      "sha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -579,6 +579,10 @@
       "beforePresentationContractBinding": {
         "reference": "7a1b4da064c643a02e60dd61369fa741bf481499",
         "sha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93"
+      },
+      "beforeAnswerCoverageBinding": {
+        "reference": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+        "sha256": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47"
       }
     },
     {
@@ -615,7 +619,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286",
+      "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -631,6 +635,10 @@
       "beforePresentationContractBinding": {
         "reference": "7a1b4da064c643a02e60dd61369fa741bf481499",
         "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+      },
+      "beforeAnswerCoverageBinding": {
+        "reference": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+        "sha256": "2b2c1c1a6ee7cb98b36690f9218bc6b9c822041b61deee3f196e476ac3f6a286"
       }
     },
     {
@@ -976,5 +984,10 @@
     "reference": "7a1b4da064c643a02e60dd61369fa741bf481499",
     "scope": "CURRENT_SOURCE_BINDING_NOT_LIVE_OR_FACTUAL_ACCEPTANCE",
     "review": "docs/xroga/evidence/response-presentation-contract/source-review.json"
+  },
+  "answerCoverageReview": {
+    "reference": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+    "scope": "CURRENT_SOURCE_CONTINUATION_NOT_LIVE_OR_FACTUAL_ACCEPTANCE",
+    "evidence": "docs/xroga/evidence/response-presentation-contract/answer-coverage-20261103.json"
   }
 }
