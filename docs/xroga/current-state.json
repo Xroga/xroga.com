@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "2b6e4aa4d856cca6796c4991447aba4ab2f37ae4",
-    "sourceTimestampUtc": "2026-11-02T03:08:57+05:00",
-    "auditStartedUtc": "2026-11-01T22:28:17.439Z",
+    "sha": "1c2ebd57134f54310942e76024295cf3862d2990",
+    "sourceTimestampUtc": "2026-11-02T13:26:04+05:00",
+    "auditStartedUtc": "2026-11-02T08:33:28.414Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -87436,7 +87436,7 @@
       "id": "surface:360b9e7bbf21b6187a8f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "sha256": "e628582e2369abb853b7edaef87a6f8daab08baed1407a286dc7926bf18d34f2",
+      "sha256": "ca88dfad1df43df059dcdfcce9937bc97aae9b3b86c52c573d01eba14e1dc9f9",
       "symbols": [
         "REPO_LIST_CACHE_KEY",
         "REPO_LIST_CACHE_TTL_MS",
@@ -87489,7 +87489,9 @@
         "savedRepo",
         "selectBranch",
         "selectRepo",
+        "selectionVersion",
         "showContextNotice",
+        "sidebarProject",
         "snapshot",
         "startWithNewRepository",
         "startedFreshSession",
@@ -87505,10 +87507,12 @@
         "@/lib/api",
         "@/lib/githubEvents",
         "@/lib/githubProjectEvents",
+        "@/lib/passiveRepositorySelection",
         "@/lib/projectContext",
         "@/lib/repoAnalysisCache",
         "@/lib/repoContext",
         "@/lib/restoreRepoTerminal",
+        "@/lib/sidebarProjectTask",
         "@/lib/syncRepoTerminalSessions",
         "@/lib/utils",
         "@/store/useProjectWorkspaceStore",
@@ -87523,10 +87527,12 @@
         "frontend/src/lib/api.ts",
         "frontend/src/lib/githubEvents.ts",
         "frontend/src/lib/githubProjectEvents.ts",
+        "frontend/src/lib/passiveRepositorySelection.ts",
         "frontend/src/lib/projectContext.ts",
         "frontend/src/lib/repoAnalysisCache.ts",
         "frontend/src/lib/repoContext.ts",
         "frontend/src/lib/restoreRepoTerminal.ts",
+        "frontend/src/lib/sidebarProjectTask.ts",
         "frontend/src/lib/syncRepoTerminalSessions.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useProjectWorkspaceStore.ts"
@@ -94158,7 +94164,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "45620d241f05cc73d84cc20f31cd957878785b7c57af9addf24a518be7ba57ef",
+      "sha256": "7e442f5db8f0da1a4a618be641d639881030f98329fc34f782103f2a5b19827a",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -100058,6 +100064,41 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:d670342f251aa77ac920",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/passiveRepositorySelection.ts",
+      "sha256": "d3bb403f545e3326521818482ace27ab2c3989aa5c297533c357e4933db75cb5",
+      "symbols": [
+        "passiveRepositorySelection"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/RepoContextBar.tsx:35",
+        "frontend/src/lib/passiveRepositorySelection.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/passiveRepositorySelection.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:e8703b6270b7bbb6c714",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/passwordStrength.ts",
@@ -101585,7 +101626,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:34",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:7",
         "frontend/src/components/terminal/RepoContextBar.tsx:10",
-        "frontend/src/components/terminal/RepoContextBar.tsx:214",
+        "frontend/src/components/terminal/RepoContextBar.tsx:216",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
         "frontend/src/components/terminal/TerminalChatBar.tsx:250",
         "frontend/src/components/terminal/TerminalChatBar.tsx:41",
@@ -101889,7 +101930,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:44",
-        "frontend/src/components/terminal/RepoContextBar.tsx:372"
+        "frontend/src/components/terminal/RepoContextBar.tsx:371"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -103378,6 +103419,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:6",
+        "frontend/src/components/terminal/RepoContextBar.tsx:34",
         "frontend/src/context/TerminalChatContext.tsx:42",
         "frontend/src/lib/sidebarOrganization.ts:5",
         "frontend/src/lib/sidebarProjectTask.test.ts:3",
@@ -104913,7 +104955,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx:40",
-        "frontend/src/components/terminal/RepoContextBar.tsx:355",
+        "frontend/src/components/terminal/RepoContextBar.tsx:354",
         "frontend/src/context/TerminalChatContext.tsx:1044",
         "frontend/src/context/TerminalChatContext.tsx:1405",
         "frontend/src/context/TerminalChatContext.tsx:2405",
@@ -108310,7 +108352,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "47fb8d10304abf826370e495dd30eadad24f07d4432bf89f238c7604fde9e54c",
+      "sha256": "c452243b525f07a92527ccecc610d46f7c2842ee671d894434a035a0ec8aa720",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -133815,44 +133857,44 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:3a862ef6a12138854d65",
+      "id": "frontend-call:cc22eb31dfe0f8742868",
       "sourcePath": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "line": 64,
+      "line": 66,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:fb5f96ddad4e0d91cf76",
+      "id": "frontend-call:3cb6426abd925defc099",
       "sourcePath": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "line": 65,
+      "line": 67,
       "callee": "api.github.listRepos",
       "reachable": true
     },
     {
-      "id": "frontend-call:92bb124295defff7e40b",
+      "id": "frontend-call:5c62be64692ed8bb46a2",
       "sourcePath": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "line": 137,
+      "line": 139,
       "callee": "api.github.listBranches",
       "reachable": true
     },
     {
-      "id": "frontend-call:c3bf451673d2253c5ec4",
+      "id": "frontend-call:5a045713b1997765e2d0",
       "sourcePath": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "line": 176,
+      "line": 178,
       "callee": "api.github.analyzeRepo",
       "reachable": true
     },
     {
-      "id": "frontend-call:c9d4de6d523720f67307",
+      "id": "frontend-call:2c03e4a52918b7cafd01",
       "sourcePath": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "line": 199,
+      "line": 201,
       "callee": "fetchRepoListSnapshot",
       "reachable": true
     },
     {
-      "id": "frontend-call:6bb66c0769ce68683f06",
+      "id": "frontend-call:6112764060717fa9e11b",
       "sourcePath": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "line": 360,
+      "line": 359,
       "callee": "api.github.updateSettings",
       "reachable": true
     },
@@ -140154,7 +140196,7 @@
     {
       "id": "test-suite:d9eeccf3b3da58cbd35c",
       "sourcePath": "frontend/src/components/response-experience-v2/exportText.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -140750,6 +140792,13 @@
       "id": "test-suite:33e48001850a318ad83e",
       "sourcePath": "frontend/src/lib/osPreview.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7b1ead40ee855e2662ac",
+      "sourcePath": "frontend/src/lib/passiveRepositorySelection.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
