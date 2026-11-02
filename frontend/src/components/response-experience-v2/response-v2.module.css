@@ -8,6 +8,7 @@
   isolation: isolate; container-type: inline-size;
 }
 .architecture { margin:0; }
+.canvas .sourceMark { display:inline-block; flex:none; vertical-align:-.12em; }
 .diagramConnections { margin:16px 0; padding-inline-start:24px; list-style:decimal; font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
 .diagramConnections li + li { margin-block-start:8px; }
 .comparisonCards { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:16px; }
