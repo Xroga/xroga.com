@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "047c6d722907bdb1bb56225377f1e2ad1d41f9ae",
-    "sourceTimestampUtc": "2026-11-02T22:55:46+05:00",
-    "auditStartedUtc": "2026-11-02T18:03:05.064Z",
+    "sha": "135be28382393e219101db2f378dc8985fe9d99d",
+    "sourceTimestampUtc": "2026-11-02T23:04:49+05:00",
+    "auditStartedUtc": "2026-11-02T18:12:11.366Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -7613,6 +7613,96 @@
       "testCoverage": [
         "backend/src/ai/research.test.ts",
         "backend/src/ai/researchLive.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:74760a8c78ac888599fd",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/responsePresentation.ts",
+      "sha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
+      "symbols": [
+        "JsonSchema",
+        "Kind",
+        "PRESENTATION_PLAN_INSTRUCTIONS",
+        "PresentationPlan",
+        "PresentationResponseFormat",
+        "addition",
+        "array",
+        "block",
+        "c",
+        "calculator",
+        "chart",
+        "chartTypes",
+        "completedRoot",
+        "count",
+        "createPresentationProjection",
+        "data",
+        "dataSchemas",
+        "depth",
+        "derivedSchema",
+        "escaped",
+        "finite",
+        "graph",
+        "i",
+        "id",
+        "idLabel",
+        "identifier",
+        "ids",
+        "inputs",
+        "label",
+        "name",
+        "next",
+        "nullable",
+        "number",
+        "object",
+        "operationSchema",
+        "operations",
+        "prefix",
+        "presentationPlanSchema",
+        "presentationRequestInstructions",
+        "presentationResponseFormat",
+        "presentationSectionSchema",
+        "project",
+        "projectSection",
+        "published",
+        "quoted",
+        "raw",
+        "response",
+        "section",
+        "str",
+        "strings",
+        "table",
+        "text",
+        "validateSection",
+        "validators",
+        "value"
+      ],
+      "imports": [
+        "zod"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "frontend/src/lib/responsePresentation.integration.test.ts:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -82063,7 +82153,8 @@
         "frontend/src/components/response-experience-v2/document.test.ts:4",
         "frontend/src/components/response-experience-v2/document.ts:5",
         "frontend/src/components/response-experience-v2/exportText.ts:2",
-        "frontend/src/components/response-experience-v2/interactionState.ts:1"
+        "frontend/src/components/response-experience-v2/interactionState.ts:1",
+        "frontend/src/lib/responsePresentation.integration.test.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82076,7 +82167,8 @@
       "testCoverage": [
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
-        "frontend/src/components/response-experience-v2/interactionState.test.ts"
+        "frontend/src/components/response-experience-v2/interactionState.test.ts",
+        "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -82357,7 +82449,8 @@
         "frontend/src/components/response-experience-v2/review/LocalReview.tsx:4",
         "frontend/src/components/response-experience-v2/shareSnapshot.ts:1",
         "frontend/src/components/response-experience-v2/sourceRegistry.test.ts:4",
-        "frontend/src/components/response-experience-v2/sourceRegistry.ts:2"
+        "frontend/src/components/response-experience-v2/sourceRegistry.ts:2",
+        "frontend/src/lib/responsePresentation.integration.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82375,7 +82468,8 @@
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/graphLayout.test.ts",
-        "frontend/src/components/response-experience-v2/sourceRegistry.test.ts"
+        "frontend/src/components/response-experience-v2/sourceRegistry.test.ts",
+        "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -82493,7 +82587,8 @@
         "frontend/src/components/response-experience-v2/document.test.ts:9",
         "frontend/src/components/response-experience-v2/exportText.test.ts:3",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:5",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:13"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:13",
+        "frontend/src/lib/responsePresentation.integration.test.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82507,7 +82602,8 @@
         "frontend/src/components/response-experience-v2/derivedCalculations.test.ts",
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts",
-        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts"
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+        "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -82828,7 +82924,8 @@
         "frontend/src/app/share/[token]/page.tsx:10",
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:9",
         "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
-        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4"
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4",
+        "frontend/src/lib/responsePresentation.integration.test.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82839,7 +82936,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts"
+        "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+        "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -107863,6 +107961,7 @@
         "frontend/src/components/terminal/XrogaBlockView.tsx:11",
         "frontend/src/lib/goldenJourneyRendering.test.ts:7",
         "frontend/src/lib/researchHandoff.ts:1",
+        "frontend/src/lib/responsePresentation.integration.test.ts:5",
         "frontend/src/lib/xrogaA2uiAdapter.ts:1",
         "frontend/src/lib/xrogaBlocks.test.ts:6",
         "frontend/src/lib/xrogaChartSchemas.test.ts:4",
@@ -107896,6 +107995,7 @@
       ],
       "testCoverage": [
         "frontend/src/lib/goldenJourneyRendering.test.ts",
+        "frontend/src/lib/responsePresentation.integration.test.ts",
         "frontend/src/lib/xrogaBlocks.test.ts",
         "frontend/src/lib/xrogaChartSchemas.test.ts",
         "frontend/src/lib/xrogaDocumentEdits.test.ts",
@@ -108730,6 +108830,7 @@
         "frontend/src/components/response-experience-v2/exportText.test.ts:4",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:3",
         "frontend/src/context/TerminalChatContext.tsx:98",
+        "frontend/src/lib/responsePresentation.integration.test.ts:4",
         "frontend/src/lib/xrogaResponseDocument.test.ts:4",
         "frontend/src/lib/xrogaRichResults.test.ts:4"
       ],
@@ -108746,6 +108847,7 @@
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+        "frontend/src/lib/responsePresentation.integration.test.ts",
         "frontend/src/lib/xrogaResponseDocument.test.ts",
         "frontend/src/lib/xrogaRichResults.test.ts"
       ],
@@ -141258,6 +141360,13 @@
       "id": "test-suite:4446028f39b7ee404095",
       "sourcePath": "frontend/src/lib/researchHandoff.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6306f58183590592024c",
+      "sourcePath": "frontend/src/lib/responsePresentation.integration.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
