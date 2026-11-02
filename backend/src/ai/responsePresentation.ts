@@ -13,6 +13,9 @@ export const PRESENTATION_PLAN_INSTRUCTIONS = `For a read-only answer, also retu
 type Kind = PresentationPlan[number]['kind'];
 type JsonSchema = Record<string, unknown>;
 const str = { type: 'string', maxLength: 12_000 };
+const shortText = { type: 'string', maxLength: 500 };
+const unitText = { type: 'string', maxLength: 120 };
+const cellText = { type: 'string', maxLength: 10_000 };
 const label = { type: 'string', minLength: 1, maxLength: 160 };
 const idLabel = { type: 'string', minLength: 1, maxLength: 80 };
 const number = { type: 'number' };
@@ -26,25 +29,25 @@ const identifier = z.string().min(1).max(80);
 const operations = ['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum'] as const;
 const operationSchema = { type: 'string', enum: [...operations] };
 const chartTypes = ['line', 'bar', 'area', 'pie', 'scatter'] as const;
-const derivedSchema = object({ id: idLabel, label, operation: operationSchema, operands: array({ anyOf: [label, number] }, 1, 8), rounding: nullable({ type: 'string', enum: ['floor', 'ceil', 'round'] }), unit: str, precision: { type: 'integer', minimum: 0, maximum: 6 } });
+const derivedSchema = object({ id: idLabel, label, operation: operationSchema, operands: array({ anyOf: [label, number] }, 1, 8), rounding: nullable({ type: 'string', enum: ['floor', 'ceil', 'round'] }), unit: unitText, precision: { type: 'integer', minimum: 0, maximum: 6 } });
 
 const dataSchemas: Record<Kind, JsonSchema> = {
   prose: { type: 'null' },
-  cards: object({ cards: array(object({ title: label, subtitle: str, description: str }), 1, 12) }),
-  table: object({ columns: array(label, 2, 8), rows: array(array(str, 2, 8), 1, 40) }),
-  graph: object({ nodes: array(object({ id: idLabel, label }), 2, 20), edges: array(object({ id: idLabel, source: idLabel, target: idLabel, label: str }), 1, 40) }),
+  cards: object({ cards: array(object({ title: label, subtitle: shortText, description: str }), 1, 12) }),
+  table: object({ columns: array(label, 2, 8), rows: array(array(cellText, 2, 8), 1, 40) }),
+  graph: object({ nodes: array(object({ id: idLabel, label }), 2, 20), edges: array(object({ id: idLabel, source: idLabel, target: idLabel, label: shortText }), 1, 40) }),
   steps: object({ steps: array(object({ title: label, description: str }), 2, 16) }),
-  chart: object({ chartType: { type: 'string', enum: [...chartTypes] }, xLabel: label, series: array(object({ label, unit: str }), 1, 5), data: array(object({ x: { anyOf: [label, number] }, values: array(number, 1, 5) }), 2, 60) }),
-  calculator: object({ operation: operationSchema, inputs: array(object({ id: idLabel, label, value: number, unit: str, min: nullable(number), max: nullable(number), step: nullable(number) }), 1, 8), resultLabel: label, resultUnit: str, precision: { type: 'integer', minimum: 0, maximum: 6 }, derivedResults: nullable(array(derivedSchema, 1, 8)) }),
+  chart: object({ chartType: { type: 'string', enum: [...chartTypes] }, xLabel: label, series: array(object({ label, unit: unitText }), 1, 5), data: array(object({ x: { anyOf: [label, number] }, values: array(number, 1, 5) }), 2, 60) }),
+  calculator: object({ operation: operationSchema, inputs: array(object({ id: idLabel, label, value: number, unit: unitText, min: nullable(number), max: nullable(number), step: nullable(number) }), 1, 8), resultLabel: label, resultUnit: unitText, precision: { type: 'integer', minimum: 0, maximum: 6 }, derivedResults: nullable(array(derivedSchema, 1, 8)) }),
 };
 const validators = {
   prose: z.null(),
-  cards: z.object({ cards: z.array(z.object({ title: name, subtitle: text, description: text }).strict()).min(1).max(12) }).strict(),
-  table: z.object({ columns: z.array(name).min(2).max(8), rows: z.array(z.array(text).min(2).max(8)).min(1).max(40) }).strict(),
-  graph: z.object({ nodes: z.array(z.object({ id: identifier, label: name }).strict()).min(2).max(20), edges: z.array(z.object({ id: identifier, source: identifier, target: identifier, label: text }).strict()).min(1).max(40) }).strict(),
+  cards: z.object({ cards: z.array(z.object({ title: name, subtitle: z.string().max(500), description: text }).strict()).min(1).max(12) }).strict(),
+  table: z.object({ columns: z.array(name).min(2).max(8), rows: z.array(z.array(z.string().max(10_000)).min(2).max(8)).min(1).max(40) }).strict(),
+  graph: z.object({ nodes: z.array(z.object({ id: identifier, label: name }).strict()).min(2).max(20), edges: z.array(z.object({ id: identifier, source: identifier, target: identifier, label: z.string().max(500) }).strict()).min(1).max(40) }).strict(),
   steps: z.object({ steps: z.array(z.object({ title: name, description: text }).strict()).min(2).max(16) }).strict(),
-  chart: z.object({ chartType: z.enum(chartTypes), xLabel: name, series: z.array(z.object({ label: name, unit: text }).strict()).min(1).max(5), data: z.array(z.object({ x: z.union([name, finite]), values: z.array(finite).min(1).max(5) }).strict()).min(2).max(60) }).strict(),
-  calculator: z.object({ operation: z.enum(operations), inputs: z.array(z.object({ id: identifier, label: name, value: finite, unit: text, min: finite.nullable(), max: finite.nullable(), step: finite.positive().nullable() }).strict()).min(1).max(8), resultLabel: name, resultUnit: text, precision: z.number().int().min(0).max(6), derivedResults: z.array(z.object({ id: identifier, label: name, operation: z.enum(operations), operands: z.array(z.union([name, finite])).min(1).max(8), rounding: z.enum(['floor', 'ceil', 'round']).nullable(), unit: text, precision: z.number().int().min(0).max(6) }).strict()).min(1).max(8).nullable() }).strict(),
+  chart: z.object({ chartType: z.enum(chartTypes), xLabel: name, series: z.array(z.object({ label: name, unit: z.string().max(120) }).strict()).min(1).max(5), data: z.array(z.object({ x: z.union([name, finite]), values: z.array(finite).min(1).max(5) }).strict()).min(2).max(60) }).strict(),
+  calculator: z.object({ operation: z.enum(operations), inputs: z.array(z.object({ id: identifier, label: name, value: finite, unit: z.string().max(120), min: finite.nullable(), max: finite.nullable(), step: finite.positive().nullable() }).strict()).min(1).max(8), resultLabel: name, resultUnit: z.string().max(120), precision: z.number().int().min(0).max(6), derivedResults: z.array(z.object({ id: identifier, label: name, operation: z.enum(operations), operands: z.array(z.union([name, finite])).min(1).max(8), rounding: z.enum(['floor', 'ceil', 'round']).nullable(), unit: z.string().max(120), precision: z.number().int().min(0).max(6) }).strict()).min(1).max(8).nullable() }).strict(),
 };
 
 /** The provider must return every planned section, with data in the requested
@@ -83,6 +86,7 @@ function validateSection(plan: PresentationPlan[number], value: unknown): { mark
     const graph = data as z.infer<typeof validators.graph>;
     const ids = new Set(graph.nodes.map(node => node.id));
     if (ids.size !== graph.nodes.length || new Set(graph.edges.map(edge => edge.id)).size !== graph.edges.length
+      || new Set(graph.edges.map(edge => JSON.stringify([edge.source, edge.target, edge.label]))).size !== graph.edges.length
       || graph.edges.some(edge => !ids.has(edge.source) || !ids.has(edge.target))) throw Error('INVALID_GRAPH_CONNECTION');
   }
   if (plan.kind === 'calculator') {
@@ -128,7 +132,9 @@ function projectSection(plan: PresentationPlan[number], raw: unknown, index: num
     block = { type: 'calculator', ...calculator, ...(calculator.derivedResults ? { derivedResults: calculator.derivedResults.map(result => Object.fromEntries(Object.entries(result).filter(([, value]) => value !== null))) } : {}), inputs: calculator.inputs.map(input => Object.fromEntries(Object.entries(input).filter(([, value]) => value !== null))) };
     if (!calculator.derivedResults) delete block.derivedResults;
   }
-  return `## ${plan.heading}\n\n${markdown}${block ? `\n\n\`\`\`xroga-ui\n${JSON.stringify({ id, ...block })}\n\`\`\`` : ''}\n\n`;
+  const encoded = block ? JSON.stringify({ id, ...block }) : undefined;
+  if (encoded && encoded.length > 50_000) throw Error('PRESENTATION_BLOCK_SIZE_LIMIT');
+  return `## ${plan.heading}\n\n${markdown}${encoded ? `\n\n\`\`\`xroga-ui\n${encoded}\n\`\`\`` : ''}\n\n`;
 }
 
 /** Read completed root properties from a JSON stream, respecting escaped quotes
