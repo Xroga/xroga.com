@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { createPortal } from 'react-dom';
+import { useRef, useState } from 'react';
 import { Check } from 'lucide-react';
+import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
 import { TERMINAL_SKINS, type TerminalSkin } from '@/lib/theme';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
@@ -28,55 +28,6 @@ export function TerminalSkinPicker() {
 
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [menuStyle, setMenuStyle] = useState<CSSProperties>({});
-
-  // Close on outside click and on Escape — a popover that only closes by re-clicking
-  // its trigger is a trap on touch, where there is no hover affordance to hint at it.
-  useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Node;
-      if (!rootRef.current?.contains(target) && !menuRef.current?.contains(target)) setOpen(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [open]);
-
-  /* The workspace window is an isolated, clipped stacking context while the fixed
-     composer sits above it. Render the menu at the document level so it cannot fall
-     behind the workspace or chatbar, then keep it aligned with the header trigger. */
-  useLayoutEffect(() => {
-    if (!open) return;
-    const sync = () => {
-      const trigger = rootRef.current?.getBoundingClientRect();
-      if (!trigger) return;
-      const width = Math.min(260, window.innerWidth - 24);
-      setMenuStyle({
-        position: 'fixed',
-        top: trigger.bottom + 8,
-        left: Math.max(12, Math.min(trigger.right - width, window.innerWidth - width - 12)),
-        width,
-        maxHeight: Math.max(180, window.innerHeight - trigger.bottom - 20),
-      });
-    };
-    sync();
-    window.addEventListener('resize', sync);
-    window.addEventListener('scroll', sync, true);
-    window.visualViewport?.addEventListener('resize', sync);
-    return () => {
-      window.removeEventListener('resize', sync);
-      window.removeEventListener('scroll', sync, true);
-      window.visualViewport?.removeEventListener('resize', sync);
-    };
-  }, [open]);
 
   const active = TERMINAL_SKINS.find((s) => s.id === skin) ?? TERMINAL_SKINS[0];
 
@@ -99,14 +50,8 @@ export function TerminalSkinPicker() {
         <AnimatedIcon icon={PaletteIcon} size={14} intro={false} />
       </button>
 
-      {open && typeof document !== 'undefined' ? createPortal(
-        <div
-          ref={menuRef}
-          className="xv-skin-menu xv-skin-menu--portal"
-          role="menu"
-          aria-label="Terminal skin"
-          style={menuStyle}
-        >
+      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef}
+        placement="bottom-end" width={260} ariaLabel="Terminal skin" className="xv-skin-menu xv-skin-menu--portal">
           <div className="xv-skin-menu-head">
             <span>Terminal appearance</span>
             <small>Choose a modern console palette</small>
@@ -152,9 +97,7 @@ export function TerminalSkinPicker() {
               </button>
             );
           })}
-        </div>,
-        document.body,
-      ) : null}
+      </AnchoredPortalPopover>
     </div>
   );
 }

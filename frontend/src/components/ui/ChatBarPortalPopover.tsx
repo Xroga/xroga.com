@@ -19,7 +19,7 @@ export function ChatBarPortalPopover({
   width?: number;
 }) {
   return (
-    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} className={className} width={width} placement="top-start">
+    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} className={className} width={width} placement="bottom-start">
       {children}
     </AnchoredPortalPopover>
   );

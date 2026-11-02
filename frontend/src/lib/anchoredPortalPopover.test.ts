@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { clampAnchoredPosition } from '../components/ui/AnchoredPortalPopover';
+import { calculateAnchoredLayout, clampAnchoredPosition } from '../components/ui/AnchoredPortalPopover';
 
 test('anchored popover clamps to every viewport edge', () => {
   // Bottom placement flips above when that side has enough room.
@@ -19,6 +19,18 @@ test('anchored popover preserves preferred placement when it fits and flips only
     const point = clampAnchoredPosition({ left: -20, right: 350, top: 0, bottom: 240 }, { width: 600, height: 500 }, viewport, placement);
     assert.deepEqual(point, { left: 12, top: 12 });
   }
+});
+
+test('long mobile popovers stay beside their trigger and scroll within the available side', () => {
+  const viewport = { width: 375, height: 600 };
+  assert.deepEqual(calculateAnchoredLayout(
+    { left: 320, right: 350, top: 90, bottom: 120 },
+    { width: 320, height: 600 }, viewport, 'bottom-start',
+  ), { left: 43, top: 128, maxHeight: 460 });
+  assert.deepEqual(calculateAnchoredLayout(
+    { left: 320, right: 350, top: 510, bottom: 540 },
+    { width: 320, height: 600 }, viewport, 'bottom-start',
+  ), { left: 43, top: 12, maxHeight: 490 });
 });
 
 test('workspace identity uses the shared body portal with complete dismissal and reposition behavior', () => {

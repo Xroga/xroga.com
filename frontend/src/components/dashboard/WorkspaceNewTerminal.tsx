@@ -194,7 +194,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       </span>
       <CapabilityVisual id={card.id} />
     </button>
-    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={264} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
+    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="bottom-start" width={264} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
       <div ref={menuRef}
         onKeyDown={event => {
           if (event.key === 'Escape') { close(); anchorRef.current?.focus(); }

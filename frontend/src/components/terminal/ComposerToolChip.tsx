@@ -24,7 +24,7 @@ export function ComposerToolChip({ label, category, description, tone, onRemove 
     <button type="button" className={styles.remove} aria-label={'Remove ' + label + ' selection'}
       onClick={onRemove}><X size={13} aria-hidden="true" /></button>
     <AnchoredPortalPopover open={detailsOpen} onClose={() => setDetailsOpen(false)}
-      anchorRef={anchorRef} placement="top-start" width={260} ariaLabel={label + ' details'} className={styles.detail}>
+      anchorRef={anchorRef} placement="bottom-start" width={260} ariaLabel={label + ' details'} className={styles.detail}>
       <div className={styles.detailHead}><Icon size={18} aria-hidden="true" /><strong>{label}</strong></div>
       <p>{description}</p>
       <span className={styles.category}>{category}</span>

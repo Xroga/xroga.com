@@ -16,4 +16,4 @@
 .teamSection p { margin:0 0 12px; }
 .teamSection button,.teamSection a { display:inline-flex; align-items:center; gap:8px; width:auto; padding:8px 0; color:inherit; font-size:12px; font-weight:650; background:transparent; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
 .teamSection button:disabled { opacity:.4; cursor:not-allowed; }
-@media(max-width:1023px) { .control { width:27px; padding:0; justify-content:center; flex-shrink:0; } .control>span { display:none; } }
+@media(max-width:1023px) { .control { width:27px; padding:0; justify-content:center; flex-shrink:0; } .control>span { display:none; } .control>:global(.xv-animated-icon-host) { display:inline-flex; } }

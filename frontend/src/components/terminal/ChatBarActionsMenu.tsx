@@ -11,6 +11,7 @@ import {
   useComposerToolsStore,
 } from '@/store/useComposerToolsStore';
 import { cn } from '@/lib/utils';
+import { calculateAnchoredLayout } from '@/components/ui/AnchoredPortalPopover';
 import controls from './WorkspaceControls.module.css';
 
 /**
@@ -98,7 +99,7 @@ export function ChatBarActionsMenu({
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({ visibility: 'hidden' });
 
   const rules = useComposerToolsStore((s) => s.rules);
   const setRules = useComposerToolsStore((s) => s.setRules);
@@ -126,31 +127,16 @@ export function ChatBarActionsMenu({
   useLayoutEffect(() => {
     if (!open) return;
     const sync = () => {
-      const composer = rootRef.current?.closest<HTMLElement>('.xv-chatbar-solid');
-      if (!composer) return;
-      const frame = composer.closest<HTMLElement>('.xv-kimi-composer-frame') ?? composer;
-      const rect = frame.getBoundingClientRect();
-      const width = Math.min(rect.width, window.innerWidth - 16);
-      const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
-      const idle = Boolean(composer.closest('.xv-terminal-dock--idle'));
-      if (idle) {
-        const available = window.innerHeight - rect.bottom - 16;
-        setMenuStyle(available >= 160 ? {
-          position: 'fixed', left, top: rect.bottom + 6,
-          bottom: 'auto', width,
-          maxHeight: Math.max(120, Math.min(480, available)),
-        } : {
-          position: 'fixed', left, top: 'auto',
-          bottom: Math.max(8, window.innerHeight - rect.top + 6), width,
-          maxHeight: Math.max(120, Math.min(440, rect.top - 12)),
-        });
-        return;
-      }
+      const trigger = rootRef.current;
+      const menu = menuRef.current;
+      if (!trigger || !menu) return;
+      const viewport = { width: window.visualViewport?.width ?? window.innerWidth, height: window.visualViewport?.height ?? window.innerHeight };
+      const width = Math.min(420, viewport.width - 24);
+      const layout = calculateAnchoredLayout(trigger.getBoundingClientRect(),
+        { width, height: Math.max(menu.scrollHeight, menu.offsetHeight) }, viewport, 'bottom-start');
       setMenuStyle({
-        position: 'fixed', left, top: 'auto',
-        bottom: Math.max(8, window.innerHeight - rect.top + 6),
-        width,
-        maxHeight: Math.min(480, Math.max(130, rect.top - 12)),
+        position: 'fixed', left: layout.left, top: layout.top, bottom: 'auto',
+        width, maxHeight: layout.maxHeight, visibility: 'visible',
       });
     };
     sync();
@@ -162,11 +148,14 @@ export function ChatBarActionsMenu({
     window.addEventListener('scroll', sync, { capture: true, passive: true });
     window.visualViewport?.addEventListener('resize', sync);
     window.visualViewport?.addEventListener('scroll', sync, { passive: true });
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(sync);
+    if (menuRef.current) observer?.observe(menuRef.current);
     return () => {
       window.removeEventListener('resize', sync);
       window.removeEventListener('scroll', sync, true);
       window.visualViewport?.removeEventListener('resize', sync);
       window.visualViewport?.removeEventListener('scroll', sync);
+      observer?.disconnect();
     };
   }, [open, panel]);
 

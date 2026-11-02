@@ -167,7 +167,7 @@ export function IntegrationsModal({
   if (!open) return null;
 
   return (
-    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} placement="top-start" width={260} className={compactStyles.menu} ariaLabel="Plugin shortcuts">
+    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} placement="bottom-start" width={260} className={compactStyles.menu} ariaLabel="Plugin shortcuts">
       <section
         role="dialog"
         aria-labelledby="workspace-plugins-title"
