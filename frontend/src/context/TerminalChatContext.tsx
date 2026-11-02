@@ -2351,7 +2351,7 @@ const stopRequestedRunIdRef =
             );
           },
         });
-        const enhanced = enhanceAiResponse(result.response, assistantId, result.completion);
+        const enhanced = enhanceAiResponse(result.response, assistantId, result.completion, result.responseSource);
         setMessages((current) => current.map((message) =>
           message.id === assistantId
             ? { ...message, content: enhanced.content, featureOutput: enhanced.output, agent: 'Xroga AI Brain' }
@@ -2931,7 +2931,7 @@ if (
                 controller.signal
               );
 
-              const enhanced = enhanceAiResponse(fullReply, assistantId, result.completion);
+              const enhanced = enhanceAiResponse(fullReply, assistantId, result.completion, result.responseSource);
               fullReply = enhanced.content;
               setMessages((current) => current.map((message) =>
                 message.id === assistantId

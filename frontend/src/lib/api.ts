@@ -6038,7 +6038,8 @@ import type {
 } from '@/lib/hackathonBrief';
 
 export interface Phase1ChatResult {
-  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' };
+  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'presentation_contract' };
+  responseSource?: { format: 'xroga-response-json-v1'; text: string };
   response:
     string;
 

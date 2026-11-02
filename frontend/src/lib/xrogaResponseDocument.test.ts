@@ -2,11 +2,36 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { enhanceAiResponse, stripXrogaUiProtocol } from './xrogaResponseDocument';
+import { parseXrogaOutput } from './xrogaBlocks';
 
 test('ordinary answers stay lightweight text', () => {
   const result = enhanceAiResponse('A direct answer with **useful emphasis**.', 'message-1');
   assert.equal(result.content, 'A direct answer with **useful emphasis**.');
   assert.equal(result.output, undefined);
+});
+
+test('received structured source and incomplete-section state survive save and reopen without executing source data', () => {
+  const raw = '{"s0":{"markdown":"Keep `tenant_id`.","data":null},"s1":';
+  const projected = '## Explanation\n\nKeep `tenant_id`.\n\n';
+  const responseSource = { format: 'xroga-response-json-v1', text: raw };
+  const result = enhanceAiResponse(projected, 'structured-partial', { status: 'partial', reason: 'presentation_contract' }, responseSource);
+  const saved = parseXrogaOutput(JSON.parse(JSON.stringify(result.output)));
+  assert.ok(saved);
+  assert.equal(saved.status, 'partial');
+  assert.deepEqual(saved.responseSource, responseSource);
+  assert.equal(saved.sourceText, projected);
+  assert.equal(saved.blocks[0].type, 'notice');
+  assert.match(saved.blocks[0].text, /did not finish all required sections.*No automatic retry/);
+  assert.equal(saved.blocks[1].type, 'narrative');
+  assert.equal(saved.blocks[1].text, projected.trim());
+  assert.equal(result.content.includes('"s0"'), false);
+  assert.equal(enhanceAiResponse('A short answer.', 'legacy').output, undefined);
+});
+
+test('an unsupported received-source envelope cannot become executable presentation data', () => {
+  const result = enhanceAiResponse('Visible answer.', 'source', { status: 'complete' }, { format: 'html', text: '<script>run()</script>' });
+  assert.equal(result.output, undefined);
+  assert.equal(result.content, 'Visible answer.');
 });
 
 test('a length-limited answer retains its exact source and partial warning through persistence', () => {

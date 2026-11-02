@@ -351,6 +351,9 @@ export const xrogaOutputSchema = z.object({
   blocks: z.array(xrogaBlockSchema),
   // Optional for older persisted messages. Source text is evidence, never executable UI.
   sourceText: z.string().max(200_000).optional(),
+  // Preserve the received document for incomplete-output recovery. It is data,
+  // never HTML, executable UI or proof that the answer passed validation.
+  responseSource: z.object({ format: z.literal('xroga-response-json-v1'), text: z.string().max(200_000) }).strict().optional(),
   composition: z.literal('source-order').optional(),
   artifact: z.object({
     id: z.string().min(1), type: z.string().min(1), title: z.string().min(1), projectId: z.string().optional(),

@@ -252,15 +252,19 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
 }
 
 /** Convert a completed assistant answer into the canonical, persisted Xroga output document. */
-export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }): EnhancedAiResponse {
+export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string }): EnhancedAiResponse {
   const source = typeof content === 'string' ? content : '';
   if (source.length > 200_000) return { content: source };
   const blocks: XrogaBlock[] = [];
   let cursor = 0;
   let segment = 0;
+  const responseSource = received?.format === 'xroga-response-json-v1' && typeof received.text === 'string' && received.text.length <= 200_000
+    ? { format: 'xroga-response-json-v1' as const, text: received.text } : undefined;
   let rejected = completion?.status === 'partial';
   if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
-    text: completion?.reason === 'authorization_review'
+    text: completion?.reason === 'presentation_contract'
+      ? 'This answer did not finish all required sections or included invalid visual data. Only validated content is shown, and the original response is retained for recovery. No automatic retry was made.'
+      : completion?.reason === 'authorization_review'
       ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
       : completion?.reason === 'output_limit'
       ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
@@ -282,7 +286,7 @@ export function enhanceAiResponse(content: string, documentId: string, completio
     rejected = true;
     blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-incomplete`, type: 'notice', tone: 'warning', text: 'The visual data was incomplete. The original response is preserved, but this visual is unavailable.' });
   }
-  if (!blocks.some(b => b.type !== 'narrative')) return { content: source.trim() };
+  if (!responseSource && !blocks.some(b => b.type !== 'narrative')) return { content: source.trim() };
   // Match the renderer's bounded document contract. Overflow remains intact as
   // original text rather than silently losing the remainder of an answer.
   if (blocks.length > 100) return { content: source };
@@ -297,6 +301,7 @@ export function enhanceAiResponse(content: string, documentId: string, completio
       id: `response-${safeIdPart(documentId)}`,
       status: rejected ? 'partial' : 'completed',
       sourceText: source,
+      ...(responseSource ? { responseSource } : {}),
       composition: 'source-order',
       blocks,
     },
