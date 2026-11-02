@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "testCount": 11,
+  "jobId": "e4a83ad8-0f81-4dae-b009-9b67b0f08c93",
+  "scope": "Local script guards only. No cloud, SQL or model execution.",
+  "logsSha256": "c71e60379574e63d87058d6f257ee531f52e0b3d4bee119be8bc040ccb1b08f1"
+}

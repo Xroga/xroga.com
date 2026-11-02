@@ -1,0 +1,20 @@
+{
+  "approved": false,
+  "deepseekResearchCorrectionApproved": false,
+  "packageId": "response-v2-deepseek-research-7a1b4da0",
+  "sourceSha": "7a1b4da064c643a02e60dd61369fa741bf481499",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.5,
+  "conditionalOnAllSevenExactSourceGates": true,
+  "acceptanceCombinedOriginalCeilingUsd": 0.5,
+  "acceptanceAlreadyConsumedMicroUsd": 4671,
+  "maximumRemainingSubmissions": 4,
+  "oneCorrectedSaasRecheckAllowed": false,
+  "retainUnknownHoldsAndBoundedAcceptanceApproved": false,
+  "originalCombinedRemainingMicroUsd": 495329,
+  "maximumTotalSubmissionsIncludingPrior": 7,
+  "futureGlmDispatchAuthorized": false,
+  "newSaasExceptionRequiresApproval": true
+}
