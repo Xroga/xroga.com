@@ -2,10 +2,10 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/deepseek-provider-policy-20261102",
-    "sha": "077396339e0752e772769a765c1ce8dc429385cb",
-    "sourceTimestampUtc": "2026-11-02T20:10:14+05:00",
-    "auditStartedUtc": "2026-11-02T15:17:31.770Z",
+    "branch": "codex/deepseek-research-policy-20261102",
+    "sha": "197210a83cd3643689b5ff9ef3e5e455c25f5a05",
+    "sourceTimestampUtc": "2026-11-02T21:25:07+05:00",
+    "auditStartedUtc": "2026-11-02T16:26:10.735Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -3084,7 +3084,7 @@
       "id": "surface:ef3623f65fc045e92013",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "a5b9472e38f19f2f8461f237fbee0c7650f42dd10ee5470d6c33e0714b2feeb2",
+      "sha256": "84c0e990c6084e117a7a4b7c8e37490e03f3453c34cc23f6c203bb2e7f6c24a4",
       "symbols": [
         "CompletionDiagnostics",
         "choice",
@@ -3102,6 +3102,7 @@
         "requirePublicCompletion",
         "requiresAuthorizationReview",
         "sentences",
+        "serviceRoleSession",
         "value"
       ],
       "imports": [
@@ -5760,7 +5761,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "b536745bb0f0209280d459895d16c04057ae40ab7dbc28bc24ea9f976b861e88",
+      "sha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5920,7 +5921,6 @@
         "idx",
         "implementationExecutionTask",
         "implementationTask",
-        "inferredRoute",
         "initialUsage",
         "integrity",
         "intelligentPlan",
@@ -6049,7 +6049,6 @@
         "security",
         "selection",
         "semanticGoal",
-        "semanticResearch",
         "shadowLine",
         "shipBlockers",
         "shipOutcomeMeta",
@@ -6606,7 +6605,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "c7d7868c63c4a21304aa72f9c26f09176d926272bc2236bd5835ba5ea7d7989e",
+      "sha256": "a536e5148ae6deffaba07f9353f8e23dcac088ca978e4475855c396cb500d683",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -7988,7 +7987,7 @@
       "id": "surface:8c4623b66cfe2703b5ad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/router.ts",
-      "sha256": "7de417dc61808c6533d0e0d49babd2c6673547ce4753e68a071d9aa1d28025c3",
+      "sha256": "7fa5476d832de2e064907e60a2b221b8651909443d12856288d98576c36a0b1f",
       "symbols": [
         "EXPLICIT_RESEARCH_RE",
         "FILE_RE",
@@ -8002,15 +8001,19 @@
         "TaskKind",
         "classification",
         "explicitResearchOnly",
+        "inferred",
         "isBuildPrompt",
         "isCodingTask",
+        "research",
         "routePrompt",
+        "routeReadOnlyConversation",
         "seriousCapability",
         "text"
       ],
       "imports": [
         "../lib/taskClassifier.js",
-        "./models.js"
+        "./models.js",
+        "./universal/goalContract.js"
       ],
       "runtimeImports": [
         "backend/src/lib/taskClassifier.ts"
@@ -39285,8 +39288,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3816",
-        "backend/src/ai/pipeline.ts:3819",
+        "backend/src/ai/pipeline.ts:3802",
+        "backend/src/ai/pipeline.ts:3805",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -39559,7 +39562,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:121",
-        "backend/src/ai/pipeline.ts:3815",
+        "backend/src/ai/pipeline.ts:3801",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -131643,9 +131646,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c33f63008183a7a268cc",
+      "id": "finding:7e0220d3a76a80a3b90c",
       "sourcePath": "backend/src/ai/router.ts",
-      "line": 54,
+      "line": 68,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -138957,7 +138960,7 @@
     {
       "id": "test-suite:3ba52610d111186305bc",
       "sourcePath": "backend/src/ai/completionDiagnostics.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -139447,7 +139450,7 @@
     {
       "id": "test-suite:08eeb4ff17d279c137e4",
       "sourcePath": "backend/src/ai/router.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 16,
       "skipLocations": [],
       "focusLocations": []
     },
