@@ -1,21 +1,26 @@
 {
-  "observedAtUtc": "2026-11-01T23:04:24.210166+00:00",
-  "scope": "SOURCE_CORRECTION_AND_PREVIEW_REGRESSION_NOT_PRODUCT_ACCEPTANCE",
+  "observedAtUtc": "2026-11-02T08:39:07.055331+00:00",
+  "scope": "APPROVED_BACKEND_RELEASE_LIVE_PRODUCT_ACCEPTANCE_FAILED",
   "backendCandidate": "a2b972fcd50b2f6a431795e393e552aac26454a7",
   "frontendCandidate": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
   "approvalPackageCommit": "7d097ab5e1b2700b909ffe3813e45f51a014ee0d",
-  "newFunctionalReleaseApproval": "REQUESTED_NOT_RECEIVED",
-  "candidateBuilt": false,
-  "candidateProductionChanges": false,
+  "newFunctionalReleaseApproval": "RECEIVED_call_8c34ee7ce45143d8a99a5f87fc619b88",
+  "candidateBuilt": true,
+  "candidateProductionChanges": true,
   "candidateModelCalls": 0,
   "production": {
-    "apiSource": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
-    "apiRevision": "xroga-api-response-4500d0-serving-1102",
+    "apiSource": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+    "apiRevision": "xroga-api-response-a2b972-serving-1102",
     "canonicalJob": "xroga-canonical-production",
-    "imageDigest": "sha256:bb429763e6ac0c2791e31c88c3cb05dab70fb07ea8c417cfb3b552c23d7a6a7a",
+    "imageDigest": "sha256:6d755ef8375c762c00848c9fee0702b1f2a87bc7c91b4c3da61840ccc7e08c66",
     "frontendSource": "e8feb297673c856b34034d30851e0c0ba82561ac",
     "frontendDeployment": "AesRbbThqvzgh2Y2Rgc34MfkdVXK",
-    "olderRecoverySource": "fd3b663290cf150da51768171021860b032df025"
+    "olderRecoverySource": "fd3b663290cf150da51768171021860b032df025",
+    "recoverySource": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
+    "recoveryRevision": "xroga-api-response-4500d0-serving-1102",
+    "latestReadOnlyStateUtc": "2026-11-02T08:23:28.818004+00:00",
+    "queue": "RUNNING",
+    "voiceTagsUnchanged": true
   },
   "backendGates": {
     "passedRuns": [
@@ -51,9 +56,9 @@
     "virtualMergeSource": "4b312358e30bddc0acce50c9a42f0ad45173ec8d",
     "preview": {
       "finalMetadataSource": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
-      "deployment": "2err1gKN9jLzeKXQxVzV3jFLA76t",
-      "state": "IGNORE_BUILD_CANCELED_REDEPLOY_REQUIRES_OWNER_EMAIL_CODE",
-      "workingPreviewSource": "e8256aa27e444ccf1b47e9583598512cec0c4de9",
+      "deployment": "1zGqDojxdcdPd88C7fgVxLdKbR1g",
+      "state": "READY",
+      "immutableUrl": "https://xrogaai-o8blrl94z-xrogas-projects.vercel.app",
       "productionPromoted": false
     }
   },
@@ -76,13 +81,31 @@
     "freshGenerationAcceptance": false
   },
   "lastNewAnswer": {
-    "source": "4500d039721323ebc5351a9493d1d695e1d3e6e8",
-    "result": "FAIL_INCOMPLETE_LENGTH_STOP",
-    "providerChargeUsd": 0.00217355,
-    "ledgerEstimateUsd": 0.001225,
-    "historicalDifferenceReconciled": false,
-    "previousUnknownAnswerHoldUsd": 0.001265,
-    "previousUnknownAnswerHoldReleased": false
+    "source": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+    "result": "FAIL_PRODUCT_ACCURACY_AND_COMPOSITION",
+    "providerFinishReason": "stop",
+    "reasoningTokens": 0,
+    "answerTokens": 1678,
+    "graphNodes": 5,
+    "graphEdges": 5,
+    "providerChargeUsd": 0.0011391,
+    "ledgerSettledMicroUsd": 1140,
+    "newCostReconciledToMicroUsdRounding": true,
+    "reservedMicroUsdBeforeAndAfter": 516543,
+    "safetyHoldMicroUsdBeforeAndAfter": 0,
+    "defects": [
+      "False absolute RLS bypass claim and stale JWT membership advice",
+      "Checkout Session metadata conflated with Invoice and Subscription metadata",
+      "Conceptual steps shown as completed/current",
+      "Production frontend drops original rich-block reading positions",
+      "Explicit new repository-free project inherited previous repository context"
+    ],
+    "repositoryFreeAcceptance": false,
+    "manualRetries": 0,
+    "additionalModelCallsAfterFailure": 0,
+    "historicalUnknownHoldUsd": 0.001265,
+    "historicalUnknownHoldReleased": false,
+    "historical4500DifferenceReconciled": false
   },
   "storageHousekeeping": {
     "state": "OPTIONAL_NOT_SCHEDULED",
@@ -90,7 +113,7 @@
     "impact": "Abandoned upload reservations require authorized operator reconciliation until a schedule is separately configured.",
     "newSchedulerCreated": false
   },
-  "nextAction": "All source and integrated CI gates pass. Await exact functional-release package approval and owner Vercel code entry. Then follow the guarded single-build paired cutover and bounded fresh new-chat acceptance. Do not restart passing CI, release without approval, or claim production acceptance.",
+  "nextAction": "Finish new exact-source CI, verified Preview context checks and one consolidated new-source release decision. Do not repeat the failed SaaS submission on unchanged production source. Keep the healthy API/Job pair and existing frontend in service.",
   "safePreparation": {
     "backendEvidenceJob": "83192311-16ed-4de2-8e6f-7b9c4c862dfd",
     "backendGateReceiptJob": "5058c9fa-adaa-4896-b1df-9c3b28c08a93",
@@ -99,5 +122,40 @@
     "newModelCalls": 0,
     "newGoogleBuilds": 0,
     "productionSqlApplied": false
+  },
+  "previousCheckpoint": "2026-11-01T23:04:24.210166+00:00",
+  "candidateModelSubmissions": 1,
+  "candidateProviderRequests": 2,
+  "release": {
+    "buildId": "2e5d4e50-b37d-4723-b13a-feba1fcd9b59",
+    "buildSeconds": 131.09,
+    "maintenanceStartedUtc": "2026-11-02T01:12:47.0421042Z",
+    "queueResumedUtc": "2026-11-02T01:20:40.085403Z",
+    "maintenanceSeconds": 473.0433,
+    "newServices": 0,
+    "newIAM": 0,
+    "newVMs": 0,
+    "newMinimumInstances": 0,
+    "actualGoogleCharge": "NOT_YET_AVAILABLE_FROM_BILLING",
+    "temporaryCheckTagsRemoved": true,
+    "temporaryReadinessTasksRemoved": true
+  },
+  "corrections": {
+    "backendSource": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+    "frontendSource": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+    "backendFocusedTests": 19,
+    "frontendFocusedTests": 34,
+    "backendTypecheck": "PASS_LOCAL_NODE24_NOT_CANONICAL",
+    "frontendTypecheck": "PASS_LOCAL_NODE24_NOT_CANONICAL",
+    "proofBindingTests": 6,
+    "strictAudit": {
+      "total": 150,
+      "reviewed": 150,
+      "pending": 0,
+      "unresolvedHighRisk": 0
+    },
+    "newExactCI": "RUNNING",
+    "productionReleased": false,
+    "scope": "Narrow known-claim warning and guidance, not a global factual accuracy certificate. Explicit project selection protected against passive repo restoration."
   }
 }

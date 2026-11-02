@@ -1,0 +1,88 @@
+{
+  "observedAtUtc": "2026-11-02T08:48:01.800104+00:00",
+  "packageId": "response-v2-answer-review-f803191c",
+  "backendSource": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "frontendSource": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+  "approvalReceived": false,
+  "newImageBuilt": false,
+  "productionSqlApplied": false,
+  "newCloudResources": 0,
+  "newModelCalls": 0,
+  "offlineOperatorGuardTests": {
+    "job": "d6aaae23-dadc-46e4-88f7-dd9397da91ec",
+    "passed": 10,
+    "failed": 0
+  },
+  "preview": {
+    "source": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+    "deployment": "HBNnvjJzFADArTSsmMk3bD7HkSar",
+    "state": "QUEUED_EXISTING_BUILD_CONCURRENCY",
+    "ownerReauthenticated": true,
+    "cacheEnabled": true,
+    "ignoreBuildStep": false,
+    "productionPromoted": false
+  },
+  "operatorFiles": [
+    {
+      "path": "docs/operations/response-v2-answer-review/01-pause-current.sql",
+      "sha256": "fa14de5e70fa731ef1e93b7ad1c48494efca69335f4162f5184610fcbc0ca802"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/02-allow-response.sql",
+      "sha256": "a7becfa10c6d8b8591736838e5006ff4c765a32df178990b9322f237ca214fe8"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/03-pause-response.sql",
+      "sha256": "6d298f09de893465f3120f4369ef105f783c95402ab17ff2f98a34856298b248"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/04-recover-current.sql",
+      "sha256": "ecc86fe45344f247ce576c39ffc5501e88552a75e9eedaa02a60cd4f0eb5465e"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/release_gates.py",
+      "sha256": "42e25e4dea1c0072cc7297a66babe5480fb7675ccd0841a85b6415ed32b94208"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/submit-build.py",
+      "sha256": "d3b8945ec029b83071299b39b579f79f486ebe78b2ff7b8a13e77defff0bc150"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/verify-image.py",
+      "sha256": "cc4b09cbb566fe312fce19ee674be7ae3984c8128b7ecb2dd2f5d0be54a14110"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/candidate.py",
+      "sha256": "d6c768f0ff0db1856c543cbe39f3e1b2e0bff3d1ea1150460f4ac46ea6d8089f"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/private-ready.py",
+      "sha256": "1315d8234a7007f7dde5d490738570a032c119282e9b14cb1ed12c6be1740a05"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/cutover.py",
+      "sha256": "3df71bb6383daa937ac32602fa4dd33290ce6189f8d1fe01135fef1b95144660"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/test_cutover_guards.py",
+      "sha256": "853efb4b3e8f9b08823363b760628bcff8dffb71209995469ffdd2123888236c"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/test_exact_approval.py",
+      "sha256": "bc9ae04f7f0910796835bd67aa344123ce2330aaeea95e9f34a56693619c7a7f"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/test_release_gates.py",
+      "sha256": "3c1dd7a8518b6c8609ac2a8afff50fe8cc881a829957745a6f950673df8a51e0"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/RELEASE-APPROVAL-TEMPLATE.json",
+      "sha256": "2bf63fe21cd081e5e7ae853c7c1ed14750fa6f0ebd41cac1b55052ce36c6590a"
+    },
+    {
+      "path": "docs/operations/response-v2-answer-review/PRODUCTION-RELEASE-APPROVAL.md",
+      "sha256": "8efeb763867ffeac1d643ffbe783cb1c48dcb0989a380ca8772c479384ef59a0"
+    }
+  ],
+  "currentProduction": "a2b972fc API/Job, e8feb297 frontend. No change authorized by this preparation."
+}

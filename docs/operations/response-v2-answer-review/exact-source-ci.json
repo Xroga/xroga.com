@@ -1,0 +1,146 @@
+{
+  "observedAtUtc": "2026-11-02T08:46:48.396855+00:00",
+  "sources": [
+    {
+      "scope": "backend",
+      "source": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+      "runs": [
+        {
+          "conclusion": "success",
+          "databaseId": 41414191743,
+          "event": "workflow_dispatch",
+          "headSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414191743",
+          "workflowName": "Xroga tenant security fixtures"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414186761,
+          "event": "workflow_dispatch",
+          "headSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414186761",
+          "workflowName": "Xroga mission operating policy"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414182629,
+          "event": "workflow_dispatch",
+          "headSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414182629",
+          "workflowName": "Xroga golden acceptance harness"
+        },
+        {
+          "conclusion": "",
+          "databaseId": 41414177639,
+          "event": "workflow_dispatch",
+          "headSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+          "status": "in_progress",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414177639",
+          "workflowName": "Isolated Supabase authenticated browser verification"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414173407,
+          "event": "workflow_dispatch",
+          "headSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414173407",
+          "workflowName": "API Docker build check"
+        },
+        {
+          "conclusion": "",
+          "databaseId": 41414169060,
+          "event": "workflow_dispatch",
+          "headSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+          "status": "in_progress",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414169060",
+          "workflowName": "Unit tests"
+        }
+      ],
+      "allRequiredPassed": false
+    },
+    {
+      "scope": "frontend",
+      "source": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+      "runs": [
+        {
+          "conclusion": "success",
+          "databaseId": 41414317325,
+          "event": "workflow_dispatch",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414317325",
+          "workflowName": "Frontend production build check"
+        },
+        {
+          "conclusion": "",
+          "databaseId": 41414312871,
+          "event": "workflow_dispatch",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "in_progress",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414312871",
+          "workflowName": "Isolated Supabase authenticated browser verification"
+        },
+        {
+          "conclusion": "",
+          "databaseId": 41414132265,
+          "event": "pull_request",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "in_progress",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414132265",
+          "workflowName": "Unit tests"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414132170,
+          "event": "pull_request",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414132170",
+          "workflowName": "Xroga golden acceptance harness"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414132182,
+          "event": "pull_request",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414132182",
+          "workflowName": "Xroga mission operating policy"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414132177,
+          "event": "pull_request",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414132177",
+          "workflowName": "Growth technical publishing"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414132303,
+          "event": "pull_request",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414132303",
+          "workflowName": "Agent V2 dependency lock"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 41414132089,
+          "event": "pull_request",
+          "headSha": "b6a7fd2e801a2f0d4bc08500af79aefe0d09ecee",
+          "status": "completed",
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41414132089",
+          "workflowName": "Xroga tenant security fixtures"
+        }
+      ],
+      "allRequiredPassed": false
+    }
+  ],
+  "scope": "CI_ONLY_NOT_PRODUCT_ACCEPTANCE"
+}

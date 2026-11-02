@@ -1,0 +1,14 @@
+{
+  "approved": true,
+  "directOutputCorrectionApproved": true,
+  "packageId": "response-v2-direct-output-a2b972fc",
+  "sourceSha": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.5,
+  "conditionalOnAllSixExactSourceGates": true,
+  "ownerDecision": "Approve this exact correction and bounded acceptance",
+  "decisionReference": "call_8c34ee7ce45143d8a99a5f87fc619b88",
+  "recordedAtUtc": "2026-11-02T00:59:49.8165114+00:00"
+}

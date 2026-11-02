@@ -1,0 +1,15 @@
+{
+  "approved": false,
+  "answerReviewCorrectionApproved": false,
+  "packageId": "response-v2-answer-review-f803191c",
+  "sourceSha": "f803191cd7f04bc3539782aa71e212e37c0ce4fb",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.5,
+  "conditionalOnAllSixExactSourceGates": true,
+  "acceptanceCombinedOriginalCeilingUsd": 0.5,
+  "acceptanceAlreadyConsumedMicroUsd": 1140,
+  "maximumRemainingSubmissions": 4,
+  "oneCorrectedSaasRecheckAllowed": false
+}

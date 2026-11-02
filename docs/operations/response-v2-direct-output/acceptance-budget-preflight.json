@@ -1,0 +1,35 @@
+{
+  "manualRetries": 0,
+  "submissionsMaximum": 4,
+  "conservativeReservationBoundMicroUsd": 381306,
+  "observedAtUtc": "2026-11-02T01:23:41.5144601+00:00",
+  "firstSubmission": "new SaaS explanation",
+  "source": "a2b972fcd50b2f6a431795e393e552aac26454a7",
+  "baselineSafetyHoldMicroUsd": 0,
+  "answer": {
+    "maxOutputTokens": 4096,
+    "fallbacksConservativelyCounted": [
+      "deepseek_v4_flash",
+      "glm_5_3_flash",
+      "glm_5_3",
+      "kimi_k3"
+    ],
+    "maxInputTokensBound": 10000,
+    "sdkAttempts": 2
+  },
+  "baselineReservedMicroUsd": 516543,
+  "baselineSettledMicroUsd": 82160,
+  "accountRemainingMicroUsd": 1051297,
+  "scope": "Fresh empty conversation, no attachments, no repository or external action. Recheck remaining allowance and actual holds before each next submission. Stop on uncertain accounting or provider failure. Existing account entitlement is not the acceptance cap.",
+  "planner": {
+    "routes": [
+      "deepseek_v4_flash",
+      "glm_5_3_flash"
+    ],
+    "maxOutputTokens": 1500,
+    "maximumCorrectionAttemptsPerRoute": 2,
+    "maxInputTokensBound": 10000,
+    "sdkAttempts": 2
+  },
+  "allowanceMicroUsd": 500000
+}

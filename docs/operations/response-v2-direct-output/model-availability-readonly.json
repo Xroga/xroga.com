@@ -1,0 +1,22 @@
+{
+  "observedAtUtc": "2026-11-01T22:33:36.245487+00:00",
+  "source": "Existing production revision plus existing protected configuration, read only",
+  "allowedModels": [
+    "kimi_k3",
+    "glm_5_3",
+    "glm_5_3_flash",
+    "deepseek_v4_flash"
+  ],
+  "disabledProviders": [
+    "zhipu"
+  ],
+  "configuredCredentials": {
+    "moonshot": true,
+    "zhipu": true,
+    "openrouter": true
+  },
+  "providerBalanceVerified": false,
+  "newProviderRequests": 0,
+  "productionChanges": false,
+  "credentialsPersisted": false
+}
