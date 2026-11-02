@@ -5,7 +5,9 @@ import {createTenantContext} from '../security/tenantContext.js';
 import {runtimeCredentialVault} from '../services/integrations/credentialVaultRuntime.js';
 import {withTenantModelReservation,type TenantModelScope} from './tenantModelDispatch.js';
 import {chatCompletion,chatCompletionStream,type ChatMessage} from './openaiCompat.js';
-import {callBuilderStream} from './pipeline.js';
+import {callBuilderStream,runChatPipeline} from './pipeline.js';
+import {goalContractSchema} from './universal/goalContract.js';
+import {presentationResponseFormat,type PresentationPlan} from './responsePresentation.js';
 import {runArchitectPlan} from './architect.js';
 import {convertUserRequest} from './converter.js';
 import {createXrogaAgentModel} from './softwareAgent/xrogaAgentModel.js';
@@ -32,6 +34,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   let mutate:(()=>void)|undefined,expire:(()=>void)|undefined;
   let executionRow:Record<string,unknown>|undefined;
   let atomicReceipts=0;
+  let receivedAnswer = '';
+  let lastReservedInput = 0;
   let abortDuringResponse:AbortController|undefined;
   const reset=(next='ok')=>{mode=next;row=structuredClone(original);ownerNow=owner;credentialReads=0;projectReads=0;mutate=undefined;expire=undefined;};
   const stringify=JSON.stringify;
@@ -53,7 +57,12 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
         row.metadata={...row.metadata,revoked:true} as typeof row.metadata;
         return Response.json({error:{message:'Synthetic retryable outage'}},{status:503});
       }
-      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:'owned result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
+      if(mode==='presentation') {
+        assert.equal(body.response_format.type,'json_schema');
+        assert.equal(body.response_format.json_schema.strict,true);
+        assert.deepEqual(body.response_format.json_schema.schema.required,['s0','s1']);
+      }
+      if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:mode==='presentation'?receivedAnswer:'owned result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
       return Response.json({id:'synthetic-provider-receipt',choices:[{message:{content:'{"stack":"static","files":[],"notes":[]}'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}});
     }
     assert.equal(url.origin,env.SUPABASE_URL,'Unexpected transport is never allowed');
@@ -79,6 +88,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     }
     if(url.pathname==='/rest/v1/model_provider_health')return Response.json(null);
     if(url.pathname.endsWith('/reserve_xroga_provider_budget')){
+      lastReservedInput = body.p_estimated_input_tokens;
       assert.equal(body.p_user_id,owner);
       const r={id:randomUUID(),user_id:mode==='reservationMismatch'?foreign:owner,status:'reserved',idempotency_key:body.p_idempotency_key,internal_route:body.p_internal_route,
         purpose:body.p_purpose,price_version:body.p_price_version,estimated_input_tokens:body.p_estimated_input_tokens,maximum_output_tokens:body.p_maximum_output_tokens,reserved_micro_usd:body.p_reservation_micro_usd};
@@ -229,6 +239,35 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   await assert.rejects(callBuilderStream('deepseek_v4_flash',messages,{userId:owner,tenantContext:context,databaseProjectId:project,maxTokens:64,maxAttempts:1,
     budget:{...DEFAULT_BUILDER_BUDGET,maxOutputChars:4},onDelta:text=>{limitedOutput+=text;}}),{code:'BUILDER_OUTPUT_LIMIT'});
   assert.equal(effects,beforeLimit+1);assert.equal(limitedOutput,'','Buffering public output must preserve the existing active provider output limit');
+
+  // Exercise the real read-only pipeline, SDK transport, canonical settlement
+  // and publication boundary together. All external responses are synthetic.
+  const presentation:PresentationPlan=[{kind:'prose',heading:'Explanation',instruction:'Preserve the supplied content.',covers:['explanation']},{kind:'graph',heading:'Relationships',instruction:'Connect the supplied systems.',covers:['relationships']}];
+  const semantic=goalContractSchema.parse({version:'1.0',goal:'Explain the supplied system',desiredOutcome:'An explanation',semanticIntent:'ANSWER',
+    requiredCapabilities:['conversation.respond'],confidence:0.9,presentation,answerObligations:[{id:'explanation',description:'Explain the supplied system.',origin:'requested',formats:['prose']},{id:'relationships',description:'Connect the supplied components.',origin:'requested',formats:['graph']}]});
+  const document={s0:{markdown:'Keep `tenant_id` unchanged.',data:null},s1:{markdown:'Client requests reach the server.',data:{nodes:[{id:'client',label:'Client'},{id:'api',label:'API'}],edges:[{id:'request',source:'client',target:'api',label:'Request'}]}}};
+  for (const valid of [true,false]) {
+    reset('presentation');resetModelRuntimeHealth();receivedAnswer=JSON.stringify(valid?document:{s0:document.s0});
+    const before:number=effects,receipts:number=atomicReceipts;let visible='';
+    const result=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied system. No external research.',goalContract:semantic,onDelta:text=>visible+=text});
+    assert.equal(effects,before+1,'No schema repair or second formatting request');
+    assert.equal(atomicReceipts,receipts+1,'The partial answer still settles exactly once');
+    assert.deepEqual(result.responseSource,{format:'xroga-response-json-v1',text:receivedAnswer});
+    assert.deepEqual(result.completion,valid?{status:'complete'}:{status:'partial',reason:'presentation_contract'});
+    assert.equal(result.response,visible);
+    assert.match(result.response,/Keep `tenant_id` unchanged/);
+    assert.equal(result.response.includes('"type":"graph"'),valid);
+    assert.ok(lastReservedInput>JSON.stringify(presentationResponseFormat(presentation)).length/5,'Schema metadata is included in the token reservation');
+  }
+  reset('presentation');resetModelRuntimeHealth();receivedAnswer=JSON.stringify(document);
+  const incompleteSemantic=goalContractSchema.parse({...semantic,answerObligations:[...semantic.answerObligations!,{id:'data-shape',description:'Show the requested data structure.',origin:'requested',formats:['table']}]});
+  const beforeCoverage:number=effects,receiptsCoverage:number=atomicReceipts;
+  const incomplete=await runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied system and data structure. No external research.',goalContract:incompleteSemantic});
+  assert.deepEqual(incomplete.completion,{status:'partial',reason:'presentation_contract'},'A valid document cannot conceal a missing answer obligation');
+  assert.equal(effects,beforeCoverage+1,'Coverage failure never triggers a paid formatting repair');
+  assert.equal(atomicReceipts,receiptsCoverage+1);
+  assert.deepEqual(incomplete.responseSource,{format:'xroga-response-json-v1',text:receivedAnswer});
+  assert.match(incomplete.response,/Keep `tenant_id` unchanged/);
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{

@@ -22,6 +22,7 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
+import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, type PresentationResponseFormat } from './responsePresentation.js';
 import {
   buildVisionUserContent,
   chatCompletion,
@@ -385,6 +386,7 @@ export interface BuildClientMeta {
 
 export interface ChatPipelineResult {
   completion?: ReturnType<typeof publicCompletionState>;
+  responseSource?: { format: 'xroga-response-json-v1'; text: string };
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
@@ -705,6 +707,7 @@ export async function callBuilderStream(
     maxTokens?: number;
     temperature?: number;
     reasoningMode?: import('./openaiCompat.js').ReasoningMode;
+    responseFormat?: PresentationResponseFormat;
     onDelta?: DeltaFn;
     userId?: string;
     tenantContext?: TenantContext;
@@ -740,7 +743,8 @@ export async function callBuilderStream(
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
   messages=structuredClone(messages);
-  opts={...opts,credentialOverrides:opts.credentialOverrides?{...opts.credentialOverrides}:undefined};
+  opts={...opts,credentialOverrides:opts.credentialOverrides?{...opts.credentialOverrides}:undefined,
+    ...(opts.responseFormat ? { responseFormat: structuredClone(opts.responseFormat) } : {})};
   const healthAwareOrder = fallbackOrderForModel(preferred);
   const candidates = healthAwareOrder.length
     ? healthAwareOrder
@@ -776,6 +780,7 @@ export async function callBuilderStream(
               maxTokens: opts.maxTokens,
               temperature: opts.temperature,
               reasoningMode: opts.reasoningMode,
+              responseFormat: opts.responseFormat,
               onDelta: (delta) => {
                 opts.onStreamDelta?.(delta);
                 opts.onDelta?.(delta);
@@ -794,7 +799,9 @@ export async function callBuilderStream(
       const runAttempt = () =>
         withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
               connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
-              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
+              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages)
+                + (opts.responseFormat ? estimateMessageTokens([{ role: 'system', content: JSON.stringify(opts.responseFormat) }]) : 0),
+              maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
       return opts.onWaiting
         ? await withProgressHeartbeat(
             {
@@ -1102,25 +1109,40 @@ export async function runChatPipeline(opts: {
   const truthAuthorities = new Set<string>(['model:execute', 'sandbox:execute']);
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
+  const presentation = opts.goalContract?.presentation;
+  const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
+  const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
+  const system = `${currentPublicProductTruth(truthAuthorities)}\n\n${chatPresentationSystem(opts.prompt)}${presentation?.length ? `\n\n${presentationRequestInstructions(presentation)}` : ''}`;
   const result = await callBuilderStream(
     route.builder,
-    [{ role: 'system', content: `${currentPublicProductTruth(truthAuthorities)}\n\n${chatPresentationSystem(opts.prompt)}` }, ...historyMsgs, { role: 'user', content: userContent }],
+    [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
       reasoningMode: 'none',
+      responseFormat: format,
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
       temperature: 0.5,
-      onDelta: opts.onDelta,
+      onDelta: projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },
   );
 
   const usage = await getUsage(opts.userId);
 
+  const document = projection?.finish(result.text);
+  const response = document ? document.response || "Xroga couldn't finish the requested structured answer." : result.text;
+  const completion = publicCompletionState(result.finishReason, document?.reviewText ?? response);
+  // A valid semantic decision with invalid display metadata, or an incomplete
+  // document, is preserved as partial. Never repair it with another model call.
+  const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid'
+    || (presentation && !assessPresentationCoverage(presentation, opts.goalContract?.answerObligations).complete);
+
   return {
-    response: result.text,
-    completion: publicCompletionState(result.finishReason, result.text),
+    response,
+    completion: presentationIncomplete && result.finishReason === 'stop' && completion.status === 'complete'
+      ? { status: 'partial', reason: 'presentation_contract' } : completion,
+    ...(document ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original } } : {}),
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,

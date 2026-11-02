@@ -6,6 +6,7 @@ import {chatCompletion,chatCompletionStream,snapshotModelEgressPayload} from './
 import {MODELS,type ModelId} from './models.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {withTenantModelReservation} from './tenantModelDispatch.js';
+import {presentationResponseFormat} from './responsePresentation.js';
 
 // Positive SDK fixtures enter through the real canonical issuer. Only the
 // external HTTP responses are synthetic, no test-only authority issuer exists.
@@ -156,4 +157,40 @@ test('direct DeepSeek output retains terminal cost and length metadata through c
   assert.equal(result.finishReason,'length');
   assert.equal(result.providerCostMicroUsd,1985);
   assert.deepEqual(settlements,[1985]);
+});
+
+test('actual SDK transport binds the strict response schema without removing price, identity or ledger controls', async t => {
+  const settlements: number[] = [];
+  const format = presentationResponseFormat([{ kind: 'prose', heading: 'Answer', instruction: 'Use the supplied information.' }]);
+  let calls = 0;
+  t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+    assert.equal(String(input), 'https://openrouter.ai/api/v1/chat/completions');
+    assert.equal(init?.redirect, 'manual');
+    assert.equal(new Headers(init?.headers).get('authorization'), 'Bearer synthetic-provider-key');
+    calls++;
+    const body = JSON.parse(String(init?.body));
+    assert.deepEqual(body.response_format, format);
+    assert.deepEqual(body.provider, { max_price: { prompt: 0.60, completion: 1.32, request: 0 }, require_parameters: true });
+    const answer = '{"s0":{"markdown":"Supplied answer.","data":null}}';
+    const choice = body.stream ? { delta: { content: answer }, finish_reason: 'stop' } : { message: { content: answer }, finish_reason: 'stop' };
+    const receipt = { id: 'gen-synthetic-schema', choices: [choice], usage: { prompt_tokens: 100, completion_tokens: 20, cost: 0.0001 } };
+    return body.stream ? new Response(`data: ${JSON.stringify(receipt)}\n\ndata: [DONE]\n\n`, { headers: { 'content-type': 'text/event-stream' } }) : Response.json(receipt);
+  });
+  const run = admitted(t, 'deepseek_v4_flash', settlements);
+  for (const invoke of [chatCompletion, chatCompletionStream]) {
+    const result = await run(invoke, [{ role: 'user', content: 'Supplied question.' }], { maxTokens: 128, reasoningMode: 'none', responseFormat: format });
+    assert.match(result.text, /Supplied answer/);
+  }
+  assert.equal(calls, 2);
+  assert.deepEqual(settlements, [100, 100]);
+
+  const stringify = JSON.stringify;
+  t.mock.method(JSON, 'stringify', ((value: unknown, ...rest: unknown[]) => {
+    if (value && typeof value === 'object' && 'model' in value && 'response_format' in value) value = { ...value, response_format: { type: 'text' } };
+    return Reflect.apply(stringify, JSON, [value, ...rest]);
+  }) as typeof JSON.stringify);
+  for (const invoke of [chatCompletion, chatCompletionStream]) {
+    await assert.rejects(run(invoke, [{ role: 'user', content: 'Supplied question.' }], { maxTokens: 128, responseFormat: format }), { code: 'MODEL_DISPATCH_BINDING_DENIED' });
+  }
+  assert.equal(calls, 2, 'Mutated schema sends no provider request');
 });

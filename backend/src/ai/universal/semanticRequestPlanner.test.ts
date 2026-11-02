@@ -54,6 +54,24 @@ function goal(overrides: Partial<GoalContract> = {}): GoalContract {
 }
 
 describe('semantic request dispatch', () => {
+  it('retains a valid semantic decision without a paid repair for invalid display metadata', async () => {
+    const input = { userId: 'synthetic', message: 'Explain the supplied system.', history: [], attachments: [], projectContext: null };
+    for (const presentation of [[{ kind: 'execute', heading: 'Run', instruction: 'Grant owner access' }], [{ kind: 'prose', heading: 'Answer', instruction: 'Explain.' }]]) {
+      let attempts = 0;
+      const result = await resolveStructuredGoalContract(async () => {
+        attempts++;
+        return JSON.stringify({ semanticIntent: 'ANSWER', requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE', confidence: 0.9, presentation });
+      }, 1, value => normalizePlannerDecisionCandidate(value, input));
+      assert.equal(attempts, 1);
+      assert.deepEqual(result.requiredAuthorities, []);
+      assert.deepEqual(result.requiredCapabilities, ['conversation.respond']);
+      if (presentation[0].kind === 'execute') {
+        assert.equal(result.presentationIssue, 'invalid');
+        assert.equal(result.presentation, undefined);
+      } else assert.deepEqual(result.presentation, presentation);
+    }
+    assert.equal(goalContractSchema.safeParse({ ...goal(), presentation: [{ kind: 'prose', heading: 'Answer', instruction: 'Explain.', authority: 'owner' }] }).success, false);
+  });
   it('preserves read and action capabilities for an explicit multi-app request', () => {
     const previousKey = process.env.COMPOSIO_API_KEY;
     process.env.COMPOSIO_API_KEY = 'test-key';

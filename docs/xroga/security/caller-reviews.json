@@ -1024,13 +1024,13 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
+      "sourceSha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
       "callIds": [
-        "cf80432cc0d9a4cf8a4b"
+        "ce9a7215efde02d1062f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -2505,13 +2505,13 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
+      "sourceSha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
       "callIds": [
-        "d83269b99a822f0eb5d1"
+        "7c670691a53343271d29"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged.",
+      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
       "evidence": [
         {
           "path": "backend/src/ai/pipeline.ts",
@@ -15399,7 +15399,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91",
+      "sourceSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
       "callIds": [
         "78696e27dd5c1ca37c3a"
       ],

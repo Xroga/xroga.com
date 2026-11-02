@@ -1,0 +1,17 @@
+{
+  "scope": "LOCAL_ENGINEERING_REGRESSION_NOT_NEW_GENERATION_OR_PRODUCTION_ACCEPTANCE",
+  "observedFailureSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "change": "Bind independently declared answer obligations to planned section formats. Preserve readable sections around rejected visuals. Carry optional resource identities through typed cards.",
+  "backendRegression": {"job": "944b4a36-8a44-4bac-92a6-d94007c553c1", "passed": 56, "failed": 0},
+  "canonicalPipelineRegression": {"job": "fb093914-6b4b-4c56-b698-fdf707f6f4b0", "passed": 2, "failed": 0, "externalResponses": "SYNTHETIC", "coverageFailureDispatches": 1, "coverageFailureSettlements": 1},
+  "backendTypecheck": {"job": "fe5d253b-e3e6-46c1-9251-3dad4c920b16", "result": "PASS"},
+  "factualCertification": false,
+  "newModelRequests": 0,
+  "newCloudResources": 0,
+  "boundedRequestCorrection": {"strictSchemaRetainedInBoundSdkResponseFormat": true, "duplicateSystemSchemaRemoved": true, "maximumEmptyChatMicroUsd": 448110, "remainingAllowanceMicroUsd": 492420, "offlineBoundJob": "8c43f48b-00dd-459b-a85b-37a6a793dee8", "regressionJob": "70f53c60-4ea5-419b-9f70-c000ffe24e5b"},
+  "productionChanged": false,
+  "remaining": ["Exact-source CI", "Separately approved source-pinned paired release and fresh acceptance exception", "New generated SaaS, calculation, research and unrelated conversation acceptance"],
+  "legacyRendererPreserved": true,
+  "historicalGlmHoldMicroUsd": 1385,
+  "originalAcceptanceAllowanceRemainingMicroUsd": 492420
+}

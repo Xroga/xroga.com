@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9ddcb89dfe54332149c4fec435c92ff9e2805eb383a2e75a0a789717220a07a5",
+  "reviewRegistrySha256": "2cb2a967ca58486245befd302c05a78667319a1b5de0c48387e7fd500499cabc",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3668,11 +3668,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "cf80432cc0d9a4cf8a4b"
+        "id": "ce9a7215efde02d1062f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d83269b99a822f0eb5d1"
+        "id": "7c670691a53343271d29"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6972,11 +6972,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cf80432cc0d9a4cf8a4b"
+        "id": "ce9a7215efde02d1062f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d83269b99a822f0eb5d1"
+        "id": "7c670691a53343271d29"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10696,18 +10696,18 @@
       }
     },
     {
-      "id": "cf80432cc0d9a4cf8a4b",
+      "id": "ce9a7215efde02d1062f",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3793,
+      "line": 3815,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
+      "sourceSha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -10717,18 +10717,18 @@
       }
     },
     {
-      "id": "d83269b99a822f0eb5d1",
+      "id": "7c670691a53343271d29",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3977,
+      "line": 3999,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0de859f6e99dca528d2c832a08b9c382d7da99bea1046d11e67e7affe121ac93",
+      "sourceSha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
         "evidence": [
           {
             "path": "backend/src/ai/pipeline.ts",
@@ -19352,7 +19352,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91",
+      "sourceSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
