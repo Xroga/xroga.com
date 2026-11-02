@@ -19,6 +19,12 @@
       "afterSha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
       "unchangedPersistenceExpressions": 2,
       "scope": "Only received answer text is passed to the existing negative completion review. All model dispatch, identity, egress, accounting and approvals remain unchanged."
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "beforeSha256": "b84aeadc18565ac0916ab5b1dd5d248e7f604e0f58a424563d1116dd65c88c9e",
+      "afterSha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d",
+      "scope": "Only existing router policy is consulted before planner model selection. Existing model transport, cancellation, egress, ledger and approval calls are unchanged. Additive tests cover disabled provider and allowlist rejection. No live acceptance inferred."
     }
   ],
   "liveAcceptance": false
