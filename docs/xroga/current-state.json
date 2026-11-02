@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "a099e08d11954f5623e4e1f51eb521ff27fd7a98",
-    "sourceTimestampUtc": "2026-11-02T16:10:22+05:00",
-    "auditStartedUtc": "2026-11-02T11:11:14.166Z",
+    "sha": "8b7212b9802a423bb1c68d8aa815b75b411bf57b",
+    "sourceTimestampUtc": "2026-11-02T16:24:15+05:00",
+    "auditStartedUtc": "2026-11-02T11:25:49.744Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -87261,7 +87261,7 @@
       "id": "surface:33d78a7d2ee718859b5a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "sha256": "b4d0f713f8e809ec97baa95835834996e6541e40133792b5a5517df063a8b3bc",
+      "sha256": "310a157075941bdd5203b00dfaef8a60e614e87c0a9f930ad6ad67b00e0b814f",
       "symbols": [
         "BrandDefinition",
         "BrandIcon",

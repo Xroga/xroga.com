@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a099e08d11954f5623e4e1f51eb521ff27fd7a98",
+  "source_sha": "8b7212b9802a423bb1c68d8aa815b75b411bf57b",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5480,9 +5480,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "2fa7ce8dc05ee76ff266a0917b62f66c2abce6bc109ebb6812134ed96b4399ea",
+      "sha256": "f9ac45329b788209c31cd2d188f092bb56cd766a3f30681e5805ec3b1586ab06",
       "byte_size": 5195629,
-      "modified_timestamp": "2026-11-02T11:11:15.445Z",
+      "modified_timestamp": "2026-11-02T11:25:51.542Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -22536,9 +22536,9 @@
       "source_id": "SRC-33d78a7d2ee71885",
       "filename": "MessageShareModal.tsx",
       "path_or_url": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "sha256": "b4d0f713f8e809ec97baa95835834996e6541e40133792b5a5517df063a8b3bc",
-      "byte_size": 13972,
-      "modified_timestamp": "2026-11-02T11:00:11.134Z",
+      "sha256": "310a157075941bdd5203b00dfaef8a60e614e87c0a9f930ad6ad67b00e0b814f",
+      "byte_size": 13977,
+      "modified_timestamp": "2026-11-02T11:22:34.334Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
