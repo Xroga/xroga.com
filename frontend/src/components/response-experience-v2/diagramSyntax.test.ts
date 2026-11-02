@@ -32,6 +32,7 @@ test('diagram adapter is general, bounded and fails visibly back to original sou
   assert.equal(graph.edges.length, 2); assert.equal(graph.nodes[0].label, 'Input; not a statement');
   assert.deepEqual(supportedDiagramV2('graph TD\nInput-node-->Output.node')?.edges, [{ source: 'Input-node', target: 'Output.node' }]);
   assert.equal(supportedDiagramV2('sequenceDiagram\nparticipant A as Customer\nA->>B: Request')?.nodes[0].label, 'Customer');
+  assert.equal(supportedDiagramV2('sequenceDiagram\nA->>B: Request\n' + Array.from({length:101},(_,i)=>`participant P${i}`).join('\n')), undefined);
   for (const source of ['graph TD\nA-->B\nclick A "https://evil.test"', 'graph TD\nA-->B\nstyle A fill:red', 'graph TD\nA[one]-->A[two]', 'graph TD\nA["unfinished]', 'pie\nA:1', 'graph TD\n' + 'x'.repeat(12_000)]) assert.equal(supportedDiagramV2(source), undefined);
   assert.equal(supportedDiagramV2('graph TD\nA["<script>alert(1)</script>"]-->B')?.nodes[0].label, '<script>alert(1)</script>');
 });

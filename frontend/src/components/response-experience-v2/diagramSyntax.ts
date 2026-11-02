@@ -31,6 +31,7 @@ export function supportedDiagramV2(source: string): Graph | undefined {
     const previous = nodes.get(id);
     if (previous && label && previous.label !== id && previous.label !== label) throw new Error('conflicting-label');
     nodes.set(id, { id, label: label ?? previous?.label ?? id });
+    if (nodes.size > 100) throw new Error('node-limit');
   };
   try {
     for (const statement of statements) {
