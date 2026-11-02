@@ -67,5 +67,119 @@
       "file": "a2b7e542-share-revoked.png",
       "sha256": "7a65f1bc5f7570873d23a33ca171503889a15d82a45b4bbe028703484f54158a"
     }
-  ]
+  ],
+  "shareBehaviorIdenticalInFinalSource": {
+    "source": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
+    "files": [
+      {
+        "path": "frontend/src/components/response-experience-v2/shareSnapshot.ts",
+        "gitBlob": "b098978e53512ff40dc10db38560dc3b7dd16cec"
+      },
+      {
+        "path": "frontend/src/components/response-experience-v2/SharedResponseV2.tsx",
+        "gitBlob": "399c5b566afe973f00113f0ecc9f73281cf83c6f"
+      },
+      {
+        "path": "frontend/src/app/share/[token]/page.tsx",
+        "gitBlob": "b9a2016b9ec35dd253c2d83f013e1a992d744de2"
+      },
+      {
+        "path": "frontend/src/components/terminal/MessageShareModal.tsx",
+        "gitBlob": "4f134f132351bb005e6422eea13fcee1ab173e76"
+      },
+      {
+        "path": "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx",
+        "gitBlob": "9d5a8d9c43ddf6cd560db41e5a7af382cb6875a5"
+      },
+      {
+        "path": "frontend/src/components/response-experience-v2/document.ts",
+        "gitBlob": "efbd64f1ac746067f097a9265c4da7299b4632aa"
+      },
+      {
+        "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
+        "gitBlob": "0e7f76a6debcbd81c3b5cbd59ac805e0b32640a1"
+      },
+      {
+        "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+        "gitBlob": "dd55e8829df399547745d71613fa8f2fb6a682e0"
+      }
+    ],
+    "scope": "Behavior preservation only. Final source additionally fixes inline mark display and isolated test dependency loading."
+  },
+  "finalWorkspaceRecheck": {
+    "source": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
+    "deployment": "GeAEUXbNbMwgwQH2M94fQScJgeXF",
+    "immutableUrl": "https://xrogaai-h1vjkkj4p-xrogas-projects.vercel.app",
+    "status": "READY",
+    "buildSeconds": 322,
+    "authenticated": true,
+    "capturedGenuineAnswerReopened": true,
+    "freshGeneration": false,
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "desktopDocumentWidth": 1440,
+    "mobileDocumentWidth": 390,
+    "desktopGraphRegionWidths": [
+      822,
+      822
+    ],
+    "mobileGraphRegionWidths": [
+      293,
+      293
+    ],
+    "mobileGraphScrollWidths": [
+      293,
+      293
+    ],
+    "graphs": [
+      {
+        "nodes": 5,
+        "edges": 6
+      },
+      {
+        "nodes": 4,
+        "edges": 7
+      }
+    ],
+    "prose": {
+      "font": "Inter",
+      "sizePx": 16,
+      "weight": 400
+    },
+    "roleMarks": {
+      "display": "inline-block",
+      "widthPx": 14,
+      "heightPx": 14
+    },
+    "viewportReset": true,
+    "temporaryVisualTabClosed": true,
+    "newModelRequests": 0,
+    "qualityAcceptance": false,
+    "screenshots": [
+      {
+        "file": "994e1dab-preview-ready.png",
+        "sha256": "6c8d11e114f8da417ab3d5d479b52bd9dcce90f45eef2ecd66051237399f3b82"
+      },
+      {
+        "file": "994e1dab-workspace-1440.png",
+        "sha256": "00005170b3e50a922081284d17d0f1dae7ed5be5ce7b64b0a726af92064b5e0f"
+      },
+      {
+        "file": "994e1dab-workspace-390.png",
+        "sha256": "9514b2965211d9f57c174c11937bce4c8eba833163465ee3e6cb1efc099b4df5"
+      },
+      {
+        "file": "994e1dab-workspace-diagram-390.png",
+        "sha256": "09ed94da77bf781a04f8757b04fc04787c01b2d54799689d6fd0a9d3a7af4c7e"
+      }
+    ]
+  }
 }

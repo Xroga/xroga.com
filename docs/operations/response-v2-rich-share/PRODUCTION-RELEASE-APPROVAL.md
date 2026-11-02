@@ -40,7 +40,7 @@ Run `submit-build.py` once through the owned local runner. Inspect its journal b
 
 Start the 60-minute deadline. Apply `01-pause-current.sql`, obtain a fresh closed/drained database receipt, then `cutover.py pause`, `serving`, `private-ready.py serving`, `job`, and `promote`. Verify actual immutable pair/readiness before `02-allow-response.sql`, fresh open-source receipt and `resume`. Preserve the serving capacity, service identity, network, secrets and microphone. A deadline, active job, stale receipt, source drift or nonpassing gate stops forward work.
 
-If needed apply `03-pause-response.sql`, drain and refresh the fence receipt. Run `recover-job`, `recover-traffic`, verify the exact f803 pair and readiness, apply `04-recover-current.sql`, fresh source receipt and `recover-resume`. Recovery remains available after the forward deadline. Never revert only one pair member or delete recovery images. The known optional storage-housekeeping readiness warning is not certified resolved by this release.
+If needed apply `03-pause-response.sql`, drain and refresh the fence receipt. Run `recover-job`, `recover-traffic`, verify the exact f803 pair and readiness, apply `04-recover-current.sql`, fresh source receipt and `recover-resume`. Recovery remains available after the forward deadline. Never revert only one pair member or delete recovery images. The known optional storage-housekeeping readiness warning is not certified resolved by this release. Recovery to f803 also restores its known planner restriction defect. Stop paid acceptance after recovery. Do not represent the recovery source as having the new provider-policy correction. No credential deletion or permission change is authorized by this package.
 
 ## Evidence and current limits
 
