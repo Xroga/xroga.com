@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-completion-diagnostics-20261102",
-    "sha": "92c69c21eaf3a8490a43f6b110f48242af09d7ec",
-    "sourceTimestampUtc": "2026-11-02T03:07:43+05:00",
-    "auditStartedUtc": "2026-11-01T22:27:36.069Z",
+    "sha": "89d6305f35b7d4fc18af2c94f0e81a47546d6a87",
+    "sourceTimestampUtc": "2026-11-02T13:32:52+05:00",
+    "auditStartedUtc": "2026-11-02T08:33:26.423Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -3084,7 +3084,7 @@
       "id": "surface:ef3623f65fc045e92013",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "677bb2771f0aef0c07081cd7b6e401089870e483640b5b0fe448bdcfd9b45005",
+      "sha256": "137462a0259883faacdd25352442dd0929b8b37b3d487044e2692223872fc390",
       "symbols": [
         "CompletionDiagnostics",
         "choice",
@@ -3093,10 +3093,12 @@
         "count",
         "key",
         "message",
+        "prose",
         "providerCostMicroUsd",
         "publicCompletionState",
         "receipt",
         "requirePublicCompletion",
+        "requiresAuthorizationReview",
         "value"
       ],
       "imports": [
@@ -3117,9 +3119,13 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/completionDiagnostics.ts#requiresAuthorizationReview"
+      ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/ai/completionDiagnostics.ts#requiresAuthorizationReview"
+      ],
       "costBoundary": [
         "backend/src/ai/completionDiagnostics.ts#cost",
         "backend/src/ai/completionDiagnostics.ts#providerCostMicroUsd"
@@ -5749,7 +5755,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+      "sha256": "b536745bb0f0209280d459895d16c04057ae40ab7dbc28bc24ea9f976b861e88",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6595,7 +6601,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "54c0dc824badfce11194c7c6f9ec7d8a0f045300715ff05a0fc5d5f3e203d2bf",
+      "sha256": "41dc0e44722f526d98415abb0c1896331af5b82a0cb3013180353a418cf2f7e4",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -131564,7 +131570,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ff0638e9750b28a58cab",
+      "id": "finding:bfb9cdd114dd546a1c0a",
       "sourcePath": "backend/src/ai/prompts.ts",
       "line": 239,
       "kind": "TODO",
@@ -138888,7 +138894,7 @@
     {
       "id": "test-suite:3ba52610d111186305bc",
       "sourcePath": "backend/src/ai/completionDiagnostics.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
