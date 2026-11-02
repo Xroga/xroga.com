@@ -2529,9 +2529,16 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+          "sha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
           "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-          "beforeDirectOutputSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4"
+          "beforeDirectOutputSha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+          "beforeRichShareCompletionReviewSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+          "richShareCompletionReview": {
+            "scope": "ONE_ARGUMENT_ADDITION_TO_EXISTING_NEGATIVE_COMPLETION_REVIEW",
+            "evidence": "docs/xroga/evidence/response-v2-rich-share/source-review.json",
+            "authorityAndPersistenceUnchanged": true,
+            "liveAcceptance": false
+          }
         },
         {
           "path": "backend/src/routes/swarm.ts",
