@@ -151,6 +151,15 @@ const conversionBlock = richBase.extend({
 });
 const progressBlock = richBase.extend({ type: z.literal('progress'), progress: progressItem });
 const progressGroupBlock = richBase.extend({ type: z.literal('progress-group'), items: z.array(progressItem).min(1) });
+export const calculatorDerivedResultSchema = z.object({
+  id: z.string().min(1).max(120), label: z.string().min(1).max(500),
+  operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']),
+  // References name an input or $result. Constants are finite authored values,
+  // never executable expressions or references to another derived result.
+  operands: z.array(z.union([z.string().min(1).max(120), z.number().finite()])).min(1).max(12),
+  rounding: z.enum(['floor', 'ceil', 'round']).optional(),
+  unit: z.string().max(120).optional(), precision: z.number().int().min(0).max(8).optional(),
+});
 const calculatorBlock = richBase.extend({
   type: z.literal('calculator'),
   operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']),
@@ -159,6 +168,7 @@ const calculatorBlock = richBase.extend({
     max: z.number().optional(), step: z.number().positive().optional(), unit: z.string().optional(),
   })).min(1).max(12),
   resultLabel: z.string().min(1), resultUnit: z.string().optional(), precision: z.number().int().min(0).max(8).optional(),
+  derivedResults: z.array(calculatorDerivedResultSchema).max(8).optional(),
 });
 const calculationBlock = richBase.extend({
   type: z.literal('calculation'), formula: z.string().optional(),
@@ -260,6 +270,7 @@ const cardGridBlock = richBase.extend({
     id: z.string().min(1), title: z.string().min(1), subtitle: z.string().optional(),
     description: z.string().optional(), badge: z.string().optional(), imageUrl: z.string().url().optional(),
     url: z.string().url().optional(), actionLabel: z.string().optional(),
+    entityId: z.string().min(1).max(80).optional(),
     metrics: z.record(z.string(), scalarValue).optional(),
   })).min(1).max(24),
 });
@@ -339,6 +350,12 @@ export const xrogaOutputSchema = z.object({
   id: z.string().min(1),
   status: z.enum(['completed', 'partial', 'blocked', 'failed']),
   blocks: z.array(xrogaBlockSchema),
+  // Optional for older persisted messages. Source text is evidence, never executable UI.
+  sourceText: z.string().max(200_000).optional(),
+  // Preserve the received document for incomplete-output recovery. It is data,
+  // never HTML, executable UI or proof that the answer passed validation.
+  responseSource: z.object({ format: z.literal('xroga-response-json-v1'), text: z.string().max(200_000) }).strict().optional(),
+  composition: z.literal('source-order').optional(),
   artifact: z.object({
     id: z.string().min(1), type: z.string().min(1), title: z.string().min(1), projectId: z.string().optional(),
     conversationId: z.string().optional(), runId: z.string().optional(), version: z.number().int().positive().default(1),

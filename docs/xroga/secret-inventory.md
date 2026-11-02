@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `fe2c6486f4c60fae0757f79a535f43286ee4a02f`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `f458273ce1dc9102e46eab6736623a5770c37d07`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -120,6 +120,7 @@ Values are forbidden. Source SHA: `fe2c6486f4c60fae0757f79a535f43286ee4a02f`. Na
 | NEON_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | NETLIFY_ACCESS_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-netlify-com, endpoint-api-vercel-com |
 | NEXT_PUBLIC_API_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-127-0-0-1, endpoint-localhost |
+| NEXT_PUBLIC_AUTH_RECOVERY_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-analytics-ahrefs-com |
 | NEXT_PUBLIC_PROMO_FULL_ACCESS_END | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_SITE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-localhost, endpoint-twitter-com, endpoint-wa-me, endpoint-www-facebook-com, endpoint-www-linkedin-com, endpoint-www-reddit-com |
@@ -151,6 +152,8 @@ Values are forbidden. Source SHA: `fe2c6486f4c60fae0757f79a535f43286ee4a02f`. Na
 | REQUIRE_REMOTE_AUTH_CHECK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com |
 | RESEND_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | RESPEECHER_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| RESPONSE_EXPERIENCE_V2 | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| RESPONSE_EXPERIENCE_V2_USERS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | RIME_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | RUNWAY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-dev-runwayml-com |
 | SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |

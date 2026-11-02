@@ -43,7 +43,7 @@ describe(
     );
 
     it(
-      'handles DeepSeek Flash cheap volume',
+      'uses the verified DeepSeek routing ceilings for conservative cost estimates',
       () => {
         const usd =
           costUsdForTokens(
@@ -54,7 +54,7 @@ describe(
 
         assert.equal(
           usd,
-          0.27,
+          1.92,
         );
       },
     );

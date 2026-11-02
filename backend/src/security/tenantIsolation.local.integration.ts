@@ -1432,6 +1432,27 @@ test('private share token cannot grant another tenant access or revocation autho
   assert.equal((await request(`/api/message-shares/${body.share.token}`,owner.token)).status,404);
 });
 
+test('rich share snapshot persists without granting cross-tenant access and retains legacy text after reload',async()=>{
+  const [owner,other]=users;
+  const text='Rich Share tenant_id privacy canary';
+  const snapshot='XROGA_RESPONSE_V2\n'+JSON.stringify({version:2,text,document:{version:2,id:'share-fixture',originalText:text,streaming:false,nodes:[{id:'text',kind:'prose',text}],sources:[]}});
+  const created=await request('/api/message-shares',owner.token,'POST',{visibility:'private',scope:'response',response:snapshot,literalContent:true});
+  assert.equal(created.status,201);
+  const receipt=await created.json() as {share:{token:string;response:string;richResponse:string}};
+  assert.equal(receipt.share.response,text);assert.equal(receipt.share.richResponse,snapshot);
+  for(const token of [undefined,other.token]){
+    const denied=await request(`/api/message-shares/${receipt.share.token}`,token);
+    assert.equal(denied.status,403);const body=await denied.text();assert.ok(!body.includes(text));assert.ok(!body.includes('share-fixture'));
+  }
+  const read=await request(`/api/message-shares/${receipt.share.token}`,owner.token);
+  assert.equal(read.status,200);assert.equal(read.headers.get('cache-control'),'private, no-store');
+  const saved=await read.json() as {share:{response:string;richResponse:string}};
+  assert.equal(saved.share.response,text);assert.equal(saved.share.richResponse,snapshot);
+  assert.equal((await request(`/api/message-shares/${receipt.share.token}`,other.token,'DELETE')).status,404);
+  assert.equal((await request(`/api/message-shares/${receipt.share.token}`,owner.token,'DELETE')).status,200);
+  assert.equal((await request(`/api/message-shares/${receipt.share.token}`,owner.token)).status,404);
+});
+
 test('owner opt-in public share is readable without auth but revocation is immediate and uncached',async()=>{
   const owner=users[0];
   const created=await request('/api/message-shares',owner.token,'POST',{visibility:'public',scope:'response',response:'Public fixture only'});assert.equal(created.status,201);

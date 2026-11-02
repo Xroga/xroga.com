@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `fe2c6486f4c60fae0757f79a535f43286ee4a02f`. Branch observed: `release/mic-mobile-20261031`. Audit started: 2026-10-31T01:26:00.463Z.
+Source SHA: `f458273ce1dc9102e46eab6736623a5770c37d07`. Branch observed: `codex/response-experience-v2-906`. Audit started: 2026-11-02T22:29:26.228Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1727
+- surfaces: 1774
 - routeRegistrations: 351
 - routes: 294
 - reachableRoutes: 236
 - queues: 4
-- migrations: 153
+- migrations: 155
 - workflows: 21
-- testSuites: 995
-- declaredTests: 6686
-- classifiedMarkers: 391
-- reachableMarkers: 328
+- testSuites: 1021
+- declaredTests: 6843
+- classifiedMarkers: 394
+- reachableMarkers: 331
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
@@ -78,7 +78,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - **cost_accounting**: backend/src/ai/providerBudget.ts, backend/src/ai/quota.ts, backend/src/ai/universal/costLedger.ts, backend/src/services/BillingService.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **credential_persistence**: backend/src/services/integrations/githubTokenStore.ts, backend/src/services/integrations/oauthPkceStore.ts, backend/src/services/publish/chromeWebStore.ts, backend/src/services/publish/easCredentials.ts, backend/src/services/publish/electronSecrets.ts, frontend/src/components/integrations/CustomCredentialsSection.tsx. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 - **browser_execution**: backend/src/lib/browserbase.ts, backend/src/middleware/runtimePreviewGateway.ts, backend/src/sandbox/flyMachineSandbox.ts, backend/src/sandbox/remoteSandbox.ts, backend/src/synthesis/browserVerificationAdapter.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
-- **completion_semantics**: backend/src/ai/measuredEvidence.ts, backend/src/ai/softwareAgent/completionGate.ts, backend/src/ai/verificationLifecycle.ts, backend/src/operations/completionGate.ts, backend/src/synthesis/webVerificationGate.ts, frontend/src/lib/verificationLifecycle.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
+- **completion_semantics**: backend/src/ai/completionDiagnostics.ts, backend/src/ai/measuredEvidence.ts, backend/src/ai/softwareAgent/completionGate.ts, backend/src/ai/verificationLifecycle.ts, backend/src/operations/completionGate.ts, backend/src/synthesis/webVerificationGate.ts, frontend/src/lib/verificationLifecycle.ts. Multiple related boundaries exist. This is a review candidate, not a conclusion that implementations are redundant; compare callers, authority, durability and evidence before changing architecture.
 
 ## Reproduction
 

@@ -5,7 +5,10 @@
  * presentation syntax here keeps the words/code the model produced while avoiding
  * headings, ornamental rules and empty emphasis markers in social previews.
  */
-export function cleanSharedText(value: string): string {
+export function cleanSharedText(value: string, literalContent = false): string {
+  // This flag changes text fidelity only. Shares remain escaped text, with the
+  // same size limits, authenticated ownership and private/public access checks.
+  if (literalContent) return value;
   return value
     .replace(/\r\n?/g, '\n')
     .replace(/^\s*```[^\n]*$/gm, '')

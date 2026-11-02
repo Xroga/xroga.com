@@ -2071,6 +2071,8 @@ export const api = {
           prompt?:
             string;
 
+          literalContent?: boolean;
+
           response:
             string;
         },
@@ -5446,6 +5448,7 @@ concurrency:
 
 export interface Profile {
   id?: string;
+  contact_phone?: string | null;
 
   role?:
     | 'member'
@@ -6035,6 +6038,8 @@ import type {
 } from '@/lib/hackathonBrief';
 
 export interface Phase1ChatResult {
+  completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'presentation_contract' };
+  responseSource?: { format: 'xroga-response-json-v1'; text: string };
   response:
     string;
 

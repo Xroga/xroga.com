@@ -1,0 +1,55 @@
+{
+  "productionSource": "e8feb297673c856b34034d30851e0c0ba82561ac",
+  "scope": "PRESERVE_EXISTING_PRODUCTION_AUTH_NOT_NEW_FEATURE_ACTIVATION",
+  "productionSQLApplied": false,
+  "liveAcceptance": false,
+  "records": [
+    {
+      "path": "frontend/src/app/(shell)/layout.tsx",
+      "oldCalls": 1,
+      "currentCalls": 2,
+      "newTargets": [
+        "needs_current_contact_phone_prompt"
+      ],
+      "sourceSha256": "44577045e394eb2a8183474d4516c4be72464f50567a92622757fed257625597"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/layout.tsx",
+      "oldCalls": 1,
+      "currentCalls": 2,
+      "newTargets": [
+        "needs_current_contact_phone_prompt"
+      ],
+      "sourceSha256": "0c878ec62c92cb0529a52f985e39dfc50756ee0ad06f2dd4940c57724b46f8d0"
+    },
+    {
+      "path": "frontend/src/app/auth/callback/route.ts",
+      "oldCalls": 0,
+      "currentCalls": 1,
+      "newTargets": [
+        "needs_current_contact_phone_prompt"
+      ],
+      "sourceSha256": "f16ff961b78edad5a3a9c3f61ea9673fba786769d1726c86d61521860b1813af"
+    },
+    {
+      "path": "frontend/src/app/auth/contact/page.tsx",
+      "oldCalls": 0,
+      "currentCalls": 2,
+      "newTargets": [
+        "save_current_contact_phone",
+        "skip_current_contact_phone_prompt"
+      ],
+      "sourceSha256": "8c6a019c44fbd6b6596ab52e95742daaa4ff9cce6e53c4759bdfbc4a152c4b54"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "wireCallsUnchanged": 1,
+      "sourceSha256": "3747ce069f6e9169f673eb62a5c164c087473ba6a57c9a9820207c1c1c20da48"
+    },
+    {
+      "path": "frontend/src/lib/supabase/authProviders.ts",
+      "wireCallsUnchanged": 1,
+      "sourceSha256": "cd66348cf8622a3c42ec0754fbdf0d627c5b4d8194127e06047a2545c028df92"
+    }
+  ]
+}

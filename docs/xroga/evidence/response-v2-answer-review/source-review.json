@@ -1,0 +1,32 @@
+{
+  "base": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
+  "scope": "PUBLIC_REVIEW_WARNING_AND_PASSIVE_CONTEXT_FENCE_NOT_LIVE_ACCEPTANCE",
+  "records": [
+    {
+      "path": "frontend/src/components/response-experience-v2/exportText.test.ts",
+      "preservedOriginalTests": 6
+    },
+    {
+      "path": "frontend/src/components/terminal/RepoContextBar.tsx",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "ca88dfad1df43df059dcdfcce9937bc97aae9b3b86c52c573d01eba14e1dc9f9"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "egress": 1,
+      "persistence": 0,
+      "sourceSha256": "7e442f5db8f0da1a4a618be641d639881030f98329fc34f782103f2a5b19827a"
+    },
+    {
+      "path": "frontend/src/lib/xrogaResponseDocument.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "c452243b525f07a92527ccecc610d46f7c2842ee671d894434a035a0ec8aa720"
+    }
+  ],
+  "historicalProofsUnchanged": true,
+  "modelCalls": 0,
+  "productionSQL": false,
+  "review": "Existing actor, project, lease, credential, approval, outbound origin, secret and cancellation boundaries remain. Only the additive review-warning display and repository-free project bootstrap fence change. No authentication, approval or backend authority is changed. Existing test calls remain unchanged. New tests cover the observed context race and persistence/export warning."
+}

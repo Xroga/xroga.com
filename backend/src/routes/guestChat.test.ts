@@ -28,6 +28,12 @@ test('guest chat requires structured components for explicit visual requests', (
   assert.match(GUEST_SYSTEM, /"type":"diff"/);
 });
 
+test('guest rich instructions leave room for a 4000-byte first question and output reservation', () => {
+  const messages = [{ role: 'system', content: GUEST_SYSTEM }, { role: 'user', content: 'a'.repeat(4_000) }];
+  assert.ok(Buffer.byteLength(JSON.stringify(messages), 'utf8') + 900 <= GUEST_CHAT_TOKEN_BUDGET,
+    'Schema guidance must fit the unchanged guest budget before any provider dispatch');
+});
+
 test('guest chat allows only the bounded preview count per session', () => {
   resetGuestChatRateLimitsForTest();
   const now = 1_700_000_000_000;

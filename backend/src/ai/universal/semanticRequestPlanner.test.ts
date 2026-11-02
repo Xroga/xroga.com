@@ -491,6 +491,14 @@ describe('semantic planner provider fallback', () => {
     assert.match(source, /executeWithProviderFallback/);
   });
 
+  it('honors existing operator provider and model restrictions before a planner hedge can be selected', () => {
+    const env={XROGA_DISABLED_PROVIDERS:'zhipu',XROGA_ALLOWED_MODELS:'deepseek_v4_flash,glm_5_3_flash,glm_5_3'};
+    assert.deepEqual(interpreterModelOrder(env),['deepseek_v4_flash']);
+    assert.deepEqual(selectPlannerRoutes(env,()=>({status:'healthy'})),['deepseek_v4_flash']);
+    assert.throws(()=>interpreterModelOrder({XROGA_DISABLED_PROVIDERS:'zhipu,openrouter,moonshot'}),/No configured model/);
+    assert.throws(()=>interpreterModelOrder({XROGA_ALLOWED_MODELS:'nonexistent-model'}),/No configured model/);
+  });
+
   it('selects two healthy routes from the full stack instead of slicing open circuits', () => {
     const env = {
       DEEPSEEK_API_KEY: 'configured',

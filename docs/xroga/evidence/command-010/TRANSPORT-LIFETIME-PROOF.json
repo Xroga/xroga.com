@@ -256,7 +256,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.egress.test.ts",
-      "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c",
+      "sha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/openaiCompat.egress.test.ts",
         "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
@@ -264,7 +264,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+      "sha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -280,7 +280,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "0168bc57563dbc535012982e5c6680fd3ebb40c7595fb67620e1ca60284df9b4",
+      "sha256": "fa67a6ccaaca85b55c30405833f4f52cbe1959ed401b0de682f5567a9ad6c645",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -550,11 +550,16 @@
         "sha256": "1fb0028682ba2d3c01abe8d40ed37af673cffa57bac54f2e80393d6771f0541b",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforeRichShareCorrection": {
+        "sha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6",
+        "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
+      },
+      "richShareCorrectionReview": "Only existing negative-completion review receives the actual answer text. Source review confirms unchanged persistence expressions, authority and model transport."
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "6827c7f21bcdac5b366d6ccb88f5d01acfeb3a8ee930cebaba353734ce82e086",
+      "sha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48",
       "previousGenericSdkBinding": {
         "sha256": "be8bff52c0a19cd2a19c8235902191d954ef6cc1af4f631a3bfc1d2508600fdd",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -602,7 +607,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "373645b8783d7a309a1cb0b2ee0aba194e3e52ece27e8cf617d95996cb7b3304",
+      "sha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/tenantModelDispatch.ts",
         "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
@@ -610,7 +615,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "b84aeadc18565ac0916ab5b1dd5d248e7f604e0f58a424563d1116dd65c88c9e",
+      "sha256": "67682c5f8dec5148e95ae7e1aa4edb9e32ed0f243aba3f32e9eb3bcfdd32018d",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
         "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
@@ -619,7 +624,12 @@
         "sha256": "dd067a0d631929f595b3141b8bae5bbd785aefd14c84f1b12fd7b224bf086128",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforeProviderAvailabilityCorrection": {
+        "sha256": "b84aeadc18565ac0916ab5b1dd5d248e7f604e0f58a424563d1116dd65c88c9e",
+        "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
+      },
+      "availabilityControlReview": "docs/xroga/evidence/response-v2-rich-share/source-review.json"
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
@@ -639,7 +649,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "8b45327a5f18faa16b9e0aee9fa371bfe00ed91068d375208ad459c769edf78c",
+      "sha256": "590991bb27015afd8d35ab8ab256b50ecffff16fd308ea0b438498e908b290a1",
       "previousGenericSdkBinding": {
         "sha256": "a4f476f3e93800fc3d0ce72e88b30484bee3f20dcb8f67233ce213442d2b0b8d",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -650,11 +660,17 @@
         "sha256": "00dd98d8b24bdcd52c2f36e77315037ad4a196aa414f0239529be7656d421941",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforeGuestRichGuideSha256": "8b45327a5f18faa16b9e0aee9fa371bfe00ed91068d375208ad459c769edf78c",
+      "guestRichGuideContinuation": {
+        "sourceCommit": "4c527227dd34e9233e46d74422bfb0f29f4b2228",
+        "scope": "Prompt import and selection only; authorization, dispatch and accounting unchanged",
+        "evidence": "docs/xroga/evidence/response-experience-v2-906/live-generation-contract.md"
+      }
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "b152c62ee7be63efbd05766c2028491be0a53bceed6fce7de4ff110d43802420",
+      "sha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/security/tenantIsolation.local.integration.ts",
         "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
@@ -663,7 +679,12 @@
         "sha256": "d16d82aeb587150da44dba0ec6638bbae38e05eb11dd8b3063820f005fd01ed9",
         "ref": "92043b72c20e5a12636dee079d760a1e5708b48f"
       },
-      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json"
+      "integrationContinuation": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+      "beforeRichShareCorrection": {
+        "sha256": "b152c62ee7be63efbd05766c2028491be0a53bceed6fce7de4ff110d43802420",
+        "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
+      },
+      "richShareCorrectionReview": "Additive isolated rich Share owner/foreign/anonymous/reload/revocation test only. Existing test bodies remain unchanged. The real database test passed in run 41435291094."
     },
     {
       "path": "backend/src/services/integrations/businessAccounting.failure.test.ts",

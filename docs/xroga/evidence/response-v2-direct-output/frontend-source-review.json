@@ -1,0 +1,138 @@
+{
+  "base": "c940a4067da8fa67d18b2f0be1b38728f6a36113",
+  "scope": "DIRECT_CHAT_COMPLETION_AND_ACCOUNTING_CORRECTION_NOT_LIVE_ACCEPTANCE",
+  "records": [
+    {
+      "path": "backend/src/ai/completionDiagnostics.test.ts",
+      "preservedOriginalTests": 2
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.egress.test.ts",
+      "preservedOriginalTests": 6
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.test.ts",
+      "preservedOriginalTests": 0
+    },
+    {
+      "path": "backend/src/ai/providerBudget.test.ts",
+      "preservedOriginalTests": 12
+    },
+    {
+      "path": "backend/src/ai/richResponsePrompt.test.ts",
+      "preservedOriginalTests": 3
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.test.ts",
+      "preservedOriginalTests": 2
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.test.ts",
+      "preservedOriginalTests": 6
+    },
+    {
+      "path": "frontend/src/lib/xrogaResponseDocument.test.ts",
+      "preservedOriginalTests": 16
+    },
+    {
+      "path": "backend/src/ai/completionDiagnostics.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "677bb2771f0aef0c07081cd7b6e401089870e483640b5b0fe448bdcfd9b45005"
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "bfc71690a84aba032ca7685f035e94fdd2a7ca69fdb3f703a0c15cd16929c9ae"
+    },
+    {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "egress": 3,
+      "persistence": 0,
+      "sourceSha256": "9b89fbbca10b4a53804a92b4c254998ebe87e9e03b2325a5c709837fca8fcaf8"
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "egress": 0,
+      "persistence": 2,
+      "sourceSha256": "373180f86ff9ed02a7624d767374d214c14765ffcbf9a489b86d3bc26507e3b6"
+    },
+    {
+      "path": "backend/src/ai/prompts.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "54c0dc824badfce11194c7c6f9ec7d8a0f045300715ff05a0fc5d5f3e203d2bf"
+    },
+    {
+      "path": "backend/src/ai/providerBudget.ts",
+      "egress": 0,
+      "persistence": 20,
+      "sourceSha256": "751dbb7b995355ed7aeedb1ca2ba1326c387a8e7618b6c4d29cc56f6ef2ecb48"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "egress": 0,
+      "persistence": 5,
+      "sourceSha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc"
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "egress": 0,
+      "persistence": 1,
+      "sourceSha256": "6fdd82d91f702447d22419a285cde70cf1c5f5bdce72bc76733364080e72ac91"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "60a729d78e37f1c29efb47abadae7ae6d42fd576bbf26185e5dc27444f5e4ad4"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "ac627f71ec1c030916d7b8e8db5ee2e54de5438243c573c90160e378463946fa"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/graphLayout.ts",
+      "egress": 0,
+      "persistence": 1,
+      "sourceSha256": "1a097a40b5095dc6a9842b0b24be8af91aaa66a0b23c35a047d9d1c47c8b89e5"
+    },
+    {
+      "path": "frontend/src/components/response-experience-v2/response-v2.module.css",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "f9efe4902bb4aa7b6796f37cfe1c8281585f1339a4fa60207dac9a946a22c45e"
+    },
+    {
+      "path": "frontend/src/context/TerminalChatContext.tsx",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "961518473899c8b1128c252d7b736e8f44b6fe10aa8ecf987cf102966676ac6b"
+    },
+    {
+      "path": "frontend/src/lib/api.ts",
+      "egress": 1,
+      "persistence": 0,
+      "sourceSha256": "45620d241f05cc73d84cc20f31cd957878785b7c57af9addf24a518be7ba57ef"
+    },
+    {
+      "path": "frontend/src/lib/runLightLaneChat.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "672d07640d6fb6184274d5b6e080acdd347be5317437a838347884b77207a7a9"
+    },
+    {
+      "path": "frontend/src/lib/xrogaResponseDocument.ts",
+      "egress": 0,
+      "persistence": 0,
+      "sourceSha256": "47fb8d10304abf826370e495dd30eadad24f07d4432bf89f238c7604fde9e54c"
+    }
+  ],
+  "historicalProofsUnchanged": true,
+  "modelCalls": 0,
+  "productionSQL": false,
+  "review": "Existing actor, project, lease, credential, approval, outbound origin, secret and cancellation boundaries remain. Only additive public completion status, explicit existing direct-output control, serialized price ceilings and validated provider cost settlement change. Original tests remain byte-identical, new tests are additive."
+}

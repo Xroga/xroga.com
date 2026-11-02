@@ -5,55 +5,68 @@
   "remappings": [
     {
       "previousCallerId": "74229d60e093f2e44542",
-      "currentCallerId": "fb2bffffc91cc072976a"
+      "currentCallerId": "78696e27dd5c1ca37c3a",
+      "beforeResearchHandoffCallerId": "fb2bffffc91cc072976a"
     },
     {
       "previousCallerId": "c37a93be0605e64b3156",
-      "currentCallerId": "99ba24aefa7f2c2f6de9"
+      "currentCallerId": "5063984e8c997b66e324",
+      "beforeResearchHandoffCallerId": "99ba24aefa7f2c2f6de9"
     },
     {
       "previousCallerId": "94fb30ec710f32d062c2",
-      "currentCallerId": "3c64dc5d4a7058fb12f8"
+      "currentCallerId": "4f84558e55d72a558c00",
+      "beforeResearchHandoffCallerId": "3c64dc5d4a7058fb12f8"
     },
     {
       "previousCallerId": "36d0fbfc5ddf864ad6ea",
-      "currentCallerId": "fc3b3f4bab00e81fbc31"
+      "currentCallerId": "0d7ac55b299aff66161b",
+      "beforeResearchHandoffCallerId": "fc3b3f4bab00e81fbc31"
     },
     {
       "previousCallerId": "bda77ff34ad9e973cbde",
-      "currentCallerId": "94f936dfc30fe898eebe"
+      "currentCallerId": "2b682298901e2f9f943b",
+      "beforeResearchHandoffCallerId": "94f936dfc30fe898eebe"
     },
     {
       "previousCallerId": "a1e1f647efb6e7002993",
-      "currentCallerId": "1f375890c653535bb84b"
+      "currentCallerId": "7b807643d71d470e0f51",
+      "beforeResearchHandoffCallerId": "1f375890c653535bb84b"
     },
     {
       "previousCallerId": "7c2970e3ea0940d5d136",
-      "currentCallerId": "9614e2de1a77eacffe05"
+      "currentCallerId": "0248d18cc31a925c621c",
+      "beforeResearchHandoffCallerId": "9614e2de1a77eacffe05"
     },
     {
       "previousCallerId": "986c86eebabfae033939",
-      "currentCallerId": "b3a2b5af5ead58408dba"
+      "currentCallerId": "66c23eb1e38ac8cb4bfc",
+      "beforeResearchHandoffCallerId": "b3a2b5af5ead58408dba"
     },
     {
       "previousCallerId": "884cad1975974abc0599",
-      "currentCallerId": "1f7c11b7359e0958073e"
+      "currentCallerId": "10f00d8450df264b93d4",
+      "beforeResearchHandoffCallerId": "1f7c11b7359e0958073e"
     },
     {
       "previousCallerId": "1a3d2ad705ca358ebbe3",
-      "currentCallerId": "8f3d42e8e45d7fb2252a"
+      "currentCallerId": "faf31e8057d6b9c3795f",
+      "beforeResearchHandoffCallerId": "8f3d42e8e45d7fb2252a"
     },
     {
       "previousCallerId": "b6708d08741254f6da06",
-      "currentCallerId": "a992f061331cff4e8d50"
+      "currentCallerId": "f842a5afc2b542487f43",
+      "beforeResearchHandoffCallerId": "a992f061331cff4e8d50"
     },
     {
       "previousCallerId": "85d5a147aa59e4f62e68",
-      "currentCallerId": "7ddf1ddcae5c5661a52a"
+      "currentCallerId": "d2879953777f5ac8d2ba",
+      "beforeResearchHandoffCallerId": "7ddf1ddcae5c5661a52a"
     },
     {
       "previousCallerId": "bbf934631616a292169c",
-      "currentCallerId": "b01c22a391468e45cbe8"
+      "currentCallerId": "6df5deb0f6f628c7d1b4",
+      "beforeResearchHandoffCallerId": "b01c22a391468e45cbe8"
     },
     {
       "previousCallerId": "840920438b3c862c0e91",
@@ -81,67 +94,67 @@
     },
     {
       "previousCallerId": "046674e946dedc2dbd0a",
-      "currentCallerId": "aae055d92faa16ae4e2e"
+      "currentCallerId": "bebfcf0f4ba426a71be1"
     },
     {
       "previousCallerId": "f7d8e33dac1c0de787f8",
-      "currentCallerId": "54326930ab9ec884b6cd"
+      "currentCallerId": "67b1241b9b70b5f136ae"
     },
     {
       "previousCallerId": "2384f6f1c188f4f6ce83",
-      "currentCallerId": "53446e75ca49c95522af"
+      "currentCallerId": "33169c5e9ad22ce0655f"
     },
     {
       "previousCallerId": "03557d58e528c5852636",
-      "currentCallerId": "4c4451bbec61aecb23d3"
+      "currentCallerId": "7836681966b6d9215ec8"
     },
     {
       "previousCallerId": "e2e547f8796cd0aad243",
-      "currentCallerId": "9d05c85f5bfac4989a75"
+      "currentCallerId": "86106178c4a136dd921d"
     },
     {
       "previousCallerId": "f602ab2d6bfebc170a02",
-      "currentCallerId": "469b0a4a0957a0d982b1"
+      "currentCallerId": "26e1c49e68e89b7b14bd"
     },
     {
       "previousCallerId": "8a48ae3957449eee9587",
-      "currentCallerId": "4a9c1469b879166fe52c"
+      "currentCallerId": "5c9be0f2e0f652c62e49"
     },
     {
       "previousCallerId": "685bdab3b4b31bd28d43",
-      "currentCallerId": "0b3ff8ce7a456a8a2acf"
+      "currentCallerId": "597ad99cc551e28182ea"
     },
     {
       "previousCallerId": "9a847ab5769bb707c1f2",
-      "currentCallerId": "f6f4b355a8c80fc166f4"
+      "currentCallerId": "5b2500bca0819c0cfbca"
     },
     {
       "previousCallerId": "e489f9a48f400005cb2d",
-      "currentCallerId": "c2adb020f37811ce7849"
+      "currentCallerId": "48608e9c8e68e6683453"
     },
     {
       "previousCallerId": "d9435c22813b64a1f1f5",
-      "currentCallerId": "9cce2ff19e247ce9c5d5"
+      "currentCallerId": "0aa6642b9d69de06f3b2"
     },
     {
       "previousCallerId": "1d3ef9e110d2f000f590",
-      "currentCallerId": "670197ad89640f5a6242"
+      "currentCallerId": "64c63cbd2cbdc0d0e6f6"
     },
     {
       "previousCallerId": "0b24ee0eecebdda0e6f3",
-      "currentCallerId": "9d0558fe12707a8a2949"
+      "currentCallerId": "298b5f4095b683f456b6"
     },
     {
       "previousCallerId": "ace18dec175b4875e7f7",
-      "currentCallerId": "65acb9b03435995fdeb0"
+      "currentCallerId": "e052915067b01ca6077d"
     },
     {
       "previousCallerId": "c07b5b1f63ae0e361ae7",
-      "currentCallerId": "774dd446f08cb58fbc9b"
+      "currentCallerId": "54e741be8699adc0e781"
     },
     {
       "previousCallerId": "fba07b765dafacccf133",
-      "currentCallerId": "706f26c27c2b32064580"
+      "currentCallerId": "f4a361a7bbed04369e1b"
     },
     {
       "previousCallerId": "cd8790e39c3283f05482",
@@ -1187,5 +1200,6 @@
   "productionEffects": false,
   "currentPositionContinuation": "docs/xroga/evidence/command-010/GITHUB-ACTOR-SEMANTIC-POSITIONS-20261028.json",
   "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json",
-  "nativeCheckoutPositionContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json"
+  "nativeCheckoutPositionContinuation": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-SOURCE-POSITIONS-20261028.json",
+  "directOutputPositionContinuation": "docs/xroga/evidence/response-v2-direct-output/position-continuation.json"
 }

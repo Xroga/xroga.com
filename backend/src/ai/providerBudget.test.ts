@@ -56,6 +56,14 @@ test('uses integer micro-USD and reserves more than the maximum estimated cost',
   assert.ok(reserved > actual);
 });
 
+test('DeepSeek reservation covers the observed provider charge and settles reported cost rather than a cheapest-endpoint estimate', () => {
+  const observed={modelId:'deepseek_v4_flash' as const,inputTokens:2817,outputTokens:4096,providerCostMicroUsd:1985};
+  const reserved=estimateProviderReservationMicroUsd({modelId:observed.modelId,estimatedInputTokens:2817,maximumOutputTokens:4096});
+  assert.ok(reserved>observed.providerCostMicroUsd);
+  assert.equal(actualProviderCostMicroUsd(observed),1985);
+  for(const providerCostMicroUsd of [-1,NaN,Infinity,1.5]) assert.throws(()=>actualProviderCostMicroUsd({...observed,providerCostMicroUsd}),/Invalid provider usage/);
+});
+
 test('cached input is conservatively accounted until a provider-specific rate is verified', () => {
   const uncached = actualProviderCostMicroUsd({ modelId: 'glm_5_3_flash', inputTokens: 10_000, outputTokens: 100 });
   const cached = actualProviderCostMicroUsd({ modelId: 'glm_5_3_flash', inputTokens: 10_000, cachedInputTokens: 9_000, outputTokens: 100 });

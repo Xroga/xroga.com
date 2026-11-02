@@ -16,8 +16,9 @@ import { adaptTerminalEvent } from '@/lib/terminal/terminalEventAdapter';
 import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
+import { streamSwarmExecute, apiFetch, ApiError, type ChatAttachment, api } from '@/lib/api';
 import { resolveBuilderProject, syncBuilderConversation } from '@/lib/builderChat';
+import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, type ResearchHandoff } from '@/lib/researchHandoff';
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
@@ -461,6 +462,7 @@ export interface ChatMessage {
     thumbnailUrl?: string;
     siteDomain?: string;
   }>;
+  researchReceiptId?: string;
   hackathonBrief?: import('@/lib/hackathonBrief').HackathonBriefCardData;
   /** Public, factual activity summaries derived from client or backend events. */
   thinkingSteps?: string[];
@@ -1345,6 +1347,46 @@ const stopRequestedRunIdRef =
     }, 450);
     return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
+
+  const researchPendingKey = JSON.stringify(messages
+    .filter(m => pendingResearchConfirmation(m)).slice(-20)
+    .map(m => ({ messageId: m.id, confirmationId: pendingResearchConfirmation(m)! })));
+
+  // Read-only receipt handoff. Focus/reopen retrieves saved evidence, never dispatches research.
+  useEffect(() => {
+    if (isGuest || !sessionReady || !workspaceIdentity.userId || restoringRef.current) return;
+    const pending = JSON.parse(researchPendingKey) as Array<{ messageId: string; confirmationId: string }>;
+    if (!pending.length) return;
+    let disposed = false;
+    let inFlight = false;
+    const session = sessionIdRef.current;
+    const refresh = async () => {
+      if (disposed || inFlight) return;
+      inFlight = true;
+      try {
+        for (const message of pending) {
+          if (disposed || sessionIdRef.current !== session) break;
+          const id = message.confirmationId;
+          try {
+            const response = await apiFetch<{ researchResult?: ResearchHandoff | null; researchResultUnavailable?: boolean }>(
+              `/api/phase1/business-actions/confirmations/${encodeURIComponent(id)}`,
+            );
+            if (!disposed && sessionIdRef.current === session && response.researchResult) {
+              const result = response.researchResult;
+              setMessages(current => current.map(m => m.id === message.messageId ? attachResearchResult(m, result) : m));
+            } else if (!disposed && sessionIdRef.current === session && response.researchResultUnavailable) {
+              setMessages(current => current.map(m => m.id === message.messageId ? markResearchUnavailable(m, id) : m));
+            }
+          } catch {
+            // Leave the original approval and context intact. No automatic provider retry.
+          }
+        }
+      } finally { inFlight = false; }
+    };
+    void refresh();
+    window.addEventListener('focus', refresh);
+    return () => { disposed = true; window.removeEventListener('focus', refresh); };
+  }, [isGuest, sessionReady, workspaceIdentity.userId, researchPendingKey]);
 
   /** Persist terminal history while user works — not only after submit completes */
   useEffect(() => {
@@ -2309,7 +2351,7 @@ const stopRequestedRunIdRef =
             );
           },
         });
-        const enhanced = enhanceAiResponse(result.response, assistantId);
+        const enhanced = enhanceAiResponse(result.response, assistantId, result.completion, result.responseSource);
         setMessages((current) => current.map((message) =>
           message.id === assistantId
             ? { ...message, content: enhanced.content, featureOutput: enhanced.output, agent: 'Xroga AI Brain' }
@@ -2889,7 +2931,7 @@ if (
                 controller.signal
               );
 
-              const enhanced = enhanceAiResponse(fullReply, assistantId);
+              const enhanced = enhanceAiResponse(fullReply, assistantId, result.completion, result.responseSource);
               fullReply = enhanced.content;
               setMessages((current) => current.map((message) =>
                 message.id === assistantId
@@ -4468,7 +4510,7 @@ active.applyBuild({
               : null;
           const friendly =
             capacityLine ??
-            (codeBuildActive || semanticBuildPlanned
+            (semanticBuildPlanned
               ? isBuildUpdateEarly
                 ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
                 : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`

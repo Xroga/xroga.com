@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "b44fdb6a853194a654b99b45f4c03512fd4ccdcdd4c3117b5c7d961109db8fc8",
+  "sourceTreeDigest": "2e9bae88b50fe81f8c282fd8cf9575916500a97c0f79591158ef2b7263958684",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 218,
+      "line": 234,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -58,7 +58,7 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+          "sha256": "c013b4bb607cf023790daec71ad5e7d43e5326403bff05e5f1f295fabfede9de"
         },
         {
           "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
@@ -75,11 +75,11 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 296,
+      "line": 313,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
+      "callSha256": "e7967923786a9678929ac76c86e28e2fa47de4de88b6a1f2c9a2aba1484336f6",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -117,11 +117,11 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 402,
+      "line": 400,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
-      "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
+      "callSha256": "52730c15b2b7368bbe4f4e4ad09116a7d6004a026fd13054f8e05e6b409168ca",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -179,7 +179,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
         }
       ]
     },
@@ -206,7 +206,7 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "40a9c47c0f61e5894bcc787e72738b44e1ec1b23dcdf652b44e6708b8ff706f2"
+          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
         }
       ]
     },
@@ -4270,7 +4270,9 @@
         {
           "path": "frontend/e2e/phase4-admin-share.security.mjs",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+          "sha256": "ed2f9f335df6716e2fbe2934839021485668bbd0929452d4567350edf166246e",
+          "beforeRichShareFixtureSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23",
+          "continuity": "Original two transport tests and every assertion unchanged. Real pure Share validators and additive API-version compatibility test now load in a shared VM realm. UI-only component remains outside transport fixture."
         }
       ]
     },
@@ -4719,10 +4721,10 @@
       ]
     },
     {
-      "id": "68df836263d1eff0010b",
+      "id": "195e486260bf940789dd",
       "file": "frontend/src/lib/supabase/authProviders.ts",
       "line": 5,
-      "entryPoint": "requireGitHubProvider",
+      "entryPoint": "requireOAuthProvider",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "f8d5cdd15b875114d405b5a83c70a3af178717ea835e8746c7eb91964f64bef8",
@@ -4900,7 +4902,7 @@
         "3b970c32a8efb294a7fd",
         "20618341b2f95ca0ba5e",
         "805931ff0dc022677403",
-        "68df836263d1eff0010b",
+        "195e486260bf940789dd",
         "eb39e5759b146603faf0",
         "e1ddea7115498d92341b"
       ]

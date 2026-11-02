@@ -1,4 +1,5 @@
 import OpenAI, {type ClientOptions} from 'openai';
+import { isDeepStrictEqual } from 'node:util';
 import { getSecret } from '../config/envSecrets.js';
 import {
   MODELS,
@@ -14,6 +15,7 @@ import {containsCredentialSecretText} from '../security/egress/dataClassificatio
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH} from './modelSdkAdmission.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
+import { CompletionDiagnostics, requirePublicCompletion, providerCostMicroUsd } from './completionDiagnostics.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -25,6 +27,7 @@ export interface ChatMessage {
 }
 
 export interface ChatResult {
+  providerCostMicroUsd?: number;
   text: string;
   /**
    * Why the model stopped. `length` means the reply was cut at the token ceiling.
@@ -74,6 +77,19 @@ export function providerReasoningControls(
     return { reasoning: { effort: 'none', exclude: true } };
   }
   return {};
+}
+
+export function providerPriceControls(modelId: ModelId, provider: string): Record<string, unknown> {
+  if (provider !== 'openrouter' || modelId !== 'deepseek_v4_flash') return {};
+  const model = MODELS[modelId];
+  return { provider: { max_price: { prompt: model.inputUsdPer1M, completion: model.outputUsdPer1M, request: 0 }, require_parameters: true } };
+}
+
+/** Verify controls on the serialized request before any provider bytes leave. */
+export function assertProviderControls(wireBody: string, modelId: ModelId, provider: string, mode?: ReasoningMode): void {
+  const wire = JSON.parse(wireBody) as Record<string, unknown>;
+  const expected = { ...providerPriceControls(modelId, provider), ...providerReasoningControls(provider, mode) };
+  for (const [key, value] of Object.entries(expected)) if (!isDeepStrictEqual(wire[key], value)) modelAdmissionDenied();
 }
 
 export function requireNonEmptyModelText(text: string, modelId: ModelId): string {
@@ -290,6 +306,7 @@ export async function chatCompletion(
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
+      assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
       await opts.beforeDispatch!(wire);checkCancellation();
     });
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
@@ -300,41 +317,20 @@ export async function chatCompletion(
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
           ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+          ...providerPriceControls(modelId, endpoint.provider),
           ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
         },
         opts.signal ? { signal: opts.signal } : undefined,
       ),
     );
+    const diagnostics = new CompletionDiagnostics();
+    diagnostics.observe(completion, false);
     const choice = completion.choices[0]?.message;
 
-    // Reasoning models split their reply in two. GLM and the DeepSeek v4 family return
-    // their thinking in `reasoning_content` and the answer in `content`. Reading only
-    // `content` means a model that spent its whole output budget thinking looks, from
-    // here, exactly like a provider that returned nothing — which is what "empty
-    // completion" reported for every GLM implementation attempt in production while the
-    // API itself was answering normally.
-    //
-    // The reasoning text is deliberately NOT used as the answer. It is a model's working,
-    // not its output, and committing it as a source file would be worse than failing. It is
-    // read only to tell the two situations apart, because they need different fixes: a
-    // larger output budget versus a different provider.
-    const reasoning =
-      typeof (choice as { reasoning_content?: unknown })?.reasoning_content === 'string'
-        ? ((choice as { reasoning_content?: string }).reasoning_content ?? '').trim()
-        : '';
+    // Private reasoning is counted in the receipt, never published as an answer.
     const answer = (choice?.content ?? '').trim();
 
-    if (!answer && reasoning) {
-      const error = new Error(
-        `${modelId} returned ${reasoning.length} characters of reasoning but no answer — its ` +
-          'output budget was spent thinking. Raise the budget for this call or route to a ' +
-          'model that answers within it.',
-      ) as Error & { code?: string };
-      error.code = 'REASONING_WITHOUT_ANSWER';
-      throw error;
-    }
-
-    const text = requireNonEmptyModelText(answer, modelId);
+    const text = requirePublicCompletion(answer, modelId, diagnostics);
     const inputTokens =
       completion.usage?.prompt_tokens ??
       messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
@@ -350,6 +346,7 @@ export async function chatCompletion(
       outputTokens,
       totalTokens: inputTokens + outputTokens,
       providerRequestId: completion.id,
+      ...(endpoint.provider === 'openrouter' ? { providerCostMicroUsd: providerCostMicroUsd(completion.usage) } : {}),
     };
     admission.complete(result,()=>{},checkCancellation);
     return Object.freeze(result);
@@ -389,6 +386,7 @@ export async function chatCompletionStream(
       checkCancellation();
       const current=resolveEndpoint(modelId,opts.credentialOverride);
       if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
+      assertProviderControls(wire,modelId,endpoint.provider,opts.reasoningMode);
       await opts.beforeDispatch!(wire);checkCancellation();
     });
     if (opts.signal?.aborted) {
@@ -406,6 +404,8 @@ export async function chatCompletionStream(
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
           ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+          ...providerPriceControls(modelId, endpoint.provider),
+          ...(endpoint.provider === 'openrouter' ? { stream_options: { include_usage: true } } : {}),
           ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
           stream: true,
         } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
@@ -414,12 +414,16 @@ export async function chatCompletionStream(
     );
 
     let text = '';
+    const diagnostics = new CompletionDiagnostics();
     let providerRequestId: string | undefined;
     let finishReason: string | null = null;
     let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     let outputTokens = 0;
+    let chargedMicroUsd: number | undefined;
 
+    try {
     for await (const chunk of stream) {
+      diagnostics.observe(chunk, true);
       providerRequestId ??= chunk.id;
       if (opts.signal?.aborted) {
         const err = new Error('Build cancelled') as Error & { code?: string };
@@ -450,10 +454,15 @@ export async function chatCompletionStream(
       if (chunk.usage) {
         inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
         outputTokens = chunk.usage.completion_tokens ?? outputTokens;
+        if (endpoint.provider === 'openrouter') chargedMicroUsd = providerCostMicroUsd(chunk.usage) ?? chargedMicroUsd;
       }
     }
+    } catch (error) {
+      console.warn('[model-stream-interrupted]', { modelId, ...diagnostics.receipt(), aborted: opts.signal?.aborted === true });
+      throw error;
+    }
 
-    text = requireNonEmptyModelText(text, modelId);
+    text = requirePublicCompletion(text, modelId, diagnostics);
     if (!outputTokens) outputTokens = estimateTokens(text);
 
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
@@ -467,6 +476,7 @@ export async function chatCompletionStream(
       outputTokens,
       totalTokens: inputTokens + outputTokens,
       providerRequestId,
+      providerCostMicroUsd: chargedMicroUsd,
     };
     admission.complete(result,()=>opts.onDelta?.(text),checkCancellation);
     return Object.freeze(result);
