@@ -1,0 +1,20 @@
+{
+  "approved": false,
+  "structuredPresentationContractApproved": false,
+  "packageId": "response-v2-answer-coverage-4c6319e2",
+  "sourceSha": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "maximumOneTimeGoogleUsd": 0.5,
+  "maximumMonthlyImageStorageUsd": 0.1,
+  "maximumMaintenanceMinutes": 60,
+  "maximumNewModelAndResearchUsd": 0.5,
+  "conditionalOnAllSevenExactSourceGates": true,
+  "acceptanceCombinedOriginalCeilingUsd": 0.5,
+  "acceptanceAlreadyConsumedMicroUsd": 7580,
+  "maximumRemainingSubmissions": 4,
+  "oneCorrectedSaasRecheckAllowed": false,
+  "retainUnknownHoldsAndBoundedAcceptanceApproved": false,
+  "originalCombinedRemainingMicroUsd": 492420,
+  "maximumTotalSubmissionsIncludingPrior": 9,
+  "futureGlmDispatchAuthorized": false,
+  "newSaasExceptionRequiresApproval": true
+}

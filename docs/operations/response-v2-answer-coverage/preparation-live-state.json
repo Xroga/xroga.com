@@ -1,0 +1,15 @@
+{
+  "observedAtUtc": "2026-11-02T19:56:03.383776+00:00",
+  "readOnly": true,
+  "servingRevision": "xroga-api-response-cd5541-serving-1102",
+  "apiSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "apiImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:70a2be6f9f8b2452e7e6505ff13f9d1c571899aca18f011e5bbacc731daef28d",
+  "jobSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "jobImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:70a2be6f9f8b2452e7e6505ff13f9d1c571899aca18f011e5bbacc731daef28d",
+  "queue": "RUNNING",
+  "voiceTags": [
+    "voice-054d7ae4",
+    "voice-9f62bba5"
+  ],
+  "newResources": 0
+}

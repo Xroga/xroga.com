@@ -1,0 +1,17 @@
+{
+  "source": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "observedAtUtc": "2026-11-02T19:50:15.933Z",
+  "freshEmptyHistoryRequired": true,
+  "noAttachmentsOrRepositoryRequired": true,
+  "maximumPlanSections": 8,
+  "allSupportedSectionKindsConsidered": true,
+  "answerTokensBound": 11308,
+  "plannerTokensBound": 4194,
+  "plannerBoundMicroUsd": 189976,
+  "answerBoundMicroUsd": 258134,
+  "combinedBoundMicroUsd": 448110,
+  "remainingAcceptanceMicroUsd": 492420,
+  "providerRequests": 0,
+  "glmPermitted": false,
+  "sourceCodeVerifiedByGit": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2"
+}
