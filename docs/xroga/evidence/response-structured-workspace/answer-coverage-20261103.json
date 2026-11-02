@@ -1,0 +1,15 @@
+{
+  "scope": "LOCAL_CAPTURED_ANSWER_REPLAY_NOT_NEW_GENERATION_OR_LIVE_ACCEPTANCE",
+  "capturedSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "captureFixture": "frontend/src/components/response-experience-v2/testdata/generated-saas-cd5541.json",
+  "captureProductAcceptance": "FAIL_MISSING_SCHEMA_AND_ACCESS_COMPARISON",
+  "frontendRegression": {"job": "02c28f33-34b0-4b39-b3a8-dcd4c515dcb6", "passed": 110, "failed": 0},
+  "frontendTypecheck": {"job": "56fcc544-8f37-4a83-8951-2020a21019e1", "result": "PASS"},
+  "browserReplay": {"renderer": "ACTUAL_RESPONSE_CANVAS_V2", "viewports": [{"width": 1440, "height": 1000}, {"width": 390, "height": 844}], "themes": ["dark", "light"], "mobileFontPx": 16, "mobileWeight": "400", "pageOverflow": false, "authenticLinkedRoleIcons": 6, "reopenTextExact": true},
+  "copyShareRegression": "PASS_FULL_CAPTURED_CONTENT_AND_STRUCTURED_IDENTITY_ROUNDTRIP",
+  "missingDataInvented": false,
+  "newModelRequests": 0,
+  "productionChanged": false,
+  "legacyRendererPreserved": true,
+  "remaining": ["Exact-source CI", "Authenticated source-pinned Preview", "Fresh generated production acceptance after specific release authorization"]
+}

@@ -7,6 +7,45 @@ import { readFileSync } from 'node:fs';
 import { specimensV2 } from './specimens';
 import { enhanceAiResponse } from '@/lib/xrogaResponseDocument';
 import { responseTextV2 } from './exportText';
+import { resourceIdentityV2 } from './entityRegistry';
+import { richShareSnapshot, readRichShareSnapshot } from './shareSnapshot';
+
+test('captured cd5541 component roles retain all content, identities and Share data without inventing omitted sections', () => {
+  // Genuine synthetic-account output from the failed production acceptance.
+  // Replay is regression evidence, never a new generation or quality acceptance.
+  const message = JSON.parse(readFileSync(new URL('./testdata/generated-saas-cd5541.json', import.meta.url), 'utf8'));
+  const result = adaptResponseV2(message);
+  assert.ok(result.supported);
+  const roles = result.document.nodes.find(node => node.kind === 'cards');
+  assert.ok(roles?.kind === 'cards');
+  assert.equal(roles.items.length, 6);
+  assert.deepEqual(roles.items.map(item => resourceIdentityV2(item.title, item.url, item.entityId)?.url), [
+    'https://nextjs.org', 'https://supabase.com', 'https://supabase.com', 'https://supabase.com', 'https://stripe.com', 'https://stripe.com',
+  ]);
+  assert.equal(result.document.nodes.some(node => node.kind === 'table'), false, 'Rendering cannot invent the missing schema');
+  const text = responseTextV2(message)!;
+  for (const item of roles.items) {
+    assert.ok(text.includes(item.title));
+    assert.ok(text.includes(item.description!));
+  }
+  assert.deepEqual(adaptResponseV2(JSON.parse(JSON.stringify(message))), result);
+  const snapshot = richShareSnapshot(message, text);
+  assert.ok(snapshot);
+  assert.deepEqual(readRichShareSnapshot(snapshot), JSON.parse(JSON.stringify({ text, document: result.document })));
+  assert.equal(result.document.originalText, message.featureOutput.sourceText);
+});
+
+test('structured entity identity survives adapter and Share, while invalid identity metadata fails safely', () => {
+  const featureOutput = { schemaVersion: 1, id: 'identity-output', status: 'completed', blocks: [{ schemaVersion: 1, id: 'roles', type: 'card-grid', cards: [{ id: 'payments', title: 'Stripe billing', entityId: 'Stripe', description: 'Authored role, not a verified action.' }] }] };
+  const message = { id: 'identity-message', content: '', featureOutput };
+  const adapted = adaptResponseV2(message);
+  assert.ok(adapted.supported);
+  const roles = adapted.document.nodes[0];
+  assert.ok(roles.kind === 'cards');
+  assert.equal(roles.items[0].entityId, 'Stripe');
+  assert.deepEqual(readRichShareSnapshot(richShareSnapshot(message, responseTextV2(message)!)!).document, JSON.parse(JSON.stringify(adapted.document)));
+  assert.equal(adaptResponseV2({ ...message, featureOutput: { ...featureOutput, blocks: [{ ...featureOutput.blocks[0], cards: [{ ...featureOutput.blocks[0].cards[0], entityId: 5 }] }] } }).supported, false);
+});
 
 test('real generated SaaS database block preserves the full ordered answer and export', () => {
   // Captured from the authorized synthetic new-chat run, not a quality-approved answer.

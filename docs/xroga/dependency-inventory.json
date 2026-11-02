@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b678c208dd30d36faa532c874359c36ef23c1d1b",
+  "source_sha": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2681,6 +2681,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-cloud-google-com",
+      "provider": "Source-defined endpoint cloud.google.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "cloud.google.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-cloudflare-com",
       "provider": "Source-defined endpoint cloudflare.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5253,6 +5287,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/lib/seoExpansionContent.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-paypal-com",
+      "provider": "Source-defined endpoint paypal.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
+      ],
+      "hostnames": [
+        "paypal.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/response-experience-v2/entityRegistry.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -16124,7 +16192,7 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "sha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655"
+      "sha256": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48"
     },
     {
       "path": "backend/src/ai/router.ts",
@@ -20975,6 +21043,10 @@
       "sha256": "10d56cec8d4ac5468a1f7fe7d1f6c0ef9c46d0161dbec7ccc836eee28fb0b5be"
     },
     {
+      "path": "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
+      "sha256": "bf5b718c192a93efe94032be73912fb1d9430aee20fea109a4978cdf921da8b9"
+    },
+    {
       "path": "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
       "sha256": "60dfe4ffa745d9405a93f27231c07ddc99c49a0e340d164e1ac0b02a81a9b888"
     },
@@ -20992,7 +21064,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "2b30dc4047a09b08d7c2c406ea1023b4cf19a008170a56eebd7906d4f4d9ff25"
+      "sha256": "d293208e6b22dfeea3872a70cb02cabaf8782019e6f01148f4a0893f2f70d1a3"
     },
     {
       "path": "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx",
@@ -21004,7 +21076,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "42b8ac9c87826fc899c3ad90cf348a96e5c0dae007461cd92626668045e9e6fa"
+      "sha256": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e"
     },
     {
       "path": "frontend/src/components/response-experience-v2/access.ts",
@@ -21028,11 +21100,11 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "388a194283e0d8edb83b60d8df7d330820f33d74c9d8e15261977f107e0c2723"
+      "sha256": "5c0415141a5e63e5af8974c5300e9b9f89a4e8d54ce32196afc09b2f565f267e"
     },
     {
       "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
-      "sha256": "24efdb288e9c885ee695d6c67b3b762ea9f68a85eef4577584078d01f2c68d02"
+      "sha256": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d"
     },
     {
       "path": "frontend/src/components/response-experience-v2/exportText.ts",
@@ -21060,7 +21132,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
-      "sha256": "36d093e98e21248f75a108d9e37f2a73a8ada5372aaac6caeb88cf6b372d4bd8"
+      "sha256": "57c6848fc2cbaf70b0de45d14aa91d80e679fce5909e0691ae12eb10d58cd7db"
     },
     {
       "path": "frontend/src/components/response-experience-v2/shareSnapshot.ts",
@@ -22680,7 +22752,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "bdad296992542fce270dc1d4913a5b29f2881c075276827e04e2f22ae61acea4"
+      "sha256": "48a9122b8aa27cafa88e463c5969d6ac2057974d18a0fce37dd2585c281dd329"
     },
     {
       "path": "frontend/src/lib/xrogaBrand.ts",
@@ -28176,6 +28248,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "paypal.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 20,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cloud.google.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/response-experience-v2/entityRegistry.ts",
+      "line": 21,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "developer.mozilla.org",
       "protocol": "https:",
       "path": "frontend/src/components/response-experience-v2/specimens.ts",
@@ -30930,42 +31016,63 @@
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 87,
+      "line": 28,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 88,
+      "line": 31,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 89,
+      "line": 34,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 96,
+      "line": 116,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 99,
+      "line": 117,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/responsePresentation.ts",
-      "line": 100,
+      "line": 118,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 125,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 128,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "line": 129,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35683,7 +35790,7 @@
     },
     {
       "path": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "line": 23,
+      "line": 24,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

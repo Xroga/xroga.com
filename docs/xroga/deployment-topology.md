@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `b678c208dd30d36faa532c874359c36ef23c1d1b`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `d86c8c44fae0777fb1e2a503bb316f7f314b196a`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -64,6 +64,7 @@ Source SHA: `b678c208dd30d36faa532c874359c36ef23c1d1b`; exact current source/con
 | endpoint-cheatsheetseries-owasp-org | Source-defined endpoint cheatsheetseries.owasp.org | CONFIGURED_BUT_UNVERIFIED | cheatsheetseries.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chrome-google-com | Source-defined endpoint chrome.google.com | CONFIGURED_BUT_UNVERIFIED | chrome.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cloud-google-com | Source-defined endpoint cloud.google.com | CONFIGURED_BUT_UNVERIFIED | cloud.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloudflare-com | Source-defined endpoint cloudflare.com | CONFIGURED_BUT_UNVERIFIED | cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-coordinator | Source-defined endpoint coordinator | CONFIGURED_BUT_UNVERIFIED | coordinator | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -133,6 +134,7 @@ Source SHA: `b678c208dd30d36faa532c874359c36ef23c1d1b`; exact current source/con
 | endpoint-open-bigmodel-cn | Source-defined endpoint open.bigmodel.cn | CONFIGURED_BUT_UNVERIFIED | open.bigmodel.cn | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-openrouter-ai | Source-defined endpoint openrouter.ai | CONFIGURED_BUT_UNVERIFIED | openrouter.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-packaging-python-org | Source-defined endpoint packaging.python.org | CONFIGURED_BUT_UNVERIFIED | packaging.python.org | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-paypal-com | Source-defined endpoint paypal.com | CONFIGURED_BUT_UNVERIFIED | paypal.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-play-google-com | Source-defined endpoint play.google.com | CONFIGURED_BUT_UNVERIFIED | play.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-pollinations-ai | Source-defined endpoint pollinations.ai | CONFIGURED_BUT_UNVERIFIED | pollinations.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-polygon-technology | Source-defined endpoint polygon.technology | CONFIGURED_BUT_UNVERIFIED | polygon.technology | NOT_INDEPENDENTLY_VERIFIED |
@@ -240,4 +242,4 @@ Historical findings below remain as review obligations, not fresh observations. 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-937 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.
+940 memory/filesystem candidates require semantic review. Static collections and scratch writes are not blanket durability defects or certificates. Source-defined optional hosts do not establish runtime reachability. No secrets, production rows, IAM, DNS, deployment or provider operation were changed by this inventory generation.

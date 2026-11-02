@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from 'react';
 import type { CitationSource } from '@/lib/xrogaCitations';
 import { sourceKeyV2 } from './sourceRegistry';
 import { Globe } from 'lucide-react';
-import { siGithub, siNextdotjs, siSupabase, siStripe, siCloudflare, siReact, siTypescript, siMdnwebdocs, siPython, siPostgresql, siNodedotjs, siVercel, siDocker, siN8n, siTemporal, siSentry, siPosthog } from 'simple-icons';
+import { siGithub, siNextdotjs, siSupabase, siStripe, siCloudflare, siReact, siTypescript, siMdnwebdocs, siPython, siPostgresql, siNodedotjs, siVercel, siDocker, siN8n, siTemporal, siSentry, siPosthog, siPaypal, siGooglecloud } from 'simple-icons';
 import { safeLinkV2 } from './document';
 import styles from './response-v2.module.css';
 
@@ -18,6 +18,7 @@ const marks = {
   'postgresql.org': siPostgresql, 'nodejs.org': siNodedotjs, 'vercel.com': siVercel,
   'docker.com': siDocker, 'docs.docker.com': siDocker, 'n8n.io': siN8n, 'docs.n8n.io': siN8n,
   'temporal.io': siTemporal, 'docs.temporal.io': siTemporal,
+  'paypal.com': siPaypal, 'developer.paypal.com': siPaypal, 'cloud.google.com': siGooglecloud, 'docs.cloud.google.com': siGooglecloud,
   'sentry.io': siSentry, 'docs.sentry.io': siSentry, 'posthog.com': siPosthog,
 };
 export const SourceRegistryContextV2 = createContext<ReadonlyMap<string, CitationSource>>(new Map());

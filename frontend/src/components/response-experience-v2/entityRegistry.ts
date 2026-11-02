@@ -17,7 +17,28 @@ const entities = [
   { names: ['Temporal'], url: 'https://temporal.io' },
   { names: ['Sentry'], url: 'https://sentry.io' },
   { names: ['PostHog'], url: 'https://posthog.com' },
+  { names: ['PayPal'], url: 'https://paypal.com' },
+  { names: ['Google Cloud'], url: 'https://cloud.google.com' },
 ] as const;
+
+/** Structured identities and authored links never certify source retrieval.
+ * Explicit links retain their destination. Conflicting identity metadata must
+ * not attach an official brand to an unrelated destination or label. */
+export function resourceIdentityV2(label: string, url?: string, entityId?: string) {
+  const byLabel = leadingEntityV2(label);
+  const explicit = entityId ? entities.find(entity => entity.names.some(name => name.toLowerCase() === entityId.toLowerCase())) : undefined;
+  const selected = explicit ? { name: explicit.names[0], url: explicit.url } : !entityId ? byLabel : undefined;
+  if (!selected || !byLabel || new URL(selected.url).hostname !== new URL(byLabel.url).hostname) return undefined;
+  if (url) {
+    try {
+      const supplied = new URL(url);
+      const host = supplied.hostname.replace(/^www\./, '');
+      const official = new URL(selected.url).hostname;
+      if (supplied.protocol !== 'https:' || supplied.username || supplied.password || (host !== official && !host.endsWith('.' + official))) return undefined;
+    } catch { return undefined; }
+  }
+  return { ...selected, markUrl: selected.url, url: url ?? selected.url };
+}
 
 export function leadingEntityV2(label: string): { name: string; url: string } | undefined {
   for (const entity of entities) for (const name of entity.names) {

@@ -12,6 +12,18 @@
 .diagramConnections { margin:16px 0; padding-inline-start:24px; list-style:decimal; font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
 .diagramConnections li + li { margin-block-start:8px; }
 .comparisonCards { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:16px; }
+.entityIdentity { display:inline-flex; align-items:center; gap:10px; min-width:0; color:var(--v2-ink); }
+.canvas .entityIdentity > svg { width:22px; height:22px; flex:none; }
+.entityIdentity > span { min-width:0; overflow-wrap:anywhere; }
+.roleRows { display:grid; gap:0; width:min(100%,74ch); }
+.roleRow { min-width:0; padding-block:20px; border-block-end:1px solid var(--v2-line); }
+.roleRow:first-child { padding-block-start:0; }
+.roleRow:last-child { border-block-end:0; padding-block-end:0; }
+.roleRow header { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.roleRow h4 { margin:0; font-size:16px; line-height:1.5; }
+.roleRow .cardSubtitle { margin-block:6px 10px; padding-inline-start:32px; }
+.roleRow > .prose { padding-inline-start:32px; }
+.roleRow .prose > p { margin-block:10px; }
 .comparisonCard { min-width:0; padding:18px; border:1px solid var(--v2-line); border-radius:14px; overflow-wrap:anywhere; }
 .comparisonCard header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
 .comparisonCard header h4 { font-size:16px; margin:0; }

@@ -12,7 +12,7 @@ const base = z.object({ id: z.string().min(1).max(200), title: label.optional(),
 const column = z.object({ key: label, label });
 const series = z.object({ key: label, label });
 export const nodeSchema = z.discriminatedUnion('kind', [
-  base.extend({ kind: z.literal('cards'), items: z.array(z.object({ id: label, title: label, subtitle: label.optional(), description: text.optional(), badge: label.optional(), imageUrl: text.optional(), url: text.optional(), actionLabel: label.optional(), metrics: row.optional(), recommended: z.boolean().optional() })).min(1).max(24) }),
+  base.extend({ kind: z.literal('cards'), items: z.array(z.object({ id: label, title: label, subtitle: label.optional(), description: text.optional(), badge: label.optional(), imageUrl: text.optional(), url: text.optional(), entityId: z.string().min(1).max(80).optional(), actionLabel: label.optional(), metrics: row.optional(), recommended: z.boolean().optional() })).min(1).max(24) }),
   base.extend({ kind: z.literal('resources'), items: z.array(xrogaRichResultSchema).min(1).max(35) }),
   base.extend({ kind: z.literal('images'), items: z.array(z.object({ id: label, label, url: text, caption: text.optional() })).max(40) }),
   base.extend({ kind: z.literal('prose'), text }),

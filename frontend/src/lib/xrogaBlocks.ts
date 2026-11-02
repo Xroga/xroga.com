@@ -270,6 +270,7 @@ const cardGridBlock = richBase.extend({
     id: z.string().min(1), title: z.string().min(1), subtitle: z.string().optional(),
     description: z.string().optional(), badge: z.string().optional(), imageUrl: z.string().url().optional(),
     url: z.string().url().optional(), actionLabel: z.string().optional(),
+    entityId: z.string().min(1).max(80).optional(),
     metrics: z.record(z.string(), scalarValue).optional(),
   })).min(1).max(24),
 });

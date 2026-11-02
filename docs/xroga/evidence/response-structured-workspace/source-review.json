@@ -2,7 +2,7 @@
   "scope": "OFFLINE_INTEGRATION_NOT_LIVE_ACCEPTANCE",
   "reference": "994e1dab2c122616269c5bcf59b198f18dcbdd5d",
   "backendContractSource": "a6f5f9daa7ad4f2c7ad4c71fdf5d3dbe45b91479",
-  "contractSha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
+  "contractSha256": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
   "unchangedPersistenceAndEgressCalls": true,
   "noModelCallsOrNewProvider": true,
   "legacyUntouched": true,
@@ -40,7 +40,7 @@
     },
     "frontend/src/components/response-experience-v2/entityRegistry.ts": {
       "before": "47422827a9deca07259c9c00ca27b9f56c86ac0f991f412c5d65d6b265174926",
-      "current": "24efdb288e9c885ee695d6c67b3b762ea9f68a85eef4577584078d01f2c68d02"
+      "current": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d"
     },
     "frontend/src/context/TerminalChatContext.tsx": {
       "before": "961518473899c8b1128c252d7b736e8f44b6fe10aa8ecf987cf102966676ac6b",
@@ -56,7 +56,7 @@
     },
     "frontend/src/lib/xrogaBlocks.ts": {
       "before": "685fdbdb94902996573d1066215ade86e6e33991012b2a153a1741bb151c30fc",
-      "current": "bdad296992542fce270dc1d4913a5b29f2881c075276827e04e2f22ae61acea4"
+      "current": "48a9122b8aa27cafa88e463c5969d6ac2057974d18a0fce37dd2585c281dd329"
     },
     "frontend/src/lib/xrogaResponseDocument.test.ts": {
       "before": "452ab53396b0f91733c3197d0a1fabdda01e6d60a698264d99f58b92101c6696",
@@ -65,6 +65,24 @@
     "frontend/src/lib/xrogaResponseDocument.ts": {
       "before": "c452243b525f07a92527ccecc610d46f7c2842ee671d894434a035a0ec8aa720",
       "current": "77dce0e0b3983fa1af2dcbec5235da53f945d2f27e6d3180fdc9db0fa80cf303"
+    },
+    "backend/src/ai/responsePresentation.ts": {
+      "current": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48"
+    },
+    "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx": {
+      "current": "d293208e6b22dfeea3872a70cb02cabaf8782019e6f01148f4a0893f2f70d1a3"
+    },
+    "frontend/src/components/response-experience-v2/SourceV2.tsx": {
+      "current": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e"
+    },
+    "frontend/src/components/response-experience-v2/document.ts": {
+      "current": "5c0415141a5e63e5af8974c5300e9b9f89a4e8d54ce32196afc09b2f565f267e"
+    },
+    "frontend/src/components/response-experience-v2/review/LocalReview.tsx": {
+      "current": "57c6848fc2cbaf70b0de45d14aa91d80e679fce5909e0691ae12eb10d58cd7db"
+    },
+    "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx": {
+      "current": "bf5b718c192a93efe94032be73912fb1d9430aee20fea109a4978cdf921da8b9"
     }
   },
   "beforeWorkspaceBoundsContractSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
@@ -74,5 +92,51 @@
     "codecTestsJob": "18cf280e-6c35-481c-9767-5411f05f4d9c",
     "crossLayerTestsJob": "74290d3d-3a03-46ae-8b6b-9eb935137677",
     "originalDataRetainedOnRejection": true
+  },
+  "answerCoverageCorrection": {
+    "scope": "LOCAL_REGRESSIONS_NOT_NEW_GENERATION_OR_PRODUCTION_ACCEPTANCE",
+    "bindings": {
+      "backend/src/ai/responsePresentation.ts": {
+        "before": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
+        "current": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
+        "egressCalls": 0
+      },
+      "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx": {
+        "before": "2b30dc4047a09b08d7c2c406ea1023b4cf19a008170a56eebd7906d4f4d9ff25",
+        "current": "d293208e6b22dfeea3872a70cb02cabaf8782019e6f01148f4a0893f2f70d1a3",
+        "egressCalls": 0
+      },
+      "frontend/src/components/response-experience-v2/SourceV2.tsx": {
+        "before": "42b8ac9c87826fc899c3ad90cf348a96e5c0dae007461cd92626668045e9e6fa",
+        "current": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e",
+        "egressCalls": 0
+      },
+      "frontend/src/components/response-experience-v2/document.ts": {
+        "before": "388a194283e0d8edb83b60d8df7d330820f33d74c9d8e15261977f107e0c2723",
+        "current": "5c0415141a5e63e5af8974c5300e9b9f89a4e8d54ce32196afc09b2f565f267e",
+        "egressCalls": 0
+      },
+      "frontend/src/components/response-experience-v2/entityRegistry.ts": {
+        "before": "24efdb288e9c885ee695d6c67b3b762ea9f68a85eef4577584078d01f2c68d02",
+        "current": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d",
+        "egressCalls": 0
+      },
+      "frontend/src/components/response-experience-v2/review/LocalReview.tsx": {
+        "before": "36d093e98e21248f75a108d9e37f2a73a8ada5372aaac6caeb88cf6b372d4bd8",
+        "current": "57c6848fc2cbaf70b0de45d14aa91d80e679fce5909e0691ae12eb10d58cd7db",
+        "egressCalls": 0
+      },
+      "frontend/src/lib/xrogaBlocks.ts": {
+        "before": "bdad296992542fce270dc1d4913a5b29f2881c075276827e04e2f22ae61acea4",
+        "current": "48a9122b8aa27cafa88e463c5969d6ac2057974d18a0fce37dd2585c281dd329",
+        "egressCalls": 0
+      },
+      "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx": {
+        "current": "bf5b718c192a93efe94032be73912fb1d9430aee20fea109a4978cdf921da8b9",
+        "egressCalls": 0
+      }
+    },
+    "modelCalls": 0,
+    "productionChanged": false
   }
 }

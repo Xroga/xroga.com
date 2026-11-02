@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "b678c208dd30d36faa532c874359c36ef23c1d1b",
-    "sourceTimestampUtc": "2026-11-02T23:12:55+05:00",
-    "auditStartedUtc": "2026-11-02T18:19:24.247Z",
+    "sha": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+    "sourceTimestampUtc": "2026-11-02T23:20:24+05:00",
+    "auditStartedUtc": "2026-11-02T19:46:40.675Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -3116,7 +3116,8 @@
       "callers": [
         "backend/src/ai/completionDiagnostics.test.ts:3",
         "backend/src/ai/openaiCompat.ts:18",
-        "backend/src/ai/pipeline.ts:24"
+        "backend/src/ai/pipeline.ts:24",
+        "backend/src/ai/responsePresentation.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3136,7 +3137,8 @@
         "backend/src/ai/completionDiagnostics.ts#receipt"
       ],
       "testCoverage": [
-        "backend/src/ai/completionDiagnostics.test.ts"
+        "backend/src/ai/completionDiagnostics.test.ts",
+        "backend/src/ai/responsePresentation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -7625,15 +7627,18 @@
       "id": "surface:74760a8c78ac888599fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/responsePresentation.ts",
-      "sha256": "7c4e4020395353a03920916e88e1be7a0f4495389d25739ec3c4ae4e3ab01655",
+      "sha256": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
       "symbols": [
+        "AnswerObligations",
         "JsonSchema",
         "Kind",
         "PRESENTATION_PLAN_INSTRUCTIONS",
         "PresentationPlan",
         "PresentationResponseFormat",
         "addition",
+        "answerObligationsSchema",
         "array",
+        "assessPresentationCoverage",
         "block",
         "c",
         "calculator",
@@ -7642,6 +7647,7 @@
         "chartTypes",
         "completedRoot",
         "count",
+        "covered",
         "createPresentationProjection",
         "data",
         "dataSchemas",
@@ -7650,6 +7656,7 @@
         "encoded",
         "escaped",
         "finite",
+        "format",
         "graph",
         "i",
         "id",
@@ -7657,7 +7664,10 @@
         "identifier",
         "ids",
         "inputs",
+        "issues",
+        "item",
         "label",
+        "markdown",
         "name",
         "next",
         "nullable",
@@ -7665,6 +7675,7 @@
         "object",
         "operationSchema",
         "operations",
+        "partial",
         "prefix",
         "presentationPlanSchema",
         "presentationRequestInstructions",
@@ -7675,6 +7686,8 @@
         "published",
         "quoted",
         "raw",
+        "readablePartial",
+        "recoverable",
         "response",
         "section",
         "shortText",
@@ -7693,6 +7706,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/ai/responsePresentation.test.ts:3",
         "frontend/src/lib/responsePresentation.integration.test.ts:3"
       ],
       "reachable": false,
@@ -7706,6 +7720,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/responsePresentation.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -81354,7 +81369,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ProseV2.tsx:18",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81404,7 +81419,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:11",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81572,7 +81587,7 @@
       ],
       "callers": [
         "frontend/src/components/response-experience-v2/ChartV2.tsx:4",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81582,6 +81597,59 @@
         "react-markdown"
       ],
       "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:cbf66836e2d2562ae887",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
+      "sha256": "bf5b718c192a93efe94032be73912fb1d9430aee20fea109a4978cdf921da8b9",
+      "symbols": [
+        "EntityIdentityV2",
+        "content",
+        "destination",
+        "identity"
+      ],
+      "imports": [
+        "./SourceV2",
+        "./document",
+        "./entityRegistry",
+        "./response-v2.module.css",
+        "lucide-react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/response-experience-v2/SourceV2.tsx",
+        "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
+        "frontend/src/components/response-experience-v2/response-v2.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react"
+      ],
+      "authBoundary": [
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx#EntityIdentityV2",
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx#identity",
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx#resourceIdentityV2"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -81639,8 +81707,8 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:14",
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:15"
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:16",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81829,7 +81897,7 @@
       "id": "surface:8cc3d07125af060b5e53",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx",
-      "sha256": "2b30dc4047a09b08d7c2c406ea1023b4cf19a008170a56eebd7906d4f4d9ff25",
+      "sha256": "d293208e6b22dfeea3872a70cb02cabaf8782019e6f01148f4a0893f2f70d1a3",
       "symbols": [
         "Calculator",
         "Chart",
@@ -81847,6 +81915,7 @@
         "observer",
         "references",
         "registry",
+        "resources",
         "root",
         "source"
       ],
@@ -81854,12 +81923,14 @@
         "./ArchitectureV2",
         "./ChartV2",
         "./DataV2",
+        "./EntityIdentityV2",
         "./InteractiveV2",
         "./ProseV2",
         "./ResourcesV2",
         "./SourceV2",
         "./composition",
         "./document",
+        "./entityRegistry",
         "./loadPresentation",
         "./response-v2.module.css",
         "./sourceRegistry",
@@ -81869,12 +81940,14 @@
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx",
         "frontend/src/components/response-experience-v2/ChartV2.tsx",
         "frontend/src/components/response-experience-v2/DataV2.tsx",
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx",
         "frontend/src/components/response-experience-v2/ProseV2.tsx",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx",
         "frontend/src/components/response-experience-v2/SourceV2.tsx",
         "frontend/src/components/response-experience-v2/composition.ts",
         "frontend/src/components/response-experience-v2/document.ts",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts",
         "frontend/src/components/response-experience-v2/loadPresentation.ts",
         "frontend/src/components/response-experience-v2/response-v2.module.css",
         "frontend/src/components/response-experience-v2/sourceRegistry.ts"
@@ -81893,7 +81966,10 @@
       "externalProviderDependencies": [
         "react"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx#EntityIdentityV2",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx#resourceIdentityV2"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -82013,7 +82089,7 @@
       "id": "surface:f8646cfeb40e43123392",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/SourceV2.tsx",
-      "sha256": "42b8ac9c87826fc899c3ad90cf348a96e5c0dae007461cd92626668045e9e6fa",
+      "sha256": "0b08ce9a1828c41cdc58bfac8bf94dad46816bcdea5ed653331e21af20dd022e",
       "symbols": [
         "InlineImageV2",
         "SourceLinkV2",
@@ -82048,6 +82124,7 @@
       "callers": [
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:8",
         "frontend/src/components/response-experience-v2/DataV2.tsx:10",
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:5",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:9",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:5",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:6"
@@ -82095,7 +82172,7 @@
       "callers": [
         "frontend/src/app/(workspace)/workspace/page.tsx:5",
         "frontend/src/app/share/[token]/page.tsx:11",
-        "frontend/src/components/response-experience-v2/document.test.ts:206",
+        "frontend/src/components/response-experience-v2/document.test.ts:245",
         "frontend/src/components/response-experience-v2/document.test.ts:5"
       ],
       "reachable": true,
@@ -82252,7 +82329,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:9",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:11",
         "frontend/src/components/response-experience-v2/composition.test.ts:4"
       ],
       "reachable": true,
@@ -82385,7 +82462,7 @@
       "id": "surface:1a11577c6b142e5e83f0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/document.ts",
-      "sha256": "388a194283e0d8edb83b60d8df7d330820f33d74c9d8e15261977f107e0c2723",
+      "sha256": "5c0415141a5e63e5af8974c5300e9b9f89a4e8d54ce32196afc09b2f565f267e",
       "symbols": [
         "AdaptedResponse",
         "ResponseDocumentV2",
@@ -82440,6 +82517,7 @@
       "callers": [
         "frontend/src/components/response-experience-v2/DataV2.tsx:4",
         "frontend/src/components/response-experience-v2/DataV2.tsx:8",
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:3",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:12",
         "frontend/src/components/response-experience-v2/ResourcesV2.tsx:4",
         "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:3",
@@ -82486,21 +82564,28 @@
       "id": "surface:6fc29287ecabfd9ced0b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/entityRegistry.ts",
-      "sha256": "24efdb288e9c885ee695d6c67b3b762ea9f68a85eef4577584078d01f2c68d02",
+      "sha256": "4ec3ceed6ef71ec640a72e085a9916e8b73c3f04e502e936fefbc12d45a9100d",
       "symbols": [
         "EntitySyntaxV2",
         "authoredEntityParagraphV2",
+        "byLabel",
         "children",
         "entities",
         "entity",
+        "explicit",
         "first",
+        "host",
         "leadingEntityV2",
         "name",
         "next",
+        "official",
         "original",
         "paragraph",
         "paragraphEntity",
         "remarkEntityRolesV2",
+        "resourceIdentityV2",
+        "selected",
+        "supplied",
         "text",
         "visit"
       ],
@@ -82513,19 +82598,24 @@
       "callers": [
         "frontend/src/components/response-experience-v2/ArchitectureV2.tsx:7",
         "frontend/src/components/response-experience-v2/DataV2.tsx:9",
+        "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx:4",
         "frontend/src/components/response-experience-v2/ProseV2.tsx:15",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10",
         "frontend/src/components/response-experience-v2/composition.ts:7",
+        "frontend/src/components/response-experience-v2/document.test.ts:10",
         "frontend/src/components/response-experience-v2/entityRegistry.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "declared-host:cloud.google.com",
         "declared-host:cloudflare.com",
         "declared-host:docker.com",
         "declared-host:github.com",
         "declared-host:n8n.io",
         "declared-host:nextjs.org",
         "declared-host:nodejs.org",
+        "declared-host:paypal.com",
         "declared-host:postgresql.org",
         "declared-host:posthog.com",
         "declared-host:python.org",
@@ -82538,13 +82628,15 @@
         "declared-host:vercel.com"
       ],
       "authBoundary": [
-        "frontend/src/components/response-experience-v2/entityRegistry.ts#authoredEntityParagraphV2"
+        "frontend/src/components/response-experience-v2/entityRegistry.ts#authoredEntityParagraphV2",
+        "frontend/src/components/response-experience-v2/entityRegistry.ts#resourceIdentityV2"
       ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/entityRegistry.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -82695,7 +82787,7 @@
       "callers": [
         "frontend/src/components/response-experience-v2/InteractiveV2.tsx:8",
         "frontend/src/components/response-experience-v2/ResponseExperienceGate.tsx:5",
-        "frontend/src/components/response-experience-v2/review/LocalReview.tsx:7"
+        "frontend/src/components/response-experience-v2/review/LocalReview.tsx:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82784,7 +82876,7 @@
         "frontend/src/app/share/[token]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:10",
+        "frontend/src/components/response-experience-v2/ResponseCanvasV2.tsx:12",
         "frontend/src/components/response-experience-v2/loadPresentation.test.ts:3"
       ],
       "reachable": true,
@@ -82851,7 +82943,7 @@
       "id": "surface:e412734145404d844e5d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/response-experience-v2/review/LocalReview.tsx",
-      "sha256": "36d093e98e21248f75a108d9e37f2a73a8ada5372aaac6caeb88cf6b372d4bd8",
+      "sha256": "57c6848fc2cbaf70b0de45d14aa91d80e679fce5909e0691ae12eb10d58cd7db",
       "symbols": [
         "Review",
         "input",
@@ -82866,6 +82958,7 @@
         "../document",
         "../interactionContext",
         "../specimens",
+        "../testdata/generated-saas-cd5541.json",
         "../testdata/generated-saas-database.json",
         "./review.css",
         "react",
@@ -82877,6 +82970,7 @@
         "frontend/src/components/response-experience-v2/interactionContext.ts",
         "frontend/src/components/response-experience-v2/review/review.css",
         "frontend/src/components/response-experience-v2/specimens.ts",
+        "frontend/src/components/response-experience-v2/testdata/generated-saas-cd5541.json",
         "frontend/src/components/response-experience-v2/testdata/generated-saas-database.json"
       ],
       "entryPoints": [],
@@ -82928,6 +83022,7 @@
         "frontend/src/app/share/[token]/page.tsx:10",
         "frontend/src/components/response-experience-v2/ConversationTurnV2.tsx:9",
         "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
+        "frontend/src/components/response-experience-v2/document.test.ts:11",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4",
         "frontend/src/lib/responsePresentation.integration.test.ts:9"
       ],
@@ -82940,6 +83035,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
@@ -107857,7 +107953,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "bdad296992542fce270dc1d4913a5b29f2881c075276827e04e2f22ae61acea4",
+      "sha256": "48a9122b8aa27cafa88e463c5969d6ac2057974d18a0fce37dd2585c281dd329",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -135978,6 +136074,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:11a90210e320c1d28cb6",
+      "sourcePath": "backend/src/ai/responsePresentation.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:29d787b61ac04237b0c4",
       "sourcePath": "backend/src/ai/reviewerRouting.test.ts",
       "declaredTests": 1,
@@ -140614,14 +140717,14 @@
     {
       "id": "test-suite:4daf44fc649a3af61e3e",
       "sourcePath": "frontend/src/components/response-experience-v2/document.test.ts",
-      "declaredTests": 28,
+      "declaredTests": 30,
       "skipLocations": [],
       "focusLocations": []
     },
     {
       "id": "test-suite:04b8e36497b5056f650e",
       "sourcePath": "frontend/src/components/response-experience-v2/entityRegistry.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

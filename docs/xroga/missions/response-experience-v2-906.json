@@ -136,7 +136,10 @@
     "backend/src/ai/pipeline.ts",
     "backend/src/security/tenantIsolation.local.integration.ts",
     "backend/src/ai/universal/semanticRequestPlanner.ts",
-    "backend/src/ai/universal/semanticRequestPlanner.test.ts"
+    "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+    "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx",
+    "frontend/src/components/response-experience-v2/testdata/generated-saas-cd5541.json",
+    "backend/src/ai/responsePresentation.test.ts"
   ],
   "decisions": {
     "keep": [
@@ -214,20 +217,12 @@
     "reason": "Existing single-answer prompt and renderer plus existing confirmation and private storage handoff. No new scheduler, provider, model-formatting call or database schema.",
     "rfc": null
   },
-  "rollout": "Controlled source-pinned Vercel release authorized in PR #909 comment 6549571336 after exact CI and authenticated Workspace verification. RESPONSE_EXPERIENCE_V2=authenticated enables ordinary verified sessions, off restores legacy.",
-  "rollback": "Keep current Google API/Job source 4500d039 and image bb429763e6ac0c2791e31c88c3cb05dab70fb07ea8c417cfb3b552c23d7a6a7a, prior fd3b recovery pair, production frontend e8feb297 deployment AesRbbThqvzgh2Y2Rgc34MfkdVXK and legacy renderer flag. Restore compatible API/Job together through the fenced release procedure. Preserve private results, consumed confirmations, data and microphone routes.",
+  "rollout": "Development correction only. Live backend cd5541 and frontend d86c8 remain unchanged. New source requires final CI, exact-source paired-release approval and bounded fresh acceptance.",
+  "rollback": "Retain cd5541 API/Job and d86c8 frontend, the legacy renderer and all earlier recovery assets. Existing SQL fence and drain procedure is required for a backend rollback.",
   "knownGaps": [
-    "Fresh SaaS explanation on live fd3b6632 backend returned EMPTY_PROVIDER_RESPONSE on 2026-11-01 at 19:49:47 UTC. No answer or rich-response acceptance. No retry was submitted.",
-    "Literal Share and safe provider-error corrections are source changes awaiting exact-source CI and compatible release. Shared links currently render escaped text, not interactive rich documents.",
-    "Production rich-response acceptance for new SaaS, sourced research, calculations and mobile/reopen remains incomplete.",
-    "Historical research bodies absent from older releases cannot be reconstructed from receipt digests. Do not repeat the paid search.",
-    "Production readiness reports storage_reconcile_not_scheduled. Database, storage connectivity and quota checks passed, but housekeeping is not accepted.",
-    "2026-11-02: legacy empty completion has no retained provider request ID or usage. New content-free diagnostic receipts and vertical mobile graphs are source changes, not live-provider recovery proof. No new model attempt or accounting mutation.",
-    "2026-11-02 production frontend e8feb297 is preserved in the V2 candidate. Optional current-subject contact migrations are copied as source only, not applied. Exact-source combined release gates and live response acceptance remain required.",
-    "2026-11-02: one new SaaS submission produced a real 4-node/5-edge graph but stopped at the output limit after 3467 reasoning tokens. Provider charge $0.00217355 differs from ledger estimate $0.001225. New direct-output, price-bound and public partial-status corrections are source-only until exact release approval and new-chat acceptance. Historical discrepancy remains unreconciled.",
-    "2026-11-02 f803 live new SaaS response retained Mermaid fences and stale JWT membership guidance. Finite data-only flow/sequence adapter and authentic entity labels are frontend corrections, not a new generated acceptance pass. Unknown GLM reservation remains held, no further model calls or frontend production promotion.",
-    "2026-11-02 follow-up: bounded rich Share snapshots reuse the existing text storage and ACL, preserve a plain-text API projection for older clients, validate the same read-only V2 nodes on reopen, and retain founder/authenticated rollout checks. Source tests pass, final exact-source CI and authenticated Preview acceptance remain pending. Strengthened current-membership guidance and the negative authorization-review guard are not proof that a fresh model answer is correct. Production remains f803 and unknown GLM usage stays held; no new paid test, SQL, cloud build or deployment.",
-    "Existing operator provider/model controls now apply to planner hedge selection. No production routing configuration has changed. Required exact-source and authenticated gates remain pending."
+    "Fresh generation on the corrected source is not tested. The last cd5541 SaaS attempt failed full product acceptance.",
+    "Exact-source CI and specific paired-release authorization for this new source are pending.",
+    "Workshop, research and unrelated new-chat acceptance remain unrun."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [

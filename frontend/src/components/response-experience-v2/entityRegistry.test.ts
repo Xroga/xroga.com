@@ -2,7 +2,26 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
-import { leadingEntityV2, remarkEntityRolesV2, type EntitySyntaxV2 } from './entityRegistry';
+import { leadingEntityV2, resourceIdentityV2, remarkEntityRolesV2, type EntitySyntaxV2 } from './entityRegistry';
+
+test('typed role cards resolve the actual captured titles with authentic navigation', () => {
+  for (const [title, url] of [
+    ['Next.js app layer', 'https://nextjs.org'],
+    ['Supabase Auth', 'https://supabase.com'],
+    ['Supabase Postgres + RLS', 'https://supabase.com'],
+    ['Supabase Storage', 'https://supabase.com'],
+    ['Stripe Checkout / Billing', 'https://stripe.com'],
+    ['Stripe webhooks', 'https://stripe.com'],
+  ]) assert.equal(resourceIdentityV2(title)?.url, url);
+  assert.equal(resourceIdentityV2('Stripe webhooks', undefined, 'stripe')?.url, 'https://stripe.com');
+  assert.equal(resourceIdentityV2('Stripe webhooks', 'https://docs.stripe.com/webhooks', 'Stripe')?.url, 'https://docs.stripe.com/webhooks');
+  for (const args of [
+    ['Stripe.evil.test'], ['SupabaseFake'], ['Tenant A'],
+    ['Supabase Auth', undefined, 'stripe'], ['Stripe', undefined, 'unverified'],
+    ['Stripe', 'https://stripe.com.evil.test'], ['Stripe', 'https://example.com'],
+    ['Stripe', 'javascript:alert(1)'], ['Stripe', 'https://user:password@stripe.com'],
+  ] as Array<[string, string?, string?]>) assert.equal(resourceIdentityV2(...args), undefined);
+});
 
 test('generated bold role paragraphs receive identities without altering words or quoted content', () => {
   const source = '**Next.js** serves as the application server.\n\n**Supabase** provides PostgreSQL.\n\n**Stripe** handles billing.\n\n**Stripe.evil.test** is not an official identity.\n\n> **Stripe** is quoted.\n\n```md\n**Next.js** is code.\n```\n\n**[Stripe](https://example.com/context)** keeps its authored link.\n\nNext.js remains ordinary prose.';
