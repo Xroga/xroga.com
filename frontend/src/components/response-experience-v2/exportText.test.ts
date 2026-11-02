@@ -59,3 +59,15 @@ test('reopening and Copy or Share retain the incomplete-answer warning and exact
   assert.ok(serializeAssistantCopy(exported).includes('tenant_id = auth.uid()'));
   assert.equal(saved.featureOutput.sourceText,source);
 });
+
+test('an unsafe authorization claim stays visibly unaccepted through persistence and export', () => {
+  const source = 'RLS cannot be bypassed by the application layer.';
+  const enhanced = enhanceAiResponse(source, 'review-required', {status:'partial',reason:'authorization_review'});
+  const saved = JSON.parse(JSON.stringify({id:'review-required',content:enhanced.content,featureOutput:enhanced.output}));
+  const exported = responseTextV2(saved)!;
+  assert.match(exported, /Authorization guidance needs review/);
+  assert.match(exported, /Privileged database roles can bypass RLS/);
+  assert.equal(saved.featureOutput.sourceText, source);
+  assert.ok(exported.endsWith(source));
+  assert.ok(serializeAssistantCopy(exported).includes(source));
+});

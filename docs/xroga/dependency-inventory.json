@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2b6e4aa4d856cca6796c4991447aba4ab2f37ae4",
+  "source_sha": "069dad07a8c6b8a81ae316cbc44471df4b3d95e3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21366,7 +21366,7 @@
     },
     {
       "path": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "sha256": "e628582e2369abb853b7edaef87a6f8daab08baed1407a286dc7926bf18d34f2"
+      "sha256": "ca88dfad1df43df059dcdfcce9937bc97aae9b3b86c52c573d01eba14e1dc9f9"
     },
     {
       "path": "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx",
@@ -21782,7 +21782,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "45620d241f05cc73d84cc20f31cd957878785b7c57af9addf24a518be7ba57ef"
+      "sha256": "7e442f5db8f0da1a4a618be641d639881030f98329fc34f782103f2a5b19827a"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -22199,6 +22199,10 @@
     {
       "path": "frontend/src/lib/parseImageContent.ts",
       "sha256": "a8c821d25b1444e78250ceaecb375d0084bcf43aaa76b796b94d658648da9f51"
+    },
+    {
+      "path": "frontend/src/lib/passiveRepositorySelection.ts",
+      "sha256": "d3bb403f545e3326521818482ace27ab2c3989aa5c297533c357e4933db75cb5"
     },
     {
       "path": "frontend/src/lib/passwordStrength.ts",
@@ -22706,7 +22710,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "47fb8d10304abf826370e495dd30eadad24f07d4432bf89f238c7604fde9e54c"
+      "sha256": "c452243b525f07a92527ccecc610d46f7c2842ee671d894434a035a0ec8aa720"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",

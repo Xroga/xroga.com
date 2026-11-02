@@ -260,7 +260,9 @@ export function enhanceAiResponse(content: string, documentId: string, completio
   let segment = 0;
   let rejected = completion?.status === 'partial';
   if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
-    text: completion?.reason === 'output_limit'
+    text: completion?.reason === 'authorization_review'
+      ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
+      : completion?.reason === 'output_limit'
       ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
       : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
   const appendText = (value: string) => blocks.push(...tableBlocksFromMarkdown(value, `${documentId}-${segment++}`).ordered);
