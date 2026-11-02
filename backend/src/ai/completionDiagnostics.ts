@@ -44,7 +44,7 @@ export function requirePublicCompletion(text: string, modelId: string, diagnosti
 
 /** Public completion state, without provider identity or private reasoning. */
 export function publicCompletionState(finishReason: string | null | undefined, answer = ''):
-  { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' } {
+  { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'presentation_contract' } {
   // This is a narrow negative check, not a certificate that other facts are true.
   // Preserve the received answer and its accounting, without retrying or rewriting it.
   if (requiresAuthorizationReview(answer)) return { status: 'partial', reason: 'authorization_review' };
@@ -62,6 +62,11 @@ export function requiresAuthorizationReview(answer: string): boolean {
   if (derivesTenantFromJwt && !mentionsCurrentMembership) return true;
   return sentences.some(sentence => {
     if (/^\s*(?:incorrect|false|myth|do not|don't|never|avoid|wrong)\b/i.test(sentence)) return false;
+    // An affirmative credential/session conflation is unsafe even when a later
+    // paragraph correctly describes RLS. A disclaimer cannot validate that step.
+    const serviceRoleSession = /\b(?:user(?:'s)?\s+)?service[- ]?role\s+session\b/i.test(sentence);
+    if (serviceRoleSession && !/\b(?:incorrect|invalid|unsafe|misleading|not a valid|does not exist)\b/i.test(sentence)) return true;
+    if (/\bservice[- ]?role\b[^.!?\n]{0,100}\b(?:enforces?|honou?rs?|obeys?|respects?)\s+(?:tenant\s+)?(?:RLS|row.level security)\b/i.test(sentence)) return true;
     return /\b(?:RLS|row.level security)\b[^.!?\n]{0,180}\b(?:cannot|can't|can not) be bypassed\b/i.test(sentence)
       || /\b(?:JWT(?: claims| tokens)?|appmetadata(?: claims)?)\s+(?:alone\s+)?(?:provides?|guarantees?|ensures?|proves?|supports?)\s+(?:immediate|instant)\s+revocation\b/i.test(sentence);
   });

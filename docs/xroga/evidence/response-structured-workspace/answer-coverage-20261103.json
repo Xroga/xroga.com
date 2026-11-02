@@ -9,6 +9,7 @@
   "copyShareRegression": "PASS_FULL_CAPTURED_CONTENT_AND_STRUCTURED_IDENTITY_ROUNDTRIP",
   "missingDataInvented": false,
   "newModelRequests": 0,
+  "authorizationCompatibilityCorrection": {"source": "SAME_GUARD_ALREADY_PRESENT_IN_CANONICAL_BACKEND", "observedCiFailure": "authored visual descriptions cannot evade the existing authorization warning", "originalFailingAssertionRetained": true, "negativeAndPositiveRegressionsJob": "162b3367-f1e1-49f3-b9ef-ddf67a87ed3a", "passed": 15, "failed": 0, "broadCompletionClaim": false},
   "sharedContractFollowup": {"duplicateSystemSchemaRemoved": true, "strictSdkSchemaUnchanged": true, "adapterRegressionJob": "7643a461-ea00-4aab-9b72-74044f5e45aa"},
   "productionChanged": false,
   "legacyRendererPreserved": true,

@@ -83,6 +83,9 @@
     },
     "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx": {
       "current": "bf5b718c192a93efe94032be73912fb1d9430aee20fea109a4978cdf921da8b9"
+    },
+    "backend/src/ai/completionDiagnostics.ts": {
+      "current": "b174790bd7a6eade5585d90c14b060a691ee196d3efbb5ac30d3655aacf059fa"
     }
   },
   "beforeWorkspaceBoundsContractSha256": "f2dd27c27300cd6850b5a23060d208747ef105aab42ba81d2e2a3cc59c90c376",
@@ -96,9 +99,9 @@
   "answerCoverageCorrection": {
     "scope": "LOCAL_REGRESSIONS_NOT_NEW_GENERATION_OR_PRODUCTION_ACCEPTANCE",
     "bindings": {
-      "backend/src/ai/responsePresentation.ts": {
-        "before": "ce1441e6fdaeca78618ad0bf6a424acee7ea24ef3a825932538868bd4db8cc48",
-        "current": "2612ca97f954c970cafc8b6cf33cbd5ed8a803acd5ee34b0aa787ed83db9df01",
+      "backend/src/ai/completionDiagnostics.ts": {
+        "before": "a5b9472e38f19f2f8461f237fbee0c7650f42dd10ee5470d6c33e0714b2feeb2",
+        "current": "b174790bd7a6eade5585d90c14b060a691ee196d3efbb5ac30d3655aacf059fa",
         "egressCalls": 0
       },
       "frontend/src/components/response-experience-v2/EntityIdentityV2.tsx": {

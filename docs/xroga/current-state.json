@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/response-experience-v2-906",
-    "sha": "ee156488ae9660601fa26ec0fa42c63254c4e692",
-    "sourceTimestampUtc": "2026-11-03T00:47:19+05:00",
-    "auditStartedUtc": "2026-11-02T19:52:14.240Z",
+    "sha": "769ee9671a6793bf95e5ae414672eb3c0b30f4ea",
+    "sourceTimestampUtc": "2026-11-03T00:53:04+05:00",
+    "auditStartedUtc": "2026-11-02T20:09:09.428Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -3083,7 +3083,7 @@
       "id": "surface:ef3623f65fc045e92013",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/completionDiagnostics.ts",
-      "sha256": "a5b9472e38f19f2f8461f237fbee0c7650f42dd10ee5470d6c33e0714b2feeb2",
+      "sha256": "b174790bd7a6eade5585d90c14b060a691ee196d3efbb5ac30d3655aacf059fa",
       "symbols": [
         "CompletionDiagnostics",
         "choice",
@@ -3101,6 +3101,7 @@
         "requirePublicCompletion",
         "requiresAuthorizationReview",
         "sentences",
+        "serviceRoleSession",
         "value"
       ],
       "imports": [
@@ -135642,7 +135643,7 @@
     {
       "id": "test-suite:3ba52610d111186305bc",
       "sourcePath": "backend/src/ai/completionDiagnostics.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
