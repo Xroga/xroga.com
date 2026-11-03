@@ -42,5 +42,12 @@
   "remaining": [
     "Exact-source CI",
     "Approved live provider and new-chat release/acceptance"
-  ]
+  ],
+  "regressionCorrection": {
+    "path": "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "beforeSource": "3823f51dcd674c00eacd09e6bdf2743ac093a65b",
+    "beforeSha256": "bd8e30a9b1d0c6fd7b595bbe69a873f506d39cc871e31881d0dd0a04473cdf93",
+    "sha256": "28e3f339f7bf2ca8288c556900c2a087c5975a62a412774f16e327e3630c4b95",
+    "review": "The one failing full-suite assertion required the superseded opaque dock, conflicting with the live transparent dock. Require the transcript clip boundary, dynamic composer height and safe area instead. Preserve both real billing/usage assertions and all remaining sidebar tests. No runtime or security policy change."
+  }
 }

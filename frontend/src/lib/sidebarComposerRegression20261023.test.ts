@@ -32,8 +32,12 @@ test('composer menus expose real files, apps, skills, tools and agents', () => {
   assert.match(chatbar, /toggleSkill\(key\.slice\(6\)\)/);
 });
 
-test('active dock is opaque and model usage is fetched, not invented', () => {
-  assert.match(css, /data-workspace-state='conversation'\] \{\s*background:var\(--terminal-ui-surface,var\(--background\)\) !important/);
+test('conversation content stays clear of the composer and model usage is fetched, not invented', () => {
+  // The current live design clips the transcript above a transparent dock.
+  // Preserve the content boundary instead of requiring the retired backdrop.
+  assert.match(css, /\.xv-terminal-scroll\[data-conversation='true'\]\s*\{[^}]*clip-path:\s*inset\(/s);
+  assert.match(css, /clip-path:\s*inset\([^}]*var\(--xv-chatbar-height,\s*112px\)[^}]*env\(safe-area-inset-bottom\)/s);
+  assert.match(css, /data-workspace-state='conversation'\][^}]*background:\s*transparent !important/s);
   assert.match(model, /api\.billing\.entitlement\(\)/);
   assert.match(model, /role="progressbar"/);
 });

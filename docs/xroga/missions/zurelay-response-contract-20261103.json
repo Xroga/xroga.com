@@ -32,7 +32,8 @@
     "frontend/src/components/terminal/TerminalDock.tsx",
     "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
     "frontend/src/lib/workspaceMobileToolbar20261103.test.ts",
-    "docs/operations/zurelay-two-model-20261103/LIVE-COMPOSER-COMPATIBILITY-REVIEW.json"
+    "docs/operations/zurelay-two-model-20261103/LIVE-COMPOSER-COMPATIBILITY-REVIEW.json",
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts"
   ],
   "decisions": {
     "keep": [
