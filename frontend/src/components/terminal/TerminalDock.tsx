@@ -192,6 +192,11 @@ export function TerminalDock() {
           ? 'empty'
           : 'conversation'
       }
+      data-response-scrolled={
+        messages.length > 0 && showJumpToLatest
+          ? 'true'
+          : 'false'
+      }
       data-testid="persistent-terminal-dock"
     >
       <div

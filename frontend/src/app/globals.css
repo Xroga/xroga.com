@@ -14801,10 +14801,36 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
   }
 }
 
-/* The dock must mask transcript text at its left, right, and bottom edges. */
+/* The transcript clips before the fixed composer. This keeps response text out of
+   the chatbar and its bottom safe-area gap without painting a second rectangular
+   surface behind the rounded composer. Existing transcript padding lets the last
+   response scroll fully above this clear zone. */
+.xv-terminal-scroll[data-conversation='true'] {
+  clip-path: inset(
+    0 0
+    calc(var(--xv-chatbar-height, 112px) + max(14px, env(safe-area-inset-bottom)))
+    0
+  );
+}
+
 .xv-terminal-dock[class*='terminal-skin-'][data-workspace-state='conversation'] {
-  background:var(--terminal-ui-surface,var(--background)) !important;
+  background:transparent !important;
   padding-bottom:max(4px,env(safe-area-inset-bottom));
+}
+.xv-terminal-dock[data-workspace-state='conversation'] .xv-terminal-dock-inner {
+  background:transparent !important;
+}
+
+/* A restrained upper-edge cue appears only while an existing response is scrolled.
+   It softens the visual hand-off at the clipping line without adding a backdrop or
+   casting a glow below the composer. */
+.xv-terminal-dock[data-response-scrolled='true']
+.xv-kimi-composer-frame[data-composer-frame='single']
+.xv-chatbar-solid {
+  box-shadow:
+    0 -1px 0 color-mix(in srgb, var(--foreground) 12%, transparent),
+    0 -16px 30px -22px color-mix(in srgb, var(--foreground) 42%, transparent)
+    !important;
 }
 .xv-suggest-label .xv-suggest-mark { display:inline-flex; width:27px; height:27px; align-items:center; justify-content:center; flex:none; }
 .xv-suggest-label .xv-suggest-mark > span { width:27px; height:27px; }
