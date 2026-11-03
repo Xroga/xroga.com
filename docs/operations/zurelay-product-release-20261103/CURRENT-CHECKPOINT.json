@@ -1,0 +1,125 @@
+{
+  "recordedAtUtc": "2026-11-03T21:25:49.457Z",
+  "state": "BLOCKED_AUTHENTICATED_EXACT_SOURCE_PREVIEW",
+  "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
+  "frontend": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+  "sourceAndTimeApproval": "call_d76904b59ed94a939f21f8ae00f94d43",
+  "expiresAtUtc": "2026-11-03T23:00:00+00:00",
+  "maintenanceStarted": false,
+  "productionSqlApplied": false,
+  "productionApiJobChanged": false,
+  "productionFrontendChangedByThisRelease": false,
+  "publicFrontend": {
+    "service": "xroga-web",
+    "release": "5c337e05fa0bf50de7ce161752709110b278a014",
+    "environment": "production"
+  },
+  "expectedRetainedLiveFrontend": "5c337e05fa0bf50de7ce161752709110b278a014",
+  "liveFrontendMatchesReviewedRollback": true,
+  "finalCI": {
+    "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+    "state": "PASS",
+    "checkedAtUtc": "2026-11-03T21:24:32.904Z",
+    "passed": 8,
+    "required": 8,
+    "checks": [
+      {
+        "name": "unit",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547270/job/126201430144"
+      },
+      {
+        "name": "integrated-candidate",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547270/job/126201430910"
+      },
+      {
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717819487/job/126202377764"
+      },
+      {
+        "name": "authenticated-browser",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717827940/job/126202405196"
+      },
+      {
+        "name": "deterministic-golden",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547242/job/126201430720"
+      },
+      {
+        "name": "structured-mission-policy",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547243/job/126201430384"
+      },
+      {
+        "name": "disposable-policy-database",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547295/job/126201430352"
+      },
+      {
+        "name": "static-contracts",
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547273/job/126201430428"
+      }
+    ]
+  },
+  "operatorTests": {
+    "total": 16,
+    "passed": 16,
+    "job": "862e8d76-4a54-4e78-a418-e206fe3df3ee",
+    "logSha256": "e3435ec4e67ea873438b69158af2251ae6f5b9b3d0dd6e23f1e48a79762df924"
+  },
+  "audit": {
+    "total": 150,
+    "reviewed": 150,
+    "pending": 0,
+    "unresolvedHighRiskBypasses": 0
+  },
+  "newModelRequests": 0,
+  "newRetrievalRequests": 0,
+  "priorProbe": {
+    "providerUsd": 0.0000027,
+    "ledgerMicroUsd": 3
+  },
+  "historicalHolds": {
+    "kimiMicroUsd": 38282,
+    "glmMicroUsd": 1385
+  },
+  "actualAdditionalGoogleCost": "NOT_YET_BILLED_OR_VERIFIED",
+  "capsUnchanged": true,
+  "preview": {
+    "source": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+    "automaticCancelled": "B1dAnEsyzP12zCemt5PVLNE1XK82",
+    "manualIgnoredCancelled": "Cy7WMSfmy1Kwf9iPZs8HnvB5tFRq",
+    "fullBuildSubmittedAfterOwnerVerification": false,
+    "reason": "Vercel requires owner reauthentication. Recovered tab 38 is prepared for Preview, cache on, Ignore Build Step off. Never submit a duplicate unknown build."
+  },
+  "next": [
+    "Complete pending Vercel owner verification, then inspect whether exact Preview rebuild started before any retry",
+    "Require all eight final CI gates, authenticate exact Preview and verify /api/release identity",
+    "Recheck actual production and competing promotions, Google pair/queue, DB drain and provider usage",
+    "Clear only conditional activation hold with source-bound receipts",
+    "Start the single approved maintenance window only when all prerequisites are ready, execute reviewed paired cutover",
+    "Run only the existing bounded new-chat acceptance sequence, stopping at first failed/unknown result"
+  ],
+  "productionAcceptance": "NOT_RUN",
+  "completionClaim": false
+}
