@@ -101,6 +101,20 @@
       "tests": 11,
       "logSha256": "8f962e0b18d8405cde0255d7c5189e18fb154496b90fe7c7068e8dca2ea06a11",
       "logBytes": 1777
+    },
+    {
+      "name": "live-composer-regression-and-proof",
+      "jobId": "a3a6a257-3854-41a2-96bf-289ebad4f9b2",
+      "status": "PASS_OFFLINE_ONLY",
+      "logSha256": "d8897eb388802f0c388ff4375ec9d67b81d3ef274b41110d0c2698985616cad7",
+      "logBytes": 6265
+    },
+    {
+      "name": "final-traffic-compatibility-and-recovery-guards",
+      "jobId": "a7a7fbc5-e997-4e2c-8169-c90321bbfca5",
+      "tests": 14,
+      "status": "PASS_OFFLINE_ONLY",
+      "logSha256": "687d2a2c6417374feb3fca581a790c690d104b6290e24a6d5a064545811e749d"
     }
   ],
   "note": "Groups overlap. Do not sum them into a unique total. Prior passing logs remain in their original receipts.",
@@ -110,12 +124,12 @@
     "kimiMicroUsd": 38282,
     "glmMicroUsd": 1385
   },
-  "currentCi": "PENDING_EXACT_SOURCE_CHECKS",
+  "currentCi": "PASS_BACKEND_7_FRONTEND_8_COMPATIBLE_RECOVERY_7",
   "freshNewChatAcceptance": "NOT_AUTHORIZED_NOT_RUN",
   "initialBackendSource": "fcc0b79fc3b0dbb6f55c05972db8ea8a134ebb89",
   "initialFrontendSource": "b2dbf974e9def8c5a7b6af3cbd2583e33ee7534f",
   "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
-  "frontend": "3823f51dcd674c00eacd09e6bdf2743ac093a65b",
+  "frontend": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
   "corrections": [
     {
       "source": "44b418c01ccde7553ea20b945da2bea8ba8c1f5e",
@@ -128,6 +142,29 @@
     {
       "source": "3823f51dcd674c00eacd09e6bdf2743ac093a65b",
       "scope": "Exact five-file current live composer/toolbar patch preserved from a1be644119af9e7406bec1f6e3fa4edaa7d12eb1."
+    },
+    {
+      "source": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
+      "scope": "Correct the obsolete opaque-dock UI assertion to the already-live clipping design. Dynamic height, safe area, real usage and all security assertions remain required. Runtime code is unchanged."
     }
-  ]
+  ],
+  "backendCleanInstall": {
+    "runId": 41680052815,
+    "source": "76c158aaeecf82f524659454b7b3726b4d255679",
+    "manifestSha256": "e2c368e3ff62842cf43249821322c6e43482d104baefda86079ba5b220b9293c",
+    "backendTests": 5292,
+    "backendPassed": 5286,
+    "backendFailed": 0,
+    "backendSkipped": 6
+  },
+  "localStorageObservation": {
+    "freeBeforeBytes": 128275791872,
+    "freeAfterBytes": 107842691072,
+    "freeSpaceChangeBytes": -20433100800,
+    "significantStorageChange": true,
+    "outputBytesProduced": 333,
+    "stopReason": "TIME_LIMIT",
+    "attribution": "Unattributed concurrent disk growth. Watcher log was 333 bytes, no new build or model request. Do not delete unknown files or claim these bytes were created by the release. Owned evidence is retained.",
+    "observerTimeout": "Observation process timed out. All actual CI runs independently completed successfully. No workflow was rerun."
+  }
 }

@@ -10,7 +10,7 @@ import re
 PROJECT = 'project-c40d4821-e647-4fa2-92d'
 REGION = 'us-east4'
 SOURCE = '76c158aaeecf82f524659454b7b3726b4d255679'
-FRONTEND = '3823f51dcd674c00eacd09e6bdf2743ac093a65b'
+FRONTEND = '2f80a744a406eb2ab7e86538bc382cc3000ef730'
 BASELINE = 'cd5541c6c887a11ba68aaf3cccfb78609f906167'
 RECOVERY = '3bed89e65411fea9376bce0da8aacd1bd8c72f92'
 RECOVERY_DIGEST = 'sha256:b060ee406046c1e62f192bdd52d830225a9dd816f3c9f4202168fc6e6bead007'
@@ -18,6 +18,11 @@ REPOSITORY = f'us-east4-docker.pkg.dev/{PROJECT}/cloud-run-source-deploy/xroga-a
 IDENTITY = f'xroga-api-runtime@{PROJECT}.iam.gserviceaccount.com'
 PACKAGE = 'zurelay-product-76c158aa-20261103'
 MODELS = 'deepseek_v4_1_flash_1017,claude_sonnet_5_5'
+
+
+def require_frontend_release(value):
+    assert value.get('service') == 'xroga-web' and value.get('environment') == 'production', 'FRONTEND_TARGET_MISMATCH'
+    assert value.get('release') == FRONTEND, 'COMPATIBLE_FRONTEND_NOT_LIVE'
 
 
 def require_approval(value, now, recovering=False):

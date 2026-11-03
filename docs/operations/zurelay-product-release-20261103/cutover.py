@@ -4,7 +4,7 @@ Every mutation is one resumable stage. Never auto-open admission or force runs
 terminal. Sensitive service manifests stay in RAM. Preserve unrelated voice tags.
 """
 import copy,datetime,json,pathlib,subprocess,sys,time,urllib.error,urllib.request
-from release_contract import RECOVERY,RECOVERY_DIGEST,require_approval,configure_container,verify_container
+from release_contract import RECOVERY,RECOVERY_DIGEST,require_approval,configure_container,verify_container,require_frontend_release
 P='project-c40d4821-e647-4fa2-92d';R='us-east4'
 OLD='xroga-api-response-cd5541-serving-1102';NEW='xroga-api-zurelay-76c158-serving-1103';TAG='zurelay-76c158-serving-check'
 OLD_SHA='cd5541c6c887a11ba68aaf3cccfb78609f906167';NEW_SHA='76c158aaeecf82f524659454b7b3726b4d255679'
@@ -77,6 +77,16 @@ def serving_config(v,sha=NEW_SHA,image=NEW_IMAGE):
  assert e['XROGA_DEPLOYMENT_ENVIRONMENT']['value']=='production','EXPLICIT_ENVIRONMENT_REQUIRED'
  assert e['XROGA_GOOGLE_WORKER_IMAGE']['value']==image and e.get('XROGA_RELEASE_CANDIDATE',{}).get('value')!='1','SERVING_CONTROLS_DRIFT'
  assert s['serviceAccountName']=='xroga-api-runtime@'+P+'.iam.gserviceaccount.com','SERVING_IDENTITY_DRIFT'
+
+def compatible_frontend():
+ # This public request must never reuse api(), which adds a Google bearer.
+ class NoRedirect(urllib.request.HTTPRedirectHandler):
+  def redirect_request(self,*args,**kwargs):return None
+ request=urllib.request.Request('https://xroga.com/api/release',headers={'Accept':'application/json'})
+ with urllib.request.build_opener(NoRedirect).open(request,timeout=20) as response:
+  data=response.read(8193);assert len(data)<=8192,'FRONTEND_METADATA_TOO_LARGE'
+  value=json.loads(data);require_frontend_release(value)
+ return value
 
 approval=json.loads((ROOT/'RELEASE-APPROVED.json').read_text(encoding='utf-8-sig'))
 require_approval(approval,datetime.datetime.now(datetime.timezone.utc),MODE.startswith('recover-'))
@@ -175,7 +185,11 @@ elif MODE in ['promote','recover-traffic']:
  fenced();assert queue['state']=='PAUSED';no_executions()
  target=NEW if MODE=='promote' else RECOVERY_REV
  job_config(job,NEW_IMAGE if MODE=='promote' else RECOVERY_IMAGE,NEW_SHA if MODE=='promote' else RECOVERY)
- if MODE=='promote':serving_config(api(V1+'/revisions/'+NEW))
+ if MODE=='promote':
+  serving_config(api(V1+'/revisions/'+NEW));compatible_frontend()
+  recovery_ready=json.loads((ROOT/'response-recovery-serving-private-ready.json').read_text())
+  assert recovery_ready['state']=='PASS_PRIVATE_READINESS' and recovery_ready['revision']==RECOVERY_REV,'COMPATIBLE_RECOVERY_READINESS_REQUIRED'
+  serving_config(api(V1+'/revisions/'+RECOVERY_REV),RECOVERY,RECOVERY_IMAGE)
  else:serving_config(api(V1+'/revisions/'+RECOVERY_REV),RECOVERY,RECOVERY_IMAGE)
  traffic=[{'type':'TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION','revision':target,'percent':100}]
  traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'zurelay-76c158-check']]

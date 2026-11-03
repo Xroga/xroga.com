@@ -2,7 +2,7 @@
 
 PREPARATION ONLY. This package is NOT approved. The completed single probe grants no permission to execute this package. No production SQL, model request, build, key update or traffic change has occurred during this continuation.
 
-Backend is `76c158aaeecf82f524659454b7b3726b4d255679`, draft PR #915. Frontend is `3823f51dcd674c00eacd09e6bdf2743ac093a65b`, draft PR #916, based on the existing Response V2 work in draft PR #909. All required checks must pass on those exact sources. Subsequent code changes invalidate these pins. Preserve the historical PR stack and review dependency order rather than blindly merging it into main.
+Backend is `76c158aaeecf82f524659454b7b3726b4d255679`, draft PR #915. Frontend is `2f80a744a406eb2ab7e86538bc382cc3000ef730`, draft PR #916, based on the existing Response V2 work in draft PR #909. All required checks must pass on those exact sources. Subsequent code changes invalidate these pins. Preserve the historical PR stack and review dependency order rather than blindly merging it into main.
 
 ## What this changes
 

@@ -5,8 +5,10 @@ import json
 import pathlib
 import tempfile
 import unittest
-from release_contract import (SOURCE, RECOVERY, RECOVERY_DIGEST, REPOSITORY, IDENTITY,
-    configure_container, verify_container)
+import urllib.request
+from unittest import mock
+from release_contract import (SOURCE, FRONTEND, RECOVERY, RECOVERY_DIGEST, REPOSITORY, IDENTITY,
+    configure_container, verify_container, require_frontend_release)
 
 ROOT = pathlib.Path(__file__).resolve().parent
 TREE = ast.parse((ROOT / 'cutover.py').read_text())
@@ -14,6 +16,42 @@ CHAIN = next(n for n in TREE.body if isinstance(n, ast.If) and ast.unparse(n.tes
 
 
 class CutoverPayloadTests(unittest.TestCase):
+    def test_forward_traffic_cannot_move_without_compatible_recovery_readiness(self):
+        mutations=[]
+        with tempfile.TemporaryDirectory() as directory:
+            root=pathlib.Path(directory)
+            env=dict(MODE='promote',ROOT=root,json=json,NEW='new',RECOVERY_REV='recovery',
+                NEW_IMAGE='new-image',RECOVERY_IMAGE='compatible-image',NEW_SHA=SOURCE,RECOVERY=RECOVERY,
+                queue={'state':'PAUSED'},job={},V1='https://control.example',
+                fenced=lambda:None,no_executions=lambda:None,job_config=lambda *a:None,
+                serving_config=lambda *a:None,compatible_frontend=lambda:None,
+                api=lambda *a,**kw:{},run=lambda *a,**kw:mutations.append(a))
+            for state in [None,{'state':'PASS_PRIVATE_READINESS','revision':'wrong'}]:
+                if state is not None:(root/'response-recovery-serving-private-ready.json').write_text(json.dumps(state))
+                with self.assertRaises((FileNotFoundError,AssertionError)):
+                    exec(compile(ast.Module(body=[CHAIN],type_ignores=[]),'cutover.py','exec'),env)
+            self.assertEqual(mutations,[])
+
+    def test_frontend_source_and_environment_must_match_before_promotion(self):
+        require_frontend_release({'service':'xroga-web','environment':'production','release':FRONTEND})
+        for value in ({'service':'xroga-web','environment':'production','release':'old'},
+                      {'service':'xroga-web','environment':'preview','release':FRONTEND}):
+            with self.assertRaises(AssertionError):require_frontend_release(value)
+
+    def test_public_release_read_never_sends_google_credentials_or_follows_redirects(self):
+        definition=next(n for n in TREE.body if isinstance(n,ast.FunctionDef) and n.name=='compatible_frontend')
+        env={'urllib':urllib,'json':json,'require_frontend_release':require_frontend_release,'TOKEN':'synthetic-google-token'}
+        exec(compile(ast.Module(body=[definition],type_ignores=[]),'cutover.py','exec'),env)
+        response=mock.MagicMock()
+        response.__enter__.return_value.read.return_value=json.dumps({'service':'xroga-web','environment':'production','release':FRONTEND}).encode()
+        opener=mock.Mock();opener.open.return_value=response
+        with mock.patch.object(urllib.request,'build_opener',return_value=opener) as build:
+            env['compatible_frontend']()
+            request=opener.open.call_args.args[0]
+            self.assertEqual(request.full_url,'https://xroga.com/api/release')
+            self.assertIsNone(request.get_header('Authorization'))
+            self.assertIsNone(build.call_args.args[0]().redirect_request(None,None,None,None,None))
+
     def test_operational_scripts_compile_without_importing_or_executing(self):
         for path in ROOT.glob('*.py'):
             with self.subTest(path=path.name):
