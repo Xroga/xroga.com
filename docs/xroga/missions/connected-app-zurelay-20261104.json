@@ -61,7 +61,7 @@
   "rollback": "Revert the bounded backend changes and restore the previous Cloud Run revision; do not alter user connections or stored workflow records.",
   "knownGaps": [
     "The official current @composio/core SDK requires Node >=22.22.3 while Xroga pins 22.21.x; the existing guarded Composio HTTP client remains in use pending compatible runtime/security review.",
-    "A Zurelay text request succeeded but the synthetic tool-call probe returned HTTP 429; live tool and multi-step response behavior remain unverified.",
+    "Zurelay text and synthetic tool-call requests succeeded; the immediate tool-result continuation returned HTTP 429, so live multi-step behavior remains unverified. Exact billed spend was not independently reconciled.",
     "No signed-in Xroga Gmail, GitHub or Canva end-to-end run has been executed against this branch.",
     "No frontend progress or universal app coverage claim is made for this change.",
     "The full backend suite exceeded the local five-minute run limit; focused suites passed but complete CI and production rollout remain unverified."
@@ -69,6 +69,6 @@
   "placeholderClaimsRemaining": ["Universal connected-app automation and production liveness remain unverified"],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
-  "release": {"state": "BLOCKED", "blockers": ["Authenticated isolated staging and live app execution not yet proved", "Live Zurelay tool-call probe rate-limited", "Complete CI/security review not yet passed"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null},
+  "release": {"state": "BLOCKED", "blockers": ["Authenticated isolated staging and live app execution not yet proved", "Live Zurelay tool-result continuation rate-limited", "Complete CI/security review not yet passed"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null},
   "evidenceRefs": ["backend/src/services/integrations/connectedAppModel.test.ts", "backend/src/services/integrations/composioActorBoundary.security.test.ts", "backend/src/services/integrations/businessWorkflow.test.ts"]
 }
