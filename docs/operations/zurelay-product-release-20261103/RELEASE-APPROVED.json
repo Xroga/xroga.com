@@ -43,6 +43,15 @@
       "conditionalOn": "all eight exact-source gates and authenticated Preview verification",
       "preparationExpiryUtc": "2026-11-03T22:00:00+00:00",
       "spendingAndSingleMaintenanceWindowUnchanged": true
+    },
+    {
+      "source": "7760f91c80a4a10471963cb0efc05a9f0af0beb3",
+      "questionId": "call_8eb0ed65eb6a44ad9c3ae6424e2f8a44",
+      "decision": "Approve this exact source amendment within existing limits",
+      "reviewCommit": "15675a4dc0efa5350f95f1d643a5046441252bff",
+      "conditionalOn": "all eight exact-source gates passing",
+      "state": "EGRESS_TREE_DIGEST_GATE_FAILED_NEVER_PROMOTED",
+      "replacementProposed": "4830b424d32e0f30aac11901374dcb09c68b4e9a"
     }
   ]
 }
