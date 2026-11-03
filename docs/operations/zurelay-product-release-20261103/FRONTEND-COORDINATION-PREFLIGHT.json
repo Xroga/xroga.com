@@ -1,0 +1,51 @@
+{
+  "recordedAtUtc": "2026-11-03T20:10:24.471Z",
+  "scope": "PREPARATION_NOT_PROMOTION_OR_LIVE_MODEL_ACCEPTANCE",
+  "frontend": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
+  "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
+  "publicProduction": {
+    "service": "xroga-web",
+    "release": "e31ecaed6c5395e1b886d5c8639a98ed97f639c1",
+    "environment": "production"
+  },
+  "productionDeploymentObservedInVercel": "CeXpKy7CG66oxWXVSXxxXnnqbGgb",
+  "productionBranch": "codex/mobile-toolbar-live-20261103",
+  "coordination": {
+    "url": "https://github.com/Xroga/xroga.com/issues/906#issuecomment-6613996869",
+    "id": 6613996869,
+    "updatedAt": "2026-11-03T20:04:06Z",
+    "live": "e31ecaed6c5395e1b886d5c8639a98ed97f639c1",
+    "cancelledOtherDeployment": false,
+    "acknowledgmentReceived": false
+  },
+  "focusedVerification": {
+    "job": "63e9233b-1555-4177-95da-d31a5f402fdc",
+    "tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "logSha256": "73f828f1100050e45078ed523e5c54aadbff4737d9396142a13c091d0417f7a9"
+  },
+  "preservedFiles": [
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "cddd4ddd69bdc0b92defbdaed357add3787ead786243913ed7915a97068aadb4",
+      "sameAsProduction": "e31ecaed6c5395e1b886d5c8639a98ed97f639c1"
+    },
+    {
+      "path": "frontend/src/components/automations/automations.module.css",
+      "sha256": "e36291f79158cf3e4ed411c645f865549385732b38a4f7dc3494495ff67059b0",
+      "sameAsProduction": "e31ecaed6c5395e1b886d5c8639a98ed97f639c1"
+    }
+  ],
+  "remaining": [
+    "eight exact-source CI gates",
+    "authenticated exact-source Preview",
+    "owner source and preparation-expiry amendment",
+    "fresh production-source and competing-promotion check before cutover"
+  ],
+  "otherDeploymentsCancelled": false,
+  "productionTrafficChanged": false,
+  "productionSqlApplied": false,
+  "newModelRequests": 0
+}
