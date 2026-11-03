@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fcc0b79fc3b0dbb6f55c05972db8ea8a134ebb89",
+  "source_sha": "44b418c01ccde7553ea20b945da2bea8ba8c1f5e",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -4388,9 +4388,9 @@
       "source_id": "SRC-540416a4e8cef063",
       "filename": "CI-SCHEMA-FIXTURE-REVIEW.json",
       "path_or_url": "docs/operations/zurelay-two-model-20261103/CI-SCHEMA-FIXTURE-REVIEW.json",
-      "sha256": "22c4f7e1119319adb059e5d93f5ec7e3827816e96bc6ebd639814a6809bc3b00",
-      "byte_size": 857,
-      "modified_timestamp": "2026-11-03T16:50:22.648Z",
+      "sha256": "1a352870c07f4aabe5af15e767a54fbdcb2ee69d07428d4e799e43be37878daf",
+      "byte_size": 994,
+      "modified_timestamp": "2026-11-03T16:59:12.369Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -5974,9 +5974,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "0404ce6b81004709f13d02af386e3f11657ed9f2696d32c2aa8dbe9de6660cd8",
+      "sha256": "ba89801ee10517712e80a4056c42926099814dcd36cf41e78041db39fad3aed4",
       "byte_size": 5347290,
-      "modified_timestamp": "2026-11-03T16:56:33.700Z",
+      "modified_timestamp": "2026-11-03T16:59:33.445Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",

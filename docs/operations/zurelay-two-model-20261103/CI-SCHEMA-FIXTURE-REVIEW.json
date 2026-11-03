@@ -12,7 +12,7 @@
   "providerCalls": 0,
   "productionChanges": false,
   "review": [
-    "The one failed full-suite test admitted messages without its strict response format. Match the exact SDK options in the admitted payload, preserving every tamper, identity, pricing, reservation and secret-egress assertion. Runtime code and build inputs are unchanged."
+    "The one failed full-suite test admitted messages without its strict response format. Match the exact SDK options in the admitted payload, preserving every tamper, identity, pricing, reservation and secret-egress assertion. Runtime application code and build definitions are unchanged. The corrected test fixture is part of the source archive and is compiled into this image, so the build context differs."
   ],
   "remaining": [
     "Exact-source CI",
