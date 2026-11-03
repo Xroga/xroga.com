@@ -14801,17 +14801,9 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
   }
 }
 
-/* The transcript clips before the fixed composer. This keeps response text out of
-   the chatbar and its bottom safe-area gap without painting a second rectangular
-   surface behind the rounded composer. Existing transcript padding lets the last
-   response scroll fully above this clear zone. */
-.xv-terminal-scroll[data-conversation='true'] {
-  clip-path: inset(
-    0 0
-    calc(var(--xv-chatbar-height, 112px) + max(28px, calc(14px + env(safe-area-inset-bottom))))
-    0
-  );
-}
+/* Let the response remain visible around the floating composer. The composer
+   itself covers content beneath its rounded surface; clipping the whole
+   transcript here created a large, square blank block behind it. */
 
 .xv-terminal-dock[class*='terminal-skin-'][data-workspace-state='conversation'] {
   background:transparent !important;
