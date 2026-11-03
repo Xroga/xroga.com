@@ -1066,9 +1066,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
       "callIds": [
-        "f49091fa17b80f771dc8"
+        "c7daac24f3fb2d4a891c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2554,13 +2554,21 @@
       "zurelayReview": {
         "path": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
         "scope": "EXACT_PERSISTENCE_EXPRESSIONS_PRESERVED_WITH_MODEL_POLICY_AND_ACCOUNTING_REVIEW_NOT_LIVE_ACCEPTANCE"
-      }
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+        "callIds": [
+          "f49091fa17b80f771dc8"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
       "callIds": [
-        "887516500e98c99a1670"
+        "fed5a5129060f9c4c78d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4046,7 +4054,15 @@
       "zurelayReview": {
         "path": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
         "scope": "EXACT_PERSISTENCE_EXPRESSIONS_PRESERVED_WITH_MODEL_POLICY_AND_ACCOUNTING_REVIEW_NOT_LIVE_ACCEPTANCE"
-      }
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+        "callIds": [
+          "887516500e98c99a1670"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
@@ -19142,9 +19158,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
+      "sourceSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
       "callIds": [
-        "78696e27dd5c1ca37c3a"
+        "fa04b8d8f9413c194ec5"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -19287,7 +19303,15 @@
           "fb2bffffc91cc072976a"
         ]
       },
-      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance."
+      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance.",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
+        "callIds": [
+          "78696e27dd5c1ca37c3a"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -21630,18 +21654,18 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "5063984e8c997b66e324",
-        "4f84558e55d72a558c00",
-        "0d7ac55b299aff66161b",
-        "2b682298901e2f9f943b",
-        "7b807643d71d470e0f51",
-        "0248d18cc31a925c621c",
-        "66c23eb1e38ac8cb4bfc",
-        "10f00d8450df264b93d4",
-        "f842a5afc2b542487f43",
-        "d2879953777f5ac8d2ba"
+        "df7eec626e3acd881448",
+        "287e2fe0dabebc523a36",
+        "3a763a5523dac73c10d4",
+        "46aca4c01b2d3d90acad",
+        "85b1d7461e8691468225",
+        "545cee9f47055ec5d761",
+        "7231d508555849d87d32",
+        "8609662e7417659e88ca",
+        "2714b6af44879d208f97",
+        "a1b9e751df5bc764909d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
@@ -21859,13 +21883,30 @@
           "7ddf1ddcae5c5661a52a"
         ]
       },
-      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance."
+      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance.",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "callIds": [
+          "5063984e8c997b66e324",
+          "4f84558e55d72a558c00",
+          "0d7ac55b299aff66161b",
+          "2b682298901e2f9f943b",
+          "7b807643d71d470e0f51",
+          "0248d18cc31a925c621c",
+          "66c23eb1e38ac8cb4bfc",
+          "10f00d8450df264b93d4",
+          "f842a5afc2b542487f43",
+          "d2879953777f5ac8d2ba"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "6df5deb0f6f628c7d1b4"
+        "7435325dc6f8734b9505"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
@@ -21937,13 +21978,21 @@
           "b01c22a391468e45cbe8"
         ]
       },
-      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance."
+      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance.",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "callIds": [
+          "6df5deb0f6f628c7d1b4"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "faf31e8057d6b9c3795f"
+        "319518470d46e4577f12"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
@@ -22015,13 +22064,21 @@
           "8f3d42e8e45d7fb2252a"
         ]
       },
-      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance."
+      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance.",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "callIds": [
+          "faf31e8057d6b9c3795f"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "92f3a041c72290ceacae"
+        "a2737e6413bb535344c8"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -22079,13 +22136,21 @@
           "16c8e03100d592b72118"
         ]
       },
-      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance."
+      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance.",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "callIds": [
+          "92f3a041c72290ceacae"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "a25465e088b8b1c6db0a"
+        "a794b7db009e04b8617a"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -22143,13 +22208,21 @@
           "402d88eda8e20ef83be0"
         ]
       },
-      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance."
+      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance.",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "callIds": [
+          "a25465e088b8b1c6db0a"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "callIds": [
-        "a08041c24e19e0c6ee42"
+        "b4a46938a0dec4c5f10c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -22207,7 +22280,15 @@
           "ab85b8388bbce761729d"
         ]
       },
-      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance."
+      "researchHandoffReview": "Original owner/claim/authority predicates and persistence operations remain intact. Native research storage is checked before dispatch and saved before acknowledgement. Exact filename filtering retains tenant and owner constraints. Focused regressions pass. Historical evidence is not promoted to new authenticated live delivery acceptance.",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "callIds": [
+          "a08041c24e19e0c6ee42"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
@@ -32711,6 +32792,22 @@
         {
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "native public PDF and fresh recovery keep supported reads with zero provider charge"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/modelResult.ts",
+      "sourceSha256": "0b7e2a115a29309c0e60e5bdc8c84b7c2616860cffff3325886867dc6a581f55",
+      "callIds": [
+        "f80ada9822602d9fd5c3"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Buffer.from(text) UTF-8 encoding only. The adjacent private StorageService operation is separately reviewed in the product integration packet and retains issued-actor access checks.",
+      "reason": "This exact native conversion has no database client, bucket receiver or provider dispatch.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/modelResult.ts",
+          "marker": "body:Buffer.from(text)"
         }
       ]
     }

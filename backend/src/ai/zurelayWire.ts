@@ -18,6 +18,7 @@ export function validateZurelayRequest(body: unknown, expectedModel: string): vo
   if (!externalIds.has(expectedModel) || value.model !== expectedModel || 'models' in value
     || 'provider' in value || 'fallback' in value || 'routing' in value) denied();
   if (!Number.isSafeInteger(value.max_tokens) || Number(value.max_tokens) <= 0) denied();
+  if ('n' in value && value.n !== 1) denied();
   // Claude cache writes have a separate surcharge and no verified Chat receipt
   // breakdown yet. Do not request them or assume they are ordinary input.
   const records = (items:unknown):Record<string,unknown>[] => Array.isArray(items)
@@ -53,8 +54,9 @@ export async function verifyZurelayResponse(response: Response, apiModel: string
     || response.headers.get('x-zurelay-model') !== apiModel || response.headers.has('x-zurelay-routed-from')) denied(true);
   const stopped = response.headers.get('x-zurelay-stopped');
   if (!streaming) {
-    const body = await response.clone().json() as { model?: string; usage?: unknown; choices?: { finish_reason?: string }[] };
-    if (body.model !== apiModel) denied(true);
+    const body = await response.clone().json() as { model?: string; usage?: unknown; choices?: { index?:number;finish_reason?: string }[] };
+    if (body.model !== apiModel || !Array.isArray(body.choices) || body.choices.length!==1
+      ||body.choices[0].index!==undefined&&body.choices[0].index!==0) denied(true);
     validateZurelayUsage(body.usage);
     if (stopped && stopped !== 'false' && body.choices?.some(c => c.finish_reason === 'stop')) denied(true);
     return response;
@@ -66,11 +68,18 @@ export async function verifyZurelayResponse(response: Response, apiModel: string
     if (!line.startsWith('data:')) return;
     const payload = line.slice(5).trim();
     if (!payload) return;
-    if (payload === '[DONE]') { if (!usageSeen || !finishSeen) denied(true); done = true; return; }
+    if (payload === '[DONE]') { if (done || !usageSeen || !finishSeen) denied(true); done = true; return; }
     if (done) denied(true);
-    const chunk = JSON.parse(payload) as { model?: string; error?: unknown; usage?: unknown; choices?: { finish_reason?: string | null }[] };
+    let chunk: { model?: string; error?: unknown; usage?: unknown; choices?: {index?:number;delta?:{content?:unknown;tool_calls?:unknown}; finish_reason?: string | null }[] };
+    try { chunk=JSON.parse(payload); } catch { denied(true); }
     if (chunk.error || chunk.model !== apiModel) denied(true);
-    if (chunk.usage) { validateZurelayUsage(chunk.usage); usageSeen = true; }
+    const choices=chunk.choices??[];
+    if(!Array.isArray(choices)||choices.length>1||choices.some(c=>c.index!==undefined&&c.index!==0))denied(true);
+    if(finishSeen&&choices.some(c=>c.finish_reason||c.delta?.content||c.delta?.tool_calls))denied(true);
+    if (chunk.usage) {
+      if(usageSeen||(!finishSeen&&!choices.some(c=>c.finish_reason)))denied(true);
+      validateZurelayUsage(chunk.usage); usageSeen = true;
+    }
     for (const choice of chunk.choices ?? []) if (choice.finish_reason) {
       finishSeen = true;
       if (stopped && stopped !== 'false' && choice.finish_reason === 'stop') denied(true);

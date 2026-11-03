@@ -11,7 +11,7 @@ This records development-source reachability, not production activation. All exe
 | Browser planner and Stagehand adapter | Default DeepSeek | Existing browser task lifetime, model gateway and ledger, no browser-host activation in this change |
 | Operations model calls | Default DeepSeek | Existing Operations authority, admitted reservation and exact SDK payload, receipt and settlement |
 | Guest conversation | Default DeepSeek | Existing bounded guest admission and same SDK, no repository or account authority granted |
-| Exceptional Sonnet | Exact second model and valid task-bound spend permit | Existing canonical permit, matching reason/task/account/payload/cap, single-use consumption. User-facing issuance/resumption remains unverified and safely gated |
+| Exceptional Sonnet | Explicit complex-engineering request prepares a separate capped read-only response review, without a planning call | Existing durable confirmation and canonical permit, matching reason/task/account/payload/cap, single-use consumption. Private saved result returns to the original Workspace turn. Offline integration verified, live behavior and repository mutation remain unverified and gated |
 | Parallel public research | Retrieval only | Existing approval, egress and retrieval ledger. Generative `responses` route denied before credential access or reservation |
 | Direct Gemini and Grok research adapters | Retired | Explicit denial, no fetch. Gemini's removed outbound site and original disposition are archived |
 | Black Hole registry, route tiers, repair and adaptive orchestrator | Default DeepSeek, no next model | Retired identities cannot regain dispatch through environment overrides, caches or fallback lists |

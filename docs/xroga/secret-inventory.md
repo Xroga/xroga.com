@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `8cd0c817ffddcd33e594bf0dc6a3ab40a667b5fb`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `3bed89e65411fea9376bce0da8aacd1bd8c72f92`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -346,7 +346,7 @@ Values are forbidden. Source SHA: `8cd0c817ffddcd33e594bf0dc6a3ab40a667b5fb`. Na
 | ZURELAY_DEEPSEEK_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 | ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 | ZURELAY_DEEPSEEK_VISION_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
-| ZURELAY_JSON_SCHEMA_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_JSON_SCHEMA_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models, endpoint-github-com |
 | ZURELAY_SONNET_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 | ZURELAY_SONNET_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 | ZURELAY_SONNET_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |

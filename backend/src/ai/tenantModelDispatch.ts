@@ -18,7 +18,7 @@ import {withProviderReservation,actualProviderCostMicroUsd,type ProviderUsageRes
 import {requireAdmittedRunAttempt,type AdmittedRunAttempt} from './runStore.js';
 
 function denied():never{throw Object.assign(Error('Model dispatch binding is no longer valid.'),{code:'MODEL_DISPATCH_BINDING_DENIED',status:400});}
-export interface ModelPayload {messages:unknown;tools?:unknown}
+export interface ModelPayload {messages:unknown;tools?:unknown;responseFormat?:unknown}
 function containsImageInput(messages: unknown): boolean {
   if (!Array.isArray(messages)) return false;
   return messages.some(message => message && typeof message === 'object'
@@ -157,6 +157,11 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
           const wire=JSON.parse(wireBody);
           if(wire.model!==apiModel||wire.max_tokens!==maximumOutputTokens
             ||!isDeepStrictEqual({messages:wire.messages,tools:wire.tools??[]},expectedPayload))denied();
+          // A structured answer's schema is part of the admitted request, not
+          // an SDK option that may be retargeted after budget/approval waits.
+          if(payload.responseFormat!==undefined
+            ? !isDeepStrictEqual(wire.response_format,payload.responseFormat)
+            : wire.response_format?.type==='json_schema')denied();
           await project();
           await execution();
           if(connected&&!isDeepStrictEqual(await read(),selected))denied();

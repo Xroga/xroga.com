@@ -24,6 +24,7 @@ import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage } from './answerCoverage.js';
+import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
 import {
   buildVisionUserContent,
   chatCompletion,
@@ -796,7 +797,7 @@ export async function callBuilderStream(
       const runAttempt = () =>
         withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
               connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
-              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages)
+              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:estimateMessageTokens(messages)
                 + (opts.responseFormat ? estimateMessageTokens([{ role: 'system', content: JSON.stringify(opts.responseFormat) }]) : 0),
               maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
       return opts.onWaiting
@@ -1023,6 +1024,12 @@ export async function runChatPipeline(opts: {
   }
 
   const route = routeReadOnlyConversation(opts.prompt, opts.goalContract);
+  if(requestedSonnetReason(opts.prompt)){
+    if(hasAttachments||route.kind==='research')throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The approved complex-model response supports text engineering work only. No alternate model or research request was made.');
+    const response=await prepareSonnetConversation(opts.modelScope??{context:requireTenantContext(opts.tenantContext),userId:opts.userId},opts.prompt,opts.history);
+    return {response,
+      intent:'model_approval',usage:usageToTokenUsage(initialUsage),webSources:[],modelId:route.builder,route};
+  }
 
   if (!opts.goalContract && isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
     const err = new Error('USE_BUILD_PIPELINE');
@@ -1172,6 +1179,8 @@ export async function runBuildPipeline(opts: {
 }): Promise<BuildPipelineResult> {
   const tenantContext=requireTenantContext(opts.tenantContext);
   requireResourceOwner(tenantContext,opts.userId);
+  if(requestedSonnetReason(opts.prompt))throw new RuntimeFailure('CAPABILITY_UNSUPPORTED',
+    'Sonnet requires the separate capped engineering-response approval in Workspace conversation. It cannot silently replace a model inside a repository build. No build or model request was started.');
   opts={...opts,userId:tenantContext.userId};
   const runId = opts.runId ?? randomUUID();
   const trace = new RunTrace(runId, opts.userId);

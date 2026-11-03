@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+      "currentSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "f49091fa17b80f771dc8",
-        "887516500e98c99a1670"
+        "c7daac24f3fb2d4a891c",
+        "fed5a5129060f9c4c78d"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4261,12 +4261,16 @@
       "beforeZurelayBinding": {
         "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
         "sha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b"
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466"
       }
     },
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
+      "currentSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
       "businessModelContinuationBinding": {
         "reference": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
         "previousCurrentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
@@ -4282,7 +4286,7 @@
         "ebede146c851a085d2b8"
       ],
       "afterIds": [
-        "78696e27dd5c1ca37c3a"
+        "fa04b8d8f9413c194ec5"
       ],
       "unchangedNearestBlockSha256": [
         "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
@@ -4485,6 +4489,10 @@
         "afterIds": [
           "78696e27dd5c1ca37c3a"
         ]
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95"
       }
     },
     {
@@ -4656,5 +4664,6 @@
   "zurelayReview": {
     "path": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
     "scope": "CURRENT_SOURCE_REVIEW_NOT_NEW_LIVE_ACCEPTANCE"
-  }
+  },
+  "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
 }

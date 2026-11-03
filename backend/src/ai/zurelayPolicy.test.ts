@@ -32,7 +32,7 @@ test('no forged/plain-object Sonnet grant, hidden alternatives or provider price
   assertModelSelection('deepseek_v4_1_flash_1017',1000);
   assert.throws(() => assertModelSelection('claude_sonnet_5_5',1000));
   assert.throws(() => assertModelSelection('claude_sonnet_5_5',1000,{reason:'complex_multifile_debug',taskId:'fixture',permit:{grantId:'forged'},binding:{} as never}));
-  for (const changed of [{models:[]},{provider:{max_price:1}},{routing:'auto'},{model:'auto'},{model:'zurelay-auto'},{max_tokens:Infinity},{max_tokens:0}]) {
+  for (const changed of [{models:[]},{provider:{max_price:1}},{routing:'auto'},{model:'auto'},{model:'zurelay-auto'},{max_tokens:Infinity},{max_tokens:0},{n:2},{n:0}]) {
     assert.throws(() => validateZurelayRequest({...request,...changed},model));
   }
   validateZurelayRequest(request,model);
@@ -45,6 +45,25 @@ test('no forged/plain-object Sonnet grant, hidden alternatives or provider price
   for(const changed of [{cache_creation_input_tokens:5},{prompt_tokens_details:{cache_write_tokens:5}},{completion_tokens_details:{reasoning_tokens:41}}]) {
     assert.throws(()=>validateZurelayUsage({...usage,...changed}));
   }
+});
+
+test('stream continuation after finish, duplicate usage and extra choices retain an invalid receipt',async()=>{
+  const frame=(data:unknown)=>'data: '+JSON.stringify(data)+'\n\n';
+  const start={model,choices:[{index:0,delta:{content:'source'},finish_reason:null}]};
+  const stop={model,choices:[{index:0,delta:{},finish_reason:'stop'}]};
+  const terminal={model,choices:[],usage};
+  const done='data: [DONE]\n\n';
+  for(const frames of [[terminal,stop],[start,stop,start,terminal],[start,stop,terminal,terminal],
+    [{...start,choices:[...start.choices,...start.choices]},stop,terminal],
+    [{...start,choices:[{...start.choices[0],index:1}]},stop,terminal]]){
+    const response=await verifyZurelayResponse(new Response(frames.map(frame).join('')+done,{headers}),model,true);
+    await assert.rejects(response.text(),(error:any)=>error.type==='xroga_model_redirect_denied_after_dispatch');
+  }
+  const valid=frame(start)+frame(stop)+frame(terminal)+done;
+  const bytes=new TextEncoder().encode(valid);
+  const fragmented=new ReadableStream({start(controller){for(const byte of bytes)controller.enqueue(Uint8Array.of(byte));controller.close();}});
+  const checked=await verifyZurelayResponse(new Response(fragmented,{headers}),model,true);
+  assert.equal(await checked.text(),valid);
 });
 
 test('actual SDK boundary fixes origin, disables provider substitution and never follows redirects', async () => {

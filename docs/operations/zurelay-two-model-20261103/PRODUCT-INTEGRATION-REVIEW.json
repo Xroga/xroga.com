@@ -1,0 +1,354 @@
+{
+  "version": 1,
+  "scope": "OFFLINE_PRODUCT_DELTA_NOT_LIVE_ACCEPTANCE",
+  "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "productionChanges": false,
+  "providerCalls": 0,
+  "additionalModelSpendUsd": 0,
+  "sources": [
+    {
+      "path": "backend/src/ai/answerCoverage.test.ts",
+      "beforeSha256": "3a1e67b0cb7c87325bfbcca2fd421f06560fd2f0e8f19d26f7e2cf3efd491e5c",
+      "currentSha256": "d9a89f72f333e1954f4d2886771fc8f198b4a33db76e3750e3d0fb511ffffe9c",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/answerCoverage.ts",
+      "beforeSha256": "d299f8517595cd135f623718dd8604c56b7fff03570a94c97b91d731bd226155",
+      "currentSha256": "2c32cfc1ad3173ce59a9a9609a3d52ea9ae923d0ba5f533da03d25f3b6c346ba",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "beforeSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+      "currentSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "matches": [
+        {
+          "beforeId": "f49091fa17b80f771dc8",
+          "afterId": "c7daac24f3fb2d4a891c",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "enclosing": "runBuildPipeline",
+          "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+        },
+        {
+          "beforeId": "887516500e98c99a1670",
+          "afterId": "fed5a5129060f9c4c78d",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "enclosing": "runBuildPipeline",
+          "callSha256": "361eaf2b8f804da3e7642f69e118157000f0678f948a6c99e9a7280d14caf329"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/responsePresentation.ts",
+      "beforeSha256": "b8e3c410009bb26c6831b8a7beddfd9c38b8e3a471bbf96a698ea56716ab98ff",
+      "currentSha256": "de8c5c7038f2631b197f43f6528a4e9cabb560d38a6c3f0a3608b37f61d5bbc4",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.test.ts",
+      "beforeSha256": "82e2c9bc5b252dfafff93336bec372bb18a72c16077387ab2ef5f76945e859d7",
+      "currentSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "beforeSha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d",
+      "currentSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708",
+      "matches": [
+        {
+          "beforeId": "d1bce33f0f58de0d6b0c",
+          "afterId": "402d25642e8693061c24",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "enclosing": "requireModelProjectBinding",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "e2e2c8415fd509d42b1b",
+          "afterId": "9c9c99ec2b28af8cb344",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "projects",
+          "enclosing": "requireModelProjectBinding",
+          "callSha256": "97847e28660d18238e4c1bb1c9b4bd261c3d24b6211ea19d8da572bc587e3051"
+        },
+        {
+          "beforeId": "18a434426cf64cfd9a7a",
+          "afterId": "d0df35ba9d0e32a15290",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getTenantSupabaseAdmin",
+          "enclosing": "withTenantModelReservation",
+          "callSha256": "db9103d7fc52bea73acc9979c1f1845688e4deeab5df3cb88dcafb3bc4005b10"
+        },
+        {
+          "beforeId": "d15243456fd0816adf5d",
+          "afterId": "fb776e464860a5924572",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "swarm_runs",
+          "enclosing": "withTenantModelReservation",
+          "callSha256": "5ff50937a10213dbdb22ea4076e4cbf8055539b925622c48e2255e425c955678"
+        },
+        {
+          "beforeId": "0f0441aff57215bc818c",
+          "afterId": "0cdf94c3541e2e1387f3",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "enclosing": "withTenantModelReservation",
+          "callSha256": "a1fdd17b3ec1147a0bc3e6d245a27ae62e3970a768356688434d26535a9c7e25"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "beforeSha256": "a152c3253d6c66b1712804954424b5eb294f74ab25a30ceadb60ff58e5b12a5a",
+      "currentSha256": "588acdae11c2186af36c1f211a9358218dc2e3c19fd4b25d2127e8097ebfb9d2",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/zurelayPolicy.test.ts",
+      "beforeSha256": "f96954924401d5e776003d33c9ba971703566e9ad9d11587487de938ea5a1cb4",
+      "currentSha256": "8f41738b88f519bb2acb6883eb9d77a2ee2ffce6de3f95f160f37ea95df63318",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/zurelayWire.ts",
+      "beforeSha256": "5d3787f3566870f17e630bebc5ce7f82b8c88e9259126e97003d867715881c4d",
+      "currentSha256": "cb55d63f39190fa07fab6c3deb3f65ca83bab0ee41a5afc9ea9f4964573e4613",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/routes/phase1.ts",
+      "beforeSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
+      "currentSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
+      "matches": [
+        {
+          "beforeId": "78696e27dd5c1ca37c3a",
+          "afterId": "fa04b8d8f9413c194ec5",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "enclosing": "toolUiLink",
+          "callSha256": "71810aae4ee0f65671120d7cc36a29e3dcc1dd34c482026e53cc7a042beee70e"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "beforeSha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
+      "currentSha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "beforeSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "currentSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
+      "matches": [
+        {
+          "beforeId": "5063984e8c997b66e324",
+          "afterId": "df7eec626e3acd881448",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "enclosing": "expireIfNeeded",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "4f84558e55d72a558c00",
+          "afterId": "287e2fe0dabebc523a36",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "business_action_confirmations",
+          "enclosing": "expireIfNeeded",
+          "callSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40"
+        },
+        {
+          "beforeId": "0d7ac55b299aff66161b",
+          "afterId": "3a763a5523dac73c10d4",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "enclosing": "createBusinessActionConfirmation",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "2b682298901e2f9f943b",
+          "afterId": "46aca4c01b2d3d90acad",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "business_action_confirmations",
+          "enclosing": "createBusinessActionConfirmation",
+          "callSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40"
+        },
+        {
+          "beforeId": "7b807643d71d470e0f51",
+          "afterId": "85b1d7461e8691468225",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "enclosing": "getBusinessActionConfirmation",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "0248d18cc31a925c621c",
+          "afterId": "545cee9f47055ec5d761",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "business_action_confirmations",
+          "enclosing": "getBusinessActionConfirmation",
+          "callSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40"
+        },
+        {
+          "beforeId": "66c23eb1e38ac8cb4bfc",
+          "afterId": "7231d508555849d87d32",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "enclosing": "cancelBusinessActionConfirmation",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "10f00d8450df264b93d4",
+          "afterId": "8609662e7417659e88ca",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "business_action_confirmations",
+          "enclosing": "cancelBusinessActionConfirmation",
+          "callSha256": "988e013708f48a00bb175b2a25d570898ec344958fb63062058458924c467242"
+        },
+        {
+          "beforeId": "92f3a041c72290ceacae",
+          "afterId": "a2737e6413bb535344c8",
+          "kind": "RPC_CANDIDATE",
+          "target": "cancel_business_action_confirmation",
+          "enclosing": "cancelClaimedBusinessActionConfirmation",
+          "callSha256": "317a434a54760d5be9e1d4eb967a1a9c5c924aec741cde60f421fad6e500dfbb"
+        },
+        {
+          "beforeId": "a25465e088b8b1c6db0a",
+          "afterId": "a794b7db009e04b8617a",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "enclosing": "cancelClaimedBusinessActionConfirmation",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "faf31e8057d6b9c3795f",
+          "afterId": "319518470d46e4577f12",
+          "kind": "RPC_CANDIDATE",
+          "target": "finish_business_action_confirmation",
+          "enclosing": "finishClaimedConfirmation",
+          "callSha256": "fec666d0ac3aee419c157c04e8bff5619223014a28b4cad8e63da1828dc0f7fe"
+        },
+        {
+          "beforeId": "f842a5afc2b542487f43",
+          "afterId": "2714b6af44879d208f97",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "enclosing": "confirmBusinessAction",
+          "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "beforeId": "d2879953777f5ac8d2ba",
+          "afterId": "a1b9e751df5bc764909d",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "business_action_confirmations",
+          "enclosing": "confirmBusinessAction",
+          "callSha256": "9d7f4d915d8f9d00e6f2cea7eabad53b5a6ec932a731ca6a78bcd25ddc104e40"
+        },
+        {
+          "beforeId": "6df5deb0f6f628c7d1b4",
+          "afterId": "7435325dc6f8734b9505",
+          "kind": "RPC_CANDIDATE",
+          "target": "claim_business_action_confirmation",
+          "enclosing": "confirmBusinessAction",
+          "callSha256": "ebbce1f573b2eb1b4b187c93c0785b81ab7434f8eed1648e0b235d89b1949a4a"
+        },
+        {
+          "beforeId": "a08041c24e19e0c6ee42",
+          "afterId": "b4a46938a0dec4c5f10c",
+          "kind": "RPC_CANDIDATE",
+          "target": "authorize_business_action_dispatch",
+          "enclosing": "confirmBusinessAction",
+          "callSha256": "b7652f69e691aa2caa93da8f0619657384327c4e0721cf0cea27578d46efb693"
+        }
+      ],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/sonnetApproval.test.ts",
+      "beforeSha256": null,
+      "currentSha256": "0ec4b15224edc9776d6395f4f13a856151d17dfc69d2725b4ccceee8b923b121",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/ai/sonnetApproval.ts",
+      "beforeSha256": null,
+      "currentSha256": "d4b25e2509c9eb96f1274186e75f0d0ce7c5be3bb26b8c0d5cf2188b73a2ef68",
+      "matches": [],
+      "added": []
+    },
+    {
+      "path": "backend/src/services/integrations/modelResult.ts",
+      "beforeSha256": null,
+      "currentSha256": "0b7e2a115a29309c0e60e5bdc8c84b7c2616860cffff3325886867dc6a581f55",
+      "matches": [],
+      "added": [
+        {
+          "id": "f80ada9822602d9fd5c3",
+          "path": "backend/src/services/integrations/modelResult.ts",
+          "line": 15,
+          "enclosing": "saveModelResult",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "<dynamic>",
+          "ownerPredicateCandidate": false,
+          "review": "REVIEW_REQUIRED",
+          "sourceSha256": "0b7e2a115a29309c0e60e5bdc8c84b7c2616860cffff3325886867dc6a581f55",
+          "text": "Buffer.from(text)"
+        }
+      ]
+    }
+  ],
+  "review": [
+    "Explicit complex Sonnet requests reach the existing Workspace planner directResponse path without an inference call. A sealed 15-minute exact-payload plan prepares a separate spending review. No sentiment escalation, automatic fallback or tool/repository mutation is permitted.",
+    "The actual existing confirmation claim and pre-effect RPC issue the current actor permit. Model target digest, nonce, reason, endpoint, model, token bound and conservative per-task estimate must still match at reservation and dispatch. Account budgets remain independently enforced. Fixed technical task ceiling is 50000 micro-USD, not an allowance to spend.",
+    "Private result persistence uses the existing StorageService issued actor and project boundary. Consumed owner-filtered confirmation plus matching receipt/object digest is required to reopen. GET does not invoke a provider. Unknown dispatch and paid publication failure cannot replay.",
+    "New Buffer.from(text) is native UTF-8 encoding only. The storage write itself remains an explicit issued-actor StorageService operation, not excluded by the static conversion disposition.",
+    "Structured response_format is cloned and bound at the canonical tenant dispatch boundary. Multi-choice responses, post-finish SSE content, repeated terminal usage and wrong identity remain invalid. No second model or retry was added.",
+    "Coverage preserves separately requested same-format obligations, exact user quotes and original failed output. Planner ID collisions cannot erase a required concept. Captured role-table evidence remains a failed partial excerpt, never a full SaaS acceptance."
+  ],
+  "tests": [
+    {
+      "path": "backend/src/ai/sonnetApproval.test.ts",
+      "sha256": "0ec4b15224edc9776d6395f4f13a856151d17dfc69d2725b4ccceee8b923b121"
+    },
+    {
+      "path": "backend/src/ai/answerCoverage.test.ts",
+      "sha256": "d9a89f72f333e1954f4d2886771fc8f198b4a33db76e3750e3d0fb511ffffe9c"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.test.ts",
+      "sha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4"
+    },
+    {
+      "path": "backend/src/ai/zurelayPolicy.test.ts",
+      "sha256": "8f41738b88f519bb2acb6883eb9d77a2ee2ffce6de3f95f160f37ea95df63318"
+    }
+  ],
+  "remaining": [
+    "Final exact-source CI and isolated authenticated acceptance",
+    "Live Zurelay SSE and Sonnet behavior are not established by offline HTTP tests",
+    "Current approval key limits are custody/probe limits, not production allowances",
+    "Exact-source production release and bounded new-chat model/retrieval authority remain unapproved",
+    "Real research approval currently returns private saved evidence, not a verified fresh synthesized answer"
+  ],
+  "historicalHolds": {
+    "kimiUsd": "0.038282",
+    "glmUsd": "0.001385",
+    "mutation": "NONE"
+  }
+}

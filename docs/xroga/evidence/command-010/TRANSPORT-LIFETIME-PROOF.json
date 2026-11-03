@@ -324,7 +324,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+      "sha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -611,6 +611,10 @@
       "beforeZurelayBinding": {
         "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
         "sha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b"
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466"
       }
     },
     {
@@ -671,7 +675,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
-      "sha256": "82e2c9bc5b252dfafff93336bec372bb18a72c16077387ab2ef5f76945e859d7",
+      "sha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
       "previousGenericSdkBinding": {
         "sha256": "acb7d3ee286d862c38e386380a20a7632415cd454510076abedca054016f2959",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -695,11 +699,15 @@
       "beforeZurelayBinding": {
         "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
         "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff"
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sha256": "82e2c9bc5b252dfafff93336bec372bb18a72c16077387ab2ef5f76945e859d7"
       }
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d",
+      "sha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/tenantModelDispatch.ts",
         "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
@@ -707,11 +715,15 @@
       "beforeZurelayBinding": {
         "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
         "sha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc"
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d"
       }
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "a152c3253d6c66b1712804954424b5eb294f74ab25a30ceadb60ff58e5b12a5a",
+      "sha256": "588acdae11c2186af36c1f211a9358218dc2e3c19fd4b25d2127e8097ebfb9d2",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
         "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
@@ -733,6 +745,10 @@
       "beforeZurelayBinding": {
         "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
         "sha256": "ef8484ff7a196924a9e3e6bca1283d84a3846e482b0495db5034b27c21c84fed"
+      },
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sha256": "a152c3253d6c66b1712804954424b5eb294f74ab25a30ceadb60ff58e5b12a5a"
       }
     },
     {
@@ -807,7 +823,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
+      "sha256": "8fc37cada11db34659cca31efa804ff99bcac3d076d83c6deabd52142662381f",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -852,7 +868,11 @@
         "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
         "previousSha256": "52834ccc98c469b80c2f14419d79fe66e39c7ff475ef5885e7d1be463153abcf"
       },
-      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json"
+      "expoWorkflowContinuation": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+      "beforeProductDelta": {
+        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
+      }
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -1106,5 +1126,6 @@
     "reason": "Direct Gemini HTTP implementation removed. Historical review retained in CALLER-REVIEW.json. Current strict auditor discovers no transport in this explicit denial adapter."
   },
   "zurelayCiCorrection": "docs/operations/zurelay-two-model-20261103/CI-CORRECTION-REVIEW.json",
-  "zurelayPriceSnapshot": "docs/operations/zurelay-two-model-20261103/PRICE-SNAPSHOT.json"
+  "zurelayPriceSnapshot": "docs/operations/zurelay-two-model-20261103/PRICE-SNAPSHOT.json",
+  "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
 }

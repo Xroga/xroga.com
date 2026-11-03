@@ -43,6 +43,9 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     if(mode==='mutatedAgentWire'&&value&&typeof value==='object'&&'model' in value&&'messages' in value){
       value={...value,messages:[{role:'user',content:'foreign source substituted after SDK serialization'}]};
     }
+    if(mode==='mutatedSchema'&&value&&typeof value==='object'&&'model' in value&&'response_format' in value){
+      value={...value,response_format:{type:'json_object'}};
+    }
     return Reflect.apply(stringify,JSON,[value,...args]);
   }) as typeof JSON.stringify);
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
@@ -291,6 +294,11 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   assert.equal(atomicReceipts,receiptsCoverage+1);
   assert.equal(incomplete.responseSource?.text,receivedAnswer);assert.equal(incomplete.responseSource?.contract?.coverage.complete,false);
   assert.match(incomplete.response,/Keep `tenant_id` unchanged/);
+  reset('mutatedSchema');resetModelRuntimeHealth();
+  const beforeSchemaDrift:number=effects;
+  await assert.rejects(runChatPipeline({userId:owner,tenantContext:context,modelScope:scope,prompt:'Explain the supplied system.',goalContract:semantic}),
+    (error:any)=>error.code==='MODEL_DISPATCH_BINDING_DENIED');
+  assert.equal(effects,beforeSchemaDrift,'Replacing the admitted schema is denied before any provider bytes');
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{

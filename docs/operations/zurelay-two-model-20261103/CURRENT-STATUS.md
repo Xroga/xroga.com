@@ -1,6 +1,22 @@
 # Zurelay two-model migration, development checkpoint
 
-Status: IN PROGRESS. No production cutover or Zurelay inference has occurred.
+Status: IN PROGRESS, development only. The separately approved one-request probe passed on source 3bed89e6. No production Zurelay cutover or additional inference has occurred.
+
+## Product integration checkpoint, November 3 at 15:54 UTC
+
+The explicit complex-engineering Sonnet request now reaches the actual Workspace semantic planner without purchasing a planning call. It prepares an existing durable confirmation, with a sealed exact request, a 15-minute expiry and a technical task ceiling of $0.05. Approval, current budget, exact model and single-use dispatch remain separate requirements. The result is saved through private StorageService and returned to the originating message on focus/reopen. It is a read-only engineering response, not authorization to mutate a repository. Paid result-publication failures and uncertain dispatch cannot replay.
+
+The canonical dispatch now binds response_format as well as model, messages, tools and token bound. Streaming rejects extra choices, early/repeated usage, post-finish content and repeated completion markers. Offline tests do not prove the provider's live SSE or Sonnet behavior.
+
+Answer obligations preserve verbatim requested clauses. Two different same-format requests and planner-generated ID collisions cannot erase a required section. A regression uses the actual captured seven-row failed SaaS excerpt. Missing schema or tenant comparison remains partial, and its original data remains intact. This is structural coverage, not universal factual certification.
+
+The focused backend group passed 52 checks. The corrected real planner/history path passed its subsequent two Sonnet checks. Backend type checking and six source-proof integrity checks pass. Strict outbound audit remains 149 reviewed, zero pending, zero unresolved high-risk bypasses. The broader historical tenant audit still has open criterion evidence and is not certified by that count. Exact-source CI, isolated authenticated integration, live transport compatibility and new-chat visual/product acceptance remain required.
+
+The single probe cost was $0.0000027 at Zurelay, conservatively settled as $0.000003 in Xroga. Receipts and independent cleanup are pinned in operator commit 8d60f3b9647cd4e3cafb7abc1d88cf0377ed1f3e. Current work spent $0 on inference and changed no cloud resources. Historical Kimi $0.038282 and GLM $0.001385 holds remain untouched. Probe image b060ee406046c1e62f192bdd52d830225a9dd816f3c9f4202168fc6e6bead007 has a November 6, 14:34:37 UTC retention deadline unless separately approved for release/recovery retention.
+
+Research currently returns the saved approved source evidence to its originating turn. Durable synthesis of the complete original answer after research approval remains an integration gap. It is not marked passed. Production release preparation must include this gap, current probe-only key limits and a compatible recovery path. No further provider tests or production operations are authorized by the completed probe.
+
+## Historical engineering checkpoint before the approved probe
 
 The founder's November 3 guide supersedes earlier provider choices. The executable catalog contains only `deepseek_v4_1_flash_1017` and `claude_sonnet_5_5`, with external IDs `deepseek-v4.1-flash-1017` and `claude-sonnet-5-5` at `https://api.zurelay.com/v1/chat/completions`. The SDK fixes fallback off and rejects routed/substituted responses. Legacy financial identities and prices remain readable, without dispatch authority.
 

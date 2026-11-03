@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "cbdd42b4a870f6d6aa7979187c077181819009b6c32f60c98c06085ad2776be2",
+  "reviewRegistrySha256": "d570ac2863eed30b56f13ee8a221a112d7d673545c876e7a47c722f3a19d5528",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 224,
-    "persistenceCandidates": 983,
+    "persistenceCandidates": 984,
     "ownerPredicateCandidates": 262,
     "reviewRequired": 136,
-    "reviewedCandidates": 847,
+    "reviewedCandidates": 848,
     "unresolvedSafetyCandidates": 169,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 23
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 136,
     "SCOPED_BOUNDARY": 558,
     "NARROW_EXCEPTION": 52,
-    "NOT_PERSISTENCE": 204,
+    "NOT_PERSISTENCE": 205,
     "REVIEWED_GAP": 33
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 80,
-    "unresolvedCandidateBoundaries": 903,
+    "unresolvedCandidateBoundaries": 904,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3736,11 +3736,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f49091fa17b80f771dc8"
+        "id": "c7daac24f3fb2d4a891c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "887516500e98c99a1670"
+        "id": "fed5a5129060f9c4c78d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3960,23 +3960,23 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d1bce33f0f58de0d6b0c"
+        "id": "402d25642e8693061c24"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e2e2c8415fd509d42b1b"
+        "id": "9c9c99ec2b28af8cb344"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "18a434426cf64cfd9a7a"
+        "id": "d0df35ba9d0e32a15290"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d15243456fd0816adf5d"
+        "id": "fb776e464860a5924572"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0f0441aff57215bc818c"
+        "id": "0cdf94c3541e2e1387f3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4660,7 +4660,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "78696e27dd5c1ca37c3a"
+        "id": "fa04b8d8f9413c194ec5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4820,63 +4820,63 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5063984e8c997b66e324"
+        "id": "df7eec626e3acd881448"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4f84558e55d72a558c00"
+        "id": "287e2fe0dabebc523a36"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0d7ac55b299aff66161b"
+        "id": "3a763a5523dac73c10d4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2b682298901e2f9f943b"
+        "id": "46aca4c01b2d3d90acad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7b807643d71d470e0f51"
+        "id": "85b1d7461e8691468225"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0248d18cc31a925c621c"
+        "id": "545cee9f47055ec5d761"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "66c23eb1e38ac8cb4bfc"
+        "id": "7231d508555849d87d32"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "10f00d8450df264b93d4"
+        "id": "8609662e7417659e88ca"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "92f3a041c72290ceacae"
+        "id": "a2737e6413bb535344c8"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a25465e088b8b1c6db0a"
+        "id": "a794b7db009e04b8617a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "faf31e8057d6b9c3795f"
+        "id": "319518470d46e4577f12"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f842a5afc2b542487f43"
+        "id": "2714b6af44879d208f97"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d2879953777f5ac8d2ba"
+        "id": "a1b9e751df5bc764909d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6df5deb0f6f628c7d1b4"
+        "id": "7435325dc6f8734b9505"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a08041c24e19e0c6ee42"
+        "id": "b4a46938a0dec4c5f10c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5261,6 +5261,10 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "653d1975581c4f1d514b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f80ada9822602d9fd5c3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6328,23 +6332,23 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d1bce33f0f58de0d6b0c"
+        "id": "402d25642e8693061c24"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e2e2c8415fd509d42b1b"
+        "id": "9c9c99ec2b28af8cb344"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "18a434426cf64cfd9a7a"
+        "id": "d0df35ba9d0e32a15290"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d15243456fd0816adf5d"
+        "id": "fb776e464860a5924572"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "0f0441aff57215bc818c"
+        "id": "0cdf94c3541e2e1387f3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6444,15 +6448,15 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "92f3a041c72290ceacae"
+        "id": "a2737e6413bb535344c8"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a25465e088b8b1c6db0a"
+        "id": "a794b7db009e04b8617a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a08041c24e19e0c6ee42"
+        "id": "b4a46938a0dec4c5f10c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7076,11 +7080,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f49091fa17b80f771dc8"
+        "id": "c7daac24f3fb2d4a891c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "887516500e98c99a1670"
+        "id": "fed5a5129060f9c4c78d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8336,7 +8340,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "78696e27dd5c1ca37c3a"
+        "id": "fa04b8d8f9413c194ec5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8672,51 +8676,51 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5063984e8c997b66e324"
+        "id": "df7eec626e3acd881448"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4f84558e55d72a558c00"
+        "id": "287e2fe0dabebc523a36"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "0d7ac55b299aff66161b"
+        "id": "3a763a5523dac73c10d4"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2b682298901e2f9f943b"
+        "id": "46aca4c01b2d3d90acad"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7b807643d71d470e0f51"
+        "id": "85b1d7461e8691468225"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "0248d18cc31a925c621c"
+        "id": "545cee9f47055ec5d761"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "66c23eb1e38ac8cb4bfc"
+        "id": "7231d508555849d87d32"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "10f00d8450df264b93d4"
+        "id": "8609662e7417659e88ca"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "faf31e8057d6b9c3795f"
+        "id": "319518470d46e4577f12"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f842a5afc2b542487f43"
+        "id": "2714b6af44879d208f97"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d2879953777f5ac8d2ba"
+        "id": "a1b9e751df5bc764909d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6df5deb0f6f628c7d1b4"
+        "id": "7435325dc6f8734b9505"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -8949,6 +8953,10 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "653d1975581c4f1d514b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f80ada9822602d9fd5c3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -9893,11 +9901,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 983,
+    "currentCallers": 984,
     "structuredVerified": 80,
-    "structuredUnproven": 903,
+    "structuredUnproven": 904,
     "manualUnresolved": 169,
-    "manualUnsupported": 734,
+    "manualUnsupported": 735,
     "agreedVerified": 80,
     "proofAwaitingManualReconciliation": 0
   },
@@ -10821,15 +10829,15 @@
       }
     },
     {
-      "id": "f49091fa17b80f771dc8",
+      "id": "c7daac24f3fb2d4a891c",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3813,
+      "line": 3822,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
@@ -10842,15 +10850,15 @@
       }
     },
     {
-      "id": "887516500e98c99a1670",
+      "id": "fed5a5129060f9c4c78d",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3997,
+      "line": 4006,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
@@ -13028,7 +13036,7 @@
       }
     },
     {
-      "id": "d1bce33f0f58de0d6b0c",
+      "id": "402d25642e8693061c24",
       "path": "backend/src/ai/tenantModelDispatch.ts",
       "line": 57,
       "enclosing": "requireModelProjectBinding",
@@ -13036,10 +13044,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d"
+      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
     },
     {
-      "id": "e2e2c8415fd509d42b1b",
+      "id": "9c9c99ec2b28af8cb344",
       "path": "backend/src/ai/tenantModelDispatch.ts",
       "line": 59,
       "enclosing": "requireModelProjectBinding",
@@ -13047,10 +13055,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d"
+      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
     },
     {
-      "id": "18a434426cf64cfd9a7a",
+      "id": "d0df35ba9d0e32a15290",
       "path": "backend/src/ai/tenantModelDispatch.ts",
       "line": 101,
       "enclosing": "withTenantModelReservation",
@@ -13058,10 +13066,10 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d"
+      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
     },
     {
-      "id": "d15243456fd0816adf5d",
+      "id": "fb776e464860a5924572",
       "path": "backend/src/ai/tenantModelDispatch.ts",
       "line": 104,
       "enclosing": "withTenantModelReservation",
@@ -13069,10 +13077,10 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d"
+      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
     },
     {
-      "id": "0f0441aff57215bc818c",
+      "id": "0cdf94c3541e2e1387f3",
       "path": "backend/src/ai/tenantModelDispatch.ts",
       "line": 112,
       "enclosing": "withTenantModelReservation",
@@ -13080,7 +13088,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d"
+      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
     },
     {
       "id": "3fba7dbe0551574fe56b",
@@ -19469,15 +19477,15 @@
       }
     },
     {
-      "id": "78696e27dd5c1ca37c3a",
+      "id": "fa04b8d8f9413c194ec5",
       "path": "backend/src/routes/phase1.ts",
-      "line": 193,
+      "line": 194,
       "enclosing": "toolUiLink",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "45d4be877afb49905acbfea658b6590d070ec0e294498a792966903d5f7d4a95",
+      "sourceSha256": "91b55da6a6beca61715b829c0087b10f90d2cc5bb7e2b7bce5500fbca50b2b7d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21575,15 +21583,15 @@
       }
     },
     {
-      "id": "5063984e8c997b66e324",
+      "id": "df7eec626e3acd881448",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 274,
+      "line": 275,
       "enclosing": "expireIfNeeded",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21596,15 +21604,15 @@
       }
     },
     {
-      "id": "4f84558e55d72a558c00",
+      "id": "287e2fe0dabebc523a36",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 280,
+      "line": 281,
       "enclosing": "expireIfNeeded",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21617,15 +21625,15 @@
       }
     },
     {
-      "id": "0d7ac55b299aff66161b",
+      "id": "3a763a5523dac73c10d4",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 356,
+      "line": 357,
       "enclosing": "createBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21638,15 +21646,15 @@
       }
     },
     {
-      "id": "2b682298901e2f9f943b",
+      "id": "46aca4c01b2d3d90acad",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 372,
+      "line": 373,
       "enclosing": "createBusinessActionConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21659,15 +21667,15 @@
       }
     },
     {
-      "id": "7b807643d71d470e0f51",
+      "id": "85b1d7461e8691468225",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 434,
+      "line": 435,
       "enclosing": "getBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21680,15 +21688,15 @@
       }
     },
     {
-      "id": "0248d18cc31a925c621c",
+      "id": "545cee9f47055ec5d761",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 440,
+      "line": 441,
       "enclosing": "getBusinessActionConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21701,15 +21709,15 @@
       }
     },
     {
-      "id": "66c23eb1e38ac8cb4bfc",
+      "id": "7231d508555849d87d32",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 515,
+      "line": 516,
       "enclosing": "cancelBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21722,15 +21730,15 @@
       }
     },
     {
-      "id": "10f00d8450df264b93d4",
+      "id": "8609662e7417659e88ca",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 521,
+      "line": 522,
       "enclosing": "cancelBusinessActionConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21743,15 +21751,15 @@
       }
     },
     {
-      "id": "92f3a041c72290ceacae",
+      "id": "a2737e6413bb535344c8",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 555,
+      "line": 556,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
         "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
@@ -21764,15 +21772,15 @@
       }
     },
     {
-      "id": "a25465e088b8b1c6db0a",
+      "id": "a794b7db009e04b8617a",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 555,
+      "line": 556,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
         "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
@@ -21785,15 +21793,15 @@
       }
     },
     {
-      "id": "faf31e8057d6b9c3795f",
+      "id": "319518470d46e4577f12",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 581,
+      "line": 582,
       "enclosing": "finishClaimedConfirmation",
       "kind": "RPC_CANDIDATE",
       "target": "finish_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
         "reason": "Fixed terminal-claim persistence boundary VERIFIED ataa1aad5c07c44cb907ff4432e1579ff79d08bd3d, disposable39119207485: actual held plan/claim changes reject before writes, opposite terminal outcomes admit one immutable winner, same-outcome replay retains its timestamp, expired original claims can record completion, rollback and browser-role denial pass. Runtime helper, SQL and fixture are unchanged. Loopback path rejects substituted/missing/outage terminal receipts without provider work and16 local SQL assertions/replay pass. Only terminal persistence is closed. Provider session authority, expiry before external execution and external-success crash reconciliation remain unresolved. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21810,15 +21818,15 @@
       }
     },
     {
-      "id": "f842a5afc2b542487f43",
+      "id": "2714b6af44879d208f97",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 622,
+      "line": 623,
       "enclosing": "confirmBusinessAction",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21831,15 +21839,15 @@
       }
     },
     {
-      "id": "d2879953777f5ac8d2ba",
+      "id": "a1b9e751df5bc764909d",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 628,
+      "line": 629,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21852,15 +21860,15 @@
       }
     },
     {
-      "id": "6df5deb0f6f628c7d1b4",
+      "id": "7435325dc6f8734b9505",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 732,
+      "line": 733,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "claim_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
         "reason": "Fixed pending-confirmation claim boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584 and again2e752b76 run39117021162: actual two-client winner, expiry while blocked, same-digest full-plan mutation, foreign actor and browser-role denial pass. Claim invocation, SQL and real integration fixture are unchanged. New terminal persistence has a separate unresolved review. Loopback intent/outage tests and15 local SQL assertions/replay also pass. Only this owner/plan-bound claim is closed. Session-to-owner provider binding, displayed-intent acknowledgement and external-success crash recovery remain unresolved. No provider execution or whole business-action certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -21877,15 +21885,15 @@
       }
     },
     {
-      "id": "a08041c24e19e0c6ee42",
+      "id": "b4a46938a0dec4c5f10c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 809,
+      "line": 811,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "authorize_business_action_dispatch",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "semanticReview": {
         "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
         "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
@@ -23658,6 +23666,27 @@
           {
             "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
             "marker": "export class GoogleCloudKmsCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f80ada9822602d9fd5c3",
+      "path": "backend/src/services/integrations/modelResult.ts",
+      "line": 15,
+      "enclosing": "saveModelResult",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "0b7e2a115a29309c0e60e5bdc8c84b7c2616860cffff3325886867dc6a581f55",
+      "semanticReview": {
+        "authority": "Native Buffer.from(text) UTF-8 encoding only. The adjacent private StorageService operation is separately reviewed in the product integration packet and retains issued-actor access checks.",
+        "reason": "This exact native conversion has no database client, bucket receiver or provider dispatch.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/modelResult.ts",
+            "marker": "body:Buffer.from(text)"
           }
         ]
       }

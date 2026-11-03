@@ -11,6 +11,7 @@ import {
 } from '../models.js';
 import { getRouterAdminConfig } from '../routerConfig.js';
 import { PRESENTATION_PLAN_INSTRUCTIONS } from '../responsePresentation.js';
+import {prepareSonnetConversation,requestedSonnetReason} from '../sonnetApproval.js';
 
 import {
   withTenantModelReservation,
@@ -1214,6 +1215,19 @@ export async function planSemanticRequest(
   requireResourceOwner(actor, input.userId);
   const { tenantContext: _context, ...requestData } = input;
   input = { ...structuredClone(requestData), tenantContext: actor };
+  // Explicit model selection is a request to review a separate bounded
+  // engineering response, never a semantic-model purchase or repository grant.
+  if(requestedSonnetReason(input.message)){
+    if(input.attachments?.length)throw new RuntimeFailure('CAPABILITY_UNSUPPORTED','The capped Sonnet response supports text only. No model request was made.');
+    const directResponse=await prepareSonnetConversation({context:actor,userId:actor.userId,connectedAccountId:'platform'},input.message,
+      input.history?.slice(-10).map(content=>({role:'user' as const,content:`Untrusted prior conversation context:\n${content}`})));
+    const goalContract=goalContractSchema.parse({version:'1.0',goal:input.message,desiredOutcome:'Review one capped complex engineering response.',
+      semanticIntent:'ANSWER',constraints:['No tools, repository writes, external actions, fallback or automatic retry.'],
+      acceptance:['Obtain a current exact spending approval before model execution.'],requiredCapabilities:['conversation.respond'],requiredAuthorities:[],
+      confidence:1,blockers:[],contextComplexity:'high'});
+    return {goalContract,dispatch:'chat',capabilityIds:['conversation.respond'],rationale:'Prepared a separate exact model spending review without inference.',blockers:[],
+      usage:usageToTokenUsage(await getUsage(actor.userId)),directResponse};
+  }
   const social =
     await planProtocolSocialTurn(
       input,

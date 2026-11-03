@@ -2483,7 +2483,7 @@
       "id": "B1-P2-84b9011a0d2b4754",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+      "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
       "baselineCallerIds": [
         "c37a93be0605e64b3156",
         "94fb30ec710f32d062c2",
@@ -2497,85 +2497,85 @@
         "85d5a147aa59e4f62e68"
       ],
       "currentCallerIds": [
-        "5063984e8c997b66e324",
-        "4f84558e55d72a558c00",
-        "0d7ac55b299aff66161b",
-        "2b682298901e2f9f943b",
-        "7b807643d71d470e0f51",
-        "0248d18cc31a925c621c",
-        "66c23eb1e38ac8cb4bfc",
-        "10f00d8450df264b93d4",
-        "f842a5afc2b542487f43",
-        "d2879953777f5ac8d2ba"
+        "df7eec626e3acd881448",
+        "287e2fe0dabebc523a36",
+        "3a763a5523dac73c10d4",
+        "46aca4c01b2d3d90acad",
+        "85b1d7461e8691468225",
+        "545cee9f47055ec5d761",
+        "7231d508555849d87d32",
+        "8609662e7417659e88ca",
+        "2714b6af44879d208f97",
+        "a1b9e751df5bc764909d"
       ],
       "mapping": [
         {
           "baselineCallerId": "c37a93be0605e64b3156",
           "currentCallerIds": [
-            "5063984e8c997b66e324"
+            "df7eec626e3acd881448"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "94fb30ec710f32d062c2",
           "currentCallerIds": [
-            "4f84558e55d72a558c00"
+            "287e2fe0dabebc523a36"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "36d0fbfc5ddf864ad6ea",
           "currentCallerIds": [
-            "0d7ac55b299aff66161b"
+            "3a763a5523dac73c10d4"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "bda77ff34ad9e973cbde",
           "currentCallerIds": [
-            "2b682298901e2f9f943b"
+            "46aca4c01b2d3d90acad"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a1e1f647efb6e7002993",
           "currentCallerIds": [
-            "7b807643d71d470e0f51"
+            "85b1d7461e8691468225"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7c2970e3ea0940d5d136",
           "currentCallerIds": [
-            "0248d18cc31a925c621c"
+            "545cee9f47055ec5d761"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "986c86eebabfae033939",
           "currentCallerIds": [
-            "66c23eb1e38ac8cb4bfc"
+            "7231d508555849d87d32"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "884cad1975974abc0599",
           "currentCallerIds": [
-            "10f00d8450df264b93d4"
+            "8609662e7417659e88ca"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b6708d08741254f6da06",
           "currentCallerIds": [
-            "f842a5afc2b542487f43"
+            "2714b6af44879d208f97"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "85d5a147aa59e4f62e68",
           "currentCallerIds": [
-            "d2879953777f5ac8d2ba"
+            "a1b9e751df5bc764909d"
           ],
           "change": "RETAINED"
         }
@@ -2585,7 +2585,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-84b9011a0d2b4754",
-        "sourceSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "sourceSha256": "b8dbbbba6fe1087d89b8bdc244205f2cc0425da576a4b7a3d6c5e6d19ae013ec",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
         "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2637,7 +2637,9 @@
           "ref": "7bde084cbb9f3ed93e0ce26b59b6cf37adae8e43",
           "sourceSha256": "40e88fdceed4ff5f571c8ea71ae86d2dfb53f537d8a3a5ff8f4d915ecc068abe"
         },
-        "researchHandoffReview": "Existing owner-scoped confirmation persistence and one-use claim stay intact. New native research evidence is privately stored before consumed acknowledgement. No historical proof promotion. New source authenticated storage and delivery acceptance remains required."
+        "researchHandoffReview": "Existing owner-scoped confirmation persistence and one-use claim stay intact. New native research evidence is privately stored before consumed acknowledgement. No historical proof promotion. New source authenticated storage and delivery acceptance remains required.",
+        "beforeProductDeltaSha256": "cebaa6b021717f0ca895806889d04ba31c0b4bd0e0026f4f440351d7cb7803c7",
+        "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
       },
       "actor": {
         "existingTrace": "Mounted phase1 routes use phase1AuthMiddleware and req.userId; confirmation reads and transitions constrain id/user_id, creation embeds that user. A pending claim precedes the external action. executePreparedBusinessAction recomputes the plan digest before provider metadata and permission resolution.",
@@ -6853,7 +6855,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+          "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6980,7 +6982,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+          "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8509,7 +8511,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+            "sha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
             "responseV2Review": "Reviewed bc6cbc43..bd1ca28d: only the prompt import and system text passed to the existing runChatPipeline callBuilderStream changed. runBuildPipeline admission, issued actor, ownership, persistence and cancellation code remain unchanged. This source binding retains the historical verification and IN_PROGRESS status; it is not new database or production acceptance.",
             "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
             "beforeDirectOutputSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
@@ -8519,7 +8521,8 @@
             "beforeAnswerCoverageSha256": "48c86fe026d5690c8f04b96d56f29f8bb8398b5203b944a432d7f3cb56b77f47",
             "answerCoverageReview": "Only read-only chat completion coverage classification and optional semantic answer metadata changed. Canonical execution admission, ownership and persistence controls are unchanged. This current-source continuation is not new live acceptance.",
             "beforeZurelaySourceSha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
-            "zurelayReview": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json"
+            "zurelayReview": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
+            "beforeProductDeltaSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466"
           },
           {
             "path": "backend/src/routes/swarm.ts",
