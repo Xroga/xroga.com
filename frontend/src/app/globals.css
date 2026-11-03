@@ -14815,10 +14815,11 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
 
 .xv-terminal-dock[class*='terminal-skin-'][data-workspace-state='conversation'] {
   background:transparent !important;
-  padding-bottom:max(4px,env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
 }
 .xv-terminal-dock[data-workspace-state='conversation'] .xv-terminal-dock-inner {
   background:transparent !important;
+  padding-bottom:0 !important;
 }
 
 /* A restrained upper-edge cue appears only while an existing response is scrolled.

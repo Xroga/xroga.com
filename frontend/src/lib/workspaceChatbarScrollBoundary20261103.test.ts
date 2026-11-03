@@ -18,6 +18,14 @@ test('conversation content clips before the transparent dock and adds a scroll-o
   assert.doesNotMatch(messageLog, /else if \(loading\)[\s\S]*setShowJumpToLatest\(true\);/);
   assert.match(css, /\.xv-terminal-scroll\[data-conversation='true'\]\s*\{[^}]*clip-path:/s);
   assert.match(css, /data-workspace-state='conversation'\][^}]*background:\s*transparent !important/s);
+  assert.match(
+    css,
+    /data-workspace-state='conversation'\][^}]*padding-bottom:\s*env\(safe-area-inset-bottom\)/s,
+  );
+  assert.match(
+    css,
+    /data-workspace-state='conversation'\]\s+\.xv-terminal-dock-inner\s*\{[^}]*padding-bottom:\s*0 !important/s,
+  );
   assert.match(css, /data-response-scrolled='true'[^}]*box-shadow:/s);
   assert.doesNotMatch(
     css,
