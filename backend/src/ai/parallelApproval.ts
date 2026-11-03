@@ -18,7 +18,7 @@ import {boundedPublicGet,publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {redactSecrets} from '../lib/truthfulExecution.js';
 import {createRequire} from 'node:module';
 
-const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Buffer,options:{max:number})=>Promise<{text:string}>;
+const pdfParse=createRequire(import.meta.url)('pdf-parse/lib/pdf-parse.js') as (data:Uint8Array,options:{max:number})=>Promise<{text:string}>;
 function extractUrls(body:Record<string,unknown>):string[]{
  if(typeof body.objective!=='string'||body.objective.length>4000||!Array.isArray(body.urls)||body.urls.length<1||body.urls.length>4||Object.keys(body).some(k=>!['urls','objective'].includes(k)))throw denied();
  return body.urls.map(url=>{if(typeof url!=='string')throw denied();return publicHttpsUrl(url).href;});
@@ -27,6 +27,9 @@ function extractUrls(body:Record<string,unknown>):string[]{
 type Operation='search'|'extract'|'responses';
 const toolkit='xroga-native-research',useCase='Send exact research request to the external provider';
 const denied=()=>new AuthorityError('PARALLEL_EGRESS_ADMISSION_DENIED');
+function requireRetrievalOnly(operation:string):void{
+  if(operation!=='search'&&operation!=='extract')throw Object.assign(new Error('Generative research uses the canonical Zurelay model path.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+}
 const unsigned=(p:BusinessActionPlan|Omit<BusinessActionPlan,'planDigest'>)=>{const{scopeRequirements:_proof,...rest}=p;const{planDigest:_digest,...value}=rest as BusinessActionPlan;return value;};
 const digest=(value:unknown)=>preparedActionDigest(JSON.parse(JSON.stringify(value)));
 const identity=(scope:TenantModelScope,nonce:string,value:unknown)=>({tenant:scope.context.tenantId,owner:scope.context.userId,provider:'research-plan',account:'parallel',credentialType:'prepared-action',recordId:nonce,revision:digest(value),scope:'research-egress'});
@@ -34,6 +37,7 @@ interface State {scope:TenantModelScope;operation:Operation;body:Record<string,u
 const admitted=new WeakMap<object,State>();
 export interface ParallelAdmission {readonly marker:'native-research'}
 export async function prepareParallelApproval(scope:TenantModelScope,operation:Operation,body:Record<string,unknown>,signal?:AbortSignal){
+ requireRetrievalOnly(operation);
  const context=requireTenantContext(scope.context);requireResourceOwner(context,scope.userId);signal?.throwIfAborted();
  if(classifyOutboundData(body,'USER_PRIVATE').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
  await requireModelProjectBinding(scope);
@@ -54,6 +58,7 @@ export async function executeParallelNativeAction(userId:string,plan:BusinessAct
  const actor=nativeReleaseActor(userId,undefined,plan,permit),{context,scope,binding}=actor;
  if(!scope||!binding||plan.toolkit!==toolkit||plan.useCase!==useCase||plan.risk!=='write'||plan.requiresConfirmation!==true||plan.forceConfirmation!==true||!isDeepStrictEqual(plan.requiredScopes,['xroga:research-egress'])||scope.actionClass!=='SENSITIVE_DATA_EXPORT'||!['parallel:platform','public-web:credential-free'].includes(scope.connectedAccountId)||plan.sessionId!==`trs_native_research_${scope.nonce}`||Date.parse(scope.expiresAt)-Date.parse(scope.issuedAt)>15*60000)throw denied();
  const args=plan.arguments,operation=args.operation as Operation,body=args.body as Record<string,unknown>;
+ requireRetrievalOnly(operation);
  if(!['search','extract','responses'].includes(operation)||plan.toolSlug!=='XROGA_RESEARCH_'+operation.toUpperCase()||!body||typeof body!=='object'||Array.isArray(body)||args.projectId!==scope.projectId||scope.currency!=='USD'||scope.maxSpendMicroUsd!==String(args.maximumMicroUsd)||typeof args.repositoryBound!=='boolean'||!isDeepStrictEqual(Object.keys(args).sort(),['attempt','body','maximumMicroUsd','operation','projectId','repository','repositoryBound']))throw denied();
  if(scope.connectedAccountId!==(operation==='extract'?'public-web:credential-free':'parallel:platform')||operation==='extract'&&args.maximumMicroUsd!==0)throw denied();
  const modelScope:TenantModelScope={context,userId,...(scope.projectId?{projectId:scope.projectId}:{}),...(args.repositoryBound?{repository:args.repository as string|null}:{})};
@@ -82,7 +87,7 @@ export async function executeParallelNativeAction(userId:string,plan:BusinessAct
     await check();let text:string;
     if(page.statusCode===401||page.statusCode===403)throw new AuthorityError('PUBLIC_RESEARCH_ACCESS_DENIED');
     if(page.statusCode<200||page.statusCode>=300)throw Object.assign(new Error('Public research document unavailable.'),{status:page.statusCode});
-    if(/^application\/pdf(?:;|$)/i.test(page.contentType)){try{const parsed=await pdfParse(page.bytes,{max:5});text=parsed.text;}catch{throw new Error('Public PDF extraction unavailable.');}}
+    if(/^application\/pdf(?:;|$)/i.test(page.contentType)){try{const parsed=await pdfParse(Uint8Array.from(page.bytes),{max:5});text=parsed.text;}catch{throw new Error('Public PDF extraction unavailable.');}}
     else if(/^(?:text\/(?:plain|html)|application\/(?:json|xml|xhtml\+xml))(?:;|$)/i.test(page.contentType))text=page.bytes.toString('utf8').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'').replace(/<[^>]+>/g,' ');
     else throw new EgressDenied('UNSAFE_DESTINATION');
     await check();results.push({url:page.finalUrl,title:new URL(page.finalUrl).hostname,excerpts:[redactSecrets(text).trim().slice(0,1200)],trust:'UNTRUSTED_DATA'});

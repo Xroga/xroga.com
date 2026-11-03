@@ -9,7 +9,7 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
+      "currentSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
       "genericSdkPreviousCurrentBinding": {
         "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
         "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
@@ -24,8 +24,8 @@
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "ce9a7215efde02d1062f",
-        "7c670691a53343271d29"
+        "f49091fa17b80f771dc8",
+        "887516500e98c99a1670"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -4257,6 +4257,10 @@
           "ea7c651e80706e5b0594",
           "2d018144911c29a2d98a"
         ]
+      },
+      "beforeZurelayBinding": {
+        "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+        "sha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b"
       }
     },
     {
@@ -4648,5 +4652,9 @@
     "reference": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
     "scope": "CURRENT_SOURCE_CONTINUATION_NOT_LIVE_OR_FACTUAL_ACCEPTANCE",
     "evidence": "docs/xroga/evidence/response-presentation-contract/answer-coverage-20261103.json"
+  },
+  "zurelayReview": {
+    "path": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
+    "scope": "CURRENT_SOURCE_REVIEW_NOT_NEW_LIVE_ACCEPTANCE"
   }
 }

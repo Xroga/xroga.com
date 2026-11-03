@@ -23,7 +23,7 @@ import { RuntimeFailure } from '../universal/runtimeFailure.js';
 function runtimeModel(id: ModelId, overrides: Partial<RuntimeModelCapability> = {}): RuntimeModelCapability {
   return {
     id,
-    provider: 'openrouter',
+    provider: 'zurelay',
     apiModel: id,
     configured: true,
     credentialSource: 'platform',
@@ -46,24 +46,14 @@ function runtimeModel(id: ModelId, overrides: Partial<RuntimeModelCapability> = 
     suitableTaskClasses: [],
     unsuitableTaskClasses: [],
     preferredFallbacks: [],
-    supports: { text: true, images: id === 'glm_5_3_flash', structuredOutput: true, toolCalls: true, streaming: true },
+    supports: { text: true, images: false, structuredOutput: true, toolCalls: true, streaming: true },
     ...overrides,
   };
 }
 
 const REGISTRY: RuntimeModelCapability[] = [
-  runtimeModel('deepseek_v4_flash', { typicalLatency: 'fast', inputUsdPer1M: 0.1, outputUsdPer1M: 0.4 }),
-  runtimeModel('glm_5_3', { provider: 'zhipu', contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
-  runtimeModel('glm_5_3_flash', {
-    provider: 'zhipu',
-    typicalLatency: 'fast',
-    inputUsdPer1M: 0.15,
-    outputUsdPer1M: 0.5,
-    contextWindow: 1_000_000,
-    maximumSafeRequestTokens: 800_000,
-    supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true },
-  }),
-  runtimeModel('kimi_k3', { provider: 'moonshot', typicalLatency: 'slow', inputUsdPer1M: 3, outputUsdPer1M: 15 }),
+  runtimeModel('deepseek_v4_1_flash_1017',{provider:'zurelay',typicalLatency:'fast',inputUsdPer1M:0.03,outputUsdPer1M:0.12}),
+  runtimeModel('claude_sonnet_5_5',{provider:'zurelay',inputUsdPer1M:0.8,outputUsdPer1M:4}),
 ];
 
 /** Records what the gateway asked of the provider, and answers successfully. */
@@ -106,7 +96,7 @@ test('the response never carries a model, provider or fallback list', () => {
   return generateWith(deps(provider.complete), baseRequest()).then((response) => {
     const serialized = JSON.stringify(response).toLowerCase();
     for (const forbidden of [
-      'kimi', 'moonshot', 'glm', 'zhipu', 'deepseek', 'openrouter', 'grok', 'xai',
+      'kimi', 'moonshot', 'glm', 'zhipu', 'deepseek', 'openrouter', 'grok', 'xai', 'zurelay', 'sonnet', 'claude',
       'apimodel', 'selectedmodel', 'fallbackmodels', 'reasoning_content', 'reasoning_details',
     ]) {
       assert.equal(serialized.includes(forbidden), false, `"${forbidden}" leaked into the response`);
@@ -124,7 +114,7 @@ test('model identity reaches the server-side trace instead', async () => {
   await generateWith(deps(provider.complete), baseRequest({ onTrace: (value) => traces.push(value) }));
   assert.equal(traces.length, 1, 'the telemetry sink must receive a trace');
   const [trace] = traces;
-  assert.equal(trace.selectedModel, 'deepseek_v4_flash');
+  assert.equal(trace.selectedModel, 'deepseek_v4_1_flash_1017');
   assert.ok(trace.chain.length > 0);
   assert.ok(trace.usage.costUsd >= 0);
   assert.ok(trace.latencyMs >= 0);
@@ -175,22 +165,11 @@ test('the newest user turn is what gets classified', async () => {
 // §8 — failover walks the chain and stops at its end
 // ---------------------------------------------------------------------------
 
-test('a provider failure moves to the next model in the chain', async () => {
-  const calls: ModelId[] = [];
-  const complete: ProviderComplete = async ({ modelId }) => {
-    calls.push(modelId);
-    if (calls.length === 1) throw new Error('provider 500');
-    return {
-      text: 'recovered', finishReason: 'stop', modelId, apiModel: modelId, provider: 'test',
-      inputTokens: 10, outputTokens: 5, totalTokens: 15,
-    };
-  };
-  const response = await generateWith(deps(complete), baseRequest());
-  assert.equal(calls.length, 2);
-  assert.notEqual(calls[0], calls[1]);
-  assert.equal(response.text, 'recovered');
-  assert.equal(response.intelligence.degraded, true, 'a served-by-fallback reply must say so');
-});
+test('a provider failure cannot substitute Sonnet or replay DeepSeek',async()=>{
+    const calls:ModelId[]=[];
+    await assert.rejects(generateWith(deps(async({modelId})=>{calls.push(modelId);throw Error('provider 500');}),baseRequest()),BlackHoleExhaustedError);
+    assert.deepEqual(calls,['deepseek_v4_1_flash_1017']);
+  });
 
 test('an exhausted chain fails rather than widening authority', async () => {
   // §8's closing rule, at the point it would actually be violated.

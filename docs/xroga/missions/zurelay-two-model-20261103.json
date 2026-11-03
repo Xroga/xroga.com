@@ -1,0 +1,249 @@
+{
+  "version": "1.0",
+  "missionId": "ZURELAY-TWO-MODEL-RESPONSE-20261103",
+  "baseSha": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "requirementIds": [
+    "XR-MISSION-054",
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Replace future LLM execution with two exact Zurelay identities through existing canonical authority and accounting. Preserve historical usage. Extend the existing semantic coverage and Workspace persistence contract. Engineering only, no credential binding or paid/production action.",
+  "changedFiles": [
+    "backend/.env.example",
+    "backend/src/ai/answerCoverage.test.ts",
+    "backend/src/ai/answerCoverage.ts",
+    "backend/src/ai/architect.ts",
+    "backend/src/ai/attachments.test.ts",
+    "backend/src/ai/attachments.ts",
+    "backend/src/ai/benchmarkEvidence.validation.test.ts",
+    "backend/src/ai/benchmarkExecutor.test.ts",
+    "backend/src/ai/benchmarkLedger.test.ts",
+    "backend/src/ai/benchmarkRunner.test.ts",
+    "backend/src/ai/black-hole/costAndCancellation.test.ts",
+    "backend/src/ai/black-hole/gateway.test.ts",
+    "backend/src/ai/black-hole/publicIdentity.ts",
+    "backend/src/ai/black-hole/registry.test.ts",
+    "backend/src/ai/black-hole/registry.ts",
+    "backend/src/ai/black-hole/registryDrift.test.ts",
+    "backend/src/ai/black-hole/repairRouting.test.ts",
+    "backend/src/ai/black-hole/repairRouting.ts",
+    "backend/src/ai/black-hole/router.test.ts",
+    "backend/src/ai/black-hole/router.ts",
+    "backend/src/ai/black-hole/webIntelligence.ts",
+    "backend/src/ai/blackBoxExecution.test.ts",
+    "backend/src/ai/converter.ts",
+    "backend/src/ai/disabledProviderDispatch.test.ts",
+    "backend/src/ai/genericSdkAdmission.test.ts",
+    "backend/src/ai/intelligentRouter.test.ts",
+    "backend/src/ai/intelligentRouter.ts",
+    "backend/src/ai/measuredEvidence.test.ts",
+    "backend/src/ai/modelCapabilityRegistry.ts",
+    "backend/src/ai/modelRedirectFallback.security.test.ts",
+    "backend/src/ai/models.ts",
+    "backend/src/ai/openaiCompat.egress.test.ts",
+    "backend/src/ai/openaiCompat.test.ts",
+    "backend/src/ai/openaiCompat.ts",
+    "backend/src/ai/operationsSdkAdmission.test.ts",
+    "backend/src/ai/parallelApproval.ts",
+    "backend/src/ai/parallelDispatch.ts",
+    "backend/src/ai/parallelWeb.security.test.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/postCompletionAccounting.test.ts",
+    "backend/src/ai/postCompletionAccounting.ts",
+    "backend/src/ai/providerBudget.evidence.test.ts",
+    "backend/src/ai/providerBudget.settlement.test.ts",
+    "backend/src/ai/providerBudget.test.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/ai/providerCostTiers.test.ts",
+    "backend/src/ai/providerCostTiers.ts",
+    "backend/src/ai/providerPolicy.test.ts",
+    "backend/src/ai/providerPolicy.ts",
+    "backend/src/ai/providerRuntime.test.ts",
+    "backend/src/ai/providerRuntime.ts",
+    "backend/src/ai/qa.ts",
+    "backend/src/ai/quota.test.ts",
+    "backend/src/ai/quota.ts",
+    "backend/src/ai/repoSummarize.security.test.ts",
+    "backend/src/ai/repoSummarize.ts",
+    "backend/src/ai/research.ts",
+    "backend/src/ai/researchLive.test.ts",
+    "backend/src/ai/responsePresentation.test.ts",
+    "backend/src/ai/responsePresentation.ts",
+    "backend/src/ai/router.test.ts",
+    "backend/src/ai/router.ts",
+    "backend/src/ai/routerConfig.test.ts",
+    "backend/src/ai/routerConfig.ts",
+    "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
+    "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/ai/tenantModelDispatch.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.test.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "backend/src/ai/zurelayAccounting.test.ts",
+    "backend/src/ai/zurelayEscalation.test.ts",
+    "backend/src/ai/zurelayPolicy.test.ts",
+    "backend/src/ai/zurelayWire.ts",
+    "backend/src/capabilities/modules/xResearch.ts",
+    "backend/src/config/envSecrets.ts",
+    "backend/src/hardening/launchHardening.test.ts",
+    "backend/src/lib/adaptiveEngine.test.ts",
+    "backend/src/lib/adaptiveOrchestrator.ts",
+    "backend/src/lib/capabilityRegistry.ts",
+    "backend/src/lib/gemini.ts",
+    "backend/src/lib/platformReady.ts",
+    "backend/src/routes/browserRuns.ts",
+    "backend/src/routes/guestChat.egress.test.ts",
+    "backend/src/routes/guestChat.ts",
+    "backend/src/security/authority/enforce.ts",
+    "backend/src/security/genericSdk.local.integration.ts",
+    "backend/src/security/softwareAgentSdk.local.integration.ts",
+    "backend/src/services/integrations/userProviderKeys.ts",
+    "backend/src/services/scaffolds/featurePacks.ts",
+    "backend/src/services/scaffolds/nextjsScaffold.ts",
+    "backend/src/services/scaffolds/zurelayScaffold.test.ts",
+    "backend/src/workers/browserModelDispatch.ts",
+    "backend/src/workers/browserModelFixture.test.ts",
+    "backend/src/workers/browserModelGateway.test.ts",
+    "backend/src/workers/browserModelGateway.ts",
+    "backend/src/workers/browserPlanner.test.ts",
+    "backend/src/workers/browserPlanner.ts",
+    "backend/src/workers/browserSdkBoundary.security.test.ts",
+    "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/CURRENT-STATUS.md",
+    "docs/operations/zurelay-two-model-20261103/EXECUTION-PATHS.md",
+    "docs/operations/zurelay-two-model-20261103/OFFLINE-VERIFICATION.json",
+    "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/ledger-preflight.json",
+    "docs/operations/zurelay-two-model-20261103/production-preflight.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/blockers.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/deployment-topology.mmd",
+    "docs/xroga/evidence/command-010/CURRENT-PROOF-METADATA-CONTINUATION-20261028.json",
+    "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+    "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "docs/xroga/missions/zurelay-two-model-20261103.json",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/requirements-ledger.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/credential-usage-audit.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/phase-three-authority-delta.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "scripts/xroga/runtime-facts.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, tenant authorization, vault, budget ledger, microphone and rollback",
+      "Historical provider records and unresolved reservations"
+    ],
+    "extend": [
+      "Existing model SDK admission and semantic coverage envelope"
+    ],
+    "replace": [
+      "Future LLM provider catalog and transport with two exact Zurelay identities"
+    ],
+    "deprecate": [
+      "Future OpenRouter, Moonshot, Zhipu, Grok, Gemini and Parallel generative dispatch"
+    ]
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No schema migration. Existing text column stores the bounded snapshot.",
+    "rollback": "Retain snapshots and the compatible frontend decoder. Restore the reviewed paired release without deleting data."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Authentication issuers and founder MFA controls remain unchanged."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Existing server-issued actor, owner, project, credential-revision and worker-generation checks remain enforced."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Exceptional Sonnet calls require exact canonical task spend authority. No prompt or global balance grants execution."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "The source recognizes the existing protected Zurelay namespace. No key value access, transfer or IAM change was performed."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Fixed Zurelay endpoint, exact model identity, fallback-off header and no redirect or model-substitution replay. Retired generative transports deny before dispatch."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Only default DeepSeek is selected automatically. Sonnet is separately bounded. No paid probes authorized or performed."
+    },
+    "billing": {
+      "changed": true,
+      "description": "New catalog-price cache/reasoning calculations and exact receipts. Historical prices and unresolved reservations remain unchanged."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/ai/zurelayPolicy.test.ts backend/src/ai/zurelayEscalation.test.ts backend/src/ai/zurelayAccounting.test.ts",
+      "scope": "Offline exact provider/model boundaries, existing task authority and usage arithmetic",
+      "negative": true,
+      "reference": "backend/src/ai/zurelayPolicy.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/tenantModelDispatch.test.ts",
+      "scope": "Canonical actor/credential/run checks through actual SDK and response coverage contract with synthetic HTTP",
+      "negative": true,
+      "reference": "backend/src/ai/tenantModelDispatch.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing Share storage and model request are extended. No scheduler, API or persistence system is added.",
+    "rfc": null
+  },
+  "rollout": "After all exact-source gates, request specific secure key/config and bounded provider-test approval, then reviewed paired API/Job fence and frontend promotion. No action in production from this checkpoint.",
+  "rollback": "Preserve the current cd5541 API/Job and d86c frontend plus voice routing and ledger. The old image is not a verified Zurelay recovery. During a new-policy rollback keep model admission and queues closed until a compatible reviewed Zurelay pair is available. Never silently reactivate old providers.",
+  "knownGaps": [
+    "Exact-source clean-install CI and authenticated isolated security acceptance remain open.",
+    "Sonnet user-facing task approval/continuation and actual provider compatibility are unverified and safely gated.",
+    "Credential binding, bounded provider probes and source-pinned production cutover require separate specific authorization.",
+    "Zurelay-compatible recovery must be verified before reopening model admission."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/zurelay-two-model-20261103/CURRENT-STATUS.md",
+    "docs/operations/zurelay-two-model-20261103/production-preflight.json",
+    "docs/operations/zurelay-two-model-20261103/ledger-preflight.json",
+    "docs/operations/zurelay-two-model-20261103/OFFLINE-VERIFICATION.json",
+    "docs/operations/zurelay-two-model-20261103/EXECUTION-PATHS.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source clean-install CI and authenticated isolated security acceptance remain open.",
+      "Sonnet user-facing task approval/continuation and actual provider compatibility are unverified and safely gated.",
+      "Credential binding, bounded provider probes and source-pinned production cutover require separate specific authorization.",
+      "Zurelay-compatible recovery must be verified before reopening model admission."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

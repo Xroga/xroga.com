@@ -1,14 +1,6 @@
-/**
- * Failure-specific repair routing.
- *
- * Mechanical repair    -> DeepSeek Flash
- * Normal repair        -> GLM-5.3 Flash
- * Structural/security  -> GLM-5.3
- * Rare escalation      -> Kimi K3
- * Visual repair        -> GLM-5.3 Flash vision
- *
- * Grok never receives repair/write authority.
- */
+/** Failure-specific scope selection. All default repairs use DeepSeek.
+ * Exceptional Sonnet spending is admitted separately through canonical authority.
+ * Image analysis remains unavailable until exact endpoint verification. */
 
 import type {
   BlackHoleTaskClass,
@@ -61,8 +53,7 @@ const ROUTES: Record<
 > = {
   type_error: {
     preferredModels: [
-      'deepseek_v4_flash',
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -80,9 +71,7 @@ const ROUTES: Record<
 
   compile_error: {
     preferredModels: [
-      'glm_5_3_flash',
-      'deepseek_v4_flash',
-      'glm_5_3',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -100,8 +89,7 @@ const ROUTES: Record<
 
   lint_error: {
     preferredModels: [
-      'deepseek_v4_flash',
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -119,8 +107,7 @@ const ROUTES: Record<
 
   test_failure: {
     preferredModels: [
-      'glm_5_3_flash',
-      'glm_5_3',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -138,8 +125,7 @@ const ROUTES: Record<
 
   runtime_error: {
     preferredModels: [
-      'glm_5_3_flash',
-      'glm_5_3',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -157,9 +143,7 @@ const ROUTES: Record<
 
   dependency_error: {
     preferredModels: [
-      'glm_5_3',
-      'glm_5_3_flash',
-      'kimi_k3',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -177,9 +161,7 @@ const ROUTES: Record<
 
   structural_failure: {
     preferredModels: [
-      'glm_5_3',
-      'kimi_k3',
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -197,7 +179,7 @@ const ROUTES: Record<
 
   visual_mismatch: {
     preferredModels: [
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -215,9 +197,7 @@ const ROUTES: Record<
 
   security_finding: {
     preferredModels: [
-      'glm_5_3',
-      'kimi_k3',
-      'glm_5_3_flash',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:
@@ -235,8 +215,7 @@ const ROUTES: Record<
 
   deployment_failure: {
     preferredModels: [
-      'glm_5_3_flash',
-      'glm_5_3',
+      'deepseek_v4_1_flash_1017',
     ],
 
     scope:

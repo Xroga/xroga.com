@@ -136,9 +136,15 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
     });
     for(const operation of ['search','extract','low','medium']){
       events.length=0;mode='ok';ownerNow=owner;
+      if(operation==='low'||operation==='medium'){
+        const before=effects,held=reservations.size;
+        await assert.rejects(parallelResponses({userId:owner,dispatchScope:scope,question:'public docs',effort:operation}),{code:'MODEL_DESTINATION_DENIED'});
+        assert.equal(effects,before);assert.equal(reservations.size,held);assert.deepEqual(events,[]);
+        continue;
+      }
       const result=operation==='search'?await search():operation==='extract'?await complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs','https://example.com/faq']})):await complete(parallelResponses({userId:owner,dispatchScope:scope,question:'public docs',effort:operation as 'low'|'medium'}));
       assert.ok(result.requestId);if(operation==='extract'){assert.deepEqual(events,['egress']);assert.equal(publicOpens,2);continue;}assert.deepEqual(events,['egress','reserve','provider','settle']);
-      const row=[...reservations.values()].at(-1)!;assert.equal(row.reserved_micro_usd,operation==='search'?1000:operation==='low'?10000:50000);
+      const row=[...reservations.values()].at(-1)!;assert.equal(row.reserved_micro_usd,1000);
     }
     await t.test('native URL retrieval denies private DNS, redirects and cancellation after DNS without delegated fetch',async()=>{
       for(const denied of ['privateDns','publicRedirect','cancelAtDns']){mode=denied;const prior=effects,opened=publicOpens;await assert.rejects(complete(parallelExtract({userId:owner,dispatchScope:scope,objective:'read public docs',urls:['https://example.com/docs']})));assert.equal(effects,prior);assert.equal(publicOpens,opened+(denied==='publicRedirect'?1:0));}mode='ok';

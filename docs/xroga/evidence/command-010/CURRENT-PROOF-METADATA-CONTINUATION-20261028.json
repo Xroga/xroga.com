@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "dad9ad08df81ec37a213b7d236cc20290fa294595129e8956f44ed39afb93132",
+      "currentSha256": "e69d1dfd9f25701b4cfd7e8963f3bac7b234e1b0461af4b4b23def4171e7c2e4",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
@@ -27,20 +27,22 @@
       "beforeDisabledProviderGuardSha256": "fe9313fa2d98e068fd5d842edc3eaf36f22c766cc863e680f18450d4d62f0f4c",
       "beforeDeepSeekResearchSha256": "667e94fe30448d1e04efaa83a967e778c2ea161a049d9c9db07914fa87f2ced2",
       "beforePresentationContractSha256": "b06023602c06579d5422165204668016ab187101111fc26b185a6b15609ccf49",
-      "beforeAnswerCoverageSha256": "9101cef68aca0bd188779384d84d3c1a1116e8b9b1197f7db3760676b6648c73"
+      "beforeAnswerCoverageSha256": "9101cef68aca0bd188779384d84d3c1a1116e8b9b1197f7db3760676b6648c73",
+      "beforeZurelaySha256": "dad9ad08df81ec37a213b7d236cc20290fa294595129e8956f44ed39afb93132"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/SOURCE-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "e34b675dfe7fc24eba51e8c5e06a02ac15495f126c0a58c432207f0592bc0b48",
-      "currentSha256": "939b91557476943b0d7a5d59d6faf4b53b305ca7cc4c9a28caa9b5d6fa844011",
-      "beforePreviewAdmissionDeadlineSha256": "33634a689a7fbc5bce2a9965c6db6e6e91231ef4c0cedfce5ab245da7f2f525c"
+      "currentSha256": "fd860f9148c98ac92c1586f1712690a14045e9936dfb54ae8a804502d08e0e75",
+      "beforePreviewAdmissionDeadlineSha256": "33634a689a7fbc5bce2a9965c6db6e6e91231ef4c0cedfce5ab245da7f2f525c",
+      "beforeZurelaySha256": "939b91557476943b0d7a5d59d6faf4b53b305ca7cc4c9a28caa9b5d6fa844011"
     },
     {
       "path": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/MODEL-DISPATCH-PROOF-87e33b94.json",
       "historicalSha256": "7b04f1a944b9258329978770b9e273804653d5c7464a4ccfb2ac6c2e6f6849e1",
-      "currentSha256": "3869906275e2f23f4ee90974f73dc7eeff3103ac12fe13505595acc5ce269a6e",
+      "currentSha256": "5e29abb17440d8ab52e6305d473774f1608611bfd92b299a4e287b5f86624d8b",
       "beforeNativePublicationSha256": "f2467eb712a137ff897be9157c16cf8e17311597f712a83aa0280ca8aed27eac",
       "nativePublicationContinuation": "docs/xroga/evidence/command-010/NATIVE-ARTIFACT-AUTHORITY-20261028.json",
       "beforeCwsApprovalSha256": "ca3969dcc33e1c8d40133d088ec652598cdc1b983b97349349184e9017bea73b",
@@ -56,7 +58,8 @@
       "beforeAnswerReviewSha256": "48ce5ad1c0b220e53505da453c09e60b98b7fbebf37c5143cead40e10bbec07c",
       "beforeDeepSeekResearchSha256": "c793d98533402c88703721582b66bfda7a73fad164a45e638a7d4e54fe834a0d",
       "beforePresentationContractSha256": "a1ad44f69540b5b26d2b588fff43a16ae11f7e3068ce50f3c071d77eb8dd7f37",
-      "beforeAnswerCoverageSha256": "f8d0e51291ba5a511a4c88bd8e2e00e256194d8258ba40e840c6f0863354d8ae"
+      "beforeAnswerCoverageSha256": "f8d0e51291ba5a511a4c88bd8e2e00e256194d8258ba40e840c6f0863354d8ae",
+      "beforeZurelaySha256": "3869906275e2f23f4ee90974f73dc7eeff3103ac12fe13505595acc5ce269a6e"
     }
   ],
   "exactPersistenceRemaps": [

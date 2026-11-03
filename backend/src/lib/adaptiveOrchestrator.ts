@@ -97,25 +97,9 @@ const MODEL_FALLBACKS: Record<
   ModelId,
   ModelId[]
 > = {
-  kimi_k3: [
-    'glm_5_3',
-    'glm_5_3_flash',
-  ],
-
-  glm_5_3: [
-    'glm_5_3_flash',
-    'kimi_k3',
-  ],
-
-  glm_5_3_flash: [
-    'glm_5_3',
-    'kimi_k3',
-  ],
-
-  deepseek_v4_flash: [
-    'glm_5_3_flash',
-    'glm_5_3',
-  ],
+  deepseek_v4_1_flash_1017: [],
+  claude_sonnet_5_5: [],
+  kimi_k3: [], glm_5_3: [], glm_5_3_flash: [], deepseek_v4_flash: [],
 };
 
 function configuredFor(

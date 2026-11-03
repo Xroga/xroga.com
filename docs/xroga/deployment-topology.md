@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `4c6319e2fc319ad0384ff3e77c07bc473a3652b2`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -16,6 +16,10 @@ Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`; exact current source/con
 | browserbase | Browserbase | LEGACY | www.browserbase.com | NOT_INDEPENDENTLY_VERIFIED |
 | google-delivery | Google Cloud Tasks and Cloud Run Jobs | ACTIVE | cloudtasks.googleapis.com, run.googleapis.com | Observed evidence explicitly scoped below; not full journey certification |
 | cloudflare-workers-proposal | Cloudflare Workers | PROPOSED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
+| zurelay-models | Zurelay | CONFIGURED_BUT_UNVERIFIED | api.zurelay.com | NOT_INDEPENDENTLY_VERIFIED |
+| historical-openrouter | OpenRouter | LEGACY | openrouter.ai | NOT_INDEPENDENTLY_VERIFIED |
+| historical-moonshot | Moonshot | LEGACY | api.moonshot.ai | NOT_INDEPENDENTLY_VERIFIED |
+| historical-zhipu | Zhipu | LEGACY | open.bigmodel.cn | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-127-0-0-1 | Source-defined endpoint 127.0.0.1 | LOCAL_ONLY | 127.0.0.1 | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-about-meta-com | Source-defined endpoint about.meta.com | CONFIGURED_BUT_UNVERIFIED | about.meta.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-accounts-google-com | Source-defined endpoint accounts.google.com | CONFIGURED_BUT_UNVERIFIED | accounts.google.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -39,7 +43,6 @@ Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`; exact current source/con
 | endpoint-api-lumalabs-ai | Source-defined endpoint api.lumalabs.ai | CONFIGURED_BUT_UNVERIFIED | api.lumalabs.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-machines-dev | Source-defined endpoint api.machines.dev | CONFIGURED_BUT_UNVERIFIED | api.machines.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-minimax-io | Source-defined endpoint api.minimax.io | CONFIGURED_BUT_UNVERIFIED | api.minimax.io | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-moonshot-ai | Source-defined endpoint api.moonshot.ai | CONFIGURED_BUT_UNVERIFIED | api.moonshot.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-netlify-com | Source-defined endpoint api.netlify.com | CONFIGURED_BUT_UNVERIFIED | api.netlify.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-openai-com | Source-defined endpoint api.openai.com | CONFIGURED_BUT_UNVERIFIED | api.openai.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-parallel-ai | Source-defined endpoint api.parallel.ai | CONFIGURED_BUT_UNVERIFIED | api.parallel.ai | NOT_INDEPENDENTLY_VERIFIED |
@@ -48,7 +51,6 @@ Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`; exact current source/con
 | endpoint-api-supabase-com | Source-defined endpoint api.supabase.com | CONFIGURED_BUT_UNVERIFIED | api.supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-vercel-com | Source-defined endpoint api.vercel.com | CONFIGURED_BUT_UNVERIFIED | api.vercel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-whop-com | Source-defined endpoint api.whop.com | CONFIGURED_BUT_UNVERIFIED | api.whop.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-x-ai | Source-defined endpoint api.x.ai | CONFIGURED_BUT_UNVERIFIED | api.x.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-appstoreconnect-apple-com | Source-defined endpoint appstoreconnect.apple.com | CONFIGURED_BUT_UNVERIFIED | appstoreconnect.apple.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-aptos-dev | Source-defined endpoint aptos.dev | CONFIGURED_BUT_UNVERIFIED | aptos.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-asana-com | Source-defined endpoint asana.com | CONFIGURED_BUT_UNVERIFIED | asana.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -102,7 +104,6 @@ Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`; exact current source/con
 | endpoint-fonts-gstatic-com | Source-defined endpoint fonts.gstatic.com | CONFIGURED_BUT_UNVERIFIED | fonts.gstatic.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-freetheai-xyz | Source-defined endpoint freetheai.xyz | CONFIGURED_BUT_UNVERIFIED | freetheai.xyz | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-gemini-google-com | Source-defined endpoint gemini.google.com | CONFIGURED_BUT_UNVERIFIED | gemini.google.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-generativelanguage-googleapis-com | Source-defined endpoint generativelanguage.googleapis.com | CONFIGURED_BUT_UNVERIFIED | generativelanguage.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-getfoundry-sh | Source-defined endpoint getfoundry.sh | CONFIGURED_BUT_UNVERIFIED | getfoundry.sh | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-github-com | Source-defined endpoint github.com | CONFIGURED_BUT_UNVERIFIED | github.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-hardhat-org | Source-defined endpoint hardhat.org | CONFIGURED_BUT_UNVERIFIED | hardhat.org | NOT_INDEPENDENTLY_VERIFIED |
@@ -124,8 +125,6 @@ Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`; exact current source/con
 | endpoint-neon-com | Source-defined endpoint neon.com | CONFIGURED_BUT_UNVERIFIED | neon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-nextjs-org | Source-defined endpoint nextjs.org | CONFIGURED_BUT_UNVERIFIED | nextjs.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-oauth2-googleapis-com | Source-defined endpoint oauth2.googleapis.com | CONFIGURED_BUT_UNVERIFIED | oauth2.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-open-bigmodel-cn | Source-defined endpoint open.bigmodel.cn | CONFIGURED_BUT_UNVERIFIED | open.bigmodel.cn | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-openrouter-ai | Source-defined endpoint openrouter.ai | CONFIGURED_BUT_UNVERIFIED | openrouter.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-packaging-python-org | Source-defined endpoint packaging.python.org | CONFIGURED_BUT_UNVERIFIED | packaging.python.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-play-google-com | Source-defined endpoint play.google.com | CONFIGURED_BUT_UNVERIFIED | play.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-pollinations-ai | Source-defined endpoint pollinations.ai | CONFIGURED_BUT_UNVERIFIED | pollinations.ai | NOT_INDEPENDENTLY_VERIFIED |

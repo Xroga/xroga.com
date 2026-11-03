@@ -17,7 +17,6 @@ import {isTerminalModelFailure} from '../providerRuntime.js';
 
 import {
   parallelExtract,
-  parallelResponses,
   parallelSearch,
   type ParallelSource,
 } from '../parallelWeb.js';
@@ -356,7 +355,7 @@ ${redactSecrets(
         payload:{messages},
 
         modelId:
-          'deepseek_v4_flash',
+          'deepseek_v4_1_flash_1017',
 
         estimatedInputTokens:
           estimateMessageTokens(
@@ -369,7 +368,7 @@ ${redactSecrets(
 
         execute: dispatch =>
           chatCompletion(
-            'deepseek_v4_flash',
+            'deepseek_v4_1_flash_1017',
             dispatch.payload.messages as ChatMessage[],
             {
               maxTokens: 500,
@@ -589,26 +588,14 @@ export async function runWebIntelligence(
     provider = 'parallel';
 
     const result =
-      await parallelResponses({
-        userId: input.userId,
-        dispatchScope: input.dispatchScope,
-
-        question:
-          decision.objective ||
-          input.prompt,
-
-        effort:
-          decision.action ===
-          'deep_research'
-            ? 'medium'
-            : 'low',
-
-        signal: input.signal,
+      await parallelSearch({
+        userId:input.userId,dispatchScope:input.dispatchScope,objective:decision.objective || input.prompt,
+        queries:decision.queries.length ? decision.queries : [redactSecrets(input.prompt).slice(0,500)],signal:input.signal,
       });
 
     if(result.needsConfirmation)return pendingResearch(decision,result.reviewUrl!);
 
-    answer = result.answer;
+    // Synthesis is performed by the existing canonical DeepSeek answer call.
 
     rawResults =
       toRawResults(
@@ -629,7 +616,7 @@ export async function runWebIntelligence(
         signal: input.signal,
       });
 
-    answer = result.answer;
+    // Synthesis is performed by the existing canonical DeepSeek answer call.
 
     rawResults =
       toRawResults(

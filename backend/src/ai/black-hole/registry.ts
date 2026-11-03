@@ -45,7 +45,7 @@ import type { ModelAvailability } from '../providerCostTiers.js';
 import { MODELS, resolveModelSpec, type ModelId } from '../models.js';
 
 /** The real transports Black Hole ∞ speaks. Named per provider, never per model family. */
-export type BlackHoleProvider = 'moonshot' | 'glm_official' | 'openrouter' | 'xai';
+export type BlackHoleProvider = 'zurelay' | 'moonshot' | 'glm_official' | 'openrouter' | 'xai';
 
 /**
  * What a model is technically able to do.
@@ -165,111 +165,10 @@ const codingCapabilities = (
  * purpose of a canonical registry.
  */
 export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
-  {
-    id: 'kimi_k3',
-    provider: 'moonshot',
-    providerModel: 'kimi-k3',
-    providerModelEnv: 'KIMI_MODEL_ID',
-    credentialEnv: 'KIMI_API_KEY',
-    capabilities: codingCapabilities({ deepReasoning: true, longContext: true, vision: true }),
-    authority: ENGINEERING_AUTHORITY,
-    contextWindow: 1_000_000,
-    costClass: 'premium',
-    preferredRoles: ['flagship_reasoning', 'architecture', 'vision', 'long_context', 'escalation'],
-    prohibitedRoles: [],
-  },
-  {
-  id: 'glm_5_3',
-  provider: 'glm_official',
-
-  providerModel:
-    'glm-5.3',
-
-  providerModelEnv:
-    'GLM_5_3_MODEL_ID',
-
-  credentialEnv:
-    'GLM_API_KEY',
-
-  capabilities:
-    codingCapabilities({
-      deepReasoning: true,
-      longContext: true,
-    }),
-
-  authority:
-    ENGINEERING_AUTHORITY,
-
-  contextWindow:
-    1_000_000,
-
-  costClass:
-    'high',
-
-  preferredRoles: [
-    'serious_engineering',
-    'long_horizon_engineering',
-    'repository_understanding',
-    'architecture',
-    'debugging',
-    'migration',
-  ],
-
-  prohibitedRoles: [],
-},
-
-{
-  id: 'glm_5_3_flash',
-  provider: 'glm_official',
-
-  providerModel:
-    'glm-5.3-flash',
-
-  providerModelEnv:
-    'GLM_5_3_FLASH_MODEL_ID',
-
-  credentialEnv:
-    'GLM_API_KEY',
-
-  capabilities:
-    codingCapabilities({
-      longContext: true,
-      vision: true,
-    }),
-
-  authority:
-    ENGINEERING_AUTHORITY,
-
-  contextWindow:
-    1_000_000,
-
-  costClass:
-    'low',
-
-  preferredRoles: [
-    'coding',
-    'normal_implementation',
-    'document_analysis',
-    'vision',
-    'synthesis',
-    'debugging',
-  ],
-
-  prohibitedRoles: [],
-},
-  {
-    id: 'deepseek_v4_flash',
-    provider: 'openrouter',
-    providerModel: 'deepseek/deepseek-v4-flash',
-    providerModelEnv: 'DEEPSEEK_FLASH_MODEL_ID',
-    credentialEnv: 'OPENROUTER_API_KEY',
-    capabilities: codingCapabilities(),
-    authority: ENGINEERING_AUTHORITY,
-    contextWindow: 128_000,
-    costClass: 'ultra_low',
-    preferredRoles: ['chat', 'summarisation', 'extraction', 'classification', 'light_reasoning'],
-    prohibitedRoles: [],
-  },
+  { id:'deepseek_v4_1_flash_1017',provider:'zurelay',providerModel:'deepseek-v4.1-flash-1017',providerModelEnv:null,credentialEnv:'ZURELAY_API_KEY',
+    capabilities:codingCapabilities({longContext:true}),authority:ENGINEERING_AUTHORITY,contextWindow:1_000_000,costClass:'low',preferredRoles:['chat','coding','synthesis','planning'],prohibitedRoles:[] },
+  { id:'claude_sonnet_5_5',provider:'zurelay',providerModel:'claude-sonnet-5-5',providerModelEnv:null,credentialEnv:'ZURELAY_API_KEY',
+    capabilities:codingCapabilities({longContext:true}),authority:ENGINEERING_AUTHORITY,contextWindow:1_000_000,costClass:'premium',preferredRoles:['authorized_complex_engineering'],prohibitedRoles:['ordinary_chat','formatting','automatic_fallback'] },
 ];
 
 const BY_ID = new Map(BLACK_HOLE_MODELS.map((model) => [model.id, model]));

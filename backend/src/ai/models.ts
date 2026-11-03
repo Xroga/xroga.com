@@ -1,21 +1,23 @@
-/**
- * Xroga multi-model stack — monthly per-user budgets and routing roles.
- *
- * Fly.io secrets:
- *   OPENROUTER_API_KEY  → DeepSeek V4 Flash ONLY
- *   KIMI_API_KEY        → Kimi K3 (Moonshot official)
- *   GLM_API_KEY         → GLM-5.3 / GLM-5.3 Flash (Zhipu / BigModel official)
- *
- * DEEPSEEK_API_KEY is unused — DeepSeek runs only via OpenRouter.
- */
-
+/** Two executable Zurelay models plus immutable historical accounting records.
+ * New model IDs and price versions never relabel past usage. */
 export type ModelId =
+  | ActiveModelId
   | 'kimi_k3'
   | 'glm_5_3'
   | 'glm_5_3_flash'
   | 'deepseek_v4_flash';
 
-export type ProviderKind = 'openrouter' | 'moonshot' | 'zhipu';
+export type ActiveModelId = 'deepseek_v4_1_flash_1017' | 'claude_sonnet_5_5';
+export const ACTIVE_MODEL_IDS: readonly ActiveModelId[] = Object.freeze(['deepseek_v4_1_flash_1017', 'claude_sonnet_5_5']);
+export const DEFAULT_MODEL_ID: ActiveModelId = 'deepseek_v4_1_flash_1017';
+export const ZURELAY_BASE_URL = 'https://api.zurelay.com/v1';
+export type ProviderKind = 'zurelay' | 'openrouter' | 'moonshot' | 'zhipu';
+export function isActiveModelId(id: unknown): id is ActiveModelId {
+  return ACTIVE_MODEL_IDS.includes(id as ActiveModelId);
+}
+export function assertActiveModelId(id: unknown): asserts id is ActiveModelId {
+  if (!isActiveModelId(id)) throw Object.assign(new Error('This historical or unknown model cannot execute.'), { code: 'MODEL_DESTINATION_DENIED', status: 400 });
+}
 
 /**
  * The canonical description of one model.
@@ -41,7 +43,7 @@ export interface ModelDef {
   modelIdEnv: string;
   provider: ProviderKind;
   baseUrl: string;
-  secretKey: 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
+  secretKey: 'ZURELAY_API_KEY' | 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
   /** Monthly USD budget allocation */
   budgetUsd: number;
   /** Monthly token pool (input + output combined target) */
@@ -80,6 +82,25 @@ export const MONTHLY_USER_PRICE_USD = 25;
 export const MONTHLY_TOTAL_TOKENS = 6_172_222;
 
 export const MODELS: Record<ModelId, ModelDef> = {
+  deepseek_v4_1_flash_1017: {
+    id: 'deepseek_v4_1_flash_1017', modelIdEnv: 'ZURELAY_DEEPSEEK_MODEL_ID',
+    label: 'Xroga Intelligence', role: 'Default conversation, research synthesis and engineering',
+    apiModel: 'deepseek-v4.1-flash-1017', provider: 'zurelay', baseUrl: ZURELAY_BASE_URL, secretKey: 'ZURELAY_API_KEY',
+    budgetUsd: 16.5, monthlyTokens: 6_172_222, inputTokens: 3_086_111, outputTokens: 3_086_111,
+    inputUsdPer1M: 0.03, outputUsdPer1M: 0.12, contextWindow: 1_000_000,
+    modalities: { text: true, images: false }, imagesEnv: 'ZURELAY_DEEPSEEK_VISION_VERIFIED', tagline: 'Everyday intelligence',
+  },
+  claude_sonnet_5_5: {
+    id: 'claude_sonnet_5_5', modelIdEnv: 'ZURELAY_SONNET_MODEL_ID',
+    label: 'Xroga Engineering', role: 'Explicitly authorized complex engineering only',
+    apiModel: 'claude-sonnet-5-5', provider: 'zurelay', baseUrl: ZURELAY_BASE_URL, secretKey: 'ZURELAY_API_KEY',
+    // A task authorization is mandatory. This is not a second monthly entitlement.
+    budgetUsd: 0, monthlyTokens: 0, inputTokens: 0, outputTokens: 0,
+    // Published model-page rate, verified 2026-11-03. Discounts are not assumed.
+    inputUsdPer1M: 0.80, outputUsdPer1M: 4, contextWindow: 1_000_000,
+    modalities: { text: true, images: false }, imagesEnv: 'ZURELAY_SONNET_VISION_VERIFIED', tagline: 'Bounded complex engineering',
+  },
+  // Immutable historical identities and prices. Never dispatch these records.
   kimi_k3: {
     id: 'kimi_k3',
     modelIdEnv: 'KIMI_MODEL_ID',
@@ -187,7 +208,7 @@ export const MODELS: Record<ModelId, ModelDef> = {
   },
 };
 
-export const MODEL_LIST = Object.values(MODELS);
+export const MODEL_LIST = ACTIVE_MODEL_IDS.map(id => MODELS[id]);
 
 /** Real provider cost for a single call from token counts. */
 export function costUsdForTokens(
@@ -234,6 +255,8 @@ export function scaleFactorForBudget(apiBudgetUsd: number): number {
  * rather than each re-deriving the mapping and drifting from this one.
  */
 export const POOL_PUBLIC_ID_BY_ROLE: Record<string, string> = {
+  deepseek_v4_1_flash_1017:'everyday_intelligence',
+  claude_sonnet_5_5:'complex_engineering',
   kimi_k3: 'flagship',
   glm_5_2: 'long_context',
   deepseek_v4: 'high_volume',
@@ -305,6 +328,9 @@ export function modelConfigurationIssues(
   const def = MODELS[id];
   const keys = operatorConfigKeys(def);
   const issues: ModelConfigurationIssue[] = [];
+  if (isActiveModelId(id) && env[keys.modelId]?.trim() && env[keys.modelId]?.trim() !== def.apiModel) {
+    issues.push('missing_provider_identifier');
+  }
   if (!(env[keys.modelId]?.trim() || def.apiModel)) issues.push('missing_provider_identifier');
   const input = def.inputUsdPer1M ?? positiveNumber(env[keys.inputPrice]);
   const output = def.outputUsdPer1M ?? positiveNumber(env[keys.outputPrice]);
@@ -377,55 +403,16 @@ export function requirePricing(
 
 /** Models that are fully specified and therefore callable right now. */
 export function callableModelIds(env: NodeJS.ProcessEnv = process.env): ModelId[] {
-  return (Object.keys(MODELS) as ModelId[]).filter((id) => resolveModelSpec(id, env) !== null);
+  return ACTIVE_MODEL_IDS.filter((id) => resolveModelSpec(id, env) !== null);
 }
 
 export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_USD) {
   const scale = scaleFactorForBudget(apiBudgetUsd);
   return [
-    {
-      role: 'kimi_k3',
-      publicId: 'flagship',
-      label: 'Flagship Reasoning',
-      tagline: 'Deep reasoning, architecture and difficult builds',
-      totalLimit: Math.round(MODELS.kimi_k3.monthlyTokens * scale),
-      budgetUsd: Math.round(MODELS.kimi_k3.budgetUsd * scale * 100) / 100,
-    },
-    {
-  // Keep the historical internal pool role so existing usage
-  // records remain compatible across the migration.
-  role: 'glm_5_2',
-  publicId: 'long_context',
-  label: 'Engineering Intelligence',
-  tagline: 'Everyday development through long-horizon engineering',
-
-  totalLimit: Math.round(
-    (
-      MODELS.glm_5_3.monthlyTokens +
-      MODELS.glm_5_3_flash.monthlyTokens
-    ) * scale,
-  ),
-
-  budgetUsd:
-    Math.round(
-      (
-        MODELS.glm_5_3.budgetUsd +
-        MODELS.glm_5_3_flash.budgetUsd
-      ) *
-        scale *
-        100,
-    ) / 100,
-},
-    {
-      role: 'deepseek_v4',
-      publicId: 'high_volume',
-      label: 'High-Volume Execution',
-      tagline: 'Fast iteration and everyday builds',
-      totalLimit: Math.round(MODELS.deepseek_v4_flash.monthlyTokens * scale),
-      budgetUsd:
-        Math.round(
-          MODELS.deepseek_v4_flash.budgetUsd * scale * 100,
-        ) / 100,
-    },
+    ...ACTIVE_MODEL_IDS.map(id => ({ role:id,publicId:id === DEFAULT_MODEL_ID ? 'everyday_intelligence' : 'complex_engineering',
+      label:id === DEFAULT_MODEL_ID ? 'Everyday Intelligence' : 'Authorized Complex Engineering',tagline:MODELS[id].tagline,
+      totalLimit:Math.round(MODELS[id].monthlyTokens * scale),budgetUsd:MODELS[id].budgetUsd * scale })),
+    ...[{role:'kimi_k3',publicId:'flagship'}, {role:'glm_5_2',publicId:'long_context'}, {role:'deepseek_v4',publicId:'high_volume'}]
+      .map(pool=>({...pool,label:pool.role==='kimi_k3'?'Historical flagship usage':pool.role==='glm_5_2'?'Historical long-context usage':'Historical high-volume usage',tagline:'Retained accounting only',totalLimit:0,budgetUsd:0})),
   ];
 }

@@ -12,6 +12,10 @@ flowchart LR
   browserbase["Browserbase - LEGACY"]
   google_delivery["Google Cloud Tasks and Cloud Run Jobs - ACTIVE"]
   cloudflare_workers_proposal["Cloudflare Workers - PROPOSED"]
+  zurelay_models["Zurelay - CONFIGURED_BUT_UNVERIFIED"]
+  historical_openrouter["OpenRouter - LEGACY"]
+  historical_moonshot["Moonshot - LEGACY"]
+  historical_zhipu["Zhipu - LEGACY"]
   endpoint_127_0_0_1["Source-defined endpoint 127.0.0.1 - LOCAL_ONLY"]
   endpoint_about_meta_com["Source-defined endpoint about.meta.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_accounts_google_com["Source-defined endpoint accounts.google.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -35,7 +39,6 @@ flowchart LR
   endpoint_api_lumalabs_ai["Source-defined endpoint api.lumalabs.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_machines_dev["Source-defined endpoint api.machines.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_minimax_io["Source-defined endpoint api.minimax.io - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_api_moonshot_ai["Source-defined endpoint api.moonshot.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_netlify_com["Source-defined endpoint api.netlify.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_openai_com["Source-defined endpoint api.openai.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_parallel_ai["Source-defined endpoint api.parallel.ai - CONFIGURED_BUT_UNVERIFIED"]
@@ -44,7 +47,6 @@ flowchart LR
   endpoint_api_supabase_com["Source-defined endpoint api.supabase.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_vercel_com["Source-defined endpoint api.vercel.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_whop_com["Source-defined endpoint api.whop.com - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_api_x_ai["Source-defined endpoint api.x.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_appstoreconnect_apple_com["Source-defined endpoint appstoreconnect.apple.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_aptos_dev["Source-defined endpoint aptos.dev - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_asana_com["Source-defined endpoint asana.com - CONFIGURED_BUT_UNVERIFIED"]
@@ -98,7 +100,6 @@ flowchart LR
   endpoint_fonts_gstatic_com["Source-defined endpoint fonts.gstatic.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_freetheai_xyz["Source-defined endpoint freetheai.xyz - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_gemini_google_com["Source-defined endpoint gemini.google.com - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_generativelanguage_googleapis_com["Source-defined endpoint generativelanguage.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_getfoundry_sh["Source-defined endpoint getfoundry.sh - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_github_com["Source-defined endpoint github.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_hardhat_org["Source-defined endpoint hardhat.org - CONFIGURED_BUT_UNVERIFIED"]
@@ -120,8 +121,6 @@ flowchart LR
   endpoint_neon_com["Source-defined endpoint neon.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_nextjs_org["Source-defined endpoint nextjs.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_oauth2_googleapis_com["Source-defined endpoint oauth2.googleapis.com - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_open_bigmodel_cn["Source-defined endpoint open.bigmodel.cn - CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_openrouter_ai["Source-defined endpoint openrouter.ai - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_packaging_python_org["Source-defined endpoint packaging.python.org - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_play_google_com["Source-defined endpoint play.google.com - CONFIGURED_BUT_UNVERIFIED"]
   endpoint_pollinations_ai["Source-defined endpoint pollinations.ai - CONFIGURED_BUT_UNVERIFIED"]
@@ -222,7 +221,6 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_api_lumalabs_ai
   api -. "source host/reference; unverified" .-> endpoint_api_machines_dev
   api -. "source host/reference; unverified" .-> endpoint_api_minimax_io
-  api -. "source host/reference; unverified" .-> endpoint_api_moonshot_ai
   api -. "source host/reference; unverified" .-> endpoint_api_netlify_com
   api -. "source host/reference; unverified" .-> endpoint_api_openai_com
   api -. "source host/reference; unverified" .-> endpoint_api_parallel_ai
@@ -231,7 +229,6 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_api_supabase_com
   api -. "source host/reference; unverified" .-> endpoint_api_vercel_com
   api -. "source host/reference; unverified" .-> endpoint_api_whop_com
-  api -. "source host/reference; unverified" .-> endpoint_api_x_ai
   api -. "source host/reference; unverified" .-> endpoint_appstoreconnect_apple_com
   frontend -. "source host/reference; unverified" .-> endpoint_aptos_dev
   frontend -. "source host/reference; unverified" .-> endpoint_asana_com
@@ -285,7 +282,6 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_fonts_gstatic_com
   frontend -. "source host/reference; unverified" .-> endpoint_freetheai_xyz
   frontend -. "source host/reference; unverified" .-> endpoint_gemini_google_com
-  api -. "source host/reference; unverified" .-> endpoint_generativelanguage_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_getfoundry_sh
   api -. "source host/reference; unverified" .-> endpoint_github_com
   api -. "source host/reference; unverified" .-> endpoint_hardhat_org
@@ -307,8 +303,6 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_neon_com
   frontend -. "source host/reference; unverified" .-> endpoint_nextjs_org
   api -. "source host/reference; unverified" .-> endpoint_oauth2_googleapis_com
-  api -. "source host/reference; unverified" .-> endpoint_open_bigmodel_cn
-  api -. "source host/reference; unverified" .-> endpoint_openrouter_ai
   frontend -. "source host/reference; unverified" .-> endpoint_packaging_python_org
   api -. "source host/reference; unverified" .-> endpoint_play_google_com
   frontend -. "source host/reference; unverified" .-> endpoint_pollinations_ai

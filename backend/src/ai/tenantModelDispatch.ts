@@ -4,21 +4,29 @@ import {requireTenantContext,requireResourceOwner,type TenantContext} from '../s
 import {requireOwnedProject} from '../security/ownership.js';
 import {getTenantSupabaseAdmin} from '../security/serviceRoleGuard.js';
 import {getUserProviderKey} from '../services/integrations/userProviderKeys.js';
-import {assertAuthorityPermit} from '../security/authority/enforce.js';
+import {assertAuthorityPermit, consumeAuthorityPermit} from '../security/authority/enforce.js';
+import {assertModelSelection, type ModelEscalation} from './providerPolicy.js';
+import {estimateProviderReservationMicroUsd} from './providerBudget.js';
 import type {AuthorityPermit,AuthorityDispatchBinding} from '../security/authority/types.js';
 import {preparedActionDigest} from '../security/authority/digest.js';
-import {MODELS,resolveModelSpec,type ModelId} from './models.js';
-import {costUsdForTokens} from './models.js';
+import {MODELS,assertActiveModelId,resolveModelSpec,type ModelId} from './models.js';
 import {poolRoleFor} from './quota.js';
 import {persistUsageAccounting} from './usageAccounting.js';
 import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 import {registerModelSdkAdmission} from './modelSdkAdmission.js';
-import {withProviderReservation,type ProviderUsageResult,type BudgetPurpose} from './providerBudget.js';
+import {withProviderReservation,actualProviderCostMicroUsd,type ProviderUsageResult,type BudgetPurpose} from './providerBudget.js';
 import {requireAdmittedRunAttempt,type AdmittedRunAttempt} from './runStore.js';
 
 function denied():never{throw Object.assign(Error('Model dispatch binding is no longer valid.'),{code:'MODEL_DISPATCH_BINDING_DENIED',status:400});}
 export interface ModelPayload {messages:unknown;tools?:unknown}
+function containsImageInput(messages: unknown): boolean {
+  if (!Array.isArray(messages)) return false;
+  return messages.some(message => message && typeof message === 'object'
+    && Array.isArray(message.content) && message.content.some((part: unknown) => part && typeof part === 'object'
+      && 'type' in part && (part.type === 'image_url' || part.type === 'input_image' || part.type === 'image')));
+}
 export interface TenantModelScope {
+  escalation?: ModelEscalation;
   context:TenantContext;
   userId:string;
   /** A real database project UUID, never a logical workspace/repository key. */
@@ -65,15 +73,23 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   validateResponse?:(result:T)=>void;
   execute:(dispatch:BoundModelDispatch)=>Promise<T>;
 }):Promise<T>{
+  assertActiveModelId(input.modelId);
   const context=requireTenantContext(input.scope?.context);
   requireResourceOwner(context,input.scope.userId);
   const scope={...input.scope,context,authority:input.scope.authority?{...input.scope.authority,binding:{...input.scope.authority.binding}}:undefined};
   const modelId=input.modelId,model=resolveModelSpec(modelId),provider=MODELS[modelId].provider;
+  // An advertised modality remains unavailable until verified for this exact
+  // endpoint. Reject before reservation instead of dropping the attachment.
+  if (containsImageInput(input.payload.messages) && !model?.supportsImages) {
+    throw Object.assign(new Error('Image input is not yet verified for the configured model.'), {code:'MODEL_DESTINATION_DENIED',status:400});
+  }
   const attempt=scope.runAttempt?requireAdmittedRunAttempt(scope.runAttempt):undefined;
   if(attempt)requireResourceOwner(context,attempt.userId);
   if(!model)denied();
   const apiModel=model.apiModel,maximumOutputTokens=input.maximumOutputTokens;
   const estimatedInputTokens=input.estimatedInputTokens,purpose=input.purpose;
+  const reservationCeiling = estimateProviderReservationMicroUsd(input);
+  assertModelSelection(modelId, reservationCeiling, scope.escalation);
   const payload=structuredClone(input.payload),execute=input.execute,validateResponse=input.validateResponse;
   // Bind the exact JSON wire representation. Optional tool-schema properties
   // with undefined values are omitted by the SDK, not changed user content.
@@ -109,15 +125,22 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
     ||typeof selected.credential_revision!=='string'||! /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(selected.credential_revision)))denied();
   const account=connected?expectedAccount:'platform';
   const checkAuthority=()=>{
+    if (modelId === 'claude_sonnet_5_5' && (!scope.authority || scope.escalation?.permit !== scope.authority.permit
+      || !isDeepStrictEqual(scope.escalation.binding, scope.authority.binding)
+      || scope.escalation.binding.userId !== context.userId)) denied();
     if(!scope.authority)return;
     const binding=scope.authority.binding;
+    const target = modelId === 'claude_sonnet_5_5'
+      ? {modelId,apiModel,provider,baseUrl:model.baseUrl,maximumOutputTokens,reason:scope.escalation!.reason,taskId:scope.escalation!.taskId,payload}
+      : payload;
     if(binding.userId!==context.userId||binding.provider!==provider||binding.connectedAccountId!==account
-      ||binding.targetDigest!==preparedActionDigest(payload))denied();
+      ||binding.targetDigest!==preparedActionDigest(target))denied();
     assertAuthorityPermit(scope.authority.permit,binding);
   };
   checkAuthority();
   let sdk:ReturnType<typeof registerModelSdkAdmission>|undefined;
   const result=await withProviderReservation({userId:context.userId,modelId,
+    escalation: scope.escalation,
     estimatedInputTokens,maximumOutputTokens,purpose,idempotencyKey:input.idempotencyKey,
     execute:async()=>{
       let active=true;
@@ -128,6 +151,9 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
         if(connected&&(!credential||!isDeepStrictEqual(await read(),selected)))denied();
         const beforeDispatch=async(wireBody:string)=>{
           if(!active)denied();
+          const current = resolveModelSpec(modelId);
+          assertActiveModelId(modelId);
+          if (!current || !isDeepStrictEqual(current, model)) denied();
           const wire=JSON.parse(wireBody);
           if(wire.model!==apiModel||wire.max_tokens!==maximumOutputTokens
             ||!isDeepStrictEqual({messages:wire.messages,tools:wire.tools??[]},expectedPayload))denied();
@@ -137,10 +163,16 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
           await project();
           await execution();
           checkAuthority();
+          assertModelSelection(modelId, reservationCeiling, scope.escalation);
+          if (modelId === 'claude_sonnet_5_5') await consumeAuthorityPermit(scope.escalation!.permit, scope.escalation!.binding);
           if(!active)denied();
         };
         sdk=registerModelSdkAdmission(beforeDispatch,modelId,credential??undefined);
-        return await execute({payload:structuredClone(payload),credentialOverride:credential??undefined,beforeDispatch});
+        const result=await execute({payload:structuredClone(payload),credentialOverride:credential??undefined,beforeDispatch});
+        const completed=sdk.completion()?.result;
+        if(completed&&['inputTokens','outputTokens','cachedInputTokens','reasoningTokens','providerRequestId','providerCostMicroUsd'].some(key=>
+          result[key as keyof ProviderUsageResult]!==completed[key as keyof ProviderUsageResult]))throw new PostCompletionAccountingError();
+        return result;
       }finally{active=false;sdk?.revoke();}
     }});
   const completion=sdk?.completion();
@@ -151,8 +183,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
         ||('modelId' in result&&result.modelId!==modelId))throw Error('Changed completion usage');
       await persistUsageAccounting(context,{receiptId:randomUUID(),modelId,poolRole:poolRoleFor(modelId),
         inputTokens:completion.result.inputTokens,outputTokens:completion.result.outputTokens,
-        costUsd:completion.result.providerCostMicroUsd === undefined ? costUsdForTokens(modelId,completion.result.inputTokens,completion.result.outputTokens)
-          : completion.result.providerCostMicroUsd / 1_000_000});
+        costUsd:actualProviderCostMicroUsd(completion.result)/1_000_000});
     }catch{throw new PostCompletionAccountingError();}
     completion.checkCancellation();validateResponse?.(result);completion.publish();
   }

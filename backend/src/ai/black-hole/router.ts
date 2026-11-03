@@ -80,38 +80,29 @@ const STARTING_CHAINS: Record<
   readonly string[]
 > = {
   routine: [
-    'deepseek_v4_flash',
-    'glm_5_3_flash',
-    'glm_5_3',
+    'deepseek_v4_1_flash_1017',
   ],
 
   reasoning: [
-    'glm_5_3',
-    'kimi_k3',
-    'glm_5_3_flash',
+    'deepseek_v4_1_flash_1017',
   ],
 
   coding: [
-    'glm_5_3_flash',
-    'glm_5_3',
-    'kimi_k3',
+    'deepseek_v4_1_flash_1017',
   ],
 
   long_horizon: [
-    'glm_5_3',
-    'kimi_k3',
-    'glm_5_3_flash',
+    'deepseek_v4_1_flash_1017',
   ],
 
-  // GLM-5.3 Flash is the confirmed multimodal
-  // GLM route. Regular 5.3 remains text-only.
+  // The exact new endpoint's image support remains verification-gated.
   vision: [
-    'glm_5_3_flash',
+    'deepseek_v4_1_flash_1017',
   ],
 
-  // Temporary until the research cleanup batch.
+  // Retrieval is separate. This route performs synthesis only.
   research: [
-    'glm_5_3_flash',
+    'deepseek_v4_1_flash_1017',
   ],
 };
 
@@ -196,14 +187,14 @@ export function routeFamilyFor(analysis: TaskAnalysis): RouteFamily {
  * modality, `modelCapabilityRegistry` reads it, and the Black Hole registry derives it. The
  * function survives as the place that would catch a regression reintroducing a second claim.
  */
-function visionCapableCandidates(registry: readonly RuntimeModelCapability[]): Set<string> {
+function visionCapableCandidates(registry: readonly RuntimeModelCapability[], env:NodeJS.ProcessEnv): Set<string> {
   const capable = new Set<string>();
   for (const model of BLACK_HOLE_MODELS) {
     // Both registries now derive image support from `models.ts`, so this is a single fact
     // read twice rather than two claims that can disagree. The intersection is kept because
     // it costs nothing and it is the assertion that would catch a future divergence.
     const runtime = registry.find((entry) => entry.id === model.id);
-    if (runtime?.supports.images) capable.add(model.id);
+    if (runtime?.supports.images && blackHoleModel(model.id,env)?.capabilities.vision) capable.add(model.id);
   }
   return capable;
 }
@@ -348,7 +339,7 @@ function scoreCandidate(
 export function routeBlackHole(request: BlackHoleRouteRequest): BlackHoleRoute {
   const registry = request.registry ?? getRuntimeModelRegistry();
   const family = routeFamilyFor(request.analysis);
-  const visionCapable = visionCapableCandidates(registry);
+  const visionCapable = visionCapableCandidates(registry,request.env ?? process.env);
   const excluded: RouteExclusion[] = [];
 
   const qualified: Array<{ modelId: string; score: number; reasons: string[] }> = [];
@@ -395,7 +386,6 @@ export function routeBlackHole(request: BlackHoleRouteRequest): BlackHoleRoute {
  * it was built, this cannot cross an authority boundary no matter how many times it is called.
  */
 export function nextInChain(route: BlackHoleRoute, failedModelId: string): string | null {
-  const position = route.chain.indexOf(failedModelId);
-  if (position === -1) return null;
-  return route.chain[position + 1] ?? null;
+  // A failed request never authorizes another model or a possibly charged replay.
+  return null;
 }

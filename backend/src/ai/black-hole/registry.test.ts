@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { MODELS, type ModelId } from '../models.js';
+import { MODELS, ACTIVE_MODEL_IDS, type ActiveModelId } from '../models.js';
 import { CODING_MODEL_TRANSPORT } from '../providerPolicy.js';
 import {
   BLACK_HOLE_MODELS,
@@ -12,11 +12,12 @@ import {
   requiredTransport,
 } from './registry.js';
 
-const ACTIVE: ModelId[] = ['kimi_k3', 'glm_5_3', 'glm_5_3_flash', 'deepseek_v4_flash'];
+const ACTIVE: readonly ActiveModelId[] = ACTIVE_MODEL_IDS;
 
 test('the canonical Black Hole pool is exactly the active engineering stack', () => {
   assert.deepEqual(BLACK_HOLE_MODELS.map((model) => model.id).sort(), [...ACTIVE].sort());
-  assert.deepEqual(Object.keys(MODELS).sort(), [...ACTIVE].sort());
+  assert.ok(ACTIVE.every(id => MODELS[id].provider === 'zurelay'));
+  assert.equal(MODELS.kimi_k3.provider,'moonshot','Historical records remain readable, without authority');
 });
 
 test('every active model reaches its mandated transport', () => {
@@ -39,13 +40,12 @@ test('Grok is private to X retrieval and absent from the generic registry', () =
   assert.equal(blackHoleAvailability('grok_4_3'), 'unknown_model');
 });
 
-test('configured model identifiers honour active environment overrides', () => {
-  const env = { GLM_5_3_MODEL_ID: 'operator-glm-5.3' } as NodeJS.ProcessEnv;
-  assert.equal(providerModelIdentifier('glm_5_3', env), 'operator-glm-5.3');
+test('environment overrides cannot restore a retired model or retarget an active identifier', () => {
+  assert.equal(providerModelIdentifier('glm_5_3',{GLM_5_3_MODEL_ID:'operator-glm-5.3'}),null);
+  assert.equal(providerModelIdentifier('deepseek_v4_1_flash_1017',{ZURELAY_DEEPSEEK_MODEL_ID:'auto'}),null);
 });
 
-test('vision belongs only to the confirmed multimodal engineering route', () => {
-  assert.equal(blackHoleModel('glm_5_3_flash')?.capabilities.vision, true);
-  assert.equal(blackHoleModel('glm_5_3')?.capabilities.vision, false);
-  assert.equal(blackHoleModel('deepseek_v4_flash')?.capabilities.vision, false);
+test('retired vision routes stay absent and new modalities require exact endpoint verification', () => {
+  assert.equal(blackHoleModel('glm_5_3_flash'),null);
+  for(const id of ACTIVE) assert.equal(blackHoleModel(id,{})?.capabilities.vision,false);
 });

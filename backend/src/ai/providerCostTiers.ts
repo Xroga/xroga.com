@@ -1,39 +1,17 @@
 import { isCodingModel } from './providerPolicy.js';
+import {resolveModelSpec, type ModelId} from './models.js';
 
-export type CodingFamily =
-  | 'kimi'
-  | 'glm'
-  | 'deepseek';
+export type CodingFamily = 'deepseek' | 'claude';
 
-export type CodingTransport =
-  | 'moonshot'
-  | 'zhipu'
-  | 'openrouter';
+export type CodingTransport = 'zurelay';
 
 export type CostTier =
   | 'premium'
   | 'cost_efficient';
 
-/**
- * One permitted transport per coding family.
- *
- * This is a hard provider boundary:
- *
- * Kimi     -> Moonshot
- * GLM      -> Zhipu / Z.ai
- * DeepSeek -> OpenRouter
- */
-export const FAMILY_TRANSPORT: Record<
-  CodingFamily,
-  CodingTransport
-> = {
-  kimi: 'moonshot',
-  glm: 'zhipu',
-  deepseek: 'openrouter',
-};
-
-export const OPENROUTER_CODING_FAMILY: CodingFamily =
-  'deepseek';
+/** Active engineering families have one provider. Historical identities and
+ * financial prices remain in models.ts, never in executable transport policy. */
+export const FAMILY_TRANSPORT = {deepseek:'zurelay',claude:'zurelay'} as const;
 
 export interface CodingModelTier {
   readonly modelId: string;
@@ -53,42 +31,10 @@ export interface CodingModelTier {
  *
  * The catalog contains only active executable engineering models.
  */
-export const CODING_MODEL_TIERS:
-  readonly CodingModelTier[] = [
-    {
-      modelId: 'kimi_k3',
-      family: 'kimi',
-      tier: 'premium',
-      modelIdEnv: 'KIMI_MODEL_ID',
-      requiresVerifiedIdentifier: false,
-    },
-
-    {
-      modelId: 'glm_5_3',
-      family: 'glm',
-      tier: 'premium',
-      modelIdEnv: 'GLM_5_3_MODEL_ID',
-      requiresVerifiedIdentifier: false,
-    },
-
-    {
-      modelId: 'glm_5_3_flash',
-      family: 'glm',
-      tier: 'cost_efficient',
-      modelIdEnv:
-        'GLM_5_3_FLASH_MODEL_ID',
-      requiresVerifiedIdentifier: false,
-    },
-
-    {
-      modelId: 'deepseek_v4_flash',
-      family: 'deepseek',
-      tier: 'cost_efficient',
-      modelIdEnv:
-        'DEEPSEEK_FLASH_MODEL_ID',
-      requiresVerifiedIdentifier: false,
-    },
-  ];
+export const CODING_MODEL_TIERS: readonly CodingModelTier[] = [
+  {modelId:'deepseek_v4_1_flash_1017',family:'deepseek',tier:'cost_efficient',modelIdEnv:'ZURELAY_DEEPSEEK_MODEL_ID',requiresVerifiedIdentifier:false},
+  {modelId:'claude_sonnet_5_5',family:'claude',tier:'premium',modelIdEnv:'ZURELAY_SONNET_MODEL_ID',requiresVerifiedIdentifier:false},
+];
 
 const TIER_BY_MODEL = new Map(
   CODING_MODEL_TIERS.map(
@@ -144,17 +90,7 @@ export function modelAvailability(
     return 'unknown_model';
   }
 
-  if (
-    !tier.requiresVerifiedIdentifier
-  ) {
-    return 'available';
-  }
-
-  return env[
-    tier.modelIdEnv
-  ]?.trim()
-    ? 'available'
-    : 'not_configured';
+  return resolveModelSpec(modelId as ModelId, env) ? 'available' : 'not_configured';
 }
 
 export class TransportPolicyError extends Error {
@@ -197,15 +133,7 @@ export function assertTransportPolicy(
     );
   }
 
-  if (
-    transport === 'openrouter' &&
-    family !==
-      OPENROUTER_CODING_FAMILY
-  ) {
-    throw new TransportPolicyError(
-      `OpenRouter carries ${OPENROUTER_CODING_FAMILY} coding models only; "${modelId}" is ${family}.`,
-    );
-  }
+
 }
 
 export interface ModelEvidence {
@@ -273,7 +201,7 @@ export function chooseCostAware(
   const usable =
     input.candidates.filter(
       (modelId) =>
-        isCodingModel(modelId) &&
+        modelId === 'deepseek_v4_1_flash_1017' && isCodingModel(modelId) &&
         codingTierFor(modelId) !==
           null,
     );
@@ -371,33 +299,23 @@ export function chooseCostAware(
     };
   }
 
-  /**
-   * Nothing has earned the lead on cost.
-   *
-   * Prefer a premium route and explicitly mark the
-   * decision as prior-based.
-   */
-  const premium =
-    byCost.find(
-      (modelId) =>
-        codingTierFor(
-          modelId,
-        )?.tier ===
-        'premium',
-    ) ??
-    byCost[0]!;
+  // Known poor results cannot be promoted as good evidence, and never grant
+  // exceptional Sonnet spending. An unmeasured default stays explicitly prior-based.
+  const defaultModel = byCost[0]!;
+  const observed = evidenceFor(defaultModel);
+  if(observed && observed.samples >= MIN_EVIDENCE_SAMPLES && observed.validationSuccessRate < SUFFICIENT_VALIDATION_RATE)return null;
 
   return {
-    modelId: premium,
+    modelId: defaultModel,
 
     reason:
-      `No cost-efficient candidate has sufficient measured evidence for ${input.role}, so the ` +
-      `premium tier leads. ${premium} selected on prior, not on measurement.`,
+      `The approved default ${defaultModel} has no sufficient measured evidence for ${input.role}. ` +
+      'This is a prior-based selection, not a verified measurement or premium spending grant.',
 
     escalation:
       byCost.filter(
         (modelId) =>
-          modelId !== premium,
+          modelId !== defaultModel,
       ),
 
     measured: false,

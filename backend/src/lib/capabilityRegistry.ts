@@ -92,7 +92,7 @@ const TEMPLATES: CapabilityTemplate[] = [
         id: 'xroga-model-stack',
         label: 'Xroga model stack',
         operations: ['analyze', 'generate', 'edit', 'repair', 'refactor', 'review'],
-        requiredCredentials: ['OPENROUTER_API_KEY', 'KIMI_API_KEY', 'GLM_API_KEY'],
+        requiredCredentials: ['ZURELAY_API_KEY'],
         inputRequirements: ['User request', 'Relevant conversation and repository context'],
         outputFormats: ['markdown', 'project_files', 'patches'],
         runtime: 'server',
@@ -188,48 +188,7 @@ const TEMPLATES: CapabilityTemplate[] = [
     },
   ],
 },
- {
-  id: 'x_research',
-  label: 'X.com research',
-  description:
-    'Retrieve current X/Twitter posts, threads, accounts, and X-native public evidence through xAI X Search.',
-  providers: [
-    {
-      id: 'xai',
-      label: 'Xroga X Intelligence',
-      operations: [
-        'x_search',
-        'x_research',
-        'synthesis',
-      ],
-      requiredCredentials: [
-        'XAI_API_KEY',
-      ],
-      inputRequirements: [
-        'Research question that specifically depends on X/Twitter evidence',
-      ],
-      outputFormats: [
-        'markdown',
-        'sources',
-      ],
-      runtime: 'server',
-      cost:
-        'Internally metered xAI model and X Search spend',
-      rateLimit:
-        'xAI account limits apply',
-      securityRestrictions: [
-        'Use X Search only for X-native evidence',
-        'Preserve X post citations',
-        'Do not invent missing posts or sources',
-        'Never expose xAI credentials',
-      ],
-      validation:
-        'Cited X/Twitter source evidence or an explicit unavailable result',
-      fallbackProviderIds: [],
-      credentialMode: 'environment',
-    },
-  ],
-},
+ {id:'x_research',label:'X.com research',description:'Dedicated X retrieval is unavailable under the current generation policy. Public web retrieval is separate.',providers:[]},
   {
     id: 'file_processing',
     label: 'File processing',
@@ -265,7 +224,7 @@ const TEMPLATES: CapabilityTemplate[] = [
         id: 'xroga-model-stack',
         label: 'Xroga model stack',
         operations: ['generate', 'rewrite', 'summarize', 'explain'],
-        requiredCredentials: ['OPENROUTER_API_KEY', 'KIMI_API_KEY', 'GLM_API_KEY'],
+        requiredCredentials: ['ZURELAY_API_KEY'],
         inputRequirements: ['User request and relevant context'],
         outputFormats: ['markdown', 'text', 'json'],
         runtime: 'server',

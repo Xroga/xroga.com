@@ -69,7 +69,7 @@ async function guestCompletion(messages: ChatMessage[],lease:GuestLease,prepaidT
   await requireCurrentGuestLease(lease);
   let wires=0;
   const callable = new Set(callableModelIds());
-  const candidates: ModelId[] = ['deepseek_v4_flash', 'glm_5_3_flash'];
+  const candidates: ModelId[] = ['deepseek_v4_1_flash_1017'];
 
   let lastError: unknown = null;
   for (const modelId of candidates) {

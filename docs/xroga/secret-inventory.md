@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `4c6319e2fc319ad0384ff3e77c07bc473a3652b2`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -9,7 +9,7 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | ANTHROPIC_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | APIFY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-apify-com, endpoint-jobs-example-com |
 | AUPHONIC_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| BIGMODEL_API_KEY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| BIGMODEL_API_KEY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
 | BLACK_HOLE_CUTOVER_STAGE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | BLACK_HOLE_ROLLOUT_PERCENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | BREVO_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
@@ -17,7 +17,7 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | BROWSERBASE_PROJECT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | browserbase |
 | CARTESIA_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
 | CARTESIA_VOICE_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-cartesia-ai, endpoint-api-elevenlabs-io, endpoint-api-fish-audio, endpoint-api-suno-ai |
-| CI | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-open-bigmodel-cn, endpoint-public-example-invalid, endpoint-whop-com |
+| CI | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
 | CLOUDFLARE_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | r2 |
 | CLOUDFLARE_R2_ACCESS_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | r2 |
 | CLOUDFLARE_R2_ACCOUNT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | r2 |
@@ -60,24 +60,23 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | FRONTEND_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-supabase-com, endpoint-api-vercel-com, endpoint-backend-composio-dev, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | GCE_METADATA_HOST | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | GCE_METADATA_IP | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GEMINI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-generativelanguage-googleapis-com |
+| GEMINI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | GEMINI_CODE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | GITHUB_CLIENT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-github-com, endpoint-localhost |
 | GITHUB_CLIENT_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-github-com, endpoint-localhost |
 | GITHUB_OAUTH_CALLBACK_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-github-com, endpoint-localhost |
 | GITHUB_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api |
-| GLM_5_3_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_5_3_FLASH_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_5_3_FLASH_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_5_3_FLASH_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_5_3_FLASH_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_5_3_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_5_3_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_5_3_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GLM_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-open-bigmodel-cn |
+| GLM_5_3_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_5_3_FLASH_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_5_3_FLASH_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_5_3_FLASH_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_5_3_FLASH_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_5_3_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_5_3_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_5_3_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-zhipu |
+| GLM_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-zhipu |
 | GOOGLE_APPLICATION_CREDENTIALS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | GOOGLE_CREDENTIALS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| GROK_SEARCH_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-x-ai |
 | GROQ_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-groq-com |
 | GROQ_CODE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | HAILUO_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-minimax-io |
@@ -90,12 +89,12 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | HUGGINGFACE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | IMMERSITY_CLIENT_ID | PUBLIC_IDENTIFIER | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | Immersity_Client_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| KIMI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| KIMI_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| KIMI_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| KIMI_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| KIMI_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| KIMI_VISION_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| KIMI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-moonshot |
+| KIMI_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-moonshot |
+| KIMI_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-moonshot |
+| KIMI_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-moonshot |
+| KIMI_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-moonshot |
+| KIMI_VISION_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | historical-moonshot |
 | KLING_ACCESS_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | KLING_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | KLING_API_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
@@ -115,7 +114,7 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | MISTRAL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | MODEL_CIRCUIT_RECOVERY_MS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | MONGODB_URI | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| MOONSHOT_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| MOONSHOT_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-moonshot |
 | MORPH_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | NEON_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | NETLIFY_ACCESS_TOKEN | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-github-com, endpoint-api-netlify-com, endpoint-api-vercel-com |
@@ -137,8 +136,8 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | NODE_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-backend-composio-dev, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-openai-com |
-| OPENROUTER_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
-| PARALLEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-parallel-ai, endpoint-api-x-ai |
+| OPENROUTER_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-openrouter |
+| PARALLEL_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-parallel-ai |
 | PATH | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | PIAPI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | PLAYWRIGHT_BROWSERS_PATH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | google-execution |
@@ -182,7 +181,7 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | SUPABASE_POOLER_HOST | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | supabase |
 | SUPABASE_SERVICE_ROLE_KEY | SERVER_CREDENTIAL | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-parallel-ai, endpoint-api-whop-com, endpoint-example-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-github-com, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid |
-| SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-open-bigmodel-cn, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
+| SUPABASE_URL | RUNTIME_CONFIGURATION | REQUIRED_FOR_CORE_AUTH | supabase, endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-localhost, endpoint-public-example-invalid, endpoint-supabase-management-tests-invalid, endpoint-whop-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | SystemRoot | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TERM | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | TMPDIR | SYSTEM_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -214,8 +213,8 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | WHOP_PLAN_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
 | WHOP_REDIRECT_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
 | WHOP_WEBHOOK_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-example-invalid, endpoint-public-example-invalid |
-| XAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-x-ai |
-| XB01_DISPOSABLE_SUPABASE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-open-bigmodel-cn, endpoint-public-example-invalid, endpoint-whop-com |
+| XAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| XB01_DISPOSABLE_SUPABASE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture, endpoint-fixture-invalid, endpoint-fixture-supabase-co, endpoint-fixtureproject-supabase-co, endpoint-public-example-invalid, endpoint-whop-com |
 | XB01_LOCAL_DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-127-0-0-1, endpoint-api-whop-com, endpoint-backend-composio-dev, endpoint-example-invalid, endpoint-fixture-invalid, endpoint-public-example-invalid |
 | XB01_TEST_SOURCE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_ALLOWED_MODELS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
@@ -297,7 +296,6 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | XROGA_LEARNING_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-127-0-0-1 |
 | XROGA_LEGACY_CREDENTIAL_MIGRATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_MAX_REPAIR_ATTEMPTS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
-| XROGA_MODEL_FALLBACK_ORDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_OCI_KMS_AUTH_MODE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_OCI_KMS_ENDPOINT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_OCI_KMS_KEY_ID | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
@@ -341,6 +339,18 @@ Values are forbidden. Source SHA: `344947deaff6de74dfe203a901fa2127a7d46953`. Na
 | XROGA_TEST_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | XROGA_TRUSTED_PROXY_HOPS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | YOUTUBE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-www-googleapis-com, endpoint-www-youtube-com |
-| ZHIPU_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| ZHIPU_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | historical-zhipu |
+| ZURELAY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | zurelay-models, endpoint-127-0-0-1 |
+| ZURELAY_DEEPSEEK_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_DEEPSEEK_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_DEEPSEEK_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_DEEPSEEK_VISION_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_JSON_SCHEMA_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_SONNET_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_SONNET_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_SONNET_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_SONNET_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_SONNET_VISION_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 
 Production uses the existing protected Google Secret Manager configuration and native managed KMS. Account-specific connected credentials remain in the canonical encrypted CredentialVault. No personal developer login, legacy Fly credential or development-assistant session is a production requirement. Rotation and access changes require their applicable authority. Optional file delivery signing, Drive and later feature configuration remain independently gated.

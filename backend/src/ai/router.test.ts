@@ -17,7 +17,7 @@ describe('admitted read-only synthesis', () => {
         requiredCapabilities: [capability], freshnessRequirement: 'NONE',
       });
       assert.equal(route.kind, 'research');
-      assert.equal(route.builder, 'deepseek_v4_flash');
+      assert.equal(route.builder, 'deepseek_v4_1_flash_1017');
       assert.equal(route.useResearch, true);
     }
   });
@@ -31,7 +31,7 @@ describe('admitted read-only synthesis', () => {
       requiredCapabilities: ['conversation.respond'], freshnessRequirement: 'NONE',
     });
     assert.equal(plain.kind, 'chat');
-    assert.equal(plain.builder, 'deepseek_v4_flash');
+    assert.equal(plain.builder, 'deepseek_v4_1_flash_1017');
     assert.equal(plain.useResearch, false);
   });
   it('preserves the existing legacy build routing when no semantic contract is supplied', () => {
@@ -53,18 +53,18 @@ describe(
 
         assert.equal(
           route.builder,
-          'glm_5_3',
+          'deepseek_v4_1_flash_1017',
         );
 
         assert.equal(
           route.converter,
-          'deepseek_v4_flash',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
 
     it(
-      'reserves Kimi K3 for rare principal-level systems work',
+      'complex requests alone cannot authorize the premium model',
       () => {
         const route =
           routePrompt(
@@ -73,7 +73,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'kimi_k3',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
@@ -88,7 +88,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'glm_5_3',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
@@ -103,7 +103,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'glm_5_3_flash',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
@@ -118,7 +118,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'glm_5_3_flash',
+          'deepseek_v4_1_flash_1017',
         );
 
         assert.equal(
@@ -143,7 +143,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'glm_5_3_flash',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );
@@ -163,7 +163,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'deepseek_v4_flash',
+          'deepseek_v4_1_flash_1017',
         );
 
         assert.equal(
@@ -183,7 +183,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'deepseek_v4_flash',
+          'deepseek_v4_1_flash_1017',
         );
 
         assert.notEqual(
@@ -213,7 +213,7 @@ describe(
 
         assert.equal(
           route.builder,
-          'deepseek_v4_flash',
+          'deepseek_v4_1_flash_1017',
         );
       },
     );

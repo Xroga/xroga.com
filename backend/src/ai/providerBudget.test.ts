@@ -17,14 +17,14 @@ import {
 
 test('invalid accounting values cannot authorize execution or poison local balances', async () => {
   for (const invalid of [NaN, Infinity, -Infinity, -1, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
-    assert.throws(() => estimateProviderReservationMicroUsd({ modelId: 'kimi_k3', estimatedInputTokens: invalid, maximumOutputTokens: 10 }));
-    assert.throws(() => actualProviderCostMicroUsd({ modelId: 'kimi_k3', inputTokens: 10, outputTokens: invalid }));
+    assert.throws(() => estimateProviderReservationMicroUsd({ modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: invalid, maximumOutputTokens: 10 }));
+    assert.throws(() => actualProviderCostMicroUsd({ modelId: 'deepseek_v4_1_flash_1017', inputTokens: 10, outputTokens: invalid }));
     let executed = false;
-    await assert.rejects(withProviderReservation({ userId: 'invalid-amount', modelId: 'kimi_k3', estimatedInputTokens: invalid, maximumOutputTokens: 10,
+    await assert.rejects(withProviderReservation({ userId: 'invalid-amount', modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: invalid, maximumOutputTokens: 10,
       execute: async () => { executed = true; return { inputTokens: 1, outputTokens: 1 }; } }));
     assert.equal(executed, false);
   }
-  assert.throws(() => estimateProviderReservationMicroUsd({ modelId: 'kimi_k3', estimatedInputTokens: 10, maximumOutputTokens: 10, billingTolerance: NaN }));
+  assert.throws(() => estimateProviderReservationMicroUsd({ modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: 10, maximumOutputTokens: 10, billingTolerance: NaN }));
 });
 
 test('production cannot authorize provider execution using process-memory accounting', async () => {
@@ -34,7 +34,7 @@ test('production cannot authorize provider execution using process-memory accoun
     process.env.NODE_ENV = 'production';
     delete process.env.SUPABASE_SERVICE_ROLE_KEY;
     let executed = false;
-    await assert.rejects(withProviderReservation({ userId: 'missing-store', modelId: 'kimi_k3', estimatedInputTokens: 10, maximumOutputTokens: 10,
+    await assert.rejects(withProviderReservation({ userId: 'missing-store', modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: 10, maximumOutputTokens: 10,
       execute: async () => { executed = true; return { inputTokens: 1, outputTokens: 1 }; } }), /Durable provider accounting is unavailable/);
     assert.equal(executed, false);
     await assert.rejects(getProviderEntitlementStatus('missing-store'), /Durable provider accounting is unavailable/);
@@ -46,10 +46,10 @@ test('production cannot authorize provider execution using process-memory accoun
 
 test('uses integer micro-USD and reserves more than the maximum estimated cost', () => {
   const actual = actualProviderCostMicroUsd({
-    modelId: 'kimi_k3', inputTokens: 20_000, outputTokens: 4_000,
+    modelId: 'deepseek_v4_1_flash_1017', inputTokens: 20_000, outputTokens: 4_000,
   });
   const reserved = estimateProviderReservationMicroUsd({
-    modelId: 'kimi_k3', estimatedInputTokens: 20_000, maximumOutputTokens: 4_000,
+    modelId: 'deepseek_v4_1_flash_1017', estimatedInputTokens: 20_000, maximumOutputTokens: 4_000,
   });
   assert.equal(Number.isInteger(actual), true);
   assert.equal(Number.isInteger(reserved), true);
@@ -70,6 +70,14 @@ test('cached input is conservatively accounted until a provider-specific rate is
   assert.equal(cached, uncached);
 });
 
+test('Zurelay completion counts include reasoning exactly once without rewriting historical accounting',()=>{
+  const normal={modelId:'deepseek_v4_1_flash_1017' as const,inputTokens:1000,outputTokens:1000};
+  assert.equal(actualProviderCostMicroUsd(normal),150);
+  assert.equal(actualProviderCostMicroUsd({...normal,reasoningTokens:750}),150);
+  assert.throws(()=>actualProviderCostMicroUsd({...normal,reasoningTokens:1001}),/Invalid provider usage/);
+  assert.equal(actualProviderCostMicroUsd({...normal,modelId:'claude_sonnet_5_5',reasoningTokens:750}),4800);
+});
+
 test('balanced month unlocks cycle-relative daily and complexity portions', () => {
   const startsAt = new Date('2026-07-01T12:00:00.000Z');
   assert.equal(unlockedEntitlementMicroUsd({ startsAt, now: startsAt, pacing: 'balanced_month', purpose: 'daily_work' }), 1_775_000);
@@ -88,7 +96,7 @@ test('idempotent replay returns one reservation without double accounting', asyn
   resetProviderBudgetMemoryForTests();
   const input = {
     userId: 'replay-user',
-    modelId: 'deepseek_v4_flash' as const,
+    modelId: 'deepseek_v4_1_flash_1017' as const,
     estimatedInputTokens: 100,
     maximumOutputTokens: 100,
     idempotencyKey: '7e72ed04-52f3-41c5-96c1-a3ef79a8d3be',
@@ -114,12 +122,13 @@ test('verified payment cycle becomes the active paid entitlement', async () => {
 });
 
 test('same-key memory replays bind exact intent and deny settled, released or uncertain reservations', async () => {
-  const input = { userId: 'replay-boundary', modelId: 'kimi_k3' as const, estimatedInputTokens: 100, maximumOutputTokens: 100,
+  const input = { userId: 'replay-boundary', modelId: 'deepseek_v4_1_flash_1017' as const, estimatedInputTokens: 100, maximumOutputTokens: 100,
     idempotencyKey: '33333333-3333-4333-8333-333333333333' };
   for (const terminal of ['settled', 'released', 'pending']) {
     resetProviderBudgetMemoryForTests();
     const reservation = await reserveProviderBudget(input);
-    for (const changed of [{ modelId: 'deepseek_v4_flash' as const }, { purpose: 'completion' as const }, { estimatedInputTokens: 101 }, { maximumOutputTokens: 99 }]) {
+    await assert.rejects(reserveProviderBudget({...input,modelId:'deepseek_v4_flash'}), {code:'MODEL_DESTINATION_DENIED'});
+    for (const changed of [{ purpose: 'completion' as const }, { estimatedInputTokens: 101 }, { maximumOutputTokens: 99 }]) {
       await assert.rejects(reserveProviderBudget({ ...input, ...changed }), /reservation evidence is invalid/);
     }
     assert.equal((await reserveProviderBudget(input)).id, reservation.id);
@@ -158,7 +167,7 @@ test('process-local reservation settlement and release cannot mutate another own
   assert.equal(Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),false,'this fixture tests the process-local boundary, not durable database proof');
   for(const action of ['settle','release','pending'] as const) {
     resetProviderBudgetMemoryForTests();
-    const input={modelId:'kimi_k3' as const,estimatedInputTokens:20000,maximumOutputTokens:4000,idempotencyKey:'ffe067ee-68b2-4139-9b0b-0bfcebfed161'};
+    const input={modelId:'deepseek_v4_1_flash_1017' as const,estimatedInputTokens:20000,maximumOutputTokens:4000,idempotencyKey:'ffe067ee-68b2-4139-9b0b-0bfcebfed161'};
     const owner=await reserveProviderBudget({...input,userId:'reservation-owner'});
     const other=await reserveProviderBudget({...input,userId:'reservation-other'});
     assert.notEqual(owner.id,other.id,'idempotency namespace must include owner');

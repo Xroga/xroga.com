@@ -124,6 +124,7 @@ async function listKeysFromStorage(userId: string): Promise<
 
 /** Providers users can paste for their own live products (not Xroga platform keys). */
 export const ALLOWED_PROVIDERS = [
+  'zurelay',
   'openai',
   'anthropic',
   'groq',
@@ -170,6 +171,7 @@ export const ALLOWED_PROVIDERS = [
 export type AllowedProvider = (typeof ALLOWED_PROVIDERS)[number];
 
 export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
+  zurelay: 'ZURELAY_API_KEY',
   grok: 'XAI_API_KEY',
   deepseek: 'DEEPSEEK_API_KEY',
   openai: 'OPENAI_API_KEY',
@@ -916,6 +918,7 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
 /** Catalog for Integrations UI */
 export function providerCatalog() {
   return [
+    { id: 'zurelay', name: 'Zurelay', envVar: 'ZURELAY_API_KEY', freeTier: false, category: 'ai' },
     { id: 'openai', name: 'OpenAI', envVar: 'OPENAI_API_KEY', freeTier: false, category: 'ai' },
     { id: 'anthropic', name: 'Anthropic', envVar: 'ANTHROPIC_API_KEY', freeTier: false, category: 'ai' },
     { id: 'groq', name: 'Groq', envVar: 'GROQ_API_KEY', freeTier: true, category: 'ai' },

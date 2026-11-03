@@ -23,6 +23,7 @@ import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
 import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, type PresentationResponseFormat } from './responsePresentation.js';
+import { prepareAnswerCoverage } from './answerCoverage.js';
 import {
   buildVisionUserContent,
   chatCompletion,
@@ -386,7 +387,7 @@ export interface BuildClientMeta {
 
 export interface ChatPipelineResult {
   completion?: ReturnType<typeof publicCompletionState>;
-  responseSource?: { format: 'xroga-response-json-v1'; text: string };
+  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?: ReturnType<typeof prepareAnswerCoverage> };
   response: string;
   intent: string;
   usage: ReturnType<typeof usageToTokenUsage>;
@@ -414,11 +415,7 @@ export interface BuildPipelineResult {
 }
 
 const BUILDER_FALLBACKS: ModelId[] = [
-  'glm_5_3_flash',
-  'glm_5_3',
-  'kimi_k3',
-
-  'deepseek_v4_flash',
+  'deepseek_v4_1_flash_1017',
 ];
 
 /**
@@ -750,7 +747,7 @@ export async function callBuilderStream(
     ? healthAwareOrder
     : [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
   const maxAttempts = Math.max(1, opts.maxAttempts ?? candidates.length);
-  const order = candidates.slice(0, maxAttempts);
+  const order = [...new Set(candidates)].slice(0, Math.min(1, maxAttempts));
   let lastErr: Error | null = null;
   for (const modelId of order) {
     const attemptStartedAt = Date.now();
@@ -1016,7 +1013,7 @@ export async function runChatPipeline(opts: {
       modelId: result.modelId,
       route: {
         kind: pick.kind === 'document' ? 'file_analysis' : 'realtime',
-        converter: 'deepseek_v4_flash',
+        converter: 'deepseek_v4_1_flash_1017',
         builder: pick.modelId,
         useResearch: false,
         reason: pick.reason,
@@ -1109,7 +1106,8 @@ export async function runChatPipeline(opts: {
   const truthAuthorities = new Set<string>(['model:execute', 'sandbox:execute']);
   if (opts.projectEvidence) truthAuthorities.add('repository:read');
   if (research?.sources.length) truthAuthorities.add('network:public-read');
-  const presentation = opts.goalContract?.presentation;
+  const answerContract = prepareAnswerCoverage(opts.prompt, opts.goalContract?.presentation, opts.goalContract?.answerObligations);
+  const presentation = answerContract.plan;
   const projection = presentation?.length ? createPresentationProjection(presentation) : undefined;
   const format = presentation?.length ? presentationResponseFormat(presentation) : undefined;
   const system = `${currentPublicProductTruth(truthAuthorities)}\n\n${chatPresentationSystem(opts.prompt)}${presentation?.length ? `\n\n${presentationRequestInstructions(presentation)}` : ''}`;
@@ -1136,13 +1134,13 @@ export async function runChatPipeline(opts: {
   // A valid semantic decision with invalid display metadata, or an incomplete
   // document, is preserved as partial. Never repair it with another model call.
   const presentationIncomplete = (document && !document.ok) || opts.goalContract?.presentationIssue === 'invalid'
-    || (presentation && !assessPresentationCoverage(presentation, opts.goalContract?.answerObligations).complete);
+    || !answerContract.coverage.complete;
 
   return {
     response,
     completion: presentationIncomplete && result.finishReason === 'stop' && completion.status === 'complete'
       ? { status: 'partial', reason: 'presentation_contract' } : completion,
-    ...(document ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original } } : {}),
+    ...(document ? { responseSource: { format: 'xroga-response-json-v1' as const, text: document.original, contract: answerContract } } : {}),
     intent: route.kind,
     usage: usageToTokenUsage(usage),
     webSources: research?.sources,
@@ -1382,7 +1380,7 @@ if(opts.deliveryClaim){
     return MODELS[modelId].provider;
   };
   const credentialOverrides: Partial<Record<ModelId, string>> = {};
-  await Promise.all((Object.keys(MODELS) as ModelId[]).map(async (modelId) => {
+  await Promise.all(getRuntimeModelRegistry().map(async ({id:modelId}) => {
     const key = await getUserProviderKey(
       opts.userId,
       providerKeyName(modelId),
@@ -1443,7 +1441,7 @@ if(opts.deliveryClaim){
     ['code_review', 'security_review'].includes(task.taskClass),
   );
 
-  const reviewerModel = reviewerTask?.selectedModel ?? 'deepseek_v4_flash';
+  const reviewerModel = reviewerTask?.selectedModel ?? 'deepseek_v4_1_flash_1017';
 
   const recoveredSynthesisArtifacts = canonicalRecovery
     ? synthesisArtifactsFromCanonicalState(canonicalRecovery.state)
@@ -2525,8 +2523,8 @@ publicationReason:
     await assertCanUseModel(
       opts.userId,
       prior.files.length >= 20 || route.kind === 'build_long_horizon'
-        ? 'glm_5_3'
-        : 'glm_5_3_flash',
+        ? 'deepseek_v4_1_flash_1017'
+        : 'deepseek_v4_1_flash_1017',
     );
     const memo = await summarizeRepoForUpdates({
       userId: opts.userId,
@@ -2684,7 +2682,7 @@ publicationReason:
     });
     try {
       const vision = await callBuilderStream(
-        'glm_5_3_flash',
+        'deepseek_v4_1_flash_1017',
         [
           { role: 'system', content: VISION_SYSTEM },
           {
@@ -2787,7 +2785,7 @@ publicationReason:
       outputTokens: 0,
     };
   } else {
-    await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+    await assertCanUseModel(opts.userId, 'deepseek_v4_1_flash_1017');
     converted = await convertUserRequest(
       opts.userId,
       converterRequest,
@@ -2853,7 +2851,7 @@ publicationReason:
         swarmTodos: todos('architect'),
       });
     } else {
-      await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+      await assertCanUseModel(opts.userId, 'deepseek_v4_1_flash_1017');
       // Cap Architect wait so a hung OpenRouter call cannot freeze the UI for 5+ minutes
       const ARCHITECT_MS = 45_000;
       const plan = await Promise.race([

@@ -356,392 +356,15 @@ export function semanticPlannerCompletionOptions(
   };
 }
 
-type PlannerRouteOutcome<T> =
-  | {
-      ok: true;
-
-      value: T;
-
-      modelId: ModelId;
-    }
-  | {
-      ok: false;
-
-      error: unknown;
-
-      modelId: ModelId;
-    };
-
-/**
- * Give the primary semantic interpreter
- * the whole request deadline, then hedge
- * one fallback after a short delay.
- */
-export async function executeHedgedPlannerFallback<T>(
-  input: {
-    routes:
-      readonly ModelId[];
-
-    execute: (
-      modelId: ModelId,
-      signal: AbortSignal,
-    ) => Promise<T>;
-
-    signal:
-      AbortSignal;
-
-    routeTimeoutMs:
-      number;
-
-    hedgeDelayMs?:
-      number;
-  },
-): Promise<{
-  value: T;
-
-  modelId: ModelId;
-}> {
-  const routes =
-    [
-      ...new Set(
-        input.routes,
-      ),
-    ].slice(
-      0,
-      2,
-    );
-
-  if (
-    !routes.length
-  ) {
-    throw new RuntimeFailure(
-      'PLANNER_PROVIDER_UNAVAILABLE',
-
-      'No planning route is available.',
-    );
-  }
-
-  const controllers =
-    new Map<
-      ModelId,
-      AbortController
-    >();
-
-  const isTerminalDenial = isTerminalModelFailure;
-  let terminalDenial: { error: unknown } | undefined;
-  const requireNoTerminalDenial = () => {
-    if (terminalDenial) throw terminalDenial.error;
-  };
-
-  const run =
-    async (
-      modelId: ModelId,
-    ): Promise<
-      PlannerRouteOutcome<T>
-    > => {
-      const controller =
-        new AbortController();
-
-      controllers.set(
-        modelId,
-        controller,
-      );
-
-      const relayAbort =
-        () =>
-          controller.abort();
-
-      input.signal
-        .addEventListener(
-          'abort',
-          relayAbort,
-          {
-            once: true,
-          },
-        );
-
-      try {
-        const result =
-          await executeWithProviderFallback(
-            {
-              routes: [
-                modelId,
-              ],
-
-              timeoutMs:
-                input
-                  .routeTimeoutMs,
-
-              maximumAttemptsPerRoute:
-                1,
-
-              recordHealth:
-                false,
-
-              signal:
-                controller.signal,
-
-              execute:
-                input.execute,
-            },
-          );
-
-        return {
-          ok: true,
-
-          value:
-            result.value,
-
-          modelId:
-            result.modelId,
-        };
-      } catch (error) {
-        if (isTerminalDenial(error)) {
-          terminalDenial ??= { error };
-          for (const active of controllers.values()) active.abort();
-        }
-        return {
-          ok: false,
-
-          error,
-
-          modelId,
-        };
-      } finally {
-        input.signal
-          .removeEventListener(
-            'abort',
-            relayAbort,
-          );
-      }
-    };
-
-  const finish =
-    (
-      outcome:
-        Extract<
-          PlannerRouteOutcome<T>,
-          {
-            ok: true;
-          }
-        >,
-    ) => {
-      requireNoTerminalDenial();
-      for (
-        const [
-          modelId,
-          controller,
-        ] of controllers
-      ) {
-        if (
-          modelId !==
-          outcome.modelId
-        ) {
-          controller.abort();
-        }
-      }
-
-      return {
-        value:
-          outcome.value,
-
-        modelId:
-          outcome.modelId,
-      };
-    };
-
-  const primary =
-    run(
-      routes[0]!,
-    );
-
-  if (
-    routes.length === 1
-  ) {
-    const outcome =
-      await primary;
-
-    if (
-      outcome.ok
-    ) {
-      return finish(
-        outcome,
-      );
-    }
-
-    throw outcome.error;
-  }
-
-  let hedgeTimer:
-    | ReturnType<
-        typeof setTimeout
-      >
-    | undefined;
-
-  const hedgeReady =
-    new Promise<
-      'hedge'
-    >(
-      (resolve) => {
-        hedgeTimer =
-          setTimeout(
-            () =>
-              resolve(
-                'hedge',
-              ),
-
-            Math.max(
-              0,
-
-              input
-                .hedgeDelayMs ??
-                SEMANTIC_PLANNER_HEDGE_DELAY_MS,
-            ),
-          );
-      },
-    );
-
-  const beforeHedge =
-    await Promise.race(
-      [
-        primary,
-        hedgeReady,
-      ],
-    );
-
-  if (
-    beforeHedge !==
-      'hedge' &&
-    beforeHedge.ok
-  ) {
-    if (
-      hedgeTimer
-    ) {
-      clearTimeout(
-        hedgeTimer,
-      );
-    }
-
-    return finish(
-      beforeHedge,
-    );
-  }
-
-  if (beforeHedge !== 'hedge' && !beforeHedge.ok && isTerminalDenial(beforeHedge.error)) {
-    if (hedgeTimer) clearTimeout(hedgeTimer);
-    throw beforeHedge.error;
-  }
-
-  const fallback =
-    // An accounting failure after completion cannot authorize another model.
-    // If the hedge was already running, its own completion is still accounted.
-    run(
-      routes[1]!,
-    );
-
-  if (
-    beforeHedge !==
-    'hedge'
-  ) {
-    if (
-      hedgeTimer
-    ) {
-      clearTimeout(
-        hedgeTimer,
-      );
-    }
-
-    const fallbackOutcome =
-      await fallback;
-
-    requireNoTerminalDenial();
-
-    if (
-      fallbackOutcome.ok
-    ) {
-      return finish(
-        fallbackOutcome,
-      );
-    }
-
-    throw new RuntimeFailure(
-      'PROVIDER_UNAVAILABLE',
-
-      'Every compatible planning route failed.',
-
-      {
-        details: {
-          failures: [
-            beforeHedge.error,
-
-            fallbackOutcome
-              .error,
-          ].map(
-            (error) =>
-              error instanceof
-              RuntimeFailure
-                ? error.details
-                : undefined,
-          ),
-        },
-      },
-    );
-  }
-
-  const first =
-    await Promise.race(
-      [
-        primary,
-        fallback,
-      ],
-    );
-
-  requireNoTerminalDenial();
-
-  if (
-    first.ok
-  ) {
-    return finish(
-      first,
-    );
-  }
-
-  const other =
-    first.modelId ===
-    routes[0]
-      ? await fallback
-      : await primary;
-
-  requireNoTerminalDenial();
-
-  if (
-    other.ok
-  ) {
-    return finish(
-      other,
-    );
-  }
-
-  throw new RuntimeFailure(
-    'PROVIDER_UNAVAILABLE',
-
-    'Every compatible planning route failed.',
-
-    {
-      details: {
-        failures: [
-          first.error,
-          other.error,
-        ].map(
-          (error) =>
-            error instanceof
-            RuntimeFailure
-              ? error.details
-              : undefined,
-        ),
-      },
-    },
-  );
+/** Compatibility entry point over the existing canonical executor. One
+ * admitted DeepSeek request, no hedge, replay or cross-model substitution. */
+export async function executeHedgedPlannerFallback<T>(input:{routes:readonly ModelId[];execute:(modelId:ModelId,signal:AbortSignal)=>Promise<T>;
+  signal:AbortSignal;routeTimeoutMs:number;hedgeDelayMs?:number}):Promise<{value:T;modelId:ModelId}>{
+  const primary=input.routes[0];
+  if(primary!=='deepseek_v4_1_flash_1017')throw Object.assign(new Error('The semantic planner requires the approved default model.'),{code:'MODEL_DESTINATION_DENIED'});
+  const result=await executeWithProviderFallback({routes:[primary],execute:input.execute,signal:input.signal,
+    timeoutMs:Math.min(input.routeTimeoutMs,SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS),maximumAttemptsPerRoute:1});
+  return {value:result.value,modelId:result.modelId};
 }
 
 export function interpreterModelOrder(
@@ -757,15 +380,7 @@ export function interpreterModelOrder(
 
   const ordered =
     (
-      [
-        'deepseek_v4_flash',
-
-        'glm_5_3_flash',
-
-        'glm_5_3',
-
-        'kimi_k3',
-      ] as const
+      ['deepseek_v4_1_flash_1017'] as const
     )
       .filter(
         (modelId) =>
@@ -1009,7 +624,7 @@ export async function resolveStructuredGoalContract(
     repairHint?: string,
   ) => Promise<string>,
 
-  maxRepairs = 1,
+  maxRepairs = 0,
 
   normalize: (
     value: unknown,
@@ -1119,7 +734,8 @@ export async function resolveStructuredGoalContract(
       ? 'PLANNER_SCHEMA_INVALID'
       : 'PLANNER_INVALID_OUTPUT',
 
-    'Xroga received an unusable planning response after one bounded correction attempt.',
+    generated.repairs > 0 ? 'Xroga received an unusable planning response after the bounded correction.'
+      : 'Xroga received an unusable planning response. No additional model request was made.',
 
     {
       details: {
@@ -1562,14 +1178,6 @@ export async function resolveRequestAuthorities(
     );
   }
 
-  if (
-    process.env
-      .XAI_API_KEY
-  ) {
-    authorities.add(
-      'network:x-read',
-    );
-  }
 
   return authorities;
 }
@@ -1863,7 +1471,7 @@ export async function planSemanticRequest(
                       .text;
                   },
 
-                  correctionUsed ? 0 : 1,
+                  0,
 
                   (
                     value,

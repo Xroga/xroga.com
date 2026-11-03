@@ -14,7 +14,7 @@ const benchmark = BENCHMARKS.find((entry) => entry.id === 'ts-backend-feature')!
 
 const testCase: BenchmarkCase = {
   benchmark,
-  modelId: 'kimi_k3' as BenchmarkCase['modelId'],
+  modelId: 'claude_sonnet_5_5' as BenchmarkCase['modelId'],
   role: 'implementation',
 };
 
@@ -62,7 +62,7 @@ test('the brief uses the benchmark objective and success criterion verbatim', ()
 });
 
 test('the brief is identical across models, so rows under one benchmark id aggregate comparably', () => {
-  const other: BenchmarkCase = { ...testCase, modelId: 'glm_5_3' };
+  const other: BenchmarkCase = { ...testCase, modelId: 'claude_sonnet_5_5' };
   assert.equal(benchmarkBrief(other), benchmarkBrief(testCase));
 });
 
