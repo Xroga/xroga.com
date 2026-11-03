@@ -11,6 +11,7 @@ test('conversation content clips before the transparent dock and adds a scroll-o
 
   assert.match(dock, /data-response-scrolled=\{/);
   assert.match(dock, /messages\.length > 0 && showJumpToLatest/);
+  assert.match(dock, /calc\(\$\{keyboardOffset\}px \+ max\(14px, env\(safe-area-inset-bottom\)\)\)/);
   assert.match(
     messageLog,
     /if \(atBottom\)[\s\S]*setShowJumpToLatest\(false\);[\s\S]*else \{[\s\S]*setShowJumpToLatest\(true\);/,
@@ -20,7 +21,7 @@ test('conversation content clips before the transparent dock and adds a scroll-o
   assert.match(css, /data-workspace-state='conversation'\][^}]*background:\s*transparent !important/s);
   assert.match(
     css,
-    /data-workspace-state='conversation'\][^}]*padding-bottom:\s*env\(safe-area-inset-bottom\)/s,
+    /data-workspace-state='conversation'\][^}]*padding-bottom:\s*0;/s,
   );
   assert.match(
     css,

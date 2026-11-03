@@ -182,7 +182,9 @@ export function TerminalDock() {
               : '64px',
 
           bottom:
-            keyboardOffset,
+            showStarterExperience || dashboardFullscreen
+              ? keyboardOffset
+              : `calc(${keyboardOffset}px + max(14px, env(safe-area-inset-bottom)))`,
           '--xv-start-keyboard': `${keyboardOffset}px`,
         } as React.CSSProperties
       }

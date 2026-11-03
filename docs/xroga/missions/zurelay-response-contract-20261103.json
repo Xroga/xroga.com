@@ -33,7 +33,10 @@
     "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
     "frontend/src/lib/workspaceMobileToolbar20261103.test.ts",
     "docs/operations/zurelay-two-model-20261103/LIVE-COMPOSER-COMPATIBILITY-REVIEW.json",
-    "frontend/src/lib/sidebarComposerRegression20261023.test.ts"
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "frontend/src/app/auth/reset-password/page.tsx",
+    "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
+    "docs/operations/zurelay-two-model-20261103/LIVE-RELEASE-DRIFT-REVIEW.json"
   ],
   "decisions": {
     "keep": [
@@ -58,8 +61,8 @@
   },
   "securityImpact": {
     "auth": {
-      "changed": false,
-      "description": "No authority or credential changes in this frontend-only companion. Presentation metadata grants no execution permission."
+      "changed": true,
+      "description": "Preserve the already-live 8745e310 email-token recovery verification instead of reverting to ordinary-session password-form admission. No roles, MFA, credentials or Supabase settings change."
     },
     "tenant": {
       "changed": false,
@@ -98,6 +101,12 @@
       "scope": "Offline original-turn continuation, unavailable recovery, source fidelity and persisted rich Copy/Share",
       "negative": true,
       "reference": "frontend/src/lib/researchHandoff.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/supabase/recoveryFlow20261103.test.ts frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+      "scope": "Preserve current production recovery-token requirement and composer safe-area behavior",
+      "negative": true,
+      "reference": "frontend/src/lib/supabase/recoveryFlow20261103.test.ts"
     }
   ],
   "architecture": {
@@ -119,7 +128,9 @@
     "frontend/src/lib/responseCoverageContract.test.ts",
     "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
     "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json",
-    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json"
+    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/LIVE-RELEASE-DRIFT-REVIEW.json",
+    "frontend/src/lib/supabase/recoveryFlow20261103.test.ts"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
