@@ -1,0 +1,190 @@
+{
+  "observedAtUtc": "2026-11-03T13:07:20.779831+00:00",
+  "sources": {
+    "backend": {
+      "source": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+      "checks": [
+        {
+          "id": 125921412724,
+          "name": "integrated-candidate",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637068993/job/125921412724"
+        },
+        {
+          "id": 125921412137,
+          "name": "unit",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637068993/job/125921412137"
+        },
+        {
+          "id": 125920967921,
+          "name": "oci-managed-custody",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637108023/job/125920967921"
+        },
+        {
+          "id": 125920965741,
+          "name": "authenticated-browser",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637108023/job/125920965741"
+        },
+        {
+          "id": 125920944365,
+          "name": "build",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637102793/job/125920944365"
+        },
+        {
+          "id": 125920925602,
+          "name": "Vercel Preview Comments",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/runs/125920925602"
+        },
+        {
+          "id": 125920826711,
+          "name": "deterministic-golden",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637068782/job/125920826711"
+        },
+        {
+          "id": 125920826612,
+          "name": "disposable-policy-database",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637068779/job/125920826612"
+        },
+        {
+          "id": 125920826558,
+          "name": "structured-mission-policy",
+          "head_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637068839/job/125920826558"
+        }
+      ],
+      "allRequiredPassed": true
+    },
+    "frontend": {
+      "source": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+      "checks": [
+        {
+          "id": 125921004160,
+          "name": "oci-managed-custody",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637119153/job/125921004160"
+        },
+        {
+          "id": 125921002139,
+          "name": "authenticated-browser",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637119153/job/125921002139"
+        },
+        {
+          "id": 125920985091,
+          "name": "build",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41637113957/job/125920985091"
+        },
+        {
+          "id": 125912882761,
+          "name": "Vercel Preview Comments",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/runs/125912882761"
+        },
+        {
+          "id": 125910753643,
+          "name": "integrated-candidate",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41633991859/job/125910753643"
+        },
+        {
+          "id": 125910753273,
+          "name": "unit",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41633991859/job/125910753273"
+        },
+        {
+          "id": 125910404126,
+          "name": "production-discovery",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41633991697/job/125910404126"
+        },
+        {
+          "id": 125910403998,
+          "name": "deterministic-golden",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41633991694/job/125910403998"
+        },
+        {
+          "id": 125910403317,
+          "name": "disposable-policy-database",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41633991726/job/125910403317"
+        },
+        {
+          "id": 125910402920,
+          "name": "structured-mission-policy",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41633991709/job/125910402920"
+        },
+        {
+          "id": 125910402597,
+          "name": "static-contracts",
+          "head_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/Xroga/xroga.com/actions/runs/41633991697/job/125910402597"
+        }
+      ],
+      "allRequiredPassed": true
+    }
+  },
+  "liveProviderRequests": 0,
+  "modelSpendUsd": 0,
+  "backendTests": {
+    "total": 5284,
+    "pass": 5278,
+    "fail": 0,
+    "skipped": 6,
+    "logSha256": "6d134d65cfd651c7a15b310db0ced6a31c1acb0c1862c3e3ea978b59698e55c2",
+    "baselineManifestSource": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+    "sourceTree": "73c32d70efdd9bee549df985608de7ebfb65f751",
+    "prSnapshot": "3542d3303e140258b20c28aa01fffeeb2bea5f4c",
+    "snapshotTreeEqualsSource": true
+  }
+}

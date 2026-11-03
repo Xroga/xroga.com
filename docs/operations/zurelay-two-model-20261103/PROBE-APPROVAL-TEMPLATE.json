@@ -1,0 +1,10 @@
+{
+  "approved": false,
+  "singleProbeApproved": false,
+  "packageId": "zurelay-single-probe-3bed89e6",
+  "sourceSha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "maximumProviderRequests": 1,
+  "maximumProviderMicroUsd": 1000,
+  "maximumOneTimeGoogleUsd": 0.5,
+  "expiresAtUtc": "OWNER_APPROVAL_AND_LIVE_PREREQUISITES_REQUIRED"
+}

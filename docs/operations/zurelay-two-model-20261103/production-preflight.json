@@ -1,0 +1,213 @@
+{
+  "observedAtUtc": "2026-11-03T13:09:03.466212+00:00",
+  "project": "project-c40d4821-e647-4fa2-92d",
+  "productionChanges": false,
+  "providerCalls": 0,
+  "apiTraffic": [
+    {
+      "percent": 100,
+      "revisionName": "xroga-api-response-cd5541-serving-1102"
+    },
+    {
+      "revisionName": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4",
+      "url": "https://voice-054d7ae4---xroga-api-422lt7eujq-uk.a.run.app"
+    },
+    {
+      "revisionName": "xroga-api-voice-fe2c6486c",
+      "tag": "voice-9f62bba5",
+      "url": "https://voice-9f62bba5---xroga-api-422lt7eujq-uk.a.run.app"
+    }
+  ],
+  "nonServingLatestTemplate": {
+    "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:d6b41af5f1ea5c83d0d021d7f9e49d2dd3565bffb3f018385bcdbd60b03426fd",
+    "environmentNames": [
+      "NODE_ENV",
+      "XROGA_PROJECT_RUNTIME_PROVIDER",
+      "XROGA_BACKGROUND_EXECUTION_PROVIDER",
+      "XROGA_CREDENTIAL_KMS_PROVIDER",
+      "XROGA_GOOGLE_CLOUD_AUTH_MODE",
+      "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+      "XROGA_PLATFORM_CONFIG_FILE",
+      "XROGA_GCE_PROJECT",
+      "XROGA_GCE_ZONE",
+      "XROGA_GCE_SUBNET",
+      "XROGA_GCE_BASE_IMAGE",
+      "XROGA_GCE_BASE_IMAGE_ID",
+      "XROGA_GCE_SERVICE_ACCOUNT",
+      "XROGA_GCE_ADMITTED_IMAGES",
+      "XROGA_GCE_MAX_INSTANCES",
+      "XROGA_GCE_DEFAULT_IMAGE",
+      "XROGA_GCE_NODE_IMAGE",
+      "XROGA_GCE_PYTHON_IMAGE",
+      "XROGA_GCE_RUST_IMAGE",
+      "XROGA_SANDBOX_BROWSER_IMAGE",
+      "XROGA_GOOGLE_DISPATCH_REGION",
+      "XROGA_GOOGLE_TASK_QUEUE",
+      "XROGA_GOOGLE_WORKER_JOB",
+      "XROGA_GOOGLE_DISPATCH_URL",
+      "XROGA_GOOGLE_DISPATCH_ACCOUNT",
+      "XROGA_AUTOMATION_SCHEDULER_MODE",
+      "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+      "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
+      "XROGA_PREVIEW_BASE_DOMAIN",
+      "XROGA_DRIVE_R2_ACCOUNT_ID",
+      "XROGA_DRIVE_R2_BUCKET",
+      "STORAGE_QUOTA_BYTES",
+      "STORAGE_WRITE_MODE",
+      "WHOP_WEBHOOK_SECRET",
+      "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+      "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+      "XROGA_GOOGLE_WORKER_IMAGE",
+      "XROGA_RELEASE_SHA",
+      "XROGA_DEPLOYMENT_ENVIRONMENT"
+    ],
+    "secretReferences": [
+      {
+        "name": "WHOP_WEBHOOK_SECRET",
+        "reference": {
+          "key": "1",
+          "name": "WHOP_WEBHOOK_SECRET"
+        }
+      },
+      {
+        "name": "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+        "reference": {
+          "key": "1",
+          "name": "XROGA_DRIVE_R2_ACCESS_KEY_ID"
+        }
+      },
+      {
+        "name": "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+        "reference": {
+          "key": "1",
+          "name": "XROGA_DRIVE_R2_SECRET_ACCESS_KEY"
+        }
+      }
+    ],
+    "configuredPolicy": {},
+    "zurelayKeyEnvironmentPresent": false
+  },
+  "servingRevision": "xroga-api-response-cd5541-serving-1102",
+  "servingSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "servingApi": {
+    "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:70a2be6f9f8b2452e7e6505ff13f9d1c571899aca18f011e5bbacc731daef28d",
+    "environmentNames": [
+      "NODE_ENV",
+      "XROGA_PROJECT_RUNTIME_PROVIDER",
+      "XROGA_BACKGROUND_EXECUTION_PROVIDER",
+      "XROGA_CREDENTIAL_KMS_PROVIDER",
+      "XROGA_GOOGLE_CLOUD_AUTH_MODE",
+      "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+      "XROGA_PLATFORM_CONFIG_FILE",
+      "XROGA_GCE_PROJECT",
+      "XROGA_GCE_ZONE",
+      "XROGA_GCE_SUBNET",
+      "XROGA_GCE_BASE_IMAGE",
+      "XROGA_GCE_BASE_IMAGE_ID",
+      "XROGA_GCE_SERVICE_ACCOUNT",
+      "XROGA_GCE_ADMITTED_IMAGES",
+      "XROGA_GCE_MAX_INSTANCES",
+      "XROGA_GCE_DEFAULT_IMAGE",
+      "XROGA_GCE_NODE_IMAGE",
+      "XROGA_GCE_PYTHON_IMAGE",
+      "XROGA_GCE_RUST_IMAGE",
+      "XROGA_SANDBOX_BROWSER_IMAGE",
+      "XROGA_GOOGLE_DISPATCH_REGION",
+      "XROGA_GOOGLE_TASK_QUEUE",
+      "XROGA_GOOGLE_WORKER_JOB",
+      "XROGA_GOOGLE_DISPATCH_URL",
+      "XROGA_GOOGLE_DISPATCH_ACCOUNT",
+      "XROGA_AUTOMATION_SCHEDULER_MODE",
+      "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+      "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
+      "XROGA_PREVIEW_BASE_DOMAIN",
+      "XROGA_DRIVE_R2_ACCOUNT_ID",
+      "XROGA_DRIVE_R2_BUCKET",
+      "STORAGE_QUOTA_BYTES",
+      "STORAGE_WRITE_MODE",
+      "WHOP_WEBHOOK_SECRET",
+      "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+      "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+      "XROGA_GOOGLE_WORKER_IMAGE",
+      "XROGA_RELEASE_SHA",
+      "XROGA_DEPLOYMENT_ENVIRONMENT"
+    ],
+    "secretReferences": [
+      {
+        "name": "WHOP_WEBHOOK_SECRET",
+        "reference": {
+          "key": "1",
+          "name": "WHOP_WEBHOOK_SECRET"
+        }
+      },
+      {
+        "name": "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+        "reference": {
+          "key": "1",
+          "name": "XROGA_DRIVE_R2_ACCESS_KEY_ID"
+        }
+      },
+      {
+        "name": "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+        "reference": {
+          "key": "1",
+          "name": "XROGA_DRIVE_R2_SECRET_ACCESS_KEY"
+        }
+      }
+    ],
+    "configuredPolicy": {},
+    "zurelayKeyEnvironmentPresent": false
+  },
+  "jobTemplate": {
+    "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:70a2be6f9f8b2452e7e6505ff13f9d1c571899aca18f011e5bbacc731daef28d",
+    "environmentNames": [
+      "NODE_ENV",
+      "XROGA_PROJECT_RUNTIME_PROVIDER",
+      "XROGA_BACKGROUND_EXECUTION_PROVIDER",
+      "XROGA_CREDENTIAL_KMS_PROVIDER",
+      "XROGA_GOOGLE_CLOUD_AUTH_MODE",
+      "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+      "XROGA_PLATFORM_CONFIG_FILE",
+      "XROGA_GCE_PROJECT",
+      "XROGA_GCE_ZONE",
+      "XROGA_GCE_SUBNET",
+      "XROGA_GCE_BASE_IMAGE",
+      "XROGA_GCE_BASE_IMAGE_ID",
+      "XROGA_GCE_SERVICE_ACCOUNT",
+      "XROGA_GCE_ADMITTED_IMAGES",
+      "XROGA_GCE_MAX_INSTANCES",
+      "XROGA_GCE_DEFAULT_IMAGE",
+      "XROGA_GCE_NODE_IMAGE",
+      "XROGA_GCE_PYTHON_IMAGE",
+      "XROGA_GCE_RUST_IMAGE",
+      "XROGA_SANDBOX_BROWSER_IMAGE",
+      "XROGA_GOOGLE_DISPATCH_REGION",
+      "XROGA_GOOGLE_TASK_QUEUE",
+      "XROGA_GOOGLE_WORKER_JOB",
+      "XROGA_GOOGLE_DISPATCH_URL",
+      "XROGA_GOOGLE_DISPATCH_ACCOUNT",
+      "XROGA_GOOGLE_WORKER_IMAGE",
+      "XROGA_AUTOMATION_SCHEDULER_MODE",
+      "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+      "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
+      "XROGA_PREVIEW_BASE_DOMAIN",
+      "XROGA_RUNTIME_ROLE",
+      "XROGA_DEPLOYMENT_ENVIRONMENT"
+    ],
+    "secretReferences": [],
+    "configuredPolicy": {},
+    "zurelayKeyEnvironmentPresent": false
+  },
+  "jobLabels": {
+    "cloud.googleapis.com/location": "us-east4",
+    "run.googleapis.com/lastUpdatedTime": "2026-11-02T21:44:45.384106Z",
+    "run.googleapis.com/satisfiesPzs": "true",
+    "xroga-source-sha": "cd5541c6c887a11ba68aaf3cccfb78609f906167"
+  },
+  "queue": "RUNNING",
+  "zurelayNamedSecrets": [
+    "projects/574998934848/secrets/xroga_models_zurelay"
+  ],
+  "bundleKeyPresence": "NOT_ACCESSED_NO_SECRET_VALUES_READ"
+}

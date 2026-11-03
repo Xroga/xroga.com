@@ -1,0 +1,48 @@
+{
+  "backendSource": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "frontendSource": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
+  "files": [
+    {
+      "path": "docs/operations/zurelay-two-model-20261103/smoke.mjs",
+      "sha256": "ae831c732ab7549faf86620ba7618e2688e71c3ded2b2a7fa4d8bc45a7fb3269"
+    },
+    {
+      "path": "docs/operations/zurelay-two-model-20261103/probe_job.py",
+      "sha256": "02b7b1fdc25bd247ac90728beb2cb2118222ae822378bcf20ee316621f11d3e8"
+    },
+    {
+      "path": "docs/operations/zurelay-two-model-20261103/submit-build.py",
+      "sha256": "bd0c7bd3654d5b72f882699946ecc8d791c6796c919a1d3c22f60c8066d69695"
+    },
+    {
+      "path": "docs/operations/zurelay-two-model-20261103/verify-image.py",
+      "sha256": "1370370699f640cb137275b61a3005722cb76faa5e2eca77b813d24e308c3b5d"
+    },
+    {
+      "path": "docs/operations/zurelay-two-model-20261103/release_gates.py",
+      "sha256": "c471b6a7be155b60984f4e2496442f69e10d79b07fb53e2e26eed7dad9f65cd4"
+    },
+    {
+      "path": "docs/operations/zurelay-two-model-20261103/PROBE-APPROVAL.md",
+      "sha256": "adcc172b109ffabe41c5399bf2dcf2d2f64226c89db070a81c9eecafb2b29d47"
+    }
+  ],
+  "state": "PREPARATION_ONLY_NO_PROVIDER_OR_BUILD_AUTHORIZATION",
+  "tests": [
+    {
+      "job": "d84b2f4c-8419-4d30-8424-dbb0d7d45c20",
+      "scope": "Four offline synthetic probe tests",
+      "status": "passed",
+      "logSha256": "2118df6c9e5d53da7b0565a47dd175927f5b35382da61cfeb79f7f4daa932d66"
+    },
+    {
+      "job": "7d472060-f859-4849-a158-f9b8b13d3a94",
+      "scope": "Nine operator/source archive/gate tests",
+      "status": "passed",
+      "logSha256": "c3c6e7d3e5ac21b2aeaadac4e5a2a93e7fa862e0afdc9eede12f7c3ce0574618"
+    }
+  ],
+  "credentialSetup": "CREDENTIAL-SETUP-RECEIPT.json",
+  "providerCalls": 0,
+  "modelSpendUsd": 0
+}
