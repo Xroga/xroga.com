@@ -14749,8 +14749,8 @@ html.xv-home-scroll-lock body {
 /* Solid backgrounds for portalled side flyouts: compositing over scrolling pages must not show through. */
 body.theme-black .xv-plugins-popover, body.theme-black .xv-sidebar-hover-menu__card { background:#171717!important; opacity:1!important; backdrop-filter:none!important; }
 body.theme-gray .xv-plugins-popover, body.theme-gray .xv-sidebar-hover-menu__card { background:#212121!important; opacity:1!important; backdrop-filter:none!important; }
-body.theme-white .xv-plugins-popover, body.theme-white .xv-sidebar-hover-menu__card,
-body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__card { background:#fafafa!important; opacity:1!important; backdrop-filter:none!important; }
+body.theme-white .xv-plugins-popover, body.theme-white .xv-sidebar-hover-menu__card { background:#fafafa!important; opacity:1!important; backdrop-filter:none!important; }
+body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__card { background:#faf7f0!important; opacity:1!important; backdrop-filter:none!important; }
 /* Only the rounded card paints a surface; the positioning wrapper must not
    paint a second square behind its corners. */
 .xv-sidebar-hover-menu { background:transparent!important; border:0!important; box-shadow:none!important; padding:0!important; backdrop-filter:none!important; }
