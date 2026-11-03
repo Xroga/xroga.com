@@ -1,0 +1,57 @@
+{
+  "scope": "OFFLINE_CURRENT_LIVE_PATCH_PRESERVATION_NOT_PRODUCTION_ACCEPTANCE",
+  "node": "v22.21.1",
+  "checks": [
+    {
+      "name": "focused",
+      "job": "bd55679e-2df2-4abd-ac0c-c7694f9a6944",
+      "status": "passed",
+      "exitCode": 0,
+      "counts": [
+        "# tests 7",
+        "# pass 7",
+        "# fail 0",
+        "# skipped 0"
+      ]
+    },
+    {
+      "name": "integrity",
+      "job": "898beafc-6fef-49bd-b81a-d8d580c0a552",
+      "status": "passed",
+      "exitCode": 0,
+      "counts": []
+    },
+    {
+      "name": "sourceBindings",
+      "job": "1fd7020d-fd4d-4954-92f2-4e6daa34e85e",
+      "status": "passed",
+      "exitCode": 0,
+      "counts": [
+        "# tests 6",
+        "# pass 6",
+        "# fail 0",
+        "# skipped 0"
+      ]
+    },
+    {
+      "name": "types",
+      "job": "f777c674-ef2e-44a6-af66-2ad68d3004ad",
+      "status": "passed",
+      "exitCode": 0,
+      "counts": []
+    },
+    {
+      "name": "responses",
+      "job": "bbd6e69c-0654-4873-9ab1-84d5d6d9911e",
+      "status": "passed",
+      "exitCode": 0,
+      "counts": [
+        "# tests 109",
+        "# pass 109",
+        "# fail 0",
+        "# skipped 0"
+      ]
+    }
+  ],
+  "providerCalls": 0
+}

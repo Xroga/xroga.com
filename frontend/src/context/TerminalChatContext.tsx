@@ -19,6 +19,7 @@ import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, apiFetch, ApiError, type ChatAttachment, api } from '@/lib/api';
 import { resolveBuilderProject, syncBuilderConversation } from '@/lib/builderChat';
 import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation, type ResearchHandoff } from '@/lib/researchHandoff';
+import {attachModelResult,markModelUnavailable,pendingModelConfirmation,type ModelHandoff} from '@/lib/modelHandoff';
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
@@ -463,6 +464,7 @@ export interface ChatMessage {
     siteDomain?: string;
   }>;
   researchReceiptId?: string;
+  modelReceiptId?: string;
   hackathonBrief?: import('@/lib/hackathonBrief').HackathonBriefCardData;
   /** Public, factual activity summaries derived from client or backend events. */
   thinkingSteps?: string[];
@@ -1349,8 +1351,8 @@ const stopRequestedRunIdRef =
   }, [sessionReady, prompt, messages, incognito]);
 
   const researchPendingKey = JSON.stringify(messages
-    .filter(m => pendingResearchConfirmation(m)).slice(-20)
-    .map(m => ({ messageId: m.id, confirmationId: pendingResearchConfirmation(m)! })));
+    .filter(m => pendingResearchConfirmation(m)||pendingModelConfirmation(m)).slice(-20)
+    .map(m => ({ messageId: m.id, confirmationId: (pendingResearchConfirmation(m)||pendingModelConfirmation(m))! })));
 
   // Read-only receipt handoff. Focus/reopen retrieves saved evidence, never dispatches research.
   useEffect(() => {
@@ -1368,10 +1370,14 @@ const stopRequestedRunIdRef =
           if (disposed || sessionIdRef.current !== session) break;
           const id = message.confirmationId;
           try {
-            const response = await apiFetch<{ researchResult?: ResearchHandoff | null; researchResultUnavailable?: boolean }>(
+            const response = await apiFetch<{ researchResult?: ResearchHandoff | null; researchResultUnavailable?: boolean;modelResult?:ModelHandoff|null;modelResultUnavailable?:boolean }>(
               `/api/phase1/business-actions/confirmations/${encodeURIComponent(id)}`,
             );
-            if (!disposed && sessionIdRef.current === session && response.researchResult) {
+            if(!disposed&&sessionIdRef.current===session&&response.modelResult){
+              setMessages(current=>current.map(m=>m.id===message.messageId?attachModelResult(m,response.modelResult!):m));
+            } else if(!disposed&&sessionIdRef.current===session&&response.modelResultUnavailable){
+              setMessages(current=>current.map(m=>m.id===message.messageId?markModelUnavailable(m,id):m));
+            } else if (!disposed && sessionIdRef.current === session && response.researchResult) {
               const result = response.researchResult;
               setMessages(current => current.map(m => m.id === message.messageId ? attachResearchResult(m, result) : m));
             } else if (!disposed && sessionIdRef.current === session && response.researchResultUnavailable) {

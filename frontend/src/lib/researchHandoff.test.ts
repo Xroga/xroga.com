@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { attachResearchResult, markResearchUnavailable, pendingResearchConfirmation } from './researchHandoff';
+import {responseTextV2} from '../components/response-experience-v2/exportText';
+import {richShareSnapshot} from '../components/response-experience-v2/shareSnapshot';
 const id = '221fe7f9-f0dd-4b12-b03a-bcb57a13f655';
 const message = { id: 'original-message', role: 'assistant', content: `Research requires approval. [Review](/dashboard/actions/confirm/${id})` };
 const result = { confirmationId: id, receiptId: 'receipt', text: '', omittedSourceCount: 0,
@@ -20,6 +22,21 @@ test('attaches evidence only to the exact originating approval and keeps origina
   assert.ok(!attachResearchResult(unavailable, result).content.includes('currently unavailable'));
   const chat = attachResearchResult({ ...message, featureOutput: { type: 'chat', content: message.content } }, result);
   assert.equal(chat.featureOutput.content, chat.content);
+});
+test('the original research turn receives its saved structured answer once, including citation and Share data',()=>{
+ const raw=JSON.stringify({s0:{markdown:'Documented choices [1].',data:{columns:['Option','Evidence'],rows:[['One','Supplied source [1]']]}}});
+ const answer={response:'## Options\n\nDocumented choices [1].\n\n```xroga-ui\n'+JSON.stringify({type:'table',id:'options',columns:[{key:'a',label:'Option',type:'text'},{key:'b',label:'Evidence',type:'text'}],rows:[{a:'One',b:'Supplied source [1]'}]})+'\n```',
+  completion:{status:'complete'},responseSource:{format:'xroga-response-json-v1',text:raw},webSources:[{...result.sources[0]}]};
+ const delivered=attachResearchResult(message,{...result,receiptId:id,answer});
+ assert.equal(delivered.id,message.id);assert.equal(delivered.researchReceiptId,id);assert.equal(delivered.webSources.length,1);
+ assert.doesNotMatch(delivered.content,/Approved research results|Review.*confirm|Actual returned excerpt/);
+ assert.equal(delivered.featureOutput.responseSource.text,raw);
+ assert.deepEqual(attachResearchResult(JSON.parse(JSON.stringify(delivered)),{...result,receiptId:id,answer}),delivered);
+ const copied=responseTextV2({id:delivered.id,content:delivered.content,featureOutput:delivered.featureOutput,webSources:delivered.webSources})!;
+ assert.match(copied,/Option/);assert.match(copied,/Supplied source/);
+ assert.ok(richShareSnapshot({id:delivered.id,content:delivered.content,featureOutput:delivered.featureOutput,webSources:delivered.webSources},copied));
+ const partial=attachResearchResult(message,{...result,answerFailure:'SYNTHESIS_UNAVAILABLE'});
+ assert.match(partial.content,/full answer could not be completed safely/);assert.match(partial.content,/Actual returned excerpt/);
 });
 
 test('retains ordered rich blocks, source evidence and old citations through unavailable and recovered states', () => {

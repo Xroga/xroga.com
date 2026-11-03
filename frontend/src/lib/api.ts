@@ -6039,7 +6039,7 @@ import type {
 
 export interface Phase1ChatResult {
   completion?: { status: 'complete' } | { status: 'partial'; reason: 'output_limit' | 'unconfirmed_stop' | 'authorization_review' | 'presentation_contract' };
-  responseSource?: { format: 'xroga-response-json-v1'; text: string };
+  responseSource?: { format: 'xroga-response-json-v1'; text: string; contract?:import('./responseCoverageContract').ResponseCoverageContract };
   response:
     string;
 

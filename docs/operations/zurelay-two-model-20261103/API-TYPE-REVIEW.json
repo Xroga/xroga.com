@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "scope": "IDENTICAL_COMPILED_RUNTIME_AND_OUTBOUND_CALLS_NOT_NEW_AUTHORIZATION",
+  "reference": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "path": "frontend/src/lib/api.ts",
+  "beforeSourceSha256": "0e2f8ba330c0a479e8aa3ac7fbf88c1141fe650f67790edd57fa25927deb4a20",
+  "currentSourceSha256": "53ab680320a6f7ae0231f27711c49b7b3cf20d3323e23d8024c3c239ec7387c2",
+  "compiledJavascriptSha256": "cbedfd256891ca609dd63fa24f956a3ad3c1d84f1b006c603a855dc7481b7e99",
+  "change": "Optional response coverage type annotation only. No function, request, origin, credentials, redirect handling or source transport was changed.",
+  "callers": [
+    {
+      "id": "c09bb8607fa4d00f23b7",
+      "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224"
+    }
+  ],
+  "originalReviews": [
+    {
+      "id": "c09bb8607fa4d00f23b7",
+      "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+      "sourceFileSha256": "0e2f8ba330c0a479e8aa3ac7fbf88c1141fe650f67790edd57fa25927deb4a20",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
+      "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "b830330a137571a774d5a46c65ebcef8355ae089fd89c3b0ccd082cde90305bf"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/integration-20261029/api-clients-AT-92043b72.mjs.txt",
+          "marker": "actual Chromium opaque redirects are terminal before any outside request",
+          "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
+          "marker": "fcad57247cfb79779f95",
+          "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-API-CLIENT-CONTINUATION-20261028.json",
+          "marker": "UNCHANGED_FIRST_PARTY_API_TRANSPORT_AND_AUTH_FUNCTIONS_ONLY_NOT_EXPO_WORKFLOW_ACCEPTANCE",
+          "sha256": "5f03c9501cb27d1c95aa08e44652d072e8d59a0a26027bdecee6a3dbd62eda6d"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/EXPO-WORKFLOW-AUTHORITY-20261028.json",
+          "marker": "EXACT_EXPO_APP_METADATA_CREATION_AND_IMMUTABLE_SOURCE_WORKFLOW_CANONICAL_APPROVAL_NOT_PHASE4_ACCEPTANCE",
+          "sha256": "9fb422a7a7194cd138f0a004650e1426f374ade514982f00e7ce17209a591c7e"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/integration-20261029/EGRESS-REVIEWS.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "56179d982c91be56551bcfcea3f4c9fc6c658ab80f07e9153d96e3de840037a0"
+        },
+        {
+          "path": "frontend/e2e/phase4-api-clients.security.mjs",
+          "marker": "actual Chromium opaque redirects are terminal before any outside request",
+          "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481",
+          "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
+        }
+      ],
+      "nativeCheckoutPriorReview": {
+        "id": "c09bb8607fa4d00f23b7",
+        "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+        "sourceFileSha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
+        "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
+        "evidence": [
+          {
+            "path": "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+            "marker": "c09bb8607fa4d00f23b7",
+            "sha256": "b830330a137571a774d5a46c65ebcef8355ae089fd89c3b0ccd082cde90305bf"
+          },
+          {
+            "path": "frontend/e2e/phase4-api-clients.security.mjs",
+            "marker": "actual Chromium opaque redirects are terminal before any outside request",
+            "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+          },
+          {
+            "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+            "marker": "c09bb8607fa4d00f23b7",
+            "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+          }
+        ]
+      },
+      "beforeExpoReadiness": {
+        "id": "c09bb8607fa4d00f23b7",
+        "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+        "sourceFileSha256": "ecfffb1f7aa6914df033ca978b00202981cd9b249f014b5ef8af1c4345d90920",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
+        "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
+        "evidence": [
+          {
+            "path": "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+            "marker": "c09bb8607fa4d00f23b7",
+            "sha256": "b830330a137571a774d5a46c65ebcef8355ae089fd89c3b0ccd082cde90305bf"
+          },
+          {
+            "path": "frontend/e2e/phase4-api-clients.security.mjs",
+            "marker": "actual Chromium opaque redirects are terminal before any outside request",
+            "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+          },
+          {
+            "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+            "marker": "c09bb8607fa4d00f23b7",
+            "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+          },
+          {
+            "path": "docs/xroga/evidence/command-010/NATIVE-CHECKOUT-AUTHORITY-20261028.json",
+            "marker": "fcad57247cfb79779f95",
+            "sha256": "4825338b4f68e7420129d25f7a6e935f01ffde21f2a85cc7622b8be117776e54"
+          }
+        ],
+        "nativeCheckoutPriorReview": {
+          "id": "c09bb8607fa4d00f23b7",
+          "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
+          "sourceFileSha256": "79928d36b438e66ee51c4464705b433d6e3c6e1b8329ec30744616f0b151166d",
+          "disposition": "VERIFIED_GUARD",
+          "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
+          "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
+          "evidence": [
+            {
+              "path": "docs/xroga/evidence/command-010/api-clients-20261027/trace.json",
+              "marker": "c09bb8607fa4d00f23b7",
+              "sha256": "b830330a137571a774d5a46c65ebcef8355ae089fd89c3b0ccd082cde90305bf"
+            },
+            {
+              "path": "frontend/e2e/phase4-api-clients.security.mjs",
+              "marker": "actual Chromium opaque redirects are terminal before any outside request",
+              "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+            },
+            {
+              "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+              "marker": "c09bb8607fa4d00f23b7",
+              "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+            }
+          ]
+        }
+      },
+      "beforeExpoWorkflow": {
+        "ref": "d803f15ee7c1ad7bfe4de98b083999d1d716ae2a",
+        "path": "docs/xroga/security/egress-caller-reviews.json",
+        "registrySha256": "48884dd72151e829fc73e15788e3177d1a21f03cb786a32352c179038cb67791",
+        "sourceFileSha256": "dfd6cb0926e5c496d7c0561a9cb5ddeeb1b8ca92542a21cf12d3e14183dd0c85",
+        "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224"
+      },
+      "beforeSupabaseProvision": {
+        "ref": "cace633a3cbcadc9f37fc7c74a29cec1acb7a143",
+        "sourceSha256": "c0175c6e88907bbe6279f48fa2d19b5cff3bba5a512cb32f21adec7b0181c7b8",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROVISION-BINDINGS-20261028.json"
+      },
+      "beforeSupabaseCreate": {
+        "ref": "6d10503fb6aafd2d9da628c886042b466d9ecb27",
+        "id": "c09bb8607fa4d00f23b7",
+        "sourceSha256": "54cde2685b1234a34b582d63379c06bdf6b8102f3f43c7b13947aea202b50600",
+        "proof": "docs/xroga/evidence/command-010/SUPABASE-PROJECT-CREATE-20261028.json"
+      },
+      "beforeGitHubPublication": {
+        "ref": "197637d2cfc360295e750cad6100ea71fcddc6df",
+        "id": "c09bb8607fa4d00f23b7",
+        "sourceSha256": "14a0abd9be8f941808fa7abb903fe8549e8b60bd894cea8207084c32753e3cf3",
+        "proof": "docs/xroga/evidence/command-010/GITHUB-PUBLICATION-20261028.json"
+      },
+      "historicalSourceBinding": {
+        "ref": "92043b72c20e5a12636dee079d760a1e5708b48f",
+        "sourceFileSha256": "f3edcd5a2e7c3c21a3ab7ba3fbb4b9396cfd07e502f2c48cb910d7e54076e639"
+      },
+      "currentMainIntegrationTestContinuation": {
+        "scope": "Same first-party transport plus real Builder create and download redirect controls. Audio decoding is explicitly stubbed only in this transport fixture and independently tested.",
+        "job": "e4c89c93-088e-4f00-91d4-e17a4f4b2df1",
+        "tests": 19,
+        "pass": 19,
+        "fail": 0
+      }
+    }
+  ],
+  "productionChanges": false,
+  "modelRequests": 0
+}

@@ -1,0 +1,154 @@
+{
+  "version": "1.0",
+  "missionId": "ZURELAY-RESPONSE-CONTRACT-20261103",
+  "baseSha": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "requirementIds": [
+    "XR-MISSION-055"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Preserve bounded semantic coverage and original model output through the existing Workspace response envelope. No new renderer, provider dispatch, credentials, SQL or deployment.",
+  "changedFiles": [
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/xrogaBlocks.ts",
+    "frontend/src/lib/xrogaResponseDocument.ts",
+    "frontend/src/lib/responseCoverageContract.ts",
+    "frontend/src/lib/responseCoverageContract.test.ts",
+    "docs/operations/zurelay-two-model-20261103/FRONTEND-STATUS.md",
+    "docs/xroga/missions/zurelay-response-contract-20261103.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
+    "docs/xroga/security/egress-callers.json",
+    "frontend/e2e/phase4-admin-share.security.mjs",
+    "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/modelHandoff.ts",
+    "frontend/src/lib/modelHandoff.test.ts",
+    "frontend/src/lib/researchHandoff.ts",
+    "frontend/src/lib/researchHandoff.test.ts",
+    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json",
+    "frontend/src/app/globals.css",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/terminal/TerminalDock.tsx",
+    "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+    "frontend/src/lib/workspaceMobileToolbar20261103.test.ts",
+    "docs/operations/zurelay-two-model-20261103/LIVE-COMPOSER-COMPATIBILITY-REVIEW.json",
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "frontend/src/app/auth/reset-password/page.tsx",
+    "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
+    "docs/operations/zurelay-two-model-20261103/LIVE-RELEASE-DRIFT-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/SECOND-LIVE-COMPOSER-COMPATIBILITY.json",
+    "docs/operations/zurelay-two-model-20261103/FINAL-LIVE-DOCK-COMPATIBILITY.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, tenant authorization, vault, budget ledger, microphone and rollback",
+      "Historical provider records and unresolved reservations"
+    ],
+    "extend": [
+      "Existing model SDK admission and semantic coverage envelope"
+    ],
+    "replace": [
+      "Future LLM provider catalog and transport with two exact Zurelay identities"
+    ],
+    "deprecate": [
+      "Future OpenRouter, Moonshot, Zhipu, Grok, Gemini and Parallel generative dispatch"
+    ]
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No schema migration. Existing text column stores the bounded snapshot.",
+    "rollback": "Retain snapshots and the compatible frontend decoder. Restore the reviewed paired release without deleting data."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Preserve the already-live 8745e310 email-token recovery verification instead of reverting to ordinary-session password-form admission. No roles, MFA, credentials or Supabase settings change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No authority or credential changes in this frontend-only companion. Presentation metadata grants no execution permission."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No authority or credential changes in this frontend-only companion. Presentation metadata grants no execution permission."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No authority or credential changes in this frontend-only companion. Presentation metadata grants no execution permission."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No authority or credential changes in this frontend-only companion. Presentation metadata grants no execution permission."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No authority or credential changes in this frontend-only companion. Presentation metadata grants no execution permission."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No authority or credential changes in this frontend-only companion. Presentation metadata grants no execution permission."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/responseCoverageContract.test.ts",
+      "scope": "Offline persisted answer, partial/error preservation and Copy/Share confidentiality",
+      "negative": true,
+      "reference": "frontend/src/lib/responseCoverageContract.test.ts"
+    },
+    {
+      "command": "node --import tsx --test src/lib/modelHandoff.test.ts src/lib/researchHandoff.test.ts",
+      "scope": "Offline original-turn continuation, unavailable recovery, source fidelity and persisted rich Copy/Share",
+      "negative": true,
+      "reference": "frontend/src/lib/researchHandoff.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/supabase/recoveryFlow20261103.test.ts frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+      "scope": "Preserve current production recovery-token requirement and composer safe-area behavior",
+      "negative": true,
+      "reference": "frontend/src/lib/supabase/recoveryFlow20261103.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing Share storage and model request are extended. No scheduler, API or persistence system is added.",
+    "rfc": null
+  },
+  "rollout": "After all exact-source gates, request specific secure key/config and bounded provider-test approval, then reviewed paired API/Job fence and frontend promotion. No action in production from this checkpoint.",
+  "rollback": "Preserve the current cd5541 API/Job and d86c frontend plus voice routing and ledger. The old image is not a verified Zurelay recovery. During a new-policy rollback keep model admission and queues closed until a compatible reviewed Zurelay pair is available. Never silently reactivate old providers.",
+  "knownGaps": [
+    "Exact-source CI and authenticated isolated pairing remain required.",
+    "Offline Sonnet and research continuation tests do not establish actual provider behavior.",
+    "The existing key has probe-only limits. Further model/retrieval spending and source-pinned production cutover remain unapproved.",
+    "Compatible Zurelay recovery is required. Preserve the historical pair, with old-provider model admission closed during a new-policy rollback."
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/operations/zurelay-two-model-20261103/FRONTEND-STATUS.md",
+    "frontend/src/lib/responseCoverageContract.test.ts",
+    "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/LIVE-RELEASE-DRIFT-REVIEW.json",
+    "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
+    "docs/operations/zurelay-two-model-20261103/SECOND-LIVE-COMPOSER-COMPATIBILITY.json",
+    "docs/operations/zurelay-two-model-20261103/FINAL-LIVE-DOCK-COMPATIBILITY.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Exact-source CI and authenticated isolated pairing remain required.",
+      "Offline Sonnet and research continuation tests do not establish actual provider behavior.",
+      "The existing key has probe-only limits. Further model/retrieval spending and source-pinned production cutover remain unapproved.",
+      "Compatible Zurelay recovery is required. Preserve the historical pair, with old-provider model admission closed during a new-policy rollback."
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

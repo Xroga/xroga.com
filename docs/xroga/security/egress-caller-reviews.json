@@ -2908,7 +2908,7 @@
     {
       "id": "c09bb8607fa4d00f23b7",
       "callSha256": "0f007db3755a07e13dfaf95ef36d99a6884d9a3cc3101513301f73201bd21224",
-      "sourceFileSha256": "0e2f8ba330c0a479e8aa3ac7fbf88c1141fe650f67790edd57fa25927deb4a20",
+      "sourceFileSha256": "53ab680320a6f7ae0231f27711c49b7b3cf20d3323e23d8024c3c239ec7387c2",
       "disposition": "VERIFIED_GUARD",
       "trust": "CONFIGURED_FIRST_PARTY_API_ORIGIN_ONLY_NO_REDIRECT_OR_CREDENTIAL_BODY_FORWARDING",
       "tenantAuthority": "EXISTING_BROWSER_SESSION_TOKEN_OR_GUEST_SESSION_ONLY_BACKEND_MUST_ENFORCE_ORIGINAL_ISSUED_ACTOR_OWNER_AND_ACTION_AUTHORITY_NO_UPSTREAM_PROMOTION",
@@ -2953,6 +2953,11 @@
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
           "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481",
           "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
+        },
+        {
+          "path": "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "fd59984bf3ccf8b589c50dd2434f8c49637b60480f6e67b669fb6ef931c9eaae"
         }
       ],
       "nativeCheckoutPriorReview": {
@@ -3069,6 +3074,10 @@
         "tests": 19,
         "pass": 19,
         "fail": 0
+      },
+      "beforeZurelayCoverageType": {
+        "reference": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+        "sourceFileSha256": "0e2f8ba330c0a479e8aa3ac7fbf88c1141fe650f67790edd57fa25927deb4a20"
       }
     },
     {
@@ -3364,9 +3373,10 @@
         {
           "path": "frontend/e2e/phase4-admin-share.security.mjs",
           "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
-          "sha256": "ed2f9f335df6716e2fbe2934839021485668bbd0929452d4567350edf166246e",
+          "sha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
           "beforeRichShareFixtureSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23",
-          "continuity": "Original two transport tests and every assertion unchanged. Real pure Share validators and additive API-version compatibility test now load in a shared VM realm. UI-only component remains outside transport fixture."
+          "continuity": "Original two transport tests and every assertion unchanged. Real pure Share validators and additive API-version compatibility test now load in a shared VM realm. UI-only component remains outside transport fixture.",
+          "beforeZurelayCoverageFixtureSha256": "ed2f9f335df6716e2fbe2934839021485668bbd0929452d4567350edf166246e"
         }
       ]
     },

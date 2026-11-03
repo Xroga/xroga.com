@@ -15,6 +15,7 @@ const pureSources={
   '@/lib/xrogaBlocks':'lib/xrogaBlocks.ts',
   '@/lib/xrogaRichResults':'lib/xrogaRichResults.ts',
   './xrogaRichResults':'lib/xrogaRichResults.ts',
+  './responseCoverageContract':'lib/responseCoverageContract.ts',
   '@/lib/osFounderAccess':'lib/osFounderAccess.ts',
 };
 const pureCache=new Map();
