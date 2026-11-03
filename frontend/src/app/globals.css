@@ -14329,7 +14329,8 @@ body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color
     border: 0 !important;
     box-shadow: none !important;
   }
-  .xv-workspace-header-tools .xv-ws-launch span { display: none !important; }
+  .xv-workspace-header-tools .xv-ws-launch > span:not(.xv-animated-icon-host) { display: none !important; }
+  .xv-workspace-header-tools button > .xv-animated-icon-host { display: inline-flex !important; }
   .xv-workspace-header-tools .xv-ws-launch {
     display: inline-flex !important;
     width: 30px !important;
