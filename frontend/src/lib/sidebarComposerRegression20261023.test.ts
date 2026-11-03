@@ -33,10 +33,10 @@ test('composer menus expose real files, apps, skills, tools and agents', () => {
 });
 
 test('conversation content stays clear of the composer and model usage is fetched, not invented', () => {
-  // The current live design clips the transcript above a transparent dock.
-  // Preserve the content boundary instead of requiring the retired backdrop.
-  assert.match(css, /\.xv-terminal-scroll\[data-conversation='true'\]\s*\{[^}]*clip-path:\s*inset\(/s);
-  assert.match(css, /clip-path:\s*inset\([^}]*var\(--xv-chatbar-height,\s*112px\)[^}]*env\(safe-area-inset-bottom\)/s);
+  // Current production preserves scroll clearance without clipping the response
+  // around the floating composer. Keep the real usage assertions unchanged.
+  assert.doesNotMatch(css, /\.xv-terminal-scroll\[data-conversation='true'\]\s*\{[^}]*clip-path:/s);
+  assert.match(css, /\.xv-terminal-scroll\s*\{[^}]*padding-bottom:\s*calc\(var\(--xv-chatbar-height/s);
   assert.match(css, /data-workspace-state='conversation'\][^}]*background:\s*transparent !important/s);
   assert.match(model, /api\.billing\.entitlement\(\)/);
   assert.match(model, /role="progressbar"/);

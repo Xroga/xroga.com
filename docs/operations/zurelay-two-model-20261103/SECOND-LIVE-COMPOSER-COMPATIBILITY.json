@@ -1,0 +1,42 @@
+{
+  "base": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
+  "scope": "PRESERVE_CONCURRENT_PRODUCTION_COMPOSER_PATCH_NOT_NEW_PRODUCT_SCOPE",
+  "production": "603844c0ce86dd5f61d302464d266312dc36c5bf",
+  "records": [
+    {
+      "path": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+      "sha256": "67f5ef403361f7943bb923602ea814fcd1d3437f916ac31d044fa67c724410b6",
+      "sameAsProduction": "603844c0ce86dd5f61d302464d266312dc36c5bf"
+    }
+  ],
+  "additionalTest": {
+    "path": "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "sha256": "56e82555a64ad9210bb616b4589c344ea753b0fc1d9a7b8784e6fad60f659a1d",
+    "review": "Replace the now-retired clip-path requirement with the current production no-clipping plus dynamic scroll-padding boundary. Keep real billing entitlement and usage progress assertions unchanged."
+  },
+  "verification": {
+    "job": "ef09124e-8754-41d8-b5ee-1b2a2a525e0d",
+    "tests": 7,
+    "pass": 7,
+    "fail": 0,
+    "skipped": 0
+  },
+  "review": "No TypeScript application logic, auth, models, API, scheduler, ledger, voice, security policy or dependencies change. Source-bound final CI remains mandatory. Previous 109 response and frontend type checks apply to identical application TypeScript.",
+  "modelRequests": 0,
+  "productionChanges": false,
+  "latestProduction": "e31ecaed6c5395e1b886d5c8639a98ed97f639c1",
+  "themeRecords": [
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "cddd4ddd69bdc0b92defbdaed357add3787ead786243913ed7915a97068aadb4",
+      "sameAsProduction": "e31ecaed6c5395e1b886d5c8639a98ed97f639c1"
+    },
+    {
+      "path": "frontend/src/components/automations/automations.module.css",
+      "sha256": "e36291f79158cf3e4ed411c645f865549385732b38a4f7dc3494495ff67059b0",
+      "sameAsProduction": "e31ecaed6c5395e1b886d5c8639a98ed97f639c1"
+    }
+  ],
+  "themeReview": "Preserve the two exact CSS files from the now-live mobile-toolbar workstream. Changes bind popover and automation surfaces to existing theme variables, including beige popup color. No JavaScript, dependencies, auth or feature activation changes.",
+  "coordinationComment": "https://github.com/Xroga/xroga.com/issues/906#issuecomment-6613996869"
+}

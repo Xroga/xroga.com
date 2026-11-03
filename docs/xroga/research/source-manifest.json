@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
+  "source_sha": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -4112,6 +4112,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-11c5365cfcd71032",
+      "filename": "SECOND-LIVE-COMPOSER-COMPATIBILITY.json",
+      "path_or_url": "docs/operations/zurelay-two-model-20261103/SECOND-LIVE-COMPOSER-COMPATIBILITY.json",
+      "sha256": "482f28e53af2f39027f15d79aa4b6a90d48a8f0e47cac59b7f9e206a9ec0dd6f",
+      "byte_size": 2222,
+      "modified_timestamp": "2026-11-03T20:03:02.889Z",
+      "parse_status": "PARSED_JSON",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-dc5e725830a5ea3b",
       "filename": "SHARE-FIXTURE-REVIEW.json",
       "path_or_url": "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json",
@@ -5584,9 +5597,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "fb3c4cd7aa58e65690098e3a6079288cb25ff3f53424d9eb96df6b5ee3114d55",
+      "sha256": "34a7b4e3a760418a6aa5b55120132b5683232b223ffe8f23ea58a2393bc3717c",
       "byte_size": 5213668,
-      "modified_timestamp": "2026-11-03T19:14:36.411Z",
+      "modified_timestamp": "2026-11-03T20:04:03.838Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",

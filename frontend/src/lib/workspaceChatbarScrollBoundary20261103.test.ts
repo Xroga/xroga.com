@@ -4,7 +4,7 @@ import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
-test('conversation content clips before the transparent dock and adds a scroll-only upper glow', () => {
+test('conversation content remains visible around the transparent dock and keeps the scroll-only upper glow', () => {
   const dock = read('../components/terminal/TerminalDock.tsx');
   const messageLog = read('../components/terminal/SwarmMessageLog.tsx');
   const css = read('../app/globals.css');
@@ -17,7 +17,8 @@ test('conversation content clips before the transparent dock and adds a scroll-o
     /if \(atBottom\)[\s\S]*setShowJumpToLatest\(false\);[\s\S]*else \{[\s\S]*setShowJumpToLatest\(true\);/,
   );
   assert.doesNotMatch(messageLog, /else if \(loading\)[\s\S]*setShowJumpToLatest\(true\);/);
-  assert.match(css, /\.xv-terminal-scroll\[data-conversation='true'\]\s*\{[^}]*clip-path:/s);
+  assert.doesNotMatch(css, /\.xv-terminal-scroll\[data-conversation='true'\]\s*\{[^}]*clip-path:/s);
+  assert.match(css, /\.xv-terminal-scroll\s*\{[^}]*padding-bottom:\s*calc\(var\(--xv-chatbar-height/s);
   assert.match(css, /data-workspace-state='conversation'\][^}]*background:\s*transparent !important/s);
   assert.match(
     css,
