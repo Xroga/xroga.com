@@ -34,7 +34,9 @@
     "docs/xroga/current-state.md",
     "docs/xroga/missions/connected-app-zurelay-20261104.json",
     "docs/xroga/security/egress-caller-reviews.json",
-    "docs/xroga/security/egress-callers.json"
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md"
   ],
   "decisions": {
     "keep": ["Canonical Composio HTTP transport with egress binding", "Existing tenant authority, budget ledger, scheduler, workflow state and confirmation gates"],
