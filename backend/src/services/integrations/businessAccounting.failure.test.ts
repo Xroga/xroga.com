@@ -26,6 +26,7 @@ for (const [file, name] of [['businessRead.ts', 'selectToolAndArguments'], ['bus
     const valid = JSON.stringify({ toolSlug: 'FIXTURE_TOOL', arguments: {}, summary: 'Synthetic action' });
     const adapters = {
       buildCandidatePayload: () => [{ toolSlug: 'FIXTURE_TOOL' }], selectPlannerRoutes: () => ['kimi_k3', 'glm_5_3'],
+      connectedAppModelRoute: () => ['deepseek_v4_1_flash_1017'],
       generateStructured, isPlainRecord: (value: unknown) => !!value && typeof value === 'object', validateArguments: () => true,
       estimateMessageTokens: () => 1,
       withTenantModelReservation: async (input: { scope:{userId:string};modelId:Parameters<typeof recordCompletedProviderUsage>[1];payload: ModelPayload; execute: (dispatch: BoundModelDispatch) => Promise<{inputTokens:number;outputTokens:number}> }) => {

@@ -11,7 +11,8 @@ function fixture(t: TestContext) {
   const context=createTenantContext({userId:owner,via:'remote_getuser'}),consent=nativeReleaseFixture(owner);
   const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55438',SUPABASE_SERVICE_ROLE_KEY:'synthetic-business-db-only',
     OPENROUTER_API_KEY:'synthetic-business-platform-credential',GLM_API_KEY:'synthetic-business-glm-credential',
-    COMPOSIO_API_KEY:'synthetic-business-composio-credential'};
+    COMPOSIO_API_KEY:'synthetic-business-composio-credential',ZURELAY_API_KEY:'synthetic-business-zurelay-credential',
+    XROGA_ALLOWED_MODELS:'deepseek_v4_1_flash_1017'};
   const prior=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const k of Object.keys(env))prior[k]===undefined?delete process.env[k]:process.env[k]=prior[k];});
   const state={lane:'read',mode:'ok',effects:0,reservations:0,settlements:0,receipts:0,releases:0,composio:0,readExecutions:0,mutate:undefined as undefined|(()=>void)};
@@ -28,10 +29,10 @@ function fixture(t: TestContext) {
   }) as typeof JSON.stringify);
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input instanceof Request?input.url:input)),body=init?.body?JSON.parse(String(init.body)):{};
-    if(['https://openrouter.ai','https://open.bigmodel.cn'].includes(url.origin)){
+    if(url.origin==='https://api.zurelay.com'){
       state.effects++;assert.ok(state.reservations>state.settlements);
       assert.equal(init?.redirect,'manual');assert.ok(body.messages.some((m:{content:string})=>m.content.includes('selected synthetic message')));
-      if(state.mode==='outage'&&url.origin==='https://openrouter.ai')return Response.json({error:{message:'Synthetic provider outage'}},{status:503});
+      if(state.mode==='outage')return Response.json({error:{message:'Synthetic provider outage'}},{status:503});
       assert.doesNotMatch(JSON.stringify(body),/synthetic-business-platform-credential|synthetic-business-glm-credential/);
       return Response.json({id:'synthetic-model-result',choices:[{message:{content:JSON.stringify({toolSlug:slug(),arguments:{},summary:'Delete the selected synthetic message'})},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}});
     }
@@ -128,14 +129,14 @@ test('actual business model callers bind issued owner and immutable input throug
   }
 });
 
-test('business model selectors still recover from an ordinary provider outage without duplicating completion accounting',async t=>{
+test('business model selectors fail closed on provider outage without a charged alternate model',async t=>{
   const f=fixture(t);
   for(const lane of ['read','action']){
     f.state.lane=lane;f.state.mode='outage';const before={...f.state};
-    const result=await f.call();assert.equal(result.status,lane==='read'?'confirmation_required':'ready');
-    assert.ok(f.state.effects>=before.effects+2,'A real provider outage may use the bounded alternate model');
-    assert.equal(f.state.reservations,before.reservations+2);assert.equal(f.state.settlements,before.settlements+1);
-    assert.equal(f.state.receipts,before.receipts+1);assert.equal(f.state.releases,before.releases+1);
+    await assert.rejects(f.call());
+    assert.equal(f.state.effects,before.effects+1,'No second provider may be charged');
+    assert.equal(f.state.reservations,before.reservations+1);assert.equal(f.state.settlements,before.settlements);
+    assert.equal(f.state.receipts,before.receipts);assert.equal(f.state.releases,before.releases+1);
     assert.equal(f.state.readExecutions,before.readExecutions);
   }
 });

@@ -82,6 +82,8 @@ interface ComposioWorkbenchConfig {
 
 interface ComposioSessionConfig {
   user_id?: string;
+  instant?: false | Record<string, unknown>;
+  premium_usage?: false | Record<string, unknown>;
   multi_account?: {
     enable?: boolean;
     require_explicit_selection?: boolean;
@@ -104,6 +106,15 @@ export interface ComposioSession {
     code?: string;
     message?: string;
   }>;
+}
+
+export function assertNonPremiumComposioSession(session: ComposioSession): void {
+  if ((session.config?.instant !== undefined && session.config.instant !== false)
+    || (session.config?.premium_usage !== undefined && session.config.premium_usage !== false)) {
+    throw new ComposioClientError('This connected-app session permits separately billed tools. Prepare a non-premium session.', {
+      status: 403, code: 'COMPOSIO_PREMIUM_TOOL_DISABLED',
+    });
+  }
 }
 
 interface ComposioConfigHistoryResponse {
@@ -1648,6 +1659,9 @@ async function createComposioSession(
   const actor=requireComposioActor(userId,tenantContext);
   const body: Record<string, unknown> = {
     user_id: composioUserId(userId),
+    // Instant/premium tools have separate provider charges. No workflow may
+    // silently spend them; an explicitly budgeted feature needs a new policy.
+    instant: false,
     workbench: {
       enable: false,
       enable_proxy_execution: false,
@@ -2642,6 +2656,7 @@ async function executeDiscoveredComposioTool(
   const sessionId = cleanSessionId(input.sessionId);
 
   const session = await assertComposioSession(userId, sessionId, input.mode,context);
+  assertNonPremiumComposioSession(session);
   signal?.throwIfAborted();
 
   const toolSlug = cleanToolSlug(input.toolSlug);

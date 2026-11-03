@@ -19,6 +19,8 @@
     "backend/src/e2e/xrogaGoldenJourneys.test.ts",
     "backend/src/lib/adaptiveOrchestrator.ts",
     "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessAccounting.failure.test.ts",
+    "backend/src/services/integrations/businessModelEgress.test.ts",
     "backend/src/services/integrations/businessRead.ts",
     "backend/src/services/integrations/businessWorkflow.test.ts",
     "backend/src/services/integrations/businessWorkflow.ts",
@@ -28,11 +30,15 @@
     "backend/src/services/integrations/composioProvenance.security.test.ts",
     "backend/src/services/integrations/connectedAppModel.test.ts",
     "backend/src/services/integrations/connectedAppModel.ts",
-    "docs/xroga/missions/connected-app-zurelay-20261104.json"
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/missions/connected-app-zurelay-20261104.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json"
   ],
   "decisions": {
     "keep": ["Canonical Composio HTTP transport with egress binding", "Existing tenant authority, budget ledger, scheduler, workflow state and confirmation gates"],
-    "extend": ["Enable explicit account selection for action sessions", "Prefer relevant connected toolkits in public metadata searches", "Route connected-app tool selection to the one specified Zurelay DeepSeek model"],
+    "extend": ["Enable explicit account selection for action sessions", "Disable separately billed Composio Instant tools at session creation and execution", "Prefer relevant connected toolkits in public metadata searches", "Route connected-app tool selection to the one specified Zurelay DeepSeek model"],
     "replace": [],
     "deprecate": []
   },
@@ -48,7 +54,7 @@
     "approval": {"changed": false, "description": "Existing consequential-action confirmation and authority permits remain mandatory."},
     "credentials": {"changed": true, "description": "Dedicated model route reads only the existing server-side ZURELAY_API_KEY; no key is sent to the client or logs."},
     "egress": {"changed": true, "description": "Connected-app planning messages use the pinned Zurelay HTTPS endpoint; public Composio search metadata still excludes private task text."},
-    "cost": {"changed": true, "description": "Zurelay's published input/output prices are registered; existing DeepSeek quota pool and provider reservation ledger remain in force; no fallback model is permitted for this lane."},
+    "cost": {"changed": true, "description": "Zurelay's published input/output prices are registered; existing DeepSeek quota pool and provider reservation ledger remain in force; no fallback model is permitted for this lane. Composio Instant usage is explicitly disabled and enabled premium sessions are refused."},
     "billing": {"changed": false, "description": "No subscription or payment behavior changes."}
   },
   "tests": [
