@@ -1,8 +1,8 @@
 {
   "scope": "APPROVED_APPLICATION_PINS_WITH_REVIEWED_RUNTIME_CONFIG_AND_FRONTEND_LIVE_COMPATIBILITY_CORRECTIONS",
   "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
-  "frontend": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
-  "recordedAtUtc": "2026-11-03T20:16:31.631Z",
+  "frontend": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+  "recordedAtUtc": "2026-11-03T21:10:49.872Z",
   "approved": false,
   "files": [
     {
@@ -67,7 +67,7 @@
     },
     {
       "path": "RELEASE-AND-ROLLBACK.md",
-      "sha256": "1d5183a287c87c34ba0968a07b254ba9835e07195fcdf5caf9aa663b6d3d395d"
+      "sha256": "313056e5744e503e172196b5167f31e9dab2aeaa01b090c802cf5488a8e0c618"
     },
     {
       "path": "RELEASE-APPROVAL-TEMPLATE.json",
@@ -75,7 +75,7 @@
     },
     {
       "path": "release_contract.py",
-      "sha256": "e449dbfa6609d47e65e39d6cde4d2f69a85926c96227e047097d1f56e886a4b1"
+      "sha256": "b1fa45e692d85335d5f7ce13fce250e51d7d8ef585c431de29b034fa34e0d457"
     },
     {
       "path": "release_gates.py",
@@ -91,7 +91,7 @@
     },
     {
       "path": "test_release_contract.py",
-      "sha256": "efc1bcd80d140982921c53d61b6db673d4ce74feea905bc37a44495483c313b8"
+      "sha256": "2b85e504ff1de0dabe56eb728b63a0c0ba68aa9560fdc94a2e1426b55c215e63"
     },
     {
       "path": "verify-image.py",
@@ -100,6 +100,6 @@
   ],
   "sourceHashNormalization": "UTF8_LF_MATCHING_GIT_BLOBS",
   "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503",
-  "frontendAmendmentCommit": "8e2e5e67dae91ddc6e841c22576dec633336a1d6",
-  "ownerAmendmentQuestionId": "call_b2ff39e786524e2d8d5bac17a1c8f4a3"
+  "frontendAmendmentCommit": "a0b31ab984ad3fe220bb7a4e3c77aab285ed4cbd",
+  "ownerAmendmentQuestionId": "call_d76904b59ed94a939f21f8ae00f94d43"
 }

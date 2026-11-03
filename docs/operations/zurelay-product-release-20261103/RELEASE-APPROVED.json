@@ -1,9 +1,9 @@
 {
   "approved": true,
-  "activationHold": "FRONTEND_PRODUCTION_DRIFT_TO_5c337e05_REQUIRES_REVIEWED_SOURCE_PIN",
+  "activationHold": "FINAL_4830_EXACT_CI_AND_AUTHENTICATED_PREVIEW_REQUIRED",
   "packageId": "zurelay-product-76c158aa-20261103",
   "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
-  "frontendSha": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
+  "frontendSha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
   "recoverySha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
   "maximumGoogleUsd": 0.5,
   "maximumImageUsdPerMonth": 0.1,
@@ -15,7 +15,7 @@
   "automaticRetries": 0,
   "singletonFenceSqlApproved": true,
   "existingKeyLimitChangeApproved": true,
-  "expiresAtUtc": "2026-11-03T22:00:00+00:00",
+  "expiresAtUtc": "2026-11-03T23:00:00+00:00",
   "ownerDecision": "Approve this exact release and bounded acceptance",
   "ownerDecisionQuestionId": "call_dea43f3b59ba4410be1e2ba3b295cc10",
   "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503",
@@ -52,6 +52,15 @@
       "conditionalOn": "all eight exact-source gates passing",
       "state": "EGRESS_TREE_DIGEST_GATE_FAILED_NEVER_PROMOTED",
       "replacementProposed": "4830b424d32e0f30aac11901374dcb09c68b4e9a"
+    },
+    {
+      "source": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "questionId": "call_d76904b59ed94a939f21f8ae00f94d43",
+      "decision": "Approve this evidence-only source and timing amendment",
+      "reviewCommit": "a0b31ab984ad3fe220bb7a4e3c77aab285ed4cbd",
+      "conditionalOn": "all eight exact-source CI gates and authenticated Preview passing",
+      "preparationExpiryUtc": "2026-11-03T23:00:00+00:00",
+      "spendingAndSingleMaintenanceWindowUnchanged": true
     }
   ]
 }

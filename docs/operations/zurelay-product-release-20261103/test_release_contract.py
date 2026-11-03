@@ -76,7 +76,7 @@ class ReleaseContractTests(unittest.TestCase):
         from release_contract import require_frontend_release
         now, a = self.approval()
         require_frontend_release({'service':'xroga-web','environment':'production','release':FRONTEND})
-        for old in ['f62ca1f3f70150040d829b2ee48f93192feff9c2','2f80a744a406eb2ab7e86538bc382cc3000ef730','f5f70ae3b47fb583dfdbf08ae0f9831028dc6238']:
+        for old in ['63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b','7760f91c80a4a10471963cb0efc05a9f0af0beb3','f62ca1f3f70150040d829b2ee48f93192feff9c2','2f80a744a406eb2ab7e86538bc382cc3000ef730','f5f70ae3b47fb583dfdbf08ae0f9831028dc6238']:
             with self.assertRaises(AssertionError):
                 require_approval(dict(a, frontendSha=old), now)
             with self.assertRaises(AssertionError):
