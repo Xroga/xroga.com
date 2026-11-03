@@ -27,6 +27,8 @@ def require_frontend_release(value):
 
 def require_approval(value, now, recovering=False):
     assert value.get('approved') is True, 'NEW_OWNER_DECISION_REQUIRED'
+    if not recovering:
+        assert not value.get('activationHold'), 'RELEASE_SAFETY_HOLD_REQUIRES_REVIEW'
     assert value.get('packageId') == PACKAGE and value.get('sourceSha') == SOURCE, 'SOURCE_APPROVAL_MISMATCH'
     assert value.get('frontendSha') == FRONTEND and value.get('recoverySha') == RECOVERY, 'PAIR_APPROVAL_MISMATCH'
     expected = {'maximumGoogleUsd': .50, 'maximumImageUsdPerMonth': .10,

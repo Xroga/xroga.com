@@ -65,7 +65,7 @@ class ReleaseContractTests(unittest.TestCase):
     def test_exact_new_approval_required(self):
         now, a = self.approval()
         require_approval(a, now)
-        for delta in ({'approved': False}, {'sourceSha': 'old'}, {'frontendSha': 'old'},
+        for delta in ({'approved': False}, {'activationHold': 'FRONTEND_PRODUCTION_DRIFT'}, {'sourceSha': 'old'}, {'frontendSha': 'old'},
                       {'maximumModelRequests': 12}, {'maximumGoogleUsd': 1},
                       {'singletonFenceSqlApproved': False}, {'existingKeyLimitChangeApproved': False},
                       {'expiresAtUtc': (now - datetime.timedelta(seconds=1)).isoformat()}):

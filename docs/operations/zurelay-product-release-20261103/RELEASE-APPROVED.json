@@ -1,5 +1,6 @@
 {
   "approved": true,
+  "activationHold": "FRONTEND_PRODUCTION_DRIFT_TO_5c337e05_REQUIRES_REVIEWED_SOURCE_PIN",
   "packageId": "zurelay-product-76c158aa-20261103",
   "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
   "frontendSha": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
