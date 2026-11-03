@@ -15,7 +15,10 @@
     "frontend/src/lib/responseCoverageContract.ts",
     "frontend/src/lib/responseCoverageContract.test.ts",
     "docs/operations/zurelay-two-model-20261103/FRONTEND-STATUS.md",
-    "docs/xroga/missions/zurelay-response-contract-20261103.json"
+    "docs/xroga/missions/zurelay-response-contract-20261103.json",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
+    "docs/xroga/security/egress-callers.json"
   ],
   "decisions": {
     "keep": [
@@ -92,7 +95,8 @@
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
     "docs/operations/zurelay-two-model-20261103/FRONTEND-STATUS.md",
-    "frontend/src/lib/responseCoverageContract.test.ts"
+    "frontend/src/lib/responseCoverageContract.test.ts",
+    "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

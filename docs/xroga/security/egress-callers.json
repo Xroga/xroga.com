@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "2e9bae88b50fe81f8c282fd8cf9575916500a97c0f79591158ef2b7263958684",
+  "sourceTreeDigest": "baa74ade2edf2844ba851196a274d708a8ab9ad632d6851096aead2f8968374e",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -4540,6 +4540,11 @@
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
           "sha256": "954f8ebae9fda01e6675124cdbd6910ed96660136f425bb1f15ac459d49f4481",
           "beforeValidVoicePcmFixtureSha256": "af759ba89fcdf41e5cf6aaf74e3581fcbeb1a7b8487cad3259c065a5c2adcf22"
+        },
+        {
+          "path": "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "fd59984bf3ccf8b589c50dd2434f8c49637b60480f6e67b669fb6ef931c9eaae"
         }
       ]
     },

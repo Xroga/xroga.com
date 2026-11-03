@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "source_sha": "8712b514ea95f3bb09632b3f89e6fddfab3d602e",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -4034,6 +4034,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-4ded3a0ce0193d46",
+      "filename": "API-TYPE-REVIEW.json",
+      "path_or_url": "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
+      "sha256": "fd59984bf3ccf8b589c50dd2434f8c49637b60480f6e67b669fb6ef931c9eaae",
+      "byte_size": 10153,
+      "modified_timestamp": "2026-11-03T12:07:06.085Z",
+      "parse_status": "PARSED_JSON",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-aacc2a7a8f5b60eb",
       "filename": "FRONTEND-STATUS.md",
       "path_or_url": "docs/operations/zurelay-two-model-20261103/FRONTEND-STATUS.md",
@@ -5493,9 +5506,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "8fd2a110f17732e8f5c535f59246573d6f1db0c46eb9c88e661545108d201df4",
+      "sha256": "53a63a4fe2a7345582fda11bdff544c529bacb2ebcfc8a502e2f83b5e0847320",
       "byte_size": 5210063,
-      "modified_timestamp": "2026-11-03T11:54:59.046Z",
+      "modified_timestamp": "2026-11-03T12:07:19.717Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",

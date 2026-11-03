@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/zurelay-response-contract-20261103",
-    "sha": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
-    "sourceTimestampUtc": "2026-11-03T03:32:11+05:00",
-    "auditStartedUtc": "2026-11-03T11:54:55.767Z",
+    "sha": "8712b514ea95f3bb09632b3f89e6fddfab3d602e",
+    "sourceTimestampUtc": "2026-11-03T16:55:20+05:00",
+    "auditStartedUtc": "2026-11-03T12:07:19.155Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
