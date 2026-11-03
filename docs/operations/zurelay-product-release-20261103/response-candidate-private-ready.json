@@ -1,0 +1,12 @@
+{
+  "state": "PASS_PRIVATE_READINESS",
+  "revision": "xroga-api-zurelay-76c158-check2-1103",
+  "task": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/queues/xroga-canonical-production/tasks/response-ready-cd5541-candidate-b747434317",
+  "startedAtUtc": "2026-11-03T18:59:38.922678+00:00",
+  "urlPath": "/ready",
+  "defaultTrafficChanged": false,
+  "httpStatus": 200,
+  "latency": "0.486370466s",
+  "observedAt": "2026-11-03T18:59:39.347914Z",
+  "exactProbeTaskRemoved": true
+}
