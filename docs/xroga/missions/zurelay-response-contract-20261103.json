@@ -26,7 +26,13 @@
     "frontend/src/lib/modelHandoff.test.ts",
     "frontend/src/lib/researchHandoff.ts",
     "frontend/src/lib/researchHandoff.test.ts",
-    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json"
+    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json",
+    "frontend/src/app/globals.css",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/terminal/TerminalDock.tsx",
+    "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+    "frontend/src/lib/workspaceMobileToolbar20261103.test.ts",
+    "docs/operations/zurelay-two-model-20261103/LIVE-COMPOSER-COMPATIBILITY-REVIEW.json"
   ],
   "decisions": {
     "keep": [

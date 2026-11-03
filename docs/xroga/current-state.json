@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/zurelay-response-contract-20261103",
-    "sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
-    "sourceTimestampUtc": "2026-11-03T17:13:56+05:00",
-    "auditStartedUtc": "2026-11-03T16:33:06.407Z",
+    "sha": "b2dbf974e9def8c5a7b6af3cbd2583e33ee7534f",
+    "sourceTimestampUtc": "2026-11-03T21:34:03+05:00",
+    "auditStartedUtc": "2026-11-03T16:54:55.213Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -88491,7 +88491,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "c81cd724d7ddd20482c989468cd7ee2bcf4e0183b14b0ea0c8a9f7bf19d158b9",
+      "sha256": "80703d51ce2d9ceefc09d6d2580dcda09d3c00940eafb8976cdedfd04408f720",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -88950,7 +88950,7 @@
       "id": "surface:96c636bdc082da399e4c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "85e2df0510c7e881f9ee0c72c0ead13c8b380bfb5ae67c8eb92468ff26b455a7",
+      "sha256": "e53c76504678059eef70a9c61755e54828ce640a49ce48ce93e10f6525a905ed",
       "symbols": [
         "TerminalDock",
         "chatbarHidden",
@@ -131233,9 +131233,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c7398e53c895591755e8",
+      "id": "finding:b06b57da9bec829297e8",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 430,
+      "line": 431,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -142172,6 +142172,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:078f6241470c34fa2ea0",
+      "sourcePath": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d85500b1398ce8914793",
       "sourcePath": "frontend/src/lib/workspaceCompactControls.test.ts",
       "declaredTests": 6,
@@ -142210,6 +142217,13 @@
       "id": "test-suite:d36f1a92a1ed887313b6",
       "sourcePath": "frontend/src/lib/workspaceIdentityMenu.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d29386ca9d8a31984640",
+      "sourcePath": "frontend/src/lib/workspaceMobileToolbar20261103.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
