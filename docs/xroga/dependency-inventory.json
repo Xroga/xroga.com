@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "source_sha": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16101,7 +16101,7 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae"
+      "sha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
@@ -16125,7 +16125,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5"
+      "sha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -16186,6 +16186,10 @@
     {
       "path": "backend/src/ai/research.ts",
       "sha256": "c63672530ee853c7697bd02fa1f9f49d0cd53d309558683c28b9dd2ffcb5a91d"
+    },
+    {
+      "path": "backend/src/ai/researchAnswer.ts",
+      "sha256": "d777c27a0082515c9701188596ea33d4475aa8e2c4719a5b638861c29a51e1c2"
     },
     {
       "path": "backend/src/ai/resourceLedger.ts",
@@ -16357,7 +16361,7 @@
     },
     {
       "path": "backend/src/ai/sonnetApproval.ts",
-      "sha256": "d4b25e2509c9eb96f1274186e75f0d0ce7c5be3bb26b8c0d5cf2188b73a2ef68"
+      "sha256": "c22b87e73e8cead0d8833eaa355e36642ee7d06fbdff84d3699ba1672613691b"
     },
     {
       "path": "backend/src/ai/startupProgress.ts",
@@ -16381,7 +16385,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
+      "sha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10"
     },
     {
       "path": "backend/src/ai/universal/artifactWorkspace.ts",
@@ -18209,7 +18213,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "c3ce5b1f29cdeb1f15214e35c4a79857235ebfee5ce3154d772752f867746c4d"
+      "sha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda"
     },
     {
       "path": "backend/src/services/integrations/supabaseAccess.ts",
@@ -24134,7 +24138,7 @@
       "hostname": "api.parallel.ai",
       "protocol": "https:",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 78,
+      "line": 91,
       "credentialsInUrl": false
     },
     {
@@ -24148,21 +24152,21 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4054,
+      "line": 4064,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.zurelay.com",
       "protocol": "https:",
       "path": "backend/src/ai/sonnetApproval.ts",
-      "line": 48,
+      "line": 51,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.zurelay.com",
       "protocol": "https:",
       "path": "backend/src/ai/sonnetApproval.ts",
-      "line": 60,
+      "line": 63,
       "credentialsInUrl": false
     },
     {
@@ -30959,49 +30963,49 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 751,
+      "line": 754,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1113,
+      "line": 1121,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1509,
+      "line": 1519,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2261,
+      "line": 2271,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3820,
+      "line": 3830,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4004,
+      "line": 4014,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4783,
+      "line": 4793,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31163,6 +31167,13 @@
     {
       "path": "backend/src/ai/repositoryTools.ts",
       "line": 607,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/researchAnswer.ts",
+      "line": 33,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -34466,7 +34477,7 @@
     },
     {
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 50,
+      "line": 57,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

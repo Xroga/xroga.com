@@ -77,6 +77,8 @@ test('actual confirmation adapter resumes pending approval once, persists its re
   throw Error('Unexpected offline fixture URL '+url.pathname);
  });
  const messages=[{role:'system' as const,content:'Review only. No actions are authorized.'},{role:'user' as const,content:'Use Sonnet to debug this complex multi-file concurrency race condition.'}];
+ await assert.rejects(prepareSonnetApproval(scope,[messages[0],{...messages[1],content:messages[1].content+' SYNTHETIC_CREDENTIAL_CANARY_MUST_NOT_LEAVE'}]));
+ assert.equal(rows.size,0);assert.equal(effects,0);
  const workspacePlan=await planSemanticRequest({userId:owner,tenantContext:context,message:messages[1].content,history:['USER: The failure is a concurrency regression.','ASSISTANT: Inspect the transaction boundary.']});
  assert.equal(workspacePlan.dispatch,'chat');assert.deepEqual(workspacePlan.capabilityIds,['conversation.respond']);
  assert.match(workspacePlan.directResponse!,/separate capped spending approval/);

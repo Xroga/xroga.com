@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/zurelay-two-model-20261103",
-    "sha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
-    "sourceTimestampUtc": "2026-11-03T17:35:09+05:00",
-    "auditStartedUtc": "2026-11-03T15:52:22.706Z",
+    "sha": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+    "sourceTimestampUtc": "2026-11-03T20:56:36+05:00",
+    "auditStartedUtc": "2026-11-03T16:33:14.409Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -283,7 +283,8 @@
         "backend/src/ai/responsePresentation.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/answerCoverage.test.ts:3",
@@ -345,7 +346,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.test.ts:9",
@@ -439,7 +441,8 @@
         "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/attachments.docx.test.ts:6",
@@ -581,7 +584,8 @@
         "backend/src/ai/providerPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkLedger.test.ts:3",
@@ -684,7 +688,8 @@
         "backend/src/ai/providerRuntime.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkEvidence.validation.test.ts:3",
@@ -841,7 +846,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/complexity.test.ts:4",
@@ -982,7 +988,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/converterPolicy.test.ts:4",
@@ -1033,7 +1040,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/cutover.test.ts:4",
@@ -1211,7 +1219,8 @@
         "backend/src/ai/black-hole/webIntelligence.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/productionBridge.test.ts:4",
@@ -1330,7 +1339,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/leakAudit.test.ts:4",
@@ -1403,7 +1413,8 @@
         "backend/src/ai/providerPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/registry.test.ts:6",
@@ -1460,7 +1471,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/productionBridge.ts:28",
@@ -1523,12 +1535,14 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/researchRouter.test.ts:4",
         "backend/src/ai/black-hole/webIntelligence.test.ts:5",
-        "backend/src/ai/black-hole/webIntelligence.ts:30"
+        "backend/src/ai/black-hole/webIntelligence.ts:30",
+        "backend/src/ai/researchAnswer.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -1654,7 +1668,8 @@
         "backend/src/ai/routingOutcomes.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/costAndCancellation.test.ts:11",
@@ -1815,7 +1830,8 @@
         "backend/src/lib/taskClassifier.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/complexity.test.ts:5",
@@ -2049,7 +2065,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/productionBridge.ts:29",
@@ -2169,7 +2186,8 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.test.ts:12",
@@ -2460,7 +2478,8 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
@@ -2513,7 +2532,8 @@
         "backend/src/ai/siteBuilder.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.test.ts:3",
@@ -2607,7 +2627,8 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:235",
@@ -2664,7 +2685,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildStreamNarrator.test.ts:3",
@@ -2797,7 +2819,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkLedger.ts:27",
@@ -2858,7 +2881,8 @@
         "backend/src/ai/modelCapabilityProfile.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/capabilityRouting.test.ts:26",
@@ -2949,7 +2973,8 @@
         "backend/src/ai/compileValidate.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileBlockerMessage.test.ts:4",
@@ -3009,7 +3034,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileCommand.test.ts:8",
@@ -3105,7 +3131,8 @@
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileBlockerMessage.ts:3",
@@ -3255,7 +3282,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/contextPreparation.test.ts:3",
@@ -3313,7 +3341,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:8",
@@ -3523,7 +3552,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/engineeringRoles.test.ts:3",
@@ -3576,7 +3606,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/engineeringTasks.test.ts:3",
@@ -3775,7 +3806,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/blackBoxExecution.test.ts:6",
@@ -3903,7 +3935,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/fileSelector.test.ts:3",
@@ -3943,7 +3976,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/githubShippingPlan.test.ts:3",
@@ -4151,7 +4185,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:3",
@@ -4252,7 +4287,8 @@
         "backend/src/lib/taskClassifier.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/leakAudit.test.ts:13",
@@ -4505,7 +4541,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/legacyBuilderAdapter.test.ts:3",
@@ -4572,7 +4609,8 @@
         "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkEvidence.validation.test.ts:4",
@@ -4636,7 +4674,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.test.ts:10",
@@ -4728,7 +4767,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/capabilityRouter.ts:26",
@@ -4792,7 +4832,8 @@
         "backend/src/config/envSecrets.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/leakAudit.test.ts:16",
@@ -5228,7 +5269,7 @@
       "id": "surface:7d07dd00cd58533729b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/parallelApproval.ts",
-      "sha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "symbols": [
         "Operation",
         "ParallelAdmission",
@@ -5237,6 +5278,8 @@
         "admission",
         "admitted",
         "amount",
+        "answer",
+        "answerRequest",
         "args",
         "attempt",
         "body",
@@ -5249,6 +5292,7 @@
         "digest",
         "executeParallelNativeAction",
         "extractUrls",
+        "finish",
         "identity",
         "issuedAt",
         "modelScope",
@@ -5259,6 +5303,7 @@
         "pdfParse",
         "prepareParallelApproval",
         "proof",
+        "request",
         "requireParallelAdmission",
         "requireRetrievalOnly",
         "response",
@@ -5271,7 +5316,8 @@
         "url",
         "urls",
         "useCase",
-        "value"
+        "value",
+        "withAnswer"
       ],
       "imports": [
         "../lib/truthfulExecution.js",
@@ -5287,8 +5333,10 @@
         "../services/integrations/businessAction.js",
         "../services/integrations/businessActionConfirmations.js",
         "../services/integrations/credentialVaultRuntime.js",
+        "../services/integrations/researchResult.js",
         "../services/publish/nativeReleaseAdmission.js",
         "./parallelDispatch.js",
+        "./researchAnswer.js",
         "./runStore.js",
         "./tenantModelDispatch.js",
         "node:crypto",
@@ -5297,6 +5345,7 @@
       ],
       "runtimeImports": [
         "backend/src/ai/parallelDispatch.ts",
+        "backend/src/ai/researchAnswer.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/lib/truthfulExecution.ts",
@@ -5311,6 +5360,7 @@
         "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/integrations/businessActionConfirmations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/services/integrations/researchResult.ts",
         "backend/src/services/publish/nativeReleaseAdmission.ts"
       ],
       "entryPoints": [
@@ -5338,8 +5388,8 @@
         "backend/src/ai/parallelApproval.ts#identity"
       ],
       "tenantBoundary": [
-        "backend/src/ai/parallelApproval.ts:71 (user_id)",
-        "backend/src/ai/parallelApproval.ts:74 (user_id)"
+        "backend/src/ai/parallelApproval.ts:84 (user_id)",
+        "backend/src/ai/parallelApproval.ts:87 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/parallelApproval.ts#actionPlanDigest",
@@ -5440,7 +5490,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/parallelApproval.ts:97",
+        "backend/src/ai/parallelApproval.ts:118",
         "backend/src/ai/parallelWeb.security.test.ts:15",
         "backend/src/ai/parallelWeb.ts:1"
       ],
@@ -5523,7 +5573,8 @@
         "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:18",
@@ -5581,7 +5632,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:50",
@@ -5788,7 +5840,8 @@
         "backend/src/ai/patchSafety.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.ts:1",
@@ -5858,7 +5911,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "sha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6418,7 +6471,8 @@
         "backend/src/synthesis/universalShadow.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/modelContext.security.test.ts:4",
@@ -6426,6 +6480,8 @@
         "backend/src/ai/projectName.test.ts:3",
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
+        "backend/src/ai/researchAnswer.test.ts:5",
+        "backend/src/ai/researchAnswer.ts:46",
         "backend/src/ai/tenantModelDispatch.test.ts:8",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
         "backend/src/builder/phase2Bridge.ts:5",
@@ -6478,6 +6534,7 @@
         "backend/src/ai/projectName.test.ts",
         "backend/src/ai/repositoryHydrationAuthority.test.ts",
         "backend/src/ai/repositoryReadFailure.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/security/workerProjectAdmission.test.ts"
@@ -6585,7 +6642,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:111",
@@ -6674,7 +6732,8 @@
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
@@ -6752,7 +6811,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/converter.ts:4",
@@ -7038,7 +7098,8 @@
         "backend/src/ai/providerPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkLedger.test.ts:13",
@@ -7482,7 +7543,8 @@
         "backend/src/ai/tenantModelDispatch.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:89",
@@ -7749,7 +7811,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:196",
@@ -7955,6 +8018,86 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:794bcc5ea45ebaad109e",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/ai/researchAnswer.ts",
+      "sha256": "d777c27a0082515c9701188596ea33d4475aa8e2c4719a5b638861c29a51e1c2",
+      "symbols": [
+        "RESEARCH_ANSWER_MAXIMUM_MICRO_USD",
+        "ResearchAnswerRequest",
+        "allowed",
+        "canonical",
+        "citationIssues",
+        "completeApprovedResearchAnswer",
+        "error",
+        "evidence",
+        "filtered",
+        "goal",
+        "input",
+        "issues",
+        "link",
+        "links",
+        "normalized",
+        "ref",
+        "refs",
+        "researchAnswerRequestSchema",
+        "researchCitationIssues",
+        "result",
+        "sources",
+        "strings",
+        "u",
+        "visible"
+      ],
+      "imports": [
+        "../security/authority/enforce.js",
+        "../services/integrations/researchResult.js",
+        "./black-hole/researchRouter.js",
+        "./pipeline.js",
+        "./tenantModelDispatch.js",
+        "./universal/goalContract.js",
+        "zod"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/black-hole/researchRouter.ts",
+        "backend/src/ai/pipeline.ts",
+        "backend/src/ai/universal/goalContract.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/services/integrations/researchResult.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/ai/parallelApproval.ts:20",
+        "backend/src/ai/researchAnswer.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
+      ],
+      "authBoundary": [
+        "backend/src/ai/researchAnswer.ts#AuthorityError"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/researchAnswer.ts#evidence",
+        "backend/src/ai/researchAnswer.ts#formatResearchAsEvidence"
+      ],
+      "testCoverage": [
+        "backend/src/ai/researchAnswer.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -8270,7 +8413,8 @@
         "backend/src/lib/taskClassifier.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:75",
@@ -8823,7 +8967,8 @@
         "backend/src/lib/truthfulExecution.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:214",
@@ -8873,7 +9018,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:29",
@@ -8935,7 +9081,8 @@
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
@@ -8996,7 +9143,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:217",
@@ -9061,7 +9209,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.ts:5",
@@ -9209,7 +9358,8 @@
         "backend/src/ai/softwareAgent/xrogaTools.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:30",
@@ -9297,7 +9447,8 @@
         "backend/src/ai/softwareAgent/writePolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:26",
@@ -9355,7 +9506,8 @@
         "backend/src/ai/softwareAgent/softwareExecutorSelector.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:23",
@@ -9426,7 +9578,8 @@
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts:29",
@@ -9505,7 +9658,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentWorkspace.checkpoint.test.ts:8",
@@ -9552,7 +9706,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:26",
@@ -9603,7 +9758,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:42",
@@ -9716,7 +9872,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:34",
@@ -9784,7 +9941,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:26",
@@ -9928,7 +10086,8 @@
         "backend/src/ai/softwareAgent/SoftwareAgentWorkspace.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:22",
@@ -9968,7 +10127,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:3",
@@ -10056,7 +10216,8 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:43",
@@ -10152,7 +10313,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts:21",
@@ -10280,7 +10442,8 @@
         "backend/src/services/integrations/githubRunBranch.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:27",
@@ -10412,7 +10575,8 @@
         "backend/src/synthesis/universalFlow.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:28",
@@ -10458,7 +10622,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:30",
@@ -10495,7 +10660,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentRuntime.ts:25",
@@ -10543,7 +10709,8 @@
         "backend/src/ai/runStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:259",
@@ -10640,7 +10807,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:46",
@@ -10690,7 +10858,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts:7",
@@ -10826,7 +10995,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:25",
@@ -10898,7 +11068,8 @@
         "backend/src/services/integrations/githubDeploy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:18",
@@ -10998,7 +11169,8 @@
         "backend/src/sandbox/sandboxTypes.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts:38",
@@ -11037,7 +11209,7 @@
       "id": "surface:2d4ed3dbf904e01aa111",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/sonnetApproval.ts",
-      "sha256": "d4b25e2509c9eb96f1274186e75f0d0ce7c5be3bb26b8c0d5cf2188b73a2ef68",
+      "sha256": "c22b87e73e8cead0d8833eaa355e36642ee7d06fbdff84d3699ba1672613691b",
       "symbols": [
         "MODEL",
         "SONNET_TASK_MAXIMUM_MICRO_USD",
@@ -11045,6 +11217,7 @@
         "approval",
         "args",
         "argsSchema",
+        "checkSecrets",
         "confirmation",
         "context",
         "current",
@@ -11072,6 +11245,8 @@
         "../security/authority/digest.js",
         "../security/authority/enforce.js",
         "../security/authority/types.js",
+        "../security/egress/dataClassification.js",
+        "../security/egress/egressPolicy.js",
         "../security/tenantContext.js",
         "../services/integrations/businessAction.js",
         "../services/integrations/businessActionConfirmations.js",
@@ -11093,6 +11268,8 @@
         "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/security/authority/digest.ts",
         "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -11164,7 +11341,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:99",
@@ -11232,7 +11410,8 @@
         "backend/src/ai/htmlTruncation.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/htmlTruncation.test.ts:4",
@@ -11435,7 +11614,7 @@
       "id": "surface:8655984f8d3c51472c8c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708",
+      "sha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10",
       "symbols": [
         "BoundModelDispatch",
         "CredentialRow",
@@ -11496,6 +11675,7 @@
         "./providerBudget.js",
         "./providerPolicy.js",
         "./quota.js",
+        "./researchAnswer.js",
         "./runStore.js",
         "./usageAccounting.js",
         "node:crypto",
@@ -11560,9 +11740,9 @@
         "backend/src/ai/tenantModelDispatch.ts#consumeAuthorityPermit"
       ],
       "tenantBoundary": [
-        "backend/src/ai/tenantModelDispatch.ts:59 (user_id)",
-        "backend/src/ai/tenantModelDispatch.ts:104 (user_id)",
-        "backend/src/ai/tenantModelDispatch.ts:112 (user_id)"
+        "backend/src/ai/tenantModelDispatch.ts:66 (user_id)",
+        "backend/src/ai/tenantModelDispatch.ts:113 (user_id)",
+        "backend/src/ai/tenantModelDispatch.ts:121 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/tenantModelDispatch.ts#preparedActionDigest"
@@ -11823,6 +12003,8 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
         "backend/src/ai/pipeline.ts:162",
+        "backend/src/ai/researchAnswer.test.ts:6",
+        "backend/src/ai/researchAnswer.ts:2",
         "backend/src/ai/responseCoverage.test.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:9",
         "backend/src/ai/universal/goalContract.test.ts:3",
@@ -11855,6 +12037,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/black-hole/webIntelligence.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/ai/responseCoverage.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/goalContract.test.ts",
@@ -12076,7 +12259,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:160",
@@ -12561,7 +12745,8 @@
         "backend/src/ai/compileValidate.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:39",
@@ -12678,7 +12863,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/intentReasoning.ts:25",
@@ -18031,7 +18217,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:161",
@@ -23463,7 +23650,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:230",
@@ -23880,7 +24068,8 @@
         "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:215"
@@ -24138,7 +24327,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/taskClass.ts:28",
@@ -24340,7 +24530,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:38",
@@ -31548,7 +31739,8 @@
         "backend/src/sandbox/sandboxTypes.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/flyMachineSandbox.test.ts:42",
@@ -31630,7 +31822,8 @@
         "backend/src/synthesis/inSandboxBrowser.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/executionBinding.test.ts:8",
@@ -31957,7 +32150,8 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/googleSandbox.test.ts:3",
@@ -32095,7 +32289,8 @@
         "backend/src/ai/runStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/meteredExecution.test.ts:4",
@@ -32157,7 +32352,8 @@
         "backend/src/sandbox/sandboxTypes.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/registryNetwork.test.ts:4",
@@ -32333,7 +32529,8 @@
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:31",
@@ -32422,7 +32619,8 @@
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:21",
@@ -32915,6 +33113,7 @@
         "backend/src/ai/pipeline.ts:1",
         "backend/src/ai/providerPolicy.ts:6",
         "backend/src/ai/providerRuntime.ts:4",
+        "backend/src/ai/researchAnswer.ts:6",
         "backend/src/ai/sonnetApproval.ts:4",
         "backend/src/ai/supabaseApprovalPipeline.security.test.ts:6",
         "backend/src/ai/tenantModelDispatch.test.ts:15",
@@ -33265,6 +33464,7 @@
         "backend/src/ai/parallelApproval.ts:8",
         "backend/src/ai/parallelDispatch.ts:8",
         "backend/src/ai/parallelWeb.ts:6",
+        "backend/src/ai/sonnetApproval.ts:17",
         "backend/src/ai/voiceBudget.ts:5",
         "backend/src/builder/hosting/authority.ts:4",
         "backend/src/builder/providerTransports.ts:14",
@@ -33367,6 +33567,7 @@
         "backend/src/ai/parallelWeb.ts:7",
         "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/providerRuntime.ts:5",
+        "backend/src/ai/sonnetApproval.ts:18",
         "backend/src/ai/supabaseApprovalPipeline.security.test.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:31",
         "backend/src/builder/data/restPort.ts:3",
@@ -33956,7 +34157,8 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/canonical.ts:9",
@@ -34148,6 +34350,7 @@
         "backend/src/ai/quota.ts:2",
         "backend/src/ai/repoSummarize.security.test.ts:6",
         "backend/src/ai/repoSummarize.ts:19",
+        "backend/src/ai/researchAnswer.test.ts:9",
         "backend/src/ai/resourceLedger.test.ts:5",
         "backend/src/ai/resourceLedger.ts:10",
         "backend/src/ai/resourceMeter.ts:17",
@@ -34444,6 +34647,7 @@
         "backend/src/ai/providerBudget.test.ts",
         "backend/src/ai/quota.failure.test.ts",
         "backend/src/ai/repoSummarize.security.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/ai/resourceLedger.test.ts",
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
@@ -35260,6 +35464,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:13",
         "backend/src/ai/parallelWeb.security.test.ts:16",
+        "backend/src/ai/researchAnswer.test.ts:13",
         "backend/src/ai/sonnetApproval.test.ts:9",
         "backend/src/ai/sonnetApproval.ts:10",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
@@ -35331,6 +35536,7 @@
       ],
       "testCoverage": [
         "backend/src/ai/parallelWeb.security.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/ai/sonnetApproval.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/routes/billingCheckout.security.test.ts",
@@ -35427,6 +35633,7 @@
       "callers": [
         "backend/src/ai/parallelApproval.ts:12",
         "backend/src/ai/parallelWeb.security.test.ts:18",
+        "backend/src/ai/researchAnswer.test.ts:7",
         "backend/src/ai/sonnetApproval.test.ts:5",
         "backend/src/ai/sonnetApproval.ts:9",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:4",
@@ -35505,6 +35712,7 @@
       ],
       "testCoverage": [
         "backend/src/ai/parallelWeb.security.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/ai/sonnetApproval.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/routes/billingCheckout.security.test.ts",
@@ -39129,12 +39337,13 @@
       "id": "surface:aac124d6e71fc0bcd5a6",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/researchResult.ts",
-      "sha256": "c3ce5b1f29cdeb1f15214e35c4a79857235ebfee5ce3154d772752f867746c4d",
+      "sha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda",
       "symbols": [
         "MAX_BYTES",
         "ResearchResult",
         "actor",
         "answer",
+        "answerSchema",
         "candidate",
         "candidates",
         "canonical",
@@ -39157,8 +39366,10 @@
         "saveResearchResult",
         "seen",
         "snippet",
+        "sourced",
         "sources",
         "storage",
+        "synthesis",
         "text",
         "url"
       ],
@@ -39168,7 +39379,8 @@
         "../../security/egress/urlPolicy.js",
         "../../security/tenantContext.js",
         "../../storage/runtime.js",
-        "./businessActionConfirmations.js"
+        "./businessActionConfirmations.js",
+        "zod"
       ],
       "runtimeImports": [
         "backend/src/lib/truthfulExecution.ts",
@@ -39182,13 +39394,19 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/parallelApproval.ts:21",
+        "backend/src/ai/researchAnswer.test.ts:14",
+        "backend/src/ai/researchAnswer.test.ts:8",
+        "backend/src/ai/researchAnswer.ts:4",
         "backend/src/routes/phase1.ts:1",
         "backend/src/services/integrations/businessActionConfirmations.ts:1",
         "backend/src/services/integrations/researchResult.test.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [
@@ -39200,6 +39418,7 @@
         "backend/src/services/integrations/researchResult.ts#receipt"
       ],
       "testCoverage": [
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/services/integrations/researchResult.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -39821,8 +40040,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3831",
-        "backend/src/ai/pipeline.ts:3834",
+        "backend/src/ai/pipeline.ts:3841",
+        "backend/src/ai/pipeline.ts:3844",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/builder/providerTransports.ts:10",
@@ -40095,7 +40314,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:124",
-        "backend/src/ai/pipeline.ts:3830",
+        "backend/src/ai/pipeline.ts:3840",
         "backend/src/ai/tenantModelDispatch.ts:6",
         "backend/src/config/supabaseTransport.security.test.ts:6",
         "backend/src/routes/integrations.ts:19",
@@ -40738,7 +40957,8 @@
         "backend/src/services/scaffolds/nextjsScaffold.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/builderScaffoldFallback.test.ts:3",
@@ -40798,6 +41018,7 @@
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:8",
         "backend/src/ai/parallelWeb.security.test.ts:17",
+        "backend/src/ai/researchAnswer.test.ts:10",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:5",
         "backend/src/services/integrations/composioControl.security.test.ts:7",
@@ -40831,6 +41052,7 @@
       "testCoverage": [
         "backend/src/ai/black-hole/webIntelligence.test.ts",
         "backend/src/ai/parallelWeb.security.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/services/integrations/businessModelEgress.test.ts",
         "backend/src/services/integrations/composioControl.security.test.ts",
@@ -42789,7 +43011,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/projectScaffold.ts:8",
@@ -42930,7 +43153,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/spec.ts:4",
@@ -42971,7 +43195,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/projectScaffold.ts:9",
@@ -43225,7 +43450,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:187",
@@ -45415,6 +45641,7 @@
       ],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:13",
+        "backend/src/ai/researchAnswer.test.ts:12",
         "backend/src/ai/sonnetApproval.test.ts:7",
         "backend/src/index.ts:58",
         "backend/src/routes/browserRuns.ts:20",
@@ -45445,6 +45672,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/parallelWeb.security.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/ai/sonnetApproval.test.ts",
         "backend/src/services/integrations/researchResult.test.ts",
         "backend/src/storage/config.matrix.test.ts",
@@ -45842,6 +46070,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/ai/parallelWeb.security.test.ts:12",
+        "backend/src/ai/researchAnswer.test.ts:11",
         "backend/src/routes/browserRunInternal.test.ts:6",
         "backend/src/routes/browserRuns.test.ts:11",
         "backend/src/routes/drive.test.ts:7",
@@ -45866,6 +46095,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/parallelWeb.security.test.ts",
+        "backend/src/ai/researchAnswer.test.ts",
         "backend/src/routes/browserRunInternal.test.ts",
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/drive.test.ts",
@@ -46119,7 +46349,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/universalExecution.ts:35",
@@ -46198,7 +46429,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/adapters.test.ts:4",
@@ -46294,7 +46526,8 @@
         "backend/src/synthesis/runtime/repositoryDiscovery.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/tenantIsolation.local.integration.ts:35",
@@ -46341,7 +46574,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/architectureValidation.test.ts:6",
@@ -46394,7 +46628,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/behavioralCapabilities.test.ts:3",
@@ -46460,7 +46695,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/browserVerification.test.ts:4",
@@ -46547,7 +46783,8 @@
         "backend/src/synthesis/webVerificationGate.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:28",
@@ -46609,7 +46846,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:6",
@@ -46684,7 +46922,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/productIntelligence.ts:13"
@@ -46754,7 +46993,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/adapters.test.ts:3",
@@ -46924,7 +47164,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/chain/advancedWeb3.ts:3",
@@ -47249,7 +47490,8 @@
         "backend/src/services/scaffolds/packageBuildZip.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:153",
@@ -47512,7 +47754,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/productIntelligence.ts:24"
@@ -47645,7 +47888,8 @@
         "backend/src/synthesis/verificationCompiler.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/executionRuntime.attempt.test.ts:6",
@@ -47705,7 +47949,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/step7LearningStrategy.test.ts:35",
@@ -47858,7 +48103,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/executionBinding.ts:6",
@@ -48199,7 +48445,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/integrations/integrations.test.ts:5",
@@ -48347,7 +48594,8 @@
         "backend/src/synthesis/projectRuntime/manager.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
@@ -48473,7 +48721,8 @@
         "backend/src/synthesis/softwareProject.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/livePreview/agentBridge.drain.test.ts:6",
@@ -48534,7 +48783,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/livePreview/plan.ts:14"
@@ -48633,7 +48883,8 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:156",
@@ -48810,7 +49061,8 @@
         "backend/src/synthesis/runtime/registry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/canonical.ts:6",
@@ -48910,7 +49162,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.security.test.ts:5",
@@ -49026,7 +49279,8 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/canonical.ts:7",
@@ -49090,7 +49344,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/projectRuntime.ts:35",
@@ -49142,7 +49397,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/productIntelligence.ts:34"
@@ -49195,7 +49451,8 @@
         "backend/src/synthesis/integrations/domainAutopilot.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/foundation.ts:28",
@@ -49355,7 +49612,8 @@
         "backend/src/services/scaffolds/detectScaffold.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:100",
@@ -49441,7 +49699,8 @@
         "backend/src/lib/truthfulExecution.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/spec.ts:1",
@@ -49540,7 +49799,8 @@
         "backend/src/synthesis/productTaxonomy.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/step7LearningStrategy.test.ts:31",
@@ -49600,7 +49860,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/productIntelligence.ts:39"
@@ -49683,7 +49944,8 @@
         "backend/src/synthesis/securityControls.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:32",
@@ -49743,7 +50005,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:141",
@@ -49807,7 +50070,8 @@
         "backend/src/synthesis/runtime/registry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/index.ts:17",
@@ -49866,7 +50130,8 @@
         "backend/src/synthesis/runtime/registry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/index.ts:15",
@@ -49960,7 +50225,8 @@
         "backend/src/sandbox/sandboxTypes.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/registryNetwork.test.ts:10",
@@ -50289,7 +50555,8 @@
         "backend/src/synthesis/projectRuntime/types.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/canonical.ts:8",
@@ -50378,7 +50645,8 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/sandbox/registryNetwork.test.ts:8",
@@ -50438,7 +50706,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:5",
@@ -50503,7 +50772,8 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/tenantIsolation.local.integration.ts:31",
@@ -50579,7 +50849,8 @@
         "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/runtimeSecretRead.local.integration.ts:6",
@@ -50902,7 +51173,8 @@
         "backend/src/ai/executionRuntime.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:245",
@@ -51337,7 +51609,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/repositoryIndex.ts:29",
@@ -51579,7 +51852,8 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/adapters.test.ts:21",
@@ -51643,7 +51917,8 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/adapters.test.ts:22",
@@ -51731,7 +52006,8 @@
         "backend/src/synthesis/runtime/staticWebAdapter.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:42",
@@ -51832,7 +52108,8 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/architecturePlan.ts:43",
@@ -51922,7 +52199,8 @@
         "backend/src/synthesis/runtime/repositoryDiscovery.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/followUpAndRegression.test.ts:30",
@@ -51991,7 +52269,8 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/adapters.test.ts:23",
@@ -52040,7 +52319,8 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/registry.ts:30"
@@ -52102,7 +52382,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/productionAdapters.test.ts:14",
@@ -52249,7 +52530,8 @@
         "backend/src/synthesis/staticWebBootstrap.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts:9",
@@ -52314,7 +52596,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:146",
@@ -52382,7 +52665,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:74",
@@ -52483,7 +52767,8 @@
         "backend/src/synthesis/reliability/canonicalResume.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/universalCanonicalTasks.test.ts:3",
@@ -52550,7 +52835,8 @@
         "backend/src/services/integrations/githubRunBranch.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:166",
@@ -52668,7 +52954,8 @@
         "backend/src/synthesis/universalPersistence.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:140",
@@ -52809,7 +53096,8 @@
         "backend/src/synthesis/webVerificationGate.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/browserGateVerification.test.ts:20",
@@ -52925,7 +53213,8 @@
         "backend/src/synthesis/universalProductSpec.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkExecutor.ts:34",
@@ -53015,7 +53304,8 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/repositorySnapshot.local.integration.ts:6",
@@ -53140,7 +53430,8 @@
         "backend/src/synthesis/runtime/registry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/spec.ts:2",
@@ -53205,7 +53496,8 @@
         "backend/src/synthesis/universalFlow.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:136",
@@ -53268,7 +53560,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/synthesis/foundation.ts:29",
@@ -53374,7 +53667,8 @@
         "backend/src/synthesis/runtime/registry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/builder/qa/plan.ts:2",
@@ -139953,6 +140247,13 @@
       "id": "test-suite:9e0f2f9b62f2864c72f2",
       "sourcePath": "backend/src/ai/research.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d2498a6171b68795395c",
+      "sourcePath": "backend/src/ai/researchAnswer.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -3953,15 +3953,15 @@
     {
       "id": "90c62dd04b83e45e1c68",
       "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sourceFileSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
       "evidence": [
         {
-          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
+          "path": "docs/operations/zurelay-two-model-20261103/RESEARCH-SYNTHESIS-REVIEW.json",
           "marker": "90c62dd04b83e45e1c68",
-          "sha256": "70eb8b3acad05297d08ff549587a9904d8c6152f2d7374ec1ec6f931abb792b4"
+          "sha256": "cbc15409ab4524241e4da049b23e25de3094b3d9b5ffcd8ee413322152bb1682"
         }
       ]
     },

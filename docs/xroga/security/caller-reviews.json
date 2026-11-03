@@ -887,11 +887,11 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "callIds": [
-        "8c387dd179220b177433",
-        "5735af54b91f357fe618",
-        "942535244a14d9488093"
+        "94daa137021764170d8d",
+        "2f73dcc10dc324e2879e",
+        "d579ef4bc0119bb2f271"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
@@ -929,7 +929,17 @@
       "zurelayReview": {
         "path": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
         "scope": "EXACT_PERSISTENCE_EXPRESSIONS_PRESERVED_WITH_MODEL_POLICY_AND_ACCOUNTING_REVIEW_NOT_LIVE_ACCEPTANCE"
-      }
+      },
+      "beforeProductDelta": {
+        "reference": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+        "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+        "callIds": [
+          "8c387dd179220b177433",
+          "5735af54b91f357fe618",
+          "942535244a14d9488093"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/RESEARCH-SYNTHESIS-REVIEW.json"
     },
     {
       "path": "backend/src/ai/parallelDispatch.ts",
@@ -1066,9 +1076,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "sourceSha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
       "callIds": [
-        "c7daac24f3fb2d4a891c"
+        "a79eaa3e95e0d228a2d5"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -2556,19 +2566,19 @@
         "scope": "EXACT_PERSISTENCE_EXPRESSIONS_PRESERVED_WITH_MODEL_POLICY_AND_ACCOUNTING_REVIEW_NOT_LIVE_ACCEPTANCE"
       },
       "beforeProductDelta": {
-        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
-        "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+        "reference": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+        "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
         "callIds": [
-          "f49091fa17b80f771dc8"
+          "c7daac24f3fb2d4a891c"
         ]
       },
-      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/RESEARCH-SYNTHESIS-REVIEW.json"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "sourceSha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
       "callIds": [
-        "fed5a5129060f9c4c78d"
+        "61a4df8320fa01a381a3"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4056,13 +4066,13 @@
         "scope": "EXACT_PERSISTENCE_EXPRESSIONS_PRESERVED_WITH_MODEL_POLICY_AND_ACCOUNTING_REVIEW_NOT_LIVE_ACCEPTANCE"
       },
       "beforeProductDelta": {
-        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
-        "sourceSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466",
+        "reference": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+        "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
         "callIds": [
-          "887516500e98c99a1670"
+          "fed5a5129060f9c4c78d"
         ]
       },
-      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/RESEARCH-SYNTHESIS-REVIEW.json"
     },
     {
       "path": "backend/src/ai/projectMemory.ts",
@@ -32781,9 +32791,9 @@
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
-      "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "callIds": [
-        "a15a28605feb7dbf597a"
+        "cb2ef3964f21b673e523"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native unshadowed Uint8Array.from copies admitted PDF bytes into an independent typed array. It has no database, bucket, service-role, network or model effect.",
@@ -32793,7 +32803,15 @@
           "path": "backend/src/ai/parallelWeb.security.test.ts",
           "marker": "native public PDF and fresh recovery keep supported reads with zero provider charge"
         }
-      ]
+      ],
+      "beforeProductDelta": {
+        "reference": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+        "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+        "callIds": [
+          "a15a28605feb7dbf597a"
+        ]
+      },
+      "productDeltaReview": "docs/operations/zurelay-two-model-20261103/RESEARCH-SYNTHESIS-REVIEW.json"
     },
     {
       "path": "backend/src/services/integrations/modelResult.ts",

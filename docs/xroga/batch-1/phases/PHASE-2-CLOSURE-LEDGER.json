@@ -6855,7 +6855,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+          "sourceSha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6982,7 +6982,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+          "sourceSha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8511,7 +8511,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+            "sha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
             "responseV2Review": "Reviewed bc6cbc43..bd1ca28d: only the prompt import and system text passed to the existing runChatPipeline callBuilderStream changed. runBuildPipeline admission, issued actor, ownership, persistence and cancellation code remain unchanged. This source binding retains the historical verification and IN_PROGRESS status; it is not new database or production acceptance.",
             "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
             "beforeDirectOutputSha256": "fab0284193784b7dec33369b3200081cbd40ab86dba9ec44a84246996f120d6a",
@@ -8522,7 +8522,7 @@
             "answerCoverageReview": "Only read-only chat completion coverage classification and optional semantic answer metadata changed. Canonical execution admission, ownership and persistence controls are unchanged. This current-source continuation is not new live acceptance.",
             "beforeZurelaySourceSha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b",
             "zurelayReview": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
-            "beforeProductDeltaSha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466"
+            "beforeProductDeltaSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5"
           },
           {
             "path": "backend/src/routes/swarm.ts",

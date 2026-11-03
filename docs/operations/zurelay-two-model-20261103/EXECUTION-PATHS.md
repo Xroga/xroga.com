@@ -5,7 +5,7 @@ This records development-source reachability, not production activation. All exe
 | Entry and task | Model decision | Admission, dispatch and receipt |
 | --- | --- | --- |
 | Swarm semantic planner | Exact default DeepSeek, one attempt, no hedge or repair request | Existing issued actor, tenant reservation, SDK admission, fixed endpoint and verified JSON receipt |
-| Workspace chat and research synthesis | Existing semantic plan, default DeepSeek | Existing pipeline and tenant dispatch, same reservation, structured projection, usage receipt before output publication |
+| Workspace chat and research synthesis | Existing semantic plan, default DeepSeek | Existing pipeline and tenant dispatch, structured projection and usage receipt. New native research confirmations disclose a single original-answer synthesis with $0.005 model subcap. Same one-use claim, separate canonical retrieval/model reservations, saved evidence before synthesis, owner/claim recheck before model bytes, private complete/partial result handoff. Offline verified, live acceptance pending |
 | Architect, QA, converter, repository summary and attachments | Default DeepSeek | Existing tenant/owner/project and credential lifetime, no independent SDK or historical fallback |
 | Canonical SoftwareAgent | Selected active model, default DeepSeek | Current worker generation and repository ownership, tenant reservation, guarded SDK, inclusive/cache-aware usage |
 | Browser planner and Stagehand adapter | Default DeepSeek | Existing browser task lifetime, model gateway and ledger, no browser-host activation in this change |

@@ -4,6 +4,7 @@ import { publicHttpsUrl } from '../../security/egress/urlPolicy.js';
 import { redactSecrets } from '../../lib/truthfulExecution.js';
 import { actorFromTenantContext, getStorageService } from '../../storage/runtime.js';
 import type { SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
+import {z} from 'zod';
 
 const MAX_BYTES = 262_144;
 const filename = (id: string) => {
@@ -12,6 +13,10 @@ const filename = (id: string) => {
 };
 const record = (v: unknown): Record<string, unknown> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {};
 const text = (v: unknown): string => typeof v === 'string' ? redactSecrets(v) : '';
+const answerSchema=z.object({response:z.string().min(1).max(160_000),completion:z.object({status:z.enum(['complete','partial']),reason:z.string().max(200).optional()}).strict(),
+ responseSource:z.object({format:z.literal('xroga-response-json-v1'),text:z.string().max(200_000),contract:z.unknown().optional()}).strict().optional(),
+ webSources:z.array(z.object({title:z.string().max(4000),url:z.string().max(8000),snippet:z.string().max(12_000),source:z.string().max(100)}).strict()).max(12),
+}).strict();
 
 /** Readiness is checked before dispatch. Reading a receipt never invokes a provider. */
 export function requireResearchResultStorage() {
@@ -36,6 +41,8 @@ export interface ResearchResult {
   text: string;
   sources: Array<{ title: string; url: string; snippet: string; source: string }>;
   omittedSourceCount: number;
+  answer?:z.infer<typeof answerSchema>;
+  answerFailure?:string;
 }
 
 /** Provider evidence is untrusted content, never an instruction or a new authority. */
@@ -71,7 +78,16 @@ export function presentResearchResult(raw: unknown): Omit<ResearchResult, 'confi
         snippet, source: 'parallel' });
     } catch { omittedSourceCount++; }
   }
-  return { text: answer, sources, omittedSourceCount };
+  const synthesis=envelope.answer===undefined?undefined:answerSchema.safeParse(envelope.answer);
+  // Citation metadata can only refer to pages actually returned by retrieval.
+  const sourced=synthesis?.success&&synthesis.data.webSources.every(s=>{
+    try{publicHttpsUrl(s.url);const url=new URL(s.url);url.hash='';return sources.some(source=>source.url===url.href);}catch{return false;}
+  });
+  return { text: answer, sources, omittedSourceCount,
+    ...(synthesis?.success&&sourced?{answer:synthesis.data}:{}),
+    ...(envelope.answer!==undefined&&!sourced?{answerFailure:'INVALID_SAVED_ANSWER'}
+      :['NO_QUALIFYING_SOURCES','SYNTHESIS_UNAVAILABLE'].includes(String(envelope.answerFailure))?{answerFailure:String(envelope.answerFailure)}:{}),
+  };
 }
 
 /** Caller must obtain the confirmation through the owner-scoped confirmation lookup. */

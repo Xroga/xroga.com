@@ -712,6 +712,9 @@ export async function callBuilderStream(
     databaseProjectId?: string;
     modelRunAttempt?:AdmittedRunAttempt;
     modelRepository?:string|null;
+    modelConnectedAccountId?:string;
+    modelMaximumCostMicroUsd?:number;
+    modelRevalidateBeforeDispatch?:()=>Promise<void>;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
     credentialOverrides?: Partial<Record<ModelId, string>>;
@@ -796,8 +799,9 @@ export async function callBuilderStream(
       };
       const runAttempt = () =>
         withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
-              connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
-              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:estimateMessageTokens(messages)
+              connectedAccountId:opts.modelConnectedAccountId??(opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined),maximumCostMicroUsd:opts.modelMaximumCostMicroUsd,revalidateBeforeDispatch:opts.modelRevalidateBeforeDispatch},
+              modelId,payload:{messages,...(opts.responseFormat?{responseFormat:process.env.ZURELAY_JSON_SCHEMA_VERIFIED==='1'?opts.responseFormat:{type:'json_object'}}:{})},estimatedInputTokens:opts.modelMaximumCostMicroUsd!==undefined
+                ?Buffer.byteLength(JSON.stringify({messages,responseFormat:opts.responseFormat}),'utf8'):estimateMessageTokens(messages)
                 + (opts.responseFormat ? estimateMessageTokens([{ role: 'system', content: JSON.stringify(opts.responseFormat) }]) : 0),
               maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
       return opts.onWaiting
@@ -959,6 +963,8 @@ export async function runChatPipeline(opts: {
   onDelta?: DeltaFn;
   goalContract?: GoalContract;
   projectEvidence?: string;
+  /** Private server continuation, populated only by the exact native research adapter. */
+  approvedResearch?:{bundle:ResearchBundle;evidence:string};
 }): Promise<ChatPipelineResult> {
   requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
   const initialUsage = await assertHasQuota(opts.userId);
@@ -1037,15 +1043,17 @@ export async function runChatPipeline(opts: {
     throw err;
   }
 
-  let research: ResearchBundle | null = null;
-  let researchBlock = '';
+  let research: ResearchBundle | null = opts.approvedResearch?.bundle??null;
+  let researchBlock = opts.approvedResearch?.evidence??'';
   let researchProviderFailed = false;
 
-  if (route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
+  if (!opts.approvedResearch&&route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
-        dispatchScope:{...opts.modelScope!,context:requireTenantContext(opts.tenantContext),userId:opts.userId,connectedAccountId:'platform'},
+        dispatchScope:{...opts.modelScope!,context:requireTenantContext(opts.tenantContext),userId:opts.userId,connectedAccountId:'platform',
+          researchAnswer:{prompt:opts.prompt,...(opts.history?{history:opts.history.slice(-12).map(h=>({role:h.role,content:h.content.slice(0,8000)}))}:{}),
+            ...(opts.goalContract?{goalContract:opts.goalContract}:{}),...(opts.projectEvidence?{projectEvidence:opts.projectEvidence}:{} )}},
         prompt: opts.prompt,
         ...(opts.goalContract
           ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
@@ -1123,11 +1131,13 @@ export async function runChatPipeline(opts: {
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
+      maxTokens: opts.approvedResearch?4096:route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
       reasoningMode: 'none',
       responseFormat: format,
       tenantContext:opts.tenantContext,
       databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
+      modelConnectedAccountId:opts.modelScope?.connectedAccountId,modelMaximumCostMicroUsd:opts.modelScope?.maximumCostMicroUsd,
+      modelRevalidateBeforeDispatch:opts.modelScope?.revalidateBeforeDispatch,
       temperature: 0.5,
       onDelta: projection ? delta => { const visible = projection.append(delta); if (visible) opts.onDelta?.(visible); } : opts.onDelta,
     },

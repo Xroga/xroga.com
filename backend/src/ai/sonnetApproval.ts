@@ -14,10 +14,13 @@ import {chatCompletion,type ChatMessage} from './openaiCompat.js';
 import {estimateProviderReservationMicroUsd} from './providerBudget.js';
 import {resolveModelSpec} from './models.js';
 import {requireModelResultStorage} from '../services/integrations/modelResult.js';
+import {classifyOutboundData} from '../security/egress/dataClassification.js';
+import {EgressDenied} from '../security/egress/egressPolicy.js';
 
 const denied=()=>new AuthorityError('SONNET_TASK_APPROVAL_DENIED');
 export const SONNET_TASK_MAXIMUM_MICRO_USD=50_000;
 const MODEL='claude_sonnet_5_5' as const;
+const checkSecrets=(value:unknown)=>{if(classifyOutboundData(value,'USER_PRIVATE').classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');};
 const USE_CASE='Run one approved complex engineering response';
 export async function prepareSonnetConversation(scope:TenantModelScope,prompt:string,history:Array<{role:'user'|'assistant';content:string}>=[]){
  const approval=await prepareSonnetApproval(scope,[
@@ -59,6 +62,7 @@ export async function prepareSonnetApproval(scope:TenantModelScope,messages:Chat
  const taskId=randomUUID(),issuedAt=new Date().toISOString();
  const target=targetSchema.parse({modelId:MODEL,apiModel:'claude-sonnet-5-5',provider:'zurelay',baseUrl:'https://api.zurelay.com/v1',
   maximumOutputTokens:4096,reason:'user_requested_complex_work',taskId,payload:{messages:structuredClone(messages)}});
+ checkSecrets(target.payload);
  // UTF-8 bytes conservatively bound token input. No price/model request is made.
  const estimatedInputTokens=Buffer.byteLength(JSON.stringify(target.payload),'utf8');
  const maximum=estimateProviderReservationMicroUsd({modelId:MODEL,estimatedInputTokens,maximumOutputTokens:4096});
@@ -83,6 +87,7 @@ export async function executeSonnetAction(userId:string,plan:BusinessActionPlan,
   ||plan.risk!=='write'||!plan.requiresConfirmation||plan.forceConfirmation!==true||!isDeepStrictEqual(plan.requiredScopes,['xroga:complex-model-response'])
   ||scope.actionClass!=='PURCHASE_OR_SPEND'||scope.connectedAccountId!=='platform'||scope.currency!=='USD')throw denied();
  const args=argsSchema.parse(plan.arguments),target=args.target;
+ checkSecrets(target.payload);
  if(scope.runId!==target.taskId||scope.nonce!==target.taskId||plan.sessionId!==`trs_model_${target.taskId}`||args.projectId!==scope.projectId
   ||Date.parse(scope.expiresAt)-Date.parse(scope.issuedAt)>15*60_000||requestedSonnetReason(String(target.payload.messages.at(-1)?.content))!==target.reason)throw denied();
  const proof=plan.scopeRequirements as {modelApprovalProof?:unknown};

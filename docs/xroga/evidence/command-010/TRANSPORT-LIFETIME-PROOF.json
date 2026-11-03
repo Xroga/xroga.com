@@ -324,7 +324,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "sha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
       "previousGenericSdkBinding": {
         "sha256": "e5b3b4a3dc538e708fa8c005a8da6584db01b3dd425833373d59decbd2bfcb93",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -613,8 +613,8 @@
         "sha256": "5a0b78b8093e394ad2bbbdc46d8287ff2c5729f46916835ae1eac3acbd80497b"
       },
       "beforeProductDelta": {
-        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
-        "sha256": "c27883f8f418d8cffae0979bea444204d253f8c565db914fb684e534e95dc466"
+        "reference": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+        "sha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5"
       }
     },
     {
@@ -707,7 +707,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708",
+      "sha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/ai/tenantModelDispatch.ts",
         "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
@@ -717,8 +717,8 @@
         "sha256": "fb0a314d772e3507bb2814c944910bc7d8912aa876efe73656ca4e4d70e170fc"
       },
       "beforeProductDelta": {
-        "reference": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
-        "sha256": "e99a10c739336763e503984cd918a348d08c01528f443cbe66f04c362f25bf7d"
+        "reference": "25fb0d2868fe8a05b68097d8eb84dcf14b130cba",
+        "sha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
       }
     },
     {
@@ -1127,5 +1127,5 @@
   },
   "zurelayCiCorrection": "docs/operations/zurelay-two-model-20261103/CI-CORRECTION-REVIEW.json",
   "zurelayPriceSnapshot": "docs/operations/zurelay-two-model-20261103/PRICE-SNAPSHOT.json",
-  "productDeltaReview": "docs/operations/zurelay-two-model-20261103/PRODUCT-INTEGRATION-REVIEW.json"
+  "productDeltaReview": "docs/operations/zurelay-two-model-20261103/RESEARCH-SYNTHESIS-REVIEW.json"
 }

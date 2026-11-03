@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d570ac2863eed30b56f13ee8a221a112d7d673545c876e7a47c722f3a19d5528",
+  "reviewRegistrySha256": "2e24a8cb29c45c4fe17fd65b35c96305d39da19883af656a1121e0e728d72769",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3696,19 +3696,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8c387dd179220b177433"
+        "id": "94daa137021764170d8d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5735af54b91f357fe618"
+        "id": "2f73dcc10dc324e2879e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "942535244a14d9488093"
+        "id": "d579ef4bc0119bb2f271"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a15a28605feb7dbf597a"
+        "id": "cb2ef3964f21b673e523"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3736,11 +3736,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c7daac24f3fb2d4a891c"
+        "id": "a79eaa3e95e0d228a2d5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fed5a5129060f9c4c78d"
+        "id": "61a4df8320fa01a381a3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3960,23 +3960,23 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "402d25642e8693061c24"
+        "id": "e571aaf1d9e69339219d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9c9c99ec2b28af8cb344"
+        "id": "92acd75cb009a202b61c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d0df35ba9d0e32a15290"
+        "id": "3b78226da77b7e78f992"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fb776e464860a5924572"
+        "id": "806c73ec27b8163a6313"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0cdf94c3541e2e1387f3"
+        "id": "1836c6f18b69f6a5d8f5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5380,7 +5380,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8bf1e922eaec394aac9a"
+        "id": "ad1e9c1616482d93e008"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -6332,23 +6332,23 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "402d25642e8693061c24"
+        "id": "e571aaf1d9e69339219d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "9c9c99ec2b28af8cb344"
+        "id": "92acd75cb009a202b61c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d0df35ba9d0e32a15290"
+        "id": "3b78226da77b7e78f992"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fb776e464860a5924572"
+        "id": "806c73ec27b8163a6313"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "0cdf94c3541e2e1387f3"
+        "id": "1836c6f18b69f6a5d8f5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6644,7 +6644,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8bf1e922eaec394aac9a"
+        "id": "ad1e9c1616482d93e008"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -7064,27 +7064,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8c387dd179220b177433"
+        "id": "94daa137021764170d8d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5735af54b91f357fe618"
+        "id": "2f73dcc10dc324e2879e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "942535244a14d9488093"
+        "id": "d579ef4bc0119bb2f271"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a15a28605feb7dbf597a"
+        "id": "cb2ef3964f21b673e523"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c7daac24f3fb2d4a891c"
+        "id": "a79eaa3e95e0d228a2d5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fed5a5129060f9c4c78d"
+        "id": "61a4df8320fa01a381a3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10562,15 +10562,15 @@
       }
     },
     {
-      "id": "8c387dd179220b177433",
+      "id": "94daa137021764170d8d",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 71,
+      "line": 84,
       "enclosing": "executeParallelNativeAction",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -10587,15 +10587,15 @@
       }
     },
     {
-      "id": "5735af54b91f357fe618",
+      "id": "2f73dcc10dc324e2879e",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 71,
+      "line": 84,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -10612,15 +10612,15 @@
       }
     },
     {
-      "id": "942535244a14d9488093",
+      "id": "d579ef4bc0119bb2f271",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 74,
+      "line": 87,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "semanticReview": {
         "authority": "The original context comes only from the canonical native permit. Exact user_id predicates scope the executing grant and current run/worker generation. Grant, owner, immutable digest, expiry and effect receipt are rechecked before and after provider waits and immediately after DNS before any public connection.",
         "reason": "Actual canonical confirmation/vault positive and negative synthetic protocol tests pass. This factory and its two scoped reads do not certify new Phase2 or whole-source live database acceptance. No new user-context issuer or accounting ledger is introduced.",
@@ -10637,15 +10637,15 @@
       }
     },
     {
-      "id": "a15a28605feb7dbf597a",
+      "id": "cb2ef3964f21b673e523",
       "path": "backend/src/ai/parallelApproval.ts",
-      "line": 90,
+      "line": 111,
       "enclosing": "executeParallelNativeAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "def39dbda4385371528fc23c6a64870a7c4c16a850ff6c1ec7dab8f9accc99ae",
+      "sourceSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "semanticReview": {
         "authority": "Native unshadowed Uint8Array.from copies admitted PDF bytes into an independent typed array. It has no database, bucket, service-role, network or model effect.",
         "reason": "Source-verified native byte conversion, covered by the existing approved public PDF, DNS, redirect, cancellation and zero-provider-charge regression.",
@@ -10829,15 +10829,15 @@
       }
     },
     {
-      "id": "c7daac24f3fb2d4a891c",
+      "id": "a79eaa3e95e0d228a2d5",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3822,
+      "line": 3832,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "sourceSha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
@@ -10850,15 +10850,15 @@
       }
     },
     {
-      "id": "fed5a5129060f9c4c78d",
+      "id": "61a4df8320fa01a381a3",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4006,
+      "line": 4016,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "665b8a53b60566ca0dac364405430cc895904e38b4fbe2d136540caf44631eb5",
+      "sourceSha256": "e738cff3883d991a5f74897cbf0b4c76543b53be5a7bed32c63e274fb24cebc2",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Re-reviewed the bc6cbc43 to 81c67314 delta: only the chat system-prompt import and selection changed. Both Array.from receivers and surrounding build/persistence behavior are unchanged. 2026-11-03: reviewed answer coverage, read-only identity projection and partial recovery changes. All registered persistence expressions remain identical. No auth, tenant, approval or credential grant is added.",
@@ -13036,59 +13036,59 @@
       }
     },
     {
-      "id": "402d25642e8693061c24",
+      "id": "e571aaf1d9e69339219d",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 57,
+      "line": 64,
       "enclosing": "requireModelProjectBinding",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
+      "sourceSha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10"
     },
     {
-      "id": "9c9c99ec2b28af8cb344",
+      "id": "92acd75cb009a202b61c",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 59,
+      "line": 66,
       "enclosing": "requireModelProjectBinding",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
+      "sourceSha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10"
     },
     {
-      "id": "d0df35ba9d0e32a15290",
+      "id": "3b78226da77b7e78f992",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 101,
+      "line": 110,
       "enclosing": "withTenantModelReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
+      "sourceSha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10"
     },
     {
-      "id": "fb776e464860a5924572",
+      "id": "806c73ec27b8163a6313",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 104,
+      "line": 113,
       "enclosing": "withTenantModelReservation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
+      "sourceSha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10"
     },
     {
-      "id": "0cdf94c3541e2e1387f3",
+      "id": "1836c6f18b69f6a5d8f5",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 112,
+      "line": 121,
       "enclosing": "withTenantModelReservation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "71abd3fc8c328d158e96eb737aa7b100f93d08a754de6e7ecb0d79b193146708"
+      "sourceSha256": "333a3ff87d65d02ad2ae0f90a98b143f121c5b32e82d46a7ae32c70c42e2bb10"
     },
     {
       "id": "3fba7dbe0551574fe56b",
@@ -24368,15 +24368,15 @@
       }
     },
     {
-      "id": "8bf1e922eaec394aac9a",
+      "id": "ad1e9c1616482d93e008",
       "path": "backend/src/services/integrations/researchResult.ts",
-      "line": 29,
+      "line": 34,
       "enclosing": "saveResearchResult",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c3ce5b1f29cdeb1f15214e35c4a79857235ebfee5ce3154d772752f867746c4d"
+      "sourceSha256": "8382a77b8a23817d945873566354960b6e07412a12d57a73e3c06511ce811dda"
     },
     {
       "id": "34d41864b9724cd70b8d",

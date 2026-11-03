@@ -16,6 +16,7 @@ import {PostCompletionAccountingError} from './postCompletionAccounting.js';
 import {registerModelSdkAdmission} from './modelSdkAdmission.js';
 import {withProviderReservation,actualProviderCostMicroUsd,type ProviderUsageResult,type BudgetPurpose} from './providerBudget.js';
 import {requireAdmittedRunAttempt,type AdmittedRunAttempt} from './runStore.js';
+import type {ResearchAnswerRequest} from './researchAnswer.js';
 
 function denied():never{throw Object.assign(Error('Model dispatch binding is no longer valid.'),{code:'MODEL_DISPATCH_BINDING_DENIED',status:400});}
 export interface ModelPayload {messages:unknown;tools?:unknown;responseFormat?:unknown}
@@ -26,6 +27,12 @@ function containsImageInput(messages: unknown): boolean {
       && 'type' in part && (part.type === 'image_url' || part.type === 'input_image' || part.type === 'image')));
 }
 export interface TenantModelScope {
+  /** Server-only continuation bound into the exact native research approval. */
+  researchAnswer?:ResearchAnswerRequest;
+  /** Restrictive server-owned task subcap, never a substitute for ledger admission. */
+  maximumCostMicroUsd?:number;
+  /** Original server-issued continuation's current owner/approval/lease check. */
+  revalidateBeforeDispatch?:()=>Promise<void>;
   escalation?: ModelEscalation;
   context:TenantContext;
   userId:string;
@@ -89,6 +96,8 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   const apiModel=model.apiModel,maximumOutputTokens=input.maximumOutputTokens;
   const estimatedInputTokens=input.estimatedInputTokens,purpose=input.purpose;
   const reservationCeiling = estimateProviderReservationMicroUsd(input);
+  if(scope.maximumCostMicroUsd!==undefined&&(!Number.isSafeInteger(scope.maximumCostMicroUsd)||scope.maximumCostMicroUsd<=0
+    ||reservationCeiling>scope.maximumCostMicroUsd))denied();
   assertModelSelection(modelId, reservationCeiling, scope.escalation);
   const payload=structuredClone(input.payload),execute=input.execute,validateResponse=input.validateResponse;
   // Bind the exact JSON wire representation. Optional tool-schema properties
@@ -167,6 +176,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
           if(connected&&!isDeepStrictEqual(await read(),selected))denied();
           await project();
           await execution();
+          await scope.revalidateBeforeDispatch?.();
           checkAuthority();
           assertModelSelection(modelId, reservationCeiling, scope.escalation);
           if (modelId === 'claude_sonnet_5_5') await consumeAuthorityPermit(scope.escalation!.permit, scope.escalation!.binding);
