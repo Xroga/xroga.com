@@ -25,7 +25,7 @@ test('the same answer schema requires every planned section without domain-speci
 
 test('answer instructions avoid duplicate schemas and server-only coverage IDs while retaining the strict SDK contract', () => {
   const covered = plan.map(section => ({ ...section, covers: ['server-coverage-id'] }));
-  const instruction = presentationRequestInstructions(covered);
+  const instruction = presentationRequestInstructions(covered, { includeSchema: false });
   assert.match(instruction, /supplied response_format schema/);
   for (const section of plan) { assert.ok(instruction.includes(section.heading)); assert.ok(instruction.includes(section.instruction)); }
   assert.doesNotMatch(instruction, /server-coverage-id|JSON schema:|additionalProperties/);

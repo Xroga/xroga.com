@@ -42,9 +42,9 @@ const base = {
   runId: 'run-1',
   task: {
     objective: 'Implement demo',
-    selectedModel: 'kimi_k3' as const,
-    provider: 'moonshot',
-    fallbackModels: ['glm_5_3'] as const,
+    selectedModel: 'deepseek_v4_1_flash_1017' as const,
+    provider: 'zurelay',
+    fallbackModels: ['claude_sonnet_5_5'] as const,
     contextReferences: ['product specification'],
     allowedFiles: [],
   },
@@ -235,9 +235,9 @@ test('a research model cannot be routed to the implementation task', async () =>
 
 test('the task records the role and the model that did the work', async () => {
   const result = await runImplementationAsCanonicalTask({ ...base, implement: async () => FILES });
-  assert.equal(result.task.selectedModel, 'kimi_k3');
-  assert.equal(result.task.selectedProvider, 'moonshot');
-  assert.deepEqual(result.task.fallbackRoutes.map((route) => route.model), ['glm_5_3']);
+  assert.equal(result.task.selectedModel, 'deepseek_v4_1_flash_1017');
+  assert.equal(result.task.selectedProvider, 'zurelay');
+  assert.deepEqual(result.task.fallbackRoutes.map((route) => route.model), ['claude_sonnet_5_5']);
   assert.ok(result.task.evidenceRequirements.includes('file_mutation'));
 });
 
@@ -404,8 +404,8 @@ test('repair rewrites files but does not decide its own success', async () => {
   const result = await runRepairAsCanonicalTask({
     state,
     objective: 'Repair 1 failure',
-    selectedModel: 'kimi_k3',
-    provider: 'moonshot',
+    selectedModel: 'deepseek_v4_1_flash_1017',
+    provider: 'zurelay',
     failureCount: 1,
     repair: async () => repaired,
   });
@@ -421,8 +421,8 @@ test('a repair that produced nothing is recorded, not treated as success', async
   const result = await runRepairAsCanonicalTask({
     state,
     objective: 'Repair 1 failure',
-    selectedModel: 'kimi_k3',
-    provider: 'moonshot',
+    selectedModel: 'deepseek_v4_1_flash_1017',
+    provider: 'zurelay',
     failureCount: 1,
     repair: async () => null,
   });
@@ -437,8 +437,8 @@ test('repair is never retried automatically', async () => {
   // which one revalidation then saw.
   const node = repairTaskNode({
     objective: 'r',
-    selectedModel: 'kimi_k3',
-    provider: 'moonshot',
+    selectedModel: 'deepseek_v4_1_flash_1017',
+    provider: 'zurelay',
     failureCount: 1,
   });
   assert.equal(node.retryPolicy.maximumAttempts, 1);
@@ -457,7 +457,7 @@ test('a research model cannot be routed to repair or review', () => {
 
 test('the reviewer holds no mutation tool', () => {
   // A reviewer that can rewrite the code it reviews is not independent of it.
-  const node = reviewTaskNode({ objective: 'r', selectedModel: 'glm_5_3', provider: 'zhipu' });
+  const node = reviewTaskNode({ objective: 'r', selectedModel: 'claude_sonnet_5_5', provider: 'zhipu' });
   assert.deepEqual(node.allowedFiles, []);
   assert.equal(node.operationType, 'code_review');
 });
@@ -467,7 +467,7 @@ test('a blocking review fails the task and records the findings', async () => {
   const result = await runReviewAsCanonicalTask({
     state,
     objective: 'Review',
-    selectedModel: 'glm_5_3',
+    selectedModel: 'claude_sonnet_5_5',
     provider: 'zhipu',
     review: async () => ({ approved: false, findings: ['unauthenticated admin route'] }),
   });
@@ -484,7 +484,7 @@ test('a reviewer that does not complete is a rejection, not an approval', async 
   const result = await runReviewAsCanonicalTask({
     state,
     objective: 'Review',
-    selectedModel: 'glm_5_3',
+    selectedModel: 'claude_sonnet_5_5',
     provider: 'zhipu',
     review: async () => {
       throw new Error('reviewer timed out');

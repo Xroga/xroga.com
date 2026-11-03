@@ -28,7 +28,7 @@ function runtimeModel(
 ): RuntimeModelCapability {
   return {
     id,
-    provider: 'openrouter',
+    provider: 'zurelay',
     apiModel: id,
     configured: true,
     credentialSource: 'platform',
@@ -61,7 +61,7 @@ function runtimeModel(
     preferredFallbacks: [],
     supports: {
       text: true,
-      images: id === 'glm_5_3_flash',
+      images: false,
       structuredOutput: true,
       toolCalls: true,
       streaming: true,
@@ -71,18 +71,8 @@ function runtimeModel(
 }
 
 const REGISTRY: RuntimeModelCapability[] = [
-  runtimeModel('deepseek_v4_flash', { typicalLatency: 'fast', inputUsdPer1M: 0.1, outputUsdPer1M: 0.4 }),
-  runtimeModel('glm_5_3', { provider: 'zhipu', inputUsdPer1M: 1.4, outputUsdPer1M: 4.4, contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
-  runtimeModel('glm_5_3_flash', {
-    provider: 'zhipu',
-    typicalLatency: 'fast',
-    inputUsdPer1M: 0.15,
-    outputUsdPer1M: 0.5,
-    contextWindow: 1_000_000,
-    maximumSafeRequestTokens: 800_000,
-    supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true },
-  }),
-  runtimeModel('kimi_k3', { provider: 'moonshot', typicalLatency: 'slow', inputUsdPer1M: 3, outputUsdPer1M: 15, contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
+  runtimeModel('deepseek_v4_1_flash_1017',{provider:'zurelay',typicalLatency:'fast',inputUsdPer1M:0.03,outputUsdPer1M:0.12}),
+  runtimeModel('claude_sonnet_5_5',{provider:'zurelay',inputUsdPer1M:0.8,outputUsdPer1M:4}),
 ];
 
 function route(
@@ -166,31 +156,31 @@ test('nextInChain walks forward only and stops at the end', () => {
 test('routine work starts at Flash', () => {
   const result = route({ prompt: 'say that again but shorter' });
   assert.equal(result.family, 'routine');
-  assert.equal(result.selected, 'deepseek_v4_flash');
+  assert.equal(result.selected, 'deepseek_v4_1_flash_1017');
 });
 
-test('deep general reasoning starts at GLM 5.3', () => {
+test('deep general reasoning retains the default without a spend grant', () => {
   const result = route({ prompt: 'reason carefully from first principles about the trade-offs' });
   assert.equal(result.family, 'reasoning');
-  assert.equal(result.selected, 'glm_5_3');
+  assert.equal(result.selected, 'deepseek_v4_1_flash_1017');
 });
 
-test('long-horizon engineering starts at GLM', () => {
+test('long-horizon engineering does not silently escalate', () => {
   const result = route({ prompt: 'migrate the entire codebase to the new router' });
   assert.equal(result.family, 'long_horizon');
-  assert.equal(result.selected, 'glm_5_3');
+  assert.equal(result.selected, 'deepseek_v4_1_flash_1017');
 });
 
-test('GLM 5.3 Flash heads the normal coding chain', () => {
+test('DeepSeek heads the normal coding chain', () => {
   const result = route({ prompt: 'add pagination', projectId: 'p-1' });
   assert.equal(result.family, 'coding');
-  assert.equal(result.selected, 'glm_5_3_flash');
+  assert.equal(result.selected, 'deepseek_v4_1_flash_1017');
 });
 
-test('a research request routes to GLM Flash for synthesis', () => {
+test('research synthesis uses DeepSeek after separate retrieval', () => {
   const result = route({ prompt: 'what is trending on x.com in the solana hackathon' });
   assert.equal(result.family, 'research');
-  assert.equal(result.selected, 'glm_5_3_flash');
+  assert.equal(result.selected, 'deepseek_v4_1_flash_1017');
   assert.equal(result.chain.some((id) => id.startsWith('grok')), false);
 });
 
@@ -209,53 +199,14 @@ test('a request that researches and then builds is routed as engineering', () =>
 // §8 vision — no invented visual route
 // ---------------------------------------------------------------------------
 
-test('a read-only image request reaches a genuinely vision-capable route', () => {
-  // The point of the registry unification: an image request must not produce an empty chain
-  // merely because K3's vision support has not been verified by an operator. The research
-  // models genuinely accept images and hold inspectMedia authority, so they serve this.
-  const result = route({
-    prompt: 'what is in this screenshot',
-    attachments: [{ mediaType: 'image/png' }],
+test('unverified image capability cannot be manufactured by a runtime registry override',()=>{
+    for(const mutation of [false,true]){
+      const result=route({prompt:'Inspect this screenshot',attachments:[{mediaType:'image/png'}],repositoryMutationRequested:mutation},
+        {registry:REGISTRY.map(model=>({...model,supports:{...model.supports,images:true}}))});
+      assert.deepEqual(result.chain,[]);assert.equal(result.selected,null);
+      assert.ok(result.excluded.some(e=>/vision/.test(e.reason)));
+    }
   });
-  assert.ok(result.chain.length > 0, 'an image request must reach some capable route');
-  for (const modelId of result.chain) {
-    const runtime = REGISTRY.find((entry) => entry.id === modelId)!;
-    assert.equal(runtime.supports.images, true, `${modelId} cannot actually read an image`);
-  }
-});
-
-test('generic Grok and text-only models never enter the vision chain', () => {
-  // Sending an image to a model that cannot read one returns a confident answer about nothing.
-  const result = route({
-    prompt: 'what is in this screenshot',
-    attachments: [{ mediaType: 'image/png' }],
-  });
-  assert.deepEqual(result.chain, ['glm_5_3_flash']);
-  assert.equal(result.chain.some((id) => id.startsWith('grok')), false);
-});
-
-test('an image request that must also write files finds no route rather than a research model', () => {
-  // The authority filter is what makes listing the research models in the vision chain safe:
-  // "describe this screenshot" reaches them, "implement this mockup" never does.
-  const result = route({
-    prompt: 'build this screen from the mockup',
-    attachments: [{ mediaType: 'image/png' }],
-    repositoryMutationRequested: true,
-  });
-  assert.equal(result.chain.some((id) => id.startsWith('grok')), false);
-});
-
-test('the confirmed GLM Flash vision model is used', () => {
-  const result = route(
-    { prompt: 'what is in this screenshot', attachments: [{ mediaType: 'image/png' }] },
-    { registry: REGISTRY },
-  );
-  assert.equal(result.selected, 'glm_5_3_flash');
-});
-
-// ---------------------------------------------------------------------------
-// §7 — public modes
-// ---------------------------------------------------------------------------
 
 test('the public modes map onto internal routing modes', () => {
   assert.equal(internalRoutingMode('fast'), 'cost');
@@ -271,10 +222,11 @@ test('FAST reorders a chain by cost and latency but never by compatibility', () 
   assert.deepEqual([...auto.chain].sort(), [...fast.chain].sort());
 });
 
-test('DEEP allows escalation to the flagship on demanding work', () => {
-  const deep = route({ prompt: 'design the multi-tenant permissions architecture' }, { mode: 'deep' });
-  assert.ok(deep.chain.includes('kimi_k3'));
-});
+test('DEEP mode cannot authorize exceptional Sonnet spending',()=>{
+    const result=route({prompt:'design multi-tenant permissions architecture'},{mode:'deep'});
+    assert.deepEqual(result.chain,['deepseek_v4_1_flash_1017']);
+    assert.equal(nextInChain({...result,chain:['deepseek_v4_1_flash_1017','claude_sonnet_5_5']},result.selected!),null);
+  });
 
 test('no public route output names a provider', () => {
   // §7 forbids exposing provider selectors. Model ids are internal; provider names such as
@@ -292,14 +244,14 @@ test('no public route output names a provider', () => {
 
 test('an open circuit breaker removes a model from the chain', () => {
   const brokenGlm = REGISTRY.map((model) =>
-    model.id === 'glm_5_3_flash'
-      ? runtimeModel('glm_5_3_flash', { health: { ...model.health, status: 'circuit_open' } })
+    model.id === 'deepseek_v4_1_flash_1017'
+      ? runtimeModel('deepseek_v4_1_flash_1017', { health: { ...model.health, status: 'circuit_open' } })
       : model,
   );
   const result = route({ prompt: 'add pagination', projectId: 'p-1' }, { registry: brokenGlm });
-  assert.equal(result.chain.includes('glm_5_3_flash'), false);
+  assert.equal(result.chain.includes('deepseek_v4_1_flash_1017'), false);
   assert.match(
-    result.excluded.find((entry) => entry.modelId === 'glm_5_3_flash')!.reason,
+    result.excluded.find((entry) => entry.modelId === 'deepseek_v4_1_flash_1017')!.reason,
     /circuit breaker/,
   );
 });
@@ -312,7 +264,7 @@ test('a context requirement beyond a model\'s safe limit excludes it', () => {
   // Only the million-token models have a window this large in the fixture.
   for (const modelId of result.chain) {
     assert.ok(
-      ['glm_5_3_flash', 'glm_5_3', 'kimi_k3'].includes(modelId),
+      ['deepseek_v4_1_flash_1017', 'deepseek_v4_1_flash_1017', 'kimi_k3'].includes(modelId),
       `${modelId} does not have the required context window`,
     );
   }
@@ -327,14 +279,11 @@ test('a compute budget below the request is refused rather than silently truncat
   assert.ok(result.excluded.every((entry) => /compute budget|safe limit/.test(entry.reason)));
 });
 
-test('a cost ceiling excludes an over-priced model rather than ranking it down', () => {
-  const result = route({ prompt: 'say that again but shorter' }, { maxCostUsdPer1MOutput: 1 });
-  assert.deepEqual(result.chain, ['deepseek_v4_flash', 'glm_5_3_flash']);
-  assert.match(
-    result.excluded.find((entry) => entry.modelId === 'glm_5_3')!.reason,
-    /exceeds the ceiling/,
-  );
-});
+test('a cost ceiling excludes the default rather than silently buying another model',()=>{
+    const result=route({prompt:'say that again but shorter'},{maxCostUsdPer1MOutput:0.01});
+    assert.deepEqual(result.chain,[]);
+    assert.match(result.excluded.find(e=>e.modelId==='deepseek_v4_1_flash_1017')!.reason,/exceeds the ceiling/);
+  });
 
 test('an administrator cannot re-enable a model into a chain it has no authority for', () => {
   // Enabling Grok everywhere in the runtime registry must not put it in a coding chain: the

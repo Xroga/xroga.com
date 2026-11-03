@@ -36,7 +36,7 @@ describe('intelligent router evaluation framework', () => {
       registry: healthyRegistry(),
     });
     const implementation = plan.subtasks.find((task) => task.taskClass === 'code_generation');
-    assert.equal(implementation?.selectedModel, 'glm_5_3_flash');
+    assert.equal(implementation?.selectedModel, 'deepseek_v4_1_flash_1017');
     assert.equal(plan.reviewRequired, false);
   });
 
@@ -48,7 +48,7 @@ describe('intelligent router evaluation framework', () => {
       registry: healthyRegistry(),
     });
     const repository = plan.subtasks.find((task) => task.taskClass === 'repository_analysis');
-    assert.equal(repository?.selectedModel, 'kimi_k3');
+    assert.equal(repository?.selectedModel, 'deepseek_v4_1_flash_1017');
     assert.equal(plan.contextStrategy.includeFullRepository, false);
   });
 
@@ -78,7 +78,7 @@ describe('intelligent router evaluation framework', () => {
       requiredTokens: 4096,
       registry: healthyRegistry(),
     });
-    assert.equal(ranked[0], 'glm_5_3_flash');
+    assert.equal(ranked[0], 'deepseek_v4_1_flash_1017');
   });
 
   it('escalates security-sensitive changes to intelligence and independent review', () => {
@@ -89,7 +89,7 @@ describe('intelligent router evaluation framework', () => {
     assert.equal(plan.mode, 'intelligence');
     assert.equal(plan.reviewRequired, true);
     const review = plan.subtasks.at(-1);
-    assert.notEqual(review?.selectedModel, plan.subtasks.find((task) => task.taskClass === 'code_generation')?.selectedModel);
+    assert.equal(review?.selectedModel,null);assert.ok(plan.blockers.some(value=>value.includes('distinct healthy configured review model')),'Independent review cannot silently grant Sonnet authority');
   });
 
   it('maps validation evidence to targeted repair routes', () => {
@@ -99,9 +99,9 @@ describe('intelligent router evaluation framework', () => {
     assert.equal(repairTaskClass('runtime'), 'runtime_debugging');
   });
 
-  it('avoids timed-out, rate-limited, or circuit-open providers when a healthy fallback exists', () => {
+  it('reports unavailability when the default circuit opens without selecting premium', () => {
     const registry = healthyRegistry().map((model) =>
-      model.id === 'kimi_k3'
+      model.id === 'deepseek_v4_1_flash_1017'
         ? {
             ...model,
             health: {
@@ -118,8 +118,7 @@ describe('intelligent router evaluation framework', () => {
       requiredTokens: 8192,
       registry,
     });
-    assert.notEqual(ranked[0], 'kimi_k3');
-    assert.ok(ranked.length > 0);
+    assert.deepEqual(ranked,[]);
   });
 
   it('rejects models whose safe context window is too small', () => {
@@ -149,7 +148,7 @@ describe('intelligent router evaluation framework', () => {
   it('respects user-owned/configured availability before platform fallback', () => {
     const registry = healthyRegistry().map((model) => ({
       ...model,
-      configured: model.id === 'glm_5_3',
+      configured: model.id === 'deepseek_v4_1_flash_1017',
     }));
     const ranked = rankModelsForSubtask('code_generation', {
       mode: 'balanced',
@@ -157,7 +156,7 @@ describe('intelligent router evaluation framework', () => {
       requiredTokens: 4096,
       registry,
     });
-    assert.deepEqual(ranked, ['glm_5_3']);
+    assert.deepEqual(ranked, ['deepseek_v4_1_flash_1017']);
   });
 
   it('implements intelligence, balanced, and cost modes without dropping validation', () => {
@@ -183,7 +182,7 @@ describe('intelligent router evaluation framework', () => {
 
   it('uses historical validation quality as advisory scoring', () => {
     const registry = healthyRegistry().map((model) =>
-      model.id === 'kimi_k3'
+      model.id === 'deepseek_v4_1_flash_1017'
         ? { ...model, health: { ...model.health, validationSuccessRate: 0, recentFailureRate: 0.8 } }
         : model,
     );
@@ -193,6 +192,6 @@ describe('intelligent router evaluation framework', () => {
       requiredTokens: 4096,
       registry,
     });
-    assert.notEqual(ranked[0], 'kimi_k3');
+    assert.deepEqual(ranked,['deepseek_v4_1_flash_1017']);
   });
 });

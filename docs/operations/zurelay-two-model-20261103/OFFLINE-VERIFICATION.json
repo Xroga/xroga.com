@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "scope": "LOCAL_OFFLINE_NOT_PROVIDER_OR_PRODUCTION_ACCEPTANCE",
+  "node": "22.21.1",
+  "modelRequests": 0,
+  "modelSpendUsd": 0,
+  "evidence": [
+    {
+      "job": "fdc87ae9-a8df-445a-97de-657d4f31e906",
+      "scope": "AI regression: 1404 pass, 7 existing Linux-shell skips, 0 fail",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "32679685fb2c6a613248dcdab34d0e584a83d55a779aa19eb113e580cf02c2f9",
+      "logBytes": 303278,
+      "retainedLocal": true
+    },
+    {
+      "job": "5727c681-79ca-4dc1-90b9-704de1ca79b2",
+      "scope": "Scaffold/browser/hardening/adaptive 88 pass, backend tsc pass, proof integrity 6 pass",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "d7bd3ec3f399cdb83218b8dfedf8ccb9b390baab193d4eea4ea78a46018f04d6",
+      "logBytes": 22484,
+      "retainedLocal": true
+    },
+    {
+      "job": "bfb93d69-d27b-4f74-ae7c-f4faf88230b2",
+      "scope": "Strict egress 149 reviewed/0 pending/0 unresolved high-risk, runtime and audit integrity. Tenant acceptance remains blocked",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "ff0af26d2c5816b0186825112d429f6a693940b4b51f2498918610ed7f3b788c",
+      "logBytes": 8063,
+      "retainedLocal": true
+    },
+    {
+      "job": "94892c0b-0061-4b5b-8a92-bb050e91dd8f",
+      "scope": "109 response/coverage/persistence/export tests pass, no skips",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "6e4e07bdb79fa57f09232b29d6157574f96b5ae138de908d06a2e0c5213245b4",
+      "logBytes": 24695,
+      "retainedLocal": true
+    },
+    {
+      "job": "50d60b0b-faa9-45c6-8a73-4340f2dec93f",
+      "scope": "Canonical Node frontend tsc pass",
+      "status": "passed",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logBytes": 0,
+      "retainedLocal": true
+    }
+  ],
+  "limitations": [
+    "Seven existing AI tests require Linux /bin/sh and await Linux CI.",
+    "One broader negative-fixture invocation failed because this backend checkout lacks frontend Tailwind dependencies. The transport-proof count mismatch found in the same invocation was corrected to account for the removed Gemini transport; its unchanged tests subsequently pass. Clean-install CI must execute the unchanged dependency test.",
+    "No live Zurelay identity, pricing receipt, provider spend or structured-output compatibility is verified.",
+    "No new-chat, desktop/mobile authenticated live acceptance or source-pinned production cutover was performed.",
+    "User-facing Sonnet approval/continuation remains safely gated, not end-to-end enabled."
+  ]
+}

@@ -16,7 +16,7 @@ import type { RuntimeModelCapability } from '../modelCapabilityRegistry.js';
 
 function runtimeModel(id: ModelId, over: Partial<RuntimeModelCapability> = {}): RuntimeModelCapability {
   return {
-    id, provider: 'openrouter', apiModel: id, configured: true, credentialSource: 'platform',
+    id, provider: 'zurelay', apiModel: id, configured: true, credentialSource: 'platform',
     enabled: true,
     health: {
       modelId: id, status: 'healthy', successes: 10, failures: 0, consecutiveFailures: 0,
@@ -35,12 +35,7 @@ function runtimeModel(id: ModelId, over: Partial<RuntimeModelCapability> = {}): 
   };
 }
 
-const REGISTRY: RuntimeModelCapability[] = [
-  runtimeModel('deepseek_v4_flash', { typicalLatency: 'fast', inputUsdPer1M: 0.1, outputUsdPer1M: 0.4 }),
-  runtimeModel('glm_5_3', { provider: 'zhipu', inputUsdPer1M: 1.4, outputUsdPer1M: 4.4 }),
-  runtimeModel('glm_5_3_flash', { provider: 'zhipu', inputUsdPer1M: 0.15, outputUsdPer1M: 0.5, supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true } }),
-  runtimeModel('kimi_k3', { provider: 'moonshot', typicalLatency: 'slow', inputUsdPer1M: 3, outputUsdPer1M: 15 }),
-];
+const REGISTRY: RuntimeModelCapability[] = [runtimeModel('deepseek_v4_1_flash_1017',{typicalLatency:'fast',inputUsdPer1M:.03,outputUsdPer1M:.12}),runtimeModel('claude_sonnet_5_5',{inputUsdPer1M:.8,outputUsdPer1M:4})];
 
 const route = (prompt: string, extra: Record<string, unknown> = {}) => {
   const analysis = analyzeTask({ prompt, ...(extra as object) });
@@ -60,11 +55,9 @@ const route = (prompt: string, extra: Record<string, unknown> = {}) => {
 
 test('a cost ceiling excludes an over-priced model rather than ranking it down', () => {
   const result = route('say that again but shorter', { maxCostUsdPer1MOutput: 1 });
-  assert.deepEqual(result.chain, ['deepseek_v4_flash', 'glm_5_3_flash']);
-  assert.match(
-    result.excluded.find((entry) => entry.modelId === 'glm_5_3')!.reason,
-    /exceeds the ceiling/,
-  );
+  assert.deepEqual(result.chain,['deepseek_v4_1_flash_1017']);
+  const refused=route('say that again but shorter',{maxCostUsdPer1MOutput:.01});
+  assert.deepEqual(refused.chain,[]);assert.match(refused.excluded.find(row=>row.modelId==='deepseek_v4_1_flash_1017')!.reason,/exceeds the ceiling/);
 });
 
 test('cost never overrides an authority requirement', () => {

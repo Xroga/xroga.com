@@ -1,4 +1,4 @@
-import { MODELS, type ModelId, type ProviderKind } from './models.js';
+import { MODELS, ACTIVE_MODEL_IDS, type ModelId, type ProviderKind } from './models.js';
 
 export type RoutingMode = 'intelligence' | 'balanced' | 'cost';
 
@@ -37,7 +37,7 @@ function jsonRecord(value: string | undefined): Record<string, unknown> {
 }
 
 export function getRouterAdminConfig(env: NodeJS.ProcessEnv = process.env): RouterAdminConfig {
-  const allModels = Object.keys(MODELS) as ModelId[];
+  const allModels = [...ACTIVE_MODEL_IDS];
   const configuredModels = csv(env.XROGA_ALLOWED_MODELS);
   const allowedModels = configuredModels.length
     ? allModels.filter((id) => configuredModels.includes(id))
@@ -55,8 +55,8 @@ export function getRouterAdminConfig(env: NodeJS.ProcessEnv = process.env): Rout
     Object.entries(rawPlanModes)
       .filter(([, value]) => ['intelligence', 'balanced', 'cost'].includes(String(value))),
   ) as Record<string, RoutingMode>;
-  const fallbackOrder = csv(env.XROGA_MODEL_FALLBACK_ORDER)
-    .filter((id): id is ModelId => allModels.includes(id as ModelId));
+  // No environment setting can authorize a silent cross-model substitution.
+  const fallbackOrder: ModelId[] = [];
   return {
     enabledProviders,
     allowedModels,

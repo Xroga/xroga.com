@@ -12,7 +12,7 @@ export function registerSoftwareAgentSdkTests(admin:SupabaseClient):void{
   test('real SoftwareAgent SDK caller binds owner and project through reservation, emits one atomic receipt and denies ownership transfer before wire',async t=>{
     assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
     assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
-    assert.equal(process.env.GLM_API_KEY,undefined,'Never replace an actual provider credential');
+    assert.equal(process.env.ZURELAY_API_KEY,undefined,'Never replace an actual provider credential');
     const actors:string[]=[];
     t.after(async()=>{for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor)).error,null);});
     for(let n=0;n<2;n++){
@@ -24,16 +24,16 @@ export function registerSoftwareAgentSdkTests(admin:SupabaseClient):void{
     assert.equal(created.error,null);assert.ok(created.data);const project=created.data.id as string;
     assert.equal((await admin.from('user_token_usage').upsert({user_id:owner,input_tokens:0,output_tokens:0,model_usage:{},spent_usd:0,
       rollover_usd:0,plan_tier:'free',plan_budget_usd:1.65,quota_period_start:new Date().toISOString().slice(0,7)+'-01'})).error,null);
-    process.env.GLM_API_KEY='synthetic-agent-sdk-key';t.after(()=>{delete process.env.GLM_API_KEY;});
+    process.env.ZURELAY_API_KEY='synthetic-agent-sdk-key';t.after(()=>{delete process.env.ZURELAY_API_KEY;});
     const nativeFetch=globalThis.fetch;let providerCalls=0,transferAtReservation=false;
     t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
       const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
-      if(url.origin==='https://open.bigmodel.cn'){
-        assert.equal(url.href,'https://open.bigmodel.cn/api/paas/v4/chat/completions');assert.equal(init?.redirect,'manual');
-        const body=JSON.parse(String(init?.body));assert.equal(body.stream,true);assert.equal(body.model,'glm-5.3-flash');
+      if(url.origin==='https://api.zurelay.com'){
+        assert.equal(url.href,'https://api.zurelay.com/v1/chat/completions');assert.equal(init?.redirect,'manual');
+        const body=JSON.parse(String(init?.body));assert.equal(body.stream,true);assert.equal(body.model,'deepseek-v4.1-flash-1017');
         assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-agent-sdk-key');
         assert.doesNotMatch(String(init?.body),/synthetic-agent-sdk-key|SYNTHETIC_CREDENTIAL/);providerCalls++;
-        return new Response('data: '+JSON.stringify({id:'synthetic-sdk-'+randomUUID(),choices:[{delta:{content:'synthetic owned result'},finish_reason:'stop'}],usage:{prompt_tokens:3,completion_tokens:2}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
+        return new Response('data: '+JSON.stringify({id:'synthetic-sdk-'+randomUUID(),choices:[{delta:{content:'synthetic owned result'},finish_reason:'stop'}],model:'deepseek-v4.1-flash-1017',usage:{prompt_tokens:3,completion_tokens:2,total_tokens:5}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream','x-request-id':'synthetic-integration-trace','x-zurelay-model':'deepseek-v4.1-flash-1017'}});
       }
       assert.equal(url.origin,process.env.SUPABASE_URL,'No unknown provider or production transport');
       const response=await nativeFetch(input,init);
@@ -44,7 +44,7 @@ export function registerSoftwareAgentSdkTests(admin:SupabaseClient):void{
       return response;
     });
     const scope={context,userId:owner,projectId:project,connectedAccountId:'platform'};
-    const bound=createXrogaAgentModel({userId:owner,modelId:'glm_5_3_flash',dispatchScope:scope,maximumOutputTokens:1024});
+    const bound=createXrogaAgentModel({userId:owner,modelId:'deepseek_v4_1_flash_1017',dispatchScope:scope,maximumOutputTokens:1024});
     const collect=async()=>{
       const events=[];
       for await(const event of bound.stream({systemPrompt:'Synthetic owned task',messages:[{role:'user',content:[{type:'text',text:'Synthetic owned project text'}]}],tools:[]} as Parameters<typeof bound.stream>[0]))events.push(event);

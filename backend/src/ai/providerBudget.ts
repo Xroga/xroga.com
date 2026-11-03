@@ -2,17 +2,17 @@ import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { requireResourceOwner, requireTenantContext, type TenantContext } from '../security/tenantContext.js';
-import { MODELS, requirePricing, resolveModelSpec, type ModelId } from './models.js';
+import { MODELS, assertActiveModelId, requirePricing, resolveModelSpec, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
 import { PostCompletionAccountingError, recordCompletedProviderUsage } from './postCompletionAccounting.js';
 import { registerModelSdkAdmission, modelAdmissionDenied, MODEL_REDIRECT_AFTER_DISPATCH } from './modelSdkAdmission.js';
 import type { BoundModelDispatch, ModelPayload } from './tenantModelDispatch.js';
-import { assertProviderEnabled } from './providerPolicy.js';
+import { assertProviderEnabled, assertModelSelection, type ModelEscalation } from './providerPolicy.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
-export const PROVIDER_PRICE_VERSION = '2026-11-02-v2';
+export const PROVIDER_PRICE_VERSION = 'zurelay-2026-11-03-v2';
 export type BudgetPurpose = 'daily_work' | 'complexity' | 'completion';
 
 export interface ProviderUsageResult {
@@ -85,7 +85,10 @@ export function estimateProviderReservationMicroUsd(input: {
   requireUsageCounts(input.estimatedInputTokens, input.maximumOutputTokens);
   if (input.billingTolerance !== undefined && (!Number.isFinite(input.billingTolerance) || input.billingTolerance < 1)) throw new Error('Invalid provider billing tolerance');
   const price = requirePricing(input.modelId);
-  const inputCost = (Math.max(0, input.estimatedInputTokens) * price.inputUsdPer1M);
+  // A Claude cache write can cost up to twice ordinary input. Reserve that
+  // upper bound, not an assumed cache discount, before permitting Sonnet.
+  const inputCost = (Math.max(0, input.estimatedInputTokens) * price.inputUsdPer1M
+    * (input.modelId === 'claude_sonnet_5_5' ? 2 : 1));
   const outputCost = (Math.max(0, input.maximumOutputTokens) * price.outputUsdPer1M);
   const tolerance = Math.max(1, input.billingTolerance ?? 1.2);
   // Rates are USD per one million tokens; multiplying by one converts USD to micro-USD.
@@ -106,16 +109,21 @@ export function actualProviderCostMicroUsd(input: {
     return input.providerCostMicroUsd;
   }
   const price = requirePricing(input.modelId);
+  const isZurelay=input.modelId==='deepseek_v4_1_flash_1017'||input.modelId==='claude_sonnet_5_5';
+  if(isZurelay&&(input.cachedInputTokens??0)>input.inputTokens)throw new Error('Invalid provider usage');
   const cachedInput = Math.min(Math.max(0, input.cachedInputTokens ?? 0), Math.max(0, input.inputTokens));
   const billableInput = Math.max(0, input.inputTokens - cachedInput);
-  const billableOutput = Math.max(0, input.outputTokens + (input.reasoningTokens ?? 0));
-  // None of the active model specifications carries a separately verified cached-input
-  // price. Charge the normal input rate conservatively; silently treating cache hits as
-  // free undercounts real provider spend and can breach the product ceiling.
-  return asSafeInteger(
-    billableInput * price.inputUsdPer1M + cachedInput * price.inputUsdPer1M +
-      billableOutput * price.outputUsdPer1M,
-  );
+  // Zurelay's completion_tokens already includes hidden reasoning. Historical
+  // adapters used disjoint counters, and retain their original pricing meaning.
+  const inclusiveOutput = input.modelId === 'deepseek_v4_1_flash_1017' || input.modelId === 'claude_sonnet_5_5';
+  if (inclusiveOutput && (input.reasoningTokens ?? 0) > input.outputTokens) throw new Error('Invalid provider usage');
+  const billableOutput = Math.max(0, input.outputTokens + (inclusiveOutput ? 0 : input.reasoningTokens ?? 0));
+  // Published 2026-11-03 model-page cache-read rates. Cache writes remain
+  // refused at the wire boundary until their separate usage receipt is verified.
+  const cacheRate=input.modelId==='deepseek_v4_1_flash_1017'?.00074:input.modelId==='claude_sonnet_5_5'?.079:price.inputUsdPer1M;
+  const priced=billableInput*price.inputUsdPer1M+cachedInput*cacheRate+billableOutput*price.outputUsdPer1M;
+  // New low-cost requests must not disappear into repeated sub-micro rounding.
+  return asSafeInteger(inclusiveOutput ? Math.ceil(priced) : priced);
 }
 
 export function unlockedEntitlementMicroUsd(input: {
@@ -318,6 +326,7 @@ export async function setUsagePacing(
 }
 
 export async function reserveProviderBudget(input: {
+  escalation?: ModelEscalation;
   userId: string;
   modelId: ModelId;
   estimatedInputTokens: number;
@@ -325,10 +334,12 @@ export async function reserveProviderBudget(input: {
   purpose?: BudgetPurpose;
   idempotencyKey?: string;
 }): Promise<ProviderReservation> {
+  assertActiveModelId(input.modelId);
   assertProviderEnabled(MODELS[input.modelId].provider);
   const purpose = input.purpose ?? 'daily_work';
   const idempotencyKey = input.idempotencyKey ?? randomUUID();
   const amount = estimateProviderReservationMicroUsd(input);
+  assertModelSelection(input.modelId, amount, input.escalation);
 
   if (hasDurableStore()) {
     const rpc = () => getSupabaseAdmin().rpc('reserve_xroga_provider_budget', {
@@ -425,6 +436,10 @@ export async function reserveOperationsProviderBudget(input: {
   maximumOutputTokens: number;
   idempotencyKey: string;
 }): Promise<ProviderReservation> {
+  assertActiveModelId(input.modelId);
+  // Operations needs a reviewed adapter carrying its durable model-specific
+  // authorization before it can spend on Sonnet. DeepSeek remains available.
+  assertModelSelection(input.modelId, estimateProviderReservationMicroUsd(input));
   assertProviderEnabled(MODELS[input.modelId].provider);
   const amount = estimateProviderReservationMicroUsd(input);
   if (!hasDurableStore()) throw new Error('Durable Operations provider accounting is unavailable');
@@ -506,7 +521,7 @@ export async function withOperationsProviderReservation<T extends ProviderUsageR
     if(completion){
       if(result.inputTokens!==completion.result.inputTokens||result.outputTokens!==completion.result.outputTokens)throw new PostCompletionAccountingError();
       // ownerId is now corroborated by the durable admitted-action reservation.
-      await recordCompletedProviderUsage(bound.ownerId,bound.modelId,completion.result.inputTokens,completion.result.outputTokens);
+      await recordCompletedProviderUsage(bound.ownerId,bound.modelId,completion.result.inputTokens,completion.result.outputTokens,actualProviderCostMicroUsd(completion.result)/1_000_000);
       completion.checkCancellation();completion.publish();
     }
     return result;
@@ -603,6 +618,7 @@ export async function finishFailedProviderReservation(input: {
 }
 
 export async function withProviderReservation<T extends ProviderUsageResult>(input: {
+  escalation?: ModelEscalation;
   userId: string;
   modelId: ModelId;
   estimatedInputTokens: number;

@@ -1475,7 +1475,7 @@ test('identical prompts cannot retrieve another tenant response through the priv
 
 test('real reservation concurrency and foreign settlement cannot transfer budget between tenants',async()=>{
   const [owner,other]=users,key=randomUUID();
-  const input={modelId:'deepseek_v4_flash' as const,estimatedInputTokens:100,maximumOutputTokens:100,idempotencyKey:key};
+  const input={modelId:'deepseek_v4_1_flash_1017' as const,estimatedInputTokens:100,maximumOutputTokens:100,idempotencyKey:key};
   // Actual existing service RPCs against the complete isolated database, no provider request/payment.
   const replay=await Promise.all(Array.from({length:4},()=>reserveProviderBudget({...input,userId:owner.id})));
   assert.equal(new Set(replay.map(row=>row.id)).size,1);
@@ -1484,7 +1484,10 @@ test('real reservation concurrency and foreign settlement cannot transfer budget
     const r=await admin.from('xroga_provider_reservations').select('id,user_id,status,reserved_micro_usd,settled_micro_usd').in('id',[replay[0].id,foreign.id]).order('id');assert.equal(r.error,null);assert.equal(r.data?.length,2);return r.data;
   };
   const before=await read();
-  for (const changed of [{ modelId:'kimi_k3' as const },{purpose:'completion' as const},{estimatedInputTokens:101},{maximumOutputTokens:99}]) {
+  await assert.rejects(reserveProviderBudget({...input,modelId:'kimi_k3',userId:owner.id}),{code:'MODEL_DESTINATION_DENIED'});
+  await assert.rejects(reserveProviderBudget({...input,modelId:'claude_sonnet_5_5',userId:owner.id}),{code:'MODEL_DISPATCH_BINDING_DENIED'});
+  assert.deepEqual(await read(),before,'retired or unapproved premium routes cannot alter the existing hold');
+  for (const changed of [{purpose:'completion' as const},{estimatedInputTokens:101},{maximumOutputTokens:99}]) {
     await assert.rejects(reserveProviderBudget({...input,...changed,userId:owner.id}),/Provider reservation evidence is invalid/);
   }
   assert.deepEqual(await read(),before,'same-key changed intent must not mutate the original hold');

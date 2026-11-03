@@ -13,7 +13,7 @@ function slugify(name: string): string {
 
 /**
  * Production-shaped Next.js App Router scaffold.
- * Env vars match Xroga vault → Vercel sync (OPENAI_*, SUPABASE_*, STRIPE_*, etc.).
+ * Env vars match Xroga vault → Vercel sync (ZURELAY_*, SUPABASE_*, STRIPE_*, etc.).
  * Supabase data/auth/storage use the USER's project keys — never Xroga's platform DB.
  * Crypto + automation packs layer on when the prompt asks for them.
  */
@@ -379,7 +379,7 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     app: ${JSON.stringify(name)},
-    hasOpenAI: Boolean(process.env.OPENAI_API_KEY),
+    hasAiProvider: Boolean(process.env.ZURELAY_API_KEY),
     hasSupabase: Boolean(
       process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     ),
@@ -395,7 +395,7 @@ export async function GET() {
 
 /**
  * Example live feature powered by vault → Vercel env.
- * Save OPENAI_API_KEY (or OPENROUTER_API_KEY) in Xroga Integrations.
+ * Save a customer-owned ZURELAY_API_KEY in Xroga Integrations.
  */
 export async function POST(req: Request) {
   const body = (await req.json().catch(() => ({}))) as { message?: string };
@@ -404,27 +404,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'message required' }, { status: 400 });
   }
 
-  const openAiKey = process.env.OPENAI_API_KEY;
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
-  const apiKey = openAiKey || openRouterKey;
+  const apiKey = process.env.ZURELAY_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
       {
         error:
-          'No AI key in Vercel env. Save openai or openrouter in Xroga Integrations, then redeploy.',
+          'No approved AI key in the application server environment. Configure the application credential before using this feature.',
       },
       { status: 503 },
     );
   }
 
-  const base = openAiKey ? 'https://api.openai.com/v1' : 'https://openrouter.ai/api/v1';
-  const model = openAiKey ? 'gpt-4o-mini' : 'openai/gpt-4o-mini';
+  const base = 'https://api.zurelay.com/v1';
+  const model = 'deepseek-v4.1-flash-1017';
 
   const res = await fetch(\`\${base}/chat/completions\`, {
     method: 'POST',
+    redirect: 'error',
     headers: {
       Authorization: ['Bearer', apiKey].join(' '),
       'Content-Type': 'application/json',
+      'x-zurelay-fallback': 'off',
     },
     body: JSON.stringify({
       model,
@@ -437,15 +437,24 @@ export async function POST(req: Request) {
   });
 
   if (!res.ok) {
-    const err = await res.text();
-    return NextResponse.json({ error: err.slice(0, 300) }, { status: 502 });
+    return NextResponse.json({ error: 'The configured AI provider could not complete this request.' }, { status: 502 });
   }
 
   const data = (await res.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
+    model?: string;
+    usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+    choices?: Array<{ message?: { content?: string }; finish_reason?: string }>;
   };
+  const usage = data.usage;
+  if (data.model !== model || res.headers.get('x-zurelay-model') !== model || !res.headers.get('x-request-id')
+    || res.headers.has('x-zurelay-routed-from') || (res.headers.get('x-zurelay-stopped') && res.headers.get('x-zurelay-stopped') !== 'false')
+    || !usage || ![usage.prompt_tokens,usage.completion_tokens,usage.total_tokens].every(n=>Number.isSafeInteger(n) && Number(n)>=0)
+    || usage.total_tokens !== Number(usage.prompt_tokens)+Number(usage.completion_tokens)
+    || data.choices?.[0]?.finish_reason !== 'stop' || !data.choices[0].message?.content?.trim()) {
+    return NextResponse.json({ error: 'AI completion could not be verified. No automatic retry was made.' }, { status: 502 });
+  }
   return NextResponse.json({
-    reply: data.choices?.[0]?.message?.content ?? '',
+    reply: data.choices[0].message!.content!,
   });
 }
 `,
@@ -531,8 +540,7 @@ export async function POST(request: Request) {
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-OPENAI_API_KEY=
-OPENROUTER_API_KEY=
+ZURELAY_API_KEY=
 STRIPE_SECRET_KEY=
 # Lemon Squeezy (subscriptions in THIS app — save in Xroga Integrations vault)
 LEMONSQUEEZY_API_KEY=

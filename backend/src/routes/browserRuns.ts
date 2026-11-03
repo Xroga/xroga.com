@@ -26,7 +26,7 @@ import { planBrowserTask } from '../workers/browserPlanner.js';
 import { dispatcherFromEnv, type BrowserRunDispatcher } from '../workers/browserRunDispatch.js';
 import { PostgresBrowserRunStore, type BrowserRunStore } from '../workers/browserRunStore.js';
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
-import type { ModelId } from '../ai/models.js';
+import { assertActiveModelId, type ModelId } from '../ai/models.js';
 
 const body = z.object({
   goal: z.string().min(1).max(2_000),
@@ -51,6 +51,7 @@ export function productionBrowserRuntime(): BrowserRunRuntime | null {
   // Not cached when something is missing: a cold start before a secret or Drive was ready must recover without a restart.
   if (!url || !secret || !drive) return null;
   const aiModel = process.env.XROGA_BROWSER_AI_MODEL as ModelId | undefined;
+  if (aiModel) assertActiveModelId(aiModel);
   const pool = createPool();
   const runs = new PostgresBrowserRunStore(pool);
   const base: BrowserCapabilityDeps = {

@@ -19,9 +19,9 @@ export async function convertUserRequest(
     { role: 'system', content: CONVERTER_SYSTEM },
     { role: 'user', content: converterUserPrompt(userRequest, researchBlock) },
   ];
-  const execute=(dispatch:BoundModelDispatch)=>chatCompletion('deepseek_v4_flash',
+  const execute=(dispatch:BoundModelDispatch)=>chatCompletion('deepseek_v4_1_flash_1017',
     dispatch.payload.messages as ChatMessage[],{temperature:0.4,maxTokens:4096,credentialOverride:dispatch.credentialOverride,beforeDispatch:dispatch.beforeDispatch});
-  const result = await withTenantModelReservation({scope,modelId:'deepseek_v4_flash',payload:{messages},
+  const result = await withTenantModelReservation({scope,modelId:'deepseek_v4_1_flash_1017',payload:{messages},
     estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:4096,execute});
 
   const instruction = result.text.trim();

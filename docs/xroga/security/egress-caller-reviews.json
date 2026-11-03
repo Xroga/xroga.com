@@ -194,31 +194,16 @@
     },
     {
       "id": "038ced12b0f74e8d5e0f",
-      "callSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
-      "sourceFileSha256": "c0fb0d187ca94d7baff5caf73d0004642f8a950e473031be13ca0741bbb083f6",
+      "callSha256": "65ddd7d7048eefea6cae9a7f6924800dd739d311a8a7b394d386ba24efff6223",
+      "sourceFileSha256": "a6070e1af66e02a8827696bcb24bab3f446ed958a7cfa5442deed139fadaff67",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
       "evidence": [
         {
-          "path": "backend/src/ai/providerPolicy.ts",
-          "marker": "assertModelProviderDestination",
-          "sha256": "7d417af23d41a2850e0dd3eed8cbf6b8aa761be43b7c7583ca31eb502b358583"
-        },
-        {
-          "path": "backend/src/ai/openaiCompat.egress.test.ts",
-          "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "f28ee8c83c32ab99c29aea7cc8de31009cd138895ec53c6af60d39b9cdcddfab"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
           "marker": "038ced12b0f74e8d5e0f",
-          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
-        },
-        {
-          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
-          "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ],
       "previousGenericSdkReview": {
@@ -279,20 +264,15 @@
     {
       "id": "0e0e3527ad05d7405c68",
       "callSha256": "e3c3def0a39603c733ecb26163e672be02388db71ca7cd804feb8390d9b4afc1",
-      "sourceFileSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+      "sourceFileSha256": "b1c7911aa41d59bfcc1e57f6925a4c705548787cdb81aba14100e78fe5432f45",
       "disposition": "VERIFIED_GUARD",
       "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
       "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
       "evidence": [
         {
-          "path": "backend/src/security/boundedPublicGet.ts",
-          "marker": "admitPublicTarget",
-          "sha256": "899faefb611b6bd1ab4cdff6e66337def9d19d5d922b116a9a1e1b57f8372c94"
-        },
-        {
-          "path": "backend/src/security/boundedPublicGet.test.ts",
-          "marker": "DNS admits no mixed private answers",
-          "sha256": "e37ed29ee71a41bf141458e1e8588d00a82dcb5637afcfeb84597822865c854a"
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
+          "marker": "0e0e3527ad05d7405c68",
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ],
       "centralGetCancellationContinuation": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json"
@@ -478,35 +458,15 @@
     {
       "id": "4c899876b9e3850af11b",
       "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
-      "sourceFileSha256": "459e3b7fa76ff33e77c9968e628ddacbb4ae5dbcda77c9d8049492c665989b0f",
+      "sourceFileSha256": "5edc02b67fe3c307ef6138137c5b6a7719d63ea2d31be37acf1721d86cee7e02",
       "disposition": "VERIFIED_GUARD",
       "trust": "ACTUAL_SOFTWARE_AGENT_SDK_ISSUED_SCOPE_WIRE_AND_ATOMIC_RECEIPT_NOT_OTHER_SDK_OR_TOOL_EFFECT_CERTIFICATION",
       "tenantAuthority": "SOLE_TRACKED_PRODUCTION_IMPORTER_REQUIRES_ORIGINAL_ISSUED_OWNER_CONTEXT_CANONICAL_PROJECT_RUN_ACCOUNT_REVISION_AND_RESERVATION_RECHECK_BEFORE_EACH_WIRE_COMPLETION_EVENTS_REQUIRE_VERIFIED_ATOMIC_RECEIPT",
       "evidence": [
         {
-          "path": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
-          "marker": "tracked production SoftwareAgent SDK caller carries original identity through both universal branches",
-          "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
-        },
-        {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
-          "marker": "SDK retry rechecks revocation",
-          "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff"
-        },
-        {
-          "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
-          "marker": "Each completed turn must have one verified atomic receipt",
-          "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
           "marker": "4c899876b9e3850af11b",
-          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
-        },
-        {
-          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
-          "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ],
       "previousGenericSdkReview": {
@@ -581,41 +541,16 @@
     },
     {
       "id": "31380a8d5b9454a98a98",
-      "callSha256": "1272507b3b4fc0dc96e8f30f6c122f486c86ad127365b90f2710cc9ecc40ae05",
-      "sourceFileSha256": "c0fb0d187ca94d7baff5caf73d0004642f8a950e473031be13ca0741bbb083f6",
+      "callSha256": "8e82b633686ef353d4c6db063a70a5772fcf9350245bec5da9d8d86dc9cc769a",
+      "sourceFileSha256": "a6070e1af66e02a8827696bcb24bab3f446ed958a7cfa5442deed139fadaff67",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
       "evidence": [
         {
-          "path": "backend/src/ai/genericSdkAdmission.test.ts",
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
           "marker": "31380a8d5b9454a98a98",
-          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
-        },
-        {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
-          "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff"
-        },
-        {
-          "path": "backend/src/ai/operationsSdkAdmission.test.ts",
-          "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
-          "marker": "31380a8d5b9454a98a98",
-          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
-        },
-        {
-          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
-          "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
-        },
-        {
-          "path": "backend/src/ai/responsePresentation.test.ts",
-          "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
-          "sha256": "b4501f1f61966ac620c9ed03c7b3ccb15614813ee291d82f26c74d167a4161f0"
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ],
       "beforeRealRedirectFix": {
@@ -647,41 +582,16 @@
     },
     {
       "id": "9c345e07b723c086440e",
-      "callSha256": "b3cd9d5da6af7abdfd225d8418cf388214b03722b9e50904dec218308bda664d",
-      "sourceFileSha256": "c0fb0d187ca94d7baff5caf73d0004642f8a950e473031be13ca0741bbb083f6",
+      "callSha256": "6eb08ff947aaf655cbb9fac9f4af25c6e8fcb622517fc4343327edaf39a6eca9",
+      "sourceFileSha256": "a6070e1af66e02a8827696bcb24bab3f446ed958a7cfa5442deed139fadaff67",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
       "evidence": [
         {
-          "path": "backend/src/ai/genericSdkAdmission.test.ts",
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
           "marker": "9c345e07b723c086440e",
-          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
-        },
-        {
-          "path": "backend/src/ai/tenantModelDispatch.test.ts",
-          "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "c0717c886d4336886ba066471c9426fb7c8f69613cee14049311ec8ef19273ff"
-        },
-        {
-          "path": "backend/src/ai/operationsSdkAdmission.test.ts",
-          "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
-          "marker": "9c345e07b723c086440e",
-          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
-        },
-        {
-          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
-          "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
-        },
-        {
-          "path": "backend/src/ai/responsePresentation.test.ts",
-          "marker": "omitted sections, duplicate keys, truncated streams and invalid graph references cannot pass",
-          "sha256": "b4501f1f61966ac620c9ed03c7b3ccb15614813ee291d82f26c74d167a4161f0"
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ],
       "beforeRealRedirectFix": {
@@ -1531,35 +1441,6 @@
       }
     },
     {
-      "id": "049adafdb79c93d85166",
-      "callSha256": "383ea650440cf0afcf9de3f2311e0d6d747e64c20fc00ee3929d335ceaa706c0",
-      "sourceFileSha256": "56b14770f7ea59661e110c6c02bab5cce47cd18b6c09864c7c2b9ca3d77640cf",
-      "disposition": "DISABLED_WITH_PROOF",
-      "trust": "NO_CURRENT_PRODUCTION_IMPORT_OR_CALLER_OF_EXACT_LEGACY_MODULE",
-      "tenantAuthority": "SOURCE_REACHABILITY_ONLY_NO_PROVIDER_UPSTREAM_OR_FUTURE_CALLER_PROMOTION",
-      "evidence": [
-        {
-          "path": "docs/xroga/evidence/command-010/integration-20261029/unused-provider-loader-AT-21193.txt",
-          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
-          "sha256": "fcd5c55b7232a8b22e7319d0be03fbc49cc06a163a95ab450a62ab547b7e86bf"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/UNUSED-PROVIDER-ADAPTER-TRACE.json",
-          "marker": "049adafdb79c93d85166",
-          "sha256": "087b43cd4a6aa4baf42f4601fb6f4172f9b1d4359fc5b7d9a40a3b0043b733fb"
-        },
-        {
-          "path": "backend/src/security/egress/unusedProviderAdapters.test.ts",
-          "marker": "seventeen legacy provider calls in nine unused adapters have no current production entry or importer",
-          "sha256": "a4f5065e2bc245adc6d85cbb389d4d16227719e1f2de49101c6b0c0f11af04a9"
-        }
-      ],
-      "sharedLoaderContinuation": {
-        "scope": "Only the location of the exact finite computed Playwright loader changed. All provider adapter importer, symbol and module checks remain.",
-        "job": "374e3b47-7a0f-4791-9d14-a0769e999a3e"
-      }
-    },
-    {
       "id": "f03cf7691ce072b34cea",
       "callSha256": "4afae8678553c0f5fff9d4cf0f047015782aa6f2b40d36f63baeab24d1bdbef2",
       "sourceFileSha256": "2e8130ad379d3e2e8521ff8171f68d8b00c896aae628229cb889614528a24969",
@@ -1736,35 +1617,15 @@
     {
       "id": "9ea21a6fc8b8700460c0",
       "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
-      "sourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+      "sourceFileSha256": "ffdf4df315ade2befc0aef670ab28bb3eab812b1ca3ec085b2e81b9761b7ce49",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
       "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
       "evidence": [
         {
-          "path": "docs/xroga/evidence/command-010/BROWSER-SDK-LIFETIME-TRACE.json",
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
           "marker": "9ea21a6fc8b8700460c0",
-          "sha256": "749f36775d4ffb487f74c2fbd8e1003fc3eebd8e9cf16f279c77462a5ced151d"
-        },
-        {
-          "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
-          "marker": "actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement",
-          "sha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
-        },
-        {
-          "path": "backend/src/workers/browserModelLifetime.security.test.ts",
-          "marker": "overlapping model requests cannot reuse an unspent allowance",
-          "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
-        },
-        {
-          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
-          "marker": "9ea21a6fc8b8700460c0",
-          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
-        },
-        {
-          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
-          "marker": "real SDK redirects cannot become retries or another provider fallback",
-          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ],
       "beforeRealRedirectFix": {
@@ -3547,25 +3408,15 @@
     {
       "id": "c7711580844b520345cf",
       "callSha256": "89ee36190deb9acd207e31b721521ab1ee9173c7baab3e9621d74b8472dfe8a2",
-      "sourceFileSha256": "1b0ae8a2547905d270d9b0abfa6363ddcaafdf727845fbb060458f791df5dfc7",
+      "sourceFileSha256": "845f195f835dd9dae9955a7e9ccd2c7d0a86ddfee917299e951fe99d289d3448",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PRIVATE_CONFIGURED_SUPABASE_CIPHERTEXT_MIRROR_ONLY_NOT_ARBITRARY_EXTERNAL_UPLOAD",
       "tenantAuthority": "CANONICAL_SEALED_OWNER_PROVIDER_ROW_AND_EXACT_CURRENT_REVISION_METADATA_BEFORE_PRIVATE_UPLOAD_POSTCHECK_NO_PLAINTEXT_OR_REVOCATION_FALLBACK",
       "evidence": [
         {
-          "path": "docs/xroga/evidence/command-010/supabase-sdk-20261027/trace.json",
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
           "marker": "c7711580844b520345cf",
-          "sha256": "f9b2034c8c7971022f4c148b68b00835c8e31fc83531282044801057f25d17fa"
-        },
-        {
-          "path": "backend/src/config/supabaseTransport.security.test.ts",
-          "marker": "real canonical credential mirror SDK cannot forward sealed credentials or service apikey through an HTTP redirect",
-          "sha256": "b7658f5d0f03c0fdd40f4e96c7bc9192500f0e1028c61c29392a5a8945c1ddef"
-        },
-        {
-          "path": "backend/src/config/supabaseClientTransport.security.test.ts",
-          "marker": "actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests",
-          "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ],
       "beforeSupabaseProvision": {
@@ -4086,41 +3937,31 @@
     },
     {
       "id": "5baa649b7c2c9b6b6f30",
-      "callSha256": "0015b0c0aa7832d13a4d87175cb68ff30a90f397c0cb84c5899433e3f5c2ea41",
-      "sourceFileSha256": "f52ba2b8ecf260f0ea48e13272f87cd96bd6dc301f38d3600cbc08e1fc4252d3",
+      "callSha256": "ade692966fd2841f4d0085e6f92a67d22fbce46a10e9e449b0c50a9374f4d8f7",
+      "sourceFileSha256": "ff1e01472174b83d678068b5f6a635d2b9b12fa456a6912d4eecb2fb6c37501c",
       "disposition": "VERIFIED_GUARD",
       "trust": "FIXED_PARALLEL_API_WITH_PRODUCER_ATTESTED_EXACT_PRIVATE_EGRESS_APPROVAL",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
       "evidence": [
         {
-          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+          "path": "docs/operations/zurelay-two-model-20261103/CALLER-REVIEW.json",
           "marker": "5baa649b7c2c9b6b6f30",
-          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
-        },
-        {
-          "path": "backend/src/ai/parallelWeb.security.test.ts",
-          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
+          "sha256": "cc9d1512e5abf7745f1814a761a673a792a786981524772da025f4d57e201ea3"
         }
       ]
     },
     {
       "id": "90c62dd04b83e45e1c68",
       "callSha256": "f2de81a8a454b092ec31470bbf964af50c74badbf8644e61fba47ff760f8013b",
-      "sourceFileSha256": "84b38d89d19071027dd6be660a9f7e3bfbb15524250f5fa8a637b7a51e32d3a8",
+      "sourceFileSha256": "3d6cc51f24257eeb6fa33d2dad97b764bf9751b929a44f09eb4e8a25edbfce48",
       "disposition": "VERIFIED_GUARD",
       "trust": "EXACT_APPROVED_CREDENTIAL_FREE_DNS_PINNED_DOCUMENT_READ_NO_DELEGATED_FETCH",
       "tenantAuthority": "ORIGINAL_ACTOR_PROJECT_RUN_GENERATION_CURRENT_ONE_USE_CLAIM_SECRET_FLOOR_AND_CANONICAL_BUDGET_SETTLEMENT_NO_DENIAL_FALLBACK",
       "evidence": [
         {
-          "path": "docs/xroga/evidence/command-010/PARALLEL-APPROVAL-BOUNDARY-20261028.json",
+          "path": "docs/operations/zurelay-two-model-20261103/RESEARCH-SYNTHESIS-REVIEW.json",
           "marker": "90c62dd04b83e45e1c68",
-          "sha256": "850381fd51ae6d892fac329962cf39b55e1bfcbacdd74614dd25abb15e1bbd2a"
-        },
-        {
-          "path": "backend/src/ai/parallelWeb.security.test.ts",
-          "marker": "actual Parallel entries enforce issued context, current owner, egress, canonical holds and exact settlement",
-          "sha256": "0d178e53fef889e52bfa4ad58aeb53f466d9bcd3b992ee9ba18255a43127c640"
+          "sha256": "cbc15409ab4524241e4da049b23e25de3094b3d9b5ffcd8ee413322152bb1682"
         }
       ]
     },

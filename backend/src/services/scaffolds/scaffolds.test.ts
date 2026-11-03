@@ -82,7 +82,7 @@ describe('scaffolds', () => {
     assert.ok(paths.has('supabase/README.md'));
     assert.ok(paths.has('.env.example'));
     const chat = files.find((f) => f.path === 'app/api/chat/route.ts')!.content;
-    assert.match(chat, /OPENAI_API_KEY|OPENROUTER_API_KEY/);
+    assert.match(chat, /ZURELAY_API_KEY/);
     assert.doesNotMatch(chat, /sk-[a-zA-Z0-9]{10,}/);
     const sql = files.find((f) => f.path === 'supabase/migrations/001_initial.sql')!.content;
     assert.match(sql, /enable row level security/i);

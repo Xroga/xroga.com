@@ -1,4 +1,5 @@
 import { requireResearchResultStorage, saveResearchResult } from './researchResult.js';
+import {requireModelResultStorage,saveModelResult} from './modelResult.js';
 import { isDeepStrictEqual } from 'node:util';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
@@ -801,6 +802,7 @@ export async function confirmBusinessAction(
     const plan = snapshotBusinessActionPlan(claimedRow.plan);
     const scope = businessActionAuthorityScope(plan);
     if (plan.toolkit === 'xroga-native-research') requireResearchResultStorage();
+    if (plan.toolkit === 'zurelay') requireModelResultStorage();
     if (Date.parse(scope.expiresAt) !== Date.parse(claimedRow.expires_at)) {
       throw new ComposioClientError('The approval expiry changed.', { status: 409, code: 'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED' });
     }
@@ -852,6 +854,10 @@ export async function confirmBusinessAction(
       if (!execution.resultText || !execution.resultDigest) throw new Error('Research result receipt is missing');
       await saveResearchResult(context, id, execution.resultText, execution.resultDigest,
         typeof plan.arguments.projectId === 'string' ? plan.arguments.projectId : null);
+    }
+    if(plan.toolkit==='zurelay'){
+      if(!execution.resultText||!execution.resultDigest)throw Error('Model result receipt is missing');
+      await saveModelResult(context,id,execution.resultText,execution.resultDigest,scope.projectId);
     }
     const completed = await finishClaimedConfirmation(db, userId, id, claimedRow, 'consumed', undefined, execution.resultDigest);
 

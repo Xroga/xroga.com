@@ -1,4 +1,4 @@
-import type { ModelId } from './models.js';
+import { assertActiveModelId, type ModelId } from './models.js';
 import { isPostCompletionAccountingError } from './postCompletionAccounting.js';
 import { TenantAccessError } from '../security/tenantErrors.js';
 import { AuthorityError } from '../security/authority/enforce.js';
@@ -292,9 +292,11 @@ export async function executeWithProviderFallback<T>(input: {
 }): Promise<{ value: T; modelId: ModelId; failures: NormalizedProviderError[] }> {
   const failures: NormalizedProviderError[] = [];
   const sleep = input.sleep ?? ((ms: number) => new Promise((resolve) => setTimeout(resolve, ms)));
-  for (const modelId of [...new Set(input.routes)]) {
+  // Another model or an unbounded replay cannot repair an uncertain request.
+  for (const modelId of [...new Set(input.routes)].slice(0, 1)) {
+    assertActiveModelId(modelId);
     if (getModelRuntimeHealth(modelId).status === 'circuit_open') continue;
-    const attempts = Math.max(1, input.maximumAttemptsPerRoute ?? 2);
+    const attempts = 1;
     for (let attempt = 0; attempt < attempts; attempt += 1) {
       if (input.signal?.aborted) throw Object.assign(new Error('Provider request cancelled'), { name: 'AbortError' });
       const controller = new AbortController();

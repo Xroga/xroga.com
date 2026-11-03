@@ -5,7 +5,7 @@ import { getRouterAdminConfig, routingModeForPlan } from './routerConfig.js';
 describe('router administrator configuration', () => {
   it('applies server-side provider, model, budget, fallback, and repair controls', () => {
     const env = {
-      XROGA_ALLOWED_MODELS: 'glm_5_3,deepseek_v4_flash',
+      XROGA_ALLOWED_MODELS: 'claude_sonnet_5_5,deepseek_v4_1_flash_1017',
       XROGA_DISABLED_PROVIDERS: 'moonshot',
       XROGA_ROUTING_MODE: 'cost',
       XROGA_MAX_REPAIR_ATTEMPTS: '4',
@@ -15,13 +15,13 @@ describe('router administrator configuration', () => {
       XROGA_FORCE_RESEARCH_TASK_CLASSES: 'api_discovery,documentation_lookup',
     };
     const config = getRouterAdminConfig(env);
-    assert.deepEqual(config.allowedModels, ['glm_5_3', 'deepseek_v4_flash']);
+    assert.deepEqual(config.allowedModels, ['deepseek_v4_1_flash_1017', 'claude_sonnet_5_5']);
     assert.equal(config.enabledProviders.includes('moonshot'), false);
     assert.equal(config.defaultMode, 'cost');
     assert.equal(config.maxRepairAttempts, 4);
     assert.equal(config.perTaskTokenCap, 12000);
     assert.equal(config.providerBudgetUsd.zhipu, 4.5);
-    assert.deepEqual(config.fallbackOrder, ['deepseek_v4_flash', 'glm_5_3']);
+    assert.deepEqual(config.fallbackOrder, []);
   });
 
   it('supports plan-specific routing modes without exposing controls to normal users', () => {

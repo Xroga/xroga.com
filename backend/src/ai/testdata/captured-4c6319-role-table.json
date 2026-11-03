@@ -1,0 +1,69 @@
+{
+  "provenance": {
+    "kind": "captured-generated-failed-production-acceptance",
+    "backendSource": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+    "observedAtUtc": "2026-11-02T21:40:32Z",
+    "acceptance": "FAIL_PARTIAL",
+    "scope": "Original seven component-role rows. Renderer regression only, not a new model response or complete acceptance."
+  },
+  "table": {
+    "id": "204ad464-e655-4f2d-8a72-479004ebdd9e-block-5",
+    "rows": [
+      {
+        "c0": "Browser / client",
+        "c1": "Renders UI, holds the user's Supabase session, calls Next.js routes and user-scoped Supabase queries.",
+        "c2": "Supabase publishable key + user access token; Next.js session cookie."
+      },
+      {
+        "c0": "Next.js (App Router)",
+        "c1": "Server rendering, server actions, route handlers, privileged operations, Stripe API calls, webhook receipt.",
+        "c2": "Supabase server client (user token or service role); Stripe secret key; webhook signing secret."
+      },
+      {
+        "c0": "Supabase Auth",
+        "c1": "Issues and refreshes user sessions; provides the authenticated user ID.",
+        "c2": "JWT access token consumed by browser and Next.js; user ID used to look up membership."
+      },
+      {
+        "c0": "Supabase Postgres + RLS",
+        "c1": "Stores tenants, memberships, business data; enforces row-level access per role.",
+        "c2": "Policies bind `tenant_id` to current membership; user-scoped queries run under the authenticated role."
+      },
+      {
+        "c0": "Supabase Storage",
+        "c1": "Stores tenant files; per-object access control.",
+        "c2": "Storage policies keyed on tenant path prefix and membership."
+      },
+      {
+        "c0": "Stripe Checkout / Billing",
+        "c1": "Collects payment, manages subscriptions, invoices, customer portal.",
+        "c2": "Server-created Checkout Sessions and Subscription objects; `customer` and `subscription` IDs mapped to tenants."
+      },
+      {
+        "c0": "Stripe Webhooks",
+        "c1": "Notifies the app of billing state changes.",
+        "c2": "Signed POST to a Next.js route handler; event ID deduplicated and effects committed atomically."
+      }
+    ],
+    "type": "table",
+    "state": "ready",
+    "columns": [
+      {
+        "key": "c0",
+        "type": "text",
+        "label": "Component"
+      },
+      {
+        "key": "c1",
+        "type": "text",
+        "label": "Responsibility"
+      },
+      {
+        "key": "c2",
+        "type": "text",
+        "label": "Key integration point"
+      }
+    ],
+    "schemaVersion": 1
+  }
+}

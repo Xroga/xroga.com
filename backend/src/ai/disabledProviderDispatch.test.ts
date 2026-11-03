@@ -22,7 +22,8 @@ test('disabled GLM is denied before credentials, reservations or any HTTP reques
     }
     assert.throws(() => assertModelProviderDestination('zhipu', 'https://open.bigmodel.cn/api/paas/v4'),
       error => isTerminalModelFailure(error));
-    assert.doesNotThrow(() => assertModelProviderDestination('openrouter', 'https://openrouter.ai/api/v1'));
+    assert.throws(() => assertModelProviderDestination('openrouter', 'https://openrouter.ai/api/v1'));
+    assert.doesNotThrow(() => assertModelProviderDestination('zurelay', 'https://api.zurelay.com/v1'));
     assert.equal(wires, 0);
   } finally {
     if (previous === undefined) delete process.env.XROGA_DISABLED_PROVIDERS;
@@ -38,10 +39,10 @@ test('a cached SDK client cannot dispatch after its provider is disabled', async
   globalThis.fetch = async () => { wires++; throw Error('No network is permitted in this test'); };
   try {
     delete process.env.XROGA_DISABLED_PROVIDERS;
-    const client = createModelProviderClient({ provider: 'zhipu', apiModel: 'glm-5.3-flash',
-      apiKey: 'synthetic-disabled-provider-test', baseUrl: 'https://open.bigmodel.cn/api/paas/v4' });
-    process.env.XROGA_DISABLED_PROVIDERS = 'zhipu';
-    await assert.rejects(client.chat.completions.create({ model: 'glm-5.3-flash', max_tokens: 10,
+    const client = createModelProviderClient({ provider: 'zurelay', apiModel: 'deepseek-v4.1-flash-1017',
+      apiKey: 'synthetic-disabled-provider-test', baseUrl: 'https://api.zurelay.com/v1' },async()=>{});
+    process.env.XROGA_DISABLED_PROVIDERS = 'zurelay';
+    await assert.rejects(client.chat.completions.create({ model: 'deepseek-v4.1-flash-1017', max_tokens: 10,
       messages: [{ role: 'user', content: 'synthetic' }] }), { code: 'MODEL_DESTINATION_DENIED', status: 400 });
     assert.equal(wires, 0);
   } finally {
