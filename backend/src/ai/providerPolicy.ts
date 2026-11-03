@@ -26,6 +26,7 @@ import type { ModelId } from './models.js';
  * transport is a compile-time error.
  */
 export const CODING_MODEL_TRANSPORT = {
+  deepseek_v4_1_flash_1017: 'zurelay',
   kimi_k3: 'moonshot',
   glm_5_3: 'zhipu',
   glm_5_3_flash: 'zhipu',
@@ -39,6 +40,7 @@ export const CODING_MODEL_TRANSPORT = {
  * keys is ever mistyped, which the widened `satisfies` above no longer catches on its own.
  */
 const MODEL_ID_TRANSPORT_COVERAGE: Partial<Record<ModelId, string>> = {
+  deepseek_v4_1_flash_1017: CODING_MODEL_TRANSPORT.deepseek_v4_1_flash_1017,
   kimi_k3:
     CODING_MODEL_TRANSPORT.kimi_k3,
 
@@ -94,6 +96,7 @@ export function requiredCodingTransport(modelId: string): string | null {
  * This is separate from model-id configuration and cannot be supplied by a prompt. */
 export function assertModelProviderDestination(provider: string, baseUrl: string, secretName?: string): void {
   const allowed:Record<string,{url:string;secret:string}>={
+    zurelay:{url:'https://api.zurelay.com/v1',secret:'ZURELAY_API_KEY'},
     moonshot:{url:'https://api.moonshot.ai/v1',secret:'KIMI_API_KEY'},
     zhipu:{url:'https://open.bigmodel.cn/api/paas/v4',secret:'GLM_API_KEY'},
     openrouter:{url:'https://openrouter.ai/api/v1',secret:'OPENROUTER_API_KEY'},

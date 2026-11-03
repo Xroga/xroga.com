@@ -64,6 +64,11 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<
   ModelId,
   Record<ModelCapability, number>
 > = {
+  deepseek_v4_1_flash_1017: {
+    coding: 7, repository_analysis: 5, architecture: 4, research: 3,
+    review: 5, debugging: 8, security_review: 4, ui_generation: 7,
+    structured_output: 8, tool_calls: 6, streaming: 10,
+  },
   kimi_k3: {
     coding: 9,
     repository_analysis: 10,
@@ -134,6 +139,7 @@ const FALLBACKS: Record<
   ModelId,
   ModelId[]
 > = {
+  deepseek_v4_1_flash_1017: [],
   kimi_k3: [
     'glm_5_3',
     'glm_5_3_flash',
@@ -177,6 +183,7 @@ function configured(id: ModelId): boolean {
 export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
   const admin = getRouterAdminConfig();
   return (Object.keys(MODELS) as ModelId[]).flatMap((id) => {
+    if (id === 'deepseek_v4_1_flash_1017') return [];
     const def = MODELS[id];
     const spec = resolveModelSpec(id);
     if (!spec) return [];

@@ -10,12 +10,13 @@
  */
 
 export type ModelId =
+  | 'deepseek_v4_1_flash_1017'
   | 'kimi_k3'
   | 'glm_5_3'
   | 'glm_5_3_flash'
   | 'deepseek_v4_flash';
 
-export type ProviderKind = 'openrouter' | 'moonshot' | 'zhipu';
+export type ProviderKind = 'zurelay' | 'openrouter' | 'moonshot' | 'zhipu';
 
 /**
  * The canonical description of one model.
@@ -41,7 +42,7 @@ export interface ModelDef {
   modelIdEnv: string;
   provider: ProviderKind;
   baseUrl: string;
-  secretKey: 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
+  secretKey: 'ZURELAY_API_KEY' | 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
   /** Monthly USD budget allocation */
   budgetUsd: number;
   /** Monthly token pool (input + output combined target) */
@@ -72,6 +73,7 @@ export interface ModelDef {
 }
 
 export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
+export const ZURELAY_BASE_URL = 'https://api.zurelay.com/v1';
 
 /** Engineering-model planning target. This is a soft allocation, not the product ceiling. */
 export const MONTHLY_TOTAL_BUDGET_USD = 16.5;
@@ -80,6 +82,26 @@ export const MONTHLY_USER_PRICE_USD = 25;
 export const MONTHLY_TOTAL_TOKENS = 6_172_222;
 
 export const MODELS: Record<ModelId, ModelDef> = {
+  deepseek_v4_1_flash_1017: {
+    id: 'deepseek_v4_1_flash_1017',
+    modelIdEnv: 'ZURELAY_DEEPSEEK_MODEL_ID',
+    label: 'Xroga Connected Intelligence',
+    role: 'Connected-app planning and argument selection',
+    apiModel: 'deepseek-v4.1-flash-1017',
+    provider: 'zurelay',
+    baseUrl: ZURELAY_BASE_URL,
+    secretKey: 'ZURELAY_API_KEY',
+    // Shares the existing DeepSeek quota pool; it is not a second entitlement.
+    budgetUsd: 0,
+    monthlyTokens: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    inputUsdPer1M: 0.03,
+    outputUsdPer1M: 0.12,
+    contextWindow: 1_000_000,
+    modalities: { text: true, images: false },
+    tagline: 'Connected-app intelligence',
+  },
   kimi_k3: {
     id: 'kimi_k3',
     modelIdEnv: 'KIMI_MODEL_ID',
@@ -184,7 +206,7 @@ export const MODELS: Record<ModelId, ModelDef> = {
   },
 };
 
-export const MODEL_LIST = Object.values(MODELS);
+export const MODEL_LIST = Object.values(MODELS).filter(model => model.id !== 'deepseek_v4_1_flash_1017');
 
 /** Real provider cost for a single call from token counts. */
 export function costUsdForTokens(
@@ -302,6 +324,8 @@ export function modelConfigurationIssues(
   const def = MODELS[id];
   const keys = operatorConfigKeys(def);
   const issues: ModelConfigurationIssue[] = [];
+  if (id === 'deepseek_v4_1_flash_1017' && env[keys.modelId]?.trim()
+      && env[keys.modelId]?.trim() !== def.apiModel) issues.push('missing_provider_identifier');
   if (!(env[keys.modelId]?.trim() || def.apiModel)) issues.push('missing_provider_identifier');
   const input = def.inputUsdPer1M ?? positiveNumber(env[keys.inputPrice]);
   const output = def.outputUsdPer1M ?? positiveNumber(env[keys.outputPrice]);
@@ -374,7 +398,8 @@ export function requirePricing(
 
 /** Models that are fully specified and therefore callable right now. */
 export function callableModelIds(env: NodeJS.ProcessEnv = process.env): ModelId[] {
-  return (Object.keys(MODELS) as ModelId[]).filter((id) => resolveModelSpec(id, env) !== null);
+  return (Object.keys(MODELS) as ModelId[]).filter((id) =>
+    id !== 'deepseek_v4_1_flash_1017' && resolveModelSpec(id, env) !== null);
 }
 
 export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_USD) {

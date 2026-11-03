@@ -62,6 +62,7 @@ export const FORBIDDEN_REASONING_KEYS: readonly string[] = [
 
 /** §31's personas. Retained for admin and migration compatibility, never for users. */
 export const MODEL_PERSONAS: readonly string[] = [
+  'Xroga Connected Intelligence',
   // Order matters: longer names first, so "Xroga Apex Efficient" is reported as itself rather
   // than as a match on the "Xroga Apex" prefix.
   'Xroga Apex Efficient',

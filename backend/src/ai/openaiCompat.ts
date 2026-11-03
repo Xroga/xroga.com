@@ -67,6 +67,9 @@ export function providerReasoningControls(
   mode: ReasoningMode = 'default',
 ): Record<string, unknown> {
   if (mode === 'default') return {};
+  if (provider === 'zurelay') {
+    return { reasoning_effort: 'none' };
+  }
   if (provider === 'zhipu') {
     return { thinking: { type: 'disabled' } };
   }
@@ -204,7 +207,9 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
     timeout: 180_000,
-    maxRetries: 1,
+    // Replaying a possibly accepted Zurelay request may charge twice. The
+    // connected-app route has no model fallback; let the run surface failure.
+    maxRetries: endpoint.provider === 'zurelay' ? 0 : 1,
     defaultHeaders: endpoint.defaultHeaders,
     fetch:async (input,init)=>{
       const url=new URL(typeof input==='string'?input:'url' in input?input.url:input.href);

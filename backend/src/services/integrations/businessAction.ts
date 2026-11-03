@@ -16,16 +16,14 @@ import {
 import {
   withTenantModelReservation,
 } from '../../ai/tenantModelDispatch.js';
-import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
+import {isTerminalModelFailure, normalizeProviderError} from '../../ai/providerRuntime.js';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 
 import {
   generateStructured,
 } from '../../ai/black-hole/structuredOutput.js';
 
-import {
-  selectPlannerRoutes,
-} from '../../ai/universal/semanticRequestPlanner.js';
+import { connectedAppModelRoute } from './connectedAppModel.js';
 
 import {
   ComposioClientError,
@@ -662,12 +660,9 @@ async function selectActionToolAndArguments(
     );
 
   const routes =
-    selectPlannerRoutes()
-      .slice(
-        0,
-        2,
-      );
+    connectedAppModelRoute();
 
+  let rateLimited = false;
   for (
     const modelId of routes
   ) {
@@ -890,12 +885,16 @@ async function selectActionToolAndArguments(
       }
     } catch (error) {
       if (input.signal?.aborted || isTerminalModelFailure(error)) throw error;
+      if (normalizeProviderError(error).kind === 'rate_limit') rateLimited = true;
       /*
        * Try the bounded fallback route.
        */
     }
   }
 
+  if (rateLimited) throw new ComposioClientError('Connected-app planning is temporarily rate-limited. No app action was performed.', {
+    status: 503, code: 'CONNECTED_APP_MODEL_RATE_LIMIT',
+  });
   throw new ComposioClientError(
     'Xroga could not safely prepare the connected-app action.',
     {
