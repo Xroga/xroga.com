@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "source_sha": "fa2d942da56c69f298e933ee1a5a476012a4b4ce",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21832,7 +21832,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "d5cda324984e321abc52418abf449408d1a76bae5d2f34e3145f0f9c1c39fab5"
+      "sha256": "e63361404059650e86323ce433c60037c52409a119beece8baf48acc90254c5b"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -22243,6 +22243,10 @@
       "sha256": "b5a20b243cf0722f816721e4090eaf37f38ed8b9af598ce33ffca01d2c8a3e92"
     },
     {
+      "path": "frontend/src/lib/modelHandoff.ts",
+      "sha256": "f4e011fd3e7dc1effe2c74a0bfef81bede80ac4339731861ebfc972623b2f678"
+    },
+    {
       "path": "frontend/src/lib/normalizeBuildSource.ts",
       "sha256": "8eb964cdc6628349845af326282c9eddaa22e6bbe8c48eb834b76d81372df0a4"
     },
@@ -22420,7 +22424,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "sha256": "99f6d221081ecef883538c5dea0f033b69a453d8f6099469b4c4c57d5eb47cb9"
+      "sha256": "7d59b242748543a52f568e421114e816283d9c49691c4045fa5c7441c096f8ad"
     },
     {
       "path": "frontend/src/lib/researchWait.ts",
@@ -22428,7 +22432,7 @@
     },
     {
       "path": "frontend/src/lib/responseCoverageContract.ts",
-      "sha256": "b0db6375dde545b675e30cc22cee433787bf94751c95a55863b47e9529a1ede1"
+      "sha256": "457d87394e339b5613ede908e6b3b0f32548e92ce4d432f1e81f301b58642d0e"
     },
     {
       "path": "frontend/src/lib/restoreRepoTerminal.ts",
@@ -28640,7 +28644,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3996,
+      "line": 4002,
       "credentialsInUrl": false
     },
     {
@@ -36095,14 +36099,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2040,
+      "line": 2046,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2073,
+      "line": 2079,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -36424,7 +36428,7 @@
     },
     {
       "path": "frontend/src/lib/researchHandoff.ts",
-      "line": 59,
+      "line": 68,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

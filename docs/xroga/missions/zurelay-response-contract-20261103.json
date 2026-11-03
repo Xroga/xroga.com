@@ -20,7 +20,13 @@
     "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
     "docs/xroga/security/egress-callers.json",
     "frontend/e2e/phase4-admin-share.security.mjs",
-    "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json"
+    "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/modelHandoff.ts",
+    "frontend/src/lib/modelHandoff.test.ts",
+    "frontend/src/lib/researchHandoff.ts",
+    "frontend/src/lib/researchHandoff.test.ts",
+    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json"
   ],
   "decisions": {
     "keep": [
@@ -79,6 +85,12 @@
       "scope": "Offline persisted answer, partial/error preservation and Copy/Share confidentiality",
       "negative": true,
       "reference": "frontend/src/lib/responseCoverageContract.test.ts"
+    },
+    {
+      "command": "node --import tsx --test src/lib/modelHandoff.test.ts src/lib/researchHandoff.test.ts",
+      "scope": "Offline original-turn continuation, unavailable recovery, source fidelity and persisted rich Copy/Share",
+      "negative": true,
+      "reference": "frontend/src/lib/researchHandoff.test.ts"
     }
   ],
   "architecture": {
@@ -89,27 +101,28 @@
   "rollout": "After all exact-source gates, request specific secure key/config and bounded provider-test approval, then reviewed paired API/Job fence and frontend promotion. No action in production from this checkpoint.",
   "rollback": "Preserve the current cd5541 API/Job and d86c frontend plus voice routing and ledger. The old image is not a verified Zurelay recovery. During a new-policy rollback keep model admission and queues closed until a compatible reviewed Zurelay pair is available. Never silently reactivate old providers.",
   "knownGaps": [
-    "Exact-source clean-install CI and authenticated isolated security acceptance remain open.",
-    "Sonnet user-facing task approval/continuation and actual provider compatibility are unverified and safely gated.",
-    "Credential binding, bounded provider probes and source-pinned production cutover require separate specific authorization.",
-    "Zurelay-compatible recovery must be verified before reopening model admission."
+    "Exact-source CI and authenticated isolated pairing remain required.",
+    "Offline Sonnet and research continuation tests do not establish actual provider behavior.",
+    "The existing key has probe-only limits. Further model/retrieval spending and source-pinned production cutover remain unapproved.",
+    "Compatible Zurelay recovery is required. Preserve the historical pair, with old-provider model admission closed during a new-policy rollback."
   ],
   "placeholderClaimsRemaining": [],
   "evidenceRefs": [
     "docs/operations/zurelay-two-model-20261103/FRONTEND-STATUS.md",
     "frontend/src/lib/responseCoverageContract.test.ts",
     "docs/operations/zurelay-two-model-20261103/API-TYPE-REVIEW.json",
-    "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json"
+    "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Exact-source clean-install CI and authenticated isolated security acceptance remain open.",
-      "Sonnet user-facing task approval/continuation and actual provider compatibility are unverified and safely gated.",
-      "Credential binding, bounded provider probes and source-pinned production cutover require separate specific authorization.",
-      "Zurelay-compatible recovery must be verified before reopening model admission."
+      "Exact-source CI and authenticated isolated pairing remain required.",
+      "Offline Sonnet and research continuation tests do not establish actual provider behavior.",
+      "The existing key has probe-only limits. Further model/retrieval spending and source-pinned production cutover remain unapproved.",
+      "Compatible Zurelay recovery is required. Preserve the historical pair, with old-provider model admission closed during a new-policy rollback."
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "BLOCKED",

@@ -1,10 +1,13 @@
 import { parseXrogaOutput } from './xrogaBlocks';
+import {enhanceAiResponse} from './xrogaResponseDocument';
 export interface ResearchHandoff {
   confirmationId: string;
   receiptId: string;
   text: string;
   sources: Array<{ title: string; url: string; snippet: string; source: string }>;
   omittedSourceCount: number;
+  answer?:{response:string;completion:{status:string;reason?:string};responseSource?:{format:string;text:string;contract?:unknown};webSources:Array<{title:string;url:string;snippet:string;source:string}>};
+  answerFailure?:string;
 }
 interface Message {
   id: string;
@@ -48,12 +51,18 @@ export function pendingResearchConfirmation(message: Message): string | null {
 
 export function attachResearchResult<T extends Message>(message: T, result: ResearchHandoff): T {
   if (pendingResearchConfirmation(message) !== result.confirmationId || !result.receiptId) return message;
+  if(result.answer&&result.receiptId===result.confirmationId&&typeof result.answer.response==='string'
+    &&result.answer.response.length<=160_000&&['complete','partial'].includes(result.answer.completion?.status)){
+    const answer=enhanceAiResponse(result.answer.response,message.id,result.answer.completion,result.answer.responseSource);
+    return {...message,content:answer.content,featureOutput:answer.output??{type:'chat',content:answer.content},webSources:result.answer.webSources,researchReceiptId:result.receiptId};
+  }
   const escape = (s: string) => s.replace(/([\\`*_[\]<>])/g, '\\$1');
   const evidence = result.sources.map(source => `### ${escape(source.title)}\n\n${source.snippet.split('\n').map(line => `> ${line}`).join('\n')}\n\n[${escape(source.title)}](<${source.url}>)`).join('\n\n');
   const original = message.content.endsWith(UNAVAILABLE_NOTICE) ? message.content.slice(0, -UNAVAILABLE_NOTICE.length) : message.content;
   const content = [original, '## Approved research results',
     'The approved request has completed. The following source excerpts are quoted third-party material. No additional search was made.',
     result.text, evidence || (!result.text ? 'The provider returned no usable public sources.' : ''),
+    result.answerFailure?'The source retrieval completed, but the full answer could not be completed safely. Its evidence and accounting are preserved. No search or model request was repeated.':'',
     result.omittedSourceCount ? `${result.omittedSourceCount} source entries were not displayed because their URLs failed validation.` : '',
   ].filter(Boolean).join('\n\n');
   const sources = new Map((message.webSources ?? []).map(source => [source.url, source]));
