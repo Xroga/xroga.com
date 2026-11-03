@@ -55,11 +55,14 @@ def configure_container(original, source, digest, candidate=False, v1=False):
     policy = {'XROGA_RELEASE_SHA': source, 'XROGA_GOOGLE_WORKER_IMAGE': target,
               'XROGA_DEPLOYMENT_ENVIRONMENT': 'production',
               'XROGA_ALLOWED_MODELS': MODELS,
-              'XROGA_DISABLED_PROVIDERS': 'openrouter,moonshot,zhipu,xai,gemini',
               'ZURELAY_JSON_SCHEMA_VERIFIED': '0'}
     if candidate:
         policy['XROGA_RELEASE_CANDIDATE'] = '1'
-    replaced = set(policy) | {'XROGA_RELEASE_CANDIDATE', 'ZURELAY_API_KEY', 'XROGA_MODEL_FALLBACK_ORDER'}
+    # This existing setting is owned by the protected bundle. Declaring it a
+    # second time causes the unchanged startup validator to reject the bundle.
+    # The pinned application's providerPolicy independently rejects every
+    # provider except Zurelay, regardless of this older availability setting.
+    replaced = set(policy) | {'XROGA_RELEASE_CANDIDATE', 'ZURELAY_API_KEY', 'XROGA_MODEL_FALLBACK_ORDER', 'XROGA_DISABLED_PROVIDERS'}
     c['env'] = [e for e in c.get('env', []) if e['name'] not in replaced]
     c['env'] += [{'name': k, 'value': v} for k, v in policy.items()]
     ref = {'secretKeyRef': {'name': 'xroga_models_zurelay', 'key': '1'}} if v1 else {'secretKeyRef': {'secret': 'xroga_models_zurelay', 'version': '1'}}
@@ -75,8 +78,7 @@ def verify_container(c, source, digest, candidate=False):
     assert len(e) == len(entries), 'DUPLICATE_ENV'
     for name, expected in [('XROGA_RELEASE_SHA', source), ('XROGA_GOOGLE_WORKER_IMAGE', image(source, digest)),
                            ('XROGA_ALLOWED_MODELS', MODELS), ('ZURELAY_JSON_SCHEMA_VERIFIED', '0'),
-                           ('XROGA_DEPLOYMENT_ENVIRONMENT', 'production'),
-                           ('XROGA_DISABLED_PROVIDERS', 'openrouter,moonshot,zhipu,xai,gemini')]:
+                           ('XROGA_DEPLOYMENT_ENVIRONMENT', 'production')]:
         assert e[name].get('value') == expected, 'POLICY_DRIFT_' + name
     assert (e.get('XROGA_RELEASE_CANDIDATE', {}).get('value') == '1') == candidate, 'STARTUP_GUARD_DRIFT'
     key = e['ZURELAY_API_KEY']
@@ -85,6 +87,7 @@ def verify_container(c, source, digest, candidate=False):
         {'secretKeyRef': {'secret': 'xroga_models_zurelay', 'version': '1'}},
         {'secretKeyRef': {'name': 'xroga_models_zurelay', 'key': '1'}}), 'SECRET_REF_DRIFT'
     assert 'XROGA_MODEL_FALLBACK_ORDER' not in e, 'FALLBACK_CONFIG_REFUSED'
+    assert 'XROGA_DISABLED_PROVIDERS' not in e, 'PROTECTED_BUNDLE_SETTING_SHADOWED'
 
 
 def permit_model_acceptance(receipt, expected_prompt, next_request_ceiling_micro, now):

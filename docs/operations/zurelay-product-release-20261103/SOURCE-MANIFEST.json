@@ -1,8 +1,8 @@
 {
-  "scope": "SOURCE_BOUND_PREPARATION_NOT_APPROVAL_OR_LIVE_ACCEPTANCE",
+  "scope": "APPROVED_APPLICATION_PINS_WITH_REVIEWED_OPERATOR_CONFIG_CORRECTION",
   "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
   "frontend": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
-  "recordedAtUtc": "2026-11-03T18:23:58.312164+00:00",
+  "recordedAtUtc": "2026-11-03T18:57:25.616425+00:00",
   "approved": false,
   "files": [
     {
@@ -27,11 +27,11 @@
     },
     {
       "path": "candidate.py",
-      "sha256": "4a7d5542f490162641d3f435a2f02b565a9282a59cba392f9bfd0b8aa28b045e"
+      "sha256": "5f22b32d74664a554223144f1f866eb7babd14b026bca18cee326b0d27736372"
     },
     {
       "path": "cutover.py",
-      "sha256": "05cf56521ed6757a55e91c620d9113d74af1719dd03d11ff9b9cd1d953d63858"
+      "sha256": "f375ba4bf7cfd7298ead5b0e77d8928a1731e98e9f5d95ea101d9800e48a9b82"
     },
     {
       "path": "FINAL-CI.json",
@@ -51,7 +51,7 @@
     },
     {
       "path": "private-ready.py",
-      "sha256": "1a0b35bd587149f9efb2799e37a3d80727e1a8175bb179a8de1c7785d966f0ad"
+      "sha256": "b69071b8ebf783bb899245e1f006f45898e5d80457ecd55121d1a8f9f2d453ce"
     },
     {
       "path": "production-preflight.json",
@@ -67,7 +67,7 @@
     },
     {
       "path": "RELEASE-AND-ROLLBACK.md",
-      "sha256": "6d73babbf908d81f70ccee7d02e75702bd3369baaad5bcc5a97f38a91589ae2c"
+      "sha256": "1d5183a287c87c34ba0968a07b254ba9835e07195fcdf5caf9aa663b6d3d395d"
     },
     {
       "path": "RELEASE-APPROVAL-TEMPLATE.json",
@@ -75,7 +75,7 @@
     },
     {
       "path": "release_contract.py",
-      "sha256": "8a0143545641169dd2e3db1201b2d925c39fa9dada325eb11e70e328a20ee005"
+      "sha256": "738de388eec95ab3f447a9130217dd791e202c40f4342e3b95c538f3708f7371"
     },
     {
       "path": "release_gates.py",
@@ -91,12 +91,13 @@
     },
     {
       "path": "test_release_contract.py",
-      "sha256": "73ed5335479b8fa025529963369fda283f27dd1bcec42f6e025cbbc71114bcd9"
+      "sha256": "bbeb420f4c50a76ff5d0fae59c7ebb3e83b6d153ecb24ebd00bfba61e949d5c6"
     },
     {
       "path": "verify-image.py",
       "sha256": "aae3343bd36f17dd0a93cee4bfa3d7a30bc34ce14247de8cbc6fa258a0e2d54a"
     }
   ],
-  "sourceHashNormalization": "UTF8_LF_MATCHING_GIT_BLOBS"
+  "sourceHashNormalization": "UTF8_LF_MATCHING_GIT_BLOBS",
+  "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503"
 }

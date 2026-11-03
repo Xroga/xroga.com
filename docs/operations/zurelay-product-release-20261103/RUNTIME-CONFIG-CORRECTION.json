@@ -1,0 +1,19 @@
+{
+  "observedAtUtc": "2026-11-03T18:57:25.616425+00:00",
+  "reason": "Protected bundle already owns XROGA_DISABLED_PROVIDERS. Preserve it and remove only the duplicate native declaration.",
+  "backendSourceUnchanged": "76c158aaeecf82f524659454b7b3726b4d255679",
+  "frontendSourceUnchanged": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
+  "imageRebuilt": false,
+  "secretChanged": false,
+  "sqlChanged": false,
+  "spendingCeilingsChanged": false,
+  "retiredProviders": "Denied unconditionally by exact-source providerPolicy in both release and recovery images.",
+  "tests": {
+    "count": 15,
+    "status": "PASS_OFFLINE_OPERATOR_AND_REAL_PROTECTED_PARSER",
+    "jobId": "b261c652-74ea-473b-bcc9-aa83295c3462",
+    "logSha256": "b819abe3866eabb1ba2b650d1433ea5752f3572c657c588e958ca2ecef83b9de"
+  },
+  "initialLocalInvocationFailure": "Wrapper imported runpy without module search path. Failed before cloud submission. Direct reviewed script invocation then submitted the single build.",
+  "applicationReadiness": "NOT_YET_PASSED_AFTER_CONFIGURATION_CORRECTION"
+}

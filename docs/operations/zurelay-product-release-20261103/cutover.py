@@ -115,7 +115,7 @@ elif MODE in ['serving','recovery-serving']:
  if MODE=='recovery-serving':
   NEW=RECOVERY_REV;TAG=RECOVERY_TAG;NEW_SHA=RECOVERY;NEW_IMAGE=RECOVERY_IMAGE
  candidate=json.loads((ROOT/('response-recovery-candidate-private-ready.json' if MODE=='recovery-serving' else 'response-candidate-private-ready.json')).read_text())
- assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']==('xroga-api-zurelay-3bed89-check-1103' if MODE=='recovery-serving' else 'xroga-api-zurelay-76c158-check-1103'),'GUARDED_CANDIDATE_PROOF_REQUIRED'
+ assert candidate['state']=='PASS_PRIVATE_READINESS' and candidate['revision']==('xroga-api-zurelay-3bed89-check-1103' if MODE=='recovery-serving' else 'xroga-api-zurelay-76c158-check2-1103'),'GUARDED_CANDIDATE_PROOF_REQUIRED'
  fenced();live(service,OLD);assert queue['state']=='PAUSED';no_executions()
  try:v=api(V1+'/revisions/'+NEW)
  except urllib.error.HTTPError as e:
@@ -192,7 +192,7 @@ elif MODE in ['promote','recover-traffic']:
   serving_config(api(V1+'/revisions/'+RECOVERY_REV),RECOVERY,RECOVERY_IMAGE)
  else:serving_config(api(V1+'/revisions/'+RECOVERY_REV),RECOVERY,RECOVERY_IMAGE)
  traffic=[{'type':'TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION','revision':target,'percent':100}]
- traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'zurelay-76c158-check']]
+ traffic += [v for v in service['traffic'] if not v.get('percent') and v.get('tag') not in [TAG,'zurelay-76c158-check','zurelay-76c158-check2','zurelay-configdiag-1103']]
  if service['traffic']!=traffic:
   record('SUBMITTING_DEFAULT_TRAFFIC_WITH_ADMISSION_CLOSED',revision=target)
   wait(run(SERVICE+'?updateMask=traffic','PATCH',{'name':SERVICE,'etag':service['etag'],'traffic':traffic}))

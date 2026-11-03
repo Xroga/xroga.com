@@ -1,10 +1,32 @@
 import datetime
 import unittest
+import json
+import pathlib
+import subprocess
 from release_contract import (SOURCE, FRONTEND, RECOVERY, RECOVERY_DIGEST, PACKAGE,
     configure_container, verify_container, require_approval, permit_model_acceptance)
 
 
 class ReleaseContractTests(unittest.TestCase):
+    def test_real_protected_loader_rejects_duplicate_and_accepts_corrected_native_manifest(self):
+        repo=pathlib.Path(__file__).resolve().parents[3]/'../xroga-response-backend-compatible'
+        repo=repo.resolve()
+        node=repo/'outputs/zurelay-toolchain/node-v22.21.1-win-x64/node.exe'
+        module=(repo/'backend/src/config/platformEnvironment.ts').as_uri()
+        c=configure_container({'env':[{'name':'XROGA_PLATFORM_CONFIG_FILE','value':'/secrets/xroga-platform/config.json'},
+            {'name':'XROGA_DISABLED_PROVIDERS','value':'old-native-duplicate'}]},SOURCE,'sha256:'+'a'*64,True,True)
+        environment={v['name']:v['value'] for v in c['env'] if 'value' in v}
+        js="import assert from 'node:assert/strict'; import {parseProtectedPlatformConfiguration as parse} from "+json.dumps(module)+"; const env="+json.dumps(environment)+"; const raw=new TextEncoder().encode(JSON.stringify({schemaVersion:1,target:'xroga-api-google',environment:{XROGA_DISABLED_PROVIDERS:'zhipu',VOICE_SETTING:'preserved'}})); assert.throws(()=>parse(raw,{...env,XROGA_DISABLED_PROVIDERS:'old-native-duplicate'})); assert.equal(parse(raw,env).XROGA_DISABLED_PROVIDERS,'zhipu'); assert.equal(parse(raw,env).VOICE_SETTING,'preserved');"
+        result=subprocess.run([str(node),'--experimental-strip-types','--input-type=module','-e',js],cwd=repo,capture_output=True,text=True,timeout=20)
+        self.assertEqual(result.returncode,0,result.stderr)
+        verify_container(c,SOURCE,'sha256:'+'a'*64,True)
+        with self.assertRaises(AssertionError):
+            verify_container(dict(c,env=c['env']+[{'name':'XROGA_DISABLED_PROVIDERS','value':'zhipu'}]),SOURCE,'sha256:'+'a'*64,True)
+        for source in (SOURCE,RECOVERY):
+            policy=subprocess.check_output(['git','show',source+':backend/src/ai/providerPolicy.ts'],cwd=repo,text=True)
+            self.assertIn("provider !== 'zurelay'",policy)
+            self.assertIn("zurelay:{url:ZURELAY_BASE_URL,secret:'ZURELAY_API_KEY'}",policy)
+
     def test_manifest_versions_preserve_unrelated_configuration(self):
         original = {'image': 'old', 'env': [{'name': 'VOICE_SETTING', 'value': 'keep'},
             {'name': 'ZURELAY_API_KEY', 'value': 'must-be-replaced'},

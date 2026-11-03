@@ -4,8 +4,8 @@ ROOT=pathlib.Path(__file__).resolve().parent
 kind=sys.argv[1];assert kind in ['candidate','serving','recovery-candidate','recovery-serving']
 sys.argv=[str(ROOT/'cutover.py'),'status']
 h=runpy.run_path(str(ROOT/'cutover.py'));api=h['api'];run=h['run'];task=h['task'];P=h['P'];QUEUE=h['QUEUE']
-revision={'candidate':'xroga-api-zurelay-76c158-check-1103','serving':h['NEW'],'recovery-candidate':'xroga-api-zurelay-3bed89-check-1103','recovery-serving':h['RECOVERY_REV']}[kind]
-tag={'candidate':'zurelay-76c158-check','serving':h['TAG'],'recovery-candidate':'zurelay-3bed89-check','recovery-serving':h['RECOVERY_TAG']}[kind]
+revision={'candidate':'xroga-api-zurelay-76c158-check2-1103','serving':h['NEW'],'recovery-candidate':'xroga-api-zurelay-3bed89-check-1103','recovery-serving':h['RECOVERY_REV']}[kind]
+tag={'candidate':'zurelay-76c158-check2','serving':h['TAG'],'recovery-candidate':'zurelay-3bed89-check','recovery-serving':h['RECOVERY_TAG']}[kind]
 service=api(h['V1']+'/services/xroga-api')
 uri=next(v['url'] for v in service['status']['traffic'] if v.get('tag')==tag)
 audience=service['status']['url']

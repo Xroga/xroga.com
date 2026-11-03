@@ -1,0 +1,51 @@
+{
+  "observedAtUtc": "2026-11-03T18:43:50.549573+00:00",
+  "revision": "xroga-api-zurelay-76c158-check-1103",
+  "logs": [
+    {
+      "at": "2026-11-03T18:40:29.632052Z",
+      "severity": "INFO",
+      "message": "{}"
+    },
+    {
+      "at": "2026-11-03T18:40:31.488267Z",
+      "severity": "INFO",
+      "message": "Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check."
+    },
+    {
+      "at": "2026-11-03T18:40:43.317950Z",
+      "severity": null,
+      "message": "file:///app/dist/config/platformEnvironment.js:3"
+    },
+    {
+      "at": "2026-11-03T18:40:43.317997Z",
+      "severity": null,
+      "message": "const deny = () => { throw new Error('Protected platform configuration is invalid.'); };"
+    },
+    {
+      "at": "2026-11-03T18:40:43.318003Z",
+      "severity": null,
+      "message": "                           ^"
+    },
+    {
+      "at": "2026-11-03T18:40:43.318034Z",
+      "severity": "ERROR",
+      "message": "Error: Protected platform configuration is invalid.\n    at deny (file:///app/dist/config/platformEnvironment.js:3:28)\n    at parseProtectedPlatformConfiguration (file:///app/dist/config/platformEnvironment.js:34:20)\n    at loadProtectedPlatformEnvironment (file:///app/dist/config/platformEnvironment.js:56:20)\n    at file:///app/dist/loadPlatformEnvironment.js:4:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)"
+    },
+    {
+      "at": "2026-11-03T18:40:43.318038Z",
+      "severity": null,
+      "message": "Node.js v22.21.1"
+    },
+    {
+      "at": "2026-11-03T18:40:43.769532819Z",
+      "severity": "WARNING",
+      "message": "Container called exit(1)."
+    },
+    {
+      "at": "2026-11-03T18:40:44.231271Z",
+      "severity": "ERROR",
+      "message": "{}"
+    }
+  ]
+}
