@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/zurelay-response-contract-20261103",
-    "sha": "8712b514ea95f3bb09632b3f89e6fddfab3d602e",
-    "sourceTimestampUtc": "2026-11-03T16:55:20+05:00",
-    "auditStartedUtc": "2026-11-03T12:07:19.155Z",
+    "sha": "4538083016c96086d5c1d78112301ecaf7aec0c7",
+    "sourceTimestampUtc": "2026-11-03T17:07:23+05:00",
+    "auditStartedUtc": "2026-11-03T12:13:50.905Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -132431,86 +132431,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:5e55b3d12fc866dca9b4",
+      "id": "frontend-call:2bc1d830423769c23f6d",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 61,
+      "line": 62,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:c1e5116db023bffdefa6",
+      "id": "frontend-call:693d1e47af542cb79e97",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 63,
+      "line": 64,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:02a98334610b10f58227",
+      "id": "frontend-call:cec7ada23e266a9e1d2c",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 68,
+      "line": 69,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:991dae60bb0eb41f7e20",
+      "id": "frontend-call:b658962f7dbd978776ed",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 68,
+      "line": 69,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:91c725ad2b9efedc0bfd",
+      "id": "frontend-call:f9a929fe01d0b90cecc8",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 80,
+      "line": 81,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:4deb87a70c6d6383f218",
+      "id": "frontend-call:bd22332eee36cf749ed7",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 82,
+      "line": 83,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:f3ea0db9efdf9d68124b",
+      "id": "frontend-call:bb23f0d54200ada643f2",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 90,
+      "line": 91,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:0d7ada1550dfcae3e52c",
+      "id": "frontend-call:f11144dbc65339158b6d",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 90,
+      "line": 91,
       "callee": "api.close",
       "reachable": false
     },
     {
-      "id": "frontend-call:5ac15b47817327ddda42",
+      "id": "frontend-call:7e8d5bff4e9f405e1ac9",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 99,
+      "line": 100,
       "callee": "api.listen",
       "reachable": false
     },
     {
-      "id": "frontend-call:47f9a52e3c7273d6ac10",
+      "id": "frontend-call:e11c443b676d2af910da",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 101,
+      "line": 102,
       "callee": "api.address",
       "reachable": false
     },
     {
-      "id": "frontend-call:1c5aad2ae0ffd7eb8e70",
+      "id": "frontend-call:08abdb307c29b1ccc26b",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 110,
+      "line": 111,
       "callee": "api.closeAllConnections",
       "reachable": false
     },
     {
-      "id": "frontend-call:1dcd662a36d1aed57818",
+      "id": "frontend-call:595f6df0f99afd8344d9",
       "sourcePath": "frontend/e2e/phase4-admin-share.security.mjs",
-      "line": 110,
+      "line": 111,
       "callee": "api.close",
       "reachable": false
     },

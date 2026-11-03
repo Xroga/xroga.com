@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8712b514ea95f3bb09632b3f89e6fddfab3d602e",
+  "source_sha": "4538083016c96086d5c1d78112301ecaf7aec0c7",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -4060,6 +4060,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-dc5e725830a5ea3b",
+      "filename": "SHARE-FIXTURE-REVIEW.json",
+      "path_or_url": "docs/operations/zurelay-two-model-20261103/SHARE-FIXTURE-REVIEW.json",
+      "sha256": "e376615d01eb579575acc0dfedeb18fdb25d6999dff33dc1e9119b1ad5a7d39c",
+      "byte_size": 2400,
+      "modified_timestamp": "2026-11-03T12:13:33.760Z",
+      "parse_status": "PARSED_JSON",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-1c0ed906965e78ce",
       "filename": "payment-integrations.md",
       "path_or_url": "docs/payment-integrations.md",
@@ -5506,9 +5519,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "53a63a4fe2a7345582fda11bdff544c529bacb2ebcfc8a502e2f83b5e0847320",
-      "byte_size": 5210063,
-      "modified_timestamp": "2026-11-03T12:07:19.717Z",
+      "sha256": "4b686dcab00bc4cb094daa8aae4e440f563eda917cf5e392b2bc187bfccb3e7c",
+      "byte_size": 5210064,
+      "modified_timestamp": "2026-11-03T12:13:51.620Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",

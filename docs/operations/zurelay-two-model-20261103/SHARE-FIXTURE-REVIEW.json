@@ -1,0 +1,43 @@
+{
+  "scope": "PURE_SCHEMA_FIXTURE_DEPENDENCY_NOT_SECURITY_EXCEPTION",
+  "reference": "4538083016c96086d5c1d78112301ecaf7aec0c7",
+  "path": "frontend/e2e/phase4-admin-share.security.mjs",
+  "previousSha256": "ed2f9f335df6716e2fbe2934839021485668bbd0929452d4567350edf166246e",
+  "currentSha256": "0b408b0cead5f45988f086a998e822cab8d0a7da828db3cb2feb21e8c7a2e1d3",
+  "schemaPath": "frontend/src/lib/responseCoverageContract.ts",
+  "schemaSha256": "b0db6375dde545b675e30cc22cee433787bf94751c95a55863b47e9529a1ede1",
+  "change": "Loads the new bounded Zod schema through the existing pure-module fixture loader. All redirect, authorization, private Share, model-call and network assertions remain unchanged.",
+  "verification": {
+    "job": "713be7b8-f119-49c3-be16-16ed6576bca6",
+    "tests": 6,
+    "pass": 6,
+    "fail": 0,
+    "skips": 0
+  },
+  "originalReviews": [
+    {
+      "id": "9187c5480b950d1fad4d",
+      "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
+      "sourceFileSha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_CONFIGURED_FIRST_PARTY_API_FILE_DOWNLOAD_ONLY_NO_ARBITRARY_ORIGIN_OR_PROVIDER_UPLOAD",
+      "tenantAuthority": "REMOTE_VERIFIED_USER_BEFORE_SESSION_FORWARDING_BACKEND_REMAINS_CANONICAL_FILE_OWNER_LINK_EXPIRY_AND_REVOCATION_AUTHORITY_NO_NEW_GRANT",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+          "marker": "9187c5480b950d1fad4d",
+          "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+        },
+        {
+          "path": "frontend/e2e/phase4-admin-share.security.mjs",
+          "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
+          "sha256": "ed2f9f335df6716e2fbe2934839021485668bbd0929452d4567350edf166246e",
+          "beforeRichShareFixtureSha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23",
+          "continuity": "Original two transport tests and every assertion unchanged. Real pure Share validators and additive API-version compatibility test now load in a shared VM realm. UI-only component remains outside transport fixture."
+        }
+      ]
+    }
+  ],
+  "productionChanges": false,
+  "modelRequests": 0
+}
