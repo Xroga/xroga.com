@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "reference": "fcc0b79fc3b0dbb6f55c05972db8ea8a134ebb89",
+  "scope": "POSITIVE_FIXTURE_BOUND_PAYLOAD_CORRECTION",
+  "sources": [
+    {
+      "path": "backend/src/ai/openaiCompat.egress.test.ts",
+      "beforeSha256": "15d4314e16c8f96e874aeff7b2dcbd6d0c7fad5da085455ca1375153f50f6a17",
+      "currentSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499"
+    }
+  ],
+  "providerCalls": 0,
+  "productionChanges": false,
+  "review": [
+    "The one failed full-suite test admitted messages without its strict response format. Match the exact SDK options in the admitted payload, preserving every tamper, identity, pricing, reservation and secret-egress assertion. Runtime code and build inputs are unchanged."
+  ],
+  "remaining": [
+    "Exact-source CI",
+    "Approved live provider and new-chat release/acceptance"
+  ]
+}

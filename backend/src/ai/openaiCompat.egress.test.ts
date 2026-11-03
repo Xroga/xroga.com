@@ -58,7 +58,7 @@ function admitted(t:TestContext,modelId:ModelId='deepseek_v4_1_flash_1017',settl
   return(invoke:typeof chatCompletion,messages:Parameters<typeof chatCompletion>[1],opts:Parameters<typeof chatCompletion>[2]={})=>{
     process.env.ZURELAY_API_KEY=opts.credentialOverride??'synthetic-provider-key';
     process.env.ZURELAY_JSON_SCHEMA_VERIFIED='1';
-    return withTenantModelReservation({scope:{context,userId:owner,connectedAccountId:'platform'},modelId,payload:{messages},estimatedInputTokens:4096,maximumOutputTokens:opts.maxTokens??8192,
+    return withTenantModelReservation({scope:{context,userId:owner,connectedAccountId:'platform'},modelId,payload:{messages,...(opts.responseFormat?{responseFormat:opts.responseFormat}:{})},estimatedInputTokens:4096,maximumOutputTokens:opts.maxTokens??8192,
       execute:d=>invoke(modelId,d.payload.messages as typeof messages,{...opts,credentialOverride:d.credentialOverride,beforeDispatch:d.beforeDispatch})});
   };
 }

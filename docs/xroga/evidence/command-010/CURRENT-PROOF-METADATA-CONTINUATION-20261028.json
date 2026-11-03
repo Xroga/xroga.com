@@ -6,7 +6,7 @@
       "path": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
       "archive": "docs/xroga/evidence/command-010/historical/TRANSPORT-LIFETIME-PROOF-87e33b94.json",
       "historicalSha256": "9950d43b6acdd1c5ad4e4bf784ef5115d47af775141905e918525f4ac3cfb4a0",
-      "currentSha256": "0d2f5f84d115df33b918c00b905918c8ad430e8ab4b29b5194fa363e78203909",
+      "currentSha256": "9bbe6fe8d52d2dc40b64856204fcb99f76c7a11aae74bfc826ca15dcb0a79625",
       "beforeAuraContinuationSha256": "70e9f401245efccf5abceeb405820c5d0b4f74895c4006a5353671c6b27c14c6",
       "beforeVoiceContinuationSha256": "8986e802f6e8a1435e18f4fe2bf6bcbad03d6ad907bca974721e70919e97b16e",
       "beforeNativePublicationSha256": "90dd03551344cf373a15e641ea37042614f54bb4dfe1dfbbe77d6ef832defd96",
@@ -28,7 +28,9 @@
       "beforeDeepSeekResearchSha256": "667e94fe30448d1e04efaa83a967e778c2ea161a049d9c9db07914fa87f2ced2",
       "beforePresentationContractSha256": "b06023602c06579d5422165204668016ab187101111fc26b185a6b15609ccf49",
       "beforeAnswerCoverageSha256": "9101cef68aca0bd188779384d84d3c1a1116e8b9b1197f7db3760676b6648c73",
-      "beforeZurelaySha256": "dad9ad08df81ec37a213b7d236cc20290fa294595129e8956f44ed39afb93132"
+      "beforeZurelaySha256": "dad9ad08df81ec37a213b7d236cc20290fa294595129e8956f44ed39afb93132",
+      "beforeExactSchemaFixture": "0d2f5f84d115df33b918c00b905918c8ad430e8ab4b29b5194fa363e78203909",
+      "schemaFixtureContinuation": "docs/operations/zurelay-two-model-20261103/CI-SCHEMA-FIXTURE-REVIEW.json"
     },
     {
       "path": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",

@@ -168,7 +168,8 @@
     "docs/xroga/security/phase-three-authority-delta.json",
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
-    "scripts/xroga/runtime-facts.mjs"
+    "scripts/xroga/runtime-facts.mjs",
+    "docs/operations/zurelay-two-model-20261103/CI-SCHEMA-FIXTURE-REVIEW.json"
   ],
   "decisions": {
     "keep": [
