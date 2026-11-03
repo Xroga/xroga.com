@@ -1,0 +1,13 @@
+{
+  "observedAtUtc": "2026-11-03T07:20:13.047960+00:00",
+  "jobId": "82829a55-fecf-4943-b940-2bc41193e85e",
+  "stopReason": "TIME_LIMIT",
+  "recordedGlobalFreeSpaceChangeBytes": -20199387136,
+  "currentDriveFreeBytes": 129732403200,
+  "ownedJobFiles": 3,
+  "ownedJobBytes": 1281,
+  "causeOfGlobalChange": "UNVERIFIED_NOT_ATTRIBUTED_TO_THIS_JOB",
+  "unownedFilesDeleted": false,
+  "retainedOriginalLogs": true,
+  "productionOrPaidTestStartedByMonitor": false
+}

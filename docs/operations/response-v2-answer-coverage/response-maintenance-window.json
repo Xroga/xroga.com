@@ -10,5 +10,6 @@
   "durationSeconds": 357.292348,
   "recoveryCompletedAtUtc": "2026-11-02T21:51:17.165040+00:00",
   "recoveryExecuted": true,
+  "totalElapsedThroughRecoverySeconds": 1402.856788,
   "failedAcceptanceChat": "b12a86b4-d20f-4ef0-ac33-f5809aa2ec86"
 }

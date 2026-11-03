@@ -1,0 +1,18 @@
+{
+  "scope": "GENUINELY_GENERATED_FAILED_ANSWER_ON_RECOVERED_PRODUCTION_PAIR",
+  "backendSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "frontendSource": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+  "sourceChat": "b12a86b4-d20f-4ef0-ac33-f5809aa2ec86",
+  "shareMode": "OWNER_ONLY",
+  "ownerOnlyLinkCreatedOnce": true,
+  "richSnapshotOpenedUnderExistingAuthenticatedOwner": true,
+  "observed": {"sections": 5, "graphNodes": 6, "graphEdges": 9, "tableRows": 7, "partialNoticeRetained": true, "cssViewportWidth": 1280, "cssViewportHeight": 720},
+  "temporaryLinkRevoked": true,
+  "reopenedRevokedLink": "404_NO_ANSWER_RENDERED",
+  "publicLinkCreated": false,
+  "privateShareTokenPublished": false,
+  "screenshot": "coverage-private-share-recovered.png",
+  "copy": {"successStateObserved": true, "clipboardInspectionReturnedCharacters": 0, "contentFidelity": "UNVERIFIED_DO_NOT_CLASSIFY_TOOL_BRIDGE_AS_CONFIRMED_PRODUCT_DEFECT"},
+  "newModelCalls": 0,
+  "fullResponseExperienceAcceptance": "FAIL_MISSING_REQUIRED_CONTENT_UNCHANGED"
+}

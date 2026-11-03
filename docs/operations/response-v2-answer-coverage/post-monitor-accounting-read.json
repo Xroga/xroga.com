@@ -1,0 +1,51 @@
+{
+  "scope": "READ_ONLY_FOLLOW_UP_AFTER_MONITOR_TIMEOUT",
+  "rows": [
+    {
+      "observed_at_utc": "2026-11-03 07:30:44.245449+00",
+      "id": "f91a8a7c-1309-49ca-afd9-7bfb259ba4db",
+      "internal_route": "glm_5_3_flash",
+      "status": "pending_reconciliation",
+      "reserved_micro_usd": 1385,
+      "settled_micro_usd": null,
+      "provider_request_id": null,
+      "error_category": "unknown"
+    },
+    {
+      "observed_at_utc": "2026-11-03 07:30:44.245449+00",
+      "id": "f374604c-edf2-4d7d-b172-9fa3cc52baee",
+      "internal_route": "deepseek_v4_flash",
+      "status": "settled",
+      "reserved_micro_usd": 4632,
+      "settled_micro_usd": 546,
+      "provider_request_id": "gen-1793655613-B0Rr6rAa5gtd8OisqxCG",
+      "error_category": null
+    },
+    {
+      "observed_at_utc": "2026-11-03 07:30:44.245449+00",
+      "id": "6d33d7e6-e376-484d-95e0-10d50dae55f9",
+      "internal_route": "kimi_k3",
+      "status": "pending_reconciliation",
+      "reserved_micro_usd": 38282,
+      "settled_micro_usd": null,
+      "provider_request_id": null,
+      "error_category": "cancelled"
+    },
+    {
+      "observed_at_utc": "2026-11-03 07:30:44.245449+00",
+      "id": "5bfa30f5-512e-41c7-bc0e-bedefcc4cfa0",
+      "internal_route": "deepseek_v4_flash",
+      "status": "settled",
+      "reserved_micro_usd": 10388,
+      "settled_micro_usd": 1103,
+      "provider_request_id": "gen-1793655619-kMyoW0WY6G9lOgZVUNbn",
+      "error_category": null
+    }
+  ],
+  "knownSettledThisAttemptMicroUsd": 1649,
+  "newUnresolvedKimiHoldMicroUsd": 38282,
+  "historicalGlmHoldMicroUsd": 1385,
+  "remainingConservativeOriginalAllowanceMicroUsd": 452489,
+  "holdsReleased": false,
+  "furtherPaidAttemptsPermitted": false
+}

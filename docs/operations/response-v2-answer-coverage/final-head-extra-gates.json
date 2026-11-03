@@ -1,0 +1,18 @@
+{
+  "source": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "branch": "codex/response-experience-v2-906",
+  "scope": "EXISTING_ISOLATED_CI_NO_PRODUCTION_CHANGE_OR_MODEL_SPEND",
+  "prBase": "release/research-source-attribution-20261031",
+  "dispatches": [
+    {
+      "workflowId": 307086407,
+      "atUtc": "2026-11-03T07:18:49.195339+00:00",
+      "state": "SUBMITTED_ONCE"
+    },
+    {
+      "workflowId": 321212442,
+      "atUtc": "2026-11-03T07:18:53.434549+00:00",
+      "state": "SUBMITTED_ONCE"
+    }
+  ]
+}

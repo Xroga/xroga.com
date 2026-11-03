@@ -88,7 +88,7 @@
     }
   ],
   "disposition": "Remaining three prompts stopped. Approved compatible backend and frontend recovery executed. Keep PRs draft.",
-  "diagnosis": "Received section shapes validate offline. The exact missing/invalid planner obligation binding was not retained in existing logs, so its root cause is not asserted as verified.",
+  "diagnosis": "Received section shapes validate offline. Original planner bindings and streamed deltas were not retained, so the exact partial-contract trigger cannot be reconstructed from final JSON alone. Neither a specific planner binding defect nor a stream mismatch is asserted as verified.",
   "screenshots": {
     "recoveredProductionDesktop": "coverage-recovered-new-chat-1440.png",
     "recoveredProductionMobile": "coverage-recovered-new-chat-390.png",

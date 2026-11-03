@@ -1,0 +1,471 @@
+{
+  "observedAtUtc": "2026-11-03T07:34:47.353055+00:00",
+  "head": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "virtualMerge": "59d8a6fd1dfcde53950f05f302df78b921dd8e71",
+  "prBase": "release/research-source-attribution-20261031",
+  "workflowRun": 41538387930,
+  "manifests": [
+    {
+      "scope": "head",
+      "artifact": "batch-01-baseline-59d8a6fd1dfcde53950f05f302df78b921dd8e71",
+      "manifest": "run-a-manifest.json",
+      "manifestSha256": "75cf9bb64a3b3a2f29934d63ffd8cb0bd5220eb3d70bd323e92dda86814150d1",
+      "source": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": [
+        {
+          "name": "lockfile-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "focused-and-skipped-tests",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-unit-tests",
+          "exitCode": 0,
+          "tests": 4996,
+          "pass": 4990,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-route-type-generation",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-lint",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-unit-tests",
+          "exitCode": 0,
+          "tests": 1418,
+          "pass": 1418,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "migration-syntax-and-order",
+          "exitCode": 0
+        },
+        {
+          "name": "inventory-drift",
+          "exitCode": 0
+        },
+        {
+          "name": "requirements-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "runtime-config-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "golden-contract-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "mission-operating-policy",
+          "exitCode": 0
+        },
+        {
+          "name": "tenant-audit-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "exitCode": 0,
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "exitCode": 0,
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "agent-dependency-resolution",
+          "exitCode": 0
+        },
+        {
+          "name": "git-diff-whitespace",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "scope": "head",
+      "artifact": "batch-01-baseline-59d8a6fd1dfcde53950f05f302df78b921dd8e71",
+      "manifest": "run-b-manifest.json",
+      "manifestSha256": "d4848d050d32d706aee4eea3adcbb393023e5b6d4e82c047b4d0e9f58afa4060",
+      "source": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": [
+        {
+          "name": "lockfile-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "focused-and-skipped-tests",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-unit-tests",
+          "exitCode": 0,
+          "tests": 4996,
+          "pass": 4990,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-route-type-generation",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-lint",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-unit-tests",
+          "exitCode": 0,
+          "tests": 1418,
+          "pass": 1418,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "migration-syntax-and-order",
+          "exitCode": 0
+        },
+        {
+          "name": "inventory-drift",
+          "exitCode": 0
+        },
+        {
+          "name": "requirements-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "runtime-config-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "golden-contract-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "mission-operating-policy",
+          "exitCode": 0
+        },
+        {
+          "name": "tenant-audit-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "exitCode": 0,
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "exitCode": 0,
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "agent-dependency-resolution",
+          "exitCode": 0
+        },
+        {
+          "name": "git-diff-whitespace",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "scope": "integrated",
+      "artifact": "batch-01-integrated-candidate-59d8a6fd1dfcde53950f05f302df78b921dd8e71",
+      "manifest": "run-a-manifest.json",
+      "manifestSha256": "9a68842bbbc34d58a2a1e731cc2b3fc520c1c053b44a538f8731d6908e380c13",
+      "source": "59d8a6fd1dfcde53950f05f302df78b921dd8e71",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": [
+        {
+          "name": "lockfile-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "focused-and-skipped-tests",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-unit-tests",
+          "exitCode": 0,
+          "tests": 4996,
+          "pass": 4990,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-route-type-generation",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-lint",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-unit-tests",
+          "exitCode": 0,
+          "tests": 1418,
+          "pass": 1418,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "migration-syntax-and-order",
+          "exitCode": 0
+        },
+        {
+          "name": "inventory-drift",
+          "exitCode": 0
+        },
+        {
+          "name": "requirements-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "runtime-config-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "golden-contract-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "mission-operating-policy",
+          "exitCode": 0
+        },
+        {
+          "name": "tenant-audit-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "exitCode": 0,
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "exitCode": 0,
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "agent-dependency-resolution",
+          "exitCode": 0
+        },
+        {
+          "name": "git-diff-whitespace",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "scope": "integrated",
+      "artifact": "batch-01-integrated-candidate-59d8a6fd1dfcde53950f05f302df78b921dd8e71",
+      "manifest": "run-b-manifest.json",
+      "manifestSha256": "2efab4cb32094bb272b1ebf3e0222bde5bb0f09cc07ad255a46e4815bfea2cdb",
+      "source": "59d8a6fd1dfcde53950f05f302df78b921dd8e71",
+      "result": "PASS",
+      "sourceTreeMutated": false,
+      "toolchain": {
+        "node": "22.21.1",
+        "npm": "10.9.4"
+      },
+      "steps": [
+        {
+          "name": "lockfile-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "focused-and-skipped-tests",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "backend-unit-tests",
+          "exitCode": 0,
+          "tests": 4996,
+          "pass": 4990,
+          "fail": 0,
+          "skipped": 6
+        },
+        {
+          "name": "frontend-route-type-generation",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-typecheck",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-lint",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-build",
+          "exitCode": 0
+        },
+        {
+          "name": "frontend-unit-tests",
+          "exitCode": 0,
+          "tests": 1418,
+          "pass": 1418,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "migration-syntax-and-order",
+          "exitCode": 0
+        },
+        {
+          "name": "inventory-drift",
+          "exitCode": 0
+        },
+        {
+          "name": "requirements-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "runtime-config-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "golden-contract-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "mission-operating-policy",
+          "exitCode": 0
+        },
+        {
+          "name": "tenant-audit-integrity",
+          "exitCode": 0
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "exitCode": 0,
+          "tests": 49,
+          "pass": 49,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "exitCode": 0,
+          "tests": 136,
+          "pass": 136,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "agent-dependency-resolution",
+          "exitCode": 0
+        },
+        {
+          "name": "git-diff-whitespace",
+          "exitCode": 0
+        }
+      ]
+    }
+  ],
+  "productionAcceptance": false,
+  "newProductionDeployment": false
+}

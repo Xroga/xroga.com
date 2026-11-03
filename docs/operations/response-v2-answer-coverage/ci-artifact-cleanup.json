@@ -1,0 +1,10 @@
+{
+  "jobId": "08513736-4885-46bd-9960-6922f2473895",
+  "scope": "EXACT_DISPOSABLE_DOWNLOADED_CI_ARTIFACT_CHILD_ONLY",
+  "removedBytes": 614917,
+  "targetRemoved": true,
+  "originalJobLogsRetained": true,
+  "verifiedSourceManifestsPreservedInReceipt": true,
+  "unownedFilesDeleted": false,
+  "longPathPolicyUsed": true
+}

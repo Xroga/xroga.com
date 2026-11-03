@@ -1,0 +1,33 @@
+{
+  "observedAtUtc": "2026-11-03T07:20:09.657834+00:00",
+  "scope": "READ_ONLY_AFTER_LOCAL_MONITOR_TIMEOUT_NO_MUTATIONS",
+  "traffic": [
+    {
+      "revision": "xroga-api-response-cd5541-serving-1102",
+      "percent": 100
+    },
+    {
+      "revision": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4"
+    },
+    {
+      "revision": "xroga-api-voice-fe2c6486c",
+      "tag": "voice-9f62bba5"
+    }
+  ],
+  "jobImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:70a2be6f9f8b2452e7e6505ff13f9d1c571899aca18f011e5bbacc731daef28d",
+  "jobSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+  "queue": "RUNNING",
+  "frontend": {
+    "httpStatus": 200,
+    "release": "d86c8c44fae0777fb1e2a503bb316f7f314b196a",
+    "environment": "production",
+    "status": null
+  },
+  "apiHealth": {
+    "httpStatus": 200,
+    "release": "cd5541c6c887a11ba68aaf3cccfb78609f906167",
+    "environment": null,
+    "status": "ok"
+  }
+}

@@ -1,15 +1,25 @@
 {
   "repository": "Xroga/xroga.com",
   "branch": "codex/response-experience-v2-906",
-  "source": "f458273ce1dc9102e46eab6736623a5770c37d07",
+  "source": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+  "applicationCorrectionCommit": "f458273ce1dc9102e46eab6736623a5770c37d07",
+  "metadataCorrection": "Corrected the blocked mission status to the unchanged schema and regenerated current-source inventory after new files became Git-tracked. Application source is identical to f458273c.",
   "pr": 909,
   "scope": "Qualified resource labels in generated role tables use the existing authentic identity component. No backend, model route, authorization, database or production change.",
   "focusedLocalTestsPassed": 48,
   "actualComponentRegressions": "PASS_CAPTURED_ROWS_BOTH_LAYOUTS_POSITIVE_AND_NEGATIVE",
   "frontendTypecheck": "PASS_LOCAL_NODE24_CANONICAL_CI_SEPARATE",
-  "strictAudit": {"total": 150, "reviewed": 150, "pending": 0, "unresolvedHighRisk": 0},
-  "requiredExactSourceCI": "PENDING_AT_RECORDING",
+  "strictAudit": {
+    "total": 150,
+    "reviewed": 150,
+    "pending": 0,
+    "unresolvedHighRisk": 0
+  },
+  "requiredExactSourceCI": "PASS_9_OF_9",
   "deployed": false,
   "fullProductAcceptance": "FAIL_INCOMPLETE_COVERAGE_REMAINS",
-  "paidTestsOrNewCloudReleaseAuthorized": false
+  "paidTestsOrNewCloudReleaseAuthorized": false,
+  "ciReceipt": "final-head-ci.json",
+  "sourceProvenanceReceipt": "final-head-ci-provenance.json",
+  "productionAcceptance": "FAIL_UNCHANGED"
 }
