@@ -82,6 +82,10 @@ interface ComposioWorkbenchConfig {
 
 interface ComposioSessionConfig {
   user_id?: string;
+  multi_account?: {
+    enable?: boolean;
+    require_explicit_selection?: boolean;
+  };
   tags?: string[] | ComposioTagsConfig;
   search?: {
     enable?: boolean;
@@ -1654,6 +1658,13 @@ async function createComposioSession(
     execute: {
       enable_multi_execute: false,
     },
+    // An approved action must select the exact account recorded in its permit.
+    // Composio's default single-account mode can silently use the newest
+    // connection instead of the `account` supplied at execution time.
+    multi_account: {
+      enable: true,
+      require_explicit_selection: true,
+    },
     manage_connections: {
       enable: true,
       enable_wait_for_connections: false,
@@ -1803,12 +1814,39 @@ function mapSearchTool(
   };
 }
 
+/** Search with provider-owned app IDs and a fixed public vocabulary only.
+ * User names, email contents, document titles and brands never leave in this
+ * metadata request. Prefer apps the user actually named over every connection. */
+export function buildPublicComposioDiscoveryQuery(
+  query: string,
+  mode: XrogaConnectMode,
+  connected: Pick<XrogaConnectToolkit, 'toolkit' | 'name' | 'connected'>[],
+  preferredToolkits: string[] = [],
+): string {
+  const safe=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).slice(0,20);
+  const normalized=` ${query.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()} `;
+  const compact=normalized.replace(/\s+/g,'');
+  const mentioned=safe.filter(item=>[item.toolkit,item.name].some(value=>{
+    if(!value)return false;
+    const name=value.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    return name.length>=3&&(normalized.includes(` ${name} `)||compact.includes(name.replace(/\s+/g,'')));
+  }));
+  const preferred=safe.filter(item=>preferredToolkits.some(slug=>slug.toLowerCase()===item.toolkit.toLowerCase()));
+  const apps=(mentioned.length?mentioned:preferred.length?preferred:safe).map(item=>item.toolkit.toLowerCase());
+  const vocabulary=['get','list','find','search','read','extract','send','create','draft','update','edit','customize','organize','duplicate','copy','save','put','delete','archive','upload','download','publish','message','email','task','issue','file','event','contact','row','record','invoice','calendar','channel','document','spreadsheet','sheet','design','logo'];
+  const tokens=query.toLowerCase().match(/[a-z]+/g)??[];
+  const words=new Set(tokens.flatMap(word=>word.length>4&&word.endsWith('s')?[word,word.slice(0,-1)]:[word]));
+  const terms=vocabulary.filter(word=>words.has(word));
+  return `Find ${mode} tools for ${apps.join(', ')||'available applications'}: ${terms.join(' ')||'available operations'}.`;
+}
+
 export async function searchComposioTools(
   userId: string,
   input: {
     query: string;
     sessionId?: string;
     mode?: XrogaConnectMode;
+    preferredToolkits?: string[];
   },
   tenantContext?: TenantContext,
 ): Promise<XrogaConnectSearchResult> {
@@ -1836,10 +1874,7 @@ export async function searchComposioTools(
   // Names, recipients, private project text and query values stay local for the
   // existing selector. Metadata never supplies execution authority.
   const connected=await listSessionComposioToolkits(userId,{sessionId:session.session_id,mode,connectedOnly:true},actor);
-  const apps=connected.filter(item=>item.connected&&!item.toolkit.toLowerCase().startsWith('custom_')&&/^[a-z0-9_-]{1,80}$/i.test(item.toolkit)).map(item=>item.toolkit.toLowerCase()).slice(0,20);
-  const vocabulary=['get','list','find','search','read','send','create','update','delete','archive','upload','download','publish','message','email','task','issue','file','event','contact','row','record','invoice','calendar','channel','document','spreadsheet'];
-  const words=new Set(query.toLowerCase().match(/[a-z]+/g)??[]),terms=vocabulary.filter(word=>words.has(word));
-  const publicQuery=`Find ${mode} tools for ${apps.join(', ')||'available applications'}: ${terms.join(' ')||'available operations'}.`;
+  const publicQuery=buildPublicComposioDiscoveryQuery(query,mode,connected,input.preferredToolkits);
   const payload={queries:[{use_case:publicQuery}],search_strategy:'tool_search'};
   const digest=preparedActionDigest(payload);
   await enforceEgress({context:actor,actionClass:'READ',destination:COMPOSIO_API_BASE,recipient:'composio-owned-session-metadata',purpose:'finite-tool-discovery',payload,declaredClass:'PUBLIC',toolTrust:'SERVER_REGISTERED',binding:{userId,provider:'composio',connectedAccountId:'catalog',operation:'DISCOVER_TOOL_METADATA',targetDigest:digest,planDigest:digest}},receipt=>persistSecurityDecision(actor,receipt));
@@ -1935,6 +1970,7 @@ export async function searchComposioActionTools(
   input: {
     query: string;
     sessionId?: string;
+    preferredToolkits?: string[];
   },
   tenantContext?: TenantContext,
 ): Promise<XrogaConnectSearchResult> {
@@ -2605,7 +2641,7 @@ async function executeDiscoveredComposioTool(
   if(classifyOutboundData({useCase:input.useCase,arguments:input.arguments}).classification==='CREDENTIAL_SECRET')throw new EgressDenied('SECRET_EGRESS_DENIED');
   const sessionId = cleanSessionId(input.sessionId);
 
-  await assertComposioSession(userId, sessionId, input.mode,context);
+  const session = await assertComposioSession(userId, sessionId, input.mode,context);
   signal?.throwIfAborted();
 
   const toolSlug = cleanToolSlug(input.toolSlug);
@@ -2652,6 +2688,12 @@ async function executeDiscoveredComposioTool(
     return{needsConfirmation:true,confirmation,reviewUrl:`/dashboard/actions/confirm/${confirmation.id}`};
   }
   if (input.mode === 'action') {
+    if (session.config?.multi_account?.enable !== true
+      || session.config.multi_account.require_explicit_selection !== true) {
+      throw new ComposioClientError('This connected-app session cannot select the approved account. Prepare the action again.', {
+        status: 409, code: 'COMPOSIO_ACTION_ACCOUNT_SELECTION_REQUIRED',
+      });
+    }
     const binding = input.authorityBinding;
     if (!binding || !allowedTool || toolSlug.startsWith('COMPOSIO_')) {
       throw new ComposioClientError('Exact application authority is required.', { status: 403, code: 'COMPOSIO_ACTION_CONFIRMATION_REQUIRED' });

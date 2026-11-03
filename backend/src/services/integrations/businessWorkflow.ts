@@ -10,8 +10,8 @@ export interface BusinessWorkflowStep {
 }
 
 const READ_VERBS = /^(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|get)\b/i;
-const ACTION_VERBS = /^(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|invite|add|set|archive|reply|refund|transfer|pay|share)\b/i;
-const NEXT_TASK = /(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|get|send|email|message|create|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|invite|add|set|archive|reply|refund|transfer|pay|share)\b/i;
+const ACTION_VERBS = /^(?:please\s+)?(?:send|email|message|create|draft|schedule|book|update|edit|customize|organize|duplicate|copy|save|put|delete|remove|cancel|publish|post|upload|invite|add|set|archive|reply|refund|transfer|pay|share)\b/i;
+const NEXT_TASK = /(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|get|send|email|message|create|draft|schedule|book|update|edit|customize|organize|duplicate|copy|save|put|delete|remove|cancel|publish|post|upload|invite|add|set|archive|reply|refund|transfer|pay|share)\b/i;
 const DEPENDENT_REFERENCE = /\b(?:them|those|these|it|that|their|each|every|all|found|matching|top\s+\d+|first\s+\d+|the results?|the (?:people|clients|leads|items|records|files|events|messages) (?:you|we) (?:found|created|listed)|from (?:that|the previous) (?:step|search))\b/i;
 
 export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflowStep[] | null {
@@ -20,7 +20,7 @@ export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflow
     return null;
   }
 
-  const separator = new RegExp(`\\s*(?:;|\\n+)\\s*|\\s+(?:and then|then|and|also)\\s+(?=${NEXT_TASK.source})`, 'gi');
+  const separator = new RegExp(`\\s*(?:;|\\n+)\\s*|\\s*,\\s*(?:and\\s+)?(?=${NEXT_TASK.source})|\\s+(?:and then|then|and|also)\\s+(?=${NEXT_TASK.source})`, 'gi');
   const clauses = text.split(separator).map((item) => item.trim().replace(/^[,.;\s]+|[,.;\s]+$/g, ''));
   if (clauses.length < 2 || clauses.length > 4 || clauses.some((item) => item.length < 5 || item.length > 500)) return null;
 

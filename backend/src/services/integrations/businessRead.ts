@@ -953,6 +953,7 @@ export async function readBusinessData(
           useCase,
 
         mode: 'read',
+        preferredToolkits: input.referenceEvidence?.map(item=>item.toolkit),
       },input.tenantContext
     );
 

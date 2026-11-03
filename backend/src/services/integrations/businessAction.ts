@@ -1126,6 +1126,7 @@ export async function prepareBusinessAction(
       {
         query:
           useCase,
+        preferredToolkits: input.referenceEvidence?.map(item=>item.toolkit),
       },input.tenantContext
     );
 
