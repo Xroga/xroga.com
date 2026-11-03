@@ -14805,9 +14805,13 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
   }
 }
 
-/* Let the response remain visible around the floating composer. The composer
-   itself covers content beneath its rounded surface; clipping the whole
-   transcript here created a large, square blank block behind it. */
+/* Keep the transcript visible around the floating composer. Only the few pixels
+   between the pane edge and the composer's lower edge are clipped; clipping at
+   the composer's *top* would recreate the large square blank block. */
+
+.xv-terminal-scroll[data-conversation='true'] {
+  clip-path: inset(0 0 max(0px, calc(var(--xv-dock-bottom, 14px) - var(--xv-pane-bottom, 0px))) 0);
+}
 
 .xv-terminal-dock[class*='terminal-skin-'][data-workspace-state='conversation'] {
   background:transparent !important;
@@ -14818,9 +14822,23 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
   padding-bottom:0 !important;
 }
 
-/* A restrained upper-edge cue appears only while an existing response is scrolled.
-   It softens the visual hand-off at the clipping line without adding a backdrop or
-   casting a glow below the composer. */
+/* A narrow theme-native fade sits directly above the composer after the transcript
+   scrolls. It does not paint a rectangular backdrop behind or below the chatbar. */
+.xv-terminal-dock[data-response-scrolled='true']
+.xv-kimi-composer-frame[data-composer-frame='single'] {
+  position: relative !important;
+}
+.xv-terminal-dock[data-response-scrolled='true']
+.xv-kimi-composer-frame[data-composer-frame='single']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% - 1px);
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(to top, color-mix(in srgb, var(--terminal-ui-surface) 86%, transparent), transparent);
+}
 .xv-terminal-dock[data-response-scrolled='true']
 .xv-kimi-composer-frame[data-composer-frame='single']
 .xv-chatbar-solid {
