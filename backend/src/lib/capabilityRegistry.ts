@@ -188,7 +188,10 @@ const TEMPLATES: CapabilityTemplate[] = [
     },
   ],
 },
- {id:'x_research',label:'X.com research',description:'Dedicated X retrieval is unavailable under the current generation policy. Public web retrieval is separate.',providers:[]},
+ {id:'x_research',label:'X.com research',description:'Dedicated X retrieval is unavailable under the current generation policy. Public web retrieval is separate.',providers:[{
+   ...serverLocal('xai','Historical X research',['search'],'Retired model execution is denied before credential access or provider dispatch.'),
+   credentialMode:'unavailable',unavailableReason:'This generative provider is retired. Public web retrieval remains separately authorized.',
+ }]},
   {
     id: 'file_processing',
     label: 'File processing',

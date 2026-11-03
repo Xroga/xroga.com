@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/zurelay-two-model-20261103",
-    "sha": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
-    "sourceTimestampUtc": "2026-11-03T01:02:03+05:00",
-    "auditStartedUtc": "2026-11-03T11:53:59.593Z",
+    "sha": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+    "sourceTimestampUtc": "2026-11-03T16:54:18+05:00",
+    "auditStartedUtc": "2026-11-03T12:20:00.449Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -1727,7 +1727,7 @@
         "backend/src/services/integrations/businessAccounting.failure.test.ts:5",
         "backend/src/services/integrations/businessAction.ts:22",
         "backend/src/services/integrations/businessRead.ts:13",
-        "backend/src/synthesis/coherentImplementation.ts:11"
+        "backend/src/synthesis/coherentImplementation.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -2734,7 +2734,7 @@
         "backend/src/ai/openaiCompat.ts:17",
         "backend/src/ai/pipeline.ts:43",
         "backend/src/ai/tenantModelDispatch.test.ts:18",
-        "backend/src/synthesis/coherentImplementation.ts:7"
+        "backend/src/synthesis/coherentImplementation.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3255,7 +3255,7 @@
         "backend/src/existingSource/change/delivery.ts:15",
         "backend/src/existingSource/change/testRunner.ts:12",
         "backend/src/existingSource/change/toolHost.ts:11",
-        "backend/src/synthesis/coherentImplementation.ts:12"
+        "backend/src/synthesis/coherentImplementation.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4974,7 +4974,7 @@
         "backend/src/routes/browserRuns.ts:29",
         "backend/src/routes/guestChat.ts:14",
         "backend/src/routes/phase1.ts:26",
-        "backend/src/synthesis/coherentImplementation.ts:8",
+        "backend/src/synthesis/coherentImplementation.ts:7",
         "backend/src/synthesis/universalEntrypoint.ts:98",
         "backend/src/workers/browserModelGateway.ts:15"
       ],
@@ -7182,7 +7182,7 @@
         "backend/src/ai/zurelayWire.ts:2",
         "backend/src/hardening/launchHardening.test.ts:20",
         "backend/src/lib/adaptiveOrchestrator.ts:6",
-        "backend/src/synthesis/coherentImplementation.ts:9",
+        "backend/src/synthesis/coherentImplementation.ts:8",
         "backend/src/synthesis/incrementalImplementation.ts:28",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:14",
         "backend/src/synthesis/universalCanonicalTasks.test.ts:22",
@@ -7347,7 +7347,7 @@
         "backend/src/services/publish/expoWorkflowDenial.security.test.ts:2",
         "backend/src/services/publish/nonWebShip.security.test.ts:4",
         "backend/src/services/systemErrorLog.ts:2",
-        "backend/src/synthesis/coherentImplementation.ts:10",
+        "backend/src/synthesis/coherentImplementation.ts:9",
         "backend/src/synthesis/incrementalImplementation.ts:29",
         "backend/src/synthesis/productionAdapters.ts:27",
         "backend/src/workers/browserModelLifetime.ts:1",
@@ -8866,7 +8866,7 @@
         "backend/src/ai/pipeline.ts:196",
         "backend/src/ai/securityScan.test.ts:3",
         "backend/src/existingSource/change/delivery.ts:16",
-        "backend/src/synthesis/coherentImplementation.ts:13"
+        "backend/src/synthesis/coherentImplementation.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22087,7 +22087,7 @@
       "id": "surface:931cd555804808c3ff3c",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/capabilityRegistry.ts",
-      "sha256": "7a3c0d8d90c77e86c3e715aa05599fd5ef2906a63840031e7239c030a65378e9",
+      "sha256": "89ac1ded8dbbbcfddc9bf0d05f8cf10c330d7ab10fb80c421ab8f73130cdaec6",
       "symbols": [
         "CapabilityAvailability",
         "CapabilityDefinition",
@@ -46793,7 +46793,7 @@
       "id": "surface:993b88dc6689b6abbae9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/coherentImplementation.ts",
-      "sha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8",
+      "sha256": "2fb40f8360bed39a7483af67e1ede2bd8f48172e5420f7275e8992485ba703ef",
       "symbols": [
         "BUNDLE_SYSTEM",
         "BuilderModelCallTelemetry",
@@ -46840,7 +46840,6 @@
         "cursor",
         "defaultCompletion",
         "depth",
-        "directOutputScore",
         "duplicate",
         "end",
         "error",
@@ -47666,7 +47665,7 @@
       "id": "surface:8afed281fb102915458f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/incrementalImplementation.ts",
-      "sha256": "83521be1d68976af19a4e74f0517d94c1ef323821873a3b0c75967c2b9110b59",
+      "sha256": "922a46c183ff8fe101e9aea7b9d41c9aefa355ee3bb5b7aea929201ebd8515ff",
       "symbols": [
         "CandidateLaneRunner",
         "CandidateQuarantinedError",
@@ -47780,7 +47779,7 @@
       ],
       "callers": [
         "backend/src/hardening/launchHardening.test.ts:46",
-        "backend/src/synthesis/coherentImplementation.ts:15",
+        "backend/src/synthesis/coherentImplementation.ts:14",
         "backend/src/synthesis/incrementalImplementation.test.ts:4"
       ],
       "reachable": true,
@@ -132077,9 +132076,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f73aec7d2f4cc6817512",
+      "id": "finding:cabf949403485f7944ce",
       "sourcePath": "backend/src/lib/capabilityRegistry.ts",
-      "line": 429,
+      "line": 432,
       "kind": "SIMULATE",
       "reachable": true,
       "state": "PARTIAL",
@@ -132087,9 +132086,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:36841515714e372dd6c0",
+      "id": "finding:dfb0e1685875f85ad9a3",
       "sourcePath": "backend/src/lib/capabilityRegistry.ts",
-      "line": 432,
+      "line": 435,
       "kind": "SIMULATION",
       "reachable": true,
       "state": "PARTIAL",

@@ -51,7 +51,7 @@ export function registerConfirmationMetadataTests(admin:SupabaseClient,getUsers:
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
   const actors:{id:string}[]=[];t.after(async()=>{for(const actor of actors)assert.equal((await admin.auth.admin.deleteUser(actor.id)).error,null);});
   for(let i=0;i<2;i++){const created=await admin.auth.admin.createUser({email:`failure-budget-${randomUUID()}@example.invalid`,email_confirm:true});assert.equal(created.error,null);assert.ok(created.data.user);actors.push({id:created.data.user.id});}
-  const [owner,other]=actors,input={modelId:'deepseek_v4_flash' as const,estimatedInputTokens:100,maximumOutputTokens:100};
+  const [owner,other]=actors,input={modelId:'deepseek_v4_1_flash_1017' as const,estimatedInputTokens:100,maximumOutputTokens:100};
   const absent=await admin.from('xroga_billing_cycles').select('id').in('user_id',actors.map(a=>a.id));assert.equal(absent.error,null);assert.deepEqual(absent.data,[]);
   const reserved=await reserveProviderBudget({...input,userId:owner.id,idempotencyKey:randomUUID()}),foreign=await reserveProviderBudget({...input,userId:other.id,idempotencyKey:randomUUID()});
   const rows=async()=>{const r=await admin.from('xroga_provider_reservations').select('*').in('id',[reserved.id,foreign.id]).order('id');assert.equal(r.error,null);assert.equal(r.data?.length,2);return r.data!;};

@@ -777,7 +777,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d",
+      "sha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/security/tenantIsolation.local.integration.ts",
         "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
@@ -791,7 +791,11 @@
         "sha256": "b152c62ee7be63efbd05766c2028491be0a53bceed6fce7de4ff110d43802420",
         "scope": "PRESERVED_PREVIOUS_SOURCE_BINDING_NOT_NEW_EXECUTION_PROOF"
       },
-      "richShareCorrectionReview": "Additive isolated rich Share owner/foreign/anonymous/reload/revocation test only. Existing test bodies remain unchanged. The real database test passed in run 41435291094."
+      "richShareCorrectionReview": "Additive isolated rich Share owner/foreign/anonymous/reload/revocation test only. Existing test bodies remain unchanged. The real database test passed in run 41435291094.",
+      "beforeZurelayCiCorrection": {
+        "reference": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+        "sha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d"
+      }
     },
     {
       "path": "backend/src/services/integrations/businessAccounting.failure.test.ts",
@@ -856,15 +860,27 @@
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.test.ts",
-      "sha256": "f9476da81c5df78caa61625fa099f375a601c896b14db4eb0a02767487d6bb58"
+      "sha256": "9d331d684c5997113735e145a5770f6d391fafe75bc625e02ac6bfbc02014648",
+      "beforeZurelayCiCorrection": {
+        "reference": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+        "sha256": "f9476da81c5df78caa61625fa099f375a601c896b14db4eb0a02767487d6bb58"
+      }
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "sha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8"
+      "sha256": "2fb40f8360bed39a7483af67e1ede2bd8f48172e5420f7275e8992485ba703ef",
+      "beforeZurelayCiCorrection": {
+        "reference": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+        "sha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8"
+      }
     },
     {
       "path": "backend/src/synthesis/incrementalImplementation.ts",
-      "sha256": "83521be1d68976af19a4e74f0517d94c1ef323821873a3b0c75967c2b9110b59"
+      "sha256": "922a46c183ff8fe101e9aea7b9d41c9aefa355ee3bb5b7aea929201ebd8515ff",
+      "beforeZurelayCiCorrection": {
+        "reference": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+        "sha256": "83521be1d68976af19a4e74f0517d94c1ef323821873a3b0c75967c2b9110b59"
+      }
     },
     {
       "path": "backend/src/synthesis/productionAdapters.test.ts",
@@ -1084,5 +1100,6 @@
     "id": "049adafdb79c93d85166",
     "path": "backend/src/lib/gemini.ts",
     "reason": "Direct Gemini HTTP implementation removed. Historical review retained in CALLER-REVIEW.json. Current strict auditor discovers no transport in this explicit denial adapter."
-  }
+  },
+  "zurelayCiCorrection": "docs/operations/zurelay-two-model-20261103/CI-CORRECTION-REVIEW.json"
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
+  "source_sha": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17026,7 +17026,7 @@
     },
     {
       "path": "backend/src/lib/capabilityRegistry.ts",
-      "sha256": "7a3c0d8d90c77e86c3e715aa05599fd5ef2906a63840031e7239c030a65378e9"
+      "sha256": "89ac1ded8dbbbcfddc9bf0d05f8cf10c330d7ab10fb80c421ab8f73130cdaec6"
     },
     {
       "path": "backend/src/lib/changeSafety.ts",
@@ -17770,7 +17770,7 @@
     },
     {
       "path": "backend/src/security/confirmationMetadata.local.integration.ts",
-      "sha256": "ef3c329225da0a1de18d532b7566bb2eb56d263846eb9e2fbe8434377ea817e4"
+      "sha256": "0cf4b051b46d1d11a9573d3bef8d774dd22d15e8a586b18a1e027480660ef100"
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
@@ -17978,7 +17978,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "51e46db6343128f1e21a27aff3fb7d75c02d755d101ab374340b1e71c4ebc46d"
+      "sha256": "ca10dcce1588319a590acc2c5db06294bb0ac47af4b81c3186b0dc9db03068f4"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -18570,7 +18570,7 @@
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "sha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8"
+      "sha256": "2fb40f8360bed39a7483af67e1ede2bd8f48172e5420f7275e8992485ba703ef"
     },
     {
       "path": "backend/src/synthesis/delivery/projectDelivery.ts",
@@ -18610,7 +18610,7 @@
     },
     {
       "path": "backend/src/synthesis/incrementalImplementation.ts",
-      "sha256": "83521be1d68976af19a4e74f0517d94c1ef323821873a3b0c75967c2b9110b59"
+      "sha256": "922a46c183ff8fe101e9aea7b9d41c9aefa355ee3bb5b7aea929201ebd8515ff"
     },
     {
       "path": "backend/src/synthesis/integrations/communicationAi.ts",
@@ -23750,7 +23750,7 @@
     },
     {
       "path": "backend/src/lib/capabilityRegistry.ts",
-      "line": 535,
+      "line": 538,
       "expression": "name",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -25677,28 +25677,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1645,
+      "line": 1648,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1663,
+      "line": 1666,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1671,
+      "line": 1674,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1675,
+      "line": 1678,
       "credentialsInUrl": false
     },
     {
@@ -35232,70 +35232,77 @@
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 108,
+      "line": 107,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 282,
+      "line": 281,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 321,
+      "line": 320,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 489,
+      "line": 488,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 493,
+      "line": 492,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 503,
+      "line": 502,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 528,
+      "line": 527,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 533,
+      "line": 532,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 539,
+      "line": 538,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 549,
+      "line": 548,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/coherentImplementation.ts",
+      "line": 705,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -35303,13 +35310,6 @@
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
       "line": 706,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 707,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
