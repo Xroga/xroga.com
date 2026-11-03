@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "43ed343c2af35f49f7959684f7e692a04a750218",
+  "source_sha": "d6ef8b4e46b048fa6cc61d11418c91144f061972",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2128,6 +2128,46 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/research.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-api-zurelay-com",
+      "provider": "Source-defined endpoint api.zurelay.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts",
+        "backend/src/services/integrations/connectedAppModel.ts"
+      ],
+      "hostnames": [
+        "api.zurelay.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "ZURELAY_API_KEY"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts",
+        "backend/src/services/integrations/connectedAppModel.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -7881,7 +7921,11 @@
         "XROGA_STORAGE_RECONCILE_MODE",
         "XROGA_TEST_CREDENTIAL_KEK",
         "XROGA_TRUSTED_PROXY_HOPS",
-        "ZHIPU_API_KEY"
+        "ZHIPU_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -15451,6 +15495,111 @@
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
       ]
+    },
+    {
+      "name": "ZURELAY_API_KEY",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts",
+        "backend/src/config/envSecrets.ts",
+        "backend/src/lib/platformReady.ts",
+        "backend/src/services/integrations/connectedAppModel.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "DECLARED_SECRET_ALIAS",
+        "REVIEWED_DYNAMIC_BINDING",
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-api-zurelay-com"
+      ]
+    },
+    {
+      "name": "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "ZURELAY_DEEPSEEK_MODEL_ID",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
     }
   ],
   "manifests": [
@@ -15753,7 +15902,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/publicIdentity.ts",
-      "sha256": "a4631657056c95a83040f1601e0c7c33a3b4f002fb4ab0479a24e514c040509a"
+      "sha256": "417211e1a1585a86ebaa3d7880272064a0af685ac92d14d7a69c376322a80b88"
     },
     {
       "path": "backend/src/ai/black-hole/registry.ts",
@@ -15937,7 +16086,7 @@
     },
     {
       "path": "backend/src/ai/modelCapabilityRegistry.ts",
-      "sha256": "a24e948bc83804e407e128107120a42fc9e650a1f6f8d87d29326a048131789f"
+      "sha256": "911344a0751d9b81220cc9f7cf05446000c77b0167fb78d47e265ab00530dedd"
     },
     {
       "path": "backend/src/ai/modelSdkAdmission.ts",
@@ -15945,11 +16094,11 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "sha256": "ce06bc3f842d59758d5adea1a144c184dda2a3ee4748a59895ce887b7111d952"
+      "sha256": "6ee8c7ddb60b542c3c7060d309b9a32534692648fb9a2eba7b81c082be04b04d"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b"
+      "sha256": "ae6ab34c567370c3c3815c19b2b57bfad00fc5d4fd52aa937368f96ebfd65fed"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -16009,7 +16158,7 @@
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+      "sha256": "311c42d704508c908bd921278984ca32e37813ea1032945706c382cda9d9f843"
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
@@ -16581,7 +16730,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "sha256": "0f2b22341650c44abf4aa358940422cd27e9232a8f513d958f3fb4ed29b05eb0"
+      "sha256": "f2ec231b0c70ce41308960f731f6033281a6766097f6bdefa464babbac5f9c07"
     },
     {
       "path": "backend/src/config/galacticPlans.ts",
@@ -16853,7 +17002,7 @@
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
-      "sha256": "6c7587872c198ab653960e30fced96d1223ce962dc2b129912c07b6fce61acbe"
+      "sha256": "fcce85529b71d286899bce8dd1952abb3e1cb8854d99867f224192962d41d0e9"
     },
     {
       "path": "backend/src/lib/apify.ts",
@@ -17597,7 +17746,7 @@
     },
     {
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "sha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1"
+      "sha256": "3f7c766d6c3e871d71f205a86c29e2a8983acdbf313a6d3539d4c4a406ba495b"
     },
     {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -17617,7 +17766,7 @@
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "sha256": "0bca6bb9a602efef4507aea90af781515f957f47e5184c00d8b9f7f7838dba7d"
+      "sha256": "4ad06e26d9f67f816972e3422ed5c79557cedc9c078f2e89db1054ba520aadd1"
     },
     {
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
@@ -17885,7 +18034,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0"
+      "sha256": "a18ce559ce9db9c8f066bbb879531204d25ba588453abf8a2e0eb1a73737cd5a"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -17905,11 +18054,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa"
+      "sha256": "fa2771bfa99ae3e71ef69bc08001da4d19b4670035d9907679e578764ca0300c"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "a1aeb614b3b6e3214b2eec5994f61c42d3cbd75e121a7327898eec1237629a86"
+      "sha256": "f79e9321150e79df41c6b4b662892cd0148cc185e0d14c9a3b183205f7b0c74f"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
@@ -17917,7 +18066,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac"
+      "sha256": "19f279b414b56736e720f19f6e683634c9e99f1d093cc0e4905a32b1a9cd07af"
     },
     {
       "path": "backend/src/services/integrations/composioControl.ts",
@@ -17930,6 +18079,10 @@
     {
       "path": "backend/src/services/integrations/composioSkillGuidance.ts",
       "sha256": "b0c8c8093c1aec39c90a4502b68102de3c7f3738d15b4b4d3fea53801101f739"
+    },
+    {
+      "path": "backend/src/services/integrations/connectedAppModel.ts",
+      "sha256": "dc0859c996bb069cb1721f9b387ca10fc805ece203c7c6e30d38fc0662a32dbe"
     },
     {
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
@@ -22839,7 +22992,7 @@
   "dynamic_bindings": [
     {
       "path": "backend/src/ai/modelCapabilityRegistry.ts",
-      "line": 160,
+      "line": 166,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -22862,7 +23015,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -22872,7 +23030,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 305,
+      "line": 327,
       "expression": "keys.modelId",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -22895,7 +23053,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -22905,7 +23068,83 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 306,
+      "line": 328,
+      "expression": "keys.modelId",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 329,
+      "expression": "keys.modelId",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "GLM_API_KEY",
+        "KIMI_API_KEY",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "KIMI_VISION_ENABLED",
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 330,
       "expression": "keys.inputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -22928,7 +23167,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -22938,7 +23182,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 307,
+      "line": 331,
       "expression": "keys.outputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -22961,7 +23205,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -22971,7 +23220,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 309,
+      "line": 333,
       "expression": "keys.contextWindow",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -22994,7 +23243,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23004,7 +23258,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 319,
+      "line": 343,
       "expression": "def.imagesEnv",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23027,7 +23281,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23037,7 +23296,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 334,
+      "line": 358,
       "expression": "keys.modelId",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23060,7 +23319,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23070,7 +23334,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 338,
+      "line": 362,
       "expression": "keys.inputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23093,7 +23357,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23103,7 +23372,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 339,
+      "line": 363,
       "expression": "keys.outputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23126,7 +23395,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23136,7 +23410,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 340,
+      "line": 364,
       "expression": "keys.contextWindow",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23159,7 +23433,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23169,7 +23448,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 183,
+      "line": 186,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23192,7 +23471,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23225,7 +23509,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23235,7 +23524,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "line": 263,
+      "line": 264,
       "expression": "key",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23301,7 +23590,8 @@
         "WHOP_WEBHOOK_SECRET",
         "XAI_API_KEY",
         "YOUTUBE_API_KEY",
-        "ZHIPU_API_KEY"
+        "ZHIPU_API_KEY",
+        "ZURELAY_API_KEY"
       ],
       "evidence_sources": [
         "backend/src/config/envSecrets.ts",
@@ -23311,7 +23601,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "line": 277,
+      "line": 278,
       "expression": "primary",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23377,7 +23667,8 @@
         "WHOP_WEBHOOK_SECRET",
         "XAI_API_KEY",
         "YOUTUBE_API_KEY",
-        "ZHIPU_API_KEY"
+        "ZHIPU_API_KEY",
+        "ZURELAY_API_KEY"
       ],
       "evidence_sources": [
         "backend/src/config/envSecrets.ts",
@@ -23399,7 +23690,7 @@
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
-      "line": 129,
+      "line": 130,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -23422,7 +23713,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23529,7 +23825,8 @@
         "WHOP_WEBHOOK_SECRET",
         "XAI_API_KEY",
         "YOUTUBE_API_KEY",
-        "ZHIPU_API_KEY"
+        "ZHIPU_API_KEY",
+        "ZURELAY_API_KEY"
       ],
       "evidence_sources": [
         "backend/src/config/envSecrets.ts",
@@ -23605,7 +23902,8 @@
         "WHOP_WEBHOOK_SECRET",
         "XAI_API_KEY",
         "YOUTUBE_API_KEY",
-        "ZHIPU_API_KEY"
+        "ZHIPU_API_KEY",
+        "ZURELAY_API_KEY"
       ],
       "evidence_sources": [
         "backend/src/config/envSecrets.ts",
@@ -23638,7 +23936,12 @@
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
         "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "OPENROUTER_API_KEY",
+        "ZURELAY_API_KEY",
+        "ZURELAY_DEEPSEEK_CONTEXT_WINDOW",
+        "ZURELAY_DEEPSEEK_INPUT_USD_PER_1M",
+        "ZURELAY_DEEPSEEK_MODEL_ID",
+        "ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
@@ -23760,35 +24063,42 @@
       "hostname": "openrouter.ai",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 74,
+      "line": 75,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.zurelay.com",
+      "protocol": "https:",
+      "path": "backend/src/ai/models.ts",
+      "line": 76,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.moonshot.ai",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 90,
+      "line": 112,
       "credentialsInUrl": false
     },
     {
       "hostname": "open.bigmodel.cn",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 113,
+      "line": 135,
       "credentialsInUrl": false
     },
     {
       "hostname": "open.bigmodel.cn",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 144,
+      "line": 166,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 110,
+      "line": 113,
       "credentialsInUrl": false
     },
     {
@@ -23813,24 +24123,31 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "api.zurelay.com",
+      "protocol": "https:",
+      "path": "backend/src/ai/providerPolicy.ts",
+      "line": 99,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.moonshot.ai",
       "protocol": "https:",
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 97,
+      "line": 100,
       "credentialsInUrl": false
     },
     {
       "hostname": "open.bigmodel.cn",
       "protocol": "https:",
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 98,
+      "line": 101,
       "credentialsInUrl": false
     },
     {
       "hostname": "openrouter.ai",
       "protocol": "https:",
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 99,
+      "line": 102,
       "credentialsInUrl": false
     },
     {
@@ -25608,14 +25925,14 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1379,
+      "line": 1394,
       "credentialsInUrl": false
     },
     {
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1402,
+      "line": 1417,
       "credentialsInUrl": false
     },
     {
@@ -25623,6 +25940,13 @@
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioControl.ts",
       "line": 46,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.zurelay.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/connectedAppModel.ts",
+      "line": 14,
       "credentialsInUrl": false
     },
     {
@@ -30452,14 +30776,14 @@
     },
     {
       "path": "backend/src/ai/modelCapabilityRegistry.ts",
-      "line": 214,
+      "line": 221,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 238,
+      "line": 243,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30718,14 +31042,14 @@
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 70,
+      "line": 72,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "line": 71,
+      "line": 73,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32608,14 +32932,14 @@
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
-      "line": 148,
+      "line": 149,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
-      "line": 247,
+      "line": 248,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33770,7 +34094,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 657,
+      "line": 655,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33812,21 +34136,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 39,
+      "line": 37,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 57,
+      "line": 55,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 519,
+      "line": 517,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -33847,42 +34171,42 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 701,
+      "line": 716,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1275,
+      "line": 1290,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1304,
+      "line": 1319,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1335,
+      "line": 1350,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1841,
+      "line": 1852,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1967,
+      "line": 2017,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

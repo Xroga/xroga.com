@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `d6ef8b4e46b048fa6cc61d11418c91144f061972`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -343,5 +343,10 @@ Values are forbidden. Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`. Na
 | XROGA_TRUSTED_PROXY_HOPS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 | YOUTUBE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-www-googleapis-com, endpoint-www-youtube-com |
 | ZHIPU_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
+| ZURELAY_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | endpoint-api-zurelay-com |
+| ZURELAY_DEEPSEEK_CONTEXT_WINDOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| ZURELAY_DEEPSEEK_INPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| ZURELAY_DEEPSEEK_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
+| ZURELAY_DEEPSEEK_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | runtime-controls-and-conditional-aliases |
 
 Production uses the existing protected Google Secret Manager configuration and native managed KMS. Account-specific connected credentials remain in the canonical encrypted CredentialVault. No personal developer login, legacy Fly credential or development-assistant session is a production requirement. Rotation and access changes require their applicable authority. Optional file delivery signing, Drive and later feature configuration remain independently gated.
