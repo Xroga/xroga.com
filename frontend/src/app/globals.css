@@ -14808,14 +14808,14 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
 .xv-terminal-scroll[data-conversation='true'] {
   clip-path: inset(
     0 0
-    calc(var(--xv-chatbar-height, 112px) + max(14px, env(safe-area-inset-bottom)))
+    calc(var(--xv-chatbar-height, 112px) + max(28px, calc(14px + env(safe-area-inset-bottom))))
     0
   );
 }
 
 .xv-terminal-dock[class*='terminal-skin-'][data-workspace-state='conversation'] {
   background:transparent !important;
-  padding-bottom:env(safe-area-inset-bottom);
+  padding-bottom:0;
 }
 .xv-terminal-dock[data-workspace-state='conversation'] .xv-terminal-dock-inner {
   background:transparent !important;
