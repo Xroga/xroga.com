@@ -1,8 +1,8 @@
 {
-  "scope": "APPROVED_APPLICATION_PINS_WITH_REVIEWED_OPERATOR_CONFIG_CORRECTION",
+  "scope": "APPROVED_APPLICATION_PINS_WITH_REVIEWED_RUNTIME_CONFIG_AND_FRONTEND_LIVE_COMPATIBILITY_CORRECTIONS",
   "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
-  "frontend": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
-  "recordedAtUtc": "2026-11-03T18:57:25.616425+00:00",
+  "frontend": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
+  "recordedAtUtc": "2026-11-03T19:37:58.240798+00:00",
   "approved": false,
   "files": [
     {
@@ -75,7 +75,7 @@
     },
     {
       "path": "release_contract.py",
-      "sha256": "738de388eec95ab3f447a9130217dd791e202c40f4342e3b95c538f3708f7371"
+      "sha256": "edbc05bfe2cd7984b2be5004984f042213fdf067e0e76017d679b20eab61e774"
     },
     {
       "path": "release_gates.py",
@@ -91,7 +91,7 @@
     },
     {
       "path": "test_release_contract.py",
-      "sha256": "bbeb420f4c50a76ff5d0fae59c7ebb3e83b6d153ecb24ebd00bfba61e949d5c6"
+      "sha256": "c5a6e3aed87eec7cb4a2bad23b9ec4e4edf703632a719c19f5ed2679f123dc42"
     },
     {
       "path": "verify-image.py",
@@ -99,5 +99,6 @@
     }
   ],
   "sourceHashNormalization": "UTF8_LF_MATCHING_GIT_BLOBS",
-  "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503"
+  "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503",
+  "frontendAmendmentCommit": "62fbe00dac9fdb3c4bbc5cf9c3f49aeaa5af73df"
 }

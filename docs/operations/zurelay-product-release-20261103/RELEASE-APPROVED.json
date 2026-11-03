@@ -2,7 +2,7 @@
   "approved": true,
   "packageId": "zurelay-product-76c158aa-20261103",
   "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
-  "frontendSha": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
+  "frontendSha": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
   "recoverySha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
   "maximumGoogleUsd": 0.5,
   "maximumImageUsdPerMonth": 0.1,
@@ -20,5 +20,19 @@
   "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503",
   "recordedAtUtc": "2026-11-03T18:33:14.193884+00:00",
   "maintenanceStarted": false,
-  "prerequisitesRecordedAtUtc": "2026-11-03T18:34:32.316653+00:00"
+  "prerequisitesRecordedAtUtc": "2026-11-03T18:34:32.316653+00:00",
+  "frontendSourceAmendments": [
+    {
+      "source": "f5f70ae3b47fb583dfdbf08ae0f9831028dc6238",
+      "questionId": "call_9566031300044027a0514b9e52164d10",
+      "decision": "Approve this frontend-only amendment within the same limits",
+      "state": "SUPERSEDED_CI_MANIFEST_FAILED_NEVER_PROMOTED"
+    },
+    {
+      "source": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
+      "questionId": "call_e20f8e3aea714fb5bc4abbdc84651f35",
+      "decision": "Approve the evidence-only identifier correction within the same limits",
+      "conditionalOn": "all eight final CI gates and authenticated Preview passing"
+    }
+  ]
 }

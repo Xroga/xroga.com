@@ -72,6 +72,16 @@ class ReleaseContractTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 require_approval(dict(a, **delta), now)
 
+    def test_superseded_frontend_pins_cannot_promote(self):
+        from release_contract import require_frontend_release
+        now, a = self.approval()
+        require_frontend_release({'service':'xroga-web','environment':'production','release':FRONTEND})
+        for old in ['2f80a744a406eb2ab7e86538bc382cc3000ef730','f5f70ae3b47fb583dfdbf08ae0f9831028dc6238']:
+            with self.assertRaises(AssertionError):
+                require_approval(dict(a, frontendSha=old), now)
+            with self.assertRaises(AssertionError):
+                require_frontend_release({'service':'xroga-web','environment':'production','release':old})
+
     def test_unknown_usage_and_replay_stop_acceptance(self):
         now, a = self.approval()
         receipt = dict(packageId=PACKAGE, sourceSha=SOURCE, nextPrompt='saas', submittedPrompts=[],
