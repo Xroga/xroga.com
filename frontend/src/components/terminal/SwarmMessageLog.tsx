@@ -164,7 +164,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       if (atBottom) {
         stickToBottomRef.current = true;
         if (!loading) userScrolledUpRef.current = false;
-      } else if (loading) {
+        setShowJumpToLatest(false);
+      } else {
         userScrolledUpRef.current = true;
         stickToBottomRef.current = false;
         setShowJumpToLatest(true);
