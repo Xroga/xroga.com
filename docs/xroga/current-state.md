@@ -1,6 +1,6 @@
 # Xroga repository truth map
 
-Source SHA: `63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b`. Branch observed: `codex/zurelay-response-contract-20261103`. Audit started: 2026-11-03T20:43:00.753Z.
+Source SHA: `7760f91c80a4a10471963cb0efc05a9f0af0beb3`. Branch observed: `codex/zurelay-response-contract-20261103`. Audit started: 2026-11-03T20:57:16.272Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 

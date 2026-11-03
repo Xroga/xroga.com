@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
+  "source_sha": "7760f91c80a4a10471963cb0efc05a9f0af0beb3",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -4050,9 +4050,9 @@
       "source_id": "SRC-0210f6e9f296ac25",
       "filename": "FINAL-LIVE-DOCK-COMPATIBILITY.json",
       "path_or_url": "docs/operations/zurelay-two-model-20261103/FINAL-LIVE-DOCK-COMPATIBILITY.json",
-      "sha256": "318c944e16e26a828b181ee14355176bc55bb9959ae5c6fc47eb9ef03898ad80",
-      "byte_size": 2595,
-      "modified_timestamp": "2026-11-03T20:42:53.271Z",
+      "sha256": "3e807085eb3039121740ecf4edafcde33881517827c29c961001ace426dbba1a",
+      "byte_size": 3251,
+      "modified_timestamp": "2026-11-03T20:56:21.404Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -5610,9 +5610,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "8e67d8dd90c2aa6823ddd090b735d99e80f499b937622e756c8c827957789753",
+      "sha256": "29ee9761b1b6b83f637a0e66235e2bd6280ce99e54a6e1c83e4e4682f828d4ee",
       "byte_size": 5213744,
-      "modified_timestamp": "2026-11-03T20:43:01.308Z",
+      "modified_timestamp": "2026-11-03T20:57:16.915Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",

@@ -51,5 +51,21 @@
     "environmentNamesUnchanged": true,
     "dependencyStatesUnchanged": true,
     "risksUnchanged": true
+  },
+  "egressDigestCorrection": {
+    "failedGate": "https://github.com/Xroga/xroga.com/actions/runs/41715231722/job/126193374077",
+    "oldDigest": "c9b0ba0bece69f051513bd39f8b3358f244903bd0b6addefa824ad95429ee16b",
+    "newDigest": "7ab269887501534066423cc0ac0d0431846ee6465df94fd050c8fcde663cbcf7",
+    "changedField": "sourceTreeDigest ONLY",
+    "callerRowsUnchanged": true,
+    "reviewEvidenceUnchanged": true,
+    "dispositionsUnchanged": true,
+    "counts": {
+      "total": 150,
+      "reviewed": 150,
+      "pending": 0,
+      "unresolvedHighRiskBypasses": 0
+    },
+    "applicationCodeUnchangedFrom": "7760f91c80a4a10471963cb0efc05a9f0af0beb3"
   }
 }
