@@ -114,7 +114,9 @@ export function TerminalDock() {
       '--xv-dock-bottom',
       dockSuppressed ? 'var(--xv-pane-bottom, 0px)' : dockBottom,
     );
-    return () => root.style.removeProperty('--xv-dock-bottom');
+    return () => {
+      root.style.removeProperty('--xv-dock-bottom');
+    };
   }, [isDashboard, dockSuppressed, dockBottom]);
 
   useEffect(() => {

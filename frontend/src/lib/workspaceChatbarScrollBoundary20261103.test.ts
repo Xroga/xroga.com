@@ -13,6 +13,7 @@ test('conversation clips only below the floating chatbar and fades its upper edg
   assert.match(dock, /messages\.length > 0 && hasScrolledTranscript/);
   assert.match(dock, /transcript\.scrollTop > 1/);
   assert.match(dock, /'--xv-dock-bottom'/);
+  assert.match(dock, /return \(\) => \{\s*root\.style\.removeProperty\('--xv-dock-bottom'\);\s*\};/);
   assert.match(dock, /calc\(\$\{keyboardOffset\}px \+ max\(14px, env\(safe-area-inset-bottom\)\)\)/);
   assert.match(
     messageLog,
