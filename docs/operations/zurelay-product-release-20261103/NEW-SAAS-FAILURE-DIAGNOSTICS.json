@@ -1,0 +1,34 @@
+{
+  "atUtc": "2026-11-03T22:30:19.188667+00:00",
+  "revision": "xroga-api-zurelay-76c158-serving-1103",
+  "boundedSyntheticInterval": [
+    "2026-11-03T22:19:43Z",
+    "2026-11-03T22:19:46Z"
+  ],
+  "entryCount": 32,
+  "diagnostics": [
+    {
+      "timestamp": "2026-11-03T22:19:44.118038Z",
+      "severity": null,
+      "safeMetadata": {
+        "diagnostic": "[phase1/chat] {"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T22:19:44.118050Z",
+      "severity": null,
+      "safeMetadata": {
+        "diagnostic": "  code: 'rate_limit_exceeded',"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T22:19:44.118054Z",
+      "severity": null,
+      "safeMetadata": {
+        "diagnostic": "  message: '429 Rate limit reached for this API key: 3 requests per minute.'"
+      }
+    }
+  ],
+  "rawBodiesSaved": false,
+  "providerRequestsSent": 0
+}

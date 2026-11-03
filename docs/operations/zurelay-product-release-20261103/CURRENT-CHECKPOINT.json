@@ -1,10 +1,10 @@
 {
-  "recordedAtUtc": "2026-11-03T21:56:52.047Z",
-  "state": "READY_FOR_FINAL_NATIVE_PREFLIGHT_NO_MAINTENANCE_STARTED",
+  "recordedAtUtc": "2026-11-03T22:48:34.729405+00:00",
+  "state": "RECOVERED_NOT_ACCEPTED_PROVIDER_429",
   "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
   "frontend": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
   "sourceAndTimeApproval": "call_d76904b59ed94a939f21f8ae00f94d43",
-  "expiresAtUtc": "2026-11-03T23:00:00+00:00",
+  "expiresAtUtc": "2026-11-04T04:00:00+05:00",
   "maintenanceStarted": false,
   "productionSqlApplied": false,
   "productionApiJobChanged": false,
@@ -96,7 +96,7 @@
   "newModelRequests": 0,
   "newRetrievalRequests": 0,
   "priorProbe": {
-    "providerUsd": 0.0000027,
+    "providerUsd": 2.7e-06,
     "ledgerMicroUsd": 3
   },
   "historicalHolds": {
@@ -139,77 +139,73 @@
     "richGeneratedAnswersVerified": false
   },
   "next": [
-    "Fresh native pair/no-active-execution preflight and final competing-promotion check",
-    "Create the single bounded maintenance window, apply reviewed close fence and drain",
-    "Execute reviewed API/Job/frontend paired cutover and guarded recovery checks",
-    "Run only bounded fresh-chat acceptance with canonical/provider accounting matching"
+    "Owner review of the new rate-limit and bounded-recheck package",
+    "No further paid request or second maintenance window before that specific decision"
   ],
   "productionAcceptance": "NOT_RUN",
   "completionClaim": false,
   "providerAccounting": {
-    "state": "PRICED_ACCOUNT_BASELINE_CONSERVATIVELY_COUNTED_ORIGIN_UNATTRIBUTED",
-    "checkedAtUtc": "2026-11-03T21:56:52.047Z",
-    "keyName": "xroga models",
-    "provider": "Zurelay",
-    "providerRequestCountBeforeAcceptance": 3,
-    "requests": [
-      {
-        "id": "req_gFEmpGJpXM9Ee1Jh7pALlxIr",
-        "atUtc": "2026-11-03T14:37:07Z",
-        "displayedUsd": "0.0000027",
-        "conservativeMicroUsd": 3,
-        "canonicalReservation": "5c0b95bd-82f8-4576-bfe3-9ab88b5b5a4a",
-        "canonicalStatus": "settled"
-      },
-      {
-        "id": "req_ARwEPpcIe3ll49Mvn99aBLu9",
-        "atUtc": "2026-11-03T21:07:47Z",
-        "displayedUsd": "0.00000081",
-        "conservativeMicroUsd": 1,
-        "inputTokens": 19,
-        "outputTokens": 2,
-        "canonicalReservation": null,
-        "origin": "UNATTRIBUTED"
-      },
-      {
-        "id": "req_9NH5XyFR706ejtHxHnIF7Pqb",
-        "atUtc": "2026-11-03T21:26:03Z",
-        "displayedUsd": "0.0000083",
-        "conservativeMicroUsd": 9,
-        "inputTokens": 84,
-        "outputTokens": 48,
-        "canonicalReservation": null,
-        "origin": "UNATTRIBUTED"
-      }
-    ],
-    "displayedProviderUsdSum": "0.00001181",
-    "conservativelyCountedMicroUsd": 13,
+    "state": "KNOWN_PRICED_USAGE_COUNTED_NO_FINANCIAL_WRITES",
+    "checkedAtUtc": "2026-11-03T22:48:34.729405+00:00",
+    "providerRequestsObserved": 4,
+    "newAcceptedRequests": 1,
+    "newCanonicalReservation": "0e0b3d56-c1f6-421c-b5e3-339f0ba2a527",
+    "newProviderRequestId": "req_BuVn7BX9g8U8tSYAK6jYhcwi",
+    "newCanonicalStatus": "settled",
+    "newSettledMicroUsd": 175,
+    "newInputTokens": 2682,
+    "newOutputTokens": 780,
+    "providerDisplayedDebitUsd": "0.0002",
+    "providerDisplayIsRounded": true,
+    "exactProviderBalanceDebitIndependentlyAvailable": false,
+    "priorBaselineConservativeMicroUsd": 13,
+    "totalConservativeMicroUsd": 188,
     "combinedCeilingMicroUsd": 100000,
-    "conservativeRemainingMicroUsd": 99987,
-    "chargeAmountsKnownFromProviderReceipts": true,
-    "callerOriginKnownForTwoAdditionalRequests": false,
-    "customerLedgerEntriesInvented": false,
-    "productionBillingWrites": false,
-    "ownerClarification": {
-      "questionId": "call_a78bb39ff57945efa2fa4b84bbf0b3c2",
-      "answer": "maybe or maybe not resolve it too",
-      "interpretation": "Continue reconciliation. This does not establish caller identity or retroactively authorize those requests."
-    },
+    "atMostRemainingMicroUsdBeforeAnyNewReservation": 99812,
+    "baselineOriginExceptions": [
+      "req_ARwEPpcIe3ll49Mvn99aBLu9",
+      "req_9NH5XyFR706ejtHxHnIF7Pqb"
+    ],
     "historicalHoldsUnchanged": {
       "kimiMicroUsd": 38282,
       "glmMicroUsd": 1385
     },
-    "keyPolicyReadOnlyVerified": {
-      "dailyUsd": 0.1,
-      "monthlyUsd": 0.1,
-      "requestsPerMinute": 3,
-      "onlyModels": [
-        "deepseek-v4.1-flash-1017",
-        "claude-sonnet-5-5"
-      ],
-      "smartRouting": "off",
-      "settingsChanged": false
-    },
-    "futureRule": "Every new acceptance request must match its canonical reservation and provider receipt. Stop at any additional unexpected request, missing usage, failed acceptance or unknown amount. Never assign the unattributed baseline charges to a customer."
-  }
+    "billingWrites": false,
+    "googleInvoiceCost": "NOT_INDEPENDENTLY_ATTRIBUTED",
+    "noFurtherModelOrResearchSubmissions": true
+  },
+  "maintenance": {
+    "startedAtUtc": "2026-11-04T02:59:52.9226145+05:00",
+    "resetPermitted": false,
+    "deadlineUtc": "2026-11-04T03:59:52.9226145+05:00",
+    "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
+    "frontendSha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+    "maximumMinutes": 60,
+    "packageId": "zurelay-product-76c158aa-20261103",
+    "completedAtUtc": "2026-11-03T22:28:04.135264+00:00",
+    "outcome": "ROLLED_BACK_TO_APPROVED_ZURELAY_COMPATIBLE_PAIR_AFTER_FIRST_FAILED_ACCEPTANCE"
+  },
+  "preparedPair": {
+    "recoveryRevision": "xroga-api-zurelay-3bed89-serving-1103",
+    "defaultTraffic": "xroga-api-response-cd5541-serving-1102",
+    "apiPrivateReady": 200,
+    "apiRevision": "xroga-api-zurelay-76c158-serving-1103",
+    "databaseFence": "CLOSED",
+    "queue": "PAUSED",
+    "recoveryPrivateReady": 200,
+    "newModelRequests": 0,
+    "jobSource": "76c158aaeecf82f524659454b7b3726b4d255679"
+  },
+  "currentProduction": {
+    "frontend": "5c337e05fa0bf50de7ce161752709110b278a014",
+    "frontendDeployment": "9YVdkEj6cnK38r6djSwsXzwSMHU5",
+    "backend": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+    "revision": "xroga-api-zurelay-3bed89-serving-1103",
+    "queue": "RUNNING",
+    "apiHealth": 200,
+    "voiceTagsPreserved": true,
+    "verificationTagsRemoved": true
+  },
+  "productAcceptance": "FAIL_NEW_RICH_ANSWER_NOT_GENERATED",
+  "remainingAcceptance": "NOT_RUN_AFTER_FIRST_FAILURE"
 }

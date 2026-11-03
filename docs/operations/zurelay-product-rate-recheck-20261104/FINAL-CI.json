@@ -1,0 +1,133 @@
+{
+  "observedAtUtc": "2026-11-03T18:23:57.261232+00:00",
+  "status": "PASS_EXACT_SOURCE_CI_NOT_LIVE_ACCEPTANCE",
+  "sources": {
+    "backend": {
+      "source": "76c158aaeecf82f524659454b7b3726b4d255679",
+      "checks": [
+        {
+          "name": "unit",
+          "id": 126071462245,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41680052815/job/126071462245"
+        },
+        {
+          "name": "build",
+          "id": 126071546460,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41680207141/job/126071546460"
+        },
+        {
+          "name": "authenticated-browser",
+          "id": 126071577144,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41680215709/job/126071577144"
+        },
+        {
+          "name": "deterministic-golden",
+          "id": 126071496834,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41680053119/job/126071496834"
+        },
+        {
+          "name": "structured-mission-policy",
+          "id": 126070997912,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41680052867/job/126070997912"
+        },
+        {
+          "name": "disposable-policy-database",
+          "id": 126070997628,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41680052795/job/126070997628"
+        },
+        {
+          "name": "integrated-candidate",
+          "id": 126071462016,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41680052815/job/126071462016"
+        }
+      ]
+    },
+    "frontend": {
+      "source": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
+      "checks": [
+        {
+          "name": "unit",
+          "id": 126082352154,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683307686/job/126082352154"
+        },
+        {
+          "name": "build",
+          "id": 126083707636,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683695893/job/126083707636"
+        },
+        {
+          "name": "authenticated-browser",
+          "id": 126083739497,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683704192/job/126083739497"
+        },
+        {
+          "name": "deterministic-golden",
+          "id": 126082352363,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683307888/job/126082352363"
+        },
+        {
+          "name": "structured-mission-policy",
+          "id": 126082351412,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683307555/job/126082351412"
+        },
+        {
+          "name": "disposable-policy-database",
+          "id": 126082352042,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683307834/job/126082352042"
+        },
+        {
+          "name": "integrated-candidate",
+          "id": 126082352743,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683307686/job/126082352743"
+        },
+        {
+          "name": "static-contracts",
+          "id": 126082352072,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41683307732/job/126082352072"
+        }
+      ]
+    },
+    "compatibleRecovery": {
+      "source": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+      "checks": [
+        {
+          "name": "unit",
+          "id": 125921412137,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068993/job/125921412137"
+        },
+        {
+          "name": "build",
+          "id": 125920944365,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41637102793/job/125920944365"
+        },
+        {
+          "name": "authenticated-browser",
+          "id": 125920965741,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41637108023/job/125920965741"
+        },
+        {
+          "name": "deterministic-golden",
+          "id": 125920826711,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068782/job/125920826711"
+        },
+        {
+          "name": "structured-mission-policy",
+          "id": 125920826558,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068839/job/125920826558"
+        },
+        {
+          "name": "disposable-policy-database",
+          "id": 125920826612,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068779/job/125920826612"
+        },
+        {
+          "name": "integrated-candidate",
+          "id": 125921412724,
+          "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068993/job/125921412724"
+        }
+      ]
+    }
+  },
+  "productionChanges": false,
+  "providerRequests": 0
+}

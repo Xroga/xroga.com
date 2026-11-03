@@ -1,0 +1,30 @@
+{
+  "state": "KNOWN_PRICED_USAGE_COUNTED_NO_FINANCIAL_WRITES",
+  "checkedAtUtc": "2026-11-03T22:48:34.729405+00:00",
+  "providerRequestsObserved": 4,
+  "newAcceptedRequests": 1,
+  "newCanonicalReservation": "0e0b3d56-c1f6-421c-b5e3-339f0ba2a527",
+  "newProviderRequestId": "req_BuVn7BX9g8U8tSYAK6jYhcwi",
+  "newCanonicalStatus": "settled",
+  "newSettledMicroUsd": 175,
+  "newInputTokens": 2682,
+  "newOutputTokens": 780,
+  "providerDisplayedDebitUsd": "0.0002",
+  "providerDisplayIsRounded": true,
+  "exactProviderBalanceDebitIndependentlyAvailable": false,
+  "priorBaselineConservativeMicroUsd": 13,
+  "totalConservativeMicroUsd": 188,
+  "combinedCeilingMicroUsd": 100000,
+  "atMostRemainingMicroUsdBeforeAnyNewReservation": 99812,
+  "baselineOriginExceptions": [
+    "req_ARwEPpcIe3ll49Mvn99aBLu9",
+    "req_9NH5XyFR706ejtHxHnIF7Pqb"
+  ],
+  "historicalHoldsUnchanged": {
+    "kimiMicroUsd": 38282,
+    "glmMicroUsd": 1385
+  },
+  "billingWrites": false,
+  "googleInvoiceCost": "NOT_INDEPENDENTLY_ATTRIBUTED",
+  "noFurtherModelOrResearchSubmissions": true
+}

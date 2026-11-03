@@ -16,6 +16,32 @@ CHAIN = next(n for n in TREE.body if isinstance(n, ast.If) and ast.unparse(n.tes
 
 
 class CutoverPayloadTests(unittest.TestCase):
+    def test_running_queue_recovery_requires_closed_fence_matching_source_and_no_execution(self):
+        branch = next(n for n in ast.walk(CHAIN) if isinstance(n, ast.If)
+            and ast.unparse(n.test) == "MODE in ['job', 'recover-job']")
+        prelude = branch.body[1:4]
+        for refusal in [None, 'fence', 'source', 'execution']:
+            with self.subTest(refusal=refusal):
+                calls = []
+                def guard(name):
+                    if refusal == name:
+                        raise AssertionError(name)
+                def task(path, method='GET'):
+                    calls.append((path, method))
+                    return {'state': 'PAUSED'}
+                env = dict(MODE='recover-job', queue={'state': 'RUNNING'},
+                    service={}, NEW='verified-serving', QUEUE='existing-queue',
+                    fenced=lambda:guard('fence'), live=lambda *a:guard('source'),
+                    no_executions=lambda:guard('execution'), task=task, record=lambda *a:None)
+                code = compile(ast.Module(body=prelude, type_ignores=[]), 'cutover.py', 'exec')
+                if refusal:
+                    with self.assertRaises(AssertionError): exec(code, env)
+                    self.assertEqual(calls, [])
+                else:
+                    exec(code, env)
+                    self.assertEqual(calls, [('existing-queue:pause', 'POST'), ('existing-queue', 'GET')])
+                    self.assertEqual(env['queue']['state'], 'PAUSED')
+
     def test_forward_traffic_cannot_move_without_compatible_recovery_readiness(self):
         mutations=[]
         with tempfile.TemporaryDirectory() as directory:

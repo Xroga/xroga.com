@@ -31,7 +31,7 @@
     },
     {
       "path": "cutover.py",
-      "sha256": "f375ba4bf7cfd7298ead5b0e77d8928a1731e98e9f5d95ea101d9800e48a9b82"
+      "sha256": "072a2cd5a095b4aab262ae7f8fe738ffdcf4bf9038739c186f2565cc1fe52124"
     },
     {
       "path": "FINAL-CI.json",
@@ -63,7 +63,7 @@
     },
     {
       "path": "public-frontend-release.json",
-      "sha256": "31a389f0852308c949d6a306342e236ff4bfc04eb516cf4980714bf24a38bb0e"
+      "sha256": "e5c5eac4adb63b8048d3dabd1fe4c2e210f082ee3d4989c7ebe38365fe7e24d7"
     },
     {
       "path": "RELEASE-AND-ROLLBACK.md",
@@ -87,7 +87,7 @@
     },
     {
       "path": "test_cutover_payloads.py",
-      "sha256": "8a38ff91da330beb73acdbf777bbd4ac1ccda599509adf518682dd131ef4ce7c"
+      "sha256": "2a1f92bc029dd1b1d8cf873743009fb4351e12795946daf707dd1b297e1ad662"
     },
     {
       "path": "test_release_contract.py",
@@ -101,5 +101,6 @@
   "sourceHashNormalization": "UTF8_LF_MATCHING_GIT_BLOBS",
   "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503",
   "frontendAmendmentCommit": "a0b31ab984ad3fe220bb7a4e3c77aab285ed4cbd",
-  "ownerAmendmentQuestionId": "call_d76904b59ed94a939f21f8ae00f94d43"
+  "ownerAmendmentQuestionId": "call_d76904b59ed94a939f21f8ae00f94d43",
+  "executionResult": "FAILED_ACCEPTANCE_RECOVERED_OPERATOR_QUEUE_PAUSE_CORRECTION_TESTED"
 }

@@ -1,0 +1,10 @@
+{
+  "state": "PASS_OFFLINE_NOT_LIVE_ACCEPTANCE",
+  "atUtc": "2026-11-03T22:48:34.729405+00:00",
+  "tests": 18,
+  "jobId": "88c289ec-eb22-4126-8145-47f508b20811",
+  "applicationSourceUnchanged": true,
+  "cloudCalls": 0,
+  "modelCalls": 0,
+  "priorPackageRecoveryTests": 17
+}

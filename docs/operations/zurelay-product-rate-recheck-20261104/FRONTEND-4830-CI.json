@@ -1,0 +1,65 @@
+{
+  "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+  "state": "PASS",
+  "checkedAtUtc": "2026-11-03T21:24:32.904Z",
+  "passed": 8,
+  "required": 8,
+  "checks": [
+    {
+      "name": "unit",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547270/job/126201430144"
+    },
+    {
+      "name": "integrated-candidate",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547270/job/126201430910"
+    },
+    {
+      "name": "build",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717819487/job/126202377764"
+    },
+    {
+      "name": "authenticated-browser",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717827940/job/126202405196"
+    },
+    {
+      "name": "deterministic-golden",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547242/job/126201430720"
+    },
+    {
+      "name": "structured-mission-policy",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547243/job/126201430384"
+    },
+    {
+      "name": "disposable-policy-database",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547295/job/126201430352"
+    },
+    {
+      "name": "static-contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41717547273/job/126201430428"
+    }
+  ]
+}

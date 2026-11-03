@@ -1,0 +1,88 @@
+{
+  "state": "UNAPPROVED_PREPARATION_ONLY",
+  "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
+  "frontend": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+  "recovery": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "files": [
+    {
+      "path": "01-pause-current.sql",
+      "sha256": "e359472122fb94709d95463a0b9aefabe561c7ba5ff0484d0fe7159261d5c232"
+    },
+    {
+      "path": "02-allow-response.sql",
+      "sha256": "1b607519776a0e1cdb1c92510c6980c9a69e935e785fab09b24514bddb2267c9"
+    },
+    {
+      "path": "03-pause-response.sql",
+      "sha256": "65d22ce01ca8ee6d20d18adbfab0fbc290985571a6fe41ddd482787266f74538"
+    },
+    {
+      "path": "04-recover-current.sql",
+      "sha256": "22d681ccd081fe4874024fad3640d0ffe9e70558034592cb60dc459cc823dc42"
+    },
+    {
+      "path": "ACCEPTANCE-INPUTS.json",
+      "sha256": "e0bbe83e465a1d62543b57ceb7ca8a67c4b3d7c7cb2a981eef802f1c040024f8"
+    },
+    {
+      "path": "cutover.py",
+      "sha256": "297732cff9b73d6f1be0df31f0121ebff3ecc0740883ec70f101f09aa49ef36b"
+    },
+    {
+      "path": "FINAL-CI.json",
+      "sha256": "cea526e39d9e5d7bc7a249b42615982f1faf19c3a4a63583a47310e2cff6db5d"
+    },
+    {
+      "path": "FRONTEND-4830-CI.json",
+      "sha256": "af1e57511368c30737ae90cfd80ebb9c6959a5f408ad7dda588bbb3c88227052"
+    },
+    {
+      "path": "image.json",
+      "sha256": "660232671c00db1eb3f4aeea7d3f5c1bd43ad21ad6c6da4523d72df28191fb93"
+    },
+    {
+      "path": "OFFLINE-OPERATOR-TESTS.json",
+      "sha256": "4b209643448408ab9f81fbf99dc2bde31287e422ebd5d70c683ef677f12c0757"
+    },
+    {
+      "path": "private-ready.py",
+      "sha256": "27a5c6dbc194aadc94a4ce67e520dbc0681d8d1855bb0eae83e1cec5db079cbf"
+    },
+    {
+      "path": "RATE-LIMIT-AND-RECHECK-APPROVAL.md",
+      "sha256": "21befe0cdc36d9377ec1eb04304ab09b9cd634dd4f45db669c29c88e78f233ad"
+    },
+    {
+      "path": "RELEASE-APPROVAL-TEMPLATE.json",
+      "sha256": "3ce948dc1210460e93e5acea960e40e1ab07bd93018d8f842792699e3bc2e8c4"
+    },
+    {
+      "path": "release_contract.py",
+      "sha256": "b84c71e6e345cbeae0f527f8a796503724fc993129cbbc1ee38071a7ed8d39e1"
+    },
+    {
+      "path": "release_gates.py",
+      "sha256": "e8f6f4df286dcbfe3300aa589be0183f6b844a726b40da6510baf5f28aa26dbd"
+    },
+    {
+      "path": "response-candidate-private-ready.json",
+      "sha256": "09149091d8070f816fa144c9608a760e893b9fbaf95d1d4fbb8d77f18e386861"
+    },
+    {
+      "path": "response-recovery-candidate-private-ready.json",
+      "sha256": "630925516642b8757069b2dfaad97383e4044fb5475e18a6caec39b103a61c3f"
+    },
+    {
+      "path": "response-recovery-serving-private-ready.json",
+      "sha256": "1030e5d6d97910063074efeceb95510348d42b940ec60c9a1de4ecb3928ac309"
+    },
+    {
+      "path": "test_cutover_payloads.py",
+      "sha256": "fbe6e2c1d5dba50642d88a6cf15aeb2606a15412076f840ee394f720c7e2da7b"
+    },
+    {
+      "path": "test_release_contract.py",
+      "sha256": "100de7dff85588fce8bde00470a094975c05d469fec99b96f39d9a5a5f9a1b37"
+    }
+  ]
+}

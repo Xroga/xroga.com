@@ -1,0 +1,30 @@
+{
+  "state": "PASS_OWNED_TAGS_REMOVED_RECOVERY_AND_VOICE_PRESERVED",
+  "atUtc": "2026-11-03T22:32:12.714567+00:00",
+  "removedTags": [
+    "zurelay-3bed89-check",
+    "zurelay-3bed89-serving-check"
+  ],
+  "imagesOrRevisionsDeleted": false,
+  "modelRequests": 0,
+  "traffic": [
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-zurelay-3bed89-serving-1103",
+      "percent": 100
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-054d7ae4",
+      "tag": "voice-054d7ae4"
+    },
+    {
+      "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_REVISION",
+      "revision": "xroga-api-voice-fe2c6486c",
+      "tag": "voice-9f62bba5"
+    }
+  ],
+  "recoveryMinimumInstances": 0,
+  "queue": "RUNNING",
+  "verifiedAtUtc": "2026-11-03T22:32:21.632089+00:00"
+}

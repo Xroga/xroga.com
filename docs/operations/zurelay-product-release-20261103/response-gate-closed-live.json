@@ -1,0 +1,8 @@
+{
+  "checkedEpoch": 1793744538.704,
+  "nonterminalCanonical": 0,
+  "closed": true,
+  "checkedAtUtc": "2026-11-03T22:22:18.7243300+00:00",
+  "evidence": "Supabase independent read after approved 03-pause-response.sql following first failed acceptance",
+  "missingRuns": 0
+}

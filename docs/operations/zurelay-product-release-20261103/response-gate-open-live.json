@@ -1,0 +1,7 @@
+{
+  "publicApiHealth": 200,
+  "checkedEpoch": 1793744868.094,
+  "source": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "evidence": "Supabase independent read after approved 04-recover-current.sql",
+  "checkedAtUtc": "2026-11-03T22:27:48.1411308+00:00"
+}

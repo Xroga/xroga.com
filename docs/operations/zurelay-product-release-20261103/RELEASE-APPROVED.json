@@ -1,6 +1,6 @@
 {
   "approved": true,
-  "activationHold": null,
+  "activationHold": "FIRST_NEW_CHAT_ACCEPTANCE_FAILED_ORIGINAL_WINDOW_COMPLETED_NEW_EXACT_DECISION_REQUIRED",
   "packageId": "zurelay-product-76c158aa-20261103",
   "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
   "frontendSha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
@@ -15,13 +15,13 @@
   "automaticRetries": 0,
   "singletonFenceSqlApproved": true,
   "existingKeyLimitChangeApproved": true,
-  "expiresAtUtc": "2026-11-03T23:00:00+00:00",
+  "expiresAtUtc": "2026-11-04T04:00:00+05:00",
   "ownerDecision": "Approve this exact release and bounded acceptance",
   "ownerDecisionQuestionId": "call_dea43f3b59ba4410be1e2ba3b295cc10",
   "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503",
-  "recordedAtUtc": "2026-11-03T18:33:14.193884+00:00",
-  "maintenanceStarted": false,
-  "prerequisitesRecordedAtUtc": "2026-11-03T18:34:32.316653+00:00",
+  "recordedAtUtc": "2026-11-03T23:33:14.193884+05:00",
+  "maintenanceStarted": true,
+  "prerequisitesRecordedAtUtc": "2026-11-03T23:34:32.316653+05:00",
   "frontendSourceAmendments": [
     {
       "source": "f5f70ae3b47fb583dfdbf08ae0f9831028dc6238",
@@ -41,7 +41,7 @@
       "decision": "Approve this exact frontend and preparation-time amendment",
       "reviewCommit": "8e2e5e67dae91ddc6e841c22576dec633336a1d6",
       "conditionalOn": "all eight exact-source gates and authenticated Preview verification",
-      "preparationExpiryUtc": "2026-11-03T22:00:00+00:00",
+      "preparationExpiryUtc": "2026-11-04T03:00:00+05:00",
       "spendingAndSingleMaintenanceWindowUnchanged": true
     },
     {
@@ -59,11 +59,13 @@
       "decision": "Approve this evidence-only source and timing amendment",
       "reviewCommit": "a0b31ab984ad3fe220bb7a4e3c77aab285ed4cbd",
       "conditionalOn": "all eight exact-source CI gates and authenticated Preview passing",
-      "preparationExpiryUtc": "2026-11-03T23:00:00+00:00",
+      "preparationExpiryUtc": "2026-11-04T04:00:00+05:00",
       "spendingAndSingleMaintenanceWindowUnchanged": true
     }
   ],
   "conditionalGatesSatisfiedAtUtc": "2026-11-03T21:56:52.047Z",
   "frontendVerificationFile": "FRONTEND-4830-VERIFICATION.json",
-  "accountProviderBaselineFile": "ACCOUNT-PROVIDER-RECONCILIATION.json"
+  "accountProviderBaselineFile": "ACCOUNT-PROVIDER-RECONCILIATION.json",
+  "maintenanceStartedAtUtc": "2026-11-03T21:59:52.9226145+00:00",
+  "maintenanceCompletedAtUtc": "2026-11-03T22:28:04.135264+00:00"
 }

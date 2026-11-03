@@ -151,7 +151,12 @@ elif MODE in ['job','recover-job']:
  if MODE=='job':
   ready=json.loads((ROOT/'response-serving-private-ready.json').read_text())
   assert ready['state']=='PASS_PRIVATE_READINESS' and ready['revision']==NEW,'ZERO_TRAFFIC_SERVING_PROOF_REQUIRED'
- fenced();assert queue['state']=='PAUSED';no_executions()
+ fenced()
+ if MODE=='recover-job' and queue['state']=='RUNNING':
+  live(service,NEW);no_executions()
+  record('SUBMITTING_RECOVERY_QUEUE_PAUSE_ADMISSION_CLOSED')
+  task(QUEUE+':pause','POST');queue=task(QUEUE)
+ assert queue['state']=='PAUSED';no_executions()
  target=NEW_IMAGE if MODE=='job' else RECOVERY_IMAGE
  sha=NEW_SHA if MODE=='job' else RECOVERY
  if job['template']['template']['containers'][0]['image']!=target:

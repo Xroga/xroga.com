@@ -1,0 +1,11 @@
+{
+  "startedAtUtc": "2026-11-04T02:59:52.9226145+05:00",
+  "resetPermitted": false,
+  "deadlineUtc": "2026-11-04T03:59:52.9226145+05:00",
+  "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
+  "frontendSha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+  "maximumMinutes": 60,
+  "packageId": "zurelay-product-76c158aa-20261103",
+  "completedAtUtc": "2026-11-03T22:28:04.135264+00:00",
+  "outcome": "ROLLED_BACK_TO_APPROVED_ZURELAY_COMPATIBLE_PAIR_AFTER_FIRST_FAILED_ACCEPTANCE"
+}
