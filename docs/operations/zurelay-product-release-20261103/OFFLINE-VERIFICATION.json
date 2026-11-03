@@ -1,0 +1,133 @@
+{
+  "observedAtUtc": "2026-11-03T16:37:59.598090+00:00",
+  "scope": "OFFLINE_ENGINEERING_NOT_PRODUCT_OR_PRODUCTION_ACCEPTANCE",
+  "groups": [
+    {
+      "name": "backend-focused",
+      "jobId": "60b07428-2f2c-4d59-9419-2516e83c28dc",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": 14,
+      "logSha256": "0074ca6d3009272c046195cbb331ba56485d2adf64d8838825a4ec34c32a6c54",
+      "logBytes": 6333
+    },
+    {
+      "name": "backend-typecheck",
+      "jobId": "68f9017e-d1d2-4568-8231-d12e51be1b16",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": null,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logBytes": 0
+    },
+    {
+      "name": "backend-security-registers",
+      "jobId": "e4da633e-b61b-4296-a9d1-043c5478a20c",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": null,
+      "logSha256": "d028d0d27b09daec2b216b743046947db042aa4064193697924ddced2843221b",
+      "logBytes": 8063
+    },
+    {
+      "name": "backend-proof-and-commit",
+      "jobId": "1cb51ec0-90d2-436e-b688-b1fe42337de9",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": 6,
+      "logSha256": "b16483ee9ac31b5946cd19311e76d9ebc42ee74d869cff8cdc617a633cf4352e",
+      "logBytes": 5165
+    },
+    {
+      "name": "frontend-rich-regression",
+      "jobId": "96b30c44-d19a-40bc-a942-6dd5d39bbee1",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": 109,
+      "logSha256": "1ccb73223da4264ea03f2c0a23089d424f4a81a732e80c4cb020033b5af72b0a",
+      "logBytes": 24689
+    },
+    {
+      "name": "frontend-handoff-and-coverage",
+      "jobId": "7c5438ff-fcae-45f3-b6d1-c3283afda11e",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": 7,
+      "logSha256": "b3472823d1c69b98de8fabb711d3a151eb481bc770a97188f8adee677430dceb",
+      "logBytes": 1974
+    },
+    {
+      "name": "frontend-typecheck",
+      "jobId": "3471d17e-2e6e-4c53-b021-93bff846e013",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": null,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logBytes": 0
+    },
+    {
+      "name": "frontend-proof-and-commit",
+      "jobId": "3c151ba9-9b60-46c6-a336-b1a29ac325c1",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": 6,
+      "logSha256": "cf765181c04b3a23d0a885466096f9753536c2de99c0386529dd4f82706ffeed",
+      "logBytes": 4767
+    },
+    {
+      "name": "sdk-schema-positive-negative",
+      "jobId": "641999e6-b816-4682-b688-fe90615444a9",
+      "status": "PASS_OFFLINE_ONLY",
+      "logSha256": "bef7cb4155b495a1572cad304bc499ab3673c6f75ab27f18e08a528f7660e109",
+      "logBytes": 2242
+    },
+    {
+      "name": "schema-proof-correction",
+      "jobId": "a22f9826-42ed-4abe-8fa0-64d3ad4f086e",
+      "status": "PASS_OFFLINE_ONLY",
+      "logSha256": "7da9f68771bd2e51e0d0f0b3b3f05a1e10d57a085a4b530369c8be0cfc5e0816",
+      "logBytes": 5359
+    },
+    {
+      "name": "live-composer-compatibility",
+      "jobId": "79f5b0a1-f87e-4baa-80e8-be75c5deff50",
+      "status": "PASS_OFFLINE_ONLY",
+      "logSha256": "1b3e69435b8f55b3fca788082507868b1aece1b755509a01a78f77144db1f543",
+      "logBytes": 10530
+    },
+    {
+      "name": "release-payload-guards",
+      "jobId": "0cd13e2b-c045-41e6-879f-697627fd60c1",
+      "status": "PASS_OFFLINE_ONLY",
+      "logSha256": "2b72020c502c4fe06ea35369f4aaaac2883f3c88fe487373537c04baf82458c5",
+      "logBytes": 1426
+    },
+    {
+      "name": "final-source-release-guards",
+      "jobId": "a77f47fa-f57e-4fbf-9473-2f1e3f94c5e3",
+      "status": "PASS_OFFLINE_ONLY",
+      "tests": 11,
+      "logSha256": "8f962e0b18d8405cde0255d7c5189e18fb154496b90fe7c7068e8dca2ea06a11",
+      "logBytes": 1777
+    }
+  ],
+  "note": "Groups overlap. Do not sum them into a unique total. Prior passing logs remain in their original receipts.",
+  "modelRequestsThisEngineeringContinuation": 0,
+  "productionChanges": false,
+  "historicalHolds": {
+    "kimiMicroUsd": 38282,
+    "glmMicroUsd": 1385
+  },
+  "currentCi": "PENDING_EXACT_SOURCE_CHECKS",
+  "freshNewChatAcceptance": "NOT_AUTHORIZED_NOT_RUN",
+  "initialBackendSource": "fcc0b79fc3b0dbb6f55c05972db8ea8a134ebb89",
+  "initialFrontendSource": "b2dbf974e9def8c5a7b6af3cbd2583e33ee7534f",
+  "backend": "76c158aaeecf82f524659454b7b3726b4d255679",
+  "frontend": "3823f51dcd674c00eacd09e6bdf2743ac093a65b",
+  "corrections": [
+    {
+      "source": "44b418c01ccde7553ea20b945da2bea8ba8c1f5e",
+      "scope": "Test fixture and current evidence bindings, no changed runtime logic. Docker context includes the compiled test."
+    },
+    {
+      "source": "76c158aaeecf82f524659454b7b3726b4d255679",
+      "scope": "Correct build-context description, application code unchanged."
+    },
+    {
+      "source": "3823f51dcd674c00eacd09e6bdf2743ac093a65b",
+      "scope": "Exact five-file current live composer/toolbar patch preserved from a1be644119af9e7406bec1f6e3fa4edaa7d12eb1."
+    }
+  ]
+}

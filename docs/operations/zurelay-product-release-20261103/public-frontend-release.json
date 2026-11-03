@@ -1,0 +1,10 @@
+{
+  "observedAtUtc": "2026-11-03T16:46:00Z",
+  "source": "https://xroga.com/api/release",
+  "response": {
+    "service": "xroga-web",
+    "release": "a1be644119af9e7406bec1f6e3fa4edaa7d12eb1",
+    "environment": "production"
+  },
+  "note": "Read-only response captured during this continuation, approximate observation minute. Preserve these four live composer commits in the new release."
+}
