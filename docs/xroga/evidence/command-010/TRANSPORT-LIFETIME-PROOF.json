@@ -276,7 +276,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+      "sha256": "ae6ab34c567370c3c3815c19b2b57bfad00fc5d4fd52aa937368f96ebfd65fed",
       "previousGenericSdkBinding": {
         "sha256": "0a418cef1bdbdadb77f14288c4298990900a111fbc0def0050756a9b146914ca",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -679,11 +679,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessAccounting.failure.test.ts",
-      "sha256": "dda180137594bd2585a7f57c6d45795d87543161256602895d2237c57787eadb"
+      "sha256": "3a611c5bf4106260c05a5e8843396014d4f301ff55fe42f5f5a5f1a0b9435be1"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
+      "sha256": "a18ce559ce9db9c8f066bbb879531204d25ba588453abf8a2e0eb1a73737cd5a",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessAction.ts",
         "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
@@ -732,7 +732,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa",
+      "sha256": "fa2771bfa99ae3e71ef69bc08001da4d19b4670035d9907679e578764ca0300c",
       "beforeCurrentMetadataReconciliation": {
         "path": "backend/src/services/integrations/businessRead.ts",
         "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
