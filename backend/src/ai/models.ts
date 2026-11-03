@@ -97,7 +97,7 @@ export const MODELS: Record<ModelId, ModelDef> = {
     // A task authorization is mandatory. This is not a second monthly entitlement.
     budgetUsd: 0, monthlyTokens: 0, inputTokens: 0, outputTokens: 0,
     // Published model-page rate, verified 2026-11-03. Discounts are not assumed.
-    inputUsdPer1M: 0.80, outputUsdPer1M: 4, contextWindow: 1_000_000,
+    inputUsdPer1M: 0.79, outputUsdPer1M: 3.95, contextWindow: 1_000_000,
     modalities: { text: true, images: false }, imagesEnv: 'ZURELAY_SONNET_VISION_VERIFIED', tagline: 'Bounded complex engineering',
   },
   // Immutable historical identities and prices. Never dispatch these records.

@@ -7,7 +7,7 @@ test('Zurelay cache reads use published rates and reasoning is part of completio
   assert.equal(actualProviderCostMicroUsd(deep),135370);
   assert.equal(actualProviderCostMicroUsd({...deep,reasoningTokens:0}),135370);
   const sonnet={...deep,modelId:'claude_sonnet_5_5' as const};
-  assert.equal(actualProviderCostMicroUsd(sonnet),4440000);
+  assert.equal(actualProviderCostMicroUsd(sonnet),4384500);
   assert.ok(estimateProviderReservationMicroUsd({modelId:sonnet.modelId,estimatedInputTokens:sonnet.inputTokens,maximumOutputTokens:sonnet.outputTokens})>actualProviderCostMicroUsd(sonnet));
 });
 

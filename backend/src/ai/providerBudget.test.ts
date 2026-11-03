@@ -75,7 +75,7 @@ test('Zurelay completion counts include reasoning exactly once without rewriting
   assert.equal(actualProviderCostMicroUsd(normal),150);
   assert.equal(actualProviderCostMicroUsd({...normal,reasoningTokens:750}),150);
   assert.throws(()=>actualProviderCostMicroUsd({...normal,reasoningTokens:1001}),/Invalid provider usage/);
-  assert.equal(actualProviderCostMicroUsd({...normal,modelId:'claude_sonnet_5_5',reasoningTokens:750}),4800);
+  assert.equal(actualProviderCostMicroUsd({...normal,modelId:'claude_sonnet_5_5',reasoningTokens:750}),4740);
 });
 
 test('balanced month unlocks cycle-relative daily and complexity portions', () => {

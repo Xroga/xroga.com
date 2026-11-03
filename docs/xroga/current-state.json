@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/zurelay-two-model-20261103",
-    "sha": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
-    "sourceTimestampUtc": "2026-11-03T16:54:18+05:00",
-    "auditStartedUtc": "2026-11-03T12:20:00.449Z",
+    "sha": "8cd0c817ffddcd33e594bf0dc6a3ab40a667b5fb",
+    "sourceTimestampUtc": "2026-11-03T17:20:17+05:00",
+    "auditStartedUtc": "2026-11-03T12:34:46.129Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -4883,7 +4883,7 @@
       "id": "surface:904c9e9ad9151b2c6280",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/models.ts",
-      "sha256": "8fc77b2ba756fdb7fa9e89dd1fb9de22b9463813173711caccc81dab2e3f05c0",
+      "sha256": "901a9eaf9253a042659bc440edb8c79cfe7d1b4b30ae9d7ce839c09c74ae3645",
       "symbols": [
         "ACTIVE_MODEL_IDS",
         "ActiveModelId",
@@ -6773,7 +6773,7 @@
       "id": "surface:faad5cf834fc5eb65afc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sha256": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2",
+      "sha256": "13b2ab65afb2c5d01e0dfab68391ba18b094c8fdc558f0ff8ae35c1c7e2e672c",
       "symbols": [
         "AdmittedOperationsAction",
         "BudgetPurpose",

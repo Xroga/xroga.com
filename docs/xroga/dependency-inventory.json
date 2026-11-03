@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "10d6f51dc0816c0d78d0c1f8efb85d37d02297bd",
+  "source_sha": "8cd0c817ffddcd33e594bf0dc6a3ab40a667b5fb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16090,7 +16090,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "sha256": "8fc77b2ba756fdb7fa9e89dd1fb9de22b9463813173711caccc81dab2e3f05c0"
+      "sha256": "901a9eaf9253a042659bc440edb8c79cfe7d1b4b30ae9d7ce839c09c74ae3645"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
@@ -16142,7 +16142,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2"
+      "sha256": "13b2ab65afb2c5d01e0dfab68391ba18b094c8fdc558f0ff8ae35c1c7e2e672c"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",

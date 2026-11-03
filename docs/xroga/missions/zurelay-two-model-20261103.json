@@ -128,6 +128,7 @@
     "docs/operations/zurelay-two-model-20261103/EXECUTION-PATHS.md",
     "docs/operations/zurelay-two-model-20261103/OFFLINE-VERIFICATION.json",
     "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/PRICE-SNAPSHOT.json",
     "docs/operations/zurelay-two-model-20261103/ledger-preflight.json",
     "docs/operations/zurelay-two-model-20261103/production-preflight.json",
     "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
@@ -243,7 +244,8 @@
     "docs/operations/zurelay-two-model-20261103/ledger-preflight.json",
     "docs/operations/zurelay-two-model-20261103/OFFLINE-VERIFICATION.json",
     "docs/operations/zurelay-two-model-20261103/EXECUTION-PATHS.md",
-    "docs/operations/zurelay-two-model-20261103/CI-CORRECTION-REVIEW.json"
+    "docs/operations/zurelay-two-model-20261103/CI-CORRECTION-REVIEW.json",
+    "docs/operations/zurelay-two-model-20261103/PRICE-SNAPSHOT.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

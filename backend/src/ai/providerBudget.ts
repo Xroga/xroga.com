@@ -12,7 +12,7 @@ import { assertProviderEnabled, assertModelSelection, type ModelEscalation } fro
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
-export const PROVIDER_PRICE_VERSION = 'zurelay-2026-11-03-v1';
+export const PROVIDER_PRICE_VERSION = 'zurelay-2026-11-03-v2';
 export type BudgetPurpose = 'daily_work' | 'complexity' | 'completion';
 
 export interface ProviderUsageResult {
@@ -120,7 +120,7 @@ export function actualProviderCostMicroUsd(input: {
   const billableOutput = Math.max(0, input.outputTokens + (inclusiveOutput ? 0 : input.reasoningTokens ?? 0));
   // Published 2026-11-03 model-page cache-read rates. Cache writes remain
   // refused at the wire boundary until their separate usage receipt is verified.
-  const cacheRate=input.modelId==='deepseek_v4_1_flash_1017'?.00074:input.modelId==='claude_sonnet_5_5'?.08:price.inputUsdPer1M;
+  const cacheRate=input.modelId==='deepseek_v4_1_flash_1017'?.00074:input.modelId==='claude_sonnet_5_5'?.079:price.inputUsdPer1M;
   const priced=billableInput*price.inputUsdPer1M+cachedInput*cacheRate+billableOutput*price.outputUsdPer1M;
   // New low-cost requests must not disappear into repeated sub-micro rounding.
   return asSafeInteger(inclusiveOutput ? Math.ceil(priced) : priced);

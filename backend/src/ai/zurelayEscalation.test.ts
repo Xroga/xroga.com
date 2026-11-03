@@ -26,5 +26,5 @@ test('Sonnet uses the existing exact task spend permit, not a prompt reason, cop
     assert.throws(()=>assertModelSelection('claude_sonnet_5_5',1000,escalation));
   });
   assert.throws(()=>assertModelSelection('claude_sonnet_5_5',1000,escaped));
-  assert.ok(estimateProviderReservationMicroUsd({modelId:'claude_sonnet_5_5',estimatedInputTokens:10000,maximumOutputTokens:1000})>=20000);
+  assert.ok(estimateProviderReservationMicroUsd({modelId:'claude_sonnet_5_5',estimatedInputTokens:10000,maximumOutputTokens:1000})>=23700);
 });

@@ -615,7 +615,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2",
+      "sha256": "13b2ab65afb2c5d01e0dfab68391ba18b094c8fdc558f0ff8ae35c1c7e2e672c",
       "previousGenericSdkBinding": {
         "sha256": "be8bff52c0a19cd2a19c8235902191d954ef6cc1af4f631a3bfc1d2508600fdd",
         "scope": "PRESERVED_PREVIOUS_BINDING_NOT_CURRENT_EXECUTION_PROOF"
@@ -631,6 +631,10 @@
       "beforeZurelayBinding": {
         "reference": "4c6319e2fc319ad0384ff3e77c07bc473a3652b2",
         "sha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b"
+      },
+      "beforeZurelayPriceSnapshot": {
+        "reference": "8cd0c817ffddcd33e594bf0dc6a3ab40a667b5fb",
+        "sha256": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2"
       }
     },
     {
@@ -1101,5 +1105,6 @@
     "path": "backend/src/lib/gemini.ts",
     "reason": "Direct Gemini HTTP implementation removed. Historical review retained in CALLER-REVIEW.json. Current strict auditor discovers no transport in this explicit denial adapter."
   },
-  "zurelayCiCorrection": "docs/operations/zurelay-two-model-20261103/CI-CORRECTION-REVIEW.json"
+  "zurelayCiCorrection": "docs/operations/zurelay-two-model-20261103/CI-CORRECTION-REVIEW.json",
+  "zurelayPriceSnapshot": "docs/operations/zurelay-two-model-20261103/PRICE-SNAPSHOT.json"
 }

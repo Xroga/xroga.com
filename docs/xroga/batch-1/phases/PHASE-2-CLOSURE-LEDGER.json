@@ -3400,7 +3400,7 @@
       "id": "B1-P2-392b9b628a9b92be",
       "family": "billing-budget",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2",
+      "sourceSha256": "13b2ab65afb2c5d01e0dfab68391ba18b094c8fdc558f0ff8ae35c1c7e2e672c",
       "baselineCallerIds": [
         "00d351afbe045a136c66",
         "254a91383e3a8af0310b",
@@ -3420,133 +3420,133 @@
         "3fc72ec34d884b871909"
       ],
       "currentCallerIds": [
-        "6cfbe9972d40635c77a8",
-        "dcf83540a5ea4f98eaf7",
-        "c74a4fc883b24e8f3ae1",
-        "f5d90a1357212b8e2323",
-        "8fa4085f64c8be202d80",
-        "3919d4d672b90a77ab7e",
-        "65523661ee65e94b7c77",
-        "4aab58391970b6bb69b5",
-        "74dbf1665c69fa2f4781",
-        "d1c61227ff1a7f3b17d4",
-        "bcf68b311f2241508be7",
-        "40c42908ab5eacc6c81e",
-        "82581ecaee5163096193",
-        "cb1c9a285a7c88c0db1d",
-        "54e86643a1c667724a64",
-        "17ce743fa35f62e2a14d"
+        "255ea9744a9343d6feaf",
+        "e4d8bf4fcb8f6422f53a",
+        "b9d50643ad7fda897932",
+        "67400600da71ba2124eb",
+        "c985fa5fee1ee7d5c6f2",
+        "b57f79f0d091e2d52575",
+        "4150f3451a1cef23bc00",
+        "be62ab94e9a3c042c183",
+        "ee7f1f1315d6867c3e17",
+        "7b462edee6e0deb442d8",
+        "63cd9db82a553901aa87",
+        "54b682f70bf2fc2118d6",
+        "53fd7bc596b2faf2d20a",
+        "845594d2636c37e55039",
+        "c7a9eb801789d331fe81",
+        "ac91a4c495ed3c2bfacc"
       ],
       "mapping": [
         {
           "baselineCallerId": "00d351afbe045a136c66",
           "currentCallerIds": [
-            "6cfbe9972d40635c77a8"
+            "255ea9744a9343d6feaf"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "254a91383e3a8af0310b",
           "currentCallerIds": [
-            "dcf83540a5ea4f98eaf7"
+            "e4d8bf4fcb8f6422f53a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "590df28cdc2b297e03b6",
           "currentCallerIds": [
-            "c74a4fc883b24e8f3ae1"
+            "b9d50643ad7fda897932"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "39a1f4163240597da04d",
           "currentCallerIds": [
-            "f5d90a1357212b8e2323"
+            "67400600da71ba2124eb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "613d8e71ddafb0d6bd0c",
           "currentCallerIds": [
-            "8fa4085f64c8be202d80"
+            "c985fa5fee1ee7d5c6f2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a80e4804742dfd6bcc0a",
           "currentCallerIds": [
-            "3919d4d672b90a77ab7e"
+            "b57f79f0d091e2d52575"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6285818c6e8220770b29",
           "currentCallerIds": [
-            "65523661ee65e94b7c77"
+            "4150f3451a1cef23bc00"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "090fe734dc5d1d3dc6e3",
           "currentCallerIds": [
-            "4aab58391970b6bb69b5"
+            "be62ab94e9a3c042c183"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3f66673813dee0d85b85",
           "currentCallerIds": [
-            "74dbf1665c69fa2f4781"
+            "ee7f1f1315d6867c3e17"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "746985044f7d3ee62aff",
           "currentCallerIds": [
-            "d1c61227ff1a7f3b17d4"
+            "7b462edee6e0deb442d8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e030677c7ecb6b0dd90e",
           "currentCallerIds": [
-            "bcf68b311f2241508be7"
+            "63cd9db82a553901aa87"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e35278adbe80b78c8d41",
           "currentCallerIds": [
-            "40c42908ab5eacc6c81e"
+            "54b682f70bf2fc2118d6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b5a82155e981259a207e",
           "currentCallerIds": [
-            "82581ecaee5163096193"
+            "53fd7bc596b2faf2d20a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "564673e6f6b21c690fce",
           "currentCallerIds": [
-            "cb1c9a285a7c88c0db1d"
+            "845594d2636c37e55039"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5ed8ef26b72e26561f26",
           "currentCallerIds": [
-            "54e86643a1c667724a64"
+            "c7a9eb801789d331fe81"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fc72ec34d884b871909",
           "currentCallerIds": [
-            "17ce743fa35f62e2a14d"
+            "ac91a4c495ed3c2bfacc"
           ],
           "change": "RETAINED"
         }
@@ -3556,7 +3556,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-392b9b628a9b92be",
-        "sourceSha256": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2",
+        "sourceSha256": "13b2ab65afb2c5d01e0dfab68391ba18b094c8fdc558f0ff8ae35c1c7e2e672c",
         "executionStatus": "IN_PROGRESS",
         "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
         "actualVerification": {
@@ -3879,7 +3879,9 @@
           "scope": "HISTORICAL_SOURCE_BINDING_NOT_NEW_SECURITY_ACCEPTANCE"
         },
         "beforeZurelaySourceSha256": "e69e2990d8190eb7a92754507fff2ee78dfbe22992d0cb2c2d53441d8a8e355b",
-        "zurelayReview": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json"
+        "zurelayReview": "docs/operations/zurelay-two-model-20261103/PERSISTENCE-REVIEW.json",
+        "beforeZurelayPriceSnapshot": "eeb2e83b336d19d47bbf74bd44b96031b9af67151115b47be5eb9d2d7456eab2",
+        "zurelayPriceSnapshot": "docs/operations/zurelay-two-model-20261103/PRICE-SNAPSHOT.json"
       },
       "actor": {
         "existingTrace": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
@@ -3916,7 +3918,7 @@
         {
           "path": "backend/src/ai/providerBudget.test.ts",
           "marker": "production cannot authorize provider execution using process-memory accounting",
-          "sourceSha256": "01f44880de1676868e65f73466b418c2d17f5e9a5a761304d39e85779222795e",
+          "sourceSha256": "61f6b5dc1fb040e3ffb60efab7693d515181ee1c1bd1279981a2d800dc54ffce",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
