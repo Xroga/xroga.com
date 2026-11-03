@@ -1,7 +1,32 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {createTenantContext} from '../../security/tenantContext.js';
 import {getComposioCatalogToolkit,listComposioCatalog} from './composioClient.js';
-import {createReadOnlyComposioSession,createActionComposioSession,getComposioSession,assertComposioSession,assertReadOnlyComposioSession,searchComposioTools,searchComposioActionTools,listComposioToolkits,listConnectedComposioToolkits,createComposioConnectionLink,listUserCustomMcpToolkits,createUserCustomMcpToolkit,syncUserCustomMcpToolkit,deleteUserCustomMcpToolkit,upsertComposioTriggerForUser,xrogaCustomToolkitPrefix} from './composioClient.js';
+import {createReadOnlyComposioSession,createActionComposioSession,getComposioSession,assertComposioSession,assertReadOnlyComposioSession,searchComposioTools,searchComposioActionTools,listComposioToolkits,listConnectedComposioToolkits,createComposioConnectionLink,listUserCustomMcpToolkits,createUserCustomMcpToolkit,syncUserCustomMcpToolkit,deleteUserCustomMcpToolkit,upsertComposioTriggerForUser,xrogaCustomToolkitPrefix,assertNonPremiumComposioSession} from './composioClient.js';
+
+test('separately billed Composio sessions are refused before app execution', () => {
+ assert.doesNotThrow(() => assertNonPremiumComposioSession({session_id:'trs_safe',config:{instant:false}}));
+ assert.throws(() => assertNonPremiumComposioSession({session_id:'trs_paid',config:{instant:{enable:true}}}),{code:'COMPOSIO_PREMIUM_TOOL_DISABLED'});
+ assert.throws(() => assertNonPremiumComposioSession({session_id:'trs_old_paid',config:{premium_usage:{enable:true}}}),{code:'COMPOSIO_PREMIUM_TOOL_DISABLED'});
+});
+
+test('new Composio sessions require explicit selection of the approved connected account',async t=>{
+ const owner='11111111-1111-4111-8111-111111111111',context=createTenantContext({userId:owner,via:'remote_getuser'}),prior=process.env.COMPOSIO_API_KEY;
+ process.env.COMPOSIO_API_KEY='synthetic-platform-key';
+ const bodies:Record<string,unknown>[]=[];
+ const config={user_id:'xroga:'+owner,tags:['readOnlyHint'],multi_account:{enable:true,require_explicit_selection:true}};
+ t.mock.method(globalThis,'fetch',async(_input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
+  if(init?.method==='POST')bodies.push(JSON.parse(String(init.body)) as Record<string,unknown>);
+  return Response.json({session_id:'trs_owned',config});
+ });
+ try{
+  await createActionComposioSession(owner,context);
+  await createReadOnlyComposioSession(owner,context);
+  assert.equal(bodies.length,2);
+  for(const body of bodies){assert.deepEqual(body.multi_account,{enable:true,require_explicit_selection:true});assert.equal(body.instant,false);}
+  assert.deepEqual(bodies[0]?.execute,{enable_multi_execute:false});
+  assert.deepEqual(bodies[1]?.tags,['readOnlyHint']);
+ }finally{if(prior===undefined)delete process.env.COMPOSIO_API_KEY;else process.env.COMPOSIO_API_KEY=prior;}
+});
 
 test('every tenant Composio entry rejects a raw user ID before any provider request',async t=>{
  const owner='11111111-1111-4111-8111-111111111111',sessionId='trs_owned',toolkit=xrogaCustomToolkitPrefix(owner)+'fixture',prior=process.env.COMPOSIO_API_KEY;process.env.COMPOSIO_API_KEY='synthetic-platform-key';let effects=0;

@@ -19,10 +19,13 @@ const REMOVED = ['kimi_k2_7', 'glm_5_2', 'deepseek_v4_pro', 'grok_4_5', 'grok_4_
 
 test('all active registries contain the same exact model set', () => {
   const expected = [...ACTIVE].sort();
-  assert.deepEqual(Object.keys(MODELS).sort(), expected);
-  assert.deepEqual(Object.keys(CODING_MODEL_TRANSPORT).sort(), expected);
+  const dedicated = 'deepseek_v4_1_flash_1017';
+  assert.deepEqual(Object.keys(MODELS).filter(id => id !== dedicated).sort(), expected);
+  assert.deepEqual(Object.keys(CODING_MODEL_TRANSPORT).filter(id => id !== dedicated).sort(), expected);
   assert.deepEqual(CODING_MODEL_TIERS.map((entry) => entry.modelId).sort(), expected);
   assert.deepEqual(BLACK_HOLE_MODELS.map((entry) => entry.id).sort(), expected);
+  assert.equal(MODELS.deepseek_v4_1_flash_1017.budgetUsd, 0);
+  assert.equal(blackHoleModel(dedicated), null);
 });
 
 test('removed models are not executable aliases', () => {

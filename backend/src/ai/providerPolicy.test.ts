@@ -27,19 +27,20 @@ import {
  *
  * Kimi     → Moonshot
  * GLM      → Zhipu / Z.ai official
- * DeepSeek → OpenRouter
+ * Historical DeepSeek → OpenRouter; connected-app DeepSeek → Zurelay
  *
  * Research models never gain project-writing authority.
  */
 
 test(
-  'only Moonshot, Zhipu and OpenRouter models may perform coding',
+  'only approved model transports may perform coding',
   () => {
     assert.deepEqual(
       Object.keys(
         CODING_MODEL_TRANSPORT,
       ).sort(),
       [
+        'deepseek_v4_1_flash_1017',
         'deepseek_v4_flash',
         'glm_5_3',
         'glm_5_3_flash',
@@ -63,6 +64,7 @@ test(
           'moonshot',
           'zhipu',
           'openrouter',
+          'zurelay',
         ].includes(
           transport,
         ),
@@ -102,6 +104,7 @@ test(
       ),
       'openrouter',
     );
+    assert.equal(requiredCodingTransport('deepseek_v4_1_flash_1017'), 'zurelay');
   },
 );
 
@@ -352,6 +355,10 @@ test(
     for (
       const model of coding
     ) {
+      if (model.id === 'deepseek_v4_1_flash_1017') {
+        assert.deepEqual(model.preferredFallbacks, [], 'connected-app model must fail closed');
+        continue;
+      }
       assert.ok(
         model.preferredFallbacks
           .length > 0,

@@ -23,6 +23,21 @@ test('keeps three explicitly separated app tasks as three steps', () => {
   assert.equal(steps?.[2]?.request, 'create a task for Friday');
 });
 
+test('keeps Gmail extraction attached to its read before an approved Sheets action', () => {
+  assert.deepEqual(splitExplicitBusinessWorkflow('Find my recent Gmail emails, extract important information, and organize it in Google Sheets.'), [
+    { kind: 'read', request: 'Find my recent Gmail emails, extract important information', dependsOnPrevious: false },
+    { kind: 'action', request: 'organize it in Google Sheets', dependsOnPrevious: true },
+  ]);
+});
+
+test('sequences Canva discovery, duplication and customization without inventing an edit', () => {
+  assert.deepEqual(splitExplicitBusinessWorkflow('Find an existing Canva logo, duplicate it, and customize it for my brand Mlok.'), [
+    { kind: 'read', request: 'Find an existing Canva logo', dependsOnPrevious: false },
+    { kind: 'action', request: 'duplicate it', dependsOnPrevious: true },
+    { kind: 'action', request: 'customize it for my brand Mlok', dependsOnPrevious: true },
+  ]);
+});
+
 test('does not turn a public search, ordinary sentence, or ambiguous clause into an app workflow', () => {
   assert.equal(splitExplicitBusinessWorkflow('Search the web for flights and send me options'), null);
   assert.equal(splitExplicitBusinessWorkflow('Explain Gmail and calendar integrations'), null);

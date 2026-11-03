@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "d04f8dc327dfb19f603874760595ecc739a436904cc0f58dfc25036dde86f4aa",
+  "sourceTreeDigest": "44e03a4bccb7d013a5d5d552e2d93ef152986e7a20639de1286221816cb02017",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 218,
+      "line": 223,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -53,7 +53,7 @@
         {
           "path": "backend/src/ai/providerPolicy.ts",
           "marker": "assertModelProviderDestination",
-          "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          "sha256": "311c42d704508c908bd921278984ca32e37813ea1032945706c382cda9d9f843"
         },
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
@@ -75,7 +75,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 296,
+      "line": 301,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -117,7 +117,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 402,
+      "line": 407,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -2497,7 +2497,7 @@
     {
       "id": "7b6e1f490ce974fc3971",
       "file": "backend/src/services/integrations/composioClient.ts",
-      "line": 1417,
+      "line": 1432,
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
@@ -2522,7 +2522,7 @@
         {
           "path": "backend/src/services/integrations/composioProvenance.security.test.ts",
           "marker": "private connected-app read uses exact existing consent",
-          "sha256": "445b458f198df385ebf35733b0578e22353921e19aaf75c43055847d4d349c73"
+          "sha256": "06c255fb13fd269a6909b265e151df0159a22385564d70f4d890fe7378b3e861"
         }
       ]
     },

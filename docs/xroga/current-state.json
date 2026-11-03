@@ -1234,7 +1234,7 @@
       "id": "surface:b095d7e42dfadecfdc4b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/publicIdentity.ts",
-      "sha256": "a4631657056c95a83040f1601e0c7c33a3b4f002fb4ab0479a24e514c040509a",
+      "sha256": "417211e1a1585a86ebaa3d7880272064a0af685ac92d14d7a69c376322a80b88",
       "symbols": [
         "BLACK_HOLE_PUBLIC_NAME",
         "FORBIDDEN_PROVIDER_TOKENS",
@@ -4618,7 +4618,7 @@
       "id": "surface:732818bef345482d15fc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/modelCapabilityRegistry.ts",
-      "sha256": "a24e948bc83804e407e128107120a42fc9e650a1f6f8d87d29326a048131789f",
+      "sha256": "911344a0751d9b81220cc9f7cf05446000c77b0167fb78d47e265ab00530dedd",
       "symbols": [
         "FALLBACKS",
         "ModelCapability",
@@ -4666,10 +4666,10 @@
         "backend/src/ai/intelligentRouter.test.ts:10",
         "backend/src/ai/intelligentRouter.ts:3",
         "backend/src/ai/pipeline.ts:232",
-        "backend/src/ai/providerPolicy.test.ts:330",
-        "backend/src/ai/providerPolicy.test.ts:389",
-        "backend/src/ai/providerPolicy.test.ts:468",
-        "backend/src/ai/providerPolicy.test.ts:481",
+        "backend/src/ai/providerPolicy.test.ts:333",
+        "backend/src/ai/providerPolicy.test.ts:396",
+        "backend/src/ai/providerPolicy.test.ts:475",
+        "backend/src/ai/providerPolicy.test.ts:488",
         "backend/src/routes/capabilities.ts:26",
         "backend/src/synthesis/universalEntrypoint.ts:67"
       ],
@@ -4756,7 +4756,7 @@
       "id": "surface:904c9e9ad9151b2c6280",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/models.ts",
-      "sha256": "ce06bc3f842d59758d5adea1a144c184dda2a3ee4748a59895ce887b7111d952",
+      "sha256": "6ee8c7ddb60b542c3c7060d309b9a32534692648fb9a2eba7b81c082be04b04d",
       "symbols": [
         "MODELS",
         "MODEL_LIST",
@@ -4772,6 +4772,7 @@
         "POOL_PUBLIC_ID_BY_ROLE",
         "ProviderKind",
         "ResolvedModelSpec",
+        "ZURELAY_BASE_URL",
         "base",
         "callableModelIds",
         "costUsdForTokens",
@@ -4835,6 +4836,8 @@
         "backend/src/operations/benchmarkAdapter.ts:20",
         "backend/src/routes/guestChat.ts:14",
         "backend/src/routes/phase1.ts:25",
+        "backend/src/services/integrations/connectedAppModel.test.ts:4",
+        "backend/src/services/integrations/connectedAppModel.ts:1",
         "backend/src/synthesis/coherentImplementation.ts:8",
         "backend/src/synthesis/universalEntrypoint.ts:98",
         "backend/src/workers/browserModelGateway.ts:15"
@@ -4843,6 +4846,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:api.moonshot.ai",
+        "declared-host:api.zurelay.com",
         "declared-host:open.bigmodel.cn",
         "declared-host:openrouter.ai"
       ],
@@ -4872,7 +4876,8 @@
         "backend/src/ai/quota.test.ts",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
-        "backend/src/operations/benchmarkAdapter.test.ts"
+        "backend/src/operations/benchmarkAdapter.test.ts",
+        "backend/src/services/integrations/connectedAppModel.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -4885,7 +4890,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
+      "sha256": "ae6ab34c567370c3c3815c19b2b57bfad00fc5d4fd52aa937368f96ebfd65fed",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -5010,6 +5015,7 @@
         "backend/src/security/genericSdk.local.integration.ts:7",
         "backend/src/services/integrations/businessAction.ts:10",
         "backend/src/services/integrations/businessRead.ts:1",
+        "backend/src/services/integrations/connectedAppModel.test.ts:5",
         "backend/src/synthesis/coherentImplementation.ts:1",
         "backend/src/synthesis/incrementalImplementation.ts:27",
         "backend/src/workers/browserModelDispatch.ts:4"
@@ -5038,6 +5044,7 @@
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
         "backend/src/security/genericSdk.local.integration.ts",
+        "backend/src/services/integrations/connectedAppModel.test.ts",
         "backend/src/synthesis/coherentImplementation.test.ts",
         "backend/src/synthesis/incrementalImplementation.test.ts"
       ],
@@ -6919,7 +6926,7 @@
       "id": "surface:88fb20b981ce5f4e1903",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerPolicy.ts",
-      "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f",
+      "sha256": "311c42d704508c908bd921278984ca32e37813ea1032945706c382cda9d9f843",
       "symbols": [
         "CODING_IDS",
         "CODING_MODEL_TRANSPORT",
@@ -6970,6 +6977,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:api.moonshot.ai",
+        "declared-host:api.zurelay.com",
         "declared-host:open.bigmodel.cn",
         "declared-host:openrouter.ai"
       ],
@@ -7111,6 +7119,7 @@
         "backend/src/services/integrations/businessRead.ts:10",
         "backend/src/services/integrations/composioClient.security.test.ts:6",
         "backend/src/services/integrations/composioConsentConsumers.security.test.ts:6",
+        "backend/src/services/integrations/connectedAppModel.ts:2",
         "backend/src/services/integrations/githubDeploy.ts:46",
         "backend/src/services/integrations/githubSourceRead.transport.security.test.ts:9",
         "backend/src/services/publish/desktopWorkflow.ts:1",
@@ -7973,13 +7982,15 @@
         "backend/src/ai/models.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/intelligentRouter.ts:8",
         "backend/src/ai/modelCapabilityRegistry.ts:5",
-        "backend/src/ai/providerPolicy.test.ts:395",
-        "backend/src/ai/routerConfig.test.ts:3"
+        "backend/src/ai/providerPolicy.test.ts:402",
+        "backend/src/ai/routerConfig.test.ts:3",
+        "backend/src/services/integrations/connectedAppModel.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11180,8 +11191,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/universal/planner.ts:2",
@@ -11330,8 +11340,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
@@ -11486,8 +11495,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/universal/semanticRequestPlanner.ts:47",
@@ -11533,8 +11541,7 @@
         "backend/src/capabilities/index.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:159",
@@ -11955,8 +11962,7 @@
         "backend/src/services/integrations/githubAuth.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:161",
@@ -11965,9 +11971,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:17",
-        "backend/src/routes/phase1.ts:33",
-        "backend/src/services/integrations/businessAction.ts:26",
-        "backend/src/services/integrations/businessRead.ts:17"
+        "backend/src/routes/phase1.ts:33"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -16245,8 +16249,7 @@
         "backend/src/capabilities/modules/xResearch.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/index.ts:2"
@@ -16287,8 +16290,7 @@
         "backend/src/capabilities/generated.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/universal/capabilityReadiness.test.ts:3",
@@ -16331,8 +16333,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:2"
@@ -16370,8 +16371,7 @@
         "backend/src/services/integrations/composioClient.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:3"
@@ -16409,8 +16409,7 @@
         "backend/src/services/integrations/composioClient.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:4"
@@ -16446,8 +16445,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:5"
@@ -16483,8 +16481,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:6"
@@ -16520,8 +16517,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:7"
@@ -16557,8 +16553,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:8"
@@ -16594,8 +16589,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:9"
@@ -16631,8 +16625,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:10"
@@ -16668,8 +16661,7 @@
         "backend/src/ai/universal/capabilityRegistry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "scripts/security/verify-oci-federation.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/generated.ts:11"
@@ -16970,7 +16962,7 @@
       "id": "surface:503822896b9eb3665367",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/config/envSecrets.ts",
-      "sha256": "0f2b22341650c44abf4aa358940422cd27e9232a8f513d958f3fb4ed29b05eb0",
+      "sha256": "f2ec231b0c70ce41308960f731f6033281a6766097f6bdefa464babbac5f9c07",
       "symbols": [
         "ALIASES",
         "getAiStackKeyStatus",
@@ -21420,7 +21412,7 @@
       "id": "surface:2368c3d3d23d7aa8ff07",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/adaptiveOrchestrator.ts",
-      "sha256": "6c7587872c198ab653960e30fced96d1223ce962dc2b129912c07b6fce61acbe",
+      "sha256": "fcce85529b71d286899bce8dd1952abb3e1cb8854d99867f224192962d41d0e9",
       "symbols": [
         "AdaptiveExecutionPlan",
         "AdaptiveSubtask",
@@ -34500,7 +34492,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "98ce8ce7042d42f4d136c1e3ab0f17b618f92c3bdf6c8f4cfedd3da2875939d0",
+      "sha256": "a18ce559ce9db9c8f066bbb879531204d25ba588453abf8a2e0eb1a73737cd5a",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -34560,6 +34552,7 @@
         "orderedTools",
         "permissionMode",
         "prepareBusinessAction",
+        "rateLimited",
         "raw",
         "requiresBusinessActionConfirmation",
         "requiresConfirmation",
@@ -34599,7 +34592,6 @@
         "../../ai/parallelApproval.js",
         "../../ai/providerRuntime.js",
         "../../ai/tenantModelDispatch.js",
-        "../../ai/universal/semanticRequestPlanner.js",
         "../../security/authority/digest.js",
         "../../security/authority/enforce.js",
         "../../security/authority/risk.js",
@@ -34614,6 +34606,7 @@
         "./composioClient.js",
         "./composioControl.js",
         "./composioSkillGuidance.js",
+        "./connectedAppModel.js",
         "./githubApproval.js",
         "./pluginPermissionPolicy.js",
         "./supabaseProjectCreation.js",
@@ -34626,7 +34619,6 @@
         "backend/src/ai/parallelApproval.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/tenantModelDispatch.ts",
-        "backend/src/ai/universal/semanticRequestPlanner.ts",
         "backend/src/security/authority/digest.ts",
         "backend/src/security/authority/enforce.ts",
         "backend/src/security/authority/risk.ts",
@@ -34635,6 +34627,7 @@
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/composioControl.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
+        "backend/src/services/integrations/connectedAppModel.ts",
         "backend/src/services/integrations/githubApproval.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts",
         "backend/src/services/integrations/supabaseProjectCreation.ts",
@@ -34667,7 +34660,7 @@
         "backend/src/services/integrations/businessActionRisk.test.ts:3",
         "backend/src/services/integrations/businessModelEgress.test.ts:7",
         "backend/src/services/integrations/businessWorkflowRuns.ts:3",
-        "backend/src/services/integrations/composioClient.ts:2648",
+        "backend/src/services/integrations/composioClient.ts:2699",
         "backend/src/services/integrations/composioControl.ts:13",
         "backend/src/services/integrations/githubApproval.ts:6",
         "backend/src/services/integrations/supabaseApproval.ts:12",
@@ -34824,7 +34817,7 @@
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4",
         "backend/src/services/integrations/businessActionConfirmationsPreview.test.ts:3",
         "backend/src/services/integrations/businessWorkflowRuns.ts:4",
-        "backend/src/services/integrations/composioClient.ts:2648",
+        "backend/src/services/integrations/composioClient.ts:2699",
         "backend/src/services/integrations/composioControl.security.test.ts:8",
         "backend/src/services/integrations/composioControl.ts:12",
         "backend/src/services/integrations/composioProvenance.security.test.ts:5",
@@ -35112,7 +35105,7 @@
       "id": "surface:54da5a37d7716514e311",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "bf6525099f63f61c7bc2586bc24d52285312a825266d8eea3bf0d483d8d552fa",
+      "sha256": "fa2771bfa99ae3e71ef69bc08001da4d19b4670035d9907679e578764ca0300c",
       "symbols": [
         "BusinessAppConnectionCandidate",
         "BusinessReadOutcome",
@@ -35154,6 +35147,7 @@
         "normalizedProviderText",
         "orderedToolkits",
         "orderedTools",
+        "rateLimited",
         "raw",
         "readBusinessData",
         "routes",
@@ -35185,20 +35179,20 @@
         "../../ai/openaiCompat.js",
         "../../ai/providerRuntime.js",
         "../../ai/tenantModelDispatch.js",
-        "../../ai/universal/semanticRequestPlanner.js",
         "../../security/tenantContext.js",
         "./composioClient.js",
-        "./composioSkillGuidance.js"
+        "./composioSkillGuidance.js",
+        "./connectedAppModel.js"
       ],
       "runtimeImports": [
         "backend/src/ai/black-hole/structuredOutput.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/tenantModelDispatch.ts",
-        "backend/src/ai/universal/semanticRequestPlanner.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/composioClient.ts",
-        "backend/src/services/integrations/composioSkillGuidance.ts"
+        "backend/src/services/integrations/composioSkillGuidance.ts",
+        "backend/src/services/integrations/connectedAppModel.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts",
@@ -35236,7 +35230,7 @@
       "id": "surface:0756eaaa034fcdc72577",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "a1aeb614b3b6e3214b2eec5994f61c42d3cbd75e121a7327898eec1237629a86",
+      "sha256": "f79e9321150e79df41c6b4b662892cd0148cc185e0d14c9a3b183205f7b0c74f",
       "symbols": [
         "ACTION_VERBS",
         "BusinessWorkflowStep",
@@ -35388,7 +35382,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "68fa5450c3a85f0685b71be4f8d3693872ca5ca36997d38988a241b8419573ac",
+      "sha256": "19f279b414b56736e720f19f6e683634c9e99f1d093cc0e4905a32b1a9cd07af",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -35457,12 +35451,14 @@
         "approval",
         "apps",
         "assertComposioSession",
+        "assertNonPremiumComposioSession",
         "assertReadOnlyComposioSession",
         "auth",
         "authScheme",
         "beforeDispatch",
         "binding",
         "body",
+        "buildPublicComposioDiscoveryQuery",
         "cacheKey",
         "cached",
         "cachedComposioValue",
@@ -35480,6 +35476,7 @@
         "cleanToolkit",
         "clearComposioCatalogCache",
         "collected",
+        "compact",
         "composioControlSource",
         "composioRequest",
         "composioUserId",
@@ -35545,6 +35542,7 @@
         "mapCatalogToolkit",
         "mapSearchTool",
         "matches",
+        "mentioned",
         "message",
         "metadata",
         "method",
@@ -35552,6 +35550,7 @@
         "name",
         "next",
         "nextOffset",
+        "normalized",
         "now",
         "offset",
         "offsetMatch",
@@ -35563,6 +35562,7 @@
         "parameters",
         "params",
         "payload",
+        "preferred",
         "prefix",
         "prior",
         "publicMetadata",
@@ -35577,6 +35577,7 @@
         "response",
         "result",
         "risk",
+        "safe",
         "sandbox",
         "schedule",
         "searchComposioActionTools",
@@ -35662,10 +35663,10 @@
         "backend/src/routes/integrations.ts:43",
         "backend/src/routes/phase1.ts:88",
         "backend/src/routes/phase1BusinessPreflight.ts:9",
-        "backend/src/services/integrations/businessAction.ts:30",
+        "backend/src/services/integrations/businessAction.ts:28",
         "backend/src/services/integrations/businessActionConfirmations.ts:11",
         "backend/src/services/integrations/businessAutomations.ts:4",
-        "backend/src/services/integrations/businessRead.ts:21",
+        "backend/src/services/integrations/businessRead.ts:19",
         "backend/src/services/integrations/composioActorBoundary.security.test.ts:3",
         "backend/src/services/integrations/composioActorBoundary.security.test.ts:4",
         "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts:3",
@@ -35904,8 +35905,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:41",
-        "backend/src/services/integrations/businessRead.ts:30",
+        "backend/src/services/integrations/businessAction.ts:39",
+        "backend/src/services/integrations/businessRead.ts:28",
         "backend/src/services/integrations/composioSkillGuidance.test.ts:3"
       ],
       "reachable": true,
@@ -35918,6 +35919,56 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/services/integrations/composioSkillGuidance.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:58713644de86656e3f7d",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/connectedAppModel.ts",
+      "sha256": "dc0859c996bb069cb1721f9b387ca10fc805ece203c7c6e30d38fc0662a32dbe",
+      "symbols": [
+        "config",
+        "connectedAppModelRoute",
+        "id",
+        "model"
+      ],
+      "imports": [
+        "../../ai/models.js",
+        "../../ai/providerRuntime.js",
+        "../../ai/routerConfig.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerRuntime.ts",
+        "backend/src/ai/routerConfig.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/businessAction.ts:26",
+        "backend/src/services/integrations/businessRead.ts:17",
+        "backend/src/services/integrations/connectedAppModel.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:api.zurelay.com"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/connectedAppModel.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -38407,7 +38458,7 @@
       "callers": [
         "backend/src/routes/integrations.ts:34",
         "backend/src/security/tenantIsolation.local.integration.ts:935",
-        "backend/src/services/integrations/businessAction.ts:43",
+        "backend/src/services/integrations/businessAction.ts:41",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
       "reachable": true,
@@ -142394,7 +142445,7 @@
     {
       "id": "test-suite:b64d08deac9922c347cc",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -142408,7 +142459,7 @@
     {
       "id": "test-suite:8f41ab5d9949d1ae4111",
       "sourcePath": "backend/src/services/integrations/composioActorBoundary.security.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -142429,7 +142480,7 @@
     {
       "id": "test-suite:cf6f911e3487a9190775",
       "sourcePath": "backend/src/services/integrations/composioClient.security.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -142458,6 +142509,13 @@
       "id": "test-suite:62a455ddfe0b926bafb9",
       "sourcePath": "backend/src/services/integrations/composioSkillGuidance.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e41170dcddec186330d2",
+      "sourcePath": "backend/src/services/integrations/connectedAppModel.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

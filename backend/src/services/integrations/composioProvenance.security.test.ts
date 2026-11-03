@@ -17,7 +17,7 @@ test('private connected-app read uses exact existing consent and preserves verif
   if(url.pathname.includes('/tools/'))return Response.json({slug:'SLACK_GET_MESSAGES',toolkit:{slug:'slack'},tags:['readOnlyHint']});
   if(url.pathname.endsWith('/search'))return Response.json({tool_schemas:{tool:{toolkit:'slack',tool_slug:'SLACK_GET_MESSAGES',input_schema:{type:'object'}}}});
   if(url.pathname.endsWith('/toolkits'))return Response.json({items:[{slug:'slack',connected_account:{id:'ca_owned',status:'ACTIVE'}}]});
-  return Response.json({session_id:'trs_owned',config:{user_id:'xroga:'+owner,tags:['readOnlyHint']}});
+  return Response.json({session_id:'trs_owned',config:{user_id:'xroga:'+owner,tags:['readOnlyHint'],multi_account:{enable:true,require_explicit_selection:true}}});
  });
  try{
   const pending=await executeComposioReadTool(owner,{tenantContext:context,sessionId:'trs_owned',useCase:'Search Slack messages',toolSlug:'SLACK_GET_MESSAGES',arguments:{query:'Unreleased customer acquisition'}});

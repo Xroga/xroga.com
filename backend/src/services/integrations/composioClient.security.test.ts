@@ -1,9 +1,19 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {classifyComposioToolRisk,getComposioToolDetails} from './composioClient.js';
+import {buildPublicComposioDiscoveryQuery,classifyComposioToolRisk,getComposioToolDetails} from './composioClient.js';
 import {createServer} from 'node:http';
 import type {AddressInfo} from 'node:net';
 import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
+
+test('discovery prefers mentioned or previous apps while omitting private user text',()=>{
+ const apps=[{toolkit:'gmail',name:'Gmail',connected:true},{toolkit:'googlesheets',name:'Google Sheets',connected:true},{toolkit:'canva',name:'Canva',connected:true}];
+ const sheets=buildPublicComposioDiscoveryQuery('organize it in Google Sheets for client Alice','action',apps,['gmail']);
+ assert.match(sheets,/googlesheets/);assert.doesNotMatch(sheets,/gmail|Alice|client/);
+ const canva=buildPublicComposioDiscoveryQuery('customize it for my brand Mlok','action',apps,['canva']);
+ assert.match(canva,/canva.*customize/);assert.doesNotMatch(canva,/Mlok|gmail|googlesheets/);
+ const read=buildPublicComposioDiscoveryQuery('Find my recent Gmail emails, extract private account data','read',apps);
+ assert.match(read,/gmail.*find.*extract.*email/);assert.doesNotMatch(read,/private|account|data/);
+});
 
 test('external read-only metadata cannot downgrade server-side destructive, write or unknown tool risk',()=>{
   for(const tags of [[],['readOnlyHint'],['readOnlyHint','approved','safe']]){

@@ -16,7 +16,8 @@ const ACTIVE: ModelId[] = ['kimi_k3', 'glm_5_3', 'glm_5_3_flash', 'deepseek_v4_f
 
 test('the canonical Black Hole pool is exactly the active engineering stack', () => {
   assert.deepEqual(BLACK_HOLE_MODELS.map((model) => model.id).sort(), [...ACTIVE].sort());
-  assert.deepEqual(Object.keys(MODELS).sort(), [...ACTIVE].sort());
+  assert.deepEqual(Object.keys(MODELS).filter(id => id !== 'deepseek_v4_1_flash_1017').sort(), [...ACTIVE].sort());
+  assert.equal(blackHoleModel('deepseek_v4_1_flash_1017'), null, 'dedicated app planner is not a general engineering model');
 });
 
 test('every active model reaches its mandated transport', () => {

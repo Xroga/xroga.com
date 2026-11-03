@@ -97,6 +97,7 @@ const MODEL_FALLBACKS: Record<
   ModelId,
   ModelId[]
 > = {
+  deepseek_v4_1_flash_1017: [],
   kimi_k3: [
     'glm_5_3',
     'glm_5_3_flash',

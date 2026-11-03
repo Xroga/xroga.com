@@ -1,6 +1,6 @@
 # Deployment topology, source and dated evidence
 
-Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
+Source SHA: `d6ef8b4e46b048fa6cc61d11418c91144f061972`; exact current source/config hashes are in the JSON. Uncommitted source is not an accepted release.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -49,6 +49,7 @@ Source SHA: `43ed343c2af35f49f7959684f7e692a04a750218`; exact current source/con
 | endpoint-api-vercel-com | Source-defined endpoint api.vercel.com | CONFIGURED_BUT_UNVERIFIED | api.vercel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-whop-com | Source-defined endpoint api.whop.com | CONFIGURED_BUT_UNVERIFIED | api.whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-x-ai | Source-defined endpoint api.x.ai | CONFIGURED_BUT_UNVERIFIED | api.x.ai | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-api-zurelay-com | Source-defined endpoint api.zurelay.com | CONFIGURED_BUT_UNVERIFIED | api.zurelay.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-appstoreconnect-apple-com | Source-defined endpoint appstoreconnect.apple.com | CONFIGURED_BUT_UNVERIFIED | appstoreconnect.apple.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-aptos-dev | Source-defined endpoint aptos.dev | CONFIGURED_BUT_UNVERIFIED | aptos.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-asana-com | Source-defined endpoint asana.com | CONFIGURED_BUT_UNVERIFIED | asana.com | NOT_INDEPENDENTLY_VERIFIED |
