@@ -2,13 +2,13 @@
   "version": "1.0",
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
-    "branch": "codex/response-experience-v2-906",
-    "sha": "f458273ce1dc9102e46eab6736623a5770c37d07",
-    "sourceTimestampUtc": "2026-11-03T03:15:33+05:00",
-    "auditStartedUtc": "2026-11-02T22:29:26.228Z",
+    "branch": "codex/zurelay-response-contract-20261103",
+    "sha": "60f50b35e40c40351b7ade5a5bb583bfcd773493",
+    "sourceTimestampUtc": "2026-11-03T03:32:11+05:00",
+    "auditStartedUtc": "2026-11-03T11:54:55.767Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v24.18.0",
+    "node": "v22.21.1",
     "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
@@ -82690,6 +82690,7 @@
         "frontend/src/components/response-experience-v2/exportText.test.ts:3",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:13",
+        "frontend/src/lib/responseCoverageContract.test.ts:6",
         "frontend/src/lib/responsePresentation.integration.test.ts:8"
       ],
       "reachable": true,
@@ -82705,6 +82706,7 @@
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+        "frontend/src/lib/responseCoverageContract.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -83030,6 +83032,7 @@
         "frontend/src/components/response-experience-v2/SharedResponseV2.tsx:4",
         "frontend/src/components/response-experience-v2/document.test.ts:11",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:4",
+        "frontend/src/lib/responseCoverageContract.test.ts:5",
         "frontend/src/lib/responsePresentation.integration.test.ts:9"
       ],
       "reachable": true,
@@ -83043,6 +83046,7 @@
       "testCoverage": [
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+        "frontend/src/lib/responseCoverageContract.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -94643,7 +94647,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "0e2f8ba330c0a479e8aa3ac7fbf88c1141fe650f67790edd57fa25927deb4a20",
+      "sha256": "53ab680320a6f7ae0231f27711c49b7b3cf20d3323e23d8024c3c239ec7387c2",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -102357,6 +102361,53 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:f319f818a1e220c70581",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/responseCoverageContract.ts",
+      "sha256": "b0db6375dde545b675e30cc22cee433787bf94751c95a55863b47e9529a1ede1",
+      "symbols": [
+        "ResponseCoverageContract",
+        "kind",
+        "responseCoverageContractSchema"
+      ],
+      "imports": [
+        "zod"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx",
+        "frontend/src/app/share/[token]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/lib/xrogaBlocks.ts:3",
+        "frontend/src/lib/xrogaResponseDocument.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/responseCoverageContract.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:8046ef5c99216ec7338f",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/restoreRepoTerminal.ts",
@@ -107959,7 +108010,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "48a9122b8aa27cafa88e463c5969d6ac2057974d18a0fce37dd2585c281dd329",
+      "sha256": "d02d578de8f105212e655121bae3ef105f90f3d3495d676b69a2ead60c72a56c",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -108047,10 +108098,12 @@
         "xrogaReceiptSchema"
       ],
       "imports": [
+        "./responseCoverageContract",
         "./xrogaRichResults",
         "zod"
       ],
       "runtimeImports": [
+        "frontend/src/lib/responseCoverageContract.ts",
         "frontend/src/lib/xrogaRichResults.ts"
       ],
       "entryPoints": [
@@ -108067,6 +108120,7 @@
         "frontend/src/components/terminal/XrogaBlockView.tsx:11",
         "frontend/src/lib/goldenJourneyRendering.test.ts:7",
         "frontend/src/lib/researchHandoff.ts:1",
+        "frontend/src/lib/responseCoverageContract.test.ts:4",
         "frontend/src/lib/responsePresentation.integration.test.ts:5",
         "frontend/src/lib/xrogaA2uiAdapter.ts:1",
         "frontend/src/lib/xrogaBlocks.test.ts:6",
@@ -108101,6 +108155,7 @@
       ],
       "testCoverage": [
         "frontend/src/lib/goldenJourneyRendering.test.ts",
+        "frontend/src/lib/responseCoverageContract.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts",
         "frontend/src/lib/xrogaBlocks.test.ts",
         "frontend/src/lib/xrogaChartSchemas.test.ts",
@@ -108838,7 +108893,7 @@
       "id": "surface:302352813d356af65f42",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "77dce0e0b3983fa1af2dcbec5235da53f945d2f27e6d3180fdc9db0fa80cf303",
+      "sha256": "6f263b5d7d8194436759e58745f6a4f14964b78527080c0410e45a54b538db69",
       "symbols": [
         "EnhancedAiResponse",
         "MAX_PROTOCOL_CHARS",
@@ -108861,6 +108916,7 @@
         "compactWhitespace",
         "complete",
         "containsUnsafeKey",
+        "contract",
         "cursor",
         "decoded",
         "dividers",
@@ -108888,6 +108944,7 @@
         "ordered",
         "parseProtocolBlocks",
         "parsed",
+        "partialReason",
         "precedingTableTitle",
         "prose",
         "raw",
@@ -108915,11 +108972,13 @@
         "xKey"
       ],
       "imports": [
+        "./responseCoverageContract",
         "./xrogaA2uiAdapter",
         "./xrogaBlocks",
         "./xrogaCapabilityManifest"
       ],
       "runtimeImports": [
+        "frontend/src/lib/responseCoverageContract.ts",
         "frontend/src/lib/xrogaA2uiAdapter.ts",
         "frontend/src/lib/xrogaCapabilityManifest.ts"
       ],
@@ -108936,6 +108995,7 @@
         "frontend/src/components/response-experience-v2/exportText.test.ts:4",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts:3",
         "frontend/src/context/TerminalChatContext.tsx:98",
+        "frontend/src/lib/responseCoverageContract.test.ts:3",
         "frontend/src/lib/responsePresentation.integration.test.ts:4",
         "frontend/src/lib/xrogaResponseDocument.test.ts:4",
         "frontend/src/lib/xrogaRichResults.test.ts:4"
@@ -108953,6 +109013,7 @@
         "frontend/src/components/response-experience-v2/document.test.ts",
         "frontend/src/components/response-experience-v2/exportText.test.ts",
         "frontend/src/components/response-experience-v2/shareSnapshot.test.ts",
+        "frontend/src/lib/responseCoverageContract.test.ts",
         "frontend/src/lib/responsePresentation.integration.test.ts",
         "frontend/src/lib/xrogaResponseDocument.test.ts",
         "frontend/src/lib/xrogaRichResults.test.ts"
@@ -141523,6 +141584,13 @@
     {
       "id": "test-suite:4446028f39b7ee404095",
       "sourcePath": "frontend/src/lib/researchHandoff.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7c11e457c656922ac724",
+      "sourcePath": "frontend/src/lib/responseCoverageContract.test.ts",
       "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []

@@ -1,6 +1,7 @@
 import { adaptTrustedA2uiBlock } from './xrogaA2uiAdapter';
 import { modelBlockCapabilitySet } from './xrogaCapabilityManifest';
 import type { XrogaBlock, XrogaOutputDocument } from './xrogaBlocks';
+import { responseCoverageContractSchema } from './responseCoverageContract';
 
 const XROGA_UI_FENCE = /```xroga-ui\s*\n?([\s\S]*?)```/gi;
 const TABLE_DIVIDER = /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/;
@@ -252,21 +253,23 @@ function tableBlocksFromMarkdown(content: string, documentId: string): { content
 }
 
 /** Convert a completed assistant answer into the canonical, persisted Xroga output document. */
-export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string }): EnhancedAiResponse {
+export function enhanceAiResponse(content: string, documentId: string, completion?: { status: string; reason?: string }, received?: { format: string; text: string; contract?:unknown }): EnhancedAiResponse {
   const source = typeof content === 'string' ? content : '';
   if (source.length > 200_000) return { content: source };
   const blocks: XrogaBlock[] = [];
   let cursor = 0;
   let segment = 0;
+  const contract = responseCoverageContractSchema.safeParse(received?.contract);
   const responseSource = received?.format === 'xroga-response-json-v1' && typeof received.text === 'string' && received.text.length <= 200_000
-    ? { format: 'xroga-response-json-v1' as const, text: received.text } : undefined;
-  let rejected = completion?.status === 'partial';
+    ? { format: 'xroga-response-json-v1' as const, text: received.text,...(contract.success?{contract:contract.data}:{}) } : undefined;
+  let rejected = completion?.status === 'partial' || Boolean(received?.contract && (!contract.success || !contract.data.coverage.complete));
+  const partialReason = completion?.status === 'partial' ? completion.reason : 'presentation_contract';
   if (rejected) blocks.push({ schemaVersion: 1, id: `${safeIdPart(documentId)}-completion`, type: 'notice', tone: 'warning',
-    text: completion?.reason === 'presentation_contract'
+    text: partialReason === 'presentation_contract'
       ? 'This answer did not finish all required sections or included invalid visual data. Only validated content is shown, and the original response is retained for recovery. No automatic retry was made.'
-      : completion?.reason === 'authorization_review'
+      : partialReason === 'authorization_review'
       ? 'Authorization guidance needs review. This answer contains a known unsafe authorization claim. Privileged database roles can bypass RLS, and JWT claims alone do not prove immediate revocation. Verify current server-owned tenant membership and permissions. The original answer is preserved. No automatic retry was made.'
-      : completion?.reason === 'output_limit'
+      : partialReason === 'output_limit'
       ? 'This answer reached its output limit and is incomplete. The received content is preserved. No automatic retry was made.'
       : 'The provider did not confirm a complete answer. The received content is preserved. No automatic retry was made.' });
   const appendText = (value: string) => blocks.push(...tableBlocksFromMarkdown(value, `${documentId}-${segment++}`).ordered);
