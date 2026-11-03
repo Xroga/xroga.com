@@ -1,5 +1,5 @@
 {
-  "observedAtUtc": "2026-11-03T16:38:39.013970+00:00",
+  "observedAtUtc": "2026-11-03T21:33:55.975916+00:00",
   "project": "project-c40d4821-e647-4fa2-92d",
   "productionChanges": false,
   "providerCalls": 0,
@@ -17,10 +17,20 @@
       "revisionName": "xroga-api-voice-fe2c6486c",
       "tag": "voice-9f62bba5",
       "url": "https://voice-9f62bba5---xroga-api-422lt7eujq-uk.a.run.app"
+    },
+    {
+      "revisionName": "xroga-api-zurelay-3bed89-check-1103",
+      "tag": "zurelay-3bed89-check",
+      "url": "https://zurelay-3bed89-check---xroga-api-422lt7eujq-uk.a.run.app"
+    },
+    {
+      "revisionName": "xroga-api-zurelay-76c158-check2-1103",
+      "tag": "zurelay-76c158-check2",
+      "url": "https://zurelay-76c158-check2---xroga-api-422lt7eujq-uk.a.run.app"
     }
   ],
   "nonServingLatestTemplate": {
-    "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:d6b41af5f1ea5c83d0d021d7f9e49d2dd3565bffb3f018385bcdbd60b03426fd",
+    "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:b060ee406046c1e62f192bdd52d830225a9dd816f3c9f4202168fc6e6bead007",
     "environmentNames": [
       "NODE_ENV",
       "XROGA_PROJECT_RUNTIME_PROVIDER",
@@ -58,9 +68,13 @@
       "WHOP_WEBHOOK_SECRET",
       "XROGA_DRIVE_R2_ACCESS_KEY_ID",
       "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
-      "XROGA_GOOGLE_WORKER_IMAGE",
       "XROGA_RELEASE_SHA",
-      "XROGA_DEPLOYMENT_ENVIRONMENT"
+      "XROGA_GOOGLE_WORKER_IMAGE",
+      "XROGA_DEPLOYMENT_ENVIRONMENT",
+      "XROGA_ALLOWED_MODELS",
+      "ZURELAY_JSON_SCHEMA_VERIFIED",
+      "XROGA_RELEASE_CANDIDATE",
+      "ZURELAY_API_KEY"
     ],
     "secretReferences": [
       {
@@ -83,10 +97,19 @@
           "key": "1",
           "name": "XROGA_DRIVE_R2_SECRET_ACCESS_KEY"
         }
+      },
+      {
+        "name": "ZURELAY_API_KEY",
+        "reference": {
+          "key": "1",
+          "name": "xroga_models_zurelay"
+        }
       }
     ],
-    "configuredPolicy": {},
-    "zurelayKeyEnvironmentPresent": false
+    "configuredPolicy": {
+      "XROGA_ALLOWED_MODELS": "deepseek_v4_1_flash_1017,claude_sonnet_5_5"
+    },
+    "zurelayKeyEnvironmentPresent": true
   },
   "servingRevision": "xroga-api-response-cd5541-serving-1102",
   "servingSource": "cd5541c6c887a11ba68aaf3cccfb78609f906167",

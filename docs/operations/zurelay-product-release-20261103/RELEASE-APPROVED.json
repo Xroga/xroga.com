@@ -1,6 +1,6 @@
 {
   "approved": true,
-  "activationHold": "FINAL_4830_EXACT_CI_AND_AUTHENTICATED_PREVIEW_REQUIRED",
+  "activationHold": null,
   "packageId": "zurelay-product-76c158aa-20261103",
   "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
   "frontendSha": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
@@ -62,5 +62,8 @@
       "preparationExpiryUtc": "2026-11-03T23:00:00+00:00",
       "spendingAndSingleMaintenanceWindowUnchanged": true
     }
-  ]
+  ],
+  "conditionalGatesSatisfiedAtUtc": "2026-11-03T21:56:52.047Z",
+  "frontendVerificationFile": "FRONTEND-4830-VERIFICATION.json",
+  "accountProviderBaselineFile": "ACCOUNT-PROVIDER-RECONCILIATION.json"
 }

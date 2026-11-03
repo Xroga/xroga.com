@@ -1,0 +1,66 @@
+{
+  "state": "PRICED_ACCOUNT_BASELINE_CONSERVATIVELY_COUNTED_ORIGIN_UNATTRIBUTED",
+  "checkedAtUtc": "2026-11-03T21:56:52.047Z",
+  "keyName": "xroga models",
+  "provider": "Zurelay",
+  "providerRequestCountBeforeAcceptance": 3,
+  "requests": [
+    {
+      "id": "req_gFEmpGJpXM9Ee1Jh7pALlxIr",
+      "atUtc": "2026-11-03T14:37:07Z",
+      "displayedUsd": "0.0000027",
+      "conservativeMicroUsd": 3,
+      "canonicalReservation": "5c0b95bd-82f8-4576-bfe3-9ab88b5b5a4a",
+      "canonicalStatus": "settled"
+    },
+    {
+      "id": "req_ARwEPpcIe3ll49Mvn99aBLu9",
+      "atUtc": "2026-11-03T21:07:47Z",
+      "displayedUsd": "0.00000081",
+      "conservativeMicroUsd": 1,
+      "inputTokens": 19,
+      "outputTokens": 2,
+      "canonicalReservation": null,
+      "origin": "UNATTRIBUTED"
+    },
+    {
+      "id": "req_9NH5XyFR706ejtHxHnIF7Pqb",
+      "atUtc": "2026-11-03T21:26:03Z",
+      "displayedUsd": "0.0000083",
+      "conservativeMicroUsd": 9,
+      "inputTokens": 84,
+      "outputTokens": 48,
+      "canonicalReservation": null,
+      "origin": "UNATTRIBUTED"
+    }
+  ],
+  "displayedProviderUsdSum": "0.00001181",
+  "conservativelyCountedMicroUsd": 13,
+  "combinedCeilingMicroUsd": 100000,
+  "conservativeRemainingMicroUsd": 99987,
+  "chargeAmountsKnownFromProviderReceipts": true,
+  "callerOriginKnownForTwoAdditionalRequests": false,
+  "customerLedgerEntriesInvented": false,
+  "productionBillingWrites": false,
+  "ownerClarification": {
+    "questionId": "call_a78bb39ff57945efa2fa4b84bbf0b3c2",
+    "answer": "maybe or maybe not resolve it too",
+    "interpretation": "Continue reconciliation. This does not establish caller identity or retroactively authorize those requests."
+  },
+  "historicalHoldsUnchanged": {
+    "kimiMicroUsd": 38282,
+    "glmMicroUsd": 1385
+  },
+  "keyPolicyReadOnlyVerified": {
+    "dailyUsd": 0.1,
+    "monthlyUsd": 0.1,
+    "requestsPerMinute": 3,
+    "onlyModels": [
+      "deepseek-v4.1-flash-1017",
+      "claude-sonnet-5-5"
+    ],
+    "smartRouting": "off",
+    "settingsChanged": false
+  },
+  "futureRule": "Every new acceptance request must match its canonical reservation and provider receipt. Stop at any additional unexpected request, missing usage, failed acceptance or unknown amount. Never assign the unattributed baseline charges to a customer."
+}

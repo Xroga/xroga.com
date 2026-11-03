@@ -55,7 +55,7 @@
     },
     {
       "path": "production-preflight.json",
-      "sha256": "c525a76ec697bef78caee15e0b3f5a1eef3d725b9b43ae276119f96add7a8644"
+      "sha256": "487ce54d3d8bd77c6c05b152d7592ebccad3265421d36039a54d5ce0f4d145c8"
     },
     {
       "path": "PRODUCTION-RELEASE-APPROVAL.md",

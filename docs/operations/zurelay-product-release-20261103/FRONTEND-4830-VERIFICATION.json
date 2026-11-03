@@ -1,0 +1,33 @@
+{
+  "state": "PASS_AUTHENTICATED_SOURCE_READINESS_NOT_GENERATED_ANSWER_ACCEPTANCE",
+  "checkedAtUtc": "2026-11-03T21:56:52.047Z",
+  "source": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+  "deployment": "DQaXPwotHwsqW8pd8vYggfwKp2MK",
+  "deploymentState": "READY",
+  "buildFinishedAtUtc": "2026-11-03T21:33:06Z",
+  "environment": "preview",
+  "identityEndpoint": "https://xrogaaicom-git-codex-zurelay-response-co-0825f7-xrogas-projects.vercel.app/api/release",
+  "identityObservedViaBrowser": {
+    "service": "xroga-web",
+    "release": "4830b424d32e0f30aac11901374dcb09c68b4e9a",
+    "environment": "preview"
+  },
+  "signedInAccount": "evanderthorne.help@gmail.com",
+  "productionFounderAccountObserved": "hello@xroga.com",
+  "founderDiagnosticsOrMfaBypassed": false,
+  "promptsSubmitted": 0,
+  "desktop": {
+    "width": 1440,
+    "height": 1000,
+    "documentWidth": 1440,
+    "screenshot": "outputs/zurelay-approved-release/final-4830-authenticated-desktop.jpg"
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "screenshot": "outputs/zurelay-approved-release/final-4830-authenticated-mobile.jpg"
+  },
+  "viewportCorrection": "Used the selected browser controller from cua.getBrowser after the tool reset. Direct raw-browser binding had not applied the override. Failed dimensions were never accepted as mobile proof.",
+  "richGeneratedAnswersVerified": false
+}
