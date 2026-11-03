@@ -37,7 +37,8 @@
     "frontend/src/app/auth/reset-password/page.tsx",
     "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
     "docs/operations/zurelay-two-model-20261103/LIVE-RELEASE-DRIFT-REVIEW.json",
-    "docs/operations/zurelay-two-model-20261103/SECOND-LIVE-COMPOSER-COMPATIBILITY.json"
+    "docs/operations/zurelay-two-model-20261103/SECOND-LIVE-COMPOSER-COMPATIBILITY.json",
+    "docs/operations/zurelay-two-model-20261103/FINAL-LIVE-DOCK-COMPATIBILITY.json"
   ],
   "decisions": {
     "keep": [
@@ -132,7 +133,8 @@
     "docs/operations/zurelay-two-model-20261103/WORKSPACE-HANDOFF-REVIEW.json",
     "docs/operations/zurelay-two-model-20261103/LIVE-RELEASE-DRIFT-REVIEW.json",
     "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
-    "docs/operations/zurelay-two-model-20261103/SECOND-LIVE-COMPOSER-COMPATIBILITY.json"
+    "docs/operations/zurelay-two-model-20261103/SECOND-LIVE-COMPOSER-COMPATIBILITY.json",
+    "docs/operations/zurelay-two-model-20261103/FINAL-LIVE-DOCK-COMPATIBILITY.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
+  "source_sha": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -4047,6 +4047,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-0210f6e9f296ac25",
+      "filename": "FINAL-LIVE-DOCK-COMPATIBILITY.json",
+      "path_or_url": "docs/operations/zurelay-two-model-20261103/FINAL-LIVE-DOCK-COMPATIBILITY.json",
+      "sha256": "318c944e16e26a828b181ee14355176bc55bb9959ae5c6fc47eb9ef03898ad80",
+      "byte_size": 2595,
+      "modified_timestamp": "2026-11-03T20:42:53.271Z",
+      "parse_status": "PARSED_JSON",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-aacc2a7a8f5b60eb",
       "filename": "FRONTEND-STATUS.md",
       "path_or_url": "docs/operations/zurelay-two-model-20261103/FRONTEND-STATUS.md",
@@ -5597,9 +5610,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "34a7b4e3a760418a6aa5b55120132b5683232b223ffe8f23ea58a2393bc3717c",
-      "byte_size": 5213668,
-      "modified_timestamp": "2026-11-03T20:04:03.838Z",
+      "sha256": "8e67d8dd90c2aa6823ddd090b735d99e80f499b937622e756c8c827957789753",
+      "byte_size": 5213744,
+      "modified_timestamp": "2026-11-03T20:43:01.308Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -22939,9 +22952,9 @@
       "source_id": "SRC-96c636bdc082da39",
       "filename": "TerminalDock.tsx",
       "path_or_url": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "cc72bc05e2437c3fb8649235be09213f88f59b4a2b429fd512d66e6bae3fa7af",
-      "byte_size": 7782,
-      "modified_timestamp": "2026-11-03T19:07:28.185Z",
+      "sha256": "70d7d276623bc00339b82feac14516ee23ea0ffc2fd1196002587eee798a452b",
+      "byte_size": 8739,
+      "modified_timestamp": "2026-11-03T20:36:24.928Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

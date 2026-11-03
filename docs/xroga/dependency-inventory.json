@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2f80a744a406eb2ab7e86538bc382cc3000ef730",
+  "source_sha": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -21512,7 +21512,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "cc72bc05e2437c3fb8649235be09213f88f59b4a2b429fd512d66e6bae3fa7af"
+      "sha256": "70d7d276623bc00339b82feac14516ee23ea0ffc2fd1196002587eee798a452b"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
