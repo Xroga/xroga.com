@@ -1,0 +1,20 @@
+{
+  "finishTime": "2026-11-03T14:34:37.004075Z",
+  "logUrl": "https://console.cloud.google.com/cloud-build/builds;region=us-east4/0306d700-a3db-4696-ba21-23bc60f3bfa5?project=574998934848",
+  "results": {
+    "images": [
+      {
+        "artifactRegistryPackage": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/repositories/cloud-run-source-deploy/packages/xroga-api-release/versions/sha256:b060ee406046c1e62f192bdd52d830225a9dd816f3c9f4202168fc6e6bead007",
+        "digest": "sha256:b060ee406046c1e62f192bdd52d830225a9dd816f3c9f4202168fc6e6bead007",
+        "name": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release:zurelay-3bed89-1103",
+        "pushTiming": {
+          "endTime": "2026-11-03T14:34:36.355525813Z",
+          "startTime": "2026-11-03T14:34:15.858507848Z"
+        }
+      }
+    ]
+  },
+  "startTime": "2026-11-03T14:31:52.788964387Z",
+  "status": "SUCCESS",
+  "observedAtUtc": "2026-11-03T14:34:43.902567+00:00"
+}

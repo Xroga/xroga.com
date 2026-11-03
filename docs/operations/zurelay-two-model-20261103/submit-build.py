@@ -22,7 +22,12 @@ describe=[GC,'artifacts','docker','images','describe',IMAGE,'--project='+P,'--ac
 command='& '+' '.join("'"+v.replace("'","''")+"'" for v in describe)
 existing=subprocess.run([PS,'-NoProfile','-Command',command],capture_output=True,text=True,timeout=45)
 assert existing.returncode!=0,'EXISTING_IMAGE_INSPECT_AND_REUSE_NO_REBUILD'
-assert 'NOT_FOUND' in existing.stderr,'IMAGE_ABSENCE_NOT_VERIFIED'
+def image_absence_verified(result):
+ # This gcloud version renders the registry 404 as "Image not found."
+ # Accept only its exact command-specific error, never a general failure.
+ first=result.stderr.strip().splitlines()[0] if result.stderr.strip() else ''
+ return result.returncode==1 and not result.stdout.strip() and first=='ERROR: (gcloud.artifacts.docker.images.describe) Image not found.'
+assert image_absence_verified(existing),'IMAGE_ABSENCE_NOT_VERIFIED'
 
 def record(state,**more):
  v={'atUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'state':state,'source':SHA,'imageTag':IMAGE,**more}

@@ -1,0 +1,15 @@
+{
+  "approved": true,
+  "singleProbeApproved": true,
+  "packageId": "zurelay-single-probe-3bed89e6",
+  "sourceSha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "maximumProviderRequests": 1,
+  "maximumProviderMicroUsd": 1000,
+  "maximumOneTimeGoogleUsd": 0.5,
+  "approvedAtUtc": "2026-11-03T14:28:21.8283418+00:00",
+  "expiresAtUtc": "2026-11-03T14:58:21.8283418+00:00",
+  "approvalOperatorSource": "a1e75f47c3d82cadf40c2185e1d03da4ca94921e",
+  "ownerDecision": "Approve this exact single probe",
+  "providerHistoryBefore": "0 requests, 0 tokens, no prior key use",
+  "productionChangesAuthorized": false
+}

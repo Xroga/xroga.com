@@ -1,0 +1,54 @@
+{
+  "source": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "job": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/jobs/xroga-zurelay-probe-1103",
+  "checks": [
+    {
+      "name": "unit",
+      "id": 125921412137,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068993/job/125921412137"
+    },
+    {
+      "name": "build",
+      "id": 125920944365,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41637102793/job/125920944365"
+    },
+    {
+      "name": "authenticated-browser",
+      "id": 125920965741,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41637108023/job/125920965741"
+    },
+    {
+      "name": "deterministic-golden",
+      "id": 125920826711,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068782/job/125920826711"
+    },
+    {
+      "name": "structured-mission-policy",
+      "id": 125920826558,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068839/job/125920826558"
+    },
+    {
+      "name": "disposable-policy-database",
+      "id": 125920826612,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068779/job/125920826612"
+    },
+    {
+      "name": "integrated-candidate",
+      "id": 125921412724,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/41637068993/job/125921412724"
+    }
+  ],
+  "operatorScriptSha256": "ae831c732ab7549faf86620ba7618e2688e71c3ded2b2a7fa4d8bc45a7fb3269",
+  "state": "PASS_SINGLE_PROBE_RECONCILED_AND_CLEANED",
+  "atUtc": "2026-11-03T14:36:11.017361+00:00",
+  "modelRequestsKnown": 1,
+  "execution": "projects/project-c40d4821-e647-4fa2-92d/locations/us-east4/jobs/xroga-zurelay-probe-1103/executions/xroga-zurelay-probe-1103-prcps",
+  "next": "Read only the exact execution zurelayProbe JSON log, compare canonical ledger settlement and provider key usage before any further inference. Execution success alone is not provider or Workspace acceptance.",
+  "cleanup": "JOB_ABSENCE_VERIFIED",
+  "servingPairUnchanged": true,
+  "productionSqlChanges": false,
+  "providerRequestId": "req_gFEmpGJpXM9Ee1Jh7pALlxIr",
+  "providerDebitUsd": "0.0000027",
+  "ledgerSettledMicroUsd": 3,
+  "windowClosedAtUtc": "2026-11-03T14:42:52.632859+00:00"
+}

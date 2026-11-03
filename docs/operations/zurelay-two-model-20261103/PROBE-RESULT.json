@@ -1,0 +1,37 @@
+{
+  "status": "PASS_SINGLE_NONSTREAMING_JSON_PROBE_ONLY",
+  "source": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "provider": "zurelay",
+  "externalModel": "deepseek-v4.1-flash-1017",
+  "requests": 1,
+  "result": "25 * 40 = 1000 validated by the reviewed operator program",
+  "providerRequestId": "req_gFEmpGJpXM9Ee1Jh7pALlxIr",
+  "providerChargedUsd": "0.0000027",
+  "ledgerSettledMicroUsd": 3,
+  "historicalUnknownHoldsUsd": {
+    "kimi": "0.038282",
+    "glm": "0.001385"
+  },
+  "modelCapUsd": "0.001",
+  "oneTimeGoogleCapUsd": "0.50",
+  "googleActualBill": "NOT_YET_AVAILABLE_DO_NOT_REPORT_ZERO",
+  "googleBuildSeconds": 164.215111,
+  "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-release@sha256:b060ee406046c1e62f192bdd52d830225a9dd816f3c9f4202168fc6e6bead007",
+  "compressedImageBytes": 154716936,
+  "imageRetainNoLaterThanUtc": "2026-11-06T14:34:37.004075+00:00",
+  "retentionRule": "Reuse only under a separate reviewed release/recovery authorization. Otherwise remove this exact new candidate by the 72-hour deadline. Preserve all existing recovery images and shared layers.",
+  "temporaryJobRemoved": true,
+  "productionPairChanged": false,
+  "voiceChanged": false,
+  "productionSqlApplied": false,
+  "windowClosedAtUtc": "2026-11-03T14:42:52.632859+00:00",
+  "originalWindowExpiryUtc": "2026-11-03T14:58:21.8283418+00:00",
+  "remainingInferenceAuthorized": 0,
+  "notVerified": [
+    "strict JSON schema enforcement",
+    "Zurelay streaming",
+    "Sonnet inference or user approval/resume",
+    "new-chat Workspace product acceptance",
+    "production provider cutover"
+  ]
+}

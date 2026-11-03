@@ -12,7 +12,7 @@
     },
     {
       "path": "docs/operations/zurelay-two-model-20261103/submit-build.py",
-      "sha256": "bd0c7bd3654d5b72f882699946ecc8d791c6796c919a1d3c22f60c8066d69695"
+      "sha256": "fe1e1bf02e63a620fcb223344a3b666996862af1e8a86874d1cab8c8ce8fd132"
     },
     {
       "path": "docs/operations/zurelay-two-model-20261103/verify-image.py",
@@ -27,7 +27,7 @@
       "sha256": "adcc172b109ffabe41c5399bf2dcf2d2f64226c89db070a81c9eecafb2b29d47"
     }
   ],
-  "state": "PREPARATION_ONLY_NO_PROVIDER_OR_BUILD_AUTHORIZATION",
+  "state": "APPROVED_SINGLE_PROBE_EXECUTED_RECONCILED_CLEANED_NO_PRODUCTION_CUTOVER",
   "tests": [
     {
       "job": "d84b2f4c-8419-4d30-8424-dbb0d7d45c20",
@@ -40,9 +40,15 @@
       "scope": "Nine operator/source archive/gate tests",
       "status": "passed",
       "logSha256": "c3c6e7d3e5ac21b2aeaadac4e5a2a93e7fa862e0afdc9eede12f7c3ce0574618"
+    },
+    {
+      "job": "52cd75cb-60d6-4945-9c50-e2828f72e3be",
+      "scope": "Two registry absence compatibility tests, permission/network/ambiguous errors still refused",
+      "status": "passed",
+      "logSha256": "4cd49ad0c73a8aa832fab522c6a78b7c7920d0020aa82b81b4234fa118a1a5f0"
     }
   ],
   "credentialSetup": "CREDENTIAL-SETUP-RECEIPT.json",
-  "providerCalls": 0,
-  "modelSpendUsd": 0
+  "providerCalls": 1,
+  "modelSpendUsd": 2.7e-06
 }

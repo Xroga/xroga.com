@@ -1,0 +1,76 @@
+{
+  "scope": "READ_ONLY_EXACT_PROBE_AND_PRESERVED_HISTORICAL_HOLDS",
+  "rows": [
+    {
+      "observed_at_utc": "2026-11-03 14:39:54.437091+00",
+      "id": "f91a8a7c-1309-49ca-afd9-7bfb259ba4db",
+      "idempotency_key": "ef0af2e4-b5f1-485d-a9b2-170ca5c96e87",
+      "status": "pending_reconciliation",
+      "internal_route": "glm_5_3_flash",
+      "price_version": "2026-11-02-v2",
+      "reserved_micro_usd": 1385,
+      "settled_micro_usd": null,
+      "provider_request_id": null,
+      "actual_input_tokens": null,
+      "cached_input_tokens": null,
+      "output_tokens": null,
+      "reasoning_tokens": null,
+      "error_category": "unknown"
+    },
+    {
+      "observed_at_utc": "2026-11-03 14:39:54.437091+00",
+      "id": "6d33d7e6-e376-484d-95e0-10d50dae55f9",
+      "idempotency_key": "ae3d4603-7e0d-43af-8ed4-1387f4762296",
+      "status": "pending_reconciliation",
+      "internal_route": "kimi_k3",
+      "price_version": "2026-11-02-v2",
+      "reserved_micro_usd": 38282,
+      "settled_micro_usd": null,
+      "provider_request_id": null,
+      "actual_input_tokens": null,
+      "cached_input_tokens": null,
+      "output_tokens": null,
+      "reasoning_tokens": null,
+      "error_category": "cancelled"
+    },
+    {
+      "observed_at_utc": "2026-11-03 14:39:54.437091+00",
+      "id": "5c0b95bd-82f8-4576-bfe3-9ab88b5b5a4a",
+      "idempotency_key": "d29e5edc-6cb2-4e55-b0bf-1bd589de0372",
+      "status": "settled",
+      "internal_route": "deepseek_v4_1_flash_1017",
+      "price_version": "zurelay-2026-11-03-v2",
+      "reserved_micro_usd": 1000,
+      "settled_micro_usd": 3,
+      "provider_request_id": "req_gFEmpGJpXM9Ee1Jh7pALlxIr",
+      "actual_input_tokens": 58,
+      "cached_input_tokens": 0,
+      "output_tokens": 8,
+      "reasoning_tokens": 0,
+      "error_category": null
+    }
+  ],
+  "provider": {
+    "accountRequestCountAfter": 1,
+    "requestId": "req_gFEmpGJpXM9Ee1Jh7pALlxIr",
+    "model": "deepseek-v4.1-flash-1017",
+    "endpoint": "/v1/chat/completions",
+    "status": 200,
+    "inputTokens": 58,
+    "outputTokens": 8,
+    "reasoningTokens": 0,
+    "cachedInputTokens": 0,
+    "chargedUsd": "0.0000027",
+    "latencyMilliseconds": 813,
+    "source": "Authenticated Zurelay Requests detail, observed 2026-11-03T14:39Z"
+  },
+  "reconciliation": {
+    "ledgerSettledMicroUsd": 3,
+    "providerChargedMicroUsd": "2.7",
+    "integerMicroUsdRounding": "ceil(2.7) = 3",
+    "ledgerRoundingDifferenceMicroUsd": "0.3",
+    "sameRequestAndUsageVerified": true,
+    "historicalHoldsPreserved": true,
+    "additionalInferenceAuthorized": false
+  }
+}

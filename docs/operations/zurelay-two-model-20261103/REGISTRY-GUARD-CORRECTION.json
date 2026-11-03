@@ -1,0 +1,14 @@
+{
+  "atUtc": "2026-11-03T14:31:08.1098226+00:00",
+  "type": "operator-only CLI diagnostic compatibility",
+  "applicationSource": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+  "priorAttempt": "13519574-62ea-4a6c-b09b-c6ca02f3e91a",
+  "readOnlyDiagnostic": "8a88d1b0-7f04-4fc2-8d83-3083127c603a",
+  "testJob": "52cd75cb-60d6-4945-9c50-e2828f72e3be",
+  "testsPassed": 2,
+  "cause": "Google CLI emits exact command-specific Image not found error, not NOT_FOUND",
+  "buildSubmitted": false,
+  "providerCalls": 0,
+  "sameApprovalWindow": true,
+  "scopesOrCapsChanged": false
+}

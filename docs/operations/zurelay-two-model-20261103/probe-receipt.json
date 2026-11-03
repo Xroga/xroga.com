@@ -1,0 +1,31 @@
+{
+  "observedAtUtc": "2026-11-03T14:38:03.853162+00:00",
+  "entries": [
+    {
+      "timestamp": "2026-11-03T14:37:07.678634Z",
+      "execution": "xroga-zurelay-probe-1103-prcps",
+      "receipt": {
+        "apiModel": "deepseek-v4.1-flash-1017",
+        "cachedInputTokens": 0,
+        "catalogCostMicroUsd": 3,
+        "founderUiOrMfaAcceptance": false,
+        "inputTokens": 58,
+        "modelId": "deepseek_v4_1_flash_1017",
+        "operatorSyntheticProjectOnly": true,
+        "outputTokens": 8,
+        "priceVersion": "zurelay-2026-11-03-v2",
+        "provider": "zurelay",
+        "providerRequestId": "req_gFEmpGJpXM9Ee1Jh7pALlxIr",
+        "reasoningTokens": 0,
+        "requestCount": 1,
+        "reservationCeilingMicroUsd": 1000,
+        "source": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
+        "status": "PASS_SINGLE_JSON_PROVIDER_PROBE_NOT_WORKSPACE_ACCEPTANCE",
+        "streamingTested": false,
+        "strictJsonSchemaTested": false
+      },
+      "failure": null
+    }
+  ],
+  "providerInferenceTriggered": false
+}
