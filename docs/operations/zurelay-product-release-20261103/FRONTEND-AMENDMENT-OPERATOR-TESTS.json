@@ -1,14 +1,15 @@
 {
   "scope": "OFFLINE_OPERATOR_PIN_GUARDS_NOT_PRODUCTION_ACCEPTANCE",
-  "job": "6370d2c7-0599-44e1-9683-72aa8d14ae26",
+  "job": "0a2b903a-8590-46c6-9aea-334b758f712f",
   "tests": 16,
   "failures": 0,
   "providerCalls": 0,
   "sourceFiles": {
-    "release_contract.py": "edbc05bfe2cd7984b2be5004984f042213fdf067e0e76017d679b20eab61e774",
-    "test_release_contract.py": "c5a6e3aed87eec7cb4a2bad23b9ec4e4edf703632a719c19f5ed2679f123dc42",
+    "release_contract.py": "19304346845bad7b252fc43280a7d1ad76e3a71569ef613b958fe2a95c67075b",
+    "test_release_contract.py": "0e41f8256b01b5deedd431b842f2ab85550d5ab08cc4f7aab69aff0d6c799fa0",
     "test_cutover_payloads.py": "8a38ff91da330beb73acdbf777bbd4ac1ccda599509adf518682dd131ef4ce7c"
   },
-  "ownerQuestionId": "call_e20f8e3aea714fb5bc4abbdc84651f35",
-  "expiryUnchanged": true
+  "ownerQuestionId": "call_b2ff39e786524e2d8d5bac17a1c8f4a3",
+  "preparationExpiryUtc": "2026-11-03T22:00:00+00:00",
+  "originalCapsAndSingleWindowUnchanged": true
 }

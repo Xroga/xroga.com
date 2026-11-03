@@ -1,24 +1,67 @@
 {
   "state": "PREPARED_NOT_SUBMITTED",
   "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
-  "frontendSha": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
+  "frontendSha": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
   "projectId": "85730a9a-fca9-4eb8-aa89-4e9c6172e2c5",
   "projectOwnership": "Read-only metadata confirms existing production account hello@xroga.com owns this project. github_repo_url and github_repo_name are null. Preview Google account differs and will not submit these founder tests.",
   "combinedCeilingMicroUsd": 100000,
   "priorProbeSettledMicroUsd": 3,
-  "historicalHolds": {"kimiMicroUsd": 38282, "glmMicroUsd": 1385},
+  "historicalHolds": {
+    "kimiMicroUsd": 38282,
+    "glmMicroUsd": 1385
+  },
   "maximumNewChats": 6,
   "maximumModelRequests": 11,
   "maximumRetrievalRequests": 1,
   "manualRetries": 0,
-  "submitOnlyAfter": ["Final frontend amendment approved", "Exact-source CI passed", "Private readiness and paired production cutover passed", "Canonical and provider budget admission fit the remaining allowance", "All prior acceptance steps passed with known charges"],
+  "submitOnlyAfter": [
+    "Final frontend amendment approved",
+    "Exact-source CI passed",
+    "Private readiness and paired production cutover passed",
+    "Canonical and provider budget admission fit the remaining allowance",
+    "All prior acceptance steps passed with known charges"
+  ],
   "prompts": [
-    {"id":"saas","model":"deepseek-v4.1-flash-1017","maximumModelRequests":2,"prompt":"Explain a small multi-tenant SaaS architecture using Next.js, Supabase and Stripe. Include a useful architecture diagram and describe tenant isolation and the role of each component. This is an explanation only, do not build or execute anything.","provenance":"Exact captured failed prompt from response-v2-answer-coverage/new-saas-attempt.json. Required acceptance also checks complete tenant comparison and proposed database structure, not merely a graph."},
-    {"id":"workshop","model":"deepseek-v4.1-flash-1017","maximumModelRequests":2,"prompt":"Help me understand revenue for a workshop with a $25 ticket and 40 attendees. Show the formula, an accurate revenue table and a working interactive calculator for ticket price and attendance. Label all changed inputs as hypothetical scenarios, explain that this is gross revenue before costs, and don't invent expenses or historical results. This is explanation only, don't execute anything."},
-    {"id":"research","model":"deepseek-v4.1-flash-1017","maximumModelRequests":2,"maximumRetrievalRequests":1,"prompt":"Research what WebAuthn passkeys are using official FIDO and W3C sources. Explain how sign-in works, compare them with passwords, and cite the actual pages you retrieve beside the relevant claims. Don't claim a search happened until it actually returns results. This is research only, don't access any account or make changes."},
-    {"id":"workflow","model":"deepseek-v4.1-flash-1017","maximumModelRequests":2,"prompt":"Explain a customer-support ticket triage workflow with a connected branching diagram. Show intake, duplicate detection, urgency classification, a human approval step before sending an external response, and a separate escalation path. Include cancellation and retry rules that avoid duplicate replies. This is a proposed workflow only. Don't send messages, connect tools or execute actions."},
-    {"id":"simple","model":"deepseek-v4.1-flash-1017","maximumModelRequests":2,"prompt":"What's the difference between a goal and a task? Give a brief, friendly explanation."},
-    {"id":"sonnet","model":"claude-sonnet-5-5","maximumModelRequests":1,"maximumReservationMicroUsd":50000,"requiresNativeExactPayloadConfirmation":true,"prompt":"Use Claude Sonnet for a read-only complex debugging analysis. Two files cause a cancellation race: queue.ts does `const item = await claim(); await run(item); await markDone(item.id);` and cancel.ts does `await markCancelled(id); await terminateWorker(id);`. Explain a safe transactional lease/fencing design, the stale-completion race, a minimal multi-file TypeScript correction, and focused regression cases. Don't access a repository, execute code, change files or call tools. Ask for the existing exact-payload model approval before this one Sonnet request. Do not substitute another model."}
+    {
+      "id": "saas",
+      "model": "deepseek-v4.1-flash-1017",
+      "maximumModelRequests": 2,
+      "prompt": "Explain a small multi-tenant SaaS architecture using Next.js, Supabase and Stripe. Include a useful architecture diagram and describe tenant isolation and the role of each component. This is an explanation only, do not build or execute anything.",
+      "provenance": "Exact captured failed prompt from response-v2-answer-coverage/new-saas-attempt.json. Required acceptance also checks complete tenant comparison and proposed database structure, not merely a graph."
+    },
+    {
+      "id": "workshop",
+      "model": "deepseek-v4.1-flash-1017",
+      "maximumModelRequests": 2,
+      "prompt": "Help me understand revenue for a workshop with a $25 ticket and 40 attendees. Show the formula, an accurate revenue table and a working interactive calculator for ticket price and attendance. Label all changed inputs as hypothetical scenarios, explain that this is gross revenue before costs, and don't invent expenses or historical results. This is explanation only, don't execute anything."
+    },
+    {
+      "id": "research",
+      "model": "deepseek-v4.1-flash-1017",
+      "maximumModelRequests": 2,
+      "maximumRetrievalRequests": 1,
+      "prompt": "Research what WebAuthn passkeys are using official FIDO and W3C sources. Explain how sign-in works, compare them with passwords, and cite the actual pages you retrieve beside the relevant claims. Don't claim a search happened until it actually returns results. This is research only, don't access any account or make changes."
+    },
+    {
+      "id": "workflow",
+      "model": "deepseek-v4.1-flash-1017",
+      "maximumModelRequests": 2,
+      "prompt": "Explain a customer-support ticket triage workflow with a connected branching diagram. Show intake, duplicate detection, urgency classification, a human approval step before sending an external response, and a separate escalation path. Include cancellation and retry rules that avoid duplicate replies. This is a proposed workflow only. Don't send messages, connect tools or execute actions."
+    },
+    {
+      "id": "simple",
+      "model": "deepseek-v4.1-flash-1017",
+      "maximumModelRequests": 2,
+      "prompt": "What's the difference between a goal and a task? Give a brief, friendly explanation."
+    },
+    {
+      "id": "sonnet",
+      "model": "claude-sonnet-5-5",
+      "maximumModelRequests": 1,
+      "maximumReservationMicroUsd": 50000,
+      "requiresNativeExactPayloadConfirmation": true,
+      "prompt": "Use Claude Sonnet for a read-only complex debugging analysis. Two files cause a cancellation race: queue.ts does `const item = await claim(); await run(item); await markDone(item.id);` and cancel.ts does `await markCancelled(id); await terminateWorker(id);`. Explain a safe transactional lease/fencing design, the stale-completion race, a minimal multi-file TypeScript correction, and focused regression cases. Don't access a repository, execute code, change files or call tools. Ask for the existing exact-payload model approval before this one Sonnet request. Do not substitute another model."
+    }
   ],
   "noPresentationInference": "Viewport changes, local sliders/reset, Copy, Share and reopening must not create model reservations or provider requests.",
   "stop": "Stop later paid submissions on the first failed or partial acceptance, factual error, provider/protocol/identity failure, unknown charge or cancellation race. Retain evidence and recover under the approved package. No new retry allowance."

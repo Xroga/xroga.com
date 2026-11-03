@@ -2,7 +2,7 @@
   "approved": true,
   "packageId": "zurelay-product-76c158aa-20261103",
   "sourceSha": "76c158aaeecf82f524659454b7b3726b4d255679",
-  "frontendSha": "f62ca1f3f70150040d829b2ee48f93192feff9c2",
+  "frontendSha": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
   "recoverySha": "3bed89e65411fea9376bce0da8aacd1bd8c72f92",
   "maximumGoogleUsd": 0.5,
   "maximumImageUsdPerMonth": 0.1,
@@ -14,7 +14,7 @@
   "automaticRetries": 0,
   "singletonFenceSqlApproved": true,
   "existingKeyLimitChangeApproved": true,
-  "expiresAtUtc": "2026-11-03T20:34:32.316653+00:00",
+  "expiresAtUtc": "2026-11-03T22:00:00+00:00",
   "ownerDecision": "Approve this exact release and bounded acceptance",
   "ownerDecisionQuestionId": "call_dea43f3b59ba4410be1e2ba3b295cc10",
   "approvedPackageCommit": "1f03c794af1764ccc326331eea08e5a36d995503",
@@ -33,6 +33,15 @@
       "questionId": "call_e20f8e3aea714fb5bc4abbdc84651f35",
       "decision": "Approve the evidence-only identifier correction within the same limits",
       "conditionalOn": "all eight final CI gates and authenticated Preview passing"
+    },
+    {
+      "source": "63a6c6129d8a1e3ef998f4e7fce13e8d00c17c2b",
+      "questionId": "call_b2ff39e786524e2d8d5bac17a1c8f4a3",
+      "decision": "Approve this exact frontend and preparation-time amendment",
+      "reviewCommit": "8e2e5e67dae91ddc6e841c22576dec633336a1d6",
+      "conditionalOn": "all eight exact-source gates and authenticated Preview verification",
+      "preparationExpiryUtc": "2026-11-03T22:00:00+00:00",
+      "spendingAndSingleMaintenanceWindowUnchanged": true
     }
   ]
 }
