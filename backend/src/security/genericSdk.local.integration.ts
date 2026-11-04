@@ -23,7 +23,7 @@ export function registerGenericSdkTests(admin:SupabaseClient):void{
     assert.equal(created.error,null);assert.ok(created.data);const project=created.data.id as string;
     assert.equal((await admin.from('user_token_usage').upsert({user_id:owner,input_tokens:0,output_tokens:0,model_usage:{},spent_usd:0,
       rollover_usd:0,plan_tier:'free',plan_budget_usd:1.65,quota_period_start:new Date().toISOString().slice(0,7)+'-01'})).error,null);
-    process.env.ZURELAY_API_KEY='synthetic-generic-sdk-key';t.after(()=>{delete process.env.ZURELAY_API_KEY;});
+    process.env.ZURELAY_API_KEY='synthetic-generic-sdk-key';process.env.ZURELAY_STREAM_USAGE_VERIFIED='1';t.after(()=>{delete process.env.ZURELAY_API_KEY;delete process.env.ZURELAY_STREAM_USAGE_VERIFIED;});
     const nativeFetch=globalThis.fetch;let sends=0,mode='ok',atomicCalls=0,settlements=0;
     t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
       const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);

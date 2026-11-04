@@ -306,6 +306,8 @@ export async function chatCompletion(
     /** Provider-specific reasoning control for compact structured workloads. */
     reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
+    /** Single-response transport only: visible text is released through the admission gate after the receipt is verified. */
+    publishAfterVerification?: (text: string) => void;
     credentialOverride?: string;
     beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
@@ -369,7 +371,7 @@ export async function chatCompletion(
       reasoningTokens: completion.usage?.completion_tokens_details?.reasoning_tokens ?? 0,
       providerRequestId: modelTransportReceipt(endpoint).requestId,
     };
-    admission.complete(result,()=>{},checkCancellation);
+    admission.complete(result,()=>opts.publishAfterVerification?.(text),checkCancellation);
     return Object.freeze(result);
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
@@ -525,10 +527,9 @@ export async function chatCompletionSingleResponse(
   messages: ChatMessage[],
   opts: Parameters<typeof chatCompletionStream>[2] = {},
 ): Promise<ChatResult> {
-  const { onDelta, onActivity, ...single } = opts;
-  const result = await chatCompletion(modelId, messages, single);
+  const { onActivity, onDelta, ...single } = opts;
+  const result = await chatCompletion(modelId, messages, { ...single, publishAfterVerification: onDelta });
   onActivity?.(result.text.length || undefined);
-  onDelta?.(result.text);
   return result;
 }
 
