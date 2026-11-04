@@ -1,0 +1,44 @@
+name: One-time SEO branch requirements ledger reconciliation
+on:
+  push:
+    branches:
+      - seo/free-ai-app-builder-2026-11
+    paths:
+      - .github/workflows/seo-ledger-reconciliation.yml
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    if: github.repository == 'Xroga/xroga.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout SEO branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: seo/free-ai-app-builder-2026-11
+          fetch-depth: 0
+      - name: Use repository Node version
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install dependencies from lockfile
+        run: npm ci
+      - name: Remove temporary workflow before reconciliation
+        run: git rm .github/workflows/seo-ledger-reconciliation.yml
+      - name: Refresh and validate canonical requirements derived from source
+        run: |
+          node scripts/xroga/inventory.mjs --check
+          node scripts/security/audit-egress-callers.mjs --require-complete
+          node scripts/xroga/reconcile-requirements.mjs
+          node scripts/xroga/validate-requirements-ledger.mjs
+          node scripts/xroga/reconcile-requirements.mjs --check
+      - name: Commit tracked derived ledger changes only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u -- docs/xroga
+          git diff --cached --stat
+          git commit -m "chore: reconcile source-bound requirements ledger after SEO updates"
+          git push origin HEAD:seo/free-ai-app-builder-2026-11
