@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "43ed343c2af35f49f7959684f7e692a04a750218",
+  "source_sha": "135f3432f4f03da15b81f1d4354d3ef1d8262374",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22833,7 +22833,7 @@
     },
     {
       "path": "vercel.json",
-      "sha256": "fce3ccc3214b782bb78649cb50dc92b8e7fb509cbb6e177648ac0c067f1c659b"
+      "sha256": "95cb45bf166533166e25a21f770f1fb4db7e340101a2e2ed11c3e7738ee0d65d"
     }
   ],
   "dynamic_bindings": [
