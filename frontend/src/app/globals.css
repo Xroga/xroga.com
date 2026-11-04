@@ -14870,3 +14870,87 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
 .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-companion-blackhole > button:hover {
   background:transparent!important;
 }
+
+/* Match the active composer to the 56rem response column without widening the starter. */
+.xv-terminal-dock[data-workspace-state='conversation'] .xv-terminal-dock-inner,
+body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split[data-workspace-state='conversation'] .xv-terminal-dock-inner,
+body.xv-terminal-fullscreen-active:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split.xv-terminal-dock--fullscreen[data-workspace-state='conversation'] .xv-terminal-dock-inner {
+  width: 100% !important;
+  max-width: calc(56rem + 3rem) !important;
+}
+.xv-terminal-dock[data-workspace-state='conversation'] .xv-kimi-composer-frame[data-composer-frame='single'] {
+  box-sizing: border-box;
+  width: 100% !important;
+  min-width: 0;
+  max-width: 56rem !important;
+}
+
+/* Segmented workspace controls, adapted from the supplied radio-button treatment.
+   These are independent actions, so they keep button semantics rather than becoming
+   a mutually exclusive radio group. Every terminal skin supplies these tokens. */
+.xv-toolbar-radio-group {
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--terminal-ui-border, var(--card-border));
+  border-radius: 7px;
+  background: var(--term-chrome, var(--card));
+}
+.xv-toolbar-radio-group .xv-toolbar-segment {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.xv-toolbar-radio-group button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: 32px !important;
+  min-height: 32px;
+  border: 0 !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: color-mix(in srgb, var(--foreground) 72%, var(--term-chrome)) !important;
+  transition: background-color .25s ease, color .25s ease, font-weight .25s ease;
+}
+.xv-toolbar-radio-group button:hover:not(:disabled),
+.xv-toolbar-radio-group button:focus-visible {
+  background: color-mix(in srgb, var(--foreground) 8%, var(--term-chrome)) !important;
+  color: var(--foreground) !important;
+}
+.xv-toolbar-radio-group button:is([aria-pressed='true'],[aria-expanded='true']) {
+  background: color-mix(in srgb, var(--foreground) 15%, var(--term-chrome)) !important;
+  color: var(--foreground) !important;
+  font-weight: 600;
+}
+.xv-toolbar-radio-group button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.xv-toolbar-radio-group button:disabled { opacity: .42; }
+@media (max-width: 1023px) {
+  .xv-toolbar-radio-group { gap: 1px; padding: 2px; flex-shrink: 0; }
+  .xv-workspace-header-tools.xv-toolbar-radio-group button,
+  .xv-terminal-header-tools.xv-toolbar-radio-group button {
+    width: 28px !important;
+    min-width: 28px !important;
+    height: 30px !important;
+    min-height: 30px;
+    padding: 0 !important;
+  }
+  .xv-workspace-identity-cluster { min-width: 0; }
+}
+@media (max-width: 360px) {
+  .xv-toolbar-radio-group { gap: 0; padding: 1px; }
+  .xv-workspace-header-tools.xv-toolbar-radio-group button,
+  .xv-terminal-header-tools.xv-toolbar-radio-group button {
+    width: 26px !important;
+    min-width: 26px !important;
+  }
+  .xv-workspace-header { gap: 4px; padding-inline: 6px; }
+}

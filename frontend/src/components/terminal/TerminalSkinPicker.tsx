@@ -86,7 +86,7 @@ export function TerminalSkinPicker() {
   }
 
   return (
-    <div ref={rootRef} className="relative shrink-0">
+    <div ref={rootRef} className="xv-toolbar-segment relative shrink-0">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

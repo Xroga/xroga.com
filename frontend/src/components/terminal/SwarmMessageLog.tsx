@@ -382,7 +382,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
           {isIncognito ? (
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
-            <div className="xv-terminal-header-tools flex items-center gap-1 shrink-0">
+            <div className="xv-terminal-header-tools xv-toolbar-radio-group flex items-center shrink-0" role="group" aria-label="Workspace controls">
               <WorkspaceLauncher control="project" />
               <WorkspacePeopleControls />
               <WorkspaceLauncher control="visibility" />
@@ -391,6 +391,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 type="button"
                 onClick={() => setTerminalFullscreen(!terminalFullscreen)}
                 className="xv-term-iconbtn"
+                aria-pressed={terminalFullscreen}
                 title={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
                 aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
               >

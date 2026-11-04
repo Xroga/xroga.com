@@ -1,0 +1,129 @@
+{
+  "version": "1.0",
+  "missionId": "CHATBAR-LIVE-RESPONSE-WIDTH-20261104",
+  "baseSha": "5c337e05fa0bf50de7ce161752709110b278a014",
+  "requirementIds": [
+    "XR-FAMILY-rich-ai-ui"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Carry the active chatbar width fix onto the exact source commit currently aliased to xroga.com, and give the workspace header actions the requested theme-aware segmented treatment while preserving their behavior.",
+  "changedFiles": [
+    "frontend/src/app/globals.css",
+    "frontend/src/components/dashboard/DashboardView.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/terminal/TerminalSkinPicker.tsx",
+    "frontend/src/components/terminal/WorkspaceLauncher.tsx",
+    "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/missions/chatbar-live-response-width-20261104.json"
+  ],
+  "decisions": {
+    "keep": [
+      "The starter composer, transcript layout, theme colors, and existing toolbar actions remain unchanged."
+    ],
+    "extend": [
+      "The active composer and its dock may grow to the response-column width.",
+      "The workspace header's independent action buttons share a compact, theme-aware segmented visual style on desktop and mobile."
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database change.",
+    "rollback": "Revert the CSS rule."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "No change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No change."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No change."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --test frontend/src/lib/workspaceComposerPolish20261021.test.ts",
+      "scope": "Existing workspace composer regressions; 4 passed. The new CSS width rule was also inspected directly.",
+      "negative": false,
+      "reference": "frontend/src/lib/workspaceComposerPolish20261021.test.ts"
+    },
+    {
+      "command": "node --test frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+      "scope": "Verifies the transparent dock and opaque composer contract; 4 passed.",
+      "negative": false,
+      "reference": "frontend/src/lib/sidebarComposerRegression20261023.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/check-runtime-config.mjs",
+      "scope": "Regenerated runtime inventory matches the live branch; passed with recorded pre-existing risks.",
+      "negative": false,
+      "reference": "docs/xroga/dependency-inventory.json"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/workspaceFullscreen.test.ts frontend/src/components/icons/animated/animatedIcons.test.ts frontend/src/lib/workspaceShellLayout.test.ts",
+      "scope": "Existing workspace, fullscreen, and toolbar-icon regressions; 62 passed.",
+      "negative": false,
+      "reference": "frontend/src/lib/workspaceFullscreen.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "A scoped CSS adjustment to the existing active workspace dock; no new UI control plane.",
+    "rfc": null
+  },
+  "rollout": "Review CI and the Vercel preview, then stage a production build from this exact live-source branch and promote only after visual verification.",
+  "rollback": "Revert the CSS and toolbar class changes or redeploy the prior frontend build.",
+  "knownGaps": [
+    "Production deployment and live visual verification are pending.",
+    "The live branch's pre-existing inventory, source-hash, egress-digest, and runtime-config drift has been regenerated, but final-source CI has not yet verified those outputs."
+  ],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Required CI recheck, merge, deployment, and live visual verification"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": [
+    "frontend/src/lib/workspaceComposerPolish20261021.test.ts"
+  ]
+}

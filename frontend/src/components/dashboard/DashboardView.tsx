@@ -242,7 +242,7 @@ export function DashboardView() {
           {incognito ? (
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
-            <div className="xv-workspace-header-tools">
+            <div className="xv-workspace-header-tools xv-toolbar-radio-group" role="group" aria-label="Workspace controls">
               <WorkspaceLauncher control="project" />
               <WorkspacePeopleControls />
               <WorkspaceLauncher control="visibility" />
@@ -251,6 +251,7 @@ export function DashboardView() {
                 type="button"
                 onClick={() => setTerminalFullscreen(!fullscreen)}
                 className="xv-term-iconbtn"
+                aria-pressed={fullscreen}
                 title={fullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
                 aria-label={fullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
               >
