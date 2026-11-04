@@ -150,8 +150,8 @@ export function AiAppBuilderLanding({
           </h1>
 
           <p className="xab-hero__lede">
-            Create an app for free with AI. Start with a prompt, work with
-            inspectable code, and verify the result before you ship.
+            Describe an app. Xroga builds it. Create an app for free with AI,
+            inspect the code, and verify the result before you ship.
           </p>
 
           <AiAppBuilderPrompt />
