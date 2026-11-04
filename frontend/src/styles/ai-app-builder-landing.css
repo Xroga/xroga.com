@@ -1130,3 +1130,77 @@
 .xab-page .xab-panel__demo {
   border-color: var(--tp-border);
 }
+
+
+/* Search-intent guide and FAQ, styled with the existing theme tokens. */
+.xab-hero__lede {
+  max-width: 56ch;
+  margin: 1.2rem auto 1.6rem;
+  color: var(--xab-ink);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  line-height: 1.6;
+  text-align: center;
+}
+.xab-discover,
+.xab-faq {
+  padding-block: 6.5rem;
+  background: var(--tp-bg);
+  color: var(--tp-ink);
+}
+.xab-faq { background: var(--tp-surface-2); }
+.xab-discover .xab-section-head,
+.xab-faq .xab-section-head { max-width: 72ch; }
+.xab-discover a,
+.xab-faq a {
+  color: var(--xab-blue);
+  text-underline-offset: 3px;
+}
+.xab-discover__grid,
+.xab-faq__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+.xab-discover__card,
+.xab-faq__item {
+  min-width: 0;
+  padding: clamp(1.35rem, 2.5vw, 2rem);
+  border: 1px solid var(--tp-border);
+  border-radius: 22px;
+  background: var(--tp-panel-solid);
+}
+.xab-faq__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.xab-discover__card h3,
+.xab-faq__item h3 {
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+.xab-discover__card p,
+.xab-faq__item p,
+.xab-faq__links {
+  color: var(--tp-muted);
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+.xab-discover__card p,
+.xab-faq__item p { margin: 0; }
+.xab-discover__card > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.35rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.xab-discover__card > a svg { width: 16px; height: 16px; }
+.xab-faq__links { margin: 1.8rem 0 0; }
+@media (max-width: 1024px) {
+  .xab-discover__grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 768px) {
+  .xab-discover,
+  .xab-faq { padding-block: 4.5rem; }
+  .xab-faq__grid { grid-template-columns: minmax(0, 1fr); }
+}
