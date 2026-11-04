@@ -7,9 +7,14 @@
   ],
   "state": "CODE_COMPLETE",
   "risk": "low",
-  "scope": "Carry the active chatbar width fix onto the exact source commit currently aliased to xroga.com, preserving other live UI changes.",
+  "scope": "Carry the active chatbar width fix onto the exact source commit currently aliased to xroga.com, and give the workspace header actions the requested theme-aware segmented treatment while preserving their behavior.",
   "changedFiles": [
     "frontend/src/app/globals.css",
+    "frontend/src/components/dashboard/DashboardView.tsx",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/components/terminal/TerminalSkinPicker.tsx",
+    "frontend/src/components/terminal/WorkspaceLauncher.tsx",
+    "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
     "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
     "docs/xroga/current-state.json",
     "docs/xroga/current-state.md",
@@ -23,10 +28,11 @@
   ],
   "decisions": {
     "keep": [
-      "The starter composer, transcript layout, theme colors, and dock behavior remain unchanged."
+      "The starter composer, transcript layout, theme colors, and existing toolbar actions remain unchanged."
     ],
     "extend": [
-      "The active composer and its dock may grow to the response-column width."
+      "The active composer and its dock may grow to the response-column width.",
+      "The workspace header's independent action buttons share a compact, theme-aware segmented visual style on desktop and mobile."
     ],
     "replace": [],
     "deprecate": []
@@ -85,6 +91,12 @@
       "scope": "Regenerated runtime inventory matches the live branch; passed with recorded pre-existing risks.",
       "negative": false,
       "reference": "docs/xroga/dependency-inventory.json"
+    },
+    {
+      "command": "npx tsx --tsconfig frontend/tsconfig.json --test frontend/src/lib/workspaceFullscreen.test.ts frontend/src/components/icons/animated/animatedIcons.test.ts frontend/src/lib/workspaceShellLayout.test.ts",
+      "scope": "Existing workspace, fullscreen, and toolbar-icon regressions; 62 passed.",
+      "negative": false,
+      "reference": "frontend/src/lib/workspaceFullscreen.test.ts"
     }
   ],
   "architecture": {
@@ -93,10 +105,10 @@
     "rfc": null
   },
   "rollout": "Review CI and the Vercel preview, then stage a production build from this exact live-source branch and promote only after visual verification.",
-  "rollback": "Revert this CSS change or redeploy the prior frontend build.",
+  "rollback": "Revert the CSS and toolbar class changes or redeploy the prior frontend build.",
   "knownGaps": [
     "Production deployment and live visual verification are pending.",
-    "The live branch's pre-existing inventory, source-hash, and egress-digest drift has been regenerated, but CI has not yet verified those outputs."
+    "The live branch's pre-existing inventory, source-hash, egress-digest, and runtime-config drift has been regenerated, but final-source CI has not yet verified those outputs."
   ],
   "placeholderClaimsRemaining": [],
   "claimsFullProductCompletion": false,

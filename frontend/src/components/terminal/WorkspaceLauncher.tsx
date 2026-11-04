@@ -44,7 +44,7 @@ export function WorkspaceLauncher({ className, control = 'all' }: { className?: 
   }
 
   return (
-    <div className={cn('flex items-center justify-end gap-1.5', className)}>
+    <div className={cn('xv-toolbar-segment flex items-center justify-end', className)}>
       {/* Deliberately icon-only and small: this is a get-out-of-the-way control, and
           a full label would compete with the workspace button next to it. The label
           still reaches assistive technology and hover. */}

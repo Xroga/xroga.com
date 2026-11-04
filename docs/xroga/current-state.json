@@ -61258,7 +61258,7 @@
       "id": "surface:793b89822aa62ee49888",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "31218793ba7eadbcb863556c8df57565775f8ac23ba9007a4463dcf783d5ec6e",
+      "sha256": "63441cbdc9ff306f657c0a4ae632336bcf8c2f172e1a94526f51833756c4c396",
       "symbols": [
         "DashboardView",
         "body",
@@ -88385,7 +88385,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "80703d51ce2d9ceefc09d6d2580dcda09d3c00940eafb8976cdedfd04408f720",
+      "sha256": "ed9d6c897e029739751f6dab7939b2472131d96284974e6ea2b7aef15b54d539",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -89098,7 +89098,7 @@
       "id": "surface:88ebed7bde87871a3e54",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalSkinPicker.tsx",
-      "sha256": "f5a62d44cea1dc5be69f2b257d681e375c728226b28908747b0d8c721d163077",
+      "sha256": "78227587e8abffc5c163a100cb031cae3f06fc571efcfced8bc06b2a376ca51f",
       "symbols": [
         "TerminalSkinPicker",
         "active",
@@ -89724,7 +89724,7 @@
       "id": "surface:4330f7386efdd6e1cd7c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "88725edfafa78eeb8e50129641166281becee1d7e81b99a86d7d10c2f0e9c867",
+      "sha256": "5d8abfdec563d764b5bbc53fdc1df764dfd02f3153906ecf33c9ec0c5b4c337d",
       "symbols": [
         "WorkspaceLauncher",
         "chatbarHidden",
@@ -89792,7 +89792,7 @@
       "id": "surface:301bb246215ac84afb3b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-      "sha256": "a1919f56653e80ff61698e1a16b9e8dcb4f83936931e1af827b061a0ad4c0726",
+      "sha256": "8f2303d46cbfb72a035961f448cb140f0e9a97d7be828fd8d109f8c0d6cc9e4b",
       "symbols": [
         "WorkspacePeopleControls",
         "activeProject",
@@ -130969,9 +130969,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b06b57da9bec829297e8",
+      "id": "finding:84c6d999cdce6dd76ba8",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 431,
+      "line": 432,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
