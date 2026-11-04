@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "3f3bdd5ad6c2f8c65d56f91cc78ddd959687669cebdcb8fc819a87d3ab0eb6cd",
+  "sourceTreeDigest": "20a5dfba3caeacd65fb7648c3d601e5a8d862bb981e736dc50fa033dbf66c656",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -61,9 +61,10 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
+          "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
           "reboundOnBranch": {
-            "previousSha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+            "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
+            "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
           }
         },
         {
@@ -107,17 +108,19 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
-            "previousSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
           }
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+          "sha256": "ced78c0b60030a167ea64de17bfd62c458128680808da196c52413b6bcac5512",
           "reboundOnBranch": {
-            "previousSha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+            "previousSha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
           }
         },
         {
@@ -138,7 +141,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 425,
+      "line": 428,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -161,17 +164,19 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
-            "previousSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
           }
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
-          "sha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+          "sha256": "ced78c0b60030a167ea64de17bfd62c458128680808da196c52413b6bcac5512",
           "reboundOnBranch": {
-            "previousSha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+            "previousSha256": "0bb5380368539941b9169d78c90cfcdab4d1b6636b4f19dd7b40e4704be6f049",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
           }
         },
         {
@@ -272,9 +277,10 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "A failed dispatch cannot retry after revocation or select another model",
-          "sha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+          "sha256": "e410d125c211ca7c753cf0259e86a32f4472a7f7e75e54d18ebb2650ed768d9d",
           "reboundOnBranch": {
-            "previousSha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
+            "previousSha256": "0e0c34ac9ba880a018e9a791d2b414e73170d493826609b934c25277d93d46f4",
+            "note": "Re-bound 2026-11-05: the fixture environment gained ZURELAY_STREAM_USAGE_VERIFIED=1 so the test still exercises the streaming transport after Zurelay answers moved to a single verified response by default; reviewed assertions are unchanged."
           }
         },
         {

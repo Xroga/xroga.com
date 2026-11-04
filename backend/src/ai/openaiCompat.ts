@@ -377,7 +377,7 @@ export async function chatCompletion(
   }
 }
 
-async function chatCompletionStreamTransport(
+export async function chatCompletionStream(
   modelId: ModelId,
   messages: ChatMessage[],
   opts: {
@@ -396,6 +396,9 @@ async function chatCompletionStreamTransport(
     beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
 ): Promise<ChatResult> {
+  // Zurelay streams are not verified to carry a usage receipt (live finding 2026-11-05). Until ZURELAY_STREAM_USAGE_VERIFIED=1 the
+  // answer is requested as one verified response; callers keep this contract, text arrives once after verification.
+  if (MODELS[modelId].provider === 'zurelay' && !zurelayStreamUsageVerified()) return chatCompletionSingleResponse(modelId, messages, opts);
   const started = Date.now();
   opts={...opts,...(opts.responseFormat ? {responseFormat:structuredClone(opts.responseFormat)} : {})};
   try {
@@ -511,18 +514,6 @@ async function chatCompletionStreamTransport(
   }
 }
 
-type StreamOptions = Parameters<typeof chatCompletionStreamTransport>[2];
-
-/**
- * Public streaming entry point. Zurelay streams are not verified to carry a usage receipt (live finding 2026-11-05), so until
- * ZURELAY_STREAM_USAGE_VERIFIED=1 the answer is requested as one verified response (chatCompletionSingleResponse). Callers keep
- * the same contract; text arrives once after verification instead of incrementally. Accounting is unchanged and fails closed.
- */
-export async function chatCompletionStream(modelId: ModelId, messages: ChatMessage[], opts: StreamOptions = {}): Promise<ChatResult> {
-  if (MODELS[modelId].provider === 'zurelay' && !zurelayStreamUsageVerified()) return chatCompletionSingleResponse(modelId, messages, opts);
-  return chatCompletionStreamTransport(modelId, messages, opts);
-}
-
 /**
  * Same contract as chatCompletionStream, but one request/one response. Usage is read and validated from the response
  * body by the Zurelay wire verifier BEFORE text is returned, so a missing or inconsistent receipt fails closed exactly as
@@ -532,7 +523,7 @@ export async function chatCompletionStream(modelId: ModelId, messages: ChatMessa
 export async function chatCompletionSingleResponse(
   modelId: ModelId,
   messages: ChatMessage[],
-  opts: StreamOptions = {},
+  opts: Parameters<typeof chatCompletionStream>[2] = {},
 ): Promise<ChatResult> {
   const { onDelta, onActivity, ...single } = opts;
   const result = await chatCompletion(modelId, messages, single);

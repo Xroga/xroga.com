@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b57abd108e409d93310f1d0d6e6f33d806ca92c2",
+  "source_sha": "17af211756ad38091835d8565e8e6eb2dd34dd1b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16652,7 +16652,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "fe4dd0a8e55d5228e09504e8a692b90610dcf0ccdda44ec994fca2ea22bb96e4"
+      "sha256": "77b4c8b5fb0e55f1c295767d5ae6e03b9801a7a0bfa146145ebaba0519669a1b"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -19921,14 +19921,6 @@
     {
       "path": "frontend/src/app/build-with/page.tsx",
       "sha256": "ffb2f17cb02c48b85e110e40d697896956724cf096c013a35b7ec6706eff262c"
-    },
-    {
-      "path": "frontend/src/app/build/[slug]/page.tsx",
-      "sha256": "1bcad7e1a1f61090f4ab79c7c27a0117f7c70bd4972b50107665035df6ed8883"
-    },
-    {
-      "path": "frontend/src/app/build/page.tsx",
-      "sha256": "f6d19ebc4cea4c9a8ca475675e9612c633b3d32570239c9a001fa307e71186bf"
     },
     {
       "path": "frontend/src/app/changelog/feed.xml/route.ts",
