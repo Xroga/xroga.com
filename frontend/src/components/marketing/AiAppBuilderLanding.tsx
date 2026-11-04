@@ -28,6 +28,29 @@ import type { CapabilityPageData } from '@/lib/capabilityPages';
 import '@/styles/homepage-coding.css';
 import '@/styles/ai-app-builder-landing.css';
 
+const APP_BUILDER_FAQS = [
+  {
+    question: 'Can I create an app for free with Xroga?',
+    answer: 'Yes. Xroga has a $0 Free plan with no credit card required. It includes monthly AI capacity for starting and building smaller projects; larger or sustained builds may need more capacity.',
+  },
+  {
+    question: 'Can I create an app in minutes?',
+    answer: 'You can describe an app idea and begin a build in minutes. Completing, testing, and deploying a working app depends on its scope, integrations, and available capacity.',
+  },
+  {
+    question: 'Is Xroga a no-code AI builder?',
+    answer: 'You can start with a plain-language prompt without writing code yourself. Unlike a closed no-code editor, Xroga works with readable source files you can inspect and maintain.',
+  },
+  {
+    question: 'Is Xroga an AI mobile app builder?',
+    answer: 'Xroga can help with mobile-friendly web applications and supported app projects. Native iOS or Android builds and app-store publishing depend on the chosen stack and external setup; they are not guaranteed by this page.',
+  },
+  {
+    question: 'What kinds of apps can I build with AI?',
+    answer: 'Supported projects include web apps, dashboards, SaaS products, portals, and API-backed tools. Real integrations, testing, and publishing require appropriate configuration and authorization.',
+  },
+] as const;
+
 const FOOTER_GROUPS = [
   {
     title: 'Product',
@@ -120,11 +143,16 @@ export function AiAppBuilderLanding({
 
   <div className="xab-shell xab-hero__body">
           <h1 className="xab-hero__title">
-            Describe an app.{' '}
+            Free AI App Builder.{' '}
             <span className="xab-accent">
-              Xroga builds it.
+              Turn ideas into apps.
             </span>
           </h1>
+
+          <p className="xab-hero__lede">
+            Describe an app. Xroga builds it. Create an app for free with AI,
+            inspect the code, and verify the result before you ship.
+          </p>
 
           <AiAppBuilderPrompt />
         </div>
@@ -156,8 +184,8 @@ export function AiAppBuilderLanding({
                 className="xab-h2"
                 id="xab-platform-heading"
               >
-                Design, build, and ship with AI
-                at the core
+                Create Apps Without Coding.
+                Keep the code.
               </h2>
 
               <p className="xab-blue__lede">
@@ -239,6 +267,53 @@ export function AiAppBuilderLanding({
         </div>
       </section>
 
+      {/* Search-intent guide: real product detail, not hidden keyword text. */}
+      <section className="xab-discover" aria-labelledby="xab-discover-heading">
+        <div className="xab-shell">
+          <div className="xab-section-head">
+            <p className="xab-pill xab-pill--light">Free AI App Builder &amp; Generator</p>
+            <h2 className="xab-h2" id="xab-discover-heading">
+              An AI app creator that takes ideas to working software
+            </h2>
+            <p>
+              Xroga is a free AI app builder to start with, not a promise of
+              unlimited generation. Describe what you need, then build AI apps,
+              business tools, or web products with readable code and checks.
+              See the <Link href="/pricing">Free plan and limits</Link>.
+            </p>
+          </div>
+          <div className="xab-discover__grid">
+            <article className="xab-discover__card">
+              <h3>No Code AI Builder, with code you can own</h3>
+              <p>
+                No programming experience is needed to describe the first
+                version. Xroga creates inspectable project files instead of
+                hiding your app inside a closed editor.
+              </p>
+              <Link href="/docs/getting-started">How to get started <ArrowRight aria-hidden="true" /></Link>
+            </article>
+            <article className="xab-discover__card">
+              <h3>Start creating an app in minutes</h3>
+              <p>
+                Turn an idea into a build brief in minutes. Implementation,
+                testing, and deployment may take longer depending on
+                requirements and connected services.
+              </p>
+              <Link href="/build">Explore app types <ArrowRight aria-hidden="true" /></Link>
+            </article>
+            <article className="xab-discover__card">
+              <h3>Build apps with AI, APIs, and data</h3>
+              <p>
+                Go beyond a static mockup: request interfaces, APIs,
+                persistent data, and authorized integrations for supported
+                projects, including SaaS and dashboards.
+              </p>
+              <Link href="/showcase">Explore examples <ArrowRight aria-hidden="true" /></Link>
+            </article>
+          </div>
+        </div>
+      </section>
+
       {/* =========================================================
           PROCESS
           ========================================================= */}
@@ -258,7 +333,7 @@ export function AiAppBuilderLanding({
                 className="xab-h2"
                 id="xab-process-heading"
               >
-                From outcome to proven result
+                Ideas to apps: from prompt to proven result
               </h2>
 
               <p>
@@ -575,6 +650,34 @@ export function AiAppBuilderLanding({
 
           <p className="xab-limits__note">
             {data.limits}
+          </p>
+        </div>
+      </section>
+
+      <section className="xab-faq" aria-labelledby="xab-faq-heading">
+        <div className="xab-shell">
+          <div className="xab-section-head">
+            <p className="xab-pill xab-pill--light">AI app builder questions</p>
+            <h2 className="xab-h2" id="xab-faq-heading">
+              What to know before you build an app for free
+            </h2>
+            <p>
+              Clear answers about free access, no-code creation, mobile
+              projects, and what it takes to ship working software.
+            </p>
+          </div>
+          <div className="xab-faq__grid">
+            {APP_BUILDER_FAQS.map(({ question, answer }) => (
+              <article className="xab-faq__item" key={question}>
+                <h3>{question}</h3>
+                <p>{answer}</p>
+              </article>
+            ))}
+          </div>
+          <p className="xab-faq__links">
+            Ready to try? <Link href="/auth/signup">Start building free</Link>.
+            For technical steps, read the <Link href="/docs">documentation</Link>
+            or compare <Link href="/pricing">Free and Pro plans</Link>.
           </p>
         </div>
       </section>
