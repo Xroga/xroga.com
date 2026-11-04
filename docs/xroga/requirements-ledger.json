@@ -3726,7 +3726,8 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/ai/runReconciler.ts",
-        "backend/src/lib/recoveryPlanner.ts"
+        "backend/src/lib/recoveryPlanner.ts",
+        "frontend/src/lib/supabase/recoverySession.ts"
       ],
       "implementation_owner_command": "MISSION-021",
       "priority": "P1",

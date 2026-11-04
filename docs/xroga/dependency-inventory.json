@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "10926a08bb53ca31a0660adfb194555dbe92f5d3",
+  "source_sha": "7a330864fe5b5a960253221dc8fec4f6b8b67dc8",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19836,7 +19836,7 @@
     },
     {
       "path": "frontend/src/app/auth/callback/route.ts",
-      "sha256": "f16ff961b78edad5a3a9c3f61ea9673fba786769d1726c86d61521860b1813af"
+      "sha256": "77935986d1b721cbafb87a72b63429e1b2f969b52c3aecf48d90aedf5bc66d70"
     },
     {
       "path": "frontend/src/app/auth/contact/page.tsx",
@@ -19844,7 +19844,7 @@
     },
     {
       "path": "frontend/src/app/auth/forgot-password/page.tsx",
-      "sha256": "c2935911e5c1ca68b7f09fcc747aa5e41be53b4b69fb0263d446e841616387ca"
+      "sha256": "c581249c31352a176528a76eb3541aa2980cdbcf1ab0a81af1b43e7bdfa12132"
     },
     {
       "path": "frontend/src/app/auth/github/callback/page.tsx",
@@ -19859,8 +19859,16 @@
       "sha256": "2da11dc9e379e6f54b1c65cebeced8035296ddfda9fd5be570f6505a256f8efd"
     },
     {
+      "path": "frontend/src/app/auth/reset-password/ResetPasswordForm.tsx",
+      "sha256": "5d6aa8b8e66b3430b442619d4af7ac63a8b8494f2fda3f5ae2c9cb5a088284f4"
+    },
+    {
+      "path": "frontend/src/app/auth/reset-password/actions.ts",
+      "sha256": "9233719cdd8617808523f07df36921914a136c3bc335acbb42d7d071061fedf0"
+    },
+    {
       "path": "frontend/src/app/auth/reset-password/page.tsx",
-      "sha256": "b4f7dd3e764f405ac820624e143d78a65acdc08ce83270256dc356ed1ed82333"
+      "sha256": "02927e05354f88a0509547335840c3f04266bdf32dd395295b3994fb6e25695e"
     },
     {
       "path": "frontend/src/app/auth/signup/page.tsx",
@@ -20248,7 +20256,7 @@
     },
     {
       "path": "frontend/src/components/auth/LoginForm.tsx",
-      "sha256": "81e65b9595865de26c2d1ac8154e492b7b286d8849fafa92e6e54a6f2a530e95"
+      "sha256": "a7752efe3a14567f36d99754beecdd2a2070254cd4a21f9bda469160b4407032"
     },
     {
       "path": "frontend/src/components/auth/SignupForm.tsx",
@@ -23381,6 +23389,10 @@
     {
       "path": "frontend/src/lib/supabase/oauthReturn.ts",
       "sha256": "a4412f4a08e89ca7e4f74612eb75b1cc876fb5cec5ce694376da3ce5b906be45"
+    },
+    {
+      "path": "frontend/src/lib/supabase/recoverySession.ts",
+      "sha256": "1314262960e80d76c938e7137bcbf00ce1120ffd5c511f6dbdfe1c0d0dae3fce"
     },
     {
       "path": "frontend/src/lib/supabase/routeAccess.ts",

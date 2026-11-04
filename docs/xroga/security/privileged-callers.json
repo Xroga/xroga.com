@@ -6256,7 +6256,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4a9e67a75ebb46b94f22"
+        "id": "8feb2c21b1dc609970eb"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -7080,7 +7080,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "4a9e67a75ebb46b94f22"
+        "id": "8feb2c21b1dc609970eb"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -30558,15 +30558,15 @@
       }
     },
     {
-      "id": "4a9e67a75ebb46b94f22",
+      "id": "8feb2c21b1dc609970eb",
       "path": "frontend/src/app/auth/callback/route.ts",
-      "line": 23,
+      "line": 21,
       "enclosing": "GET",
       "kind": "RPC_CANDIDATE",
       "target": "needs_current_contact_phone_prompt",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f16ff961b78edad5a3a9c3f61ea9673fba786769d1726c86d61521860b1813af"
+      "sourceSha256": "77935986d1b721cbafb87a72b63429e1b2f969b52c3aecf48d90aedf5bc66d70"
     },
     {
       "id": "aa4c728556c80152b423",
