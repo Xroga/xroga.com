@@ -88385,7 +88385,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "ed9d6c897e029739751f6dab7939b2472131d96284974e6ea2b7aef15b54d539",
+      "sha256": "f6728c8d84c5826f5cacf22d6917318da4466d704df5dd458f632851a8eeb90a",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",

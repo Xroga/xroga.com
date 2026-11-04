@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "missionId": "ASSISTANT-RESPONSE-INSET-20261104",
+  "baseSha": "a088e454b3e81c6753eef441f376df1611941e3e",
+  "requirementIds": ["XR-FAMILY-rich-ai-ui"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Align narrow-screen assistant replies with the chatbar inner text inset without moving user messages or the composer.",
+  "changedFiles": [
+    "frontend/src/app/globals.css",
+    "frontend/src/components/terminal/SwarmMessageLog.tsx",
+    "frontend/src/lib/assistantResponseInset20261104.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/missions/assistant-response-inset-20261104.json"
+  ],
+  "decisions": {
+    "keep": ["Composer dimensions, user-message alignment, and all existing actions remain unchanged."],
+    "extend": ["Assistant turns gain a role marker and a narrow-screen inner inset."],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No database change.", "rollback": "Revert the scoped CSS and role marker."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "No change."},
+    "tenant": {"changed": false, "description": "No change."},
+    "approval": {"changed": false, "description": "No change."},
+    "credentials": {"changed": false, "description": "No change."},
+    "egress": {"changed": false, "description": "No change."},
+    "cost": {"changed": false, "description": "No change."},
+    "billing": {"changed": false, "description": "No change."}
+  },
+  "tests": [{"command": "node --test frontend/src/lib/assistantResponseInset20261104.test.ts", "scope": "Source-level role and responsive alignment regression.", "negative": false, "reference": "frontend/src/lib/assistantResponseInset20261104.test.ts"}],
+  "architecture": {"change": "extends_canonical", "reason": "Scoped styling of the existing conversation turns.", "rfc": null},
+  "rollout": "Review CI and preview, then deploy from the live-source branch and verify the production alias.",
+  "rollback": "Revert this CSS rule or redeploy the previous frontend build.",
+  "knownGaps": ["Production release and visual verification pending."],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Required CI and live verification"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "NOT_APPLICABLE", "liveUrl": null, "deployedSha": null},
+  "evidenceRefs": ["frontend/src/lib/assistantResponseInset20261104.test.ts"]
+}

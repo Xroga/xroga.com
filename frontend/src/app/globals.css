@@ -14885,6 +14885,16 @@ body.xv-terminal-fullscreen-active:not(.xv-workspace-expanded-active) .xv-termin
   max-width: 56rem !important;
 }
 
+/* The mobile transcript begins at the pane inset, but composer text begins
+   inside its rounded border. Keep assistant replies inside that same inner
+   column without moving user bubbles or the floating composer. */
+@media (max-width: 600px) {
+  .xv-terminal-body--flush .xv-terminal-turn[data-message-role='assistant'] {
+    box-sizing: border-box;
+    padding-inline-start: 18px;
+  }
+}
+
 /* Segmented workspace controls, adapted from the supplied radio-button treatment.
    These are independent actions, so they keep button semantics rather than becoming
    a mutually exclusive radio group. Every terminal skin supplies these tokens. */
