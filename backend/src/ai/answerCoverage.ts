@@ -9,7 +9,7 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
     ['diagram', /\b(?:diagram|flowchart|architecture\s+(?:map|graph))\b/i, 'graph'],
     ['schema', /\b(?:database\s+(?:schema|structure)|data\s+model)\b/i, 'table'],
     ['table', /\b(?:table|tabular)\b/i, 'table'],
-    ['calculator', /\b(?:interactive\s+(?:calculation|scenario)|calculator|editable\s+inputs)\b/i, 'calculator'],
+    ['calculator', /\b(?:interactive\s+(?:calculation|scenario)|calculator|editable\s+inputs|let\s+me\s+(?:change|adjust|tweak|vary)\s+(?:the\s+)?(?:numbers|inputs|values|assumptions)|adjustable\s+(?:inputs|numbers|assumptions)|sliders?)\b/i, 'calculator'],
     ['chart', /\b(?:chart|plot|histogram)\b/i, 'chart'],
     ['workflow', /\b(?:step.by.step|workflow|lifecycle)\b/i, 'steps'],
     ['comparison', /\b(?:comparison\s+cards|compare\s+.{0,60}\b(?:access|permissions|isolation))\b/i, 'cards'],
@@ -17,7 +17,7 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
   for (const [id, expression, kind] of requests) {
     const evidence = sentences.filter(sentence => {
       const match = expression.exec(sentence);
-      if (!match || !/\b(?:include|show|draw|create|provide|render|add|with|give|build|compare|explain)\b/i.test(sentence)) return false;
+      if (!match || !/\b(?:include|show|draw|create|provide|render|add|with|give|build|compare|explain|let\s+me|allow|want)\b/i.test(sentence)) return false;
       return !/\b(?:no|without|don't|do not|avoid|skip)\s+(?:any\s+)?(?:\w+\s+){0,2}$/i.test(sentence.slice(0,match.index));
     });
     let occurrence=0;
@@ -26,6 +26,12 @@ export function requestedAnswerObligations(prompt: string): AnswerObligations {
       occurrence++;
       result.push({id:`requested-${id}${occurrence===1?'':`-${occurrence}`}`,description:sentence.trim().slice(0,400),sourceQuote:sentence.trim().slice(0,400),origin:'requested',formats:[kind]});
     }
+  }
+  // A workflow that names failure, branching, retry or approval is a decision structure. Sequential steps would
+  // hide those branches, so it asks for a connected diagram instead (one section, not steps plus a diagram).
+  const branching = /\b(?:fail(?:s|ure|ures)?|errors?|retry|retries|branch(?:es|ing)?|decisions?|approval|otherwise|if\s+(?:it|they|the|a)\b)/i;
+  for (const item of result) {
+    if (item.id.startsWith('requested-workflow') && branching.test(item.sourceQuote ?? item.description)) item.formats = ['graph'];
   }
   return result;
 }

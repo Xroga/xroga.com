@@ -99,3 +99,14 @@ test('a planner-generated ID collision cannot erase an explicit requirement or c
  assert.equal(partial.ok,false);assert.equal(partial.original,received);
  assert.match(partial.response,/Next.js/);assert.match(partial.response,/Stripe Webhooks/);
 });
+
+test('natural calculator phrasing and branching workflows select the right presentation without padding simple questions', () => {
+  const calc = requestedAnswerObligations('If I invest $5,000 at 7% for 10 years, show me what I end up with and let me change the numbers.');
+  assert.deepEqual(calc.map(o => [o.id, o.formats[0]]), [['requested-calculator', 'calculator']]);
+  const flow = requestedAnswerObligations('Show me a lead-capture automation workflow, including what happens on failure.');
+  assert.deepEqual(flow.map(o => [o.id, o.formats]), [['requested-workflow', ['graph']]]);
+  const plain = requestedAnswerObligations('Show me a step-by-step workflow for onboarding a new employee.');
+  assert.deepEqual(plain.map(o => [o.id, o.formats]), [['requested-workflow', ['steps']]]);
+  assert.deepEqual(requestedAnswerObligations('What is the capital of France?'), []);
+  assert.deepEqual(requestedAnswerObligations('Explain how photosynthesis works in simple words.'), []);
+});
