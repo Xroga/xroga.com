@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "7231ff50cbf96a5117d594aab9d1a93bfd57470a",
+  "source_sha": "4ac075f0d7a30dc7e74845448cc17cf24bf763de",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -38,6 +38,7 @@
         "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
         "NEXT_PUBLIC_XROGA_BUILDER",
         "NEXT_PUBLIC_XROGA_DRIVE",
+        "NEXT_PUBLIC_XROGA_WHOLE_CONVERSATION_V2",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
       ],
@@ -11171,6 +11172,25 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_XROGA_WHOLE_CONVERSATION_V2",
+      "consuming_sources": [
+        "frontend/src/components/terminal/SwarmMessageLog.tsx"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
+      ]
+    },
+    {
       "name": "NODE_ENV",
       "consuming_sources": [
         "backend/src/ai/guestBudget.ts",
@@ -21428,7 +21448,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "80703d51ce2d9ceefc09d6d2580dcda09d3c00940eafb8976cdedfd04408f720"
+      "sha256": "374e40f53890851fcb78ed27178a61bce51557c42542683964f745ba83d36646"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -35900,7 +35920,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 223,
+      "line": 228,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

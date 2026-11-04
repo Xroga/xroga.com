@@ -88386,7 +88386,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "80703d51ce2d9ceefc09d6d2580dcda09d3c00940eafb8976cdedfd04408f720",
+      "sha256": "374e40f53890851fcb78ed27178a61bce51557c42542683964f745ba83d36646",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -130970,9 +130970,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b06b57da9bec829297e8",
+      "id": "finding:2835baa107fbae345b84",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 431,
+      "line": 436,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
