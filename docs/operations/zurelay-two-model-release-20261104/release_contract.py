@@ -109,3 +109,26 @@ def permit_model_acceptance(receipt, expected_prompt, next_request_ceiling_micro
     assert receipt['researchRequests'] + (1 if expected_prompt == 'research' else 0) <= 1, 'SEARCH_COUNT_DENIED'
     assert len(receipt['submittedPrompts']) < 7, 'CHAT_COUNT_DENIED'
     assert now < datetime.datetime.fromisoformat(receipt['deadlineUtc']), 'ACCEPTANCE_EXPIRED'
+
+
+STALE_DELIVERY_MIN_AGE_HOURS = 72
+STALE_DELIVERY_MAX_COUNT = 24
+
+
+def require_fence_receipt(receipt, now_epoch):
+    """Closed fence with no LIVE nonterminal canonical delivery.
+
+    `nonterminalCanonical` counts nonterminal deliveries created inside the last 72 hours and must be 0.
+    Owner-approved exception (2026-11-04): a fixed set of pre-existing orphan rows older than 72 hours
+    (at most 24, none newer) may remain; they are never edited by this package and must be declared exactly.
+    """
+    assert receipt.get('closed') is True and receipt.get('nonterminalCanonical') == 0, 'LIVE_FENCE_PROOF_REQUIRED'
+    assert 0 <= now_epoch - receipt['checkedEpoch'] < 1200, 'LIVE_FENCE_PROOF_EXPIRED'
+    stale = receipt.get('staleException')
+    if stale is None:
+        return
+    assert stale.get('ownerApproved') is True, 'STALE_EXCEPTION_NOT_OWNER_APPROVED'
+    assert isinstance(stale.get('count'), int) and 0 <= stale['count'] <= STALE_DELIVERY_MAX_COUNT, 'STALE_EXCEPTION_COUNT_EXCEEDS_APPROVAL'
+    newest = datetime.datetime.fromisoformat(stale['newestCreatedAtUtc'])
+    checked = datetime.datetime.fromtimestamp(receipt['checkedEpoch'], datetime.timezone.utc)
+    assert checked - newest >= datetime.timedelta(hours=STALE_DELIVERY_MIN_AGE_HOURS), 'STALE_EXCEPTION_NOT_OLD_ENOUGH'

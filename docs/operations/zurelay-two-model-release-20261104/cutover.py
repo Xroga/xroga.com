@@ -4,7 +4,7 @@ Every mutation is one resumable stage. Never auto-open admission or force runs
 terminal. Sensitive service manifests stay in RAM. Preserve unrelated voice tags.
 """
 import copy,datetime,json,pathlib,subprocess,sys,time,urllib.error,urllib.request
-from release_contract import RECOVERY,RECOVERY_DIGEST,require_approval,configure_container,verify_container,require_frontend_release
+from release_contract import RECOVERY,RECOVERY_DIGEST,require_approval,configure_container,verify_container,require_frontend_release,require_fence_receipt
 P='project-c40d4821-e647-4fa2-92d';R='us-east4'
 OLD='xroga-api-zurelay-3bed89-serving-1103';NEW='xroga-api-zurelay-1a6426-serving-1103';TAG='zurelay-1a6426-serving-check'
 OLD_SHA='3bed89e65411fea9376bce0da8aacd1bd8c72f92';NEW_SHA='1a642656542b2e806550b4c7b68517c9df51b22f'
@@ -68,8 +68,7 @@ def fenced():
  if not MODE.startswith('recover-'):
   assert datetime.datetime.now(datetime.timezone.utc)<datetime.datetime.fromisoformat(window['deadlineUtc']),'MAINTENANCE_DEADLINE_REACHED_RECOVER_ONLY'
  receipt=json.loads((ROOT/'response-gate-closed-live.json').read_text())
- assert receipt['closed'] is True and receipt['nonterminalCanonical']==0,'LIVE_FENCE_PROOF_REQUIRED'
- assert 0<=time.time()-receipt['checkedEpoch']<1200,'LIVE_FENCE_PROOF_EXPIRED'
+ require_fence_receipt(receipt,time.time())
 def serving_config(v,sha=NEW_SHA,image=NEW_IMAGE):
  s=v['spec'];c=s['containers'][0];e={x['name']:x for x in c.get('env',[])}
  verify_container(c,sha,image.rsplit('@',1)[1])

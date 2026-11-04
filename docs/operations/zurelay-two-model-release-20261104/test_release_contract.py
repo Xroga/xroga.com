@@ -5,7 +5,7 @@ import pathlib
 import shutil
 import subprocess
 from release_contract import (SOURCE, FRONTEND, RECOVERY, RECOVERY_DIGEST, PACKAGE,
-    configure_container, verify_container, require_approval, permit_model_acceptance)
+    configure_container, verify_container, require_approval, permit_model_acceptance, require_fence_receipt)
 
 
 class ReleaseContractTests(unittest.TestCase):
@@ -115,6 +115,28 @@ class ReleaseContractTests(unittest.TestCase):
                 permit_model_acceptance(dict(receipt,**delta), 'saas-rate-recheck', 1000, now)
         with self.assertRaises(AssertionError):
             permit_model_acceptance(dict(receipt,nextPrompt='workshop'), 'workshop', 1000, now)
+
+
+class FenceReceiptTests(unittest.TestCase):
+    NOW = 1793812000.0
+    def receipt(self, **more):
+        base = {'closed': True, 'nonterminalCanonical': 0, 'checkedEpoch': self.NOW - 30}
+        base.update(more)
+        return base
+    def stale(self, **more):
+        base = {'ownerApproved': True, 'count': 24, 'newestCreatedAtUtc': '2026-10-31T15:23:41+00:00'}
+        base.update(more)
+        return base
+    def test_zero_live_with_declared_old_orphans_is_accepted(self):
+        require_fence_receipt(self.receipt(), self.NOW)
+        require_fence_receipt(self.receipt(staleException=self.stale()), self.NOW)
+    def test_every_other_shape_fails_closed(self):
+        bad = [self.receipt(closed=False), self.receipt(nonterminalCanonical=1), self.receipt(checkedEpoch=self.NOW - 4000),
+               self.receipt(staleException=self.stale(ownerApproved=False)), self.receipt(staleException=self.stale(count=25)),
+               self.receipt(staleException=self.stale(newestCreatedAtUtc='2026-11-03T20:00:00+00:00')), self.receipt(staleException=self.stale(count=-1))]
+        for receipt in bad:
+            with self.assertRaises(AssertionError):
+                require_fence_receipt(receipt, self.NOW)
 
 
 if __name__ == '__main__':
