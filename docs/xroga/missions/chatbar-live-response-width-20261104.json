@@ -10,6 +10,7 @@
   "scope": "Carry the active chatbar width fix onto the exact source commit currently aliased to xroga.com, preserving other live UI changes.",
   "changedFiles": [
     "frontend/src/app/globals.css",
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
     "docs/xroga/current-state.json",
     "docs/xroga/current-state.md",
     "docs/xroga/research/source-manifest.json",
@@ -68,6 +69,12 @@
       "scope": "Existing workspace composer regressions; 4 passed. The new CSS width rule was also inspected directly.",
       "negative": false,
       "reference": "frontend/src/lib/workspaceComposerPolish20261021.test.ts"
+    },
+    {
+      "command": "node --test frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+      "scope": "Verifies the transparent dock and opaque composer contract; 4 passed.",
+      "negative": false,
+      "reference": "frontend/src/lib/sidebarComposerRegression20261023.test.ts"
     }
   ],
   "architecture": {
