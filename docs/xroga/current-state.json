@@ -149416,13 +149416,6 @@
       "focusLocations": []
     },
     {
-      "id": "test-suite:efe78e72e686f15036f1",
-      "sourcePath": "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
-      "declaredTests": 1,
-      "skipLocations": [],
-      "focusLocations": []
-    },
-    {
       "id": "test-suite:707d0f005fd772519ffd",
       "sourcePath": "frontend/src/lib/supabase/routeAccess.test.ts",
       "declaredTests": 2,
