@@ -11,6 +11,8 @@ import { createClient } from '@/lib/supabase/client';
 export default function ResetPasswordPage() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
+  const [recoveryToken, setRecoveryToken] = useState('');
+  const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [pending, setPending] = useState(false);
@@ -18,8 +20,24 @@ export default function ResetPasswordPage() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    void createClient().auth.getUser().then(({ data }) => setReady(Boolean(data.user)));
+    const token = new URLSearchParams(window.location.search).get('token_hash');
+    if (token) {
+      setRecoveryToken(token);
+      window.history.replaceState(null, '', '/auth/reset-password');
+    }
+    setChecking(false);
   }, []);
+
+  async function verifyRecovery() {
+    setPending(true); setError('');
+    const { error: verifyError } = await createClient().auth.verifyOtp({
+      token_hash: recoveryToken,
+      type: 'recovery',
+    });
+    if (verifyError) setError('This reset link is invalid or expired. Request a new one.');
+    else { setRecoveryToken(''); setReady(true); }
+    setPending(false);
+  }
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError('');
@@ -37,7 +55,11 @@ export default function ResetPasswordPage() {
   }
 
   return <AuthFlowFrame title="Choose a new password" subtitle="Your reset link signs you in temporarily so you can set a new password.">
-    {done ? <p role="status" className="text-sm text-emerald-400">Password updated. Taking you to sign in…</p> : !ready ?
+    {done ? <p role="status" className="text-sm text-emerald-400">Password updated. Taking you to sign in…</p> : checking ?
+      <p role="status" className="text-sm text-[var(--auth-text)]">Checking your reset link…</p> : !ready && recoveryToken ?
+      <div className="space-y-4"><p className="text-sm text-[var(--auth-text)]">Confirm your email link to choose a new password.</p>
+        {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
+        <AuthGradientButton type="button" disabled={pending} onClick={verifyRecovery}>{pending ? 'Verifying…' : 'Verify email and continue'}</AuthGradientButton></div> : !ready ?
       <p role="alert" className="text-sm text-[var(--auth-text)]">This reset link is invalid or expired. Request another link from the sign-in page.</p> :
       <form onSubmit={save} className="space-y-4">
         <div><AuthModernLabel htmlFor="new-password">New password</AuthModernLabel><AuthModernInput id="new-password" type="password" required minLength={8} autoComplete="new-password" icon={<LockKeyhole className="h-4 w-4" />} value={password} onChange={event => setPassword(event.target.value)} /></div>

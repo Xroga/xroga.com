@@ -29,7 +29,6 @@ import {
 } from '@/lib/supabase/authErrors';
 
 import { requireOAuthProvider } from '@/lib/supabase/authProviders';
-import { passwordRecoveryEnabled } from '@/lib/supabase/authRecovery';
 import { rememberOAuthNextPath, safeAuthNextPath } from '@/lib/supabase/oauthReturn';
 
 import {
@@ -289,11 +288,11 @@ export function LoginForm() {
           />
         </div>
 
-        {passwordRecoveryEnabled && <div className="text-right">
+        <div className="text-right">
           <Link className="text-xs font-semibold text-[#006aff] hover:underline" href="/auth/forgot-password">
             Forgot password?
           </Link>
-        </div>}
+        </div>
 
         <div>
           <AuthModernLabel
