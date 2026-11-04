@@ -116,3 +116,16 @@ test('invalid quantitative controls retain their source without publishing an un
     assert.doesNotMatch(final.response, /```xroga-ui/);
   }
 });
+
+test('output budget scales with the planned sections and never exceeds the existing ceiling', async () => {
+  const { presentedAnswerMaxTokens } = await import('./responsePresentation.js');
+  const section = (kind: 'prose' | 'graph' | 'table' | 'cards' | 'steps', i: number) => ({ kind, heading: `H${i}`, instruction: 'x' });
+  assert.equal(presentedAnswerMaxTokens(undefined), 4096);
+  assert.equal(presentedAnswerMaxTokens([]), 4096);
+  assert.equal(presentedAnswerMaxTokens([section('prose', 1)]), 4096);
+  const saas = [section('prose', 1), section('graph', 2), section('cards', 3), section('table', 4), section('steps', 5)];
+  const budget = presentedAnswerMaxTokens(saas);
+  assert.ok(budget > 4096 && budget <= 8192, String(budget));
+  assert.equal(budget % 512, 0);
+  assert.equal(presentedAnswerMaxTokens(Array.from({ length: 8 }, (_, i) => section('graph', i))), 8192);
+});

@@ -22,7 +22,7 @@ import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import { publicCompletionState } from './completionDiagnostics.js';
-import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, type PresentationResponseFormat } from './responsePresentation.js';
+import { assessPresentationCoverage, createPresentationProjection, presentationRequestInstructions, presentationResponseFormat, presentedAnswerMaxTokens, type PresentationResponseFormat } from './responsePresentation.js';
 import { prepareAnswerCoverage } from './answerCoverage.js';
 import {prepareSonnetConversation,requestedSonnetReason} from './sonnetApproval.js';
 import {
@@ -1131,7 +1131,7 @@ export async function runChatPipeline(opts: {
     [{ role: 'system', content: system }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      maxTokens: opts.approvedResearch?4096:route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
+      maxTokens: opts.approvedResearch?4096:route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : presentedAnswerMaxTokens(presentation),
       reasoningMode: 'none',
       responseFormat: format,
       tenantContext:opts.tenantContext,

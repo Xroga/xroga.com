@@ -263,3 +263,14 @@ export function createPresentationProjection(plan: PresentationPlan) {
     },
   };
 }
+
+/** Output budget for a planned answer. A fixed 4096-token cap cut off a captured multi-section SaaS answer
+ * (finish_reason "length"), and the missing sections were then reported as an incomplete answer. The budget
+ * grows with the sections the plan requires and with the dense ones (graph, table, chart, calculator), and
+ * stays inside the existing 8192 ceiling. A plain one-section answer keeps the original 4096. */
+export function presentedAnswerMaxTokens(plan: PresentationPlan | undefined): number {
+  if (!plan?.length) return 4096;
+  const dense = plan.filter(section => section.kind === 'graph' || section.kind === 'table' || section.kind === 'chart' || section.kind === 'calculator').length;
+  const wanted = 1536 + 700 * plan.length + 500 * dense;
+  return Math.min(8192, Math.max(4096, Math.ceil(wanted / 512) * 512));
+}

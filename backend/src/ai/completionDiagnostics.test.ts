@@ -88,3 +88,20 @@ test('stream usage-only terminal chunk and nonstream answer are preserved withou
   assert.equal(nonstream.providerRequestId,null);
   assert.deepEqual(nonstream.usage,{inputTokens:null,outputTokens:null});
 });
+
+test('billing and tenant authority from client-supplied facts is flagged, while correct server-verified guidance is accepted', () => {
+  const unsafe = [
+    'After checkout, the success page unlocks the premium plan for the customer.',
+    'The browser confirms the payment and activates the subscription in the database.',
+    'The tenant_id from the request body is used directly to scope every query.',
+    'The organization id in the query string is trusted as authority for reads and writes.',
+  ];
+  for (const sentence of unsafe) assert.equal(requiresAuthorizationReview(sentence), true, sentence);
+  const safe = [
+    'Never let the success page unlock a plan; Stripe sends a signed webhook, and the server verifies its signature before it updates the subscription.',
+    'Do not trust a tenant_id from the request body; look up the current membership for the authenticated user instead.',
+    'Instead of the browser confirming payment, a verified webhook marks the subscription active, idempotently.',
+    'The server checks the current membership of the signed-in user before it scopes the query to the tenant.',
+  ];
+  for (const sentence of safe) assert.equal(requiresAuthorizationReview(sentence), false, sentence);
+});
