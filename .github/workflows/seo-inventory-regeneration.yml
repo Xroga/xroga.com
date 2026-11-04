@@ -1,0 +1,45 @@
+name: One-time SEO branch inventory regeneration
+on:
+  push:
+    branches:
+      - seo/free-ai-app-builder-2026-11
+    paths:
+      - .github/workflows/seo-inventory-regeneration.yml
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    if: github.repository == 'Xroga/xroga.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact SEO branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: seo/free-ai-app-builder-2026-11
+          fetch-depth: 0
+      - name: Use repository Node version
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install frozen workspace dependencies
+        run: npm ci
+      - name: Remove this temporary workflow from final source
+        run: git rm .github/workflows/seo-inventory-regeneration.yml
+      - name: Regenerate canonical inventory and egress register
+        run: |
+          node scripts/xroga/inventory.mjs
+          node scripts/security/audit-egress-callers.mjs --write
+          node scripts/xroga/inventory.mjs --check
+          node scripts/security/audit-egress-callers.mjs --require-complete
+      - name: Commit only generated evidence and workflow removal
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u -- docs/xroga/current-state.json docs/xroga/current-state-schema.json docs/xroga/current-state.md docs/xroga/blockers.md docs/xroga/security/egress-callers.json
+          git diff --cached --stat
+          git commit -m "chore: regenerate Xroga inventories for app builder copy changes"
+          git push origin HEAD:seo/free-ai-app-builder-2026-11
