@@ -140774,6 +140774,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8e12a22cceafa1e26217",
+      "sourcePath": "frontend/src/lib/assistantResponseInset20261104.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:859e642ce66c79977c7f",
       "sourcePath": "frontend/src/lib/auraFirstParty.security.test.ts",
       "declaredTests": 1,

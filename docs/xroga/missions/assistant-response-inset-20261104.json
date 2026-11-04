@@ -11,6 +11,7 @@
     "frontend/src/components/terminal/SwarmMessageLog.tsx",
     "frontend/src/lib/assistantResponseInset20261104.test.ts",
     "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
     "docs/xroga/dependency-inventory.json",
     "docs/xroga/deployment-topology.md",
     "docs/xroga/research/source-manifest.json",
