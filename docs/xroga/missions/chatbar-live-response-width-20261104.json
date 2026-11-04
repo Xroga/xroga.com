@@ -10,6 +10,10 @@
   "scope": "Carry the active chatbar width fix onto the exact source commit currently aliased to xroga.com, preserving other live UI changes.",
   "changedFiles": [
     "frontend/src/app/globals.css",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/security/egress-callers.json",
     "docs/xroga/missions/chatbar-live-response-width-20261104.json"
   ],
   "decisions": {
@@ -75,7 +79,7 @@
   "rollback": "Revert this CSS change or redeploy the prior frontend build.",
   "knownGaps": [
     "Production deployment and live visual verification are pending.",
-    "The live source branch already has an unrelated generated inventory mismatch and a reset-password page source-hash mismatch."
+    "The live branch's pre-existing inventory, source-hash, and egress-digest drift has been regenerated, but CI has not yet verified those outputs."
   ],
   "placeholderClaimsRemaining": [],
   "claimsFullProductCompletion": false,
@@ -83,7 +87,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Required CI checks, including pre-existing inventory and source-integrity failures, merge, deployment, and live visual verification"
+      "Required CI recheck, merge, deployment, and live visual verification"
     ],
     "authenticatedE2e": "BLOCKED",
     "stagedSecurity": "NOT_APPLICABLE",
