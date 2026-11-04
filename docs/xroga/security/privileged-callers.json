@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "7531b0ef784ca6356b90d777325e6d75a04503950e32ceb9a884a3e96da00d2c",
+  "reviewRegistrySha256": "2814a05c3faaa5ef2b5497c4e0493bab97b7a69c0874513b889f36387a686f35",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -6368,7 +6368,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "cdc742944930c390a470"
+        "id": "ee548d3cf583cfcbdd91"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -10112,7 +10112,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cdc742944930c390a470"
+        "id": "ee548d3cf583cfcbdd91"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -31818,7 +31818,7 @@
       }
     },
     {
-      "id": "cdc742944930c390a470",
+      "id": "ee548d3cf583cfcbdd91",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
       "line": 635,
       "enclosing": "decodeBase64UrlUtf8",
@@ -31826,14 +31826,18 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d80e1ce5489b7326a5c0834759b84d9a0d276fe5de4826a5540875d4357162c1",
+      "sourceSha256": "dba219fea184b59714d2c36619d1c58bd3273e6b232c9d1b4b53e3427bc16fdf",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh. Re-bound 2026-11-04: Diff from the reviewed source d80e1ce5489b is only `export` added to BusinessActionConfirmationInline so the V2 turn can render the existing confirmation review. The reviewed call (decodeBase64UrlUtf8 Array/Uint8Array conversion) is unchanged; no new call, receiver, persistence or egress was added.",
         "evidence": [
           {
             "path": "frontend/src/lib/formatAiMarkdown.tsx",
             "marker": "Uint8Array.from("
+          },
+          {
+            "path": "frontend/src/lib/formatAiMarkdown.tsx",
+            "marker": "export function BusinessActionConfirmationInline"
           }
         ]
       }
