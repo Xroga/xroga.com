@@ -61,3 +61,25 @@ export function graphLayersV2(node: Extract<ResponseNodeV2, { kind: 'graph' }>):
   for (const item of node.nodes) (layers[ranks.get(item.id)!] ??= []).push(item.id);
   return layers;
 }
+
+export type GraphToneV2 = 'client' | 'app' | 'data' | 'billing' | 'neutral';
+const toneRules: Array<[GraphToneV2, RegExp]> = [
+  ['billing', /\b(?:stripe|paypal|billing|payments?|checkout|subscriptions?|invoices?|webhooks?)\b/i],
+  ['data', /\b(?:supabase|postgres(?:ql)?|database|storage|buckets?|auth(?:entication)?|rls|redis|s3|vector)\b/i],
+  ['app', /\b(?:next\.?js|server|api|routes?|backend|application|app|workers?|services?|functions?)\b/i],
+  ['client', /\b(?:browser|clients?|users?|customers?|mobile|frontend)\b/i],
+];
+/** Role colour for a diagram node. It is presentation only and never changes labels, wording or edges. The
+ * earliest matching role in the label wins, so "Next.js Webhook Handler" reads as application code and
+ * "Supabase Auth" as data. Only when the label names no role does the detail line decide. */
+export function graphToneV2(label: string, detail?: string): GraphToneV2 {
+  for (const text of [label, detail ?? '']) {
+    let best: { tone: GraphToneV2; at: number } | undefined;
+    for (const [tone, rule] of toneRules) {
+      const at = text.search(rule);
+      if (at >= 0 && (!best || at < best.at)) best = { tone, at };
+    }
+    if (best) return best.tone;
+  }
+  return 'neutral';
+}

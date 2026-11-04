@@ -3,10 +3,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ReactFlow, MarkerType, Position, BaseEdge, EdgeLabelRenderer, getSmoothStepPath, type EdgeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { ResponseNodeV2 } from './document';
-import { graphCanvasV2 } from './graphLayout';
+import { graphCanvasV2, graphToneV2, type GraphToneV2 } from './graphLayout';
 import { leadingEntityV2 } from './entityRegistry';
 import { SourceMarkV2 } from './SourceV2';
 import styles from './response-v2.module.css';
+
+const toneStyle: Record<GraphToneV2, { border: string; background: string; dashed?: boolean }> = {
+  client: { border: '#8b95a7', background: 'rgba(139,149,167,0.08)', dashed: true },
+  app: { border: '#5b8def', background: 'rgba(91,141,239,0.10)' },
+  data: { border: '#34c38f', background: 'rgba(52,195,143,0.09)' },
+  billing: { border: '#8b5cf6', background: 'rgba(139,92,246,0.10)' },
+  neutral: { border: 'var(--v2-line)', background: 'var(--background, #fff)' },
+};
 
 function LabeledConnectionV2(props: EdgeProps) {
   const lane = props.data?.lane;
@@ -52,15 +60,28 @@ export default function ArchitectureV2({ node }: { node: Extract<ResponseNodeV2,
     id: item.id, position: positions.get(item.id)!,
     data: { label: <><strong>{leadingEntityV2(item.label) && <SourceMarkV2 url={leadingEntityV2(item.label)!.url} />}{item.label}</strong>{item.detail && <span>{item.detail}</span>}</> },
     sourcePosition: Position.Bottom, targetPosition: Position.Top,
-    style: { width: layout.nodeWidth, minHeight: layout.nodeHeight, padding: 16, borderRadius: 12, background: 'var(--background, #fff)', color: 'var(--v2-ink)', border: '1px solid var(--v2-line)', fontSize: 14, lineHeight: 1.5, overflowWrap: 'anywhere' as const },
+    style: (() => {
+      const tone = toneStyle[graphToneV2(item.label, item.detail)];
+      return { width: layout.nodeWidth, minHeight: layout.nodeHeight, padding: 14, borderRadius: 14, background: tone.background, color: 'var(--v2-ink)',
+        border: `1.5px ${tone.dashed ? 'dashed' : 'solid'} ${tone.border}`, fontSize: 14, lineHeight: 1.45, overflowWrap: 'anywhere' as const,
+        display: 'flex', flexDirection: 'column' as const, justifyContent: 'center', textAlign: 'center' as const };
+    })(),
   })), [node, positions, layout]);
+  const edgeColour = useMemo(() => {
+    const byId = new Map(node.nodes.map(item => [item.id, item]));
+    return (target: string) => {
+      const item = byId.get(target);
+      const border = toneStyle[item ? graphToneV2(item.label, item.detail) : 'neutral'].border;
+      return border.startsWith('var(') ? '#7890b3' : border;
+    };
+  }, [node]);
   const edges = useMemo(() => node.edges.map((edge, index) => ({
     id: `${node.id}-edge-${index}`, source: edge.source, target: edge.target, label: String(index + 1),
-    type: 'responseConnection', data: { lane: layout.edgeLanes[index] }, markerEnd: { type: MarkerType.ArrowClosed, color: '#7890b3' },
-    style: { stroke: '#7890b3', strokeWidth: 1.5 },
+    type: 'responseConnection', data: { lane: layout.edgeLanes[index] }, markerEnd: { type: MarkerType.ArrowClosed, color: edgeColour(edge.target) },
+    style: { stroke: edgeColour(edge.target), strokeWidth: 1.75 },
     labelStyle: { fill: 'var(--v2-ink)', fontSize: 12 },
     labelBgStyle: { fill: 'var(--background, #fff)' }, labelBgPadding: [8, 5] as [number, number],
-  })), [node, layout]);
+  })), [node, layout, edgeColour]);
   return <figure className={styles.architecture}>
     {node.title && <figcaption>{node.title}</figcaption>}
     {node.description && <p>{node.description}</p>}
