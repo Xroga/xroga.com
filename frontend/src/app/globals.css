@@ -14839,5 +14839,6 @@ body.xv-terminal-fullscreen-active:not(.xv-workspace-expanded-active) .xv-termin
 }
 .xv-terminal-dock[data-workspace-state='conversation'] .xv-kimi-composer-frame[data-composer-frame='single'] {
   width: 100% !important;
+  min-width: 0;
   max-width: 56rem !important;
 }
