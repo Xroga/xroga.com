@@ -67,11 +67,45 @@ const source = (rel: string) => readFileSync(new URL(rel, import.meta.url), 'utf
 test('the V2 turn shows open approvals through the existing server-backed confirmation review, in the controls slot', () => {
   const log = source('../../components/terminal/SwarmMessageLog.tsx');
   assert.match(log, /RequiredInteractionCards/);
-  assert.match(log, /requiredInteractionsFromEvents\(terminalRun\.events\)/);
+  assert.match(log, /openInteractionsForTurn\(terminalRun\.events, msg\.content\)/);
   assert.match(log, /controls=\{/);
-  assert.match(log, /<RequiredInteractionCards interactions=\{openInteractions\(requiredInteractionsFromEvents\(terminalRun\.events\)\)\}/);
+  assert.match(log, /<RequiredInteractionCards interactions=\{openInteractionsForTurn\(terminalRun\.events, msg\.content\)\}/);
   const card = source('../../components/terminal/RequiredInteractionCards.tsx');
   assert.match(card, /BusinessActionConfirmationInline confirmationId=\{item\.confirmationId\}/);
   assert.match(card, /aria-label="Needs your decision"/);
   assert.doesNotMatch(card, /fetch\(|apiFetch|confirm\(/, 'the card never decides or calls the server itself');
+});
+
+import { adaptTerminalEvent } from './terminalEventAdapter';
+import { confirmationIdFromPayload } from '../xrogaEventAdapter';
+
+const REVIEW = (id: string) => `Review the exact Supabase setup: [Review action](/dashboard/actions/confirm/${id}). Schema and storage changes require confirmation.`;
+
+test('a pipeline confirmation_required progress event becomes a canonical approval.requested with only the id', () => {
+  const rows = adaptTerminalEvent('progress', { agent: 'deploy', status: 'confirmation_required', message: REVIEW(ID_A) } as never, { fromSeq: 0, now: 5000 } as never);
+  const approval = rows.find(row => row.canonical?.type === 'approval.requested');
+  assert.ok(approval, 'approval event emitted');
+  assert.equal(approval!.canonical!.status, 'waiting');
+  assert.equal(approval!.canonical!.metadata?.confirmationId, ID_A);
+  const list = requiredInteractionsFromEvents(rows);
+  assert.deepEqual(openInteractions(list).map(i => i.confirmationId), [ID_A]);
+});
+
+test('anything that is not exactly one well-formed confirmation link stays an ordinary update', () => {
+  const none = { status: 'confirmation_required', message: 'Review the request, no link here' };
+  const two = { status: 'confirmation_required', message: `${REVIEW(ID_A)} ${REVIEW(ID_B)}` };
+  const forged = { status: 'confirmation_required', message: '[x](/dashboard/actions/confirm/not-a-uuid) and https://evil.example/dashboard/actions/confirm/' + 'zz' };
+  const wrongStatus = { status: 'running', message: REVIEW(ID_A) };
+  for (const payload of [none, two, forged, wrongStatus]) assert.equal(confirmationIdFromPayload(payload), null);
+  const rows = adaptTerminalEvent('progress', { agent: 'deploy', ...two } as never, { fromSeq: 0, now: 5000 } as never);
+  assert.equal(requiredInteractionsFromEvents(rows).length, 0);
+});
+
+import { openInteractionsForTurn } from './requiredInteractions';
+
+test('an approval already shown inline in the answer is not rendered a second time', () => {
+  const events = [ev('approval.requested', ID_A), ev('approval.requested', ID_B)];
+  const shown = openInteractionsForTurn(events, `Review: [Review action](/dashboard/actions/confirm/${ID_A.toUpperCase()})`);
+  assert.deepEqual(shown.map(i => i.confirmationId), [ID_B]);
+  assert.equal(openInteractionsForTurn(events, 'No link here').length, 2);
 });

@@ -94392,7 +94392,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "28cac606e3e69ae6bd8b2960ebeea04d1b4fb8f804d6274f7636f68014ffd05a",
+      "sha256": "46620a18afa66deeb284cde5c4ca101b88509f249e48d331678aa302e5082c84",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -94607,9 +94607,7 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx#requiredInteractionsFromEvents"
-      ],
+      "evidenceBoundary": [],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -111948,7 +111946,7 @@
       "id": "surface:a91eaf7f089c8dce4b1c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminal/requiredInteractions.ts",
-      "sha256": "2bb1ee91a5708d8ef2e8af15fe313903d708e849fb74332dad01081378a745a1",
+      "sha256": "33fd677ac9762f9f4c1c2e3a27e5236c1e96863b351925af579d225e2702605a",
       "symbols": [
         "RequiredInteraction",
         "RequiredInteractionStatus",
@@ -111956,11 +111954,13 @@
         "at",
         "byId",
         "canonical",
+        "content",
         "event",
         "id",
         "isConfirmationId",
         "key",
         "openInteractions",
+        "openInteractionsForTurn",
         "outcome",
         "previous",
         "requiredInteractionsFromEvents",
@@ -111976,6 +111976,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:45",
+        "frontend/src/lib/terminal/requiredInteractions.test.ts:104",
         "frontend/src/lib/terminal/requiredInteractions.test.ts:4"
       ],
       "reachable": true,
@@ -112129,6 +112130,7 @@
         "frontend/src/context/TerminalChatContext.tsx:15",
         "frontend/src/lib/goldenJourneyRendering.test.ts:3",
         "frontend/src/lib/terminal/liveActivity.test.ts:8",
+        "frontend/src/lib/terminal/requiredInteractions.test.ts:79",
         "frontend/src/lib/terminal/softwareAgentEvents.test.ts:7",
         "frontend/src/lib/terminal/terminalEventModel.test.ts:5",
         "frontend/src/lib/xrogaEvent.test.ts:4"
@@ -112163,6 +112165,7 @@
       "testCoverage": [
         "frontend/src/lib/goldenJourneyRendering.test.ts",
         "frontend/src/lib/terminal/liveActivity.test.ts",
+        "frontend/src/lib/terminal/requiredInteractions.test.ts",
         "frontend/src/lib/terminal/softwareAgentEvents.test.ts",
         "frontend/src/lib/terminal/terminalEventModel.test.ts",
         "frontend/src/lib/xrogaEvent.test.ts"
@@ -114853,15 +114856,18 @@
       "id": "surface:9cf0fc38a015443d3ee7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaEventAdapter.ts",
-      "sha256": "6c703355d90fdc51679d1400693534c114edbcd55fc2888a8f39bf585de2a116",
+      "sha256": "5447cfea2e130bf5f3a23bf5b723b8ccd57d767b97e15c105338084fc3843ad3",
       "symbols": [
+        "CONFIRM_LINK",
         "XrogaCanonicalEventAdapter",
         "XrogaEventAdapterInput",
         "adaptToXrogaEvent",
+        "confirmationIdFromPayload",
         "eventId",
         "evidence",
         "genericStatus",
         "genericType",
+        "ids",
         "number",
         "offset",
         "rawSequence",
@@ -114885,6 +114891,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/lib/terminal/requiredInteractions.test.ts:80",
         "frontend/src/lib/terminal/terminalEventAdapter.ts:32"
       ],
       "reachable": true,
@@ -114892,7 +114899,10 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/xrogaEventAdapter.ts#CONFIRM_LINK",
+        "frontend/src/lib/xrogaEventAdapter.ts#confirmationIdFromPayload"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [
         "frontend/src/lib/xrogaEventAdapter.ts#SoftwareRunEvent",
@@ -114905,7 +114915,9 @@
         "frontend/src/lib/xrogaEventAdapter.ts#eventId",
         "frontend/src/lib/xrogaEventAdapter.ts#evidence"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/terminal/requiredInteractions.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -138667,7 +138679,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:29bdeb4d18f0f6d25bf7",
+      "id": "finding:8d2b44a5f23e781f7c0b",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 433,
       "kind": "PLACEHOLDER",
@@ -149897,7 +149909,7 @@
     {
       "id": "test-suite:246533bb926b8f897d10",
       "sourcePath": "frontend/src/lib/terminal/requiredInteractions.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },

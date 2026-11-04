@@ -59,5 +59,14 @@ export function requiredInteractionsFromEvents(events: readonly TerminalEvent[])
   return [...byId.values()];
 }
 
+/**
+ * Open interactions for one assistant turn that are not already shown as an inline review inside the answer text
+ * (a message whose markdown carries the confirmation link already renders that review). Prevents two cards.
+ */
+export function openInteractionsForTurn(events: readonly TerminalEvent[], messageContent: string): RequiredInteraction[] {
+  const content = messageContent.toLowerCase();
+  return openInteractions(requiredInteractionsFromEvents(events)).filter(item => !content.includes(item.confirmationId));
+}
+
 /** Interactions that still need the person's decision. */
 export const openInteractions = (list: readonly RequiredInteraction[]): RequiredInteraction[] => list.filter(item => item.status === 'requested');

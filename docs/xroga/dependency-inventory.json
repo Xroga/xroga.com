@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1a642656542b2e806550b4c7b68517c9df51b22f",
+  "source_sha": "fafc7c9697938931b35505296081fbf959690acb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -22300,7 +22300,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "28cac606e3e69ae6bd8b2960ebeea04d1b4fb8f804d6274f7636f68014ffd05a"
+      "sha256": "46620a18afa66deeb284cde5c4ca101b88509f249e48d331678aa302e5082c84"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -23444,7 +23444,7 @@
     },
     {
       "path": "frontend/src/lib/terminal/requiredInteractions.ts",
-      "sha256": "2bb1ee91a5708d8ef2e8af15fe313903d708e849fb74332dad01081378a745a1"
+      "sha256": "33fd677ac9762f9f4c1c2e3a27e5236c1e96863b351925af579d225e2702605a"
     },
     {
       "path": "frontend/src/lib/terminal/terminalEvent.ts",
@@ -23616,7 +23616,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaEventAdapter.ts",
-      "sha256": "6c703355d90fdc51679d1400693534c114edbcd55fc2888a8f39bf585de2a116"
+      "sha256": "5447cfea2e130bf5f3a23bf5b723b8ccd57d767b97e15c105338084fc3843ad3"
     },
     {
       "path": "frontend/src/lib/xrogaFileExports.ts",
@@ -38565,6 +38565,13 @@
       "path": "frontend/src/lib/xrogaEvent.ts",
       "line": 107,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/xrogaEventAdapter.ts",
+      "line": 32,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

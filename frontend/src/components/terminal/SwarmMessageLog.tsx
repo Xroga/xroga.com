@@ -42,7 +42,7 @@ import { cn } from '@/lib/utils';
 import { TerminalSkinPicker } from './TerminalSkinPicker';
 import { TerminalLiveActivity } from './TerminalLiveActivity';
 import { RequiredInteractionCards } from './RequiredInteractionCards';
-import { openInteractions, requiredInteractionsFromEvents } from '@/lib/terminal/requiredInteractions';
+import { openInteractionsForTurn } from '@/lib/terminal/requiredInteractions';
 import { ChatTurnRail, buildChatTurns } from './ChatTurnRail';
 import {
   rollbackProjectUpdate,
@@ -618,7 +618,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                     copyContent={responseTextV2(msg) ?? [msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                     prompt={promptByAssistantId.get(msg.id)}
                     streaming={msg.id === animatingId && loading}
-                    controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractions(requiredInteractionsFromEvents(terminalRun.events)).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractions(requiredInteractionsFromEvents(terminalRun.events))} /> : null}</> : undefined}
+                    controls={msg.buildStopped || msg.capacityUnavailable || msg.updateTrail || (currentTurn && openInteractionsForTurn(terminalRun.events, msg.content).length) ? <>{msg.buildStopped || msg.capacityUnavailable || msg.updateTrail ? taskControls : null}{currentTurn ? <RequiredInteractionCards interactions={openInteractionsForTurn(terminalRun.events, msg.content)} /> : null}</> : undefined}
                     activity={operationRows.length ? <TerminalLiveActivity activity={operationRows} run={currentTurn ? terminalRun : undefined} /> : undefined}>
                     {msg.role === 'assistant' ? answer : null}
                   </ConversationTurnV2>
