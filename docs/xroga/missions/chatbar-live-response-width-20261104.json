@@ -13,8 +13,12 @@
     "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
     "docs/xroga/current-state.json",
     "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
     "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
     "docs/xroga/security/egress-callers.json",
+    "docs/xroga/secret-inventory.md",
     "docs/xroga/missions/chatbar-live-response-width-20261104.json"
   ],
   "decisions": {
@@ -75,6 +79,12 @@
       "scope": "Verifies the transparent dock and opaque composer contract; 4 passed.",
       "negative": false,
       "reference": "frontend/src/lib/sidebarComposerRegression20261023.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/check-runtime-config.mjs",
+      "scope": "Regenerated runtime inventory matches the live branch; passed with recorded pre-existing risks.",
+      "negative": false,
+      "reference": "docs/xroga/dependency-inventory.json"
     }
   ],
   "architecture": {
