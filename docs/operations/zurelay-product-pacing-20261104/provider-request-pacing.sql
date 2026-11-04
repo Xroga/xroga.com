@@ -48,10 +48,12 @@ BEGIN
   END IF;
   UPDATE public.xroga_provider_reservations SET dispatch_admission_id=p_token,dispatch_admitted_at=dispatch_now
     WHERE id=p_reservation_id AND user_id=p_user_id;
-  -- Six RPM with one-second spacing headroom. One in-flight request per key.
+  -- Three RPM (the last verified key limit) with one-second spacing headroom: 21 seconds between dispatches.
+  -- Raise the key limit and this spacing together only after the Zurelay dashboard shows the new limit.
+  -- One in-flight request per key.
   -- HTTP lifetime is bounded to 180 seconds, below this crash-recovery lease.
   UPDATE public.xroga_model_request_capacity SET lease_token=p_token,
-    lease_expires_at=dispatch_now+interval '210 seconds',next_dispatch_at=dispatch_now+interval '11 seconds'
+    lease_expires_at=dispatch_now+interval '210 seconds',next_dispatch_at=dispatch_now+interval '21 seconds'
     WHERE key_fingerprint=p_key;
   RETURN pg_catalog.jsonb_build_object('granted',true,'retry_after_ms',0);
 END;
