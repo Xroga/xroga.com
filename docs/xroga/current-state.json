@@ -82277,7 +82277,7 @@
       "id": "surface:d16ba204164dbff537bb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "3d68cfe38bad2ec2fd34d2ebe5b4602731fca47abe05ebc75833dc9e3e3b422f",
+      "sha256": "68fed1d051aca5a4ae2d4d16ebb7d983af621601974ae1036b58d73fa9859c7b",
       "symbols": [
         "APP_BUILDER_FAQS",
         "AiAppBuilderLanding",
