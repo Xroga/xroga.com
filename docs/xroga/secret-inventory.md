@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `7231ff50cbf96a5117d594aab9d1a93bfd57470a`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `4ac075f0d7a30dc7e74845448cc17cf24bf763de`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -134,6 +134,7 @@ Values are forbidden. Source SHA: `7231ff50cbf96a5117d594aab9d1a93bfd57470a`. Na
 | NEXT_PUBLIC_XROGA_BROWSER_RUNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend, endpoint-example-com, endpoint-your-website-com |
 | NEXT_PUBLIC_XROGA_BUILDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NEXT_PUBLIC_XROGA_DRIVE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
+| NEXT_PUBLIC_XROGA_WHOLE_CONVERSATION_V2 | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend |
 | NODE_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | api, endpoint-127-0-0-1, endpoint-accounts-google-com, endpoint-api-github-com, endpoint-api-vercel-com, endpoint-backend-composio-dev, endpoint-chrome-google-com, endpoint-chromewebstore-googleapis-com, endpoint-github-com, endpoint-localhost, endpoint-oauth2-googleapis-com, endpoint-vercel-com, endpoint-www-googleapis-com, endpoint-xroga-api-fly-dev, endpoint-xrogaaicom-vercel-app |
 | OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | runtime-controls-and-conditional-aliases |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | endpoint-api-openai-com |
