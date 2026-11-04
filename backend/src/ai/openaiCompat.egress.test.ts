@@ -2,7 +2,7 @@ import test,{type TestContext} from 'node:test';
 import {randomUUID} from 'node:crypto';
 import assert from 'node:assert/strict';
 import OpenAI from 'openai';
-import {chatCompletion,chatCompletionStream,snapshotModelEgressPayload} from './openaiCompat.js';
+import {chatCompletion,chatCompletionStream,chatCompletionSingleResponse,snapshotModelEgressPayload} from './openaiCompat.js';
 import {MODELS,type ModelId} from './models.js';
 import {createTenantContext} from '../security/tenantContext.js';
 import {withTenantModelReservation} from './tenantModelDispatch.js';
@@ -124,6 +124,7 @@ test('model endpoint admission rejects a private registry destination in both ex
 });
 
 test('real SDK completion and streaming use only the approved endpoint and refuse redirects',async t=>{
+  { const prev = process.env.ZURELAY_STREAM_USAGE_VERIFIED; process.env.ZURELAY_STREAM_USAGE_VERIFIED = '1'; t.after(() => { if (prev === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED; else process.env.ZURELAY_STREAM_USAGE_VERIFIED = prev; }); }
   const sent:string[]=[];let redirect=false;
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:Parameters<typeof fetch>[1])=>{
     const url=String(input);sent.push(url);
@@ -155,6 +156,7 @@ test('public destination substitution and cross-provider credential namespace fa
 });
 
 test('direct DeepSeek output retains terminal cost and length metadata through canonical settlement without another generation',async t=>{
+  { const prev = process.env.ZURELAY_STREAM_USAGE_VERIFIED; process.env.ZURELAY_STREAM_USAGE_VERIFIED = '1'; t.after(() => { if (prev === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED; else process.env.ZURELAY_STREAM_USAGE_VERIFIED = prev; }); }
   const settlements:number[]=[],run=admitted(t,'deepseek_v4_1_flash_1017',settlements);
   let calls=0;
   mockProviderHttp(t,async(_path:unknown,options:unknown)=>{
@@ -211,4 +213,83 @@ test('actual SDK transport binds the strict response schema without removing pri
     await assert.rejects(run(invoke, [{ role: 'user', content: 'Supplied question.' }], { maxTokens: 128, responseFormat: format }), { code: 'MODEL_DISPATCH_BINDING_DENIED' });
   }
   assert.equal(calls, 2, 'Mutated schema sends no provider request');
+});
+
+// ---- Single-response Zurelay transport: verified usage, fail-closed accounting (2026-11-05 live finding) ----
+const HEADERS = { 'x-request-id': 'synthetic-single', 'x-zurelay-model': 'deepseek-v4.1-flash-1017' };
+const answerBody = (usage?: Record<string, unknown> | null, extra: Record<string, unknown> = {}) => ({
+  id: 'gen-single', model: 'deepseek-v4.1-flash-1017', choices: [{ index: 0, message: { content: 'A complete answer.' }, finish_reason: 'stop' }],
+  ...(usage === null ? {} : { usage: usage ?? { prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 } }), ...extra,
+});
+const single = chatCompletionSingleResponse as unknown as typeof chatCompletion;
+
+test('single-response transport sends one non-streaming request, settles from the provider receipt and publishes text once', async t => {
+  const settlements: number[] = []; const bodies: Record<string, unknown>[] = [];
+  t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+    assert.equal(String(input), 'https://api.zurelay.com/v1/chat/completions');
+    bodies.push(JSON.parse(String(init?.body)));
+    return Response.json(answerBody(), { headers: HEADERS });
+  });
+  const run = admitted(t, 'deepseek_v4_1_flash_1017', settlements);
+  const shown: string[] = [];
+  const result = await run(single, [{ role: 'user', content: 'Ordinary question.' }],
+    { maxTokens: 64, reasoningMode: 'none', onDelta: (d: string) => shown.push(d) } as never);
+  assert.equal(result.text, 'A complete answer.');
+  assert.equal(result.inputTokens, 120); assert.equal(result.outputTokens, 30);
+  assert.equal(bodies.length, 1); assert.ok(!bodies[0].stream, 'must not stream');
+  assert.equal(settlements.length, 1, 'exactly one settlement per provider request, never a duplicate');
+  assert.deepEqual(shown, ['A complete answer.']);
+});
+
+test('a missing, inconsistent or non-numeric usage receipt is refused: nothing published, nothing settled from an estimate', async t => {
+  for (const usage of [null, { prompt_tokens: 10, completion_tokens: 5, total_tokens: 99 }, { prompt_tokens: 'x', completion_tokens: 5, total_tokens: 5 }, { prompt_tokens: -1, completion_tokens: 5, total_tokens: 4 }]) {
+    const settlements: number[] = []; const shown: string[] = [];
+    t.mock.method(globalThis, 'fetch', async () => Response.json(answerBody(usage as never), { headers: HEADERS }));
+    const run = admitted(t, 'deepseek_v4_1_flash_1017', settlements);
+    await assert.rejects(run(single, [{ role: 'user', content: 'Ordinary question.' }],
+      { maxTokens: 64, onDelta: (d: string) => shown.push(d) } as never), { code: 'MODEL_DESTINATION_DENIED' });
+    assert.deepEqual(shown, [], 'unverified text is never shown');
+    assert.deepEqual(settlements, [], 'no estimated settlement');
+    t.mock.restoreAll();
+  }
+});
+
+test('a provider failure or an unverifiable receipt header publishes nothing and settles nothing', async t => {
+  for (const respond of [
+    () => new Response('{"error":{"message":"upstream"}}', { status: 500, headers: { 'content-type': 'application/json', ...HEADERS } }),
+    () => Response.json(answerBody(), { headers: { 'x-request-id': 'synthetic-single', 'x-zurelay-model': 'some-other-model' } }),
+    () => Response.json(answerBody(), { headers: { 'x-zurelay-model': 'deepseek-v4.1-flash-1017' } }),
+  ]) {
+    const settlements: number[] = []; const shown: string[] = [];
+    t.mock.method(globalThis, 'fetch', async () => respond());
+    const run = admitted(t, 'deepseek_v4_1_flash_1017', settlements);
+    await assert.rejects(run(single, [{ role: 'user', content: 'Ordinary question.' }],
+      { maxTokens: 64, onDelta: (d: string) => shown.push(d) } as never));
+    assert.deepEqual(shown, []); assert.deepEqual(settlements, []);
+    t.mock.restoreAll();
+  }
+});
+
+test('an interrupted request sends nothing and settles nothing; two separate requests settle twice, never once-for-two', async t => {
+  const settlements: number[] = []; let providerCalls = 0;
+  t.mock.method(globalThis, 'fetch', async () => { providerCalls++; return Response.json(answerBody(), { headers: HEADERS }); });
+  const run = admitted(t, 'deepseek_v4_1_flash_1017', settlements);
+  const aborted = new AbortController(); aborted.abort();
+  await assert.rejects(run(single, [{ role: 'user', content: 'Ordinary question.' }], { maxTokens: 64, signal: aborted.signal } as never));
+  assert.equal(providerCalls, 0); assert.deepEqual(settlements, []);
+  for (let i = 0; i < 2; i++) await run(single, [{ role: 'user', content: `Question ${i}.` }], { maxTokens: 64 } as never);
+  assert.equal(providerCalls, 2); assert.equal(settlements.length, 2);
+});
+
+test('streaming stays refused without a usage chunk, and the single-response default holds until streaming is verified', async t => {
+  { const prev = process.env.ZURELAY_STREAM_USAGE_VERIFIED; process.env.ZURELAY_STREAM_USAGE_VERIFIED = '1'; t.after(() => { if (prev === undefined) delete process.env.ZURELAY_STREAM_USAGE_VERIFIED; else process.env.ZURELAY_STREAM_USAGE_VERIFIED = prev; }); }
+  const { zurelayStreamUsageVerified } = await import('./zurelayWire.js');
+  assert.equal(zurelayStreamUsageVerified({} as NodeJS.ProcessEnv), false);
+  assert.equal(zurelayStreamUsageVerified({ ZURELAY_STREAM_USAGE_VERIFIED: '1' } as unknown as NodeJS.ProcessEnv), true);
+  const settlements: number[] = []; const shown: string[] = [];
+  const frame = { id: 'x', model: 'deepseek-v4.1-flash-1017', choices: [{ index: 0, delta: { content: 'No receipt.' }, finish_reason: 'stop' }] };
+  t.mock.method(globalThis, 'fetch', async () => new Response('data: ' + JSON.stringify(frame) + '\n\ndata: [DONE]\n\n', { headers: { ...HEADERS, 'content-type': 'text/event-stream' } }));
+  const run = admitted(t, 'deepseek_v4_1_flash_1017', settlements);
+  await assert.rejects(run(chatCompletionStream, [{ role: 'user', content: 'Ordinary question.' }], { maxTokens: 64, onDelta: (d: string) => shown.push(d) } as never), { code: 'MODEL_DESTINATION_DENIED' });
+  assert.deepEqual(shown, []); assert.deepEqual(settlements, []);
 });

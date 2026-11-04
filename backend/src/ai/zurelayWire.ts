@@ -8,6 +8,15 @@ function denied(afterDispatch = false): never {
       ...(afterDispatch ? { type: 'xroga_model_redirect_denied_after_dispatch' } : {}) });
 }
 
+/**
+ * Zurelay's streamed responses have not been verified to carry a usage receipt (a live 2026-11-05 run streamed a complete
+ * answer with no usage chunk, so settlement was correctly refused). Until a verified streaming contract exists, answers are
+ * requested as ONE response whose body carries `usage`, which validateZurelayUsage checks before any text is published.
+ * Set ZURELAY_STREAM_USAGE_VERIFIED=1 only after that is proven against the provider. Single-response is NOT incremental
+ * streaming; the Workspace chat endpoint returns the finished answer in one JSON body either way.
+ */
+export const zurelayStreamUsageVerified = (env: NodeJS.ProcessEnv = process.env): boolean => env.ZURELAY_STREAM_USAGE_VERIFIED === '1';
+
 /** Data-only wire checks, shared by ordinary and direct SDK execution paths. */
 export function validateZurelayRequest(body: unknown, expectedModel: string): void {
   if (!body || typeof body !== 'object' || Array.isArray(body)) denied();

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8ed1d919398d30e54e61c29c859d54126502beb5",
+  "source_sha": "b57abd108e409d93310f1d0d6e6f33d806ca92c2",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -660,7 +660,8 @@
         "ZURELAY_SONNET_INPUT_USD_PER_1M",
         "ZURELAY_SONNET_MODEL_ID",
         "ZURELAY_SONNET_OUTPUT_USD_PER_1M",
-        "ZURELAY_SONNET_VISION_VERIFIED"
+        "ZURELAY_SONNET_VISION_VERIFIED",
+        "ZURELAY_STREAM_USAGE_VERIFIED"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -16126,6 +16127,25 @@
       "dependency_ids": [
         "zurelay-models"
       ]
+    },
+    {
+      "name": "ZURELAY_STREAM_USAGE_VERIFIED",
+      "consuming_sources": [
+        "backend/src/ai/zurelayWire.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "zurelay-models"
+      ]
     }
   ],
   "manifests": [
@@ -16632,7 +16652,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021"
+      "sha256": "fe4dd0a8e55d5228e09504e8a692b90610dcf0ccdda44ec994fca2ea22bb96e4"
     },
     {
       "path": "backend/src/ai/parallelApproval.ts",
@@ -17016,7 +17036,7 @@
     },
     {
       "path": "backend/src/ai/zurelayWire.ts",
-      "sha256": "cb55d63f39190fa07fab6c3deb3f65ca83bab0ee41a5afc9ea9f4964573e4613"
+      "sha256": "f909e34be16a47e1f40ba757782a933ae35026e3e1297d857f534ba690f5f975"
     },
     {
       "path": "backend/src/builder/canonical.ts",

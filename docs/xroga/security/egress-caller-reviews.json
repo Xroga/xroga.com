@@ -211,9 +211,10 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
+          "sha256": "8a686f065bbd6b45bd94a332466dcd77799ed7d125947b9ec1b23296ceeb6c35",
           "reboundOnBranch": {
-            "previousSha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+            "previousSha256": "0622d56b1885aad11d4f284da5aa055690e20d3661533aa59d0c9dd1c78cd499",
+            "note": "Re-bound 2026-11-05: the file gained single-response transport regression tests and a streaming-verified guard in the existing redirect test; the reviewed redirect-refusal assertions are unchanged."
           }
         },
         {

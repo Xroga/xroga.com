@@ -20,7 +20,7 @@ import {withRunAttempt,createRunDurable,captureAdmittedRunAttempt} from './runSt
 
 test('actual pipeline, completion and SoftwareAgent calls bind tenant, account revision, payload and canonical reservation',async t=>{
   const env={SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback-only',NODE_ENV:'test',
-    ZURELAY_API_KEY:'synthetic-platform-key',ZURELAY_JSON_SCHEMA_VERIFIED:'1'};
+    ZURELAY_API_KEY:'synthetic-platform-key',ZURELAY_JSON_SCHEMA_VERIFIED:'1',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
   const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const k of Object.keys(env)){if(old[k]===undefined)delete process.env[k];else process.env[k]=old[k];}});
   const owner='11111111-1111-4111-8111-111111111111',foreign='22222222-2222-4222-8222-222222222222',project='33333333-3333-4333-8333-333333333333';

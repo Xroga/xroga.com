@@ -1,6 +1,6 @@
 # Secret and environment name inventory
 
-Values are forbidden. Source SHA: `8ed1d919398d30e54e61c29c859d54126502beb5`. Names and source discovery do not prove that a capability is configured or accepted.
+Values are forbidden. Source SHA: `b57abd108e409d93310f1d0d6e6f33d806ca92c2`. Names and source discovery do not prove that a capability is configured or accepted.
 
 | Name | Classification | Requirement | Dependency |
 | --- | --- | --- | --- |
@@ -355,5 +355,6 @@ Values are forbidden. Source SHA: `8ed1d919398d30e54e61c29c859d54126502beb5`. Na
 | ZURELAY_SONNET_MODEL_ID | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 | ZURELAY_SONNET_OUTPUT_USD_PER_1M | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 | ZURELAY_SONNET_VISION_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
+| ZURELAY_STREAM_USAGE_VERIFIED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | zurelay-models |
 
 Production uses the existing protected Google Secret Manager configuration and native managed KMS. Account-specific connected credentials remain in the canonical encrypted CredentialVault. No personal developer login, legacy Fly credential or development-assistant session is a production requirement. Rotation and access changes require their applicable authority. Optional file delivery signing, Drive and later feature configuration remain independently gated.

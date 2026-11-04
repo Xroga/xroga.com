@@ -18,7 +18,7 @@ import {acquireModelRequestLease,providerCooldownSeconds,releasePacingWithBody} 
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 import { CompletionDiagnostics, requirePublicCompletion } from './completionDiagnostics.js';
 import type { PresentationResponseFormat } from './responsePresentation.js';
-import { validateZurelayRequest, verifyZurelayResponse } from './zurelayWire.js';
+import { validateZurelayRequest, verifyZurelayResponse, zurelayStreamUsageVerified } from './zurelayWire.js';
 
 // No compatibility retry can replay a possibly charged request.
 const withProviderTemperature = <T>(temperature: number | undefined, execute: (value: number | undefined) => Promise<T>) => execute(temperature);
@@ -377,7 +377,7 @@ export async function chatCompletion(
   }
 }
 
-export async function chatCompletionStream(
+async function chatCompletionStreamTransport(
   modelId: ModelId,
   messages: ChatMessage[],
   opts: {
@@ -509,6 +509,36 @@ export async function chatCompletionStream(
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
     throw error;
   }
+}
+
+type StreamOptions = Parameters<typeof chatCompletionStreamTransport>[2];
+
+/**
+ * Public streaming entry point. Zurelay streams are not verified to carry a usage receipt (live finding 2026-11-05), so until
+ * ZURELAY_STREAM_USAGE_VERIFIED=1 the answer is requested as one verified response (chatCompletionSingleResponse). Callers keep
+ * the same contract; text arrives once after verification instead of incrementally. Accounting is unchanged and fails closed.
+ */
+export async function chatCompletionStream(modelId: ModelId, messages: ChatMessage[], opts: StreamOptions = {}): Promise<ChatResult> {
+  if (MODELS[modelId].provider === 'zurelay' && !zurelayStreamUsageVerified()) return chatCompletionSingleResponse(modelId, messages, opts);
+  return chatCompletionStreamTransport(modelId, messages, opts);
+}
+
+/**
+ * Same contract as chatCompletionStream, but one request/one response. Usage is read and validated from the response
+ * body by the Zurelay wire verifier BEFORE text is returned, so a missing or inconsistent receipt fails closed exactly as
+ * before: the answer is not published, nothing is settled from an estimate, and the existing reservation hold stays for
+ * reconciliation. Visible text is delivered once, after verification, mirroring the stream path's post-admission publish.
+ */
+export async function chatCompletionSingleResponse(
+  modelId: ModelId,
+  messages: ChatMessage[],
+  opts: StreamOptions = {},
+): Promise<ChatResult> {
+  const { onDelta, onActivity, ...single } = opts;
+  const result = await chatCompletion(modelId, messages, single);
+  onActivity?.(result.text.length || undefined);
+  onDelta?.(result.text);
+  return result;
 }
 
 /** Build OpenAI-compatible multimodal user content (text + images). */

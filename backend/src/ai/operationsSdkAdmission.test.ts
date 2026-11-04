@@ -5,7 +5,7 @@ import {withOperationsProviderReservation} from './providerBudget.js';
 import {chatCompletion,chatCompletionStream,type ChatMessage} from './openaiCompat.js';
 
 test('actual Operations generic SDK path rechecks the admitted-action reservation on each wire and requires settlement plus atomic accounting',async t=>{
-  const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55439',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback-only',ZURELAY_API_KEY:'synthetic-ops-key'};
+  const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55439',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback-only',ZURELAY_API_KEY:'synthetic-ops-key',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
   const previous=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
   t.after(()=>{for(const k of Object.keys(env))previous[k]===undefined?delete process.env[k]:process.env[k]=previous[k];});
   const owner='11111111-1111-4111-8111-111111111111',actor='22222222-2222-4222-8222-222222222222',action={id:randomUUID(),user_id:owner,requested_by:actor,status:'running'};

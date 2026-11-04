@@ -5103,7 +5103,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "daae1d83b060a6c98262b5c598dcbc07af2767f31b332e2dde4b9c57bec84021",
+      "sha256": "fe4dd0a8e55d5228e09504e8a692b90610dcf0ccdda44ec994fca2ea22bb96e4",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -5111,6 +5111,7 @@
         "ModelNotConfiguredError",
         "ReasoningMode",
         "ResolvedEndpoint",
+        "StreamOptions",
         "active",
         "admission",
         "answer",
@@ -5121,7 +5122,9 @@
         "buildVisionUserContent",
         "cachedInputTokens",
         "chatCompletion",
+        "chatCompletionSingleResponse",
         "chatCompletionStream",
+        "chatCompletionStreamTransport",
         "checkCancellation",
         "choice",
         "chunk",
@@ -5275,7 +5278,8 @@
         "backend/src/ai/openaiCompat.ts#receipt",
         "backend/src/ai/openaiCompat.ts#transportReceipts",
         "backend/src/ai/openaiCompat.ts#verified",
-        "backend/src/ai/openaiCompat.ts#verifyZurelayResponse"
+        "backend/src/ai/openaiCompat.ts#verifyZurelayResponse",
+        "backend/src/ai/openaiCompat.ts#zurelayStreamUsageVerified"
       ],
       "testCoverage": [
         "backend/src/ai/black-hole/providerAdapter.test.ts",
@@ -13281,7 +13285,7 @@
       "id": "surface:84f50e10770c8bd713e4",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/zurelayWire.ts",
-      "sha256": "cb55d63f39190fa07fab6c3deb3f65ca83bab0ee41a5afc9ea9f4964573e4613",
+      "sha256": "f909e34be16a47e1f40ba757782a933ae35026e3e1297d857f534ba690f5f975",
       "symbols": [
         "body",
         "buffer",
@@ -13309,7 +13313,8 @@
         "validateZurelayRequest",
         "validateZurelayUsage",
         "value",
-        "verifyZurelayResponse"
+        "verifyZurelayResponse",
+        "zurelayStreamUsageVerified"
       ],
       "imports": [
         "./models.js",
@@ -13324,6 +13329,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/openaiCompat.egress.test.ts:286",
         "backend/src/ai/openaiCompat.test.ts:4",
         "backend/src/ai/openaiCompat.ts:21",
         "backend/src/ai/zurelayPolicy.test.ts:8"
@@ -13336,9 +13342,11 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
-        "backend/src/ai/zurelayWire.ts#verifyZurelayResponse"
+        "backend/src/ai/zurelayWire.ts#verifyZurelayResponse",
+        "backend/src/ai/zurelayWire.ts#zurelayStreamUsageVerified"
       ],
       "testCoverage": [
+        "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/openaiCompat.test.ts",
         "backend/src/ai/zurelayPolicy.test.ts"
       ],
@@ -143579,7 +143587,7 @@
     {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },

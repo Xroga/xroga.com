@@ -26,7 +26,7 @@ test('research attribution binds canonical pages without treating code or chart 
 test('one exact research approval completes its original rich answer, saves evidence and cannot replay either provider',async t=>{
  const owner='11111111-1111-4111-8111-111111111111',foreign='22222222-2222-4222-8222-222222222222';
  const context=createTenantContext({userId:owner,via:'remote_getuser'});
- const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback',PARALLEL_API_KEY:'synthetic-retrieval',ZURELAY_API_KEY:'synthetic-model'};
+ const env={NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55437',SUPABASE_SERVICE_ROLE_KEY:'synthetic-loopback',PARALLEL_API_KEY:'synthetic-retrieval',ZURELAY_API_KEY:'synthetic-model',ZURELAY_STREAM_USAGE_VERIFIED:'1'};
  const before=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
  const storage=harness(),confirmation=nativeReleaseFixture(owner),reservations=new Map<string,any>();setStorageServiceForTests(storage.svc);
  t.after(()=>{setStorageServiceForTests(undefined);for(const k of Object.keys(env)){if(before[k]===undefined)delete process.env[k];else process.env[k]=before[k];}});
