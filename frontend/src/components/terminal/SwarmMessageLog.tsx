@@ -414,6 +414,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
           className={cn(
             'xv-terminal-body space-y-3 font-coding text-[13px]',
             conversationV2 && conversationStyles.scope,
+            chromeless && !conversationV2 && conversationStyles.legacyTranscript,
             chromeless ? 'xv-terminal-body--flush' : 'px-4 py-3 overflow-visible rounded-b-xl'
           )}
         >
