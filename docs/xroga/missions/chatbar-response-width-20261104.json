@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "missionId": "CHATBAR-RESPONSE-WIDTH-20261104",
+  "baseSha": "d1ed0db724b6d9a985c192195f832be89e9c7a43",
+  "requirementIds": ["XR-FAMILY-rich-ai-ui"],
+  "state": "CODE_COMPLETE",
+  "risk": "low",
+  "scope": "Widen the active workspace chatbar toward the left so its maximum width matches the 56rem AI response column, while retaining viewport constraints on narrow screens.",
+  "changedFiles": [
+    "frontend/src/app/globals.css",
+    "docs/xroga/missions/chatbar-response-width-20261104.json"
+  ],
+  "decisions": {
+    "keep": ["The starter composer, transcript layout, theme colors, and dock behavior remain unchanged."],
+    "extend": ["The active composer and its dock may grow to the response-column width."],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database change.",
+    "rollback": "Revert the CSS rule."
+  },
+  "securityImpact": {
+    "auth": { "changed": false, "description": "No change." },
+    "tenant": { "changed": false, "description": "No change." },
+    "approval": { "changed": false, "description": "No change." },
+    "credentials": { "changed": false, "description": "No change." },
+    "egress": { "changed": false, "description": "No change." },
+    "cost": { "changed": false, "description": "No change." },
+    "billing": { "changed": false, "description": "No change." }
+  },
+  "tests": [{
+    "command": "node --test frontend/src/lib/workspaceComposerPolish20261021.test.ts",
+    "scope": "Existing workspace composer regressions; 4 passed. The new CSS width rule was also inspected directly.",
+    "negative": false,
+    "reference": "frontend/src/lib/workspaceComposerPolish20261021.test.ts"
+  }],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "A scoped CSS adjustment to the existing active workspace dock; no new UI control plane.",
+    "rfc": null
+  },
+  "rollout": "Merge after required checks and verify a conversation on the deployed site at desktop and tablet widths.",
+  "rollback": "Revert this CSS change or redeploy the prior frontend build.",
+  "knownGaps": ["Live visual verification is pending deployment; no committed browser geometry test covers this CSS rule."],
+  "placeholderClaimsRemaining": [],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": ["Required CI checks, merge, deployment, and live visual verification"],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "NOT_APPLICABLE",
+    "liveUrl": null,
+    "deployedSha": null
+  },
+  "evidenceRefs": ["frontend/src/lib/workspaceComposerPolish20261021.test.ts"]
+}

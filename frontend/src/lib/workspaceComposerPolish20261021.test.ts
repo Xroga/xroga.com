@@ -50,3 +50,4 @@ test('New Work and active conversations share one bordered composer with inline 
   assert.match(audio, /<IconMotion>/);
   assert.match(starter, /TASK_ACCEPTANCE\[label\]/);
 });
+
