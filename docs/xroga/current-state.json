@@ -54283,11 +54283,13 @@
       "id": "surface:f477275a901ed4bad863",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/auth/reset-password/page.tsx",
-      "sha256": "52cd9497464e59cc1249c67cb6ce92b83320594cb82a1f1cfdbcb02ee9cdbd87",
+      "sha256": "b4f7dd3e764f405ac820624e143d78a65acdc08ce83270256dc356ed1ed82333",
       "symbols": [
         "ResetPasswordPage",
         "router",
-        "save"
+        "save",
+        "token",
+        "verifyRecovery"
       ],
       "imports": [
         "@/components/auth/AuthFlowFrame",
@@ -54324,7 +54326,9 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/app/auth/reset-password/page.tsx#verifyRecovery"
+      ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -77922,8 +77926,9 @@
       "id": "surface:d16ba204164dbff537bb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "e1eb7cb35b512811c0479a2b654d8761773ea46bdf80ec1e9a8580e1df1202e1",
+      "sha256": "68fed1d051aca5a4ae2d4d16ebb7d983af621601974ae1036b58d73fa9859c7b",
       "symbols": [
+        "APP_BUILDER_FAQS",
         "AiAppBuilderLanding",
         "FOOTER_GROUPS"
       ],
@@ -88381,7 +88386,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "c81cd724d7ddd20482c989468cd7ee2bcf4e0183b14b0ea0c8a9f7bf19d158b9",
+      "sha256": "80703d51ce2d9ceefc09d6d2580dcda09d3c00940eafb8976cdedfd04408f720",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -88840,12 +88845,13 @@
       "id": "surface:96c636bdc082da399e4c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "85e2df0510c7e881f9ee0c72c0ead13c8b380bfb5ae67c8eb92468ff26b455a7",
+      "sha256": "70d7d276623bc00339b82feac14516ee23ea0ffc2fd1196002587eee798a452b",
       "symbols": [
         "TerminalDock",
         "chatbarHidden",
         "chatbarHiddenRaw",
         "dashboardFullscreen",
+        "dockBottom",
         "dockRef",
         "dockSuppressed",
         "emptyWorkspace",
@@ -88856,13 +88862,16 @@
         "isDashboard",
         "keyboardOffset",
         "pathname",
+        "root",
         "showStarterExperience",
         "sidebarOpen",
         "sidebarWidth",
+        "sync",
         "terminalFullscreen",
         "terminalFullscreenRaw",
         "terminalSkin",
         "terminalSkinRaw",
+        "transcript",
         "workspaceOpen",
         "workspaceOpenRaw"
       ],
@@ -95649,7 +95658,7 @@
       "id": "surface:9e7f4761ff2aaa6132ab",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/capabilityPages.ts",
-      "sha256": "7733757da3fe9c24bcb1bec24e50e426957c3328151f5766dc4a81d92d1a3f0e",
+      "sha256": "d8fde4fdca780d6796991d4f1c9bd661f4fc6da6e1dc6dac088228ef75d0627e",
       "symbols": [
         "CAPABILITY_PAGES",
         "CapabilityPageData"
@@ -130961,9 +130970,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c7398e53c895591755e8",
+      "id": "finding:b06b57da9bec829297e8",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 430,
+      "line": 431,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -141606,6 +141615,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:efe78e72e686f15036f1",
+      "sourcePath": "frontend/src/lib/supabase/recoveryFlow20261103.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:707d0f005fd772519ffd",
       "sourcePath": "frontend/src/lib/supabase/routeAccess.test.ts",
       "declaredTests": 2,
@@ -141872,6 +141888,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:078f6241470c34fa2ea0",
+      "sourcePath": "frontend/src/lib/workspaceChatbarScrollBoundary20261103.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d85500b1398ce8914793",
       "sourcePath": "frontend/src/lib/workspaceCompactControls.test.ts",
       "declaredTests": 6,
@@ -141910,6 +141933,13 @@
       "id": "test-suite:d36f1a92a1ed887313b6",
       "sourcePath": "frontend/src/lib/workspaceIdentityMenu.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d29386ca9d8a31984640",
+      "sourcePath": "frontend/src/lib/workspaceMobileToolbar20261103.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
