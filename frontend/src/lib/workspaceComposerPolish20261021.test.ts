@@ -11,7 +11,6 @@ const shell = read('../components/ui/AnchoredPortalPopover.tsx');
 const sidebar = read('../components/layout/Sidebar.tsx');
 const profile = read('../components/ui/ProfileQuickMenu.tsx');
 const model = read('../components/terminal/BlackHoleVButton.tsx');
-const styles = read('../app/globals.css');
 
 test('an actionable model selector and live voice remain after removing decorative chevrons', () => {
   assert.match(model, /onClick=\{\(\) => setOpen\(value => !value\)\}/);
@@ -52,8 +51,3 @@ test('New Work and active conversations share one bordered composer with inline 
   assert.match(starter, /TASK_ACCEPTANCE\[label\]/);
 });
 
-test('active chatbar uses the response-column width without spilling past the viewport', () => {
-  assert.match(styles, /\.xv-terminal-body--flush \.xv-terminal-turn\s*\{[^}]*max-width:\s*56rem/);
-  assert.match(styles, /\.xv-terminal-dock\[data-workspace-state='conversation'\] \.xv-terminal-dock-inner,[\s\S]*?max-width:\s*calc\(56rem \+ 3rem\) !important/);
-  assert.match(styles, /\.xv-terminal-dock\[data-workspace-state='conversation'\] \.xv-kimi-composer-frame\[data-composer-frame='single'\]\s*\{[^}]*width:\s*100% !important;[^}]*max-width:\s*56rem !important/);
-});

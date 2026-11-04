@@ -8,9 +8,6 @@
   "scope": "Widen the active workspace chatbar toward the left so its maximum width matches the 56rem AI response column, while retaining viewport constraints on narrow screens.",
   "changedFiles": [
     "frontend/src/app/globals.css",
-    "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
-    "docs/xroga/current-state.json",
-    "docs/xroga/current-state.md",
     "docs/xroga/missions/chatbar-response-width-20261104.json"
   ],
   "decisions": {
@@ -23,7 +20,7 @@
     "changed": false,
     "migrations": [],
     "rollout": "No database change.",
-    "rollback": "Revert the CSS and source-backed assertion."
+    "rollback": "Revert the CSS rule."
   },
   "securityImpact": {
     "auth": { "changed": false, "description": "No change." },
@@ -36,7 +33,7 @@
   },
   "tests": [{
     "command": "node --test frontend/src/lib/workspaceComposerPolish20261021.test.ts",
-    "scope": "Checks response and active composer width rules; 5 passed.",
+    "scope": "Existing workspace composer regressions; 4 passed. The new CSS width rule was also inspected directly.",
     "negative": false,
     "reference": "frontend/src/lib/workspaceComposerPolish20261021.test.ts"
   }],
@@ -47,7 +44,7 @@
   },
   "rollout": "Merge after required checks and verify a conversation on the deployed site at desktop and tablet widths.",
   "rollback": "Revert this CSS change or redeploy the prior frontend build.",
-  "knownGaps": ["Live visual verification is pending deployment."],
+  "knownGaps": ["Live visual verification is pending deployment; no committed browser geometry test covers this CSS rule."],
   "placeholderClaimsRemaining": [],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
