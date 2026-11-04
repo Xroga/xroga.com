@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "43ed343c2af35f49f7959684f7e692a04a750218",
+  "source_sha": "b593ff9e277026c34b3a996df8cf66389ac1665f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -20869,7 +20869,7 @@
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "sha256": "e1eb7cb35b512811c0479a2b654d8761773ea46bdf80ec1e9a8580e1df1202e1"
+      "sha256": "68fed1d051aca5a4ae2d4d16ebb7d983af621601974ae1036b58d73fa9859c7b"
     },
     {
       "path": "frontend/src/components/marketing/AiAppBuilderPrompt.tsx",
@@ -21885,7 +21885,7 @@
     },
     {
       "path": "frontend/src/lib/capabilityPages.ts",
-      "sha256": "7733757da3fe9c24bcb1bec24e50e426957c3328151f5766dc4a81d92d1a3f0e"
+      "sha256": "d8fde4fdca780d6796991d4f1c9bd661f4fc6da6e1dc6dac088228ef75d0627e"
     },
     {
       "path": "frontend/src/lib/capacityMessage.ts",
@@ -27988,14 +27988,14 @@
       "hostname": "x.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 633,
+      "line": 736,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/marketing/AiAppBuilderLanding.tsx",
-      "line": 642,
+      "line": 745,
       "credentialsInUrl": false
     },
     {
